@@ -1,0 +1,112 @@
+.custom-button-group {
+    display: inline-flex;
+    align-items: center;
+   float: right;
+}
+
+.custom-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0px;
+    margin: 0 4px 9px;
+    font-size: 35px;
+}
+
+.custom-divider {
+    height: 28px;
+    border-left: 2px solid rgb(var(--default-border));
+    margin: 0 8px;
+}
+
+.post-button {
+    background-color: rgb(var(--primary)) !important;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 10px;
+    font-size: 14px !important;
+    cursor: pointer;
+    margin-left: -1px;
+    margin-bottom: 3px;
+    height: 26px;
+}
+
+
+.vertical-icon {
+    transform: rotate(-60deg);
+}
+.ql-snow.ql-toolbar button,
+.ql-snow .ql-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 30px;
+    padding: 3px 5px;
+    width: 40px;
+}
+@media (min-width: 640px) { .ql-snow.ql-toolbar button,
+.ql-snow .ql-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 30px;
+    padding: 3px 5px;
+    width: 40px;
+} }
+
+@media (min-width: 768px) { .ql-snow.ql-toolbar button,
+.ql-snow .ql-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 30px;
+    padding: 0 0;
+    width: 22px;
+} }
+
+@media (min-width: 1024px) { .ql-snow.ql-toolbar button,
+.ql-snow .ql-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 30px;
+    padding: 0 1px;
+    width: 30px;
+} }
+
+@media (min-width: 1280px) { .ql-snow.ql-toolbar button,
+.ql-snow .ql-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 30px;
+    padding: 0 1px;
+    width: 24px;
+} }
+
+@media (min-width: 1536px) { .ql-snow.ql-toolbar button,
+.ql-snow .ql-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 30px;
+    padding: 0 1px;
+    width: 36px;
+} }
+
+
+.post-button:hover{
+color: white !important;
+}

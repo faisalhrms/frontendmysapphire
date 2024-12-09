@@ -1,0 +1,92 @@
+import api from "@config/axiosConfig.js";
+import Notify from "@helpers/toastNotifications.js";
+
+export const projectStatuses = [
+    { value: 'active', label: 'Active' },
+    { value: 'on_hold', label: 'On Hold' },
+    { value: 'archived', label: 'Archived' }
+];
+
+export const priorities = [
+    { value: 'low', label: 'Low' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'high', label: 'High' }
+];
+
+export const createProject = async (payload) => {
+    try {
+        const response = await api.post('/projects', payload);
+
+        Notify.success(response.data.message);
+        return response.data.data;
+    } catch (error) {
+
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+
+export const updateProject = async (id, payload) => {
+    try {
+        const response = await api.put(`/projects/${id}`, payload);
+
+        Notify.success(response.data.message);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+
+export const getProjects = async (page, size, s) => {
+    try {
+        const response = await api.get(`/projects/datatable`, {
+            params: { skip: (page - 1) * size, limit: size, s },
+        });
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+
+export const getProjectById = async (id) => {
+    try {
+        const response = await api.get(`/projects/${id}`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+
+export const getProjectMilestonesWithTasks = async (id) => {
+    try {
+        const response = await api.get(`/projects/${id}/milestones`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || 'Failed to get project milestones with tasks');
+    }
+};
+
+
+export const toggleFavouriteProject = async (id, isFavourite) => {
+    try {
+        const response = await api.post(`/projects/${id}/toggle-favourite`, {is_favourite: isFavourite});
+        Notify.success(response.data.message);
+        return response.data.data;
+    }catch (error){
+        Notify.error(error.response?.data?.message);
+    }
+}
+
+export const uploadProjects = async (formData) => {
+    try {
+        const response = await api.post(`projects/upload`, formData);
+        Notify.success(response.data.message);
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || 'An error occurred');
+        throw new Error(error.response?.data?.message || 'An error occurred');
+    }
+};

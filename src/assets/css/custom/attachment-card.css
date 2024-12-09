@@ -1,0 +1,9 @@
+.attachments .shared-files li {
+    @apply mb-1;
+}
+.attachments .shared-files li:last-child {
+    @apply mb-0;
+}
+.attachments .shared-files .shared-file-icon i {
+    @apply w-4 h-4 leading-none rounded-[0.3rem] border border-solid border-defaultborder dark:border-defaultborder/10 dark:text-defaulttextcolor/70 flex items-center p-[1.125rem] justify-center text-[1.125rem] text-[#8c9097];
+}

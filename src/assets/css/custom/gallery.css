@@ -1,0 +1,48 @@
+.gallery-img {
+    position: relative;
+}
+
+.gallery-img-body {
+    position: relative;
+    border-color: rgb(var(--default-border));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(var(--light));
+    min-height: 135px;
+}
+
+.gallery-img-body img {
+    height: 135px;
+    width: 135px;
+    border-radius: .5rem;
+    border-color: rgb(var(--default-border));
+    background-color: rgb(var(--light));
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.active.gallery-img-body .actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+.gallery-img:hover .active .actions {
+    display: flex;
+}
+
+.active.gallery-img-body .actions .edit {
+    margin-left: 5px;
+}
+
+.gallery-img:hover .active {
+    cursor: pointer;
+}

@@ -1,0 +1,83 @@
+import {calculateEffort, formatDate} from "@helpers/dateTime.js";
+import React from "react";
+import HasPermission from "@components/HasPermission.jsx";
+
+const TaskSummary = ({task, openTaskModal}) => {
+    return (
+        <>
+            <div className="box">
+                <div className="box-header justify-between">
+                    <div className="box-title">Task Summary</div>
+                    <div className="btn-list">
+                        <HasPermission permission='task_create'>
+                        {
+                            task.status!=='on_hold' && task.status!=='completed'&& (
+                                <button type="button"
+                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.id)}
+                                        className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 mr-3 !px-2 !text-[0.75rem]">
+                                    <i className="ri-add-line font-semibold align-middle"></i> Add Sub task
+                                </button>
+                            )
+                        }
+                        </HasPermission>
+
+                        <HasPermission permission='task_update'>
+
+                        {
+                            task.status !== 'under_approval' && task.status !== 'completed' && (
+                                <button
+                                    className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                                    onClick={() => openTaskModal(task.id, task.milestone.started_at, task.milestone.ended_at, null, true)}>
+                                    <i className="ri-edit-line me-1 align-middle"></i>Edit Task
+                                </button>
+                            )
+                        }
+                        </HasPermission>
+
+                    </div>
+
+                </div>
+                <div className="box-body">
+                    <h5 className="font-semibold mb-4 task-title text-[1.25rem]">
+                        {task.name}
+                    </h5>
+                    <div className="text-[.9375rem] font-semibold mb-2">Task Description :</div>
+                    <p className="text-[#8c9097] dark:text-white/50 task-description">{task.description}</p>
+                </div>
+                <div className="box-footer">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+
+                        <div>
+                            <span
+                                className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Assigned Date</span>
+                            <span
+                                className="block text-[.875rem] font-semibold dark:text-defaulttextcolor/70 {formatDate(task.started_at)}">{formatDate(task.started_at)}</span>
+                        </div>
+                        <div>
+                            <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Due Date</span>
+                            <span
+                                className="block text-[.875rem] font-semibold dark:text-defaulttextcolor/70 {formatDate(task.ended_at)}">{formatDate(task.ended_at)}</span>
+                        </div>
+                        <div className="task-details-progress">
+                            <span
+                                className="block text-[#8c9097] dark:text-white/50 text-[0.75rem] mb-1">Progress</span>
+                            <div className="flex items-center flex-wrap">
+                                <div className="progress progress-xs progress-animate flex-grow me-2"
+                                     style={{width: '70%'}}>
+                                    <div className="progress-bar bg-primary"></div>
+                                </div>
+                                <div className="text-[#8c9097] dark:text-white/50 text-[.6875rem]">0%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Efforts</span>
+                            <span className="block text-[.875rem]  dark:text-defaulttextcolor/70 font-semibold">{ calculateEffort(task.started_at, task.ended_at) }</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export default TaskSummary

@@ -1,0 +1,55 @@
+.hierarchy-list {
+    display: flex;
+    justify-content: center;
+    padding: 0 15px; /* Add padding to ensure it's not too tight on mobile */
+}
+
+.box-hierarchy {
+    border: 1px solid rgb(var(--default-border));
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    padding: 10px;
+}
+
+.draggable-item {
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border: 1px solid rgb(var(--primary));
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: move;
+    @apply bg-white dark:bg-bodybg text-defaulttextcolor dark:text-defaulttextcolor/70 !important;
+
+}
+
+.item-position {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgb(var(--primary));
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.item-buttons {
+    align-items: center;
+    justify-content: space-between;
+    min-width: 65px;
+    margin-left: 15px;
+}
+
+.add-button, .remove-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    height: 30px;
+    padding: 3px 5px;
+}
+
+.footer-hierarchy {
+    padding: 10px;
+    border-top: 1px dashed rgb(var(--default-border));
+    justify-content: flex-end;
+}

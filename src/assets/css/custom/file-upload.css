@@ -1,0 +1,58 @@
+.img-upload-box {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.img-upload-box-body {
+    position: relative;
+    width: 220px;
+    border-color: rgb(var(--default-border));
+    height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(var(--light));
+}
+
+.img-upload-box-body svg {
+    width: 120px;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.img-upload-box-body img {
+    border-radius: 0.5rem;
+    object-fit: contain;
+}
+
+.img-upload-box-body img, .img-upload-box-body svg {
+    border-radius: 0.5rem;
+    object-fit: contain;
+}
+
+.active.img-upload-box-body .actions {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    height: 0;
+    width: 0;
+    display: none;
+    align-content: center;
+    justify-content: center;
+}
+
+.active.img-upload-box-body .actions .edit {
+    margin-left: 5px;
+}
+
+.img-upload-box:hover .active {
+    cursor: pointer;
+}
+
+.img-upload-box:hover .active .actions {
+    display: flex;
+}
