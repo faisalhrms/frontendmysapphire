@@ -1,57 +1,60 @@
-import { useParams } from "react-router-dom";
-import { usePendingReqTaskForm, useServiceRequest } from "@modules/sr-management/Hooks/PendingServiceReqHook.js";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import React from "react";
-import FormInput from "@components/form/FormInput.jsx";
-import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import { formatOptions } from "@helpers/formatters.js";
-import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
-import GalleryUpload from "@components/GalleryUpload.jsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import pendingReqTaskSchema from "@modules/sr-management/schema/PendingReqCreateSchema.js";
 import { format } from "date-fns";
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import FormInput from "@components/form/FormInput.jsx";
+import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
+import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormButton from "@components/form/FormButton.jsx";
+import { formatOptions } from "@helpers/formatters.js";
+import { usePendingReqTaskForm } from "@modules/sr-management/Hooks/PendingServiceReqHook.js";
 import PendingReqTaskCard from "@modules/sr-management/component/components/PendingReqTaskCard.jsx";
+import pendingReqTaskSchema from "@modules/sr-management/schema/PendingReqCreateSchema.js";
 
-const PendingReqTaskForm = ({ pendingReqData, currentReqId }) => {
-  console.log(
-    `Pending Req Data: department_id=${pendingReqData.department_id}, sub_department_id=${pendingReqData.sub_department_id}, sr_type_id=${pendingReqData.sr_type_id}, attachments=${pendingReqData.attachment_ids}`
-  );
-
-  // Destructure serviceData for easier access
+const PendingReqTaskForm = ({ pendingReqData }) => {
   const createdAtDate = pendingReqData?.created_at
     ? format(new Date(pendingReqData.created_at), "yyyy-MM-dd")
     : "";
-  console.log(`This is subdepartment ${pendingReqData.sub_department_id}`);
-
+  const endedAtDate = pendingReqData?.need_by_date
+    ? format(new Date(pendingReqData.created_at), "yyyy-MM-dd")
+    : "";
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(pendingReqTaskSchema()),
     defaultValues: {
       ...pendingReqData,
-      location_id: pendingReqData.location_id,
-      department_id: pendingReqData.department_id,
-      sub_department_id: pendingReqData.sub_department_id,
-      sr_type_id: pendingReqData.sr_type_id,
+      location_id: pendingReqData.location.id,
+      sr_type: pendingReqData.sr_type.id,
       started_at: createdAtDate,
-      ended_at: "",
-      user_ids: (pendingReqData.users || []).map((user) => user.id) || [],
-      attachment_ids: pendingReqData.attachment_ids || [],
+      ended_at: endedAtDate,
+      user_ids: (pendingReqData.users || []).map((user) => user.id),
       description: pendingReqData.description || "",
     },
   });
 
   const { handleTaskSubmit } = usePendingReqTaskForm(pendingReqData);
 
-  console.log("Pending Request Data:", pendingReqData);
-
-  // Only render form once pendingReqData is loaded
-  if (!pendingReqData) {
-    return <div>Loading...</div>;
-  }
+  const handleSaveDraft = async (data) => {
+    console.log("Form data before submission:", data);
+    try {
+      await handleTaskSubmit(data);
+    } catch (error) {
+      console.error("Error saving draft:", error);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit(handleTaskSubmit)}>
+    <form
+      onSubmit={handleSubmit(
+        (data) => {
+          console.log("Form Submitted Data:", data);
+          handleSaveDraft(data);
+        },
+        (validationErrors) => {
+          console.error("Validation Errors:", validationErrors);
+        }
+      )}
+    >
       <div className="grid grid-cols-12 gap-x-6">
         <div className="xxl:col-span-9">
           <div className="box">
@@ -75,10 +78,10 @@ const PendingReqTaskForm = ({ pendingReqData, currentReqId }) => {
                     placeholder="Requester Location"
                     apiUrl="/select/locations"
                     queryKeyBase="locations"
-                    clientSideSearch={true}
+                    clientSideSearch
                     preselectedOptions={
-                      pendingReqData.location_id
-                        ? [{ value: pendingReqData.location_id, label: pendingReqData.location?.name }]
+                      pendingReqData?.location.id
+                        ? [{ value: pendingReqData.location.id, label: pendingReqData.location?.name }]
                         : []
                     }
                   />
@@ -86,13 +89,13 @@ const PendingReqTaskForm = ({ pendingReqData, currentReqId }) => {
                 <div className="xl:col-span-6 col-span-12">
                   <FormAsyncSelect
                     label="SR Type"
-                    name="sr_type_id"
+                    name="sr_type"
                     control={control}
                     errors={errors}
                     placeholder="SR Type"
                     apiUrl="/select/sr-types"
                     queryKeyBase="sr_types"
-                    clientSideSearch={true}
+                    clientSideSearch
                     preselectedOptions={
                       pendingReqData?.sr_type
                         ? [{ value: pendingReqData.sr_type.id, label: pendingReqData.sr_type.name }]
@@ -103,7 +106,7 @@ const PendingReqTaskForm = ({ pendingReqData, currentReqId }) => {
                 <div className="xl:col-span-6 col-span-12">
                   <FormAsyncSelect
                     label="Members"
-                    isMulti={true}
+                    isMulti
                     name="user_ids"
                     control={control}
                     errors={errors}
@@ -152,25 +155,19 @@ const PendingReqTaskForm = ({ pendingReqData, currentReqId }) => {
                       buttonList: [
                         ["bold", "italic", "underline", "strike"],
                         ["font", "fontSize", "fontColor", "hiliteColor"],
-                        ["align", "list", "table"]
+                        ["align", "list", "table"],
                       ],
                     }}
-                  />
-                </div>
-                <div className="col-span-12">
-                  <GalleryUpload
-                    currentValue={pendingReqData?.attachment_ids}
-                    files={pendingReqData?.attachments}
-                    inputName="attachment_ids"
-                    placeholder="Select Attachments"
-                    control={control}
-                    errors={errors}
                   />
                 </div>
               </div>
             </div>
             <div className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
-              <FormButton type="submit" isLoading={isSubmitting} />
+              <FormButton
+                text="Save"
+                onClick={() => handleSubmit(handleSaveDraft)()}
+                isLoading={isSubmitting}
+              />
             </div>
           </div>
         </div>

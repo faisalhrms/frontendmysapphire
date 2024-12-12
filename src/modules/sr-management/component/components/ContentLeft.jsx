@@ -13,6 +13,7 @@ function ContentLeft({generatedReqData, serviceRequest}) {
             description: serviceRequest.description || "",
         },
     });
+
     return (
         <div className="w-full lg:w-3/5  rounded-lg dark:bg-bodybg">
             <ModelRight isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
@@ -109,7 +110,7 @@ function ContentLeft({generatedReqData, serviceRequest}) {
                 <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
                     <SRDiscussion
                         title="Task Discussions"
-                        getEndPoint={`/sr-task/${serviceRequest.id}/discussions`}
+                        getEndPoint={`/sr-task/${generatedReqData.id}/discussions/`}
                         serviceRequest={serviceRequest}
                     />
                 </div>

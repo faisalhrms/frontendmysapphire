@@ -1,46 +1,69 @@
-import { z } from "zod";
-import { dateSchema } from "@helpers/schema.js";
+import {z} from "zod";
 
-const serviceRequestSchema = (isSaveMode) => z.object({
-    company_id: z.number().min(1).default(1),
-    location_id: z.number().min(1).default(1),
-    department_id: z.number().min(1).default(1),
+const serviceRequestSchema = () =>
+    z
+        .object({
+            company_id: z
+                .number()
+                .min(1, {message: "Company ID is required and must be a valid number"})
+                .default(1),
+            location_id: z
+                .number()
+                .min(1, {message: "Location ID is required and must be a valid number"}),
+            department_id: z
+                .number()
+                .min(1, {message: "Department ID is required and must be a valid number"}),
+            sub_department_id: z
+                .number()
+                .min(1, {message: "Sub Department ID is required and must be a valid number"}),
+            sr_type: z
+                .number()
+                .min(1, {message: "SR Type is required and must be a valid number"}),
+            request_title: z
+                .string()
+                .min(1, {message: "Request Title is required and cannot be empty"}),
+            reporter: z
+                .string()
+                .min(1, {message: "Reporter is required and cannot be empty"})
+                .default("Faisal"),
+            reporter_email: z
+                .string()
+                .email({message: "Reporter Email must be a valid email address"})
+                .transform((email) => email.trim()),
+            to_email: z
+                .array(
+                    z.string().refine(
+                        (email) => {
+                            const trimmed = email.trim();
+                            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+                        },
+                        {message: "Each To Email must be a valid email address"}
+                    )
+                )
+                .min(1, {message: "At least one To Email is required"}),
+            cc_email: z
+                .array(z.string().email({message: "Each CC Email must be a valid email address"})).optional(),
+            description: z
+                .string()
+                .nullable()
+                .default(""),
+            attachments: z
+                .array(z.number(), {message: "Attachments must be an array of valid numbers"})
+                .optional(),
+            is_submitted: z
+                .boolean()
+                .default(false),
+            parent_request: z
+                .number()
+                .nullable()
+                .optional(),
 
-    request_title: z.string()
-        .min(1, { message: "Request title is required" })
-        .max(255, { message: "Request title must be at most 255 characters long" })
-        .default("string"),
-
-    reporter: z.string().default("string"),
-
-
-
-    // on_behalf_of: z.boolean().default(false),
-    // other_employee_code: z.string().default("string"),
-
-    // Handle `to_email` and `cc_email` as arrays of email strings directly
-    to_email: z.array(
-        z.string().email("Each email must be a valid email address")
-    ).min(1, "At least one recipient must be assigned"),
-
-
-    description: z.string()
-        .max(500, {message: "Description must be at most 500 characters long"})
-        .nullable()
-        .optional()
-        .default("string"),
-
-    sub_department_id: z.number().min(1).default(1),
-    sr_type_id: z.number().min(1).default(1),
-
-    is_submitted: z.boolean().default(false),
-    parent_request_id: z.number().optional(),
-
-    reporter_email: z.string().email().optional().default("user@example.com"),
-
-    reporter_location: z.string().optional().default("string"),
-
-    attachment_ids: z.array(z.number()).optional()
-});
+            need_by_date: z
+                .string()
+                .min(1, {message: "Need By Date is required and must be valid"}),
+        })
+        .superRefine((data, ctx) => {
+            console.log("Validated Data:", data);
+        });
 
 export default serviceRequestSchema;

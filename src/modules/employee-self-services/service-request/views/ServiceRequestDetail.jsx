@@ -4,6 +4,7 @@ import ServiceRequestCard from "@modules/employee-self-services/service-request/
 import { useServiceRequest } from "@modules/employee-self-services/hooks/service-request/ServiceRequestHook.js";
 import { formatDate } from "@helpers/dateTime.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import ServiceReadCard from "@modules/employee-self-services/service-request/components/ServiceReadCard.jsx";
 
 const ServiceRequestDetail = () => {
     const { id } = useParams();
@@ -113,7 +114,7 @@ const ServiceRequestDetail = () => {
                     </div>
                 </div>
             </div>
-            <ServiceRequestCard serviceData={serviceData} />
+            <ServiceReadCard serviceData={serviceData} />
         </div>
         </>
     );

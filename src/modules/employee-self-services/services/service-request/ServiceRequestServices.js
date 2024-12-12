@@ -21,7 +21,7 @@ export const sr_type = [
 export const createServiceRequest=async (payload)=>{
     try {
 
-        const response=await api.post('/service-requests',payload)
+        const response=await api.post('/service-request/create/',payload)
         Notify.success(response.data.message);
         return response.data.data;
     } catch (error) {
@@ -35,7 +35,7 @@ export const createServiceRequest=async (payload)=>{
 export const saveServiceRequest=async (id,payload)=>{
     try {
 
-        const response = await api.put(`/service-requests/${id}`,payload)
+        const response = await api.put(`/service-request/${id}/update/`,payload)
         Notify.success(response.data.message);
         return response.data.data;
     } catch (error) {
@@ -46,7 +46,7 @@ export const saveServiceRequest=async (id,payload)=>{
 
 export const getServiceRequestById=async (id)=>{
     try {
-        const response = await api.get(`/service-requests/${id}`);
+        const response = await api.get(`/service-request/${id}`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
@@ -56,7 +56,7 @@ export const getServiceRequestById=async (id)=>{
 
 export const getServiceRequest=async (page, size, s)=>{
 try {
-    const response=await api.get(`/service-requests/datatable`,{
+    const response=await api.get(`/service-request/datatable`,{
         params: { skip: (page - 1) * size, limit: size, s },
     })
     return response.data.data;
@@ -69,7 +69,7 @@ try {
 
 export const submitServiceRequest = async (id) => {
     try {
-        const response = await api.post(`/service-requests/${id}/submit`, { is_submitted: true });
+        const response = await api.post(`/service-request/${id}/submit/`, { is_submitted: true });
         Notify.success(response.data.message);
         return response.data.data;
     } catch (error) {

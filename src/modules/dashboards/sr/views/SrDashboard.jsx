@@ -22,9 +22,8 @@ const SrDashboard = () => {
     };
 
     const {serviceRequest} = useServiceRequest();
-
     const handleCardClick = (status) => {
-        navigate(`/dashboards/sr/sr-list/${status}`);
+        navigate(`/dashboard/status/${status}/`);
     };
 
     const renderCard = (status, label, icon) => {
@@ -171,7 +170,7 @@ const SrDashboard = () => {
 
             <div className="grid grid-cols-12 gap-x-6">
                 {renderCard2("Unassign", "Unassigned", "ri-user-line","bg-primary")}
-                {renderCard2("Not Started", "Not Started", "ri-time-line","bg-danger")}
+                {renderCard2("Not-Started", "Not Started", "ri-time-line","bg-danger")}
                 {renderCard2("In-Progress", "In Process", "ri-settings-6-line","bg-warning")}
                 {renderCard2("Waiting for Approval", "Waiting for Approval", "ri-check-double-line","bg-secondary")}
                 {renderCard2("Waiting for Quotation", "Waiting for Quotation", "ri-price-tag-3-line","bg-secondary")}

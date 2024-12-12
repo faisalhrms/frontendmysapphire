@@ -33,7 +33,20 @@ const ServiceRequestList = () => {
         { Header: 'Location', accessor: 'location.name' },
         { Header: 'Request Title', accessor: 'request_title' },
         { Header: 'Requester', accessor: 'reporter' },
-        { Header: 'Assignee', accessor: 'assignee' },
+     {
+            Header: "Assignee",
+            accessor: "sr_tasks",
+            Cell: ({value}) => {
+                if (Array.isArray(value) && value.length > 0) {
+                    const allAssignees = value.flatMap(task =>
+                        task.assignees.map(a => a.name)
+                    );
+                    const uniqueAssignees = [...new Set(allAssignees)];
+                    return uniqueAssignees.join(", ");
+                }
+                return "UnAssigned";
+            },
+        },
         { Header: 'Status', accessor: 'status' },
         {
             Header: 'Created at',
@@ -86,7 +99,7 @@ const ServiceRequestList = () => {
             <DataTable
                 columns={columns}
                 title="Self Services"
-                apiUrl="/service-requests/datatable"
+                apiUrl="/service-request/datatable"
                 buttons={buttons}
             />
         </>
