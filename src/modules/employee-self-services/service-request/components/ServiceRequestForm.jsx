@@ -73,6 +73,23 @@ const ServiceRequestForm = ({
         }
     }, [serviceData, setValue]);
 
+    useEffect(() => {
+        if (serviceData) {
+            Object.keys(serviceData).forEach((key) => {
+                setValue(
+                    key,
+                    key === "attachments"
+                        ? serviceData.attachments.map((attachment) => ({
+                            file_name: attachment.file_name,
+                            file_content: null,
+                        }))
+                        : serviceData[key]
+                );
+            });
+            setIsSavedAsDraft(serviceData?.is_submitted === false);
+            setIsSubmitted(serviceData?.is_submitted || false);
+        }
+    }, [serviceData, setValue]);
 
     const handleSaveDraft = async (data) => {
         console.log("Save Draft Data:", data); // Debug log
@@ -85,26 +102,33 @@ const ServiceRequestForm = ({
         }
     };
 
-    const handleSubmitRequest = async (data) => {
-        console.log("Submit Data:", data); // Debug log
+const handleSubmitRequest = async (data) => {
+    console.log("Submit Data Before Processing:", data); // Debug log
 
-        try {
-            const payload = {
-                ...data,
-                is_submitted: true,
-                parent_request: serviceRequestId || null,
-            };
-            if (isSaveMode && serviceData?.id) {
-                await submitRequest(serviceData.id, payload);
-            } else {
-                await submitRequest(null, payload);
-            }
-            setIsSavedAsDraft(false);
-            setIsSubmitted(true);
-        } catch (error) {
-            console.error("Error submitting request:", error);
-        }
+    const payload = {
+        ...data,
+        attachments: data.attachments.map((file) => ({
+            file_name: file.file_name,
+            file_content: file.file_content,
+        })),
+        is_submitted: true,
+        parent_request: serviceRequestId || null,
     };
+
+    try {
+        if (isSaveMode && serviceData?.id) {
+            await submitRequest(serviceData.id, payload);
+        } else {
+            await submitRequest(null, payload);
+        }
+        setIsSavedAsDraft(false);
+        setIsSubmitted(true);
+    } catch (error) {
+        console.error("Error submitting request:", error);
+    }
+};
+
+
 
     return (
         <form>
