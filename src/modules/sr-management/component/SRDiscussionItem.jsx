@@ -12,7 +12,7 @@ import excelIcon from "@assets/images/icon/011-excel-file.png";
 import powerpointIcon from "@assets/images/icon/powerpoint.png";
 import fileIcon from "@assets/images/icon/008-file.png";
 
-t
+
 const generateIcon = (attachment) => {
     const { file_type, small_url, file_name } = attachment;
     let imgStyle = "height: 40px; width: 40px;";
