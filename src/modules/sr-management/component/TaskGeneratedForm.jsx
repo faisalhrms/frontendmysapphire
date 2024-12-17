@@ -83,7 +83,7 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
                     control={control}
                     errors={errors}
                     placeholder="Status"
-                    apiUrl="/select/statuses"
+                    apiUrl="select/sr/statuses"
                     queryKeyBase="statuses"
                     clientSideSearch={true}
                     preselectedOptions={userOptions}

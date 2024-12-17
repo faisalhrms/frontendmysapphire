@@ -1,22 +1,22 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import {formatOptions} from "@helpers/formatters.js";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { formatOptions } from "@helpers/formatters.js";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import serviceRequestSchema from "@modules/employee-self-services/schemas/service-request/ServiceRequestSchema.js";
-import {useServiceRequestForm} from "@modules/employee-self-services/hooks/service-request/ServiceRequestHook.js";
+import { useServiceRequestForm } from "@modules/employee-self-services/hooks/service-request/ServiceRequestHook.js";
 import FormInput from "@components/form/FormInput.jsx";
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import ServiceRequestCard from "@modules/employee-self-services/service-request/components/ServiceRequestCard.jsx";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 const ServiceRequestForm = ({
-                                serviceData,
-                                isSaveMode = false,
-                                isChild = false,
-                                serviceRequestId,
-                            }) => {
+    serviceData,
+    isSaveMode = false,
+    isChild = false,
+    serviceRequestId,
+}) => {
     const user = useSelector((state) => state.auth.user);
 
     const [isSavedAsDraft, setIsSavedAsDraft] = useState(false);
@@ -25,23 +25,24 @@ const ServiceRequestForm = ({
     );
     const [subDepartmentOptions, setSubDepartmentOptions] = useState([]);
 
-
     const {
         control,
         handleSubmit,
-        formState: {errors, isSubmitting},
+        formState: { errors, isSubmitting },
         setValue,
         watch,
     } = useForm({
-        resolver: zodResolver(serviceRequestSchema(isSaveMode)),
+        resolver: zodResolver(serviceRequestSchema()),
         defaultValues: {
             company_id: 1,
+            sr_number: serviceData?.sr_number || "",
             reporter: user?.full_name || "Faisal",
             reporter_email: user?.email || "default@example.com",
             to_email: serviceData?.to_email?.map((email) =>
                 email.replace(/[\n\r]+/g, "").trim()
-            ) || [], cc_email: serviceData?.cc_email || [], // Initialize as empty array
-            attachments: serviceData?.attachments || [],
+            ) || [],
+            cc_email: serviceData?.cc_email || [], // Initialize as empty array
+            attachments: serviceData?.attachments?.map((file) => file.id) || [], // Initialize with existing attachment IDs
             description: serviceData?.description || "", // Initialize as empty string
             location_id: serviceData?.location.id || null,
             department_id: serviceData?.department.id || null,
@@ -51,6 +52,8 @@ const ServiceRequestForm = ({
             need_by_date: serviceData?.need_by_date || "",
         },
     });
+
+    console.log("Service Request Form Data:", serviceData);
     const selectedDepartment = watch("department_id");
     const selectedSubDepartment = watch("sub_department_id");
 
@@ -58,7 +61,7 @@ const ServiceRequestForm = ({
         setValue("to_email", [email]);
     };
 
-    const {saveAsDraft, submitRequest} = useServiceRequestForm(
+    const { saveAsDraft, submitRequest } = useServiceRequestForm(
         serviceData,
         isSaveMode
     );
@@ -73,65 +76,54 @@ const ServiceRequestForm = ({
         }
     }, [serviceData, setValue]);
 
-    useEffect(() => {
-        if (serviceData) {
-            Object.keys(serviceData).forEach((key) => {
-                setValue(
-                    key,
-                    key === "attachments"
-                        ? serviceData.attachments.map((attachment) => ({
-                            file_name: attachment.file_name,
-                            file_content: null,
-                        }))
-                        : serviceData[key]
-                );
-            });
-            setIsSavedAsDraft(serviceData?.is_submitted === false);
-            setIsSubmitted(serviceData?.is_submitted || false);
-        }
-    }, [serviceData, setValue]);
+    // Removed the second useEffect that was conflicting
 
     const handleSaveDraft = async (data) => {
-        console.log("Save Draft Data:", data); // Debug log
+        const payload = {
+            ...data,
+            attachments: data.attachments.filter((file) => typeof file === 'object' ? file.file_content : true), // Exclude invalid files
+            is_submitted: false,
+            parent_request: serviceRequestId || null,
+        };
 
         try {
-            await saveAsDraft(data);
+            await saveAsDraft(payload);
+            console.log("Draft saved successfully.");
             setIsSavedAsDraft(true);
         } catch (error) {
             console.error("Error saving draft:", error);
         }
     };
 
-const handleSubmitRequest = async (data) => {
-    console.log("Submit Data Before Processing:", data); // Debug log
-
-    const payload = {
-        ...data,
-        attachments: data.attachments.map((file) => ({
-            file_name: file.file_name,
-            file_content: file.file_content,
-        })),
-        is_submitted: true,
-        parent_request: serviceRequestId || null,
+    const onError = (errors) => {
+        console.error("Form validation errors:", errors);
     };
 
-    try {
-        if (isSaveMode && serviceData?.id) {
-            await submitRequest(serviceData.id, payload);
-        } else {
-            await submitRequest(null, payload);
+    const handleSubmitRequest = async (data) => {
+        console.log("Submit Data Before Processing:", data); // Debug log
+
+        const payload = {
+            ...data,
+            attachments: data.attachments.filter((file) => typeof file === 'object' ? file.file_content : true), // Exclude invalid files
+            is_submitted: true,
+            parent_request: serviceRequestId || null,
+        };
+
+        try {
+            if (isSaveMode && serviceData?.id) {
+                await submitRequest(serviceData.id, payload);
+            } else {
+                await submitRequest(null, payload);
+            }
+            setIsSavedAsDraft(false);
+            setIsSubmitted(true);
+        } catch (error) {
+            console.error("Error submitting request:", error);
         }
-        setIsSavedAsDraft(false);
-        setIsSubmitted(true);
-    } catch (error) {
-        console.error("Error submitting request:", error);
-    }
-};
-
-
+    };
 
     return (
-        <form>
+        <form onSubmit={(e) => e.preventDefault()}>
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="xxl:col-span-9">
                     <div className="box">
@@ -240,7 +232,7 @@ const handleSubmitRequest = async (data) => {
                                     <FormButton
                                         text="Save"
                                         type="button"
-                                        onClick={handleSubmit(handleSaveDraft)}
+                                        onClick={handleSubmit(handleSaveDraft, onError)}
                                     />
                                     <FormButton
                                         text="Submit"
@@ -262,6 +254,7 @@ const handleSubmitRequest = async (data) => {
             </div>
         </form>
     );
+
 };
 
 export default ServiceRequestForm;

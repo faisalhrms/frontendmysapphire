@@ -22,8 +22,9 @@ const SrDashboard = () => {
     };
 
     const {serviceRequest} = useServiceRequest();
+
     const handleCardClick = (status) => {
-        navigate(`/dashboard/status/${status}/`);
+        navigate(`/dashboards/sr/sr-list/${status}`);
     };
 
     const renderCard = (status, label, icon) => {
