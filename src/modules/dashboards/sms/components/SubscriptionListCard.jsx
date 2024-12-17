@@ -54,7 +54,7 @@ const SubscriptionListCard = ({totalCount, title, items }) => {
                                                 {formatDate(item.created_at)}
                                             </p>
                                         </div>
-                                        <HasPermission permission="subscription_update">
+                                        <HasPermission permission="change_subscription">
                                         <div className="flex space-x-2 pr-4">
                                             <Link to={`/module/subscription/edit/${item.id}`}>
                                                 <button className="ti-btn ti-btn-primary ti-btn-sm">

@@ -76,7 +76,7 @@ const UserList = () => {
     {
         Header: 'Actions',
         Cell: ({row}) => (
-            <HasPermission permission='user_update'>
+            <HasPermission permission='change_user'>
                 <div className="flex space-x-2">
                     <button onClick={() => handleEdit(row.original.id)} className="ti-btn ti-btn-primary ti-btn-sm">
                         <i className="ri-edit-line"></i>

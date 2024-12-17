@@ -46,6 +46,8 @@ export default defineConfig(({ mode }) => ({
   },
   assetsInclude: ['**/*.xlsx'],
   server: {
+    host: '0.0.0.0',  // Expose the server to all network interfaces
+    port: 5173,        // Use the default port or change if necessary
     headers: {
       'Cache-Control': 'no-store',
     },

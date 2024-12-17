@@ -2,13 +2,13 @@ export const ACCESS_CONTROL_ROUTES = {
     ROLE: {
         READ: {
             path: '/module/users/roles',
-            permission: 'role_read',
+            // permission: 'role_read',
         }
     },
     PERMISSION: {
         READ: {
             path: '/module/users/permissions',
-            permission: 'permission_read',
+            // permission: 'permission_read',
         },
         GRANT:{
             path: '/module/users/roles/:id/permissions',
