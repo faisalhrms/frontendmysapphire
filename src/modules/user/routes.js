@@ -1,12 +1,16 @@
 export const USER_ROUTES = {
     READ: {
         path: '/module/users',
-        permission: 'user_read',
+        permission: 'view_user',
     },
     EDIT: {
         path: '/module/users/edit/:id',
-        permission: 'user_update',
+        permission: 'change_user',
     },
+    CREATE: {
+        path: '/module/users/create',
+        permission: 'add_user',
+    }
 };
 
 export const MODULE_ROUTES = [
@@ -20,4 +24,9 @@ export const MODULE_ROUTES = [
         component: () => import(`/src/modules/user/views/UserEdit.jsx`),
         permission: USER_ROUTES.EDIT.permission,
     },
+    {
+        path: USER_ROUTES.CREATE.path,
+        component: () => import(`/src/modules/user/views/UserCreate.jsx`),
+        permission: USER_ROUTES.CREATE.permission,
+    }
 ];

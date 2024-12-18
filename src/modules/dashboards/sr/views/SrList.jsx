@@ -14,7 +14,7 @@ const SrList = () => {
     };
     useEffect(() => {
         if (status) {
-            setApiUrl(`/service-requests/status/${status}`);
+            setApiUrl(`dashboard/status/${status}`);
         }
     }, [status]);
 
@@ -28,15 +28,28 @@ const SrList = () => {
             Cell: ({value}) => value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : "",
         },
         {Header: "Requester", accessor: "reporter"},
-        {Header: "Assignee", accessor: "assignee"},
         {
-            Header: "Status",
+            Header: "Assignee",
             accessor: "sr_tasks",
             Cell: ({value}) => {
                 if (Array.isArray(value) && value.length > 0) {
-                    return value.map((task) => task.status).join(", ");
+                    const allAssignees = value.flatMap(task =>
+                        task.assignees.map(a => a.name)
+                    );
+                    const uniqueAssignees = [...new Set(allAssignees)];
+                    return uniqueAssignees.join(", ");
                 }
-                return "New";
+                return "No Assignees";
+            },
+        },
+        {
+            Header: "Status",
+            Cell: ({row}) => {
+                const {sr_tasks} = row.original;
+                if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
+                    return sr_tasks.map((task) => task.status).join(", ");
+                }
+                return "No Tasks";
             },
         },
         {

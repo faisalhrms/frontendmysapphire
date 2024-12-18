@@ -45,7 +45,7 @@ const Role = () => {
             <DataTable
                 columns={columns}
                 title="Permissions"
-                apiUrl="/permissions/datatable"
+                apiUrl="/permissions/datatable/"
                 buttons={buttons}
             />
             <PermissionModal

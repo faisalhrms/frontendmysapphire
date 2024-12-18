@@ -44,7 +44,7 @@ const ProjectTree = ({ projectId, projectStatus, startedAt, endedAt, milestones,
           </div>
           <div className="flex items-center space-x-2">
             <div className="flex space-x-2">
-              <HasPermission permission='project_create'>
+              <HasPermission permission='add_project'>
                 <a
                     href={sampleFile}
                     download="sample_upload_tasks_against_milestone.xlsx"

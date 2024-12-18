@@ -3,9 +3,59 @@ import "@assets/css/custom/project-discussion.css";
 import React from "react";
 import Avatar from "@components/Avatar.jsx";
 import {formatDate} from "@helpers/dateTime.js";
-import {generateFile} from "@helpers/media.js";
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
+import videoIcon from "@assets/images/icon/007-video-file.png";
+import zipIcon from "@assets/images/icon/005-zip-2.png";
+import pdfIcon from "@assets/images/icon/002-pdf-file-format-symbol.png";
+import wordIcon from "@assets/images/icon/010-word.png";
+import excelIcon from "@assets/images/icon/011-excel-file.png";
+import powerpointIcon from "@assets/images/icon/powerpoint.png";
+import fileIcon from "@assets/images/icon/008-file.png";
 
+
+const generateIcon = (attachment) => {
+    const { file_type, small_url, file_name } = attachment;
+    let imgStyle = "height: 40px; width: 40px;";
+
+    if (file_type?.startsWith("image")) {
+        return `<img style="object-fit: contain;" src="${small_url}" alt="${file_name}">`;
+    }
+
+    if (file_type?.startsWith("video")) {
+        return `<img src="${videoIcon}" alt="${file_name}" style="${imgStyle}">`;
+    }
+
+    if (file_type?.includes("x-zip-compressed") || file_type?.includes("/zip")) {
+        return `<img src="${zipIcon}" alt="${file_name}" style="${imgStyle}">`;
+    }
+
+    if (file_type?.includes("/pdf")) {
+        return `<img src="${pdfIcon}" alt="${file_name}" style="${imgStyle}">`;
+    }
+
+    if (file_type?.includes("/msword") || file_type?.includes("wordprocessingml")) {
+        return `<img src="${wordIcon}" alt="${file_name}" style="${imgStyle}">`;
+    }
+
+    if (file_type?.includes("spreadsheetml") || file_type?.includes("excel")) {
+        return `<img src="${excelIcon}" alt="${file_name}" style="${imgStyle}">`;
+    }
+
+    if (file_type?.includes("presentation")) {
+        return `<img src="${powerpointIcon}" alt="${file_name}" style="${imgStyle}">`;
+    }
+
+    if (file_type?.includes("audio") || file_type?.startsWith("audio")) {
+        return `
+            <audio controls style="width: 60px; margin-top: 10px;">
+                <source src="${small_url}" type="${file_type}">
+                Your browser does not support the audio tag.
+            </audio>
+        `;
+    }
+
+    return `<img src="${fileIcon}" alt="${file_name}" style="${imgStyle}">`;
+};
 const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
     if (!discussion || !control) {
         console.error("Missing required props in SRDiscussionItem:", { discussion, control });
@@ -43,12 +93,12 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
                         {discussion.attachments.map((attachment) => (
                             <Link
                                 key={`${discussion.id}-${attachment.id}`}
-                                to={attachment.file_url}
+                                to={attachment.file}
                                 download
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <span dangerouslySetInnerHTML={{ __html: generateFile(attachment) }} />
+                                <span dangerouslySetInnerHTML={{ __html: generateIcon(attachment) }} />
                             </Link>
                         ))}
                     </p>

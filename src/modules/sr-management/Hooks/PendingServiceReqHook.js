@@ -32,7 +32,7 @@ export const usePendingReqTaskForm = (pendingReqData) => {
         location_id: data.location_id || pendingReqData.location_id,
         department_id: data.department_id || pendingReqData.department_id,
         sub_department_id: data.sub_department_id || pendingReqData.sub_department_id,
-        sr_type_id: data.sr_type_id,
+        sr_type_id: data.sr_type || pendingReqData.sr_type,
         description: data.description,
         started_at: data.started_at || new Date().toISOString().split('T')[0],
         ended_at: data.ended_at || null,
