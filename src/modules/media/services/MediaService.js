@@ -7,7 +7,7 @@ export const uploadMediaFiles = async (files) => {
         formData.append('files', file);
     });
     try {
-        const response = await api.post('/media', formData, {
+        const response = await api.post('/media/', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -21,7 +21,7 @@ export const uploadMediaFiles = async (files) => {
 
 export const getMediaFiles = async (page, size, s, t) => {
     try {
-        const response = await api.get(`/media/datatable`, {
+        const response = await api.get(`/media/datatable/`, {
             params: { skip: (page - 1) * size, limit: size, s, t },
         });
         return response.data.data;
@@ -32,7 +32,7 @@ export const getMediaFiles = async (page, size, s, t) => {
 
 export const getMediaFileById = async (id) => {
     try {
-        const response = await api.get(`/projects/${id}`);
+        const response = await api.get(`/projects/${id}/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response.data?.data?.message);
