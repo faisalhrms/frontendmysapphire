@@ -1,17 +1,17 @@
 export const SUBSCRIPTION_ROUTES = {
     READ: {
         path: '/module/subscription',
-        permission: 'subscription_read',
+        // permission: 'subscription_read',
 
 },
     CREATE: {
         path: '/module/subscription/create',
-        permission: 'subscription_create',
+        // permission: 'subscription_create',
 
     },
     EDIT: {
         path: '/module/subscription/edit/:id',
-        permission: 'subscription_update',
+        // permission: 'subscription_update',
 
     },
     FILTER: {
