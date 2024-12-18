@@ -38,15 +38,15 @@ const GrantPermission = () => {
         const [permissionsList, assignedPermissionsData] = await Promise.all([
           getPermissions(),
           getAssignedPermissions(id),
-        ]);
+        ])
 
         // Check if assigned permissions data is empty
-        const formattedAssignedPermissions = Object.keys(assignedPermissionsData).length === 0
-            ? {}
-            : assignedPermissionsData.reduce((acc, { id, name }) => {
-              acc[id] = { name, checked: false };
+        const formattedAssignedPermissions = Array.isArray(assignedPermissionsData)
+            ? assignedPermissionsData.reduce((acc, { id, codename }) => {
+              acc[id] = { codename, checked: false };
               return acc;
-            }, {});
+            }, {})
+            : {};
 
         // Format and set permissions
         const formattedPermissions = formatPermissions(permissionsList, formattedAssignedPermissions);
@@ -72,7 +72,7 @@ const GrantPermission = () => {
               .map(id => parseInt(id)) // Convert ID to integer
       );
 
-      // Call the savePermissions service
+      // Call the AssignPermissionsToRole service
       await AssignPermissionsToRole(id, formattedPermissions);
       setIsSubmittingLoading(false);
       // Optionally, you can show a success notification here
@@ -94,20 +94,23 @@ const GrantPermission = () => {
   // Format permissions into the desired structure
   const formatPermissions = (data, assignedPermissions) => {
     const groupedPermissions = data.reduce((acc, permission) => {
-      const { id, name } = permission;
-      let roleName = name.split('_')[0].toUpperCase();
+      const { id, name, codename } = permission;
+
+      // **Updated Grouping Logic:** Use the last part after the underscore
+      let roleName = codename.split('_').pop().toUpperCase();
+
       if (!acc[roleName]) acc[roleName] = [];
-      acc[roleName].push({ id, name });
+      acc[roleName].push({ id, name, codename });
       return acc;
     }, {});
 
     return Object.keys(groupedPermissions).map(role => ({
       roleWithPermissions: {
         roleName: role,
-        permissions: groupedPermissions[role].reduce((acc, { id, name }) => {
+        permissions: groupedPermissions[role].reduce((acc, { id, name, codename }) => {
           acc[id] = {
-            name,
-            checked: !!(assignedPermissions[id] && assignedPermissions[id].name === name),
+            name, // Correctly use the 'name' property from permission
+            checked: !!(assignedPermissions[id] && assignedPermissions[id].codename === codename),
           };
           return acc;
         }, {}),

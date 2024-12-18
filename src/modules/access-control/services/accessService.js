@@ -4,7 +4,7 @@ import Notify from "@helpers/toastNotifications.js";
 // Create role API call
 export const createRole = async (roleData) => {
     try {
-        const response = await api.post('/roles', roleData);
+        const response = await api.post('/groups/', roleData);
         Notify.success('Role created successfully!')
         return response.data;
     } catch (error) {
@@ -14,7 +14,7 @@ export const createRole = async (roleData) => {
 // Update role API call
 export const updateRole = async ({id, roleData}) => {
     try {
-        const response = await api.put(`/roles/${id}`, roleData);
+        const response = await api.put(`/groups/${id}/`, roleData);
         Notify.success('Role Updated successfully!')
         return response.data;
     } catch (error) {
@@ -34,7 +34,7 @@ export const createPermission = async (permissionData) => {
 // Update permission API call
 export const updatePermission = async ({id, permissionData}) => {
     try {
-        const response = await api.put(`/permissions/${id}`, permissionData);
+        const response = await api.put(`/permissions/${id}/`, permissionData);
         Notify.success('Permission Updated successfully!')
         return response.data;
     } catch (error) {
@@ -44,7 +44,7 @@ export const updatePermission = async ({id, permissionData}) => {
 // Fetch all permissions
 export const getPermissions = async () => {
     try {
-        const response = await api.get('/permissions');
+        const response = await api.get('/permissions/');
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Failed to fetch permissions')
@@ -53,7 +53,7 @@ export const getPermissions = async () => {
 // Fetch assigned permissions for a role
 export const getAssignedPermissions = async (roleId) => {
     try {
-        const response = await api.get(`/roles/${roleId}/permissions`);
+        const response = await api.get(`/groups/${roleId}/retrieve-permissions/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Failed to fetch assigned permissions')
@@ -62,7 +62,7 @@ export const getAssignedPermissions = async (roleId) => {
 // Save permissions for a specific role
 export const AssignPermissionsToRole = async (roleId, permissionIds) => {
     try {
-        const response = await api.post(`/roles/${roleId}/permissions`, {permission_ids: permissionIds});
+        const response = await api.post(`/groups/${roleId}/assign-permissions/`, {permission_ids: permissionIds});
         Notify.success('Permission assigned to role successfully!')
         return response.data;
     } catch (error) {
