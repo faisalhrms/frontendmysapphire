@@ -14,6 +14,7 @@ export const useServiceRequest = (id) => {
           // Check if the service request has `sr_task_id`
           if (serviceRequestData.sr_task_id) {
             const taskData = await getTaskById(serviceRequestData.sr_task_id);
+
             setGeneratedReqData(taskData);
 
             // Check if taskData has a service_request, else fall back to serviceRequestData

@@ -35,7 +35,7 @@ const Login = () => {
                   <img src={desktopLogoWhite} alt="" className="authentication-brand desktop-logo" />
                   <img src={desktopLogoBlack} alt="" className="authentication-brand desktop-dark" />
                 </div>
-             
+
               <div className="text-center my-[3rem] authentication-barrier">
                 <span> SIGN IN </span>
               </div>

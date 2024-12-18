@@ -4,15 +4,9 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import Rating from "@mui/material/Rating";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 
-import GalleryUpload from "@components/GalleryUpload.jsx";
-
-import projectSchema from "@modules/project-management/schemas/projectSchema.js";
 import {formatOptions} from "@helpers/formatters.js";
-import ProjectAttachment from "@modules/project-management/components/project/ProjectAttachment.jsx";
 import SubTaskList from "@modules/sr-management/component/components/SubTaskList.jsx";
-import TaskAdditionalDetail from "@modules/project-management/components/task/TaskAdditionalDetail.jsx";
-import ProjectTeam from "@modules/project-management/components/project/ProjectTeam.jsx";
-import TaskTree from "@modules/project-management/components/task/TaskTree.jsx";
+import SRAttachment from "@modules/sr-management/component/SRAttachment.jsx";
 
 const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, serviceRequest}) => {
     const [ratingValue2, setRatingValue2] = useState(null);
@@ -73,7 +67,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
 
             <div className="xl:col-span-3 col-span-12">
                 {serviceRequest.attachments.length > 0 && (
-                    <ProjectAttachment attachments={serviceRequest.attachments}/>)}
+                    <SRAttachment attachments={serviceRequest.attachments}/>)}
             </div>
 
             <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">

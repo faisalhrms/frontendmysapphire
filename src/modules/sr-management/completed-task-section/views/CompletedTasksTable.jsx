@@ -48,7 +48,7 @@ const TaskGeneratedTable = () => {
         },
     ];
 
-    return <DataTable columns={columns} apiUrl="/service-requests/task-completed" title="Task Completed"/>;
+    return <DataTable columns={columns} apiUrl="service-request/completed/sr/" title="Task Completed"/>;
 };
 
 export default TaskGeneratedTable;

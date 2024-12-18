@@ -8,13 +8,13 @@ function CreatedAssign({generatedReqData,serviceRequest}) {
         <div className="text-center">
           <p className="ri-checkbox-circle-fill text-success mx-auto" />
           <p className="text-success font-medium mt-2">Created</p>
-          <p className="text-gray-500 text-sm"> {serviceRequest.created_at ? new Date(serviceRequest.created_at).toLocaleString() : "No Date"}</p>
+          <p className="text-gray-500 text-sm"> {serviceRequest?.created_at ? new Date(serviceRequest?.created_at).toLocaleString() : "No Date"}</p>
         </div>
         <span className="text-success bi bi-arrow-right text-2xl"></span>
         <div className="text-center">
           <p className="ri-refresh-line text-info mx-auto" />
           <p className="text-info font-medium mt-2">Assigned</p>
-          <p className="text-gray-500 text-sm">{generatedReqData.created_at ? new Date(generatedReqData.created_at).toLocaleString() : "No Date"}</p>
+          <p className="text-gray-500 text-sm">{generatedReqData?.created_at ? new Date(generatedReqData?.created_at).toLocaleString() : "No Date"}</p>
         </div>
       </div>
     </div>

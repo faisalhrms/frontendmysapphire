@@ -19,7 +19,7 @@ const ProfileMenu = () => {
             <div className="header-element md:!px-[0.65rem] px-2 hs-dropdown !items-center ti-dropdown [--placement:bottom-left]">
                 <button id="dropdown-profile" type="button"
                     className="hs-dropdown-toggle ti-dropdown-toggle !gap-2 !p-0 flex-shrink-0 sm:me-2 me-0 !rounded-full !shadow-none text-xs align-middle !border-0 !shadow-transparent ">
-                    <Avatar avatar={user.avatar} classes='online' />
+                    <Avatar avatar={user?.avatar} classes='online' />
                 </button>
                 <div className="md:block hidden dropdown-profile cursor-pointer">
                     <p className="font-semibold mb-0 leading-none text-[#536485] text-[0.813rem] ">

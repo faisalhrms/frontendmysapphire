@@ -40,7 +40,7 @@ const PendingRequestsTable = () => {
         },
     ];
 
-    return <DataTable columns={columns} apiUrl="/service-requests/pending-requests" title="Task Pending"/>;
+    return <DataTable columns={columns} apiUrl="service-request/pending/sr/" title="Task Pending"/>;
 };
 
 export default PendingRequestsTable;

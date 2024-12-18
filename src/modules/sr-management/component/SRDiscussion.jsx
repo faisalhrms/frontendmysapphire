@@ -146,15 +146,6 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                     </div>
                 </>
             )}
-            {isModalOpen && (
-                <MediaModal
-                    type={mediaType}
-                    modalId="discussionAttachments"
-                    multiple={true}
-                    onClose={closeModal}
-                    selectedFiles={handleSelectedFiles}
-                />
-            )}
             <EmailComposeModal
                 isOpen={isEmailModalOpen}
                 serviceRequest={serviceRequest}

@@ -3,7 +3,7 @@ import Notify from "@helpers/toastNotifications.js";
 
 export const getPendingList = async (page, size, s) => {
     try {
-        const response = await api.get(`/service-requests/assigned-pending-list`, {
+        const response = await api.get(`/service-request/assigned-pending-list`, {
             params: { skip: (page - 1) * size, limit: size, s },
         });
         return response.data.data;
@@ -14,7 +14,7 @@ export const getPendingList = async (page, size, s) => {
 
 export const getInProgressList = async (page, size, s) => {
     try {
-        const response = await api.get(`/service-requests/assigned-InProgress-list`, {
+        const response = await api.get(`/service-request/assigned-in-progress-list`, {
             params: { skip: (page - 1) * size, limit: size, s },
         });
         return response.data.data;
@@ -25,7 +25,7 @@ export const getInProgressList = async (page, size, s) => {
 
 export const getCompletedList = async (page, size, s) => {
     try {
-        const response = await api.get(`/service-requests/assigned-completed-list`, {
+        const response = await api.get(`/service-request/assigned-completed-list`, {
             params: { skip: (page - 1) * size, limit: size, s },
         });
         return response.data.data;
