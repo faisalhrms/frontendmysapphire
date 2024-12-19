@@ -61,8 +61,10 @@ function ContentLeft({generatedReqData, serviceRequest}) {
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
                                 Status:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200"><span
-                                className="badge bg-primary/10 text-primary">{generatedReqData?.status ? generatedReqData?.status : '-'}</span>
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200">
+                                <span className="badge bg-primary/10 text-primary">
+                                         {generatedReqData?.status ? generatedReqData?.status : serviceRequest?.status || '-'}
+                             </span>
                             </td>
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
                                 Progress:

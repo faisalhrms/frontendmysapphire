@@ -35,7 +35,7 @@ const handleSave = async (data) => {
     };
 
     try {
-        await api.post(`/sr-task/${serviceRequest.id}/send-email`, payload);
+        await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
         console.log("Email sent successfully");
         onClose();
     } catch (error) {
