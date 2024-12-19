@@ -45,13 +45,14 @@ const SrList = () => {
         {
             Header: "Status",
             Cell: ({row}) => {
-                const {sr_tasks} = row.original;
+                const {sr_tasks, status} = row.original; // Extract both sr_tasks and status
                 if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
                     return sr_tasks.map((task) => task.status).join(", ");
                 }
-                return "No Tasks";
+                return status || "-"; // Return status if no sr_tasks or fallback to '-'
             },
         },
+
         {
             Header: "Action",
             accessor: "action",

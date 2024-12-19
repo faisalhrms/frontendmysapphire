@@ -19,7 +19,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
     const endedAtDate = pendingReqData?.need_by_date
         ? format(new Date(pendingReqData.created_at), "yyyy-MM-dd")
         : "";
-    const { control, setValue, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    const {control, setValue, handleSubmit, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(pendingReqTaskSchema()),
         defaultValues: {
             ...pendingReqData,
@@ -111,7 +111,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                                 : []
                                         }
                                         onChange={(selected) => {
-                                            setValue("sr_type", selected?.value || null); // Use setValue here
+                                            setValue("sr_type", selected?.value || null);
                                         }}
                                     />
                                 </div>
@@ -123,7 +123,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Members"
-                                        apiUrl="/select/users"
+                                        apiUrl={`/select/users?department_id=${pendingReqData.department.id}`}
                                         queryKeyBase="users"
                                         preselectedOptions={formatOptions(pendingReqData, "users", "id", "full_name")}
                                     />
