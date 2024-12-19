@@ -1,19 +1,49 @@
+import React, { useState, useRef } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { formatDate } from "@helpers/dateTime.js";
 import "@assets/css/custom/attachment-card.css";
 import { Link } from "react-router-dom";
+import Notify from "@helpers/toastNotifications.js";
 
 const getAttachmentIcon = (fileType) => {
-    if (!fileType) return "ti ti-file-text"; // Default icon for undefined or null file_type
-    if (fileType.startsWith("image")) return "ri-image-line"; // Icon for images
-    if (fileType.startsWith("video")) return "ri-video-line"; // Icon for videos
-    if (fileType.startsWith("audio") || fileType.includes("audio")) return "ri-user-voice-line"; // Icon for audio
-    return "ti ti-file-text"; // Default icon for other file types
+    if (!fileType) return "ti ti-file-text";
+    if (fileType.startsWith("image")) return "ri-image-line";
+    if (fileType.startsWith("video")) return "ri-video-line";
+    if (fileType.startsWith("audio") || fileType.includes("audio")) return "ri-user-voice-line";
+    return "ti ti-file-text";
 };
 
-const SRAttachment = ({ attachments }) => {
-    // Ensure attachments is an array
+const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) => {
     const safeAttachments = Array.isArray(attachments) ? attachments : [];
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const fileInputRef = useRef(null); // Reference for the input element
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedFile(e.target.files[0]);
+        }
+    };
+
+    const handleUpdateAttachments = async () => {
+        setIsUpdating(true);
+        try {
+            if (!selectedFile) {
+                Notify.error("No file selected");
+                return;
+            }
+
+            await onUpdateAttachments({ file: selectedFile }); // Pass only the selected file
+            setSelectedFile(null); // Clear the file state
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ""; // Reset the input field
+            }
+        } catch (error) {
+            Notify.error("Error uploading attachment");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
 
     return (
         <div className="box">
@@ -26,16 +56,13 @@ const SRAttachment = ({ attachments }) => {
                 <div className="attachments">
                     <ul className="shared-files list-none">
                         {safeAttachments.map((attachment, key) => (
-                            <li key={key} className="!mb-4">
+                            <li key={key} className="!mb-4 flex items-center justify-between">
                                 <div className="flex items-center">
-                                    {/* Attachment Icon */}
                                     <div className="me-2">
                                         <span className="shared-file-icon">
                                             <i className={getAttachmentIcon(attachment.file_type)}></i>
                                         </span>
                                     </div>
-
-                                    {/* File Name and Details */}
                                     <div className="flex-grow">
                                         <Link
                                             className="text-[0.75rem] font-semibold mb-0 dark:text-defaulttextcolor/70"
@@ -51,11 +78,41 @@ const SRAttachment = ({ attachments }) => {
                                         </p>
                                     </div>
                                 </div>
+                                {onRemoveAttachment && (
+                                    <button
+                                        onClick={() => onRemoveAttachment(attachment.id)}
+                                        className="ti-btn ti-btn-danger ti-btn-sm"
+                                    >
+                                        <i className="ri-close-circle-line"></i>
+                                    </button>
+                                )}
                             </li>
                         ))}
                     </ul>
                 </div>
             </PerfectScrollbar>
+
+            <div className="box-footer border-t p-3 flex items-center justify-between gap-2 rounded-md">
+                <div className="flex-grow">
+                    <label className="block">
+                        <span className="sr-only">Choose Files</span>
+                        <input
+                            type="file"
+                            ref={fileInputRef} // Reference the input field
+                            onChange={handleFileChange}
+                            className="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50 file:me-4 file:py-2 file:px-4 file:rounded-s-sm file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary focus-visible:outline-none"
+                        />
+                    </label>
+                </div>
+                <button
+                    type="button"
+                    className="bg-primary text-white text-[0.75rem] px-4 py-2 rounded-full hover:bg-primary/90"
+                    onClick={handleUpdateAttachments}
+                    disabled={isUpdating}
+                >
+                    {isUpdating ? "Uploading..." : "Upload"}
+                </button>
+            </div>
         </div>
     );
 };

@@ -141,14 +141,16 @@ const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, error
                     {files.map((fileEntry, index) => (
                         <div
                             key={fileEntry.id}
-                            className="flex items-center justify-between bg-gray-100 rounded-md mb-3"
+                            className="flex items-center justify-between bg-gray-100 rounded-md mb-3 p-2"
                         >
-                            <input
-                                type="file"
-                                className="flex-grow border-none rounded-l-md mr-2 py-1"
-                                onChange={(event) => handleFileChange(event, index)}
-                            />
-                            <div className="flex items-center rounded-r-md">
+                            <div className="flex-grow">
+                                <input
+                                    type="file"
+                                    className="w-full border-none rounded-l-md py-1"
+                                    onChange={(event) => handleFileChange(event, index)}
+                                />
+                            </div>
+                            <div className="flex items-center flex-shrink-0 ml-2">
                                 <i
                                     className="ri-eye-fill text-success mr-2 cursor-pointer"
                                     onClick={() => {
@@ -164,6 +166,7 @@ const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, error
                                 ></i>
                             </div>
                         </div>
+
                     ))}
 
                     {/* Add New File */}

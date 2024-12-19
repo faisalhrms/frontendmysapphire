@@ -40,3 +40,14 @@ export const closeServiceRequest = async (id) => {
     throw error;
   }
 };
+
+export const updateServiceRequest = async (id, requestData) => {
+    console.log("Updating service request:", requestData);
+    try {
+        const response = await api.put(`/service-request/${id}/update/`, requestData);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error updating service request");
+        throw error;
+    }
+};
