@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useTable, usePagination } from 'react-table';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {useDataTable} from "@hooks/dataTableHooks.js";
+import { useDataTable } from "@hooks/dataTableHooks.js";
 import PropTypes from "prop-types";
 
 const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, filter }) => {
@@ -15,8 +15,9 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
         handleSizeChange,
     } = useDataTable(apiUrl, 10, filter); // Pass filter to hook
 
-    const items = Array.isArray(data?.data.rows) ? data.data.rows : [];
-    const total = data?.data.total || 0;
+    // Access rows and total directly from data
+    const items = Array.isArray(data?.rows) ? data.rows : [];
+    const total = typeof data?.total === 'number' ? data.total : 0;
 
     const memoizedColumns = useMemo(() => columns, [columns]);
     const memoizedData = useMemo(() => items, [items]);
@@ -42,11 +43,9 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
         usePagination
     );
 
-    
-    React.useEffect(() => {
+    useEffect(() => {
         setPage(pageIndex + 1);
     }, [pageIndex, setPage]);
-
 
     const paginationControls = useMemo(() => {
         const totalPages = Math.ceil(total / size);
@@ -93,8 +92,6 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
         );
     }, [canPreviousPage, canNextPage, total, size, page, pageIndex, gotoPage]);
 
-
-
     const startResult = (page - 1) * size + 1;
     const endResult = Math.min(page * size, total);
 
@@ -128,11 +125,11 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
                         <table {...getTableProps()} className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover">
                             <thead>
                             {headerGroups.map((headerGroup) => {
-                                const {key, ...headerGroupProps} = headerGroup.getHeaderGroupProps();
+                                const { key, ...headerGroupProps } = headerGroup.getHeaderGroupProps();
                                 return (
                                     <tr key={key} {...headerGroupProps} className="border-b border-defaultborder">
                                         {headerGroup.headers.map((column) => {
-                                            const {key, ...columnProps} = column.getHeaderProps();
+                                            const { key, ...columnProps } = column.getHeaderProps();
                                             return (
                                                 <th key={key} {...columnProps} scope="col" className="text-start">
                                                     {column.render('Header')}
@@ -146,11 +143,11 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
                             <tbody {...getTableBodyProps()}>
                             {tablePage.map((row) => {
                                 prepareRow(row);
-                                const {key, ...rowProps} = row.getRowProps();
+                                const { key, ...rowProps } = row.getRowProps();
                                 return (
                                     <tr key={key} {...rowProps} className="border-b border-defaultborder text-[0.6875rem]">
                                         {row.cells.map((cell) => {
-                                            const {key, ...cellProps} = cell.getCellProps();
+                                            const { key, ...cellProps } = cell.getCellProps();
                                             return (
                                                 <td key={key} {...cellProps}>
                                                     {cell.render('Cell')}
@@ -183,6 +180,7 @@ DataTable.propTypes = {
     apiUrl: PropTypes.string.isRequired,
     title: PropTypes.string,
     buttons: PropTypes.node,
+    filter: PropTypes.string, // Added prop type for filter
 };
 
 export default DataTable;

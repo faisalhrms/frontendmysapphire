@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import {createSubscription, getSubscriptionById, updateSubscription} from "../services/subscriptionService.js";
 import {useEffect, useState} from "react";
+import {renewSubscription} from "@modules/subscription/services/subscriptionService.js";
 
 export const useSubscriptionForm = (subscriptionData, isEditMode = false) => {
     const navigate = useNavigate();
@@ -36,3 +37,18 @@ export  const useSubscription = (id) => {
     },[id])
     return {subscriptionData};
 }
+export const useSubscriptionRenewForm = (subscriptionData) => {
+    const navigate = useNavigate();
+
+    const handleSubscriptionRenewSubmit = async (data) => {
+        try {
+            await renewSubscription(subscriptionData.id, data);
+
+            // navigate('/module/subscription');
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    return { handleSubscriptionRenewSubmit };
+};

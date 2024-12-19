@@ -9,7 +9,6 @@ import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
 import subscriptionSchema from "@modules/subscription/schemas/subscriptionSchema.js";
 import { useSubscriptionForm } from "@modules/subscription/hooks/subscriptionHooks.js";
-import { useEditSubscription } from "@modules/subscription/hooks/editsubscriptionHook.js";
 import {
   currencies,
   paymentCycle,
@@ -32,13 +31,13 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
       type: "free",
       payment_cycle: "yearly",
       currency: "PKR",
-      status: "active", // Ensure this matches the schema key
+      status: "active",
       ...subscriptionData,
     },
   });
 
   const subscriptionType = useWatch({ control, name: "type" });
-
+  const currency = useWatch({ control, name: "currency" });
 
   const { handleSubscriptionSubmit } = useSubscriptionForm(subscriptionData, isEditMode);
   useEffect(() => {
@@ -84,14 +83,14 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                 <div className="xl:col-span-4 col-span-12">
 
                   <FormSelect
-                      name="status" // Matches the schema key
+                      name="status"
                       control={control}
                       errors={errors}
-                      options={subscriptionStatuses} // Ensure this is passed
+                      options={subscriptionStatuses}
                       placeholder="Subscription Status"
                   />
                 </div>
-                <div className="xl:col-span-6 col-span-12">
+                <div className="xl:col-span-4 col-span-12">
                   <FormInput
                       type="date"
                       name="started_at"
@@ -100,7 +99,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                       placeholder="Start Date"
                   />
                 </div>
-                <div className="xl:col-span-6 col-span-12">
+                <div className="xl:col-span-4 col-span-12">
                   <FormInput
                       type="date"
                       name="ended_at"
@@ -113,7 +112,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                 {subscriptionType === "paid" && (
                     <>
 
-                      <div className="xl:col-span-6 col-span-12">
+                      <div className="xl:col-span-4 col-span-12">
                         <FormSelect
                             name="payment_cycle"
                             control={control}
@@ -133,6 +132,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                             placeholder="Currency"
                         />
                       </div>
+
                       <div className="xl:col-span-6 col-span-12">
                         <FormInput
                             type="number"
@@ -142,24 +142,16 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                             placeholder="Amount"
                         />
                       </div>
-                      {/*<div className="xl:col-span-6 col-span-12">*/}
-                      {/*  <FormSelect*/}
-                      {/*      name="payment_method"*/}
-                      {/*      control={control}*/}
-                      {/*      errors={errors}*/}
-                      {/*      options={paymentMethod}*/}
-                      {/*      placeholder="Payment Method"*/}
-                      {/*  />*/}
-                      {/*</div>*/}
-                      {/*<div className="xl:col-span-4 col-span-12">*/}
-                      {/*  <FormInput*/}
-                      {/*      type="date"*/}
-                      {/*      name="due_date"*/}
-                      {/*      control={control}*/}
-                      {/*      errors={errors}*/}
-                      {/*      placeholder="Next Due Date"*/}
-                      {/*  />*/}
-                      {/*</div>*/}
+                      <div className="xl:col-span-6 col-span-12">
+                        <FormSelect
+                            name="payment_method"
+                            control={control}
+                            errors={errors}
+                            options={paymentMethod}
+                            placeholder="Payment Method"
+                        />
+                      </div>
+
                       <div className="xl:col-span-6 col-span-12">
                         <FormSelect
                             name="payment_status"
@@ -169,15 +161,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                             placeholder=" Payment Status"
                         />
                       </div>
-                      {/*<div className="xl:col-span-4 col-span-12">*/}
-                      {/*  <FormInput*/}
-                      {/*      type="number"*/}
-                      {/*      name="due_amount"*/}
-                      {/*      control={control}*/}
-                      {/*      errors={errors}*/}
-                      {/*      placeholder="Next Due Amount"*/}
-                      {/*  />*/}
-                      {/*</div>*/}
+
                     </>
                 )}
 
@@ -221,10 +205,10 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                   control={control}
                   errors={errors}
                   placeholder="Vendor"
-                  apiUrl="/select/subscription/vendors"
+                  apiUrl="/select/vendor/"
                   queryKeyBase="subscriptionVendors"
                   preselectedOptions={formatOptions(subscriptionData, "vendor")}
-                  saveOptionEndpoint="/select/subscription/vendor"
+                  saveOptionEndpoint="/select/vendor/"
                   allowSaveNewOption={true}
               />
             </div>
@@ -242,7 +226,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                   errors={errors}
                   label={false}
                   placeholder="Department"
-                  apiUrl="/select/departments"
+                  apiUrl="/select/departments/"
                   queryKeyBase="departments"
                   clientSideSearch={true}
                   isMulti={true}
@@ -257,15 +241,31 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
             </div>
             <div className="box-body">
               <FormSelect
-                name="reminder_days"
-                label={false}
-                control={control}
-                errors={errors}
-                options={reminderDays}
-                placeholder="Set Reminder"
+                  name="reminder_days"
+                  label={false}
+                  control={control}
+                  errors={errors}
+                  options={reminderDays}
+                  placeholder="Set Reminder"
               />
             </div>
           </div>
+          {(currency === 'USD' || currency === 'GBP' || currency === 'EUR') && (
+          <div className="box">
+            <div className="box-header">
+              <div className="box-title"> Currant Rate</div>
+            </div>
+            <div className="box-body">
+              <FormInput
+                  type="number"
+                  name="current_rate"
+                  control={control}
+                  errors={errors}
+                  placeholder="Current Rate"
+              />
+            </div>
+          </div>
+              )}
         </div>
       </div>
     </form>
