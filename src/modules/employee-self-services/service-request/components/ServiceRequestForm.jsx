@@ -24,7 +24,6 @@ const ServiceRequestForm = ({
         serviceData?.is_submitted || false
     );
     const [subDepartmentOptions, setSubDepartmentOptions] = useState([]);
-
     const {
         control,
         handleSubmit,
@@ -34,10 +33,10 @@ const ServiceRequestForm = ({
     } = useForm({
         resolver: zodResolver(serviceRequestSchema()),
         defaultValues: {
-            company_id: 1,
+            company_id: user.employee.company.id || 1 ,
             sr_number: serviceData?.sr_number || "",
-            reporter: user?.full_name || "Faisal",
-            reporter_email: user?.email || "default@example.com",
+            reporter: user?.full_name,
+            reporter_email: user?.email,
             to_email: serviceData?.to_email?.map((email) =>
                 email.replace(/[\n\r]+/g, "").trim()
             ) || [],

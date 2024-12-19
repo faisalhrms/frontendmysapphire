@@ -57,7 +57,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                         control={control}
                         errors={errors}
                         placeholder="Members"
-                        apiUrl="/select/users"
+                        apiUrl={`/select/users?department_id=${generatedReqData?.service_request?.department_id}`}
                         queryKeyBase="users"
                         preselectedOptions={userOptions}
                     />

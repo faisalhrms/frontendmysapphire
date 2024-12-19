@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {getUserById, updateUser} from "@modules/user/services/userService.js";
+import {createUser, getUserById, updateUser} from "@modules/user/services/userService.js";
 import {useEffect, useState} from "react";
 
 export const useUserForm = (userData) => {
@@ -7,8 +7,15 @@ export const useUserForm = (userData) => {
 
     const handleUserSubmit = async (data) => {
         try {
-            await updateUser(userData.id, data);
-            navigate('/module/users');
+            // If userData is present, update user; otherwise, create a new user
+            if (userData) {
+                // Update user logic
+                await updateUser(userData.id, data);
+            } else {
+                // Create new user logic
+                await createUser(data);
+            }
+            navigate('/module/users');  // Redirect after successful submission
         } catch (error) {
             console.error('Error:', error.message);
         }

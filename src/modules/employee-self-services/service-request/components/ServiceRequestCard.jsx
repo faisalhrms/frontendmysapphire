@@ -1,5 +1,8 @@
 import face5 from "@assets/images/faces/5.jpg";
 import React, { useEffect, useState } from "react";
+import FormInput from "@components/form/FormInput.jsx";
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import { formatOptions } from "@helpers/formatters.js";
 
 const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, errors }) => {
     const [files, setFiles] = useState([]);
@@ -169,6 +172,38 @@ const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, error
                             className="bi bi-plus-square text-success px-3 py-2 rounded-md cursor-pointer hover:bg-success-dark"
                             onClick={addFileInput}
                         ></i>
+                    </div>
+                </div>
+            </div>
+            <div className="box">
+                <div className="box-body p-4">
+                    <div className="xl:col-span-4 col-span-12 mt-4">
+                        <FormInput
+                            name="to_email"
+                            control={control}
+                            errors={errors}
+                            placeholder="To"
+                            readOnly
+                        />
+                    </div>
+                    <div className="xl:col-span-4 col-span-12 mt-2 md-2">
+                        <FormAsyncSelect
+                            label="CC"
+                            isMulti={true}
+                            name="cc_email"
+                            control={control}
+                            errors={errors}
+                            placeholder="CC"
+                            apiUrl="/select/users-email"
+                            queryKeyBase="users-email"
+                            allowSaveNewOption={false}
+                            preselectedOptions={formatOptions(serviceData, "cc_email", "value", "label")}
+                            onOptionSelect={(selectedOption) => {
+                                const emails = selectedOption.map((option) => option.value);
+                                setValue("cc_email", emails);
+                                console.log("CC Emails Updated:", emails);
+                            }}
+                        />
                     </div>
                 </div>
             </div>
