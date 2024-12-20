@@ -1,6 +1,7 @@
 export const SRM_ROUTES = {
     READ: {
         path: '/module/srm',
+        permission: 'view_sr_management'
     
 
 },
@@ -33,6 +34,7 @@ export const MODULE_ROUTES = [
     {
         path: SRM_ROUTES.READ.path,
         component: () => import(`/src/modules/sr-management/views/Sr.jsx`),
+        permission: SRM_ROUTES.READ.permission,
     },
     {
         path: SRM_ROUTES.TASK.path,
