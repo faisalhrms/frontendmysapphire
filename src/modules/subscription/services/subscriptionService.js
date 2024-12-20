@@ -49,7 +49,7 @@ export const createSubscription = async (subscriptionData) => {
     try {
         const response = await api.post('/subscriptions/', subscriptionData);
         Notify.success(response.data.message);
-        return response.data;
+        return response.data.data;
     }
     catch (error) {
         Notify.error(error.response?.data?.message);
@@ -61,7 +61,7 @@ export const updateSubscription = async (id, subscriptionData) => {
     try {
         const response = await api.put(`/subscriptions/${id}/`, subscriptionData);
         Notify.success(response.data.message);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
 
@@ -87,7 +87,7 @@ export const getFilteredSubscriptions = async (filterType, searchQuery, skip = 0
         params.append("limit", limit);
 
         const response = await api.get(`/subscriptions/datatable?${params.toString()}`);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
         throw error;
@@ -95,9 +95,9 @@ export const getFilteredSubscriptions = async (filterType, searchQuery, skip = 0
 };
 export const renewSubscription = async (id, data) => {
     try {
-        const response = await api.put(`/subscriptions/renew/${id}`, data);
+        const response = await api.post(`/transactions/${id}/renew/`, data);
         Notify.success("Subscription renewed successfully");
-        return response.data;
+        return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Error renewing subscription');
         throw error;
