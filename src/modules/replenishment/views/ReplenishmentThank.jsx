@@ -7,7 +7,6 @@ import ProgressBar from "@modules/replenishment/components/ProgressBar.jsx";
 const ReplenishmentThank = () => {
   const location = useLocation();
   const {
-    file_path,
     forecast_days,
     message,
     progress,
@@ -25,9 +24,8 @@ const ReplenishmentThank = () => {
   const [reportFileUrl, setReportFileUrl] = useState(file_url);
 
   useEffect(() => {
-    console.log(reportFileUrl);
     if (!task_id) return;
-    const eventSource = createEventSource(`/supply-chain-management/report/progress/${task_id}`);
+    const eventSource = createEventSource(`/scm/report/progress/${task_id}`);
 
     eventSource.onmessage = function (event) {
       const progressData = JSON.parse(event.data);
