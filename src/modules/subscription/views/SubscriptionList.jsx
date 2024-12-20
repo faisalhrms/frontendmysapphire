@@ -42,7 +42,7 @@ const SubscriptionList = () => {
             Cell: ({row}) => (
               
                     <div className="flex space-x-2">
-                        <HasPermission permission="subscription_update">
+                        <HasPermission permission="change_subscription">
                   <Link to={`/module/subscription/edit/${row.original.id }`}>
                         <button 
                          className="ti-btn ti-btn-primary ti-btn-sm">

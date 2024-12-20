@@ -1,32 +1,30 @@
-import { z } from "zod";
-import { dateSchema } from "@helpers/schema.js";
+import {z} from "zod";
+import {dateSchema} from "@helpers/schema.js";
 
 const pendingReqTaskSchema = () => z.object({
 
-    location_id:z.number()
-        .min(1, { message: "location_id is required" })
-        ,
-    department_id:z.number()
-        .min(1, { message: "department_id is required" })
-        ,
-    sub_department_id:z.number()
-        .min(1, { message: "sub_department_id is required" })
-        ,
 
-    sr_type_id: z.number()
-        .min(1, { message: "SR Type is required" })
-        .default(1), // Set default based on the available SR types in your system
-
-    user_ids: z.array(z.number()).min(1, "At least one member must be assigned"),
-
-
+    user_ids: z
+        .array(z.number())
+        .min(1, {message: "Select at least one user"}),
     started_at: dateSchema()
         .optional()
         .default(() => new Date().toISOString()),
-
+    sr_type: z
+        .number()
+        .min(1, {message: "SR Type is required and must be a valid number"}),
+    location_id: z
+        .number()
+        .min(1, {message: "Select a location"}),
+    description: z
+        .string()
+        .nullable()
+        .default(""),
     ended_at: dateSchema()
         .optional()
         .nullable(),
-});
-
+})
+    .superRefine((data, ctx) => {
+        console.log("Validated Data:", data);
+    });
 export default pendingReqTaskSchema;

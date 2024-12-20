@@ -13,6 +13,7 @@ function ContentLeft({generatedReqData, serviceRequest}) {
             description: serviceRequest.description || "",
         },
     });
+
     return (
         <div className="w-full lg:w-3/5  rounded-lg dark:bg-bodybg">
             <ModelRight isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
@@ -60,8 +61,10 @@ function ContentLeft({generatedReqData, serviceRequest}) {
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
                                 Status:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200"><span
-                                className="badge bg-primary/10 text-primary">{generatedReqData.status ? generatedReqData.status : '-'}</span>
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200">
+                                <span className="badge bg-primary/10 text-primary">
+                                         {generatedReqData?.status ? generatedReqData?.status : serviceRequest?.status || '-'}
+                             </span>
                             </td>
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
                                 Progress:
@@ -70,7 +73,7 @@ function ContentLeft({generatedReqData, serviceRequest}) {
                                 <div className="w-48 bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
                                     <div
                                         className="bg-blue-600 ti-btn-primary-full h-1.5 rounded-full"
-                                        style={{width: `${generatedReqData.progress}%`}}
+                                        style={{width: `${generatedReqData?.progress}%`}}
                                     />
                                 </div>
                             </td>
@@ -109,7 +112,7 @@ function ContentLeft({generatedReqData, serviceRequest}) {
                 <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
                     <SRDiscussion
                         title="Task Discussions"
-                        getEndPoint={`/sr-task/${serviceRequest.id}/discussions`}
+                        getEndPoint={`/sr-task/${serviceRequest.id}/discussions/`}
                         serviceRequest={serviceRequest}
                     />
                 </div>

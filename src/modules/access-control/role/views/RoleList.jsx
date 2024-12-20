@@ -30,13 +30,13 @@ const Role = () => {
                 console.log("row.original.name:", row.original.name);
                 return (
                   <div className="flex space-x-2">
-                      <HasPermission permission='role_update'>
+                      <HasPermission permission='change_group'>
 
                       <button onClick={() => handleEdit(row.original)} className="ti-btn ti-btn-primary ti-btn-sm">
                       <i className="ri-edit-line"></i>
                     </button>
                           </HasPermission>
-                      <HasPermission permission='permission_matrix'>
+                      <HasPermission permission='manage_permission'>
                     <Link
                       to={{
                         pathname: `${row.original.id}/permissions`,
@@ -56,7 +56,7 @@ const Role = () => {
     ];
 
     const buttons = (
-        <HasPermission permission='role_create'>
+        // <HasPermission permission='role_create'>
         <div className="flex space-x-2">
             <button
                 type="button"
@@ -66,7 +66,7 @@ const Role = () => {
                 <i className="ri-add-line font-semibold align-middle"></i> Create Role
             </button>
         </div>
-        </HasPermission>
+        // </HasPermission>
     );
 
     return (
@@ -75,7 +75,7 @@ const Role = () => {
             <DataTable
                 columns={columns}
                 title="Roles"
-                apiUrl="/roles/datatable"
+                apiUrl="/groups/datatable/"
                 buttons={buttons}
             />
 

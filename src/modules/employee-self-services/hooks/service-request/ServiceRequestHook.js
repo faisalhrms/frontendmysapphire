@@ -33,10 +33,8 @@ console.log(`this is data`,data)
         try {
             let response;
             if (id) {
-                // Update existing service request
                 response = await saveServiceRequest(id, data);
             } else {
-                // Create new service request
                 response = await createServiceRequest(data);
             }
             navigate('/module/ess/services-request'); // Redirect after successful submission

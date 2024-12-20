@@ -106,25 +106,9 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                                             }}
                                         />
                                         <button
-                                            onClick={() => openModal("document")}
-                                            aria-label="button"
-                                            type="button"
-                                            className="ti-btn ti-btn-light !rounded-none !mb-0"
-                                        >
-                                            <i className="bi bi-paperclip"></i>
-                                        </button>
-                                        <button
-                                            onClick={() => openModal("image")}
-                                            aria-label="button"
-                                            type="button"
-                                            className="ti-btn ti-btn-light !rounded-none !mb-0"
-                                        >
-                                            <i className="bi bi-camera"></i>
-                                        </button>
-                                        <button
                                             disabled={isSubmitting}
                                             onClick={handleSubmit}
-                                            className="ti-btn bg-primary text-white !rounded-s-none !mb-0"
+                                            className="ti-btn bg-primary text-white !rounded-s-none !ml-1 !mb-0"
                                             type="button"
                                         >
                                             Post
@@ -145,15 +129,6 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                         </div>
                     </div>
                 </>
-            )}
-            {isModalOpen && (
-                <MediaModal
-                    type={mediaType}
-                    modalId="discussionAttachments"
-                    multiple={true}
-                    onClose={closeModal}
-                    selectedFiles={handleSelectedFiles}
-                />
             )}
             <EmailComposeModal
                 isOpen={isEmailModalOpen}
