@@ -13757,3 +13757,8 @@ input[type=color i]::-webkit-color-swatch {
 .icon-grey{
   color:grey ;
 }
+
+
+.sun-editor .se-toolbar {
+  z-index: 1 !important;
+}
