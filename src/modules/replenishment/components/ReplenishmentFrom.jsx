@@ -192,7 +192,7 @@ const ReplenishmentFrom = () => {
                                   control={control}
                                   errors={errors}
                                   placeholder="Warehouse"
-                                  apiUrl="/select/supply-chain-management/warehouses"
+                                  apiUrl="/select/scm/warehouses/"
                                   queryKeyBase="scm_warehouses"
                                   preselectedOptions={[]}
                               />

@@ -1,7 +1,7 @@
 export const REPLENISHMENT_ROUTES = {
     READ: {
         path: '/module/replenishment',
-        permission: 'supply_chain_management'
+        permission: 'scm_replenishment_report'
     },
     THANK:{
         path: '/module/replenishment/thank-you',
