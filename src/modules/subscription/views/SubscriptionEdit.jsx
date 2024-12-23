@@ -7,17 +7,12 @@ import {useSubscription} from "@modules/subscription/hooks/subscriptionHooks.js"
 const SubscriptionEdit = () => {
     const { id } = useParams();
     const {subscriptionData}=useSubscription(id)
-
-
-
-    return (
+  return (
         <div>
             <PageHeader currentpage='Edit Subscription' activepage="Subscription" mainpage="Edit Subscription"/>
             {subscriptionData&&(
                 <SubscriptionForm subscriptionData={subscriptionData} isEditMode={true} />
-
             )
-
             }
         </div>
     );

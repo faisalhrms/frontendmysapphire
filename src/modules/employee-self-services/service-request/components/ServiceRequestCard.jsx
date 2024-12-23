@@ -1,5 +1,8 @@
 import face5 from "@assets/images/faces/5.jpg";
 import React, { useEffect, useState } from "react";
+import FormInput from "@components/form/FormInput.jsx";
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import { formatOptions } from "@helpers/formatters.js";
 
 const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, errors }) => {
     const [files, setFiles] = useState([]);
@@ -138,14 +141,16 @@ const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, error
                     {files.map((fileEntry, index) => (
                         <div
                             key={fileEntry.id}
-                            className="flex items-center justify-between bg-gray-100 rounded-md mb-3"
+                            className="flex items-center justify-between bg-gray-100 rounded-md mb-3 p-2"
                         >
-                            <input
-                                type="file"
-                                className="flex-grow border-none rounded-l-md mr-2 py-1"
-                                onChange={(event) => handleFileChange(event, index)}
-                            />
-                            <div className="flex items-center rounded-r-md">
+                            <div className="flex-grow">
+                                <input
+                                    type="file"
+                                    className="w-full border-none rounded-l-md py-1"
+                                    onChange={(event) => handleFileChange(event, index)}
+                                />
+                            </div>
+                            <div className="flex items-center flex-shrink-0 ml-2">
                                 <i
                                     className="ri-eye-fill text-success mr-2 cursor-pointer"
                                     onClick={() => {
@@ -161,6 +166,7 @@ const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, error
                                 ></i>
                             </div>
                         </div>
+
                     ))}
 
                     {/* Add New File */}
@@ -169,6 +175,38 @@ const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, error
                             className="bi bi-plus-square text-success px-3 py-2 rounded-md cursor-pointer hover:bg-success-dark"
                             onClick={addFileInput}
                         ></i>
+                    </div>
+                </div>
+            </div>
+            <div className="box">
+                <div className="box-body p-4">
+                    <div className="xl:col-span-4 col-span-12 mt-4">
+                        <FormInput
+                            name="to_email"
+                            control={control}
+                            errors={errors}
+                            placeholder="To"
+                            readOnly
+                        />
+                    </div>
+                    <div className="xl:col-span-4 col-span-12 mt-2 md-2">
+                        <FormAsyncSelect
+                            label="CC"
+                            isMulti={true}
+                            name="cc_email"
+                            control={control}
+                            errors={errors}
+                            placeholder="CC"
+                            apiUrl="/select/users-email"
+                            queryKeyBase="users-email"
+                            allowSaveNewOption={false}
+                            preselectedOptions={formatOptions(serviceData, "cc_email", "value", "label")}
+                            onOptionSelect={(selectedOption) => {
+                                const emails = selectedOption.map((option) => option.value);
+                                setValue("cc_email", emails);
+                                console.log("CC Emails Updated:", emails);
+                            }}
+                        />
                     </div>
                 </div>
             </div>

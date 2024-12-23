@@ -40,39 +40,39 @@ const SubscriptionList = () => {
         {
             Header: 'Actions',
             Cell: ({row}) => (
-              
+
                     <div className="flex space-x-2">
-                        <HasPermission permission="change_subscription">
+                        {/*<HasPermission permission="subscription_update">*/}
                   <Link to={`/module/subscription/edit/${row.original.id }`}>
-                        <button 
+                        <button
                          className="ti-btn ti-btn-primary ti-btn-sm">
                             <i className="ri-edit-line"></i>
                         </button>
                         </Link>
-                        </HasPermission>
-                        <HasPermission permission="subscription_read">
+                        {/*</HasPermission>*/}
+                        {/*<HasPermission permission="subscription_read">*/}
                         <Link to={`/module/subscription/detail/${row.original.id }`}>
                             <button
                                 className="ti-btn ti-btn-info ti-btn-sm">
                                 <i className="ri-eye-line"></i>
                             </button>
                         </Link>
-                        </HasPermission>
+                        {/*</HasPermission>*/}
                     </div>
-              
+
                 ),
             },
     ];
 
     const buttons = (
-        <HasPermission permission='subscription_create'>
+        // <HasPermission permission='subscription_create'>
         <div className="flex space-x-2">
             <Link to={SUBSCRIPTION_ROUTES.CREATE.path}
                   className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
                 <i className="ri-add-line font-semibold align-middle"></i> Add Subscription
             </Link>
         </div>
-        </HasPermission>
+        // </HasPermission>
 
     );
     return (
@@ -82,7 +82,7 @@ const SubscriptionList = () => {
                 columns={columns}
                 title="Subscriptions"
                 buttons={buttons}
-                apiUrl={`/subscriptions/datatable`}
+                apiUrl={`/subscriptions/`}
                 filter={filterType}
             />
         </>

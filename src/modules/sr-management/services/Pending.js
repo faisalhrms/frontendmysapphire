@@ -30,3 +30,24 @@ export const getTaskById = async (id) => {
   }
 };
 
+export const closeServiceRequest = async (id) => {
+  try {
+    const response = await api.post(`/service-request/cancel/`, { id });
+    Notify.success(response.data.message || "Service request closed successfully");
+    return response.data.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Error closing service request");
+    throw error;
+  }
+};
+
+export const updateServiceRequest = async (id, requestData) => {
+    console.log("Updating service request:", requestData);
+    try {
+        const response = await api.put(`/service-request/${id}/update/`, requestData);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error updating service request");
+        throw error;
+    }
+};
