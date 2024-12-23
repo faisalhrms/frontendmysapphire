@@ -17,13 +17,16 @@ const paymentCycleEnum = z.enum(["monthly", "quarterly", "yearly"], {
     errorMap: () => "Payment cycle must be 'monthly', 'quarterly' or 'yearly'",
 });
 
-const currenciesEnum = z.enum(["USD", "PKR"], {
-    errorMap: () => "Currency must be 'USD' or 'PKR'",
+const currenciesEnum = z.enum(["USD", "PKR","EUR","GBP"], {
+    errorMap: () => "Currency must be 'USD','GBP','EUR' or 'PKR'",
 });
 
 const reminderEnum = z.enum(['7', '14', '30'], {
     errorMap: () => "Reminder cycle must be '7', '14', or '30'",
 });
+const paymentModeEnum=z.enum(['card','cash','online'],{
+    errorMap: () => "Payment mode must be 'card','online' or 'cash'",
+})
 const subscriptionSchema = z.object({
     name: z.string().min(1, "Name is required").max(1000, "Name must be at most 1000 characters long"),
     department_ids: z.array(z.number()).min(1, "At least one department ID is required"),
@@ -32,6 +35,16 @@ const subscriptionSchema = z.object({
     status: subscriptionTypeEnum.nullable().optional(),
     payment_status: paymentStatusEnum.nullable().optional(),
     currency: currenciesEnum.nullable().optional(),
+    current_rate: z.union([
+        z.number().min(1, "Current Rate must be greater than 0"),
+        z.string().refine((val) => {
+            const num = Number(val);
+            return !isNaN(num) && num > 0;
+        }, {
+            message: "Current Rate must be a number greater than 0"
+        })
+    ]).nullable().optional(),
+    payment_method:paymentModeEnum.nullable().optional(),
     payment_cycle: paymentCycleEnum.nullable().optional(),
     amount: z.union([
         z.number().min(1, "Amount must be greater than 0"),
@@ -96,16 +109,16 @@ const subscriptionSchema = z.object({
         message: "Payment status is required for paid subscriptions",
         path: ["payment_status"],
     })
-    .refine(data => {
-        // Check if vendor_id is required and present for paid subscriptions
-        if (data.type === "paid") {
-            return data.vendor_id !== null;
-        }
-        return true;
-    }, {
-        message: "Vendor is required for paid subscriptions",
-        path: ["vendor_id"],
-    })
+    // .refine(data => {
+    //     // Check if vendor_id is required and present for paid subscriptions
+    //     if (data.type === "paid") {
+    //         return data.vendor_id !== null;
+    //     }
+    //     return true;
+    // }, {
+    //     message: "Vendor is required for paid subscriptions",
+    //     path: ["vendor_id"],
+    // })
     .refine(data => {
         // Ensure end date is after start date if both dates are provided
         if (data.started_at && data.ended_at) {
