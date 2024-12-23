@@ -1,0 +1,24 @@
+name: Deploy to Local Server
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Test SSH Connectivity
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_staging
+        chmod 600 ~/.ssh/id_rsa_staging
+        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+        ssh -i ~/.ssh/id_rsa_staging -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "echo 'Connected to Server'"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.STAGING_SECRET_KEY }}
+        SERVER_IP: ${{ secrets.STAGING_SERVER_IP }}
+        SERVER_USER: ${{ secrets.STAGING_SERVER_USER }}
