@@ -42,7 +42,7 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
         usePagination
     );
 
-    
+
     React.useEffect(() => {
         setPage(pageIndex + 1);
     }, [pageIndex, setPage]);

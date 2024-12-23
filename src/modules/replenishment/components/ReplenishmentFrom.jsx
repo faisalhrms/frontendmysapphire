@@ -25,7 +25,7 @@ const ReplenishmentFrom = () => {
   useEffect( () => {
     const fetchSalesDateRange = async () => {
       try {
-        const response = await api.get('/supply-chain-management/report/sales-date-range');
+        const response = await api.get('/scm/report/sales-date-range/');
         setMinSoldAt(response.data?.data?.min_sold_at)
         setMaxSoldAt(response.data?.data?.max_sold_at)
       } catch (error) {
@@ -86,11 +86,10 @@ const ReplenishmentFrom = () => {
   const handleReport = async (payload) => {
     try {
       setIsGenerating(true);
-      const response = await api.post('/supply-chain-management/generate-report', payload);
-      const { file_path, forecast_days, message, progress, status, task_id, total_items, total_warehouses, file_url } = response.data?.data;
+      const response = await api.post('scm/report/generate/', payload);
+      const { forecast_days, message, progress, status, task_id, total_items, total_warehouses, file_url } = response.data?.data;
       navigate(REPLENISHMENT_ROUTES.THANK.path, {
         state: {
-          file_path,
           forecast_days,
           message,
           progress,
@@ -193,7 +192,7 @@ const ReplenishmentFrom = () => {
                                   control={control}
                                   errors={errors}
                                   placeholder="Warehouse"
-                                  apiUrl="/select/supply-chain-management/warehouses"
+                                  apiUrl="/select/scm/warehouses/"
                                   queryKeyBase="scm_warehouses"
                                   preselectedOptions={[]}
                               />

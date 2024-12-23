@@ -12,9 +12,20 @@ const SubscriptionSummary = ({id,subscriptionData}) => {
                         <Link
                             to={`/module/subscription/edit/${id}`}
 
-                            className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-primary  btn-wave"
+                            className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-secondary  btn-wave"
                         >
                             <i className="ri-edit-line align-middle me-1 font-semibold"></i>Edit Subscription
+                        </Link>
+
+
+                    </div>
+                    <div>
+                        <Link
+                            to={`/module/subscription/renew/${id}`}
+
+                            className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-primary  btn-wave"
+                        >
+                            <i className="ri-refresh-line align-middle me-1 font-semibold"></i>Renew Subscription
                         </Link>
 
 
