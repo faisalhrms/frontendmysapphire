@@ -1,56 +1,35 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../../../assets/images/company-logos/sapphire.png";
+import { useSelector } from 'react-redux';
+import api from "@config/axiosConfig.js";
+
 
 const DiscountCard = () => {
   const [selectedOption, setSelectedOption] = useState("card");
   const [discountData, setDiscountData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const user = useSelector((state) => state.auth.user);
 
+  const fetchDiscountData = async (email= '', cardNo = '') => {
+    try {
+      setIsLoading(true);
+      const response = await api.post('dc/remaining-balance/', {
+        email: email,
+        card_no: cardNo
+      });
+      setFilteredData(response.data.data)
+    } catch (error) {
+      setFilteredData(null)
+    }
+    finally{
+      setIsLoading(false);
+    }
+  };
+  
   useEffect(() => {
-    const fetchDiscountData = async () => {
-      try {
-        const data = {
-          data: [
-            {
-              Name: "Kashif Hussain",
-              Account_Number: "SRL12032522124",
-              Customer_Group: "CG008",
-              Remaining_Quantity: 0.0,
-              Remaining_Value: 8750.0,
-              Remaining_Value_x4: 35000,
-              Card_No: "SRL-2024-246-81002897",
-              Email: "kashif.hussain@example.com",
-              Total_Value: 35000,
-              Total_Value_x4: 35000,
-              Limit_Type: "Monthly",
-              Blocked: "No",
-            },
-            {
-              Name: "Ali Ahmed",
-              Account_Number: "SRL12032522125",
-              Customer_Group: "CG009",
-              Remaining_Quantity: 0.0,
-              Remaining_Value: 15000.0,
-              Remaining_Value_x4: 60000,
-              Card_No: "SRL-2024-246-81002999",
-              Email: "ali.ahmed@example.com",
-              Total_Value: 60000,
-              Total_Value_x4: 60000,
-              Limit_Type: "Yearly",
-              Blocked: "No",
-            },
-          ],
-        };
-
-        setDiscountData(data.data);
-        setFilteredData(data.data[0]);
-      } catch (error) {
-        console.error("Failed to fetch discount data:", error);
-      }
-    };
-
-    fetchDiscountData();
+    fetchDiscountData(user.email);
   }, []);
 
   const handleSelect = (option) => {
@@ -78,16 +57,16 @@ const DiscountCard = () => {
   const data = filteredData
     ? [
         {
-          title: "Total Balance",
+          title: "allowed_balance",
           value: `PKR ${filteredData.Total_Value || "0.00"}`,
         },
         {
-          title: "Remaining Balance",
+          title: "remaining_balance",
           value: `PKR ${filteredData.Remaining_Value || "0.00"}`,
         },
         { title: "Discount Price", value: filteredData.Limit_Type || "N/A" },
         {
-          title: "Max Limit",
+          title: "limit_type",
           value: `PKR ${filteredData.Remaining_Value_x4 || "0.00"}`,
         },
       ]
@@ -116,7 +95,6 @@ const DiscountCard = () => {
             />
           </div>
 
-          {/* Discount Card UI */}
         </div>
       </div>
       <div className="flex flex-col items-center space-y-6 mt-20 mb-20 rounded-3xl">
@@ -127,7 +105,7 @@ const DiscountCard = () => {
               {filteredData?.Name || "N/A"}
             </h4>
             <h6 className="text-sm opacity-80">
-              Card No. {filteredData?.Card_No || "N/A"}
+              Card No. {filteredData?.card_no || "N/A"}
             </h6>
           </div>
 
@@ -155,3 +133,7 @@ const DiscountCard = () => {
 };
 
 export default DiscountCard;
+
+
+
+
