@@ -39,7 +39,7 @@ jobs:
 
           npm run build
         
-          sudo systemctl restart nginx
+          sudo systemctl reload  nginx
 
           # Log the result of deployment
           if [ $? -eq 0 ]; then
@@ -84,7 +84,7 @@ jobs:
 
           npm run build
           
-          sudo systemctl restart nginx
+          sudo systemctl reload  nginx
         
           # Log the result of deployment
           if [ $? -eq 0 ]; then
