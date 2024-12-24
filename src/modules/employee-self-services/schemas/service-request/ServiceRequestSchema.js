@@ -62,7 +62,9 @@ const serviceRequestSchema = () =>
             .default([]),
 
             is_submitted: z.boolean().default(false),
+            on_behalf_of: z.boolean().default(false),
             parent_request: z.number().nullable().optional(),
+            on_behalf_employee: z.string().nullable().optional(),
             need_by_date: z
                 .string()
                 .min(1, {message: "Need By Date is required and must be valid"}),

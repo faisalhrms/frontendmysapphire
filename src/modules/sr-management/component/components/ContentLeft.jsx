@@ -86,7 +86,7 @@ function ContentLeft({generatedReqData, serviceRequest}) {
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
                                 On Behalf Of:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200"> {serviceRequest.on_behalf_of ? serviceRequest.reporter_email : '-'}</td>
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200"> {serviceRequest.on_behalf_of ? serviceRequest.on_behalf_employee : '-'}</td>
                         </tr>
 
                         </tbody>

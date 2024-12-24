@@ -1,48 +1,72 @@
-import React, {useMemo} from "react";
+import React, { useMemo, useEffect } from "react";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import api from "@config/axiosConfig.js";
 
-const EmailComposeModal = ({isOpen, onClose, serviceRequest}) => {
+const EmailComposeModal = ({ isOpen, onClose, serviceRequest }) => {
     const {
         control,
         handleSubmit,
-        formState: {errors, isSubmitting},
-    } = useForm();
+        reset,
+        watch,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        defaultValues: {
+            to_email: [],
+            cc_email: [],
+            message: "",
+        }
+    });
 
+    // Format options to match the expected format of FormAsyncSelect
+    const formatEmails = (emails) =>
+        Array.isArray(emails) ? emails.map((email) => ({ value: email, label: email })) : [];
+
+    // Prepare preselected options for "To" field
     const preselectedToEmails = useMemo(() => {
-        return serviceRequest?.reporter_email
-            ? [{value: serviceRequest.reporter_email, label: serviceRequest.reporter_email}]
-            : [];
+        const reporterEmail = serviceRequest?.reporter_email;
+        return reporterEmail ? [{ value: reporterEmail, label: reporterEmail }] : [];
     }, [serviceRequest]);
 
+    // Prepare preselected options for "CC" field
     const preselectedCcEmails = useMemo(() => {
-        return [];
-    }, []);
+        return formatEmails(serviceRequest?.cc_emails || []);
+    }, [serviceRequest]);
 
-const handleSave = async (data) => {
-    const toEmails = data.to_email || [];
-    const ccEmails = data.cc_email || [];
+    // Reset form values when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            const defaultValues = {
+                to_email: preselectedToEmails,
+                cc_email: preselectedCcEmails,
+                message: "",
+            };
+            reset(defaultValues);
+        }
+    }, [isOpen, reset, preselectedToEmails, preselectedCcEmails]);
 
-    const payload = {
-        service_request_id: serviceRequest.id,
-        message: data.message,
-        to_email: toEmails,
-        cc_email: ccEmails,
-        send_email: true,
+    // Handle form submission
+    const handleSave = async (data) => {
+        const toEmails = Array.isArray(data.to_email) ? data.to_email.map((item) => item.value) : [];
+        const ccEmails = Array.isArray(data.cc_email) ? data.cc_email.map((item) => item.value) : [];
+
+        const payload = {
+            service_request_id: serviceRequest.id,
+            message: data.message,
+            to_email: toEmails,
+            cc_email: ccEmails,
+            send_email: true,
+        };
+
+        try {
+            await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
+            onClose();
+        } catch (error) {
+            console.error("Error sending email:", error);
+        }
     };
-
-    try {
-        await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
-        console.log("Email sent successfully");
-        onClose();
-    } catch (error) {
-        console.error("Error sending email:", error);
-    }
-};
-
 
     return (
         <div
@@ -52,8 +76,7 @@ const handleSave = async (data) => {
             }`}
             tabIndex={-1}
         >
-            <div
-                className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex min-h-[calc(100%-3.5rem)] items-center justify-center max-w-2xl mx-auto my-auto">
+            <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex min-h-[calc(100%-3.5rem)] items-center justify-center max-w-2xl mx-auto my-auto">
                 <div className="ti-modal-content bg-white rounded-lg shadow-xl w-full">
                     <div className="ti-modal-header flex justify-between items-center p-4 border-b">
                         <h6 className="modal-title text-[1rem] font-semibold">Compose Email</h6>
@@ -71,29 +94,29 @@ const handleSave = async (data) => {
                             <div className="xl:col-span-12 col-span-12">
                                 <FormAsyncSelect
                                     label="To"
-                                    isMulti={true}
+                                    isMulti
                                     name="to_email"
                                     control={control}
                                     errors={errors}
                                     placeholder="To"
-                                    apiUrl="/select/users-email"
+                                    apiUrl="/select/users/email"
                                     queryKeyBase="users-email"
-                                    allowSaveNewOption={false}
                                     preselectedOptions={preselectedToEmails}
+                                    allowSaveNewOption={false}
                                 />
                             </div>
                             <div className="xl:col-span-12 col-span-12">
                                 <FormAsyncSelect
                                     label="CC"
-                                    isMulti={true}
+                                    isMulti
                                     name="cc_email"
                                     control={control}
                                     errors={errors}
                                     placeholder="CC"
-                                    apiUrl="/select/users-email"
-                                    queryKeyBase="users-email"
-                                    allowSaveNewOption={false}
+                                    apiUrl="/select/users/email"
+                                    queryKeyBase="cc-email"
                                     preselectedOptions={preselectedCcEmails}
+                                    allowSaveNewOption={false}
                                 />
                             </div>
                             <div>
@@ -114,7 +137,7 @@ const handleSave = async (data) => {
                             >
                                 Cancel
                             </button>
-                            <FormButton isLoading={isSubmitting} text="Send"/>
+                            <FormButton isLoading={isSubmitting} text="Send" />
                         </div>
                     </form>
                 </div>
@@ -122,6 +145,5 @@ const handleSave = async (data) => {
         </div>
     );
 };
-
 
 export default EmailComposeModal;
