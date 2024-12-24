@@ -34,7 +34,7 @@ jobs:
           echo "Deployment to Staging React started at $TIMESTAMP" >> /var/log/pipeline/deploy.log
 
           # Navigate to project directory and update
-          cd /var/www/html/web_portal/backend_django
+          cd /var/www/html/web_portal/frontend_react
           git pull
 
           npm run build
