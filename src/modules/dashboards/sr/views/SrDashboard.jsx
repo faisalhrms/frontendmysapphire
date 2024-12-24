@@ -21,7 +21,7 @@ const SrDashboard = () => {
         setShowFilters((prev) => !prev);
     };
 
-    const {serviceRequest} = useServiceRequest();
+    const { serviceRequest, downloadExcel } = useServiceRequest();
 
     const handleCardClick = (status) => {
         navigate(`/dashboards/sr/sr-list/${status}`);
@@ -114,8 +114,10 @@ const SrDashboard = () => {
                         </button>
                         <button
                             type="button"
+                            onClick={downloadExcel}
                             className="ti-btn ti-btn-outline-secondary btn-wave !font-medium !me-[0.375rem] !ms-1 !text-[0.85rem] !rounded-[0.35rem] !py-[0.51rem] !px-[0.86rem] shadow-none mb-1"
                         >
+
                             <i className="ri-upload-cloud-line inline-block"></i> Excel
                         </button>
                     </div>

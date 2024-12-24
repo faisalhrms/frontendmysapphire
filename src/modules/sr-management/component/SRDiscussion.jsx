@@ -39,7 +39,7 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
     const handleOpenEmailModal = () => {
         setIsEmailModalOpen(true);
     };
-
+       console.log("discussions", discussions)
     const handleCloseEmailModal = () => {
         setIsEmailModalOpen(false);
     };

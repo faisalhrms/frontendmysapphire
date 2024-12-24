@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import { formatOptions } from "@helpers/formatters.js";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {formatOptions} from "@helpers/formatters.js";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 import serviceRequestSchema from "@modules/employee-self-services/schemas/service-request/ServiceRequestSchema.js";
-import { useServiceRequestForm } from "@modules/employee-self-services/hooks/service-request/ServiceRequestHook.js";
+import {useServiceRequestForm} from "@modules/employee-self-services/hooks/service-request/ServiceRequestHook.js";
 import FormInput from "@components/form/FormInput.jsx";
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import ServiceRequestCard from "@modules/employee-self-services/service-request/components/ServiceRequestCard.jsx";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
 const ServiceRequestForm = ({
-    serviceData,
-    isSaveMode = false,
-    isChild = false,
-    serviceRequestId,
-}) => {
+                                serviceData,
+                                isSaveMode = false,
+                                isChild = false,
+                                serviceRequestId,
+                            }) => {
     const user = useSelector((state) => state.auth.user);
 
     const [isSavedAsDraft, setIsSavedAsDraft] = useState(false);
@@ -24,17 +24,23 @@ const ServiceRequestForm = ({
         serviceData?.is_submitted || false
     );
     const [subDepartmentOptions, setSubDepartmentOptions] = useState([]);
+    const [showOnBehalfOfField, setShowOnBehalfOfField] = useState(false);
+    const [isSaving, setIsSaving] = useState(false); // Loading state for "Save" button
+    const [isSubmittingRequest, setIsSubmittingRequest] = useState(false); // Loading state for "Submit" button
+
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: {errors, isSubmitting},
         setValue,
         watch,
     } = useForm({
         resolver: zodResolver(serviceRequestSchema()),
         defaultValues: {
-            company_id: user.employee.company.id || 1 ,
+            company_id: user.employee.company.id || 1,
             sr_number: serviceData?.sr_number || "",
+            on_behalf_of: serviceData?.on_behalf_of || false,
+            on_behalf_employee: serviceData?.on_behalf_employee || "",
             reporter: user?.full_name,
             reporter_email: user?.email,
             to_email: serviceData?.to_email?.map((email) =>
@@ -60,7 +66,7 @@ const ServiceRequestForm = ({
         setValue("to_email", [email]);
     };
 
-    const { saveAsDraft, submitRequest } = useServiceRequestForm(
+    const {saveAsDraft, submitRequest} = useServiceRequestForm(
         serviceData,
         isSaveMode
     );
@@ -78,19 +84,23 @@ const ServiceRequestForm = ({
     // Removed the second useEffect that was conflicting
 
     const handleSaveDraft = async (data) => {
-        const payload = {
-            ...data,
-            attachments: data.attachments.filter((file) => typeof file === 'object' ? file.file_content : true), // Exclude invalid files
-            is_submitted: false,
-            parent_request: serviceRequestId || null,
-        };
-
+        setIsSaving(true);
         try {
+            const payload = {
+                ...data,
+                attachments: data.attachments.filter((file) =>
+                    typeof file === "object" ? file.file_content : true
+                ),
+                is_submitted: false,
+                parent_request: serviceRequestId || null,
+            };
             await saveAsDraft(payload);
             console.log("Draft saved successfully.");
             setIsSavedAsDraft(true);
         } catch (error) {
             console.error("Error saving draft:", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -99,16 +109,16 @@ const ServiceRequestForm = ({
     };
 
     const handleSubmitRequest = async (data) => {
-        console.log("Submit Data Before Processing:", data); // Debug log
-
-        const payload = {
-            ...data,
-            attachments: data.attachments.filter((file) => typeof file === 'object' ? file.file_content : true), // Exclude invalid files
-            is_submitted: true,
-            parent_request: serviceRequestId || null,
-        };
-
+        setIsSubmittingRequest(true);
         try {
+            const payload = {
+                ...data,
+                attachments: data.attachments.filter((file) =>
+                    typeof file === "object" ? file.file_content : true
+                ),
+                is_submitted: true,
+                parent_request: serviceRequestId || null,
+            };
             if (isSaveMode && serviceData?.id) {
                 await submitRequest(serviceData.id, payload);
             } else {
@@ -118,6 +128,8 @@ const ServiceRequestForm = ({
             setIsSubmitted(true);
         } catch (error) {
             console.error("Error submitting request:", error);
+        } finally {
+            setIsSubmittingRequest(false);
         }
     };
 
@@ -198,6 +210,40 @@ const ServiceRequestForm = ({
                                         placeholder="Needed Date"
                                     />
                                 </div>
+                                <div className="col-span-12">
+                                    <label className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            name="on_behalf_of"
+                                            onChange={(e) => {
+                                                const isChecked = e.target.checked; // Boolean value
+                                                setShowOnBehalfOfField(isChecked);
+                                                setValue("on_behalf_of", isChecked); // Pass boolean directly
+                                                setValue("on_behalf_employee", isChecked ? "" : null); // Reset if unchecked
+                                            }}
+                                            checked={watch("on_behalf_of") || false} // Reflect current form state
+                                        />
+                                        <span className="ml-2">On Behalf Of</span>
+                                    </label>
+                                </div>
+
+                                {showOnBehalfOfField && (
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormAsyncSelect
+                                            label="On Behalf Of Employee"
+                                            name="on_behalf_employee"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="On Behalf Of Employee"
+                                            apiUrl="/select/users/email/"
+                                            queryKeyBase="employees"
+                                            clientSideSearch={true}
+                                            preselectedOptions={formatOptions(serviceData, "on_behalf_employee")}
+                                        />
+                                    </div>
+                                )}
+
+
                                 <div className="xl:col-span-12 col-span-12">
                                     <FormInput
                                         name="request_title"
@@ -231,16 +277,19 @@ const ServiceRequestForm = ({
                                     <FormButton
                                         text="Save"
                                         type="button"
+                                        isLoading={isSaving}
                                         onClick={handleSubmit(handleSaveDraft, onError)}
                                     />
                                     <FormButton
                                         text="Submit"
                                         type="button"
-                                        onClick={handleSubmit(handleSubmitRequest)}
+                                        isLoading={isSubmittingRequest}
+                                        onClick={handleSubmit(handleSubmitRequest, onError)}
                                     />
                                 </>
                             )}
                         </div>
+
                     </div>
                 </div>
                 <ServiceRequestCard
