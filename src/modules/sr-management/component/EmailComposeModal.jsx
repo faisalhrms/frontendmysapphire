@@ -47,26 +47,41 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest }) => {
         }
     }, [isOpen, reset, preselectedToEmails, preselectedCcEmails]);
 
-    // Handle form submission
-    const handleSave = async (data) => {
-        const toEmails = Array.isArray(data.to_email) ? data.to_email.map((item) => item.value) : [];
-        const ccEmails = Array.isArray(data.cc_email) ? data.cc_email.map((item) => item.value) : [];
+const handleSave = async (data) => {
+    console.log("Form Data:", data);
 
-        const payload = {
-            service_request_id: serviceRequest.id,
-            message: data.message,
-            to_email: toEmails,
-            cc_email: ccEmails,
-            send_email: true,
-        };
+    // Ensure the 'to_email' array contains the email values, not the entire object
+    const toEmails = data.to_email && Array.isArray(data.to_email)
+        ? data.to_email.map(item => item?.value || item) // Ensure you're accessing 'value'
+        : [];
 
-        try {
-            await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
-            onClose();
-        } catch (error) {
-            console.error("Error sending email:", error);
-        }
+    const ccEmails = data.cc_email && Array.isArray(data.cc_email)
+        ? data.cc_email.map(item => item?.value || item) // Same for CC emails
+        : [];
+
+    console.log("To Emails:", toEmails);
+    console.log("CC Emails:", ccEmails);
+
+    const payload = {
+        service_request_id: serviceRequest.id,
+        message: data.message,
+        to_email: toEmails,
+        cc_email: ccEmails,
+        send_email: true,
     };
+
+    console.log("Payload:", payload); // Log the final payload to confirm
+
+    try {
+        await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
+        onClose();
+    } catch (error) {
+        console.error("Error sending email:", error);
+    }
+};
+
+
+
 
     return (
         <div
