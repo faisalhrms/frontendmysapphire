@@ -3,7 +3,9 @@ import Notify from "@helpers/toastNotifications.js";
 
 export const currencies =[
     {value: 'USD', label: 'USD'},
-    {value: 'PKR', label: 'PKR'}
+    {value: 'PKR', label: 'PKR'},
+    {value: 'GBP', label: 'GBP'},
+    {value: 'EUR', label: 'EUR'}
 ];
 
 export const subscriptionStatuses = [
@@ -39,12 +41,13 @@ export const paymentStatus=[
 export const paymentMethod=[
     {value: 'card', label: 'Card'},
     {value: 'cash', label: 'Cash'},
+    {value: 'online', label: 'Online'},
 
 ]
 
 export const createSubscription = async (subscriptionData) => {
     try {
-        const response = await api.post('/subscriptions', subscriptionData);
+        const response = await api.post('/subscriptions/', subscriptionData);
         Notify.success(response.data.message);
         return response.data.data;
     }
@@ -56,7 +59,7 @@ export const createSubscription = async (subscriptionData) => {
 export const updateSubscription = async (id, subscriptionData) => {
     console.log("Form Data Submitted:", subscriptionData.status);
     try {
-        const response = await api.put(`/subscriptions/${id}`, subscriptionData);
+        const response = await api.put(`/subscriptions/${id}/`, subscriptionData);
         Notify.success(response.data.message);
         return response.data.data;
     } catch (error) {
@@ -67,8 +70,8 @@ export const updateSubscription = async (id, subscriptionData) => {
 
 export const getSubscriptionById = async (id) => {
     try {
-        const response = await api.get(`/subscriptions/${id}`);
-        return response.data.data;
+        const response = await api.get(`/subscriptions/${id}/`);
+        return response.data;
 
     } catch (error) {
         Notify.error(error.response?.data?.message);
@@ -87,6 +90,16 @@ export const getFilteredSubscriptions = async (filterType, searchQuery, skip = 0
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
+        throw error;
+    }
+};
+export const renewSubscription = async (id, data) => {
+    try {
+        const response = await api.post(`/transactions/${id}/renew/`, data);
+        Notify.success("Subscription renewed successfully");
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || 'Error renewing subscription');
         throw error;
     }
 };
