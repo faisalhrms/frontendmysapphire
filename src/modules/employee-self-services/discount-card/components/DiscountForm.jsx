@@ -58,10 +58,11 @@ const DiscountForm = ({
             <h6 className="text-sm opacity-80">
               Card No. {filteredData?.card_no || "N/A"}
             </h6>
-            {!filteredData?.length && (
+            {!filteredData && (
               <p className="text-red-500 mt-2">User not available</p>
             )}
           </div>
+
           <div className="grid grid-cols-2 gap-6 mb-6">
             {data?.map(({ title, value }, index) => (
               <div
