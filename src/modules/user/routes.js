@@ -10,7 +10,8 @@ export const USER_ROUTES = {
     CREATE: {
         path: '/module/users/create',
         // permission: 'add_user',
-    }
+    },
+
 };
 
 export const MODULE_ROUTES = [
