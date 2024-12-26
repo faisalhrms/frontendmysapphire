@@ -1,7 +1,6 @@
 export const SRM_ROUTES = {
     READ: {
         path: '/module/srm',
-        permission: 'view_sr_management'
     
 
 },
