@@ -1,6 +1,6 @@
 import {generateSidebarItem} from "@helpers/formatters.js"
 import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
-import { DISCOUNT_ROUTES } from "../discount-card/routes";
+
 export const sidebarMenu=[
     generateSidebarItem(
         '',
@@ -25,7 +25,7 @@ export const sidebarMenu=[
                 '',
             ),
             generateSidebarItem(
-                DISCOUNT_ROUTES.READ.path,
+                SELF_SERVICES_ROUTES.SERVICES.DISCOUNT_CARD.path,
                 'link',
                 'Discount Card',
                 3,
