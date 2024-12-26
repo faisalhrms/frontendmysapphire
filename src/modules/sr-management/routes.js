@@ -1,10 +1,6 @@
 export const SRM_ROUTES = {
     READ: {
         path: '/module/srm',
-<<<<<<< HEAD
-     
-=======
->>>>>>> 637cd0620fc6624b4a684c6ea66fd9d4b7f7bbdf
     
 
 },
