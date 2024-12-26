@@ -10,7 +10,7 @@ const UserEdit = () => {
 
     return (
         <>
-            <PageHeader currentpage={`Edit ${userData?.full_name}`} activepage="Users" mainpage="Edit User"/>
+            <PageHeader currentpage={`Edit User`} activepage="Users" mainpage="Edit User"/>
             {userData && (
                 <UserForm
                     userData={userData}

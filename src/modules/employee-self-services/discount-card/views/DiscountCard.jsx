@@ -10,7 +10,7 @@ const DiscountCard = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const user = useSelector((state) => state.auth.user);
-  const adminEmail = ["sana.asghr@srl.com.pk", "rehab.zafar@srl.com.pk"];
+  const adminEmail = ["sana.asghar@srl.com.pk", "rehab.zafar@srl.com.pk"];
   const isUserAdmin = adminEmail?.includes(user.email);
 
   const handleFetchData = async (email, cardNo, load) => {

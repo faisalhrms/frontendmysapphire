@@ -2,9 +2,9 @@ import ReactApexChart from "react-apexcharts";
 
 export const DonatChart = ({ data }) => {
     console.log(`data from donat`,data);
-    const series = data.map(item => item.count); // The values for the chart
+    const series = data?.map(item => item.count); // The values for the chart
     const options = {
-        labels: data.map(item => item.status), // Labels for the chart
+        labels: data?.map(item => item.status), // Labels for the chart
         chart: {
             type: 'donut',
             height: 260,

@@ -23,6 +23,7 @@ const badgeStyles = {
     not_registered: info,
     suspended: warning,
     deactivated: danger,
+    pending:warning,
 };
 
 const statusStyles = {
@@ -34,6 +35,7 @@ const statusStyles = {
     cancelled: txtDanger,
     active:txtSuccess,
     archived:txtWarning,
+    pending:warning,
 };
 
 export const getBadgeClasses = (text, classes) => {

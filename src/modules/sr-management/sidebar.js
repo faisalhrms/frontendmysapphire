@@ -17,7 +17,10 @@ export const sidebarMenu = [
                 'SR Assignment',
                 1,
                 '',
+<<<<<<< HEAD
               
+=======
+>>>>>>> 637cd0620fc6624b4a684c6ea66fd9d4b7f7bbdf
             ),
 
         ]

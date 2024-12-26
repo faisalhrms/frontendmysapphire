@@ -82,7 +82,7 @@ const ServiceRequestCard = ({ serviceData, currentUser, control, setValue, error
     };
 
     return (
-        <div className="xl:col-span-3 col-span-12">
+        <div className="xl:col-span-3 col-span-12 ">
             <div className="box bg-primary">
                 <div className="flex items-start bg-primary p-4 rounded-xl shadow-md">
                     <span className="avatar avatar-xl avatar-rounded mr-4">

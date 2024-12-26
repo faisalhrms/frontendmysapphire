@@ -38,7 +38,7 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
             <PageHeader currentpage="Add New Equipment" activepage="Inventory" mainpage="Add" />
 
             <form onSubmit={handleSubmit(handleEquipmentSubmit)}>
-                <div className="grid grid-cols-12 gap-x-6">
+                <div className="grid grid-cols-12 gap-x-6 md:flex">
                     <div className="xxl:col-span-9">
                         <div className="box">
                             <div className="box-header">
@@ -49,15 +49,15 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
                                     <div className="xl:col-span-4 col-span-12">
 
-                                        <FormAsyncSelect
-                                            name="site_id"
+                                    <FormAsyncSelect
+                                            name="Site_id"
                                             control={control}
                                             errors={errors}
                                             placeholder="Site"
-                                            apiUrl="/select/sites"
-                                            queryKeyBase="sites"
+                                            apiUrl="/select/locations"
+                                            queryKeyBase="locations"
                                             clientSideSearch={true}
-                                            preselectedOptions={formatOptions(equipmentData, 'site')}
+                                            preselectedOptions={formatOptions(equipmentData, 'location')}
                                         />
                                     </div>
 
