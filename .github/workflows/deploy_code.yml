@@ -1,0 +1,98 @@
+name: Deploy Server
+
+on:
+  push:
+    branches:
+      - staging_server
+      - main
+
+jobs:
+  deploy_staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging_server'  # Only runs for 'staging' branch
+
+    steps:
+
+    - name: Test SSH Connectivity to Staging Server
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_staging
+        chmod 600 ~/.ssh/id_rsa_staging
+        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+        ssh -i ~/.ssh/id_rsa_staging -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "echo 'Connected to Staging Server'"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.STAGING_SECRET_KEY }}
+        SERVER_IP: ${{ secrets.STAGING_SERVER_IP }}
+        SERVER_USER: ${{ secrets.STAGING_SERVER_USER }}
+
+    - name: Run Deployment Script to Staging Server
+      run: |
+        ssh -i ~/.ssh/id_rsa_staging -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'EOF'
+          # Start logging
+          mkdir -p /var/log/pipeline
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+          echo "Deployment to Staging React started at $TIMESTAMP" >> /var/log/pipeline/deploy.log
+
+          # Navigate to project directory and update
+          cd /var/www/html/web_portal/frontend_react
+          git pull
+
+          npm run build
+        
+          sudo systemctl reload  nginx
+
+          # Log the result of deployment
+          if [ $? -eq 0 ]; then
+            echo "Deployment to Staging React completed successfully at $(date "+%Y-%m-%d %H:%M:%S")" >> /var/log/pipeline/deploy.log
+          else
+            echo "Deployment to Staging React failed at $(date "+%Y-%m-%d %H:%M:%S")" >> /var/log/pipeline/deploy.log
+          fi
+        EOF
+      env:
+        SERVER_IP: ${{ secrets.STAGING_SERVER_IP }}
+        SERVER_USER: ${{ secrets.STAGING_SERVER_USER }}
+
+  deploy_main:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # Only runs for 'main' branch
+
+    steps:
+
+    - name: Test SSH Connectivity to Main Server
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa_production
+        chmod 600 ~/.ssh/id_rsa_production
+        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+        ssh -i ~/.ssh/id_rsa_production -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "echo 'Connected to Main Server'"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.MAIN_SECRET_KEY }}
+        SERVER_IP: ${{ secrets.MAIN_SERVER_IP }}
+        SERVER_USER: ${{ secrets.MAIN_SERVER_USER }}
+
+    - name: Run Deployment Script to Main Server
+      run: |
+        ssh -i ~/.ssh/id_rsa_production -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'EOF'
+          # Start logging
+          mkdir -p /var/log/pipeline
+          TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+          echo "Deployment to Main React started at $TIMESTAMP" >> /var/log/pipeline/deploy.log
+
+          # Navigate to project directory and update
+          cd /var/www/html/web_portal/frontend_react
+          git pull
+
+          npm run build
+          
+          sudo systemctl reload  nginx
+        
+          # Log the result of deployment
+          if [ $? -eq 0 ]; then
+            echo "Deployment to Main React completed successfully at $(date "+%Y-%m-%d %H:%M:%S")" >> /var/log/pipeline/deploy.log
+          else
+            echo "Deployment to Main React failed at $(date "+%Y-%m-%d %H:%M:%S")" >> /var/log/pipeline/deploy.log
+          fi
+        EOF
+      env:
+        SERVER_IP: ${{ secrets.MAIN_SERVER_IP }}
+        SERVER_USER: ${{ secrets.MAIN_SERVER_USER }}
