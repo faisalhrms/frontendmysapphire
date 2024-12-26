@@ -43,7 +43,7 @@ const FormAsyncSelect = ({
     const fetchOptions = useCallback(async (search) => {
         try {
             const response = await api.get(apiUrl, { params: { search } });
-            return ensureArray(response.data.data);
+            return ensureArray(response.data?.data);
         } catch (error) {
             console.error('Error fetching options:', error);
             return [];

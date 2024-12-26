@@ -15,8 +15,8 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
         handleSizeChange,
     } = useDataTable(apiUrl, 10, filter); // Pass filter to hook
 
-    const items = Array.isArray(data?.data.rows) ? data.data.rows : [];
-    const total = data?.data.total || 0;
+    const items = Array.isArray(data?.data?.rows) ? data.data?.rows : [];
+    const total = data?.data?.total || 0;
 
     const memoizedColumns = useMemo(() => columns, [columns]);
     const memoizedData = useMemo(() => items, [items]);
