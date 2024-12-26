@@ -5,8 +5,9 @@ import Notify from "@helpers/toastNotifications.js";
 
 export const getSubscriptionSummary = async () => {
     try {
-        const response = await api.get('/subscriptions/summary');
-        return response.data.data; // Assuming data is in response.data.data
+        const response = await api.get('/dashboard/subscriptions/summary/');
+        console.log(`summary`,response);
+        return response.data.data;// Assuming data is in response.data.data
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Error fetching subscription summary');
         throw error;
@@ -15,8 +16,10 @@ export const getSubscriptionSummary = async () => {
 
 export const getActiveAndPendingSubscriptions = async () => {
     try {
-        const response = await api.get('/subscriptions/active-pending');
+        const response = await api.get('/dashboard/subscriptions/active-pending/');
+        console.log(`active pending`,response);
         return response.data.data; // Assuming data is in response.data.data
+
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Error fetching active and pending subscriptions');
         throw error;
@@ -25,7 +28,8 @@ export const getActiveAndPendingSubscriptions = async () => {
 
 export const getChartData = async () => {
     try {
-        const response = await api.get('/subscriptions/charts');
+        const response = await api.get('/dashboard/subscriptions/charts/');
+        console.log(`charts`,response);
         return response.data.data; // Assuming data is in response.data.data
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Error fetching chart data');

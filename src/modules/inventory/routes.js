@@ -2,16 +2,16 @@
 export const INVENTORY_ROUTES = {
     READ:{
       path:'/module/equipment',
-        permission: 'equipment_read',
+        // permission: 'equipment_read',
     },
     ADD:{
         path:'/module/equipment/add',
-        permission: 'equipment_create',
+        // permission: 'equipment_create',
 
     },
     DETAIL:{
         path:'/module/equipment/detail/:id',
-        permission: 'equipment_read'
+        // permission: 'equipment_read'
     }
 }
 export const MODULE_ROUTES = [

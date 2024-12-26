@@ -14,7 +14,10 @@ export  const SELF_SERVICES_ROUTES={
         },
         WORK_DESK:{
             path:'/module/ess/work-desk',
-        }
+        },
+        DISCOUNT_CARD: {
+            path: "/module/ess/discount-card",
+          },
     }
 }
 export  const MODULE_ROUTES = [
@@ -37,5 +40,9 @@ export  const MODULE_ROUTES = [
     {
         path:SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path,
         component:()=>import('/src/modules/employee-self-services/work-desk/views/WorkDesk.jsx')
+    },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.DISCOUNT_CARD.path,
+        component:()=>import('/src/modules/employee-self-services/discount-card/views/DiscountCard.jsx')
     }
 ]

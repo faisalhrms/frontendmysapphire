@@ -11,7 +11,7 @@ import FormButton from "@components/form/FormButton.jsx";
 const InventoryForm = ({ equipmentData, control, errors, isSubmitting, handleSubmit, handleEquipmentSubmit }) => {
     return (
         <form onSubmit={handleSubmit(handleEquipmentSubmit)}>
-            <div className="grid grid-cols-12 gap-4">
+            <div className="grid grid-cols-12 gap-4 ">
 
                 <div className="col-span-12 lg:col-span-9">
                     <div className="box">
