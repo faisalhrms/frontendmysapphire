@@ -144,7 +144,7 @@ const UserForm = ({ userData}) => {
                                         <div className="flex flex-wrap items-center">
                                             <div className="me-2 font-semibold">Gender :</div>
                                             <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.gender}</span>
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender==="M" ? "Male" : "Female"}</span>
                                         </div>
                                     </li>
                                     <li className="list-group-item">
