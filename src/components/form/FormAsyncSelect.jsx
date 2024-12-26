@@ -88,19 +88,51 @@ const FormAsyncSelect = ({
         };
     }, [debouncedSearch]);
 
+    // const handleCreateOption = async (newOptionLabel, field) => {
+    //     const newOption = await saveNewOption(newOptionLabel);
+    //     if (newOption) {
+    //         setSelectedOptions(prev => {
+    //             return [...prev, newOption].filter((v, i, a) => a.findIndex(t => t.value === v.value) === i);
+    //         });
+    //         if (isMulti) {
+    //             field.onChange([...(field.value || []), newOption.value]);
+    //         } else {
+    //             field.onChange(newOption.value);
+    //         }
+    //     }
+    // }; Rehab Code
+
+    // Instead of calling the returned data `newOption`, call it `updatedList`
     const handleCreateOption = async (newOptionLabel, field) => {
-        const newOption = await saveNewOption(newOptionLabel);
-        if (newOption) {
-            setSelectedOptions(prev => {
-                return [...prev, newOption].filter((v, i, a) => a.findIndex(t => t.value === v.value) === i);
-            });
-            if (isMulti) {
-                field.onChange([...(field.value || []), newOption.value]);
-            } else {
-                field.onChange(newOption.value);
+        const updatedList = await saveNewOption(newOptionLabel);
+        if (updatedList && Array.isArray(updatedList)) {
+            setAllOptions(updatedList);
+            const newlyCreatedItem = updatedList.find(
+                opt => opt.label.toLowerCase() === newOptionLabel.toLowerCase()
+            );
+            if (newlyCreatedItem) {
+                if (isMulti) {
+                    field.onChange([...(field.value || []), newlyCreatedItem.value]);
+                    setSelectedOptions(prev => [...prev, newlyCreatedItem]);
+                } else {
+                    field.onChange(newlyCreatedItem.value);
+                    setSelectedOptions([newlyCreatedItem]);
+                }
             }
         }
     };
+
+
+    const saveNewOption = async (newOptionLabel) => {
+                 if (!allowSaveNewOption || !saveOptionEndpoint) return;
+                 try {
+                         const { data } = await api.post(saveOptionEndpoint, { label: newOptionLabel });
+                         return data.data; // Ensure this includes both value and label
+                     } catch (error) {
+                         console.error('Error saving new option:', error);
+                         return null;
+               }
+       };
 
     return (
         <>

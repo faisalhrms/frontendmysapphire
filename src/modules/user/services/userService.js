@@ -18,8 +18,9 @@ export const createUser = async (userData) => {
 };
 
 export const updateUser = async (id, userData) => {
+
     try {
-        const response = await api.put(`/users/${id}/`, userData);
+        const response = await api.put(`/users/${id}/update/`, userData);
         Notify.success(response.data.message);
         return response.data.data;
     } catch (error) {
@@ -30,7 +31,7 @@ export const updateUser = async (id, userData) => {
 
 export const getUserById = async (id) => {
     try {
-        const response = await api.get(`/users/${id}/`);
+        const response = await api.get(`/users/${id}/detail/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
