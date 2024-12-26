@@ -94,19 +94,35 @@ function ContentLeft({generatedReqData, serviceRequest}) {
                 </div>
             </div>
 
-            <div className="box shadow-md  dark:border dark:border-gray-700 rounded-lg overflow-hidden">
-                <FormRichTextarea
-                    name="description"
+            <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
+        <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50 ">
+          <h2 className="box-title text-lg font-semibold text-gray-700">
+            Description
+          </h2>
+        </div>
+
+        <div className="p-4 pt-2">
+          <table className="w-full text-sm text-gray-600">
+            <tbody>
+              <tr>
+                <td className="py-2 text-gray-700 text-normal dark:text-gray-200">
+                  <FormRichTextarea
+                    name=""
                     control={control}
                     errors={errors}
                     readOnly
-                    placeholder="Description"
+                    placeholder=""
                     editorOptions={{
-                        height: 300,
-                        buttonList: []
+                      height: 300,
+                      buttonList: [],
                     }}
-                />
-            </div>
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
             {generatedReqData && Object.keys(generatedReqData).length > 0 && (
                 <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">

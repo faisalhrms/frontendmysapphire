@@ -2,6 +2,7 @@ import React from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
+import { string } from "zod";
 
 const TaskGeneratedTable = () => {
 
@@ -15,7 +16,13 @@ const TaskGeneratedTable = () => {
         {Header: "SR #", accessor: "sr_number"},
         {Header: "Task Type", accessor: "sr_type.name"},
         {Header: "Requester Location", accessor: "location.name"},
-        {Header: "Request Title", accessor: "request_title"},
+        {
+            Header: "Request Title",
+            accessor: "request_title",
+            Cell: ({ value }) => 
+              value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"
+          },
+          
         {
             Header: "SR Time", accessor: "created_at",
             Cell: ({value}) => value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : "",
