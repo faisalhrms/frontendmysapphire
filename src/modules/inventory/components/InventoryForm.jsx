@@ -161,7 +161,7 @@ const InventoryForm = ({ equipmentData, control, errors, isSubmitting, handleSub
                 </div>
 
                 {/* Right Sidebar with Date Fields and Custodian */}
-                <div className="col-span-12 lg:col-span-3 flex flex-col gap-2">
+                <div className="col-span-12 lg:col-span-3 flex flex-col ">
                     <div className="box flex-grow">
                         <div className="box-header">
                             <div className="box-title">Purchase Date</div>

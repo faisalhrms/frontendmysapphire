@@ -11,13 +11,15 @@ const ServiceRequestCard = ({
   setValue,
   errors,
 }) => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([
+    { id: `${Date.now()}-${Math.random()}`, file: null, file_content: "" },
+  ]);
   const [existingAttachments, setExistingAttachments] = useState([]);
 
   useEffect(() => {
     if (serviceData?.attachments) {
       setExistingAttachments(serviceData.attachments);
-  
+
       setValue(
         "attachments",
         serviceData.attachments.map((att) => att.id)
@@ -40,7 +42,7 @@ const ServiceRequestCard = ({
     const reader = new FileReader();
 
     reader.onload = () => {
-      const base64Content = reader.result.split(",")[1]; // Extract Base64 content
+      const base64Content = reader.result.split(",")[1];
       newFiles[index] = {
         ...newFiles[index],
         file,
@@ -49,9 +51,8 @@ const ServiceRequestCard = ({
 
       setFiles(newFiles);
 
-     
       setValue("attachments", [
-        ...existingAttachments.map((att) => att.id), 
+        ...existingAttachments.map((att) => att.id),
         ...newFiles.map((f) => ({
           file_name: f.file?.name,
           file_content: f.file_content,
@@ -63,38 +64,37 @@ const ServiceRequestCard = ({
       console.error("Failed to read file:", file.name);
     };
 
-    reader.readAsDataURL(file); 
+    reader.readAsDataURL(file);
   };
 
-  const removeFileInput = (index) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    setFiles(newFiles);
+const removeFileInput = (index) => {
+  const newFiles = files.filter((_, i) => i !== index);
+  setFiles(newFiles);
+
+  setValue("attachments", [
+    ...existingAttachments.map((att) => att.id), // Only include IDs for existing attachments
+    ...newFiles.filter((f) => f.file).map((f) => ({
+      file_name: f.file?.name,
+      file_content: f.file_content,
+    })), // Include valid file objects for new files
+  ]);
+};
 
 
-    setValue("attachments", [
-      ...existingAttachments.map((att) => att.id), 
-      ...newFiles.map((f) => ({
-        file_name: f.file?.name,
-        file_content: f.file_content,
-      })),
-    ]);
-  };
+const removeExistingAttachment = (attachmentId) => {
+  const updatedAttachments = existingAttachments.filter(
+    (att) => att.id !== attachmentId
+  );
+  setExistingAttachments(updatedAttachments);
 
-  const removeExistingAttachment = (attachmentId) => {
-    const updatedAttachments = existingAttachments.filter(
-      (att) => att.id !== attachmentId
-    );
-    setExistingAttachments(updatedAttachments);
-
-   
-    setValue("attachments", [
-      ...updatedAttachments.map((att) => att.id), 
-      ...files.map((f) => ({
-        file_name: f.file?.name,
-        file_content: f.file_content,
-      })),
-    ]);
-  };
+  setValue("attachments", [
+    ...updatedAttachments.map((att) => att.id), // Only include remaining IDs for existing attachments
+    ...files.filter((f) => f.file).map((f) => ({
+      file_name: f.file?.name,
+      file_content: f.file_content,
+    })), // Include valid file objects for new files
+  ]);
+};
 
   return (
     <div className="xl:col-span-3 col-span-12">
@@ -133,7 +133,6 @@ const ServiceRequestCard = ({
       </div>
       <div className="box">
         <div className="box-body p-4 rounded-md cursor-pointer">
-    
           {existingAttachments.map((attachment) => (
             <div
               key={attachment.id}
@@ -155,40 +154,38 @@ const ServiceRequestCard = ({
             </div>
           ))}
 
-      
-          {files.length === 0 && (
-            <div className="flex items-center justify-between bg-gray-100 rounded-md mb-3 p-2">
+          {files.map((file, index) => (
+            <div
+              key={file.id}
+              className="flex items-center justify-between bg-gray-100 rounded-md mb-3 p-2"
+            >
               <input
                 type="file"
                 className="border rounded-md py-2 px-3 w-full"
-                onChange={(event) => handleFileChange(event, 0)}
+                onChange={(event) => handleFileChange(event, index)}
               />
               <div className="flex items-center flex-shrink-0 ml-2">
                 <i
                   className="ri-eye-fill text-success mr-2 cursor-pointer"
                   onClick={() => {
-                    if (files[0]?.file) {
-                      const url = URL.createObjectURL(files[0].file);
+                    if (file.file) {
+                      const url = URL.createObjectURL(file.file);
                       window.open(url, "_blank");
                     }
                   }}
                 ></i>
                 <i
                   className="ri-delete-bin-5-fill text-danger cursor-pointer"
-                  onClick={() => removeFileInput(0)}
+                  onClick={() => removeFileInput(index)}
                 ></i>
               </div>
             </div>
-          )}
+          ))}
 
           <div className="flex justify-start mt-4">
             <i
               className="bi bi-plus-square text-success px-3 py-2 rounded-md cursor-pointer hover:bg-success-dark"
-              onClick={() => {
-                if (files.length === 0) {
-                  addFileInput();
-                }
-              }}
+              onClick={addFileInput}
             ></i>
           </div>
         </div>

@@ -106,8 +106,7 @@ const ServiceRequestDetail = () => {
                                                 rel="noopener noreferrer"
                                                 className="text-blue-500 underline"
                                             >
-                                                {attachment.file_name || `Attachment ${index + 1}`} // Fallback if
-                                                file_name is not present
+                                                {attachment.file_name || `Attachment ${index + 1}`}
                                             </a>
                                         ))}
 

@@ -7,7 +7,7 @@ export const sidebarMenu = [
         '',
         'sub',
         'Access Control',
-        5,
+        6,
         'bx-cog',
         '',
         [
