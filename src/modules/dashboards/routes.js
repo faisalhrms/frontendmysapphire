@@ -22,7 +22,7 @@ export const DASHBOARD_ROUTES = {
     },
     SR: {
         path: '/dashboards/sr',
-        permission: 'dashboard_sr'
+        // permission: 'dashboard_sr'
     },
     SR_LIST: {
         path: '/dashboards/sr/sr-list/:status',
