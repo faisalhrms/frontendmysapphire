@@ -28,6 +28,7 @@ jobs:
     - name: Run Deployment Script to Staging Server
       run: |
         ssh -i ~/.ssh/id_rsa_staging -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'EOF'
+          set -e  # Exit immediately if any command fails
           # Start logging
           mkdir -p /var/log/pipeline
           TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
@@ -73,6 +74,7 @@ jobs:
     - name: Run Deployment Script to Main Server
       run: |
         ssh -i ~/.ssh/id_rsa_production -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP << 'EOF'
+          set -e  # Exit immediately if any command fails
           # Start logging
           mkdir -p /var/log/pipeline
           TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
