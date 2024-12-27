@@ -61,7 +61,7 @@ const DiscountForm = ({
             Card No. {filteredData?.card_no || "N/A"}
           </h6>
           {!filteredData && (
-            <p className="text-red-500 mt-2">User not available</p>
+            <p className="text-red-500 mt-2">Data not available</p>
           )}
         </div>
   
