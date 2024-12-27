@@ -14,10 +14,12 @@ import Notify from "@helpers/toastNotifications.js";
 import { SELF_SERVICES_ROUTES } from "@modules/employee-self-services/routes.js";
 
 function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
-    const { control, handleSubmit, formState: { errors }, setValue } = useForm({});
+    const { control, handleSubmit, formState: { errors }, setValue,watch } = useForm({});
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [taskIdToUpdate, setTaskIdToUpdate] = useState(null);
+
+    console.log(selectedStatus)
 
     const userOptions = formatOptions(generatedReqData, "status");
 
@@ -32,6 +34,7 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
         }
     };
     const navigate = useNavigate();
+    console.log(watch('status'))
 
     const handleNavigateToSubTask = () => {
         navigate(SELF_SERVICES_ROUTES.SERVICES.CREATE.path, {
@@ -106,7 +109,7 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
             <TaskFormHeader />
             <CreatedAssign generatedReqData={generatedReqData} serviceRequest={serviceRequest} />
             <div className="flex flex-col lg:flex-row lg:space-x-4 w-full mt-8">
-                <ContentLeft generatedReqData={generatedReqData} serviceRequest={serviceRequest} />
+                <ContentLeft generatedReqData={generatedReqData} serviceRequest={serviceRequest} selectedStatus={selectedStatus}/>
                 <ContentRight generatedReqData={generatedReqData} serviceRequest={serviceRequest} />
             </div>
         </div>

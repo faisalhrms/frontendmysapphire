@@ -135,7 +135,7 @@ const ServiceRequestForm = ({
 
     return (
         <form onSubmit={(e) => e.preventDefault()}>
-            <div className="grid grid-cols-12 gap-x-6">
+            <div className="grid grid-cols-12 gap-x-6 ">
                 <div className="xxl:col-span-9">
                     <div className="box">
                         <div className="box-body overflow-hidden">

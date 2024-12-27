@@ -16,8 +16,7 @@ export const sidebarMenu = [
                 'link',
                 'SR Assignment',
                 1,
-                '',
-                SRM_ROUTES.READ.permission,
+                ''
             ),
 
         ]

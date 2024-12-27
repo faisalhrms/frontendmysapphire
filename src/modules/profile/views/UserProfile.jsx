@@ -1,42 +1,52 @@
 import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { statuses } from "@modules/user/services/userService.js";
-import userSchema from "@modules/user/schemas/userSchema.js";
+import { formatOptions } from "@helpers/formatters.js";
+import { formatDate } from "@helpers/dateTime.js";
+import userEditSchema from "@modules/user/schemas/userEditSchema.js";
 import FormInput from "@components/form/FormInput.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormButton from "@components/form/FormButton.jsx";
-import {formatOptions} from "@helpers/formatters.js";
-import {useUserForm} from "@modules/user/hooks/userHooks.js";
 import FileUpload from "@components/FileUpload.jsx";
 import Avatar from "@components/Avatar.jsx";
-import {formatDate} from "@helpers/dateTime.js";
-import {Link} from "react-router-dom";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
-import userEditSchema from "@modules/user/schemas/userEditSchema.js";
+import { Link } from "react-router-dom";
+import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import profileEditSchema from "@modules/profile/schemas/profileEditSchema.js";
+import {useProfileForm} from "@modules/profile/hooks/profileHooks.js";
 
-const UserForm = ({ userData}) => {
+const UserProfile = () => {
+    const userData = useSelector((state) => state.auth.user);
 
-    const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
-        resolver: zodResolver(userEditSchema),
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        setValue,
+    } = useForm({
+        resolver: zodResolver(profileEditSchema),
         defaultValues: {
-            ...userData
-        }
+            ...userData,
+        },
     });
-
-    const { handleUserSubmit } = useUserForm(userData);
 
     useEffect(() => {
         if (userData) {
-            Object.keys(userData).forEach(key => {
+            Object.keys(userData).forEach((key) => {
                 setValue(key, userData[key]);
             });
         }
     }, [userData, setValue]);
 
+    const {handleProfileUpdate} = useProfileForm(userData);
+
     return (
-        <form onSubmit={handleSubmit(handleUserSubmit)}>
+        <>
+            <PageHeader currentpage={`Edit Profile`} activepage="User" mainpage="Edit Profile"/>
+
+            <form onSubmit={handleSubmit(handleProfileUpdate)}>
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="xxl:col-span-5 xl:col-span-12 col-span-12">
                     <div className="box overflow-hidden">
@@ -144,12 +154,12 @@ const UserForm = ({ userData}) => {
                                         <div className="flex flex-wrap items-center">
                                             <div className="me-2 font-semibold">Gender :</div>
                                             <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender==="M" ? "Male" : "Female"}</span>
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender === "M" ? "Male" : "Female"}</span>
                                         </div>
                                     </li>
                                     <li className="list-group-item">
                                         <div className="flex flex-wrap items-center">
-                                            <div className="me-2 font-semibold">Department :</div>
+                                        <div className="me-2 font-semibold">Department :</div>
                                             <span
                                                 className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.department.name}</span>
                                         </div>
@@ -166,26 +176,23 @@ const UserForm = ({ userData}) => {
                         </div>
                     </div>
                 </div>
+
                 <div className="xxl:col-span-7">
                     <div className="box">
                         <div className="box-header">
-                            <div className="box-title">User Info</div>
+                            <div className="box-title">Edit Profile</div>
                         </div>
-
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
-                                {/* Avatar Upload */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FileUpload
-                                        currentValue={userData?.avatar_id} // Updated to match payload structure
+                                        currentValue={userData?.avatar_id}
                                         file={userData?.avatar}
                                         inputName="avatar_id"
                                         control={control}
                                         errors={errors}
                                     />
                                 </div>
-
-                                {/* Password Input */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FormInput
                                         type="password"
@@ -196,58 +203,18 @@ const UserForm = ({ userData}) => {
                                     />
                                 </div>
 
-
-
-                                {/* Group IDs Async Select */}
-                                <div className="xl:col-span-12 col-span-12">
-                                    <FormAsyncSelect
-                                        isMulti={true}
-                                        name="group_ids"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Groups"
-                                        apiUrl="/select/roles/" // Updated API endpoint to 'groups'
-                                        queryKeyBase="groups"
-                                        preselectedOptions={formatOptions(userData, 'group_ids')}
-                                    />
-                                </div>
-                                {/* Superuser Checkbox */}
-                                <div className="xl:col-span-12 col-span-12">
-                                    <FormCheckbox
-                                        name="is_superuser"
-                                        label="Superuser"
-                                        control={control}
-                                        errors={errors}
-
-                                    />
-                                </div>
-
-                                {/* Active Status Checkbox */}
-                                <div className="xl:col-span-12 col-span-12">
-                                    <FormCheckbox
-                                        name="is_active"
-                                        label="Active"
-                                        control={control}
-                                        errors={errors}
-                                        className="mt-1"
-                                    />
-                                </div>
-
-
                             </div>
                         </div>
-
-                        {/* Submit Button */}
                         <div
                             className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
                             <FormButton isLoading={isSubmitting}/>
                         </div>
                     </div>
                 </div>
-
             </div>
         </form>
+        </>
     );
 };
 
-export default UserForm;
+export default UserProfile;
