@@ -177,7 +177,7 @@ const UserList = () => {
     ];
 
     const buttons = (
-        // <HasPermission permission='add_user'>
+        <HasPermission permission='add_user'>
             <div className="flex space-x-2">
                 <button
                     type="button"
@@ -187,7 +187,7 @@ const UserList = () => {
                     <i className="ri-add-line font-semibold align-middle"></i> Create User
                 </button>
             </div>
-        // </HasPermission>
+        </HasPermission>
     );
 
     return (

@@ -1,15 +1,15 @@
 export const USER_ROUTES = {
     READ: {
         path: '/module/users',
-        // permission: 'view_user',
+        permission: 'view_user',
     },
     EDIT: {
         path: '/module/users/edit/:id',
-        // permission: 'change_user',
+        permission: 'change_user',
     },
     CREATE: {
         path: '/module/users/create',
-        // permission: 'add_user',
+        permission: 'add_user',
     },
 
 };
