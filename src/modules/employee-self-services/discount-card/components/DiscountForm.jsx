@@ -23,15 +23,15 @@ const DiscountForm = ({
         <div className="box-body">
           <div className="flex flex-wrap justify-between items-center  md:space-y-0 md:space-x-">
             <select
-              className="w-full md:w-1/2 px-4 py-2 rounded-md form-control"
-              value={selectedOption}
-              onChange={(e) => setSelectedOption(e.target.value)}
+                className="w-full md:w-1/2 px-4 py-2 rounded-md form-control"
+                value={selectedOption}
+                onChange={(e) => setSelectedOption(e.target.value)}
             >
-              <option value="email">Email</option>
               <option value="card_no">Card Number</option>
+              <option value="email">Email</option>
             </select>
             <input
-              type="text"
+                type="text"
               placeholder={`Search by ${
                 selectedOption === "email" ? "Email" : "Card Number"
               }`}
