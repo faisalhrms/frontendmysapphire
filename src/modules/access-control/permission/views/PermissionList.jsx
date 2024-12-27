@@ -14,7 +14,8 @@ const Role = () => {
 
     const columns = [
         { Header: 'ID', accessor: 'id' },
-        { Header: 'Name', accessor: 'name' },
+        { Header: 'Name', accessor: 'codename' },
+        { Header: 'Description', accessor: 'name' },
         {
             Header: 'Actions',
             Cell: ({ row }) => (
