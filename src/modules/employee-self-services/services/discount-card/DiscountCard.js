@@ -32,28 +32,29 @@ const fetchDiscountData = async (email = "", cardNo = "") => {
     };
   } catch (error) {
     console.error("Error fetching discount data:", error);
-    return {
-      name: "N/A",
-      card_no: "N/A",
-      data: [
-        // {
-        //   title: "Allowed Balance",
-        //   value: `PKR  0.00`,
-        // },
-        // {
-        //   title: "Remaining Balance",
-        //   value: `PKR  0.00`,
-        // },
-        // {
-        //   title: "Discount Percentage",
-        //   value: `N/A %`,
-        // },
-        // {
-        //   title: "Limit Type",
-        //   value: `N/A`,
-        // },
-      ],
-    };
+    // return {
+    //   name: "N/A",
+    //   card_no: "N/A",
+      
+    //   data: [
+    //     {
+    //       title: "Allowed Balance",
+    //       value: `PKR  0.00`,
+    //     },
+    //     {
+    //       title: "Remaining Balance",
+    //       value: `PKR  0.00`,
+    //     },
+    //     {
+    //       title: "Discount Percentage",
+    //       value: `N/A %`,
+    //     },
+    //     {
+    //       title: "Limit Type",
+    //       value: `N/A`,
+    //     },
+    //   ],
+    // };
   }
 };
 

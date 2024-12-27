@@ -13,6 +13,9 @@ import FileUpload from "@components/FileUpload.jsx";
 import Avatar from "@components/Avatar.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import { Link } from "react-router-dom";
+import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import profileEditSchema from "@modules/profile/schemas/profileEditSchema.js";
+import {useProfileForm} from "@modules/profile/hooks/profileHooks.js";
 
 const UserProfile = () => {
     const userData = useSelector((state) => state.auth.user);
@@ -23,7 +26,7 @@ const UserProfile = () => {
         formState: { errors, isSubmitting },
         setValue,
     } = useForm({
-        resolver: zodResolver(userEditSchema),
+        resolver: zodResolver(profileEditSchema),
         defaultValues: {
             ...userData,
         },
@@ -37,13 +40,13 @@ const UserProfile = () => {
         }
     }, [userData, setValue]);
 
-    const handleProfileUpdate = (formData) => {
-        console.log("Profile updated data:", formData);
-        // Add API call or update logic here
-    };
+    const {handleProfileUpdate} = useProfileForm(userData);
 
     return (
-        <form onSubmit={handleSubmit(handleProfileUpdate)}>
+        <>
+            <PageHeader currentpage={`Edit Profile`} activepage="User" mainpage="Edit Profile"/>
+
+            <form onSubmit={handleSubmit(handleProfileUpdate)}>
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="xxl:col-span-5 xl:col-span-12 col-span-12">
                     <div className="box overflow-hidden">
@@ -130,46 +133,46 @@ const UserProfile = () => {
                                     </div>
                                 )
                             }
-                            {/*<div className="p-6">*/}
-                            {/*    <p className="text-[.9375rem] mb-2 me-6 font-semibold">Other Information :</p>*/}
-                            {/*    <ul className="list-group">*/}
-                            {/*        <li className="list-group-item">*/}
-                            {/*            <div className="flex flex-wrap items-center">*/}
-                            {/*                <div className="me-2 font-semibold">Emp code :</div>*/}
-                            {/*                <span*/}
-                            {/*                    className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.emp_code}</span>*/}
-                            {/*            </div>*/}
-                            {/*        </li>*/}
-                            {/*        <li className="list-group-item">*/}
-                            {/*            <div className="flex flex-wrap items-center">*/}
-                            {/*                <div className="me-2 font-semibold">Father name :</div>*/}
-                            {/*                <span*/}
-                            {/*                    className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.father_name}</span>*/}
-                            {/*            </div>*/}
-                            {/*        </li>*/}
-                            {/*        <li className="list-group-item">*/}
-                            {/*            <div className="flex flex-wrap items-center">*/}
-                            {/*                <div className="me-2 font-semibold">Gender :</div>*/}
-                            {/*                <span*/}
-                            {/*                    className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.gender}</span>*/}
-                            {/*            </div>*/}
-                            {/*        </li>*/}
-                            {/*        <li className="list-group-item">*/}
-                            {/*            <div className="flex flex-wrap items-center">*/}
-                            {/*                <div className="me-2 font-semibold">Department :</div>*/}
-                            {/*                <span*/}
-                            {/*                    className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.department.name}</span>*/}
-                            {/*            </div>*/}
-                            {/*        </li>*/}
-                            {/*        <li className="list-group-item">*/}
-                            {/*            <div className="flex flex-wrap items-center">*/}
-                            {/*                <div className="me-2 font-semibold">Cnic :</div>*/}
-                            {/*                <span*/}
-                            {/*                    className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>*/}
-                            {/*            </div>*/}
-                            {/*        </li>*/}
-                            {/*    </ul>*/}
-                            {/*</div>*/}
+                            <div className="p-6">
+                                <p className="text-[.9375rem] mb-2 me-6 font-semibold">Other Information :</p>
+                                <ul className="list-group">
+                                    <li className="list-group-item">
+                                        <div className="flex flex-wrap items-center">
+                                            <div className="me-2 font-semibold">Emp code :</div>
+                                            <span
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.emp_code}</span>
+                                        </div>
+                                    </li>
+                                    <li className="list-group-item">
+                                        <div className="flex flex-wrap items-center">
+                                            <div className="me-2 font-semibold">Father name :</div>
+                                            <span
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.father_name}</span>
+                                        </div>
+                                    </li>
+                                    <li className="list-group-item">
+                                        <div className="flex flex-wrap items-center">
+                                            <div className="me-2 font-semibold">Gender :</div>
+                                            <span
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender === "M" ? "Male" : "Female"}</span>
+                                        </div>
+                                    </li>
+                                    <li className="list-group-item">
+                                        <div className="flex flex-wrap items-center">
+                                        <div className="me-2 font-semibold">Department :</div>
+                                            <span
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.department.name}</span>
+                                        </div>
+                                    </li>
+                                    <li className="list-group-item">
+                                        <div className="flex flex-wrap items-center">
+                                            <div className="me-2 font-semibold">Cnic :</div>
+                                            <span
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,6 +213,7 @@ const UserProfile = () => {
                 </div>
             </div>
         </form>
+        </>
     );
 };
 

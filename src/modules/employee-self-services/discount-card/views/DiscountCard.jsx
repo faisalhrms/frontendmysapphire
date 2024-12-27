@@ -28,7 +28,7 @@ const DiscountCard = () => {
 
   useEffect(() => {
     if (user.email) handleFetchData(user.email, "");
-  }, [user.email]);
+  }, []);
 
   const handleSearch = () => {
     try {

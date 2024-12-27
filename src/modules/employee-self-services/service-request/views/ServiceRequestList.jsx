@@ -21,7 +21,7 @@ const ServiceRequestList = () => {
     const handleSubmit = async (id) => {
         try {
             await submitServiceRequest(id);
-            setSubmittedRows((prev) => ({ ...prev, [id]: true })); // Mark row as submitted
+            setSubmittedRows((prev) => ({ ...prev, [id]: true })); 
         } catch (error) {
             console.error("Error submitting request:", error.message);
         }
@@ -31,7 +31,12 @@ const ServiceRequestList = () => {
         { Header: 'SR #', accessor: 'sr_number' },
         { Header: 'SR Type', accessor: 'sr_type.name' },
         { Header: 'Location', accessor: 'location.name' },
-        { Header: 'Request Title', accessor: 'request_title' },
+        {
+            Header: "Request Title",
+            accessor: "request_title",
+            Cell: ({ value }) => 
+              value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"
+          },
         { Header: 'Requester', accessor: 'reporter' },
      {
             Header: "Assignee",
@@ -50,7 +55,7 @@ const ServiceRequestList = () => {
         { Header: 'Status', accessor: 'status' },
         {
             Header: 'Created at',
-            accessor: row => formatDate(row.created_at) // Apply formatDate to created_at
+            accessor: row => formatDate(row.created_at) 
         },
         {
             Header: 'Actions',
@@ -59,21 +64,18 @@ const ServiceRequestList = () => {
 
                 return (
                     <div className="flex space-x-2">
-                        {/* Edit icon only if not submitted */}
                         {!is_submitted && !submittedRows[id] && (
                             <button onClick={() => handleEdit(id)} className="ti-btn ti-btn-primary ti-btn-sm">
                                 <i className="ri-edit-line"></i>
                             </button>
                         )}
 
-                        {/* View icon, shown if submitted */}
                         {(is_submitted || submittedRows[id]) && (
                             <button onClick={() => handleView(id)} className="ti-btn ti-btn-info ti-btn-sm">
                                 <i className="ri-eye-line"></i>
                             </button>
                         )}
 
-                        {/* Submit icon only if not submitted */}
                         {(!is_submitted && !submittedRows[id]) && (
                             <button onClick={() => handleSubmit(id)} className="ti-btn ti-btn-primary ti-btn-sm">
                                 <i className="ri-share-forward-line"></i>

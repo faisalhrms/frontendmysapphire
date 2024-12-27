@@ -16,7 +16,7 @@ export const sidebarMenu = [
                 'link',
                 'SR Assignment',
                 1,
-                '',
+                ''
             ),
 
         ]
