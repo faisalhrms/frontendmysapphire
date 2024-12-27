@@ -11,9 +11,9 @@ const ServiceRequestCard = ({
   setValue,
   errors,
 }) => {
-  const [files, setFiles] = useState([]);
-  const [existingAttachments, setExistingAttachments] = useState([]);
-
+ 
+  const [files, setFiles] = useState([{ file: null }]); 
+  const existingAttachments = []; 
   useEffect(() => {
     if (serviceData?.attachments) {
       setExistingAttachments(serviceData.attachments);
@@ -26,59 +26,22 @@ const ServiceRequestCard = ({
   }, [serviceData, setValue]);
 
   const addFileInput = () => {
-    setFiles((prevFiles) => [
-      ...prevFiles,
-      { id: `${Date.now()}-${Math.random()}`, file: null, file_content: "" },
-    ]);
+    setFiles([...files, { file: null }]); 
   };
 
   const handleFileChange = (event, index) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const newFiles = [...files];
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const base64Content = reader.result.split(",")[1]; // Extract Base64 content
-      newFiles[index] = {
-        ...newFiles[index],
-        file,
-        file_content: base64Content,
-      };
-
-      setFiles(newFiles);
-
-     
-      setValue("attachments", [
-        ...existingAttachments.map((att) => att.id), 
-        ...newFiles.map((f) => ({
-          file_name: f.file?.name,
-          file_content: f.file_content,
-        })),
-      ]);
-    };
-
-    reader.onerror = () => {
-      console.error("Failed to read file:", file.name);
-    };
-
-    reader.readAsDataURL(file); 
+    const updatedFiles = [...files];
+    updatedFiles[index].file = event.target.files[0]; 
+    setFiles(updatedFiles);
   };
 
   const removeFileInput = (index) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    setFiles(newFiles);
-
-
-    setValue("attachments", [
-      ...existingAttachments.map((att) => att.id), 
-      ...newFiles.map((f) => ({
-        file_name: f.file?.name,
-        file_content: f.file_content,
-      })),
-    ]);
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles); 
   };
+
+
+
 
   const removeExistingAttachment = (attachmentId) => {
     const updatedAttachments = existingAttachments.filter(
@@ -132,67 +95,64 @@ const ServiceRequestCard = ({
         </div>
       </div>
       <div className="box">
-        <div className="box-body p-4 rounded-md cursor-pointer">
-    
-          {existingAttachments.map((attachment) => (
-            <div
-              key={attachment.id}
-              className="flex items-center justify-between bg-gray-100 rounded-md mb-3"
-            >
-              <span className="flex-grow py-1 px-2">
-                {attachment.file_name}
-              </span>
-              <div className="flex items-center rounded-r-md">
-                <i
-                  className="ri-eye-fill text-success mr-2 cursor-pointer"
-                  onClick={() => window.open(attachment.file, "_blank")}
-                ></i>
-                <i
-                  className="ri-delete-bin-5-fill text-danger cursor-pointer"
-                  onClick={() => removeExistingAttachment(attachment.id)}
-                ></i>
-              </div>
+      <div className="box-body p-4 rounded-md cursor-pointer">
+        {existingAttachments.map((attachment) => (
+          <div
+            key={attachment.id}
+            className="flex items-center justify-between bg-gray-100 rounded-md mb-3"
+          >
+            <span className="flex-grow py-1 px-2">
+              {attachment.file_name}
+            </span>
+            <div className="flex items-center rounded-r-md">
+              <i
+                className="ri-eye-fill text-success mr-2 cursor-pointer"
+                onClick={() => window.open(attachment.file, "_blank")}
+              ></i>
+              <i
+                className="ri-delete-bin-5-fill text-danger cursor-pointer"
+                onClick={() => console.log('Remove attachment', attachment.id)}
+              ></i>
             </div>
-          ))}
+          </div>
+        ))}
 
-      
-          {files.length === 0 && (
-            <div className="flex items-center justify-between bg-gray-100 rounded-md mb-3 p-2">
-              <input
-                type="file"
-                className="border rounded-md py-2 px-3 w-full"
-                onChange={(event) => handleFileChange(event, 0)}
-              />
-              <div className="flex items-center flex-shrink-0 ml-2">
+        {files.map((file, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between bg-gray-100 rounded-md mb-3 p-2"
+          >
+            <input
+              type="file"
+              className="border rounded-md py-2 px-3 w-full"
+              onChange={(event) => handleFileChange(event, index)}
+            />
+            <div className="flex items-center flex-shrink-0 ml-2">
+              {file.file && (
                 <i
                   className="ri-eye-fill text-success mr-2 cursor-pointer"
                   onClick={() => {
-                    if (files[0]?.file) {
-                      const url = URL.createObjectURL(files[0].file);
-                      window.open(url, "_blank");
-                    }
+                    const url = URL.createObjectURL(file.file);
+                    window.open(url, "_blank");
                   }}
                 ></i>
-                <i
-                  className="ri-delete-bin-5-fill text-danger cursor-pointer"
-                  onClick={() => removeFileInput(0)}
-                ></i>
-              </div>
+              )}
+              <i
+                className="ri-delete-bin-5-fill text-danger cursor-pointer"
+                onClick={() => removeFileInput(index)}
+              ></i>
             </div>
-          )}
-
-          <div className="flex justify-start mt-4">
-            <i
-              className="bi bi-plus-square text-success px-3 py-2 rounded-md cursor-pointer hover:bg-success-dark"
-              onClick={() => {
-                if (files.length === 0) {
-                  addFileInput();
-                }
-              }}
-            ></i>
           </div>
+        ))}
+
+        <div className="flex justify-start mt-4">
+          <i
+            className="bi bi-plus-square text-success px-3 py-2 rounded-md cursor-pointer hover:bg-success-dark"
+            onClick={() => addFileInput()}
+          ></i>
         </div>
       </div>
+    </div>
 
       <div className="box">
         <div className="box-body p-4">
