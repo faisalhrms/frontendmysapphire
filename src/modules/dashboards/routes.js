@@ -34,7 +34,7 @@ export const MODULE_ROUTES = [
     {
         path: DASHBOARD_ROUTES.PROJECT.path,
         component: () => import(`/src/modules/dashboards/pms/views/Project.jsx`),
-        permission:DASHBOARD_ROUTES.PROJECT.permission,
+        permission: DASHBOARD_ROUTES.PROJECT.permission,
     },
     {
         path: DASHBOARD_ROUTES.BI.path,
@@ -58,9 +58,12 @@ export const MODULE_ROUTES = [
     {
         path: DASHBOARD_ROUTES.SR.path,
         component: () => import(`/src/modules/dashboards/sr/views/SrDashboard.jsx`),
+        permission: DASHBOARD_ROUTES.SR.permission,
     },
     {
         path: DASHBOARD_ROUTES.SR_LIST.path,
         component: () => import(`/src/modules/dashboards/sr/views/SrList.jsx`),
+        permission: DASHBOARD_ROUTES.SR_LIST.permission,
+
     }
 ];

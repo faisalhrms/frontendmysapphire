@@ -7,8 +7,8 @@ export const sidebarMenu = [
         '',
         'sub',
         ' SR Management',
-        6,
-        'bi bi-diagram-2',
+        5,
+        'bi bi-bezier',
         '',
         [
             generateSidebarItem(
@@ -17,8 +17,10 @@ export const sidebarMenu = [
                 'SR Assignment',
                 1,
                 '',
-            ),
-
-        ]
+            SRM_ROUTES.READ.permission,
     ),
-];
+
+]
+),
+]
+;
