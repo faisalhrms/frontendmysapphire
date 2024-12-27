@@ -1,32 +1,32 @@
 export const DASHBOARD_ROUTES = {
     PROJECT: {
         path: '/dashboards/project-management-system',
-        permission: 'dashboard_pms',
+        permission: 'pms_dashboard',
 
     },
     BI:{
         path: '/dashboards/business-intelligence',
-        permission: 'dashboard_bi',
+        permission: 'bi_dashboard',
     },
     CIO:{
         path: '/dashboards/chief-information-officer',
-        permission: 'dashboard_cio',
+        permission: 'cio_dashboard',
     },
     CS:{
         path: '/dashboards/cyber-security',
-        permission: 'dashboard_cs',
+        permission: 'cs_dashboard',
     },
     SUBSCRIPTION:{
         path: '/dashboards/subscription',
-        // permission:'dashboard_sms'
+         permission:'sms_dashboard'
     },
     SR: {
         path: '/dashboards/sr',
-        // permission: 'dashboard_sr'
+        permission: 'sr_dashboard'
     },
     SR_LIST: {
         path: '/dashboards/sr/sr-list/:status',
-        // permission: 'dashboard_sr'
+        permission: 'sr_dashboard'
     }
 }
 

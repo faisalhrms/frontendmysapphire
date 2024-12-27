@@ -57,7 +57,7 @@ export const sidebarMenu = [
                 6,
                 '',
                 // DASHBOARD_ROUTES.SR.permission,
-            ),
+            )
         ]
     ),
 ];
