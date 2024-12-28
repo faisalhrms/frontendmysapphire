@@ -22,7 +22,6 @@ export const useServiceRequest = (id) => {
 };
 
 export const usePendingReqTaskForm = (pendingReqData) => {
-  console.log(`PendingReqData: `, pendingReqData);
   const navigate = useNavigate();
 
   const handleTaskSubmit = async (data) => {
@@ -40,7 +39,6 @@ export const usePendingReqTaskForm = (pendingReqData) => {
         attachment_ids: Array.isArray(data.attachment_ids) ? data.attachment_ids : [data.attachment_ids],
       };
 
-      console.log("Submitting request data:", requestData);
 
       await createTask(pendingReqData.id, requestData);
       navigate('/module/srm');

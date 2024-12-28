@@ -14,7 +14,6 @@ import EmailComposeModal from "@modules/sr-management/component/EmailComposeModa
 const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceRequest}) => {
     const {user} = useSelector((state) => state.auth);
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
-    console.log("sr data", serviceRequest)
     const {control, formState: {errors}} = useForm();
     const {
         isModalOpen,
@@ -39,7 +38,6 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
     const handleOpenEmailModal = () => {
         setIsEmailModalOpen(true);
     };
-       console.log("discussions", discussions)
     const handleCloseEmailModal = () => {
         setIsEmailModalOpen(false);
     };
