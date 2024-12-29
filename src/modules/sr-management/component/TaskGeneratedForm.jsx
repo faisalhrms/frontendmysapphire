@@ -19,7 +19,6 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [taskIdToUpdate, setTaskIdToUpdate] = useState(null);
 
-    console.log(selectedStatus)
 
     const userOptions = formatOptions(generatedReqData, "status");
 
@@ -34,7 +33,6 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
         }
     };
     const navigate = useNavigate();
-    console.log(watch('status'))
 
     const handleNavigateToSubTask = () => {
         navigate(SELF_SERVICES_ROUTES.SERVICES.CREATE.path, {
