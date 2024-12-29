@@ -18,7 +18,6 @@ function ContentLeft({ generatedReqData, serviceRequest, selectedStatus }) {
     },
   });
 
-  console.log(generatedReqData);
 
   return (
     <div className="w-full lg:w-3/5  rounded-lg dark:bg-bodybg">
@@ -74,7 +73,7 @@ function ContentLeft({ generatedReqData, serviceRequest, selectedStatus }) {
                   <span className="badge bg-primary/10 text-primary">
                     {selectedStatus?.label
                       ? selectedStatus?.label
-                      : serviceRequest?.status || "-"}
+                      : generatedReqData?.status || "-"}
                   </span>
                 </td>
                 <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">

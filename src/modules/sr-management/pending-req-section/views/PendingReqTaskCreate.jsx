@@ -8,7 +8,6 @@ const PendingReqTaskCreate = () => {
     const { pendingReqData } = useServiceRequest(id);  // Destructure serviceData for easier access
 
 
-    console.log("Pending Request Data:", pendingReqData);
 
 
 

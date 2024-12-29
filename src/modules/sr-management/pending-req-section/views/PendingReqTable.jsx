@@ -27,7 +27,6 @@ const PendingRequestsTable = () => {
 
   const onConfirmClose = async () => {
     try {
-      console.log("Selected Service Request ID:", selectedSRId); // Debugging
       await closeServiceRequest(selectedSRId);
       setIsModalOpen(false);
       setSelectedSRId(null);

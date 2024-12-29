@@ -3,7 +3,6 @@ import React from "react";
 import {useSelector} from "react-redux";
 
 const ServiceRequestCard = ({serviceData = {}, currentUser}) => {
-    console.log(`currentUser`, currentUser);
     return (
         <div className="xl:col-span-3 col-span-12">
             <div className="box">

@@ -222,7 +222,6 @@ const removeExistingAttachment = (attachmentId) => {
               onOptionSelect={(selectedOption) => {
                 const emails = selectedOption.map((option) => option.value);
                 setValue("cc_email", emails);
-                console.log("CC Emails Updated:", emails);
               }}
             />
           </div>

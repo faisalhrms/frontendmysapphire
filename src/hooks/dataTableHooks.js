@@ -16,7 +16,6 @@ export const useDataTable = (apiUrl, pageSize, filter = null) => {
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
     });
-    console.log(data)
     const debouncedSearch = useCallback(debounce((value) => {
         setSearch(value);
         setPage(1);
