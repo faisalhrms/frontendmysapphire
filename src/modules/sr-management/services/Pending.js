@@ -2,7 +2,6 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const createTask = async (id, requestData) => {
-  console.log("Sending request data:", requestData);
   try {
     const response = await api.post(`/sr-task/${id}`, requestData);
     Notify.success(response.data.message || "Task created successfully");
@@ -42,7 +41,6 @@ export const closeServiceRequest = async (id) => {
 };
 
 export const updateServiceRequest = async (id, requestData) => {
-    console.log("Updating service request:", requestData);
     try {
         const response = await api.put(`/service-request/${id}/update/`, requestData);
         return response.data.data;

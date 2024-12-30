@@ -4,7 +4,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createPermission, updatePermission } from '@modules/access-control/services/accessService.js';
 
 const PermissionModal = ({ isOpen, onClose, permission }) => {
-  console.log(`this is permission`, permission);
 
   // State variables for name and codename
   const [permissionName, setPermissionName] = useState('');

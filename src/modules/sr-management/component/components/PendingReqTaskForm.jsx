@@ -35,7 +35,6 @@ const PendingReqTaskForm = ({pendingReqData}) => {
     const {handleTaskSubmit} = usePendingReqTaskForm(pendingReqData);
 
     const handleSaveDraft = async (data) => {
-        console.log("Form data before submission:", data);
         try {
             await handleTaskSubmit(data);
         } catch (error) {
@@ -47,7 +46,6 @@ const PendingReqTaskForm = ({pendingReqData}) => {
         <form
             onSubmit={handleSubmit(
                 (data) => {
-                    console.log("Form Submitted Data:", data);
                     handleSaveDraft(data);
                 },
                 (validationErrors) => {

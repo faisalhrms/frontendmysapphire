@@ -9,6 +9,7 @@ import React, {useEffect} from "react";
 import {useIsAuthenticated} from "@modules/auth/hooks/authHooks.js";
 import {useNavigate} from "react-router-dom";
 import {PMS_ROUTES} from "@modules/project-management/routes.js";
+import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
 
 
 const Login = () => {
@@ -16,7 +17,7 @@ const Login = () => {
   const isAuthenticated = useIsAuthenticated();
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(PMS_ROUTES.PROJECT.READ.path);
+      navigate(SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path);
     }
   }, [isAuthenticated]);
 

@@ -42,7 +42,7 @@ const UserForm = ({ userData}) => {
                     <div className="box overflow-hidden">
                         <div className="box-body !p-0">
                             <div className="sm:flex items-start p-6 main-profile-cover">
-                                <Avatar avatar={userData.employee.avatar} size='xxl' parentClasses='me-4'/>
+                                <Avatar avatar={userData.avatar} size='xxl' parentClasses='me-4'/>
                                 <div className="flex-grow main-profile-info">
                                     <div className="flex items-center !justify-between">
                                         <h6 className="font-semibold mb-1 text-white text-[1rem]">{userData.full_name} ({userData.employee.emp_code})</h6>
@@ -177,7 +177,7 @@ const UserForm = ({ userData}) => {
                                 {/* Avatar Upload */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FileUpload
-                                        currentValue={userData?.avatar_id} // Updated to match payload structure
+                                        currentValue={userData?.avatar?.file_url} // Updated to match payload structure
                                         file={userData?.avatar}
                                         inputName="avatar_id"
                                         control={control}
