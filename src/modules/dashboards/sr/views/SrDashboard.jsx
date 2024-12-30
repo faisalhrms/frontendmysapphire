@@ -142,7 +142,7 @@ const SrDashboard = () => {
           <div
             className={`transition-all duration-300 ease-in-out ${
               showFilters ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-            } overflow-hidden`}
+            } `}
           >
             <div className="box">
               <div className="box-body">
