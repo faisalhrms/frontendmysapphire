@@ -11,7 +11,7 @@ export const sidebarMenu = [
         5,
        'bx bx-message-square-edit',
       
-        // DIGITAL_SIGNATURES_ROUTES.READ.permission
+        
 
     )
 ];
