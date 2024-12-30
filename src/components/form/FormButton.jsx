@@ -1,4 +1,4 @@
-const FormButton = ({ isLoading, text = "Save changes", className = "m-2", ...props }) => {
+const FormButton = ({ isLoading, text = "Save changes", className = "m-2", submitTxt= "Submitting...", ...props }) => {
     return (
         <button
             type="submit"
@@ -8,7 +8,7 @@ const FormButton = ({ isLoading, text = "Save changes", className = "m-2", ...pr
         >
             {isLoading ? (
                 <>
-                    <span className="me-2">Submitting...</span>
+                    <span className="me-2">{submitTxt}</span>
                     <span className="loading">
                         <i className="ri-loader-2-fill text-[1rem] animate-spin"></i>
                     </span>

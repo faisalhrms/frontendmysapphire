@@ -351,29 +351,34 @@ const SrDashboard = () => {
 
         {[
           {
-            status: "Additional 1",
-            label: "Additional 1",
-            icon: "ri-add-line",
-            bg: "bg-success",
+            rating: 4,
           },
           {
-            status: "Additional 2",
-            label: "Additional 2",
-            icon: "ri-add-box-line",
-            bg: "bg-info",
+            rating: 5,
           },
           {
-            status: "Additional 3",
-            label: "Additional 3",
-            icon: "ri-add-circle-line",
-            bg: "bg-warning",
+            rating: 5,
           },
         ].map((item, index) => (
           <div
             key={index}
-            className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12"
+            className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12 mb-4"
           >
-            {renderCard2(item.status, item.label, item.icon, item.bg)}
+            <div className="bg-white shadow-lg rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-right">
+                  <p className="text-yellow-500 font-bold">
+                    {"⭐".repeat(item.rating)}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 text-right">
+                <a
+                  href="#"
+                  className="text-purple-600 text-sm font-medium hover:underline"
+                ></a>
+              </div>
+            </div>
           </div>
         ))}
       </div>
