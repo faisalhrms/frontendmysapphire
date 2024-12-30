@@ -51,7 +51,7 @@ const SubscriptionListCard = ({totalCount, title, items }) => {
                                         <div className="flex items-center">
                                             <i className="ri-calendar-2-line me-1 font-semibold text-primary"></i>
                                             <p className="mb-0 text-[0.8rem] opacity-70 text-[#8c9097] dark:text-white/50 font-semibold">
-                                                {formatDate(item.created_at)}
+                                                {formatDate(item.started_at)}
                                             </p>
                                         </div>
                                         <HasPermission permission="change_subscription">
