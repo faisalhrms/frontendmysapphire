@@ -92,6 +92,12 @@ const SavedSignature = () => {
             >
               Downlond
             </button>
+            <button
+              onClick={() => onOpenModal(employee_code)}
+               className="bx bx-download"
+            >
+             Download All signature
+            </button>
 
           </div>
         );
