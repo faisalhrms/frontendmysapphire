@@ -106,7 +106,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                   <div className="xl:col-span-4 col-span-12">
                     <FormInput
                       type="text"
-                      name="phoneNumber"
+                      name="Phone"
                       control={control}
                       errors={errors}
                       label={true}
