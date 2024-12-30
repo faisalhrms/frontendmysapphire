@@ -9,7 +9,6 @@ import ServiceReadCard from "@modules/employee-self-services/service-request/com
 const ServiceRequestDetail = () => {
     const {id} = useParams();
     const {serviceData} = useServiceRequest(id);
-    console.log(serviceData);
     if (!serviceData) {
         return <p>Loading...</p>;
     }

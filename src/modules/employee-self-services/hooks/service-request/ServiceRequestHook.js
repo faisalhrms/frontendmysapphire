@@ -9,7 +9,6 @@ export const useServiceRequestForm = (serviceData, isEditMode) => {
     const navigate = useNavigate();
 
     const saveAsDraft = async (data) => {
-        console.log(`this is data in handleSaveDraft`, data);
         try {
             let response;
             if (isEditMode && serviceData?.id) {
@@ -17,7 +16,6 @@ export const useServiceRequestForm = (serviceData, isEditMode) => {
                 navigate('/module/ess/services-request'); // Redirect after successful submission
 
             } else {
-console.log(`this is data`,data)
                 response = await createServiceRequest(data);
                 navigate('/module/ess/services-request'); // Redirect after successful submission
 

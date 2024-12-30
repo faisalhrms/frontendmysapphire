@@ -58,7 +58,6 @@ const ServiceRequestForm = ({
         },
     });
 
-    console.log("Service Request Form Data:", serviceData);
     const selectedDepartment = watch("department_id");
     const selectedSubDepartment = watch("sub_department_id");
 

@@ -1,31 +1,25 @@
 export const SRM_ROUTES = {
     READ: {
         path: '/module/srm',
-    
+        permission: 'view_sr_management',
+    },
+    TASK: {
+        path: '/module/srm/taskgenerated',
+    },
 
-},
-TASK:{
-    path:'/module/srm/taskgenerated',
-  
+    CREATE: {
+        path: '/module/srm/createtask/:id',
 
-},
+    },
 
-CREATE:{
-    path:'/module/srm/createtask/:id',
-  
+    COMPLETE: {
+        path: '/module/srm/taskcompleteform',
 
-},
 
-COMPLETE:{
-    path:'/module/srm/taskcompleteform',
-  
-
-},
-GENERATED:{
-    path:'/module/srm/taskgeneratedform/:id',
-  
-
-},
+    },
+    GENERATED: {
+        path: '/module/srm/taskgeneratedform/:id',
+    },
 
 };
 
@@ -39,7 +33,7 @@ export const MODULE_ROUTES = [
         path: SRM_ROUTES.TASK.path,
         component: () => import(`/src/modules/sr-management/views/Tg.jsx`),
     },
-   
+
     {
         path: SRM_ROUTES.CREATE.path,
         component: () => import(`/src/modules/sr-management/pending-req-section/views/PendingReqTaskCreate.jsx`),
