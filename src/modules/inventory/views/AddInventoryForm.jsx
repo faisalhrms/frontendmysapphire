@@ -250,3 +250,11 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
 };
 
 export default AddEquipmentForm;
+
+
+
+
+
+
+
+
