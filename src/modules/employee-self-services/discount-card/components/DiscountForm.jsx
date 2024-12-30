@@ -1,7 +1,7 @@
 import React from "react";
 import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
-import HasPermission from "@components/HasPermission.jsx";
+// import HasPermission from "@components/HasPermission.jsx";
 const DiscountForm = ({
   isUserAdmin,
   selectedOption,
@@ -58,14 +58,14 @@ const DiscountForm = ({
             <h6 className="text-sm opacity-80">
               Card No. {filteredData?.card_no || "N/A"}
             </h6>
-            <HasPermission permission="change_group" negate>
+            {/* <HasPermission permission="change_group" negate>
               {!filteredData && (
                 <p className="text-red-500 mt-2">Data not available</p>
               )}
-            </HasPermission>
-            {/* {!filteredData && (
+            </HasPermission> */}
+            {!filteredData && (
             <p className="text-red-500 mt-2">Data not available</p>
-          )} */}
+          )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
