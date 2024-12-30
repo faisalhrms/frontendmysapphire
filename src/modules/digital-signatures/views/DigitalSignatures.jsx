@@ -5,7 +5,7 @@ import SignatureForm from "../component/SignaturesForm";
 import SocialSignature from "../component/SocialSignatures";
 import TemplateSignature from "../component/TemplateSignature";
 import SavedSignature from "../component/SavedSignature";
-import { getSignature, saveSignature } from "../services/service";
+import { getSignature, saveSignature } from "../services/Service";
 
 const DigitalSignatures = () => {
   const [activeTab, setActiveTab] = useState("details");
