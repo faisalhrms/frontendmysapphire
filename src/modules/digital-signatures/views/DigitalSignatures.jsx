@@ -114,7 +114,7 @@ const DigitalSignatures = () => {
             )} */}
             {activeTab === "saved" && (
               <div
-                className="tab-pane col-span-12 md:col-span-9"
+                className="tab-pane col-span-12 "
                 id="saved"
                 aria-labelledby="saved"
                 role="tabpanel"

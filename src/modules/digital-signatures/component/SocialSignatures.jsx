@@ -1,5 +1,3 @@
-
-
 import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import FormInput from "@components/form/FormInput.jsx";
@@ -63,7 +61,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       label={true}
-                      placeholder="Enter a Facebook URL"
+                      placeholder="Facebook URL"
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
@@ -73,7 +71,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       label={true}
-                      placeholder="Enter an Instagram username"
+                      placeholder="User name"
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
@@ -83,7 +81,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       label={true}
-                      placeholder="Enter a LinkedIn profile"
+                      placeholder="LinkedIn profile"
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
@@ -93,7 +91,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       label={true}
-                      placeholder="Enter a Twitter handle"
+                      placeholder="Twitter handle"
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
@@ -103,7 +101,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       label={true}
-                      placeholder="Enter a TikTok username"
+                      placeholder="TikTok username"
                     />
                   </div>
                 </div>
@@ -116,21 +114,31 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
           </div>
         </div>
 
-        {/* Preview Section */}
         <div className="xxl:col-span-3">
           <div className="box">
             <div className="box-header">
               <div className="box-title"> Preview</div>
             </div>
-            <div className="box-body">
-              <FormInput
-                type="text"
-                name="Preview"
-                control={control}
-                errors={errors}
-                label={false}
-                placeholder="Preview"
-              />
+           
+            <div className="box-body border border-gray-300 rounded-md p-4 bg-gray-50">
+              <div className="mb-4 text-gray-700 font-semibold">Preview</div>
+              <div className="border border-dashed border-gray-300 rounded-md h-32 flex items-center justify-center bg-white">
+               
+              </div>
+              <div className="mt-4 flex justify-end gap-4">
+                <button
+                  className="px-4 py-2 text-sm font-medium text-blue-500 border border-blue-500 rounded-md ti-btn-primary-full  focus:outline-none"
+                  onClick={() => console.log("Save Signature")}
+                >
+                  Save Signature
+                </button>
+                <button
+                  className="px-4 py-2 text-sm font-medium text-red-500 border border-red-500 rounded-md ti-btn-primary-full  focus:outline-none"
+                  onClick={() => console.log("Clear")}
+                >
+                  Clear
+                </button>
+              </div>
             </div>
           </div>
         </div>
