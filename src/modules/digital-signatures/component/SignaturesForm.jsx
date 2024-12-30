@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
-
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
   const {
     control,
@@ -59,13 +59,16 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
-                    <FormInput
-                      type="text"
-                      name="Employee Name"
+                    <FormAsyncSelect
+                      name="Employee Name "
                       control={control}
                       errors={errors}
-                      label={true}
-                      placeholder=" Employee Name"
+                      placeholder="Employee "
+                      apiUrl="/select/employees/"
+                      queryKeyBase="employees"
+                      isMulti={false}
+                      preselectedOptions={[]}
+                     
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
@@ -79,13 +82,14 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
-                    <FormInput
-                      type="text"
-                      name="department"
+                    <FormAsyncSelect
+                      name="department_id"
                       control={control}
                       errors={errors}
-                      label={true}
                       placeholder="Department"
+                      apiUrl="/select/departments"
+                      queryKeyBase="departments"
+                      clientSideSearch={true}
                     />
                   </div>
 
@@ -165,12 +169,10 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false }) => {
             <div className="box-header">
               <div className="box-title"> Preview</div>
             </div>
-           
+
             <div className="box-body border border-gray-300 rounded-md p-4 bg-gray-50">
               <div className="mb-4 text-gray-700 font-semibold">Preview</div>
-              <div className="border border-dashed border-gray-300 rounded-md h-32 flex items-center justify-center bg-white">
-               
-              </div>
+              <div className="border border-dashed border-gray-300 rounded-md h-32 flex items-center justify-center bg-white"></div>
               <div className="mt-4 flex justify-end gap-4">
                 <button
                   className="px-4 py-2 text-sm font-medium text-blue-500 border border-blue-500 rounded-md ti-btn-primary-full  focus:outline-none"

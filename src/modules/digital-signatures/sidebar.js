@@ -9,7 +9,8 @@ export const sidebarMenu = [
         'link',
         'Digital Signatures',
         5,
-        'ri-sketching"',
+       'bx bx-message-square-edit',
+      
         // DIGITAL_SIGNATURES_ROUTES.READ.permission
 
     )
