@@ -7,8 +7,7 @@ const GeneratedTaskView = () => {
     const { id } = useParams();
     const { generatedReqData, serviceRequest } = useServiceRequest(id);
 
-    console.log("Generated Task Data:", generatedReqData);
-    console.log("Service Request Data:", serviceRequest);
+
 
     return (
         <>

@@ -11,7 +11,7 @@ const userUpdateSchema = z.object({
     password: z.string().optional(),
     is_superuser: z.boolean().optional(),
     is_active: z.boolean().optional(),
-    avatar_id: z.union([z.number(), z.null()]).optional(),
+    avatar: z.union([z.string().length(0), z.number(), z.null()]).optional(),
     group_ids: z.array(z.number()).optional(),
 });
 

@@ -18,7 +18,7 @@ export const DASHBOARD_ROUTES = {
     },
     SUBSCRIPTION:{
         path: '/dashboards/subscription',
-         permission:'sms_dashboard'
+        permission:'sms_dashboard'
     },
     SR: {
         path: '/dashboards/sr',
@@ -67,3 +67,4 @@ export const MODULE_ROUTES = [
 
     }
 ];
+
