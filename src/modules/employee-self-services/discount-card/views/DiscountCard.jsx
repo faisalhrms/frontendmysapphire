@@ -3,7 +3,6 @@ import DiscountForm from "../components/DiscountForm";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { useSelector } from "react-redux";
 import fetchDiscountData from "../../services/discount-card/DiscountCard";
-import HasPermission from "@components/HasPermission.jsx";
 
 const DiscountCard = () => {
   const [selectedOption, setSelectedOption] = useState("email");
@@ -52,7 +51,6 @@ const DiscountCard = () => {
       />
 
      
-      <HasPermission permission="discount_card_management">
         <DiscountForm
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
@@ -64,7 +62,7 @@ const DiscountCard = () => {
           filteredData={filteredData}
           data={filteredData?.data}
         />
-      </HasPermission>
+    
 
   
     </>

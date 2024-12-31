@@ -367,7 +367,7 @@ const SrDashboard = () => {
             <div className="bg-white shadow-lg rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="text-right">
-                  <p className="text-yellow-500 font-bold">
+                  <p className="text-yellow-500  line-center font-bold">
                     {"⭐".repeat(item.rating)}
                   </p>
                 </div>

@@ -1,4 +1,4 @@
-import api from "./axiosConfig.js";
+import api from "../../../config/axiosConfig";
 
 export const saveSignature = async (data) => {
     console.table(data)
@@ -24,3 +24,12 @@ export const getSignature = async (data) => {
 };
 
 
+export const getSignatureByEmpCode = async (employeeCode) => {
+  console.table(employeeCode)
+try {
+  const response = await api.get(`/signatures/${employeeCode}`);
+  return response?.data;
+} catch (error) {
+  console.error("Error fetching discount data:", error);
+}
+};
