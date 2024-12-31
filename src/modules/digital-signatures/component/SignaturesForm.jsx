@@ -211,6 +211,7 @@ import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import TemplateSignature from "./TemplateSignature";
 
 const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
   const {
@@ -253,7 +254,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
   return (
     <>
       <div className="grid grid-cols-12 gap-x-6">
-        <div className="xxl:col-span-9">
+        <div className="xxl:col-span-8">
           <div className="box">
             <div className="box-header">
               <div className="box-title">SignatureForm</div>
@@ -284,10 +285,10 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                   </div>
                   <div className="xl:col-span-4 col-span-12">
                     <FormInput
-                      name="employee"
+                      name="name"
                       control={control}
                       errors={errors}
-                      placeholder="Employee "
+                      placeholder="Employee Name"
                       apiUrl="/select/employees/"
                       queryKeyBase="employees Name"
                       isMulti={false}
@@ -367,7 +368,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                       placeholder="Address"
                     />
                   </div>
-
+{/* 
                   <div className="col-span-12">
                     <GalleryUpload
                       currentValue={previewData.attachment_ids}
@@ -377,7 +378,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                       control={control}
                       errors={errors}
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
@@ -387,13 +388,13 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
             </div>
           </div>
         </div>
-        <div className="xxl:col-span-3">
+        <div className="xxl:col-span-4">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Preview</div>
             </div>
 
-            <div className="box-body border border-gray-300 rounded-md p-4 bg-gray-50">
+            {/* <div className="box-body border border-gray-300 rounded-md p-4 bg-gray-50">
               <div className="mb-4 text-gray-700 font-semibold">Preview</div>
               <div className="border border-dashed border-gray-300 rounded-md p-4 bg-white">
              
@@ -451,7 +452,8 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                   Clear
                 </button>
               </div>
-            </div>
+            </div> */}
+            <TemplateSignature title={false}/>
           </div>
         </div>
       </div>
