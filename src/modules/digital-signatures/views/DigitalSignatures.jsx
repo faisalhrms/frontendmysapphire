@@ -5,12 +5,13 @@ import SignatureForm from "../component/SignaturesForm";
 import SocialSignature from "../component/SocialSignatures";
 import TemplateSignature from "../component/TemplateSignature";
 import SavedSignature from "../component/SavedSignature";
-import { getSignature, saveSignature } from "../services/Service";
+import { getSignatureByEmpCode } from "../services/Service";
+
 
 const DigitalSignatures = () => {
   const [activeTab, setActiveTab] = useState("details");
-
   const [data, setData] = useState({});
+  const [editData, setEditData] = useState(null);
 
   const handleSubmitData = async (data1, step) => {
     setData({ ...data, ...data1 });
@@ -22,6 +23,18 @@ const DigitalSignatures = () => {
       console.log("savedData", savedData);
     }
   };
+
+  const handleSavedDataFetch = async(Code,step)=>{
+    try {
+      console.log(Code,step)
+      await setActiveTab("details")
+      const data = await getSignatureByEmpCode(Code);
+      setEditData(data)
+      
+    } catch (error) {
+      
+    }
+  }
   return (
     <>
       <PageHeader
@@ -89,7 +102,7 @@ const DigitalSignatures = () => {
                 aria-labelledby="details"
                 role="tabpanel"
               >
-                <SignatureForm handleSubmitData={handleSubmitData} />
+                <SignatureForm handleSubmitData={handleSubmitData} editData={editData} />
               </div>
             )}
             {activeTab === "social" && (
@@ -99,7 +112,7 @@ const DigitalSignatures = () => {
                 aria-labelledby="social"
                 role="tabpanel"
               >
-                <SocialSignature handleSubmitData={handleSubmitData} />
+                <SocialSignature handleSubmitData={handleSubmitData} editData={editData}/>
               </div>
             )}
             {/* {activeTab === "template" && (
@@ -119,7 +132,7 @@ const DigitalSignatures = () => {
                 aria-labelledby="saved"
                 role="tabpanel"
               >
-                <SavedSignature />
+                <SavedSignature handleSavedDataFetch={handleSavedDataFetch}/>
               </div>
             )}
           </div>

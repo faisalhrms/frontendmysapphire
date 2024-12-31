@@ -1,7 +1,8 @@
 import React from "react";
 import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
-// import HasPermission from "@components/HasPermission.jsx";
+import HasPermission from "@components/HasPermission.jsx";
+
 const DiscountForm = ({
   isUserAdmin,
   selectedOption,
@@ -16,7 +17,8 @@ const DiscountForm = ({
 }) => {
   return (
     <div className="col-span-12 xl:col-span-6">
-      <div className="box">
+      <HasPermission permission="discount_card_management">
+        <div className="box">
         {isUserAdmin && (
           <div className="box-body">
             <div className="flex flex-wrap justify-between items-center  md:space-y-0 md:space-x-">
@@ -48,6 +50,7 @@ const DiscountForm = ({
           </div>
         )}
       </div>
+      </HasPermission>
       <div className="flex flex-col items-center space-y-6 mt-10 md:mt-20 mb-10 md:mb-20 rounded-3xl">
         <div className="text-black p-6 rounded-3xl shadow-2xl max-w-full md:max-w-3xl w-full border bg-white">
           <div className="flex flex-col items-center mb-4">
