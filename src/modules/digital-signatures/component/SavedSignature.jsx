@@ -1,28 +1,16 @@
-
 import React, { useState } from "react";
-import DataTable from "@components/DataTable.jsx"; 
+import DataTable from "@components/DataTable.jsx";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "@modules/sr-management/component/ConfirmationModal.jsx";
+import { getSignatureByEmpCode } from "../services/service";
 
-const SavedSignature = () => {
+const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSignatureId, setSelectedSignatureId] = useState(null);
-  const [signatures, setSignatures] = useState([
-    {
-      id: 1,
-      employee_code: "EMP-001",
-      name: "John Doe",
-      company_id: "Company-1",
-    },
-    {
-      id: 2,
-      employee_code: "EMP-002",
-      name: "Jane Smith",
-      company_id: "Company-2",
-    },
-  ]);
+  const [signatures, setSignatures] = useState([]);
+  console.log(signatures);
   const [loading, setLoading] = useState(false);
 
   const onOpenModal = (id) => {
@@ -37,12 +25,15 @@ const SavedSignature = () => {
 
   const onConfirmDelete = () => {
     setSignatures(signatures.filter((sig) => sig.id !== selectedSignatureId));
-    setIsModalOpen(false);
-    setSelectedSignatureId(null);
+    onCloseModal();
   };
 
-  const fetchSignature = (employeeCode) => {
-    alert(`Signature for Employee Code: ${employeeCode} viewed successfully!`);
+  const fetchSignature = async (employeeCode) => {
+    try {
+      handleSavedDataFetch(employeeCode, 1);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const downloadAllSignatures = () => {
@@ -50,27 +41,42 @@ const SavedSignature = () => {
   };
 
   const columns = [
-    { Header: "Employee Code", accessor: "employee_code" },
+    { Header: "Employee", accessor: "employee_code" },
     { Header: "Name", accessor: "name" },
-    { Header: "Company", accessor: "company_id" },
+    { Header: "Company", accessor: "company.name" },
     {
       Header: "Action",
       Cell: ({ row }) => {
-        const { id, employee_code } = row.original;
+        const { id, employee_code, company } = row.original;
+        console.log(row);
         return (
-          <div className="flex space-x-2">
-            <button
-              onClick={() => fetchSignature(employee_code)}
-              className="ti-btn ti-btn-primary ti-btn-sm"
-              disabled={loading}
-            >
-              View
-            </button>
+          <div className="flex space-x-1">
+           
             <button
               onClick={() => onOpenModal(id)}
               className="ti-btn ti-btn-danger ti-btn-sm"
             >
-              Delete
+              <i class="ri-delete-bin-6-line"></i>
+            </button>
+
+            <button
+             
+              onClick={() => fetchSignature(employee_code)}
+              className="ti-btn ti-btn-primary ti-btn-sm"
+            >
+              <i className="ri-edit-line"></i>
+            </button>
+            <button
+              onClick={downloadAllSignatures}
+              className="ti-btn ti-btn-primary ti-btn-sm"
+            >
+              <i class="ri-file-pdf-line"></i>
+            </button>
+            <button
+              onClick={downloadAllSignatures}
+              className="ti-btn ti-btn-primary ti-btn-sm"
+            >
+              <i class="ri-download-2-line"></i>
             </button>
           </div>
         );
@@ -81,16 +87,8 @@ const SavedSignature = () => {
   return (
     <div>
       <div className="mt-1">
-       
-        <DataTable columns={columns} data={signatures} />
+        <DataTable columns={columns} apiUrl="/signatures/datatable/" />
       </div>
-
-      <button
-        onClick={downloadAllSignatures}
-        className="ti-btn ti-btn-primary mt-3"
-      >
-        Download All Signatures
-      </button>
 
       {isModalOpen && (
         <ConfirmationModal
@@ -106,4 +104,3 @@ const SavedSignature = () => {
 };
 
 export default SavedSignature;
-
