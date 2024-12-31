@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DataTable from "@components/DataTable.jsx";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "@modules/sr-management/component/ConfirmationModal.jsx";
-import { getSignatureByEmpCode } from "../services/service";
+import { getSignatureByEmpCode } from "../services/Service";
 
 const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
   const navigate = useNavigate();
