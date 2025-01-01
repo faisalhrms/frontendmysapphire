@@ -123,7 +123,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                             clientSideSearch={false}
                         />
                       </div>
-                      <div className="xl:col-span-6 col-span-12">
+                      <div className="xl:col-span-4 col-span-12">
                         <FormSelect
                             name="currency"
                             control={control}
@@ -133,13 +133,22 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                         />
                       </div>
 
-                      <div className="xl:col-span-6 col-span-12">
+                      <div className="xl:col-span-4 col-span-12">
                         <FormInput
                             type="number"
                             name="amount"
                             control={control}
                             errors={errors}
                             placeholder="Amount"
+                        />
+                      </div>
+                      <div className="xl:col-span-4 col-span-12">
+                        <FormInput
+                            type="number"
+                            name="per_month_amount"
+                            control={control}
+                            errors={errors}
+                            placeholder="Per Month Amount"
                         />
                       </div>
                       <div className="xl:col-span-6 col-span-12">
