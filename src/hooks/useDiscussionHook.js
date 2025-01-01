@@ -17,7 +17,10 @@ const useDiscussion = (attachment_ids = [], clearAttachments, getEndPoint, store
     const mutation = useMutation({
         mutationFn: (payload) => api.post(storeEndPoint, payload).then((res) => res.data.data),
         onSuccess: (newDiscussion) => {
-            queryClient.setQueryData([getEndPoint], (oldDiscussions) => [...(oldDiscussions || []), newDiscussion]);
+            queryClient.setQueryData([getEndPoint], (oldDiscussions) => {
+                const discussionsArray = oldDiscussions && Array.isArray(oldDiscussions) ? oldDiscussions : [];
+                return [...discussionsArray, newDiscussion];
+            });
             Notify.success('Discussion posted successfully');
             setMessage("");
             clearAttachments();

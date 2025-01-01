@@ -62,7 +62,7 @@ export const useTaskModal = (refetch) => {
     fetchTask();
   }, [id, isEditMode, reset]);
 
-  const openTaskModal = (id = null,startedAt,endedAt, parent_id = null, isEditMode = false) => {
+  const openTaskModal = (id = null,startedAt,endedAt, parent = null, isEditMode = false) => {
 
     setId(id);
     setMilestoneDates({ startedAt, endedAt });
@@ -73,7 +73,7 @@ export const useTaskModal = (refetch) => {
         status: "in_progress",
         priority: "medium",
         description: "",
-        parent_id: parent_id,
+        parent: parent,
         start_date: "", // Reset the start and end date
         end_date: ""
       });
