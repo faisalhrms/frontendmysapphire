@@ -55,6 +55,15 @@ const subscriptionSchema = z.object({
             message: "Amount must be a number greater than 0"
         })
     ]).nullable().optional(),
+    per_month_amount: z.union([
+        z.number().min(1, "Amount must be greater than 0"),
+        z.string().refine((val) => {
+            const num = Number(val);
+            return !isNaN(num) && num > 0;
+        }, {
+            message: "Amount must be a number greater than 0"
+        })
+    ]).nullable().optional(),
     reminder_days: z.union([
         z.number().min(1, "Reminder days must be a number greater than 0"),
         z.string().refine((val) => {

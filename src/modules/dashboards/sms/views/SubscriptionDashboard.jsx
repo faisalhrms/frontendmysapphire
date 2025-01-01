@@ -35,7 +35,7 @@ console.log(`activeSubscriptions`,activeSubscriptions);
                   let route;
                   switch (data.name) {
                       case "Total Subscription":
-                          route = SUBSCRIPTION_ROUTES.READ.path; // Redirect to all subscriptions
+                          route = `${SUBSCRIPTION_ROUTES.READ.path}?filter=total-active`; // Redirect to all subscriptions
                           break;
                       case "Paid Subscription":
                           route = `${SUBSCRIPTION_ROUTES.READ.path}?filter=paid`; // Redirect to paid subscriptions

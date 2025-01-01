@@ -13,7 +13,7 @@ const notFound = 'bg-gray/10 text-black';
 
 
 const badgeStyles = {
-    cancelled:danger,
+    canceled:danger,
     low: success,
     completed: success,
     medium: secondary,
@@ -24,6 +24,7 @@ const badgeStyles = {
     suspended: warning,
     deactivated: danger,
     pending:warning,
+    inactive:danger
 };
 
 const statusStyles = {
@@ -32,10 +33,12 @@ const statusStyles = {
     open: txtPrimary,
     on_hold: txtDanger,
     completed: txtSuccess,
-    cancelled: txtDanger,
+    canceled: txtDanger,
     active:txtSuccess,
     archived:txtWarning,
     pending:warning,
+    inactive:txtDanger
+
 };
 
 export const getBadgeClasses = (text, classes) => {
