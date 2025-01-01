@@ -36,7 +36,7 @@ const TaskDetail = () => {
                 <div className="xl:col-span-9 col-span-12">
                     <TaskSummary task={task} openTaskModal={openTaskModal}/>
                         {task.children.length > 0 && (<TaskTree task={task} openTaskModal={openTaskModal}/>)}
-                    <Discussion title="Task Discussions" getEndPoint={`/tasks/${id}/discussions`}/>
+                    <Discussion title="Task Discussions" storeEndPoint={`/pms/tasks/${id}/discussion/`} getEndPoint={`/pms/tasks/${id}/discussions/`}/>
                 </div>
                 <div className="xl:col-span-3 col-span-12">
                     <TaskAdditionalDetail task={task}/>

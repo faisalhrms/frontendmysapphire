@@ -7,7 +7,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import milestoneSchema from "@modules/project-management/schemas/milestoneSchema.js";
 import {useForm} from "react-hook-form";    
 import {useEffect, useState} from "react";
-import { useQuery } from '@tanstack/react-query';
+
 const useMilestoneForm = (isEditMode = false) => {
     const handleMilestoneSubmit = async (id, milestoneData) => {
         try {

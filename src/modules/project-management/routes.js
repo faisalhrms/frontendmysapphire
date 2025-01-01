@@ -5,11 +5,11 @@ export const PMS_ROUTES = {
         },
         CREATE: {
             path: '/module/projects/create',
-            permission: 'project_create',
+            permission: 'add_project',
         },
         EDIT: {
             path: '/module/projects/edit/:id',
-            permission: 'project_update',
+            permission: 'change_project',
         },
         DETAIL: {
             path: '/module/projects/detail/:id',

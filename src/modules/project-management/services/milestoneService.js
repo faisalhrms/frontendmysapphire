@@ -1,10 +1,10 @@
 import api from "@config/axiosConfig.js";
-import Notify from "@helpers/toastNotifications.js"; // Import showAlert action
+import Notify from "@helpers/toastNotifications.js";
 
 
 export const createMilestone = async (project_id, data) => {
     try {
-        const response = await api.post(`/milestones/${project_id}`, data);
+        const response = await api.post(`/pms/milestones/create/${project_id}/`, data);
 
         Notify.success(response.data.message);
         return response.data;
@@ -17,7 +17,7 @@ export const createMilestone = async (project_id, data) => {
 
 export const updateMilestone = async (milestone_id, milestoneData) => {
     try {
-        const response = await api.put(`/milestones/${milestone_id}`, milestoneData);
+        const response = await api.put(`/pms/milestones/${milestone_id}/`, milestoneData);
 
         Notify.success(response.data.message);
         return response.data;
@@ -26,21 +26,9 @@ export const updateMilestone = async (milestone_id, milestoneData) => {
     }
 };
 
-export const getMilestones = async (page, size, s) => {
-    try {
-        const response = await api.get(`/milestones/datatable`, {
-            params: { skip: (page - 1) * size, limit: size, s },
-        });
-        return response.data.data;
-    } catch (error) {
-        Notify.error(error.response?.data?.message);
-    }
-};
-
-
 export const getMilestoneById = async (id) => {
     try {
-        const response = await api.get(`/milestones/${id}`);
+        const response = await api.get(`/pms/milestones/${id}/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
