@@ -42,7 +42,7 @@ export const getDownloadByEmpCode = async (employeeCode) => {
 };
 
 
-export const getDownloadAll = async () => {
+export const getDownloadAllS = async () => {
   try {
     const response = await api.get(`/signatures/download-all`); 
     return response?.data;

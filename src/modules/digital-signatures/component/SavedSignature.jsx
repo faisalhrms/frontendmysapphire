@@ -46,6 +46,7 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
       console.log(error);
     }
   };
+ 
 
   const columns = [
     { Header: "Employee", accessor: "employee_code" },
