@@ -154,13 +154,13 @@ const UserForm = ({ userData}) => {
                                                 className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.department.name}</span>
                                         </div>
                                     </li>
-                                    <li className="list-group-item">
-                                        <div className="flex flex-wrap items-center">
-                                            <div className="me-2 font-semibold">Cnic :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>
-                                        </div>
-                                    </li>
+                                    {/*<li className="list-group-item">*/}
+                                    {/*    <div className="flex flex-wrap items-center">*/}
+                                    {/*        <div className="me-2 font-semibold">Cnic :</div>*/}
+                                    {/*        <span*/}
+                                    {/*            className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>*/}
+                                    {/*    </div>*/}
+                                    {/*</li>*/}
                                 </ul>
                             </div>
                         </div>

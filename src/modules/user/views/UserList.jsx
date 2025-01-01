@@ -144,10 +144,10 @@ const UserList = () => {
             Header: 'Is Super User',
                 "accessor": "is_superuser",
             Cell: ({ value }) => {
-                const status = value ? 'True' : 'False';
+
                 const statusLabel = value ? 'True' : 'False';
                 return (
-                    <span className={getBadgeClasses(status, '!rounded-full')}>
+                    <span >
                         {toTitleCase(statusLabel)}
                     </span>
                 );
