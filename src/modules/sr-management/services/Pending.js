@@ -40,6 +40,28 @@ export const closeServiceRequest = async (id) => {
   }
 };
 
+export const updateTask = async (id, requestData) => {
+  try {
+    const response = await api.post(`/sr-task/update/${id}`, requestData);
+    Notify.success(response.data.message || "Task updated successfully");
+    return response.data.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Error updating task");
+    throw error;
+  }
+};
+
+export const updateAttachments = async (id, attachments) => {
+  try {
+    const response = await api.put(`/service-request/${id}/attachments/`, { attachments });
+    Notify.success("Attachments updated successfully");
+    return response.data.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Error updating attachments");
+    throw error;
+  }
+};
+
 export const updateServiceRequest = async (id, requestData) => {
     try {
         const response = await api.put(`/service-request/${id}/update/`, requestData);
