@@ -15,13 +15,8 @@ const userUpdateSchema = z.object({
         .optional(),
     is_superuser: z.boolean().optional(),
     is_active: z.boolean().optional(),
-    avatar: z
-        .union([
-            z.string().length(0, { message: "Avatar cannot be an empty string" }),
-            z.number(),
-            z.null(),
-        ])
-        .optional(),
+    avatar_id: z.union([z.string().length(0), z.number(), z.null()]).optional(),
+
     group_ids: z
         .array(z.number().positive({ message: "Group IDs must be positive numbers" }), {
             invalid_type_error: "Group IDs must be an array of positive numbers",

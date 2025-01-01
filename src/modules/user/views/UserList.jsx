@@ -162,7 +162,7 @@ const UserList = () => {
                     {Array.isArray(value) && value.length > 0 ? (
                         [...new Set(value)].map((group, index) => (
                             <span key={index} className="badge bg-primary/10 text-primary">
-                                {toTitleCase(group)}
+                                {toTitleCase(group.name)}
                             </span>
                         ))
                     ) : (
