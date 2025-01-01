@@ -7,7 +7,7 @@ import ReplenishmentHistory from "@modules/replenishment/components/Replenishmen
 const Replenishment = () => {
     return (
         <>
-            <PageHeader currentpage=" Inventory Demand Forecasting" mainpage="Replenishment" />
+            <PageHeader currentpage=" Inventory Demand Forecasting"  />
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
