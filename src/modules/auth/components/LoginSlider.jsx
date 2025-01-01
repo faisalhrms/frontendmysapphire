@@ -26,13 +26,13 @@ const LoginSlider = () => {
                                             <img src={img1} className="authentication-image" alt=""/>
                                         </div>
                                         <h6 className="font-semibold text-[1rem]">Sign In</h6>
-                                        <p className="font-normal text-[.875rem] opacity-[0.7]">
+                                        {/* <p className="font-normal text-[.875rem] opacity-[0.7]">
                                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa eligendi
                                             expedita
                                             aliquam quaerat nulla voluptas facilis. Porro rem voluptates possimus, ad,
                                             autem
                                             quae culpa architecto, quam labore blanditiis at ratione.
-                                        </p>
+                                        </p> */}
                                     </div>
                                 </div>
                             </SwiperSlide>
@@ -43,13 +43,13 @@ const LoginSlider = () => {
                                             <img src={img2} className="authentication-image" alt=""/>
                                         </div>
                                         <h6 className="font-semibold text-[1rem]">Sign In</h6>
-                                        <p className="font-normal text-[.875rem] opacity-[0.7]">
+                                        {/* <p className="font-normal text-[.875rem] opacity-[0.7]">
                                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa eligendi
                                             expedita
                                             aliquam quaerat nulla voluptas facilis. Porro rem voluptates possimus, ad,
                                             autem
                                             quae culpa architecto, quam labore blanditiis at ratione.
-                                        </p>
+                                        </p> */}
                                     </div>
                                 </div>
                             </SwiperSlide>
@@ -60,13 +60,13 @@ const LoginSlider = () => {
                                             <img src={img3} className="authentication-image" alt=""/>
                                         </div>
                                         <h6 className="font-semibold text-[1rem]">Sign In</h6>
-                                        <p className="font-normal text-[.875rem] opacity-[0.7]">
+                                        {/* <p className="font-normal text-[.875rem] opacity-[0.7]">
                                             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa eligendi
                                             expedita
                                             aliquam quaerat nulla voluptas facilis. Porro rem voluptates possimus, ad,
                                             autem
                                             quae culpa architecto, quam labore blanditiis at ratione.
-                                        </p>
+                                        </p> */}
                                     </div>
                                 </div>
                             </SwiperSlide>

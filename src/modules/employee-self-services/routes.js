@@ -17,6 +17,8 @@ export  const SELF_SERVICES_ROUTES={
         },
         DISCOUNT_CARD: {
             path: "/module/ess/discount-card",
+         
+         
           },
     }
 }
