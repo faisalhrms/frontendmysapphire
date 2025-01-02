@@ -11,6 +11,17 @@ const DigitalSignatures = () => {
   const [data, setData] = useState({});
   const [editData, setEditData] = useState(null);
 
+  const [hide, setHide] = useState(false);
+
+  console.log('check',hide)
+  const handleHide = ()=>{
+    try {
+      setHide(!hide)
+    } catch (error) {
+      
+    }
+  }
+
   const handleSubmitData = async (data1, step) => {
     setData({ ...data, ...data1 });
     if (step === 1) {
@@ -73,7 +84,7 @@ const DigitalSignatures = () => {
       <div className="grid grid-cols-12 gap-6">
         <div className="xl:col-span-12 col-span-12">
           <div className="box">
-            <div className="box-header sm:flex block !justify-start">
+            <div className="box-header flex flex-col sm:flex-row justify-between items-center w-full p-4 rounded-md">
               <nav
                 aria-label="Tabs"
                 className="md:flex block !justify-start whitespace-nowrap"
@@ -119,17 +130,18 @@ const DigitalSignatures = () => {
                 >
                   Saved
                 </button>
+              </nav>
                 {activeTab === "saved" && (
                   <div className="flex right">
                     <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md bg-primary flex items-center gap-2 bx bx-down-arrow-althover:bg-primary-dark"
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md bg-primary flex items-center gap-2 hover:bg-primary-dark"
                       onClick={downloadAllScripts}
                     >
-                      Download All Scripts
+                      <i className="bx bxs-download"></i>
+                      All Download
                     </button>
                   </div>
                 )}
-              </nav>
             </div>
           </div>
 
@@ -144,6 +156,8 @@ const DigitalSignatures = () => {
                 <SignatureForm
                   handleSubmitData={handleSubmitData}
                   editData={editData}
+                  hide={hide}
+                  handleHide={handleHide}
                 />
               </div>
             )}
@@ -169,7 +183,7 @@ const DigitalSignatures = () => {
                 aria-labelledby="template"
                 role="tabpanel"
               >
-                <TemplateSignature />
+                <TemplateSignature handleHide={handleHide}/>
               </div>
             )}
 

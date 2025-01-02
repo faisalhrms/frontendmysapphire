@@ -44,7 +44,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
   return (
     <>
       <div className="grid grid-cols-12 gap-x-6">
-        <div className="xxl:col-span-9">
+        <div className="xxl:col-span-9 col-span-12 sm:col-span-9">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Social Media</div>
@@ -105,14 +105,14 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                 </div>
 
                 <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
-                  {/* <FormButton isLoading={isSubmitting} type="submit" /> */}
+                  <FormButton isLoading={isSubmitting} type="submit" />
                 </div>
               </form>
             </div>
           </div>
         </div>
 
-        <div className="xxl:col-span-3">
+        <div className="xxl:col-span-3 col-span-12 sm:col-span-3">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Preview</div>
@@ -148,7 +148,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
               </div>
               <div className="mt-4 flex justify-end gap-4">
                 <button
-                  className="px-4 py-2 text-sm font-medium text-red-500 border border-red-500 rounded-md"
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md"
                   onClick={() => setPreviewData({})}
                 >
                   Clear

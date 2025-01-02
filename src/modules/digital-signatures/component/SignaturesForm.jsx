@@ -6,7 +6,13 @@ import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import TemplateSignature from "./TemplateSignature";
 
-const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
+const SignatureForm = ({
+  handleSubmitData,
+  isEditMode = false,
+  editData,
+  hide,
+  handleHide,
+}) => {
   const {
     control,
     handleSubmit,
@@ -47,7 +53,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
   return (
     <>
       <div className="grid grid-cols-12 gap-x-4">
-        <div className="xxl:col-span-8">
+        <div className="xxl:col-span-8 col-span-12 sm:col-span-8">
           <div className="box">
             <div className="box-header">
               <div className="box-title">SignatureForm</div>
@@ -161,17 +167,6 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                       placeholder="Address"
                     />
                   </div>
-                  {/* 
-                  <div className="col-span-12">
-                    <GalleryUpload
-                      currentValue={previewData.attachment_ids}
-                      files={previewData.attachments}
-                      inputName="attachment_ids"
-                      placeholder="Select Attachments"
-                      control={control}
-                      errors={errors}
-                    />
-                  </div> */}
                 </div>
 
                 <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
@@ -181,7 +176,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
             </div>
           </div>
         </div>
-        <div className="xxl:col-span-4">
+        <div className="xxl:col-span-4 col-span-12 sm:col-span-4">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Preview</div>
@@ -233,12 +228,15 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                   <strong>Address:</strong> {previewData.address}
                 </div>
               )}
-              <TemplateSignature title={false} />
+              {hide && <TemplateSignature title={false} />}
             </div>
-            <div className="mt-4 flex justify-end gap-4">
+            <div className="mt-4 flex justify-end gap-4 mb-4 mr-4">
               <button
-                className="px-4 py-2 text-sm font-medium text-red-500 border border-red-500 rounded-md ti-btn-primary-full  focus:outline-none"
-                onClick={() => setPreviewData({})}
+                className="px-4 py-2 text-sm font-medium rounded-md ti-btn-primary-full"
+                onClick={() => {
+                  setPreviewData({});
+                  handleHide();
+                }}
               >
                 Clear
               </button>
