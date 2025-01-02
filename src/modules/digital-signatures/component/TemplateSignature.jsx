@@ -1,7 +1,7 @@
 import React from "react";
 import Img from "../../../assets/images/company-logos/template.png";
 
-const TemplateSignature = ({ title = true }) => {
+const TemplateSignature = ({ title = true,handleHide }) => {
   return (
     <div className="grid grid-cols-12 gap-x-6">
       <div className="col-span-12">
@@ -12,7 +12,9 @@ const TemplateSignature = ({ title = true }) => {
             </div>
           )}
           <div className="box-body">
-            <div className="flex items-center border p-4 md:p-6 shadow-md rounded-md max-w-full md:max-w-md bg-white">
+            <div className="flex items-center border py-4 md:py-6 shadow-md rounded-md max-w-full md:max-w-md bg-white"
+            onClick={handleHide}
+            >
               <div className="flex-shrink-0">
                 <img
                   src={Img}
