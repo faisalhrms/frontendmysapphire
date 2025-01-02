@@ -46,8 +46,7 @@ const DiscountCard = () => {
     <>
       <PageHeader
         currentpage={`Detail Discount Card`}
-        activepage="Discount Card"
-        mainpage="Discount Card"
+      
       />
 
      

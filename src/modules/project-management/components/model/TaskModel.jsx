@@ -113,7 +113,7 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="Assigned To"
-                                                    apiUrl={`/select/project/${projectId}/users`}
+                                                    apiUrl={`/select/project/${projectId}/users/`}
                                                     queryKeyBase="users"
                                                     preselectedOptions={formattedUsers}
                                                 />
@@ -127,10 +127,10 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="Tags"
-                                                    apiUrl="/select/tags"
+                                                    apiUrl="/select/tags/"
                                                     queryKeyBase="tags"
                                                     preselectedOptions={formattedTags}
-                                                    saveOptionEndpoint="/select/tag"
+                                                    saveOptionEndpoint="/select/tag/"
                                                     allowSaveNewOption={true}
                                                 />
                                             </div>

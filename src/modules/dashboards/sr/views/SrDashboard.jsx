@@ -12,8 +12,8 @@ import {
   yearDashboard,
 } from "@modules/sr-management/services/srServices.js";
 import srSchema from "@modules/sr-management/schema/srSchema.js";
-
-const SrDashboard = () => {
+import Rating from "@mui/material/Rating";
+const SrDashboard = ({ status, label, icon }) => {
   const [showFilters, setShowFilters] = useState(false);
   const navigate = useNavigate();
   const {
@@ -33,8 +33,10 @@ const SrDashboard = () => {
     navigate(`/dashboards/sr/sr-list/${status}`);
   };
 
-  const renderCard = (status, label, icon) => {
-    const count = serviceRequest?.[status] ?? 0;
+  const count = serviceRequest?.[status] ?? 0;
+  const [ratingValue2, setRatingValue2] = useState(null);
+  const handleRatingChange2 = (_event, newValue) => {
+    setRatingValue2(newValue);
 
     return (
       <div
@@ -42,23 +44,21 @@ const SrDashboard = () => {
         className="cursor-pointer xl:col-span-3 lg:col-span-6 md:col-span-6 sm:col-span-6 col-span-12"
       >
         <div className="box">
-          <div className="box-body">
-            <div className="grid grid-cols-12">
-              <div className="col-span-6 pe-0">
-                <p className="mb-2">
-                  <span className="text-[0.75rem]">{label}</span>
-                </p>
-                <p className="mb-2 text-[0.75rem]">
-                  <span className="text-[1.5625rem] font-semibold leading-none vertical-bottom mb-0">
-                    {count}
-                  </span>
-                </p>
-              </div>
-              <div className="col-span-6">
-                <p className="main-card-icon mb-0">
-                  <i className={`text-3xl text-primary ${icon}`}></i>
-                </p>
-              </div>
+          <div className="grid grid-cols-12">
+            <div className="col-span-3">
+              <p className="mb-1">
+                <span className="text-[0.75rem]">{label}</span>
+              </p>
+              <p className="mb-1 text-[0.75rem]">
+                <span className="text-[1.5625rem] font-semibold leading-none vertical-bottom ">
+                  {count}
+                </span>
+              </p>
+            </div>
+            <div className="col-span-3">
+              <p className="main-card-icon mb-0">
+                <i className={`text-3xl text-primary ${icon}`}></i>
+              </p>
             </div>
           </div>
         </div>
@@ -71,37 +71,29 @@ const SrDashboard = () => {
 
     return (
       <div className="xxl:col-span-3  xl:col-span-3 col-span-12">
-        <div className="xxl:col-span-6 xl:col-span-6 col-span-12">
-          <div className="box overflow-hidden">
+        <div
+          onClick={() => handleCardClick(status)}
+          className="cursor-pointer xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
+        >
+          <div className="box overflow-hidden bg-white shadow-md rounded-lg p-2 transition-transform transform hover:scale-105">
             <div className="box-body">
               <div className="flex items-top justify-between">
                 <div>
                   <span
-                    className={`!text-[0.8rem]  !w-[2.5rem] !h-[2.5rem] !leading-[2.5rem] !rounded-full inline-flex items-center justify-center ${bg}`}
+                    className={`!text-[0.7rem] !w-[2rem] !h-[2rem] !leading-[2rem] !rounded-full inline-flex items-center justify-center ${bg}`}
                   >
-                    <i className={`${icon} text-[1rem] text-white`}></i>
+                    <i className={`${icon} text-[0.9rem] text-white`}></i>
                   </span>
                 </div>
-                <div className="flex-grow ms-4">
+                <div className="flex-grow ms-3">
                   <div className="flex items-center justify-between flex-wrap">
                     <div>
-                      <p className="text-[#8c9097] dark:text-white/50 text-[0.813rem] mb-0">
+                      <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem] mb-0">
                         {label}
                       </p>
-                      <h4 className="font-semibold  text-[1.5rem] !mb-2 ">
+                      <h4 className="font-semibold text-[1.25rem] !mb-1">
                         {count}
                       </h4>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between !mt-1">
-                    <div>
-                      <a
-                        className="text-primary text-[0.813rem]"
-                        onClick={() => handleCardClick(status)}
-                      >
-                        View All
-                        <i className="ti ti-arrow-narrow-right ms-2 font-semibold inline-block"></i>
-                      </a>
                     </div>
                   </div>
                 </div>
@@ -195,33 +187,42 @@ const SrDashboard = () => {
           {
             status: "Unassign",
             label: "Unassigned",
-            icon: "ri-user-line",
-            bg: "bg-primary",
+            icon: "ri-user-line text-primary",
           },
           {
             status: "Not-Started",
             label: "Not Started",
-            icon: "ri-time-line",
-            bg: "bg-danger",
+            icon: "ri-time-line text-danger",
           },
           {
             status: "In-Progress",
             label: "In Process",
-            icon: "ri-settings-6-line",
-            bg: "bg-warning",
+            icon: "ri-settings-6-line text-warning",
           },
           {
             status: "Waiting for Approval",
             label: "Waiting for Approval",
-            icon: "ri-check-double-line",
-            bg: "bg-secondary",
+            icon: "ri-loader-2-line text-secondary",
           },
         ].map((item, index) => (
           <div
             key={index}
-            className="xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
+            onClick={() => handleCardClick(item.status)}
+            className="cursor-pointer xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
           >
-            {renderCard2(item.status, item.label, item.icon, item.bg)}
+            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+              <div>
+                <i className={`${item.icon} text-4xl`}></i>
+              </div>
+              <div className="text-center">
+                <h3 className="text-gray-600 text-sm font-medium">
+                  {item.label}
+                </h3>
+                <p className="text-2xl font-bold">
+                  {serviceRequest?.[item.status] ?? 0}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
 
@@ -229,33 +230,42 @@ const SrDashboard = () => {
           {
             status: "Waiting for Quotation",
             label: "Waiting for Quotation",
-            icon: "ri-price-tag-3-line",
-            bg: "bg-secondary",
+            icon: "bx bx-circle-three-quarter text-secondary",
           },
           {
             status: "Waiting for Budget",
             label: "Waiting for Budget",
-            icon: "ri-bank-line",
-            bg: "bg-secondary",
+            icon: "ri-bank-line text-secondary",
           },
           {
             status: "Waiting for Purchase",
             label: "Waiting for Purchase",
-            icon: "ri-shopping-cart-line",
-            bg: "bg-secondary",
+            icon: "ri-bank-line text-secondary",
           },
           {
             status: "Waiting for Acknowledgement",
             label: "Waiting for Acknowledgement",
-            icon: "ri-service-line",
-            bg: "bg-secondary",
+            icon: "ri-service-line text-secondary",
           },
         ].map((item, index) => (
           <div
             key={index}
-            className="xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
+            onClick={() => handleCardClick(item.status)}
+            className="cursor-pointer xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
           >
-            {renderCard2(item.status, item.label, item.icon, item.bg)}
+            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+              <div>
+                <i className={`${item.icon} text-4xl`}></i>
+              </div>
+              <div className="text-center">
+                <h3 className="text-gray-600 text-sm font-medium">
+                  {item.label}
+                </h3>
+                <p className="text-2xl font-bold">
+                  {serviceRequest?.[item.status] ?? 0}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
 
@@ -263,27 +273,37 @@ const SrDashboard = () => {
           {
             status: "Cancelled",
             label: "Cancelled",
-            icon: "ri-close-circle-line",
-            bg: "bg-danger",
+            icon: "ri-close-circle-line text-danger",
           },
           {
             status: "Closed",
             label: "Closed",
-            icon: "ri-lock-line",
-            bg: "bg-secondary",
+            icon: "ri-lock-line text-secondary",
           },
           {
             status: "Completed",
             label: "Completed",
-            icon: "ri-checkbox-circle-fill",
-            bg: "bg-success",
+            icon: "bx bx-check-circle text-success",
           },
         ].map((item, index) => (
           <div
             key={index}
-            className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12"
+            onClick={() => handleCardClick(item.status)}
+            className="cursor-pointer xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12"
           >
-            {renderCard2(item.status, item.label, item.icon, item.bg)}
+            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+              <div>
+                <i className={`${item.icon} text-4xl`}></i>
+              </div>
+              <div className="text-center">
+                <h3 className="text-gray-600 text-sm font-medium">
+                  {item.label}
+                </h3>
+                <p className="text-2xl font-bold">
+                  {serviceRequest?.[item.status] ?? 0}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
 
@@ -291,92 +311,79 @@ const SrDashboard = () => {
           {
             status: "On-Hold",
             label: "On Hold",
-            icon: "ri-pause-circle-line",
-            bg: "bg-success/70",
+            icon: "ri-pause-circle-line text-success",
           },
           {
             status: "Overdue",
             label: "Overdue",
-            icon: "ri-timer-line",
-            bg: "bg-info/70",
+            icon: "ri-timer-line text-info",
           },
           {
             status: "Waiting for GRN",
             label: "Waiting for GRN",
-            icon: "ri-grid-line",
-            bg: "bg-primary/70",
+            icon: "ri-grid-line text-primary",
           },
         ].map((item, index) => (
           <div
             key={index}
-            className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12"
+            onClick={() => handleCardClick(item.status)}
+            className="cursor-pointer xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12"
           >
-            {renderCard2(item.status, item.label, item.icon, item.bg)}
+            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+              <div>
+                <i className={`${item.icon} text-4xl`}></i>
+              </div>
+              <div className="text-center">
+                <h3 className="text-gray-600 text-sm font-medium">
+                  {item.label}
+                </h3>
+                <p className="text-2xl font-bold">
+                  {serviceRequest?.[item.status] ?? 0}
+                </p>
+              </div>
+            </div>
           </div>
         ))}
 
         {[
           {
-            status: "Waiting for PR",
-            label: "Waiting for PR",
-            icon: "ri-checkbox-indeterminate-line",
-            bg: "bg-primary/70",
+            rating: 5,
+            status: "rating",
+            label: "Rating",
+            icon: "ri-star-fill text-yellow-600",
           },
-          {
-            status: "Unassign (1Day)",
-            label: "Unassigned (1 Day)",
-            icon: "ri-loader-line",
-            bg: "bg-primary",
-          },
-          {
-            status: "Unassign (7Day)",
-            label: "Unassigned (7 Days)",
-            icon: "ri-group-line",
-            bg: "bg-warning/70",
-          },
-          {
-            status: "Unassign (Above7Days)",
-            label: "Unassigned (Above 7 Days)",
-            icon: "ri-group-2-line",
-            bg: "bg-warning/70",
-          },
-        ].map((item, index) => (
-          <div
-            key={index}
-            className="xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
-          >
-            {renderCard2(item.status, item.label, item.icon, item.bg)}
-          </div>
-        ))}
-
-        {[
           {
             rating: 4,
+            status: "rating",
+            label: "Rating",
+            icon: "ri-star-fill text-yellow-600",
           },
           {
-            rating: 5,
-          },
-          {
-            rating: 5,
+            rating: 3,
+            status: "rating",
+            label: "Rating",
+            icon: "ri-star-fill text-yellow-600",
           },
         ].map((item, index) => (
           <div
             key={index}
-            className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12 mb-4"
+            onClick={() => handleCardClick(item.status)}
+            className="cursor-pointer xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12 mb-4"
           >
-            <div className="bg-white shadow-lg rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-right">
-                  <p className="text-yellow-500  line-center font-bold">
-                    {"⭐".repeat(item.rating)}
-                  </p>
-                </div>
+            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+              <div className="text-center">
+                <h3 className="text-gray-600 text-sm font-medium">
+                  {item.label}
+                </h3>
+                <p className="text-2xl font-bold">{item.rating}</p>
               </div>
-              <div className="mt-4 text-right">
-                <a
-                  href="#"
-                  className="text-purple-600 text-sm font-medium hover:underline"
-                ></a>
+
+              <div className="mt-2">
+                <Rating
+                  name={`clickable-rating-${index}`}
+                  value={item.rating}
+                  onChange={handleRatingChange2}
+                />
               </div>
             </div>
           </div>

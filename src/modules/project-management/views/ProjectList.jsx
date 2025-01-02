@@ -26,7 +26,7 @@ const ProjectList = () => {
         isSubmittingMilestone,
         handleSubmitMilestone,
         onSubmitMilestone,
-    } = useMilestoneModal();
+    } = useMilestoneModal(refetch);
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
@@ -51,13 +51,13 @@ const ProjectList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Project Management" mainpage="Projects" />
+            <PageHeader currentpage="Project Management System" />
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box custom-box">
                         <div className="box-body p-4">
                             <div className="flex items-center justify-between flex-wrap gap-4">
-                                <HasPermission permission='project_create'>
+                                <HasPermission permission='add_project'>
                                     <div className="flex flex-wrap gap-1 newproject">
                                         <Link to="/module/projects/create"
                                               className="ti-btn ti-btn-primary-full me-2 !mb-0">

@@ -38,7 +38,7 @@ const ProjectCard = ({ project, openModal, refetch }) => {
                         </a>
 
                         <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
-                            <HasPermission permission='project_update'>
+                            <HasPermission permission='change_project'>
                             <li>
                                 <Link
                                     to={`/module/projects/edit/${project.id}`}
@@ -55,7 +55,7 @@ const ProjectCard = ({ project, openModal, refetch }) => {
                                     <i className="ri-eye-line me-1 align-middle"></i>View
                                 </Link>
                             </li>
-                            <HasPermission permission='project_create'>
+                            <HasPermission permission='add_project'>
                             {project.status==='active'&& (<li>
                                 <button onClick={() => openModal(project.id, false)}
                                         className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">

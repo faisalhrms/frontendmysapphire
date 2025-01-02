@@ -82,7 +82,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                             <td>
 
                                     <span className='flex space-x-2'>
-                                          <HasPermission permission='task_create'>
+                                          <HasPermission permission='add_task'>
                                             {task.status === 'active' || task.status === 'in_progress' && projectStatus === 'active' && milestoneStatus === 'active' &&(
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
@@ -98,7 +98,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
 
                                                 </HasPermission>
 
-                                        <HasPermission permission='task_update'>
+                                        <HasPermission permission='change_task'>
                                         {task.status === "completed" || task.status === "under_approval" ? ('') : (
                                             <Tooltip
                                                 id={`edit-tooltip-${task.id}-edit`}
