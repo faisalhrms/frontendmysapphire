@@ -177,7 +177,7 @@ const UserForm = ({ userData}) => {
                                 {/* Avatar Upload */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FileUpload
-                                        currentValue={userData?.avatar.id}
+                                        currentValue={userData?.avatar?.id}
                                         file={userData?.avatar}
                                         inputName="avatar_id"
                                         control={control}
