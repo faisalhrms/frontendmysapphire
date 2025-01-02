@@ -2,7 +2,6 @@ import React from "react";
 import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
 import HasPermission from "@components/HasPermission.jsx";
-
 const DiscountForm = ({
   isUserAdmin,
   selectedOption,
@@ -17,38 +16,37 @@ const DiscountForm = ({
 }) => {
   return (
     <div className="col-span-12 xl:col-span-6">
-      <HasPermission permission="discount_card_management">
-        <div className="box">
-        {isUserAdmin && (
-          <div className="box-body">
-            <div className="flex flex-wrap justify-between items-center  md:space-y-0 md:space-x-">
-              <select
-                className="w-full md:w-1/2 px-4 py-2 rounded-md form-control"
-                value={selectedOption}
-                onChange={(e) => setSelectedOption(e.target.value)}
-              >
-                <option value="card_no">Card Number</option>
-                <option value="email">Email</option>
-              </select>
-              <input
-                type="text"
-                placeholder={`Search by ${
-                  selectedOption === "email" ? "Email" : "Card Number"
-                }`}
-                className="w-full md:w-1/3 px-4 py-2 form-control"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-              />
-              <FormButton
-                isLoading={isLoading}
-                text="Search"
-                className="w-full md:w-auto px-4 py-2 bg-primary text-white rounded-md"
-                onClick={handleSearch}
-              />
-            </div>
+ <HasPermission permission="discount_card_management"> 
+      <div className="box">
+     
+        <div className="box-body">
+          <div className="flex flex-wrap justify-between items-center  md:space-y-0 md:space-x-">
+            <select
+              className="w-full md:w-1/2 px-4 py-2 rounded-md form-control"
+              value={selectedOption}
+              onChange={(e) => setSelectedOption(e.target.value)}
+            >
+              <option value="card_no">Card Number</option>
+              <option value="email">Email</option>
+            </select>
+            <input
+              type="text"
+              placeholder={`Search by ${
+                selectedOption === "email" ? "Email" : "Card Number"
+              }`}
+              className="w-full md:w-1/3 px-4 py-2 form-control"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <FormButton
+              isLoading={isLoading}
+              text="Search"
+              className="w-full md:w-auto px-4 py-2 bg-primary text-white rounded-md"
+              onClick={handleSearch}
+            />
           </div>
-        )}
+        </div>
       </div>
       </HasPermission>
       <div className="flex flex-col items-center space-y-6 mt-10 md:mt-20 mb-10 md:mb-20 rounded-3xl">
@@ -61,14 +59,10 @@ const DiscountForm = ({
             <h6 className="text-sm opacity-80">
               Card No. {filteredData?.card_no || "N/A"}
             </h6>
-            {/* <HasPermission permission="change_group" negate>
-              {!filteredData && (
-                <p className="text-red-500 mt-2">Data not available</p>
-              )}
-            </HasPermission> */}
+
             {!filteredData && (
-            <p className="text-red-500 mt-2">Data not available</p>
-          )}
+              <p className="text-red-500 mt-2">Data not available</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
