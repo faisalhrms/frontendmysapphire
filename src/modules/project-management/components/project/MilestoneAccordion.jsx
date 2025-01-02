@@ -103,7 +103,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, openMilestoneModal, ope
                                     <div className="xl:col-span-2 col-span-12">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Action</p>
                                         <div className="flex space-x-2">
-                                            <HasPermission permission='project_update'>
+                                            <HasPermission permission='change_project'>
                                                 <Tooltip
                                                     id={`edit-tooltip-${milestone.id}`}
                                                     tooltipContent={`Edit Milestone (${milestone.name})`}
@@ -123,7 +123,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, openMilestoneModal, ope
                                                 </span>
                                                 </Tooltip>
                                             </HasPermission>
-                                            <HasPermission permission='project_create'>
+                                            <HasPermission permission='add_project'>
                                                 {projectStatus === 'active' && milestone.status === 'active' && (
                                                     <Tooltip
                                                         id={`add-tooltip-${milestone.id}`}

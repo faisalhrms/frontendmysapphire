@@ -12,7 +12,7 @@ export const taskStatuses = [
 
 export const createTask = async (milestone_id, data) => {
     try {
-        const response = await api.post(`/tasks/${milestone_id}`, data);
+        const response = await api.post(`/pms/tasks/create/${milestone_id}/`, data);
         Notify.success(response.data.message);
         return response.data;
     } catch (error) {
@@ -23,7 +23,7 @@ export const createTask = async (milestone_id, data) => {
 
 export const updateTask = async (id, taskData) => {
     try {
-        const response = await api.put(`/tasks/${id}`, taskData);
+        const response = await api.put(`/pms/tasks/${id}/`, taskData);
 
         Notify.success(response.data.message);
         return response.data;
@@ -46,7 +46,7 @@ export const uploadTasks = async (milestoneId, formData) => {
 
 export const getTaskById = async (id) => {
     try {
-        const response = await api.get(`/tasks/${id}`);
+        const response = await api.get(`/pms/tasks/${id}/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
@@ -76,7 +76,7 @@ export const storeTaskDiscussion = async (taskId, payload) => {
 
 export const getTaskWithChild = async (id) => {
     try {
-        const response = await api.get(`/tasks/${id}/children`);
+        const response = await api.get(`/pms/tasks/${id}/children/`);
         return response.data.data;
     } catch (error) {
        Notify.error(error.response?.data?.message);

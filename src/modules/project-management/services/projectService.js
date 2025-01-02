@@ -15,7 +15,7 @@ export const priorities = [
 
 export const createProject = async (payload) => {
     try {
-        const response = await api.post('/projects', payload);
+        const response = await api.post('/pms/projects/', payload);
 
         Notify.success(response.data.message);
         return response.data.data;
@@ -28,7 +28,7 @@ export const createProject = async (payload) => {
 
 export const updateProject = async (id, payload) => {
     try {
-        const response = await api.put(`/projects/${id}`, payload);
+        const response = await api.put(`/pms/projects/${id}/`, payload);
 
         Notify.success(response.data.message);
         return response.data.data;
@@ -40,7 +40,7 @@ export const updateProject = async (id, payload) => {
 
 export const getProjects = async (page, size, s) => {
     try {
-        const response = await api.get(`/projects/datatable`, {
+        const response = await api.get(`/pms/projects/datatable/`, {
             params: { skip: (page - 1) * size, limit: size, s },
         });
         return response.data.data;
@@ -52,7 +52,7 @@ export const getProjects = async (page, size, s) => {
 
 export const getProjectById = async (id) => {
     try {
-        const response = await api.get(`/projects/${id}`);
+        const response = await api.get(`/pms/projects/${id}/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
@@ -62,7 +62,7 @@ export const getProjectById = async (id) => {
 
 export const getProjectMilestonesWithTasks = async (id) => {
     try {
-        const response = await api.get(`/projects/${id}/milestones`);
+        const response = await api.get(`/pms/milestones/tasks/${id}/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Failed to get project milestones with tasks');
@@ -72,7 +72,7 @@ export const getProjectMilestonesWithTasks = async (id) => {
 
 export const toggleFavouriteProject = async (id, isFavourite) => {
     try {
-        const response = await api.post(`/projects/${id}/toggle-favourite`, {is_favourite: isFavourite});
+        const response = await api.post(`/pms/projects/${id}/toggle-favourite/`, {is_favourite: isFavourite});
         Notify.success(response.data.message);
         return response.data.data;
     }catch (error){

@@ -32,26 +32,26 @@ const HeaderNotifications = () => {
                     className="hs-dropdown-toggle relative ti-dropdown-toggle !p-0 !border-0 flex-shrink-0 !rounded-full !shadow-none align-middle text-xs">
                 <i className="bx bx-bell header-link-icon text-[1.125rem]"></i>
                 <span className="flex absolute h-5 w-5 -top-[0.25rem] end-0 -me-[0.6rem]">
-        <span
-            className="animate-slow-ping absolute inline-flex -top-[2px] -start-[2px] h-full w-full rounded-full bg-secondary/40 opacity-75"></span>
-        <span
+        {/* <span
+            className="animate-slow-ping absolute inline-flex -top-[2px] -start-[2px] h-full w-full rounded-full bg-secondary/40 opacity-75"></span> */}
+        {/* <span
             className="relative inline-flex justify-center items-center rounded-full h-[14.7px] w-[14px] bg-secondary text-[0.625rem] text-white"
             id="notification-icon-badge">
           {notifications.length}
-        </span>
+        </span> */}
       </span>
             </button>
             <div
                 className="main-header-dropdown !-mt-3 !p-0 hs-dropdown-menu ti-dropdown-menu bg-white !w-[22rem] border-0 border-defaultborder hidden !m-0"
                 aria-labelledby="dropdown-notification">
-                <div className="ti-dropdown-header !m-0 !p-4 !bg-transparent flex justify-between items-center">
+                {/* <div className="ti-dropdown-header !m-0 !p-4 !bg-transparent flex justify-between items-center">
                     <p className="mb-0 text-[1.0625rem] text-defaulttextcolor font-semibold dark:text-[#8c9097] dark:text-white/50">Notifications</p>
                     <span
                         className="text-[0.75em] py-[0.25rem/2] px-[0.45rem] font-[600] rounded-sm bg-secondary/10 text-secondary"
                         id="notifiation-data">
           {`${notifications.length} Unread`}
         </span>
-                </div>
+                </div> */}
                 <div className="dropdown-divider"></div>
                 <ul className="list-none !m-0 !p-0 end-0">
                     <SimpleBar id="header-notification-scroll">
@@ -88,7 +88,7 @@ const HeaderNotifications = () => {
                             </li>))}
                     </SimpleBar>
                 </ul>
-                <div
+                {/* <div
                     className={`p-4 empty-header-item1 border-t mt-2 ${notifications.length === 0 ? 'hidden' : ''}`}>
                     <div className="grid">
                         <a href={`${import.meta.env.BASE_URL}pages/notifications/`}
@@ -103,7 +103,7 @@ const HeaderNotifications = () => {
                         <h6 className="font-semibold mt-3 text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 text-[1rem]">No
                             New Notifications</h6>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     </>)
