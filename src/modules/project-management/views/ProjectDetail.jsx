@@ -44,7 +44,7 @@ const ProjectDetail = () => {
                     <div className="xl:col-span-9 col-span-12">
                         <ProjectSummary project={projectData} handleUploadModal={handleUploadModal} />
                         <ProjectTree projectId={projectData.id} projectStatus={projectData.status} startedAt={projectData.started_at} endedAt={projectData.ended_at} milestones={milestones} isLoading={isLoading} refetch={refetch} handleUploadModal={handleUploadModal}  />
-                        <Discussion title="Project Discussions" getEndPoint={`/projects/${id}/discussions`}  />
+                        <Discussion title="Project Discussions" storeEndPoint={`/pms/projects/${id}/discussion/`} getEndPoint={`/pms/projects/${id}/discussions/`}  />
                     </div>
                     <div className="xl:col-span-3 col-span-12">
                         <ProjectAdditionalDetail project={projectData}  />
