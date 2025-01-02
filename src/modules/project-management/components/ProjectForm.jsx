@@ -55,7 +55,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Department"
-                                        apiUrl="/select/departments"
+                                        apiUrl="/select/departments/"
                                         queryKeyBase="departments"
                                         clientSideSearch={true}
                                         preselectedOptions={formatOptions(projectData, 'department')}
@@ -67,7 +67,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Manager"
-                                        apiUrl="/select/users"
+                                        apiUrl="/select/users/"
                                         queryKeyBase="users"
                                         preselectedOptions={formatOptions(projectData, 'manager', 'id', 'full_name')}
                                     />
@@ -130,10 +130,10 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                 control={control}
                                 errors={errors}
                                 placeholder="Tags"
-                                apiUrl="/select/tags"
+                                apiUrl="/select/tags/"
                                 queryKeyBase="tags"
                                 preselectedOptions={formatOptions(projectData, 'tags')}
-                                saveOptionEndpoint="/select/tag"
+                                saveOptionEndpoint="/select/tag/"
                                 allowSaveNewOption={true}
                             />
                         </div>
@@ -150,7 +150,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                 control={control}
                                 errors={errors}
                                 placeholder="Members"
-                                apiUrl="/select/users"
+                                apiUrl="/select/users/"
                                 queryKeyBase="users"
                                 preselectedOptions={formatOptions(projectData, 'users', 'id', 'full_name')}
                             />

@@ -6,7 +6,7 @@ import FormButton from "@components/form/FormButton.jsx";
 import {useCallback} from "react";
 
 
-  const MilestoneModel = ({ control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, isEditMode = false, startedAt,endedAt  }) => {
+  const MilestoneModel = ({ control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, isEditMode = false, startedAt, endedAt  }) => {
   const handleClose  = useCallback(() => closeModal(), [closeModal]);
   return (
       <div id="milestoneModal" data-hs-overlay-keyboard="false"
