@@ -12,7 +12,7 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                 <div className="box-header justify-between">
                     <div className="box-title">Project Summary</div>
                     <div className="flex items-center space-x-2">
-                        <HasPermission permission='project_update'>
+                        <HasPermission permission='change_project'>
                             <div className="flex space-x-2">
                                 <a
                                     href={sampleFile}

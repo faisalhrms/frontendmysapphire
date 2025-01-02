@@ -144,10 +144,10 @@ const UserList = () => {
             Header: 'Is Super User',
                 "accessor": "is_superuser",
             Cell: ({ value }) => {
-                const status = value ? 'True' : 'False';
+
                 const statusLabel = value ? 'True' : 'False';
                 return (
-                    <span className={getBadgeClasses(status, '!rounded-full')}>
+                    <span >
                         {toTitleCase(statusLabel)}
                     </span>
                 );
@@ -162,7 +162,7 @@ const UserList = () => {
                     {Array.isArray(value) && value.length > 0 ? (
                         [...new Set(value)].map((group, index) => (
                             <span key={index} className="badge bg-primary/10 text-primary">
-                                {toTitleCase(group)}
+                                {toTitleCase(group.name)}
                             </span>
                         ))
                     ) : (

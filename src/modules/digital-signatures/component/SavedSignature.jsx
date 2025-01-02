@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import DataTable from "@components/DataTable.jsx";
 import { useNavigate } from "react-router-dom";
 import ConfirmationModal from "@modules/sr-management/component/ConfirmationModal.jsx";
-import { getSignatureByEmpCode } from "../services/Service";
+import {
+  getDownloadByEmpCode,
+  getSignatureByEmpCode,
+} from "../services/Service";
 
 const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
   const navigate = useNavigate();
@@ -30,15 +33,44 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
 
   const fetchSignature = async (employeeCode) => {
     try {
-      handleSavedDataFetch(employeeCode, 1);
+      handleSavedDataFetch(employeeCode, 1, true);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const downloadAllSignatures = () => {
-    alert("All signatures downloaded successfully!");
+  const downloadAllSignatures = async (code) => {
+    try {
+      // const res = await getDownloadByEmpCode(code);
+
+
+      const response = await axios.get(`/signatures/download-all`, {
+        responseType: "blob",
+      });
+
+      if (!response || !response.data) {
+        throw new Error("No file data received from the server.");
+      }
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+
+      const contentDisposition = response.headers["content-disposition"];
+      const fileName = contentDisposition
+        ? contentDisposition.split("filename=")[1]?.replace(/"/g, "")
+        : "all_signatures_scripts.zip";
+
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+        } catch (error) {
+      console.log(error);
+    }
   };
+ 
 
   const columns = [
     { Header: "Employee", accessor: "employee_code" },
@@ -51,7 +83,6 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
         console.log(row);
         return (
           <div className="flex space-x-1">
-           
             <button
               onClick={() => onOpenModal(id)}
               className="ti-btn ti-btn-danger ti-btn-sm"
@@ -60,20 +91,19 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
             </button>
 
             <button
-             
               onClick={() => fetchSignature(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
               <i className="ri-edit-line"></i>
             </button>
             <button
-              onClick={downloadAllSignatures}
+              onClick={() => downloadAllSignatures(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
               <i class="ri-file-pdf-line"></i>
             </button>
             <button
-              onClick={downloadAllSignatures}
+              onClick={() => downloadAllSignatures(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
               <i class="ri-download-2-line"></i>

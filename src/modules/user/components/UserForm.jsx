@@ -154,13 +154,13 @@ const UserForm = ({ userData}) => {
                                                 className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.department.name}</span>
                                         </div>
                                     </li>
-                                    <li className="list-group-item">
-                                        <div className="flex flex-wrap items-center">
-                                            <div className="me-2 font-semibold">Cnic :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>
-                                        </div>
-                                    </li>
+                                    {/*<li className="list-group-item">*/}
+                                    {/*    <div className="flex flex-wrap items-center">*/}
+                                    {/*        <div className="me-2 font-semibold">Cnic :</div>*/}
+                                    {/*        <span*/}
+                                    {/*            className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>*/}
+                                    {/*    </div>*/}
+                                    {/*</li>*/}
                                 </ul>
                             </div>
                         </div>
@@ -177,7 +177,7 @@ const UserForm = ({ userData}) => {
                                 {/* Avatar Upload */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FileUpload
-                                        currentValue={userData?.avatar?.file_url} // Updated to match payload structure
+                                        currentValue={userData?.avatar.id}
                                         file={userData?.avatar}
                                         inputName="avatar_id"
                                         control={control}
@@ -197,7 +197,6 @@ const UserForm = ({ userData}) => {
                                 </div>
 
 
-
                                 {/* Group IDs Async Select */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FormAsyncSelect
@@ -206,9 +205,9 @@ const UserForm = ({ userData}) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Groups"
-                                        apiUrl="/select/roles/" // Updated API endpoint to 'groups'
+                                        apiUrl="/select/roles/"
                                         queryKeyBase="groups"
-                                        preselectedOptions={formatOptions(userData, 'group_ids')}
+                                        preselectedOptions={formatOptions(userData, 'groups')}
                                     />
                                 </div>
                                 {/* Superuser Checkbox */}

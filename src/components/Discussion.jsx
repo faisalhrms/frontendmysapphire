@@ -9,7 +9,7 @@ import ProjectDiscussionItem from "@modules/project-management/components/projec
 import { useSelector } from "react-redux";
 import useDiscussion from "@hooks/useDiscussionHook.js";
 
-const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint = getEndPoint }) => {
+const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint }) => {
     const { user } = useSelector((state) => state.auth);
     const { isModalOpen, openModal, closeModal, selectedIds, attachments, handleSelectedFiles, handleDeleteAttachment, mediaType, clearAttachments } = useFileModal('discussionAttachments');
 
