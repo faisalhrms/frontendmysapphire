@@ -13,7 +13,7 @@ import {
 } from "@modules/sr-management/services/srServices.js";
 import srSchema from "@modules/sr-management/schema/srSchema.js";
 import Rating from "@mui/material/Rating";
-const SrDashboard = ({ status, label, icon }) => {
+const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
   const [showFilters, setShowFilters] = useState(false);
   const navigate = useNavigate();
   const {
@@ -31,6 +31,11 @@ const SrDashboard = ({ status, label, icon }) => {
 
   const handleCardClick = (status) => {
     navigate(`/dashboards/sr/sr-list/${status}`);
+  };
+
+  const [selectedStatus, setSelectedStatus] = useState(null);
+  const handleClick = (status) => {
+    setSelectedStatus((prev) => (prev === status ? null : status));
   };
 
   const count = serviceRequest?.[status] ?? 0;
@@ -75,7 +80,7 @@ const SrDashboard = ({ status, label, icon }) => {
           onClick={() => handleCardClick(status)}
           className="cursor-pointer xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
         >
-          <div className="box overflow-hidden bg-white shadow-md rounded-lg p-2 transition-transform transform hover:scale-105">
+          <div className="box overflow-hidden bg-white shadow-md rounded-lg  transition-transform transform hover:scale-105">
             <div className="box-body">
               <div className="flex items-top justify-between">
                 <div>
@@ -182,7 +187,7 @@ const SrDashboard = ({ status, label, icon }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-10">
         {[
           {
             status: "Unassign",
@@ -204,38 +209,42 @@ const SrDashboard = ({ status, label, icon }) => {
             label: "Waiting for Approval",
             icon: "ri-loader-2-line text-secondary",
           },
-        ].map((item, index) => (
-          <div
-            key={index}
-            onClick={() => handleCardClick(item.status)}
-            className="cursor-pointer xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
-          >
-            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
-              <div>
-                <i className={`${item.icon} text-4xl`}></i>
-              </div>
-              <div className="text-center">
-                <h3 className="text-gray-600 text-sm font-medium">
-                  {item.label}
-                </h3>
-                <p className="text-2xl font-bold">
-                  {serviceRequest?.[item.status] ?? 0}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {[
           {
             status: "Waiting for Quotation",
             label: "Waiting for Quotation",
             icon: "bx bx-circle-three-quarter text-secondary",
           },
+        ].map((item, index) => (
+          <div
+            key={index}
+            onClick={() => handleClick(item.status)}
+            className="cursor-pointer"
+          >
+            <div
+              className={`bg-white ${
+                selectedStatus === item.status ? "shadow-2xl" : "shadow-md"
+              } rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto`}
+            >
+              <i className={`${item.icon} text-4xl`}></i>
+              <div>
+                <h3 className="text-gray-600 text-sm font-medium">
+                  {item.label}
+                </h3>
+                <p className="text-2xl font-bold">
+                  {serviceData?.[item.status] ?? 0}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        {[
           {
             status: "Waiting for Budget",
             label: "Waiting for Budget",
-            icon: "ri-bank-line text-secondary",
+            icon: "bx bx-box text-secondary",
           },
           {
             status: "Waiting for Purchase",
@@ -247,55 +256,20 @@ const SrDashboard = ({ status, label, icon }) => {
             label: "Waiting for Acknowledgement",
             icon: "ri-service-line text-secondary",
           },
-        ].map((item, index) => (
-          <div
-            key={index}
-            onClick={() => handleCardClick(item.status)}
-            className="cursor-pointer xxl:col-span-3 xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12"
-          >
-            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
-              <div>
-                <i className={`${item.icon} text-4xl`}></i>
-              </div>
-              <div className="text-center">
-                <h3 className="text-gray-600 text-sm font-medium">
-                  {item.label}
-                </h3>
-                <p className="text-2xl font-bold">
-                  {serviceRequest?.[item.status] ?? 0}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {[
           {
             status: "Cancelled",
             label: "Cancelled",
             icon: "ri-close-circle-line text-danger",
           },
-          {
-            status: "Closed",
-            label: "Closed",
-            icon: "ri-lock-line text-secondary",
-          },
-          {
-            status: "Completed",
-            label: "Completed",
-            icon: "bx bx-check-circle text-success",
-          },
         ].map((item, index) => (
           <div
             key={index}
             onClick={() => handleCardClick(item.status)}
-            className="cursor-pointer xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12"
+            className="cursor-pointer"
           >
-            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+            <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[300px] mx-auto">
+              <i className={`${item.icon} text-4xl`}></i>
               <div>
-                <i className={`${item.icon} text-4xl`}></i>
-              </div>
-              <div className="text-center">
                 <h3 className="text-gray-600 text-sm font-medium">
                   {item.label}
                 </h3>
@@ -306,12 +280,19 @@ const SrDashboard = ({ status, label, icon }) => {
             </div>
           </div>
         ))}
+      </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {[
+          {
+            status: "Completed",
+            label: "Completed",
+            icon: "bx bx-check-circle text-success",
+          },
           {
             status: "On-Hold",
             label: "On Hold",
-            icon: "ri-pause-circle-line text-success",
+            icon: "ri-pause-circle-line  text-warning",
           },
           {
             status: "Overdue",
@@ -323,17 +304,20 @@ const SrDashboard = ({ status, label, icon }) => {
             label: "Waiting for GRN",
             icon: "ri-grid-line text-primary",
           },
+          {
+            status: "Closed",
+            label: "Closed",
+            icon: "ri-lock-line text-secondary",
+          },
         ].map((item, index) => (
           <div
             key={index}
             onClick={() => handleCardClick(item.status)}
-            className="cursor-pointer xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12"
+            className="cursor-pointer"
           >
-            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+            <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto">
+              <i className={`${item.icon} text-4xl`}></i>
               <div>
-                <i className={`${item.icon} text-4xl`}></i>
-              </div>
-              <div className="text-center">
                 <h3 className="text-gray-600 text-sm font-medium">
                   {item.label}
                 </h3>
@@ -344,35 +328,49 @@ const SrDashboard = ({ status, label, icon }) => {
             </div>
           </div>
         ))}
+      </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {[
           {
             rating: 5,
             status: "rating",
-            label: "Rating",
+
             icon: "ri-star-fill text-yellow-600",
           },
           {
             rating: 4,
             status: "rating",
-            label: "Rating",
+
             icon: "ri-star-fill text-yellow-600",
           },
           {
             rating: 3,
             status: "rating",
-            label: "Rating",
+
+            icon: "ri-star-fill text-yellow-600",
+          },
+          {
+            rating: 2,
+            status: "rating",
+
+            icon: "ri-star-fill text-yellow-600",
+          },
+          {
+            rating: 1,
+            status: "rating",
+
             icon: "ri-star-fill text-yellow-600",
           },
         ].map((item, index) => (
           <div
             key={index}
             onClick={() => handleCardClick(item.status)}
-            className="cursor-pointer xxl:col-span-4 xl:col-span-4 lg:col-span-4 md:col-span-6 col-span-12 mb-4"
+            className="cursor-pointer"
           >
-            <div className="bg-white shadow-md rounded-lg p-2 flex flex-col items-center space-y-3 transition-transform transform hover:scale-105">
+            <div className="bg-white shadow-md rounded-lg flex flex-col items-center space-y-3 transition-transform transform hover:scale-105 mt-2">
               <div className="text-center">
-                <h3 className="text-gray-600 text-sm font-medium">
+                <h3 className="text-gray-600 text-sm font-medium mt-2">
                   {item.label}
                 </h3>
                 <p className="text-2xl font-bold">{item.rating}</p>
