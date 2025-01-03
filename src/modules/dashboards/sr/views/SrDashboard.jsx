@@ -334,36 +334,31 @@ const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {[
           {
             rating: 5,
-            status: "rating",
-
+            status: "rating-5",
             icon: "ri-star-fill text-yellow-600",
           },
           {
             rating: 4,
-            status: "rating",
-
+            status: "rating-4",
             icon: "ri-star-fill text-yellow-600",
           },
           {
             rating: 3,
-            status: "rating",
-
+            status: "rating-3",
             icon: "ri-star-fill text-yellow-600",
           },
           {
             rating: 2,
-            status: "rating",
-
+            status: "rating-2",
             icon: "ri-star-fill text-yellow-600",
           },
           {
             rating: 1,
-            status: "rating",
-
+            status: "rating-1",
             icon: "ri-star-fill text-yellow-600",
           },
         ].map((item, index) => (
@@ -372,19 +367,21 @@ const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
             onClick={() => handleCardClick(item.status)}
             className="cursor-pointer"
           >
-            <div className="bg-white shadow-md rounded-lg flex flex-col items-center space-y-3 transition-transform transform hover:scale-105 mt-2">
+            <div className="bg-white shadow-md rounded-lg flex flex-col items-center space-y-3 transition-transform transform hover:scale-105 mt-2 p-4">
               <div className="text-center">
                 <h3 className="text-gray-600 text-sm font-medium mt-2">
                   {item.label}
                 </h3>
-                <p className="text-2xl font-bold">{item.rating}</p>
+                <p className="text-2xl font-bold">
+                  {serviceRequest?.[item.status] ?? 0}
+                </p>
               </div>
-
               <div className="mt-2">
                 <Rating
                   name={`clickable-rating-${index}`}
                   value={item.rating}
                   onChange={handleRatingChange2}
+                  readOnly
                 />
               </div>
             </div>

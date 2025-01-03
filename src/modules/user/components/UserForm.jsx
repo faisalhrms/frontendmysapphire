@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { statuses } from "@modules/user/services/userService.js";
 import userSchema from "@modules/user/schemas/userSchema.js";
 import FormInput from "@components/form/FormInput.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
+
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import {formatOptions} from "@helpers/formatters.js";
@@ -15,9 +16,18 @@ import {formatDate} from "@helpers/dateTime.js";
 import {Link} from "react-router-dom";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import userEditSchema from "@modules/user/schemas/userEditSchema.js";
-
+const passwordPolicies = [
+    { id: 1, text: "At least 8 characters long", regex: /.{8,}/ },
+    { id: 2, text: "At least one uppercase letter", regex: /[A-Z]/ },
+    { id: 3, text: "At least one lowercase letter", regex: /[a-z]/ },
+    { id: 4, text: "At least one number", regex: /\d/ },
+    { id: 5, text: "At least one special character", regex: /[@$!%*?&]/ },
+];
 const UserForm = ({ userData}) => {
-
+    const [password, setPassword] = useState("");
+    const [policyStatus, setPolicyStatus] = useState(
+        passwordPolicies.map((policy) => ({ ...policy, satisfied: false }))
+    );
     const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
         resolver: zodResolver(userEditSchema),
         defaultValues: {
@@ -26,7 +36,18 @@ const UserForm = ({ userData}) => {
     });
 
     const { handleUserSubmit } = useUserForm(userData);
+    const handlePasswordChange = (e) => {
+        const newPassword = e.target.value;
+        setPassword(newPassword);
 
+        // Update policy status
+        setPolicyStatus(
+            passwordPolicies.map((policy) => ({
+                ...policy,
+                satisfied: policy.regex.test(newPassword),
+            }))
+        );
+    };
     useEffect(() => {
         if (userData) {
             Object.keys(userData).forEach(key => {
@@ -185,18 +206,45 @@ const UserForm = ({ userData}) => {
                                     />
                                 </div>
 
-                                {/* Password Input */}
-                                <div className="xl:col-span-12 col-span-12">
+                                <div className="xl:col-span-12 col-span-12 relative">
                                     <FormInput
                                         type="password"
                                         name="password"
                                         control={control}
                                         errors={errors}
                                         placeholder="Password"
+                                        onChange={handlePasswordChange}
+                                        value={password}
                                     />
+                                    <div className="relative group inline-block">
+                                        {/* Icon */}
+                                        <span className="absolute right-3 bottom-6  cursor-pointer">
+            <i className="ri-information-line text-2xl text-primary"></i>
+        </span>
+                                        {/* Tooltip */}
+                                        <div
+                                            className="absolute hidden group-hover:flex flex-col bg-white border border-gray-200 shadow-lg rounded-md p-4 text-sm text-gray-700 w-64 right-0 mt-8 z-50">
+                                            <p className="font-semibold text-gray-900 mb-2">Password Policies:</p>
+                                            <ul>
+                                                {policyStatus.map((policy) => (
+                                                    <li
+                                                        key={policy.id}
+                                                        className={`flex items-center gap-2 ${
+                                                            policy.satisfied ? "text-green" : "text-red"
+                                                        }`}
+                                                    >
+                                                        <i
+                                                            className={`${
+                                                                policy.satisfied ? "ri-check-line" : "ri-close-line"
+                                                            } text-lg`}
+                                                        ></i>
+                                                        {policy.text}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
-
-
                                 {/* Group IDs Async Select */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FormAsyncSelect
