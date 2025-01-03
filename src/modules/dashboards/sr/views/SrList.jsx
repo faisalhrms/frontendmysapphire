@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
 import {useNavigate, useParams} from "react-router-dom";
+import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+
 
 const SrList = () => {
     const [apiUrl, setApiUrl] = useState("-");
@@ -17,12 +19,17 @@ const SrList = () => {
             setApiUrl(`dashboard/status/${status}`);
         }
     }, [status]);
-
+ 
     const columns = [
         {Header: "SR #", accessor: "sr_number"},
         {Header: "Task Type", accessor: "sr_type.name"},
         {Header: "Requester Location", accessor: "location.name"},
-        {Header: "Request Title", accessor: "request_title"},
+        {
+            Header: "Request Title",
+            accessor: "request_title",
+            Cell: ({ value }) => (value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"),
+          },
+          
         {
             Header: "SR Time", accessor: "created_at",
             Cell: ({value}) => value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : "",
@@ -60,7 +67,7 @@ const SrList = () => {
                 const {id} = row.original;
                 return (
                     <div className="flex space-x-2">
-                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm">
+                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm " >
                             <i className="ri-eye-line"></i>
                         </button>
                     </div>
@@ -68,7 +75,6 @@ const SrList = () => {
             },
         },
     ];
-
 
     return <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>;
 };

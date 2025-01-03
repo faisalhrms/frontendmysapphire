@@ -50,21 +50,17 @@ const DiscountCard = () => {
         mainpage="Discount Card"
       />
 
-     
-        <DiscountForm
-          selectedOption={selectedOption}
-          setSelectedOption={setSelectedOption}
-          searchQuery={searchQuery}
-          handleKeyDown={handleKeyDown}
-          isLoading={isLoading}
-          handleSearch={handleSearch}
-          setSearchQuery={setSearchQuery}
-          filteredData={filteredData}
-          data={filteredData?.data}
-        />
-    
-
-  
+      <DiscountForm
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        searchQuery={searchQuery}
+        handleKeyDown={handleKeyDown}
+        isLoading={isLoading}
+        handleSearch={handleSearch}
+        setSearchQuery={setSearchQuery}
+        filteredData={filteredData}
+        data={filteredData?.data}
+      />
     </>
   );
 };
