@@ -187,7 +187,7 @@ const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {[
           {
             status: "Unassign",
@@ -223,7 +223,7 @@ const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
             <div
               className={`bg-white ${
                 selectedStatus === item.status ? "shadow-2xl" : "shadow-md"
-              } rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto`}
+              } rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105`}
             >
               <i className={`${item.icon} text-4xl`}></i>
               <div>
@@ -267,8 +267,11 @@ const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
             onClick={() => handleCardClick(item.status)}
             className="cursor-pointer"
           >
-            <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[300px] mx-auto">
-              <i className={`${item.icon} text-4xl`}></i>
+            <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 ">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-100">
+                <i className={`${item.icon} text-4xl`}></i>
+              </div>
+
               <div>
                 <h3 className="text-gray-600 text-sm font-medium">
                   {item.label}
@@ -292,7 +295,7 @@ const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
           {
             status: "On-Hold",
             label: "On Hold",
-            icon: "ri-pause-circle-line  text-warning",
+            icon: "ri-pause-circle-line text-warning",
           },
           {
             status: "Overdue",
@@ -315,8 +318,9 @@ const SrDashboard = ({ status, label, icon, serviceRequest: serviceData }) => {
             onClick={() => handleCardClick(item.status)}
             className="cursor-pointer"
           >
-            <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto">
+            <div className="bg-white shadow-md rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105">
               <i className={`${item.icon} text-4xl`}></i>
+
               <div>
                 <h3 className="text-gray-600 text-sm font-medium">
                   {item.label}

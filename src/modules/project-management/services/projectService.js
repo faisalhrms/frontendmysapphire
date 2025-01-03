@@ -82,7 +82,7 @@ export const toggleFavouriteProject = async (id, isFavourite) => {
 
 export const uploadProjects = async (formData) => {
     try {
-        const response = await api.post(`projects/upload`, formData);
+        const response = await api.post(`/pms/projects/upload/`, formData);
         Notify.success(response.data.message);
         return response.data;
     } catch (error) {
