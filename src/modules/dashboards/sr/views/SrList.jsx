@@ -76,7 +76,7 @@ const SrList = () => {
         },
     ];
 
-    return <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>;
+    return  <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>;
 };
 
 export default SrList;
