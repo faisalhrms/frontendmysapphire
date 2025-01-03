@@ -12,6 +12,7 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import {formatOptions} from "@helpers/formatters.js";
 
+
 import GalleryUpload from "@components/GalleryUpload.jsx";
 
 const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
@@ -87,7 +88,15 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                             preselectedOptions={formatOptions(equipmentData, 'location')}
                                         />
                                     </div>
-
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput
+                                            type="code"
+                                            name="part_no"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Code"
+                                        />
+                                    </div>
 
                                     <div className="xl:col-span-4 col-span-12">
                                         <FormAsyncSelect
@@ -153,7 +162,50 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                             preselectedOptions={formatOptions(equipmentData, 'users', 'id', 'full_name')}
                                         />
                                     </div>
-
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput
+                                            name="employee_code"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Employee_code"
+                                        />
+                                    </div>
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormAsyncSelect
+                                            name="grade"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Grade"
+                                            // apiUrl="/select/users"
+                                            queryKeyBase="users"
+                                            clientSideSearch={true}
+                                          
+                                        />
+                                    </div>
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput
+                                            name="previous custodian"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Previous custodian"
+                                        />
+                                    </div>
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput
+                                            name="updated"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Updated"
+                                        />
+                                    </div>
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput
+                                            name="updated by"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Updated By"
+                                        />
+                                    </div>
 
 
 
@@ -240,6 +292,23 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 />
                             </div>
                         </div>
+                        {/* <div className="box">
+                            <div className="box-header">
+                                <div className="box-title"></div>
+                            </div>
+                            <div className="box-body">
+                            <FormAsyncSelect
+                                          
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Email"
+                                            // apiUrl="/select/users"
+                                            queryKeyBase="users"
+                                            clientSideSearch={true}
+                                          
+                                        />
+                            </div>
+                        </div> */}
 
 
                     </div>

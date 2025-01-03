@@ -30,7 +30,7 @@ console.log(`activeSubscriptions`,activeSubscriptions);
               activepage="Dashboard"
               mainpage="Subscription"
           />
-          <div className="grid grid-cols-6 gap-x-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 my-10">
               {summaryData.map((data, index) => {
                   let route;
                   switch (data.name) {
@@ -51,7 +51,7 @@ console.log(`activeSubscriptions`,activeSubscriptions);
                       <SubscriptionCard
                           key={index}
                           subscriptionData={data}
-                          route={route} // Pass the dynamic route
+                          route={route} // Pass the dynamic route here
                       />
                   );
               })}
@@ -89,7 +89,8 @@ console.log(`activeSubscriptions`,activeSubscriptions);
 
                               <div className="lead-source-value">
                                   <span className="block text-[0.875rem]">Total</span>
-                                  <span className="block text-[1.5625rem] font-bold">{formatAmountWithCommas(donutChartData.total_count)}</span>
+                                  <span
+                                      className="block text-[1.5625rem] font-bold">{formatAmountWithCommas(donutChartData.total_count)}</span>
                               </div>
                           </div>
                       </div>

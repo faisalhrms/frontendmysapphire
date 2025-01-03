@@ -3,6 +3,8 @@ import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
 import {useNavigate, useParams} from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+
+
 const SrList = () => {
     const [apiUrl, setApiUrl] = useState("-");
     const {status} = useParams();
@@ -17,7 +19,7 @@ const SrList = () => {
             setApiUrl(`dashboard/status/${status}`);
         }
     }, [status]);
-
+ 
     const columns = [
         {Header: "SR #", accessor: "sr_number"},
         {Header: "Task Type", accessor: "sr_type.name"},
@@ -65,7 +67,7 @@ const SrList = () => {
                 const {id} = row.original;
                 return (
                     <div className="flex space-x-2">
-                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm">
+                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm " >
                             <i className="ri-eye-line"></i>
                         </button>
                     </div>
@@ -74,7 +76,7 @@ const SrList = () => {
         },
     ];
 
-    return <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>;
+    return  <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>;
 };
 
 export default SrList;
