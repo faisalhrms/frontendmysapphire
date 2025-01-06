@@ -19,17 +19,32 @@ const SrList = () => {
             setApiUrl(`dashboard/status/${status}`);
         }
     }, [status]);
- 
+
     const columns = [
+        {
+            Header: "Action",
+            accessor: "action",
+            Cell: ({row}) => {
+                const {id} = row.original;
+                return (
+                    <div className="flex space-x-2">
+                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm ">
+                            <i className="ri-eye-line"></i>
+                        </button>
+                    </div>
+                );
+            },
+        },
         {Header: "SR #", accessor: "sr_number"},
         {Header: "Task Type", accessor: "sr_type.name"},
         {Header: "Requester Location", accessor: "location.name"},
+        {Header: "Completed at", accessor: "completed_at"},
         {
             Header: "Request Title",
             accessor: "request_title",
-            Cell: ({ value }) => (value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"),
-          },
-          
+            Cell: ({value}) => (value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"),
+        },
+
         {
             Header: "SR Time", accessor: "created_at",
             Cell: ({value}) => value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : "",
@@ -60,23 +75,10 @@ const SrList = () => {
             },
         },
 
-        {
-            Header: "Action",
-            accessor: "action",
-            Cell: ({row}) => {
-                const {id} = row.original;
-                return (
-                    <div className="flex space-x-2">
-                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm " >
-                            <i className="ri-eye-line"></i>
-                        </button>
-                    </div>
-                );
-            },
-        },
+
     ];
 
-    return  <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>;
+    return <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>;
 };
 
 export default SrList;
