@@ -127,8 +127,8 @@ const SrDashboard = () => {
                       control={control}
                       errors={errors}
                       placeholder="City"
-                      apiUrl={`/select/cities?store_region_id=${selectedRegion?.value || ""}`}
-                      queryKeyBase={`cities-${selectedRegion?.value || ""}`}
+                      apiUrl={`/select/cities?store_region_id=${selectedRegion || ""}`}
+                      queryKeyBase={`cities-${selectedRegion || ""}`}
                       clientSideSearch
                       preselectedOptions={[]}
                     />
@@ -140,8 +140,8 @@ const SrDashboard = () => {
                       control={control}
                       errors={errors}
                       placeholder="Location"
-                      apiUrl={`/select/locations?city_id=${selectedCity?.value || ""}`}
-                      queryKeyBase={`locations-${selectedCity?.value || ""}`}
+                      apiUrl={`/select/locations?city_id=${selectedCity || ""}`}
+                      queryKeyBase={`locations-${selectedCity || ""}`}
                       clientSideSearch
                       preselectedOptions={[]}
                     />
