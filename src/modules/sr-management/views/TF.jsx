@@ -1,10 +1,10 @@
 import React from 'react';
-import TaskCompleteForm from '../component/TaskCompleteForm';
+import TaskCompletedForm from "@modules/sr-management/component/TaskCompletedForm.jsx";
 
 const TF = () => {
     return (
         <div>
-            <TaskCompleteForm/>
+            <TaskCompletedForm/>
         </div>
     );
 }
