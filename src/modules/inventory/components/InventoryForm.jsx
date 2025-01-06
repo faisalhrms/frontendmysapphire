@@ -96,7 +96,7 @@ const InventoryForm = ({ equipmentData, control, errors, isSubmitting, handleSub
                                     />
                                 </div>
 
-                                {/* Part No */}
+                              
                                 <div className="col-span-12 md:col-span-6">
                                     <FormInput
                                         type="number"

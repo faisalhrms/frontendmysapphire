@@ -7,6 +7,7 @@ const ProjectAdditionalDetail = ({project}) => {
         <>
             <div className="box">
                 <div className="box-header justify-between">
+                    
                     <div className="box-title">
                         Additional Details
                     </div>

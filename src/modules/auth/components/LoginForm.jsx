@@ -59,13 +59,14 @@ const LoginForm = () => {
           </div>
 
           <div className="xl:col-span-12 col-span-12">
-            <label htmlFor="signin-password" className="form-label mt-3 text-default block">
-              <Link to={`${import.meta.env.BASE_URL}authentication/resetpassword/resetcover`} className="ltr:float-right rtl:float-left text-danger">
+            <label htmlFor="signin-password" className="form-label mt-3 text-default block">Password
+              <Link to={`/resetpassword/`} className="ltr:float-right rtl:float-left text-danger">
                 Forget password?
               </Link>
             </label>
-            <div className="relative">
+            <div className="input-group">
               <FormInput
+                  label={false}
                   name="password"
                   control={control}
                   errors={errors}
@@ -75,7 +76,7 @@ const LoginForm = () => {
               />
               {/* Eye icon to toggle password visibility */}
               <span
-                  className="absolute inset-y-0 right-3 pt-7 flex items-center cursor-pointer justify-center h-full"
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer justify-center h-full"
                   onClick={togglePasswordVisibility}
               >
           <i className={`text-gray-500 text-lg ${showPassword ? 'ri-eye-line' : 'ri-eye-off-line'}`} aria-hidden="true" />

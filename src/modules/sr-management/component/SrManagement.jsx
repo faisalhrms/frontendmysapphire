@@ -3,6 +3,7 @@ import PendingRequestsTable from "@modules/sr-management/pending-req-section/vie
 import TaskGeneratedTable from "@modules/sr-management/task-genrated-section/views/TaskGeneratedTable.jsx";
 import CompletedTasksTable from "@modules/sr-management/completed-task-section/views/CompletedTasksTable.jsx";
 import { useNavigate } from "react-router-dom";
+import TaskClosedTable from "@modules/sr-management/closed-task-section/views/TaskClosedTable.jsx";
 
 const SrManagement = () => {
   const [activeTab, setActiveTab] = useState("pending");
@@ -16,45 +17,56 @@ const SrManagement = () => {
 
         <div className="box">
           <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
-            <nav aria-label="Tabs" className="md:flex block !justify-start whitespace-nowrap">
-              <button
-                  onClick={() => setActiveTab("pending")}
-                  className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                      activeTab === "pending"
-                          ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
-                          : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
-                  }`}
-              >
-               Task Pending
-              </button>
-              <button
-                  onClick={() => setActiveTab("task")}
-                  className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                      activeTab === "task"
-                          ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
-                          : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
-                  }`}
-              >
-                Task Generated
-              </button>
-              <button
-                  onClick={() => setActiveTab("completed")}
-                  className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                      activeTab === "completed"
-                          ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
-                          : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
-                  }`}
-              >
-                Task Completed
-              </button>
-            </nav>
+              <nav aria-label="Tabs" className="md:flex block !justify-start whitespace-nowrap">
+                  <button
+                      onClick={() => setActiveTab("pending")}
+                      className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
+                          activeTab === "pending"
+                              ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
+                              : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
+                      }`}
+                  >
+                      Task Pending
+                  </button>
+                  <button
+                      onClick={() => setActiveTab("task")}
+                      className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
+                          activeTab === "task"
+                              ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
+                              : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
+                      }`}
+                  >
+                      Task Generated
+                  </button>
+                  <button
+                      onClick={() => setActiveTab("completed")}
+                      className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
+                          activeTab === "completed"
+                              ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
+                              : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
+                      }`}
+                  >
+                      Task Completed
+                  </button>
+                  <button
+                      onClick={() => setActiveTab("closed")}
+                      className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
+                          activeTab === "closed"
+                              ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
+                              : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
+                      }`}
+                  >
+                      Task Closed
+                  </button>
+              </nav>
           </div>
 
-          <div className="box-content bg-white">
-            {activeTab === "pending" && <PendingRequestsTable  />}
-            {activeTab === "task" && <TaskGeneratedTable />}
-            {activeTab === "completed" && <CompletedTasksTable />}
-          </div>
+            <div className="box-content bg-white">
+                {activeTab === "pending" && <PendingRequestsTable/>}
+                {activeTab === "task" && <TaskGeneratedTable/>}
+                {activeTab === "completed" && <CompletedTasksTable/>}
+                {activeTab === "closed" && <TaskClosedTable/>}
+            </div>
         </div>
       </div>
   );
