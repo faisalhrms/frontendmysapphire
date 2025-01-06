@@ -4,6 +4,7 @@ import {
     createServiceRequest, getServiceRequest, saveServiceRequest, getServiceRequestById, submitServiceRequest
 
 } from "@modules/employee-self-services/services/service-request/ServiceRequestServices.js";
+import Notify from "@helpers/toastNotifications.js";
 
 export const useServiceRequestForm = (serviceData, isEditMode) => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const useServiceRequestForm = (serviceData, isEditMode) => {
         try {
             let response;
             if (isEditMode && serviceData?.id) {
-                response = await saveServiceRequest(serviceData.id, { ...data, is_submitted: false });
+                response = await saveServiceRequest(serviceData.id, {...data, is_submitted: false});
                 navigate('/module/ess/services-request'); // Redirect after successful submission
 
             } else {
@@ -42,7 +43,22 @@ export const useServiceRequestForm = (serviceData, isEditMode) => {
             throw error;
         }
     };
-    return { saveAsDraft, submitRequest };
+
+    const submitFeedback = async (id, feedbackData) => {
+        try {
+            if (id) {
+                await saveServiceRequest(id, feedbackData);
+            } else {
+                Notify.error(
+                    "Service Request ID is missing.")
+            }
+        } catch (error) {
+            console.error("Error submitting feedback:", error.message);
+            alert("Failed to submit feedback.");
+        }
+    };
+
+    return {saveAsDraft, submitRequest, submitFeedback};
 };
 
 export const useServiceRequest = (id) => {
@@ -61,5 +77,5 @@ export const useServiceRequest = (id) => {
         fetchService();
     }, [id]);
 
-    return { serviceData };
+    return {serviceData};
 };

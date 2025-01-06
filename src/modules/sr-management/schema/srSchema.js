@@ -1,16 +1,14 @@
 import { z } from "zod";
 
-const yearlyDashboard = z.enum(["2024", "2025"], {
-    errorMap: () => "Year must be '2024' or '2025'",
-});
-const monthDashboard = z.enum(["'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'"], {
-    errorMap: () => "Year must be 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug','Sep', 'Oct', 'Nov' or 'Dec' ",
-});
-
-const srSchema = z.object( {
-    name: "sr",
-    yearly_dashboard: yearlyDashboard.optional(),
-    month_dashboard: yearlyDashboard.optional(),
+const srSchema = z.object({
+    date: z
+        .string()
+        .nullable()
+        .refine(
+            (value) => value === null || /^\d{4}-(0[1-9]|1[0-2])$/.test(value),
+            { message: "Please select a valid month." }
+        ),
+    department_id: z.number().nullable(),
 });
 
 export default srSchema;
