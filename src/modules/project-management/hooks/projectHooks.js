@@ -4,7 +4,7 @@ import {
     createProject,
     getProjectById,
     getProjectMilestonesWithTasks,
-    getProjects,
+    getProjects, getProjectStats,
     toggleFavouriteProject,
     updateProject, uploadProjects
 } from "@modules/project-management/services/projectService.js";
@@ -79,6 +79,18 @@ export const useProjectMilestonesWithTasks = (projectId) => {
     });
 
     return { milestones, isLoading, refetch };
+}
+
+export const useProjectStatistics = (projectId = null, months = 6) => {
+    const { data = [], isLoading, refetch } = useQuery({
+        queryKey: ['projectStatistics', projectId],
+        queryFn: () => getProjectStats(projectId, months),
+        enabled: true,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
+
+    return { data, isLoading, refetch };
 }
 
 export const useToggleFavouriteProject = () => {
