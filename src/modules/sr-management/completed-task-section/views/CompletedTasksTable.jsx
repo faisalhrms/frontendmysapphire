@@ -3,12 +3,12 @@ import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
 
-const TaskGeneratedTable = () => {
+const TaskCompletedTable = () => {
 
     const navigate = useNavigate();
 
     const onViewTask = (id) => {
-        navigate(`/module/srm/taskgeneratedform/${id}`);
+        navigate(`/module/srm/taskcompletedform/${id}`);
     };
 
     const columns = [
@@ -51,4 +51,4 @@ const TaskGeneratedTable = () => {
     return <DataTable columns={columns} apiUrl="service-request/completed/sr/" title="Task Completed"/>;
 };
 
-export default TaskGeneratedTable;
+export default TaskCompletedTable;
