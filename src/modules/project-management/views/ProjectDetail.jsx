@@ -13,7 +13,7 @@ import {
 import ProjectTeam from "@modules/project-management/components/project/ProjectTeam.jsx";
 import Discussion from "@components/Discussion.jsx";
 import UploadModal from "@modules/project-management/components/model/UploadModal.jsx";
-// import ProjectDashboard from "../components/project/Projectdashboard";
+import ProjectStats from "../components/project/ProjectStats.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -68,9 +68,9 @@ const ProjectDetail = () => {
           </div>
 
           <div className="xl:col-span-3 col-span-12">
-            {/*<div className="bg-white shadow-md rounded-lg mb-4 ">*/}
-            {/*  <ProjectDashboard />*/}
-            {/*</div>*/}
+            <div className="bg-white shadow-md rounded-lg mb-4 ">
+              <ProjectStats projectId={projectData.id} />
+            </div>
             <div className="bg-white shadow-md rounded-lg p-4 mb-4">
               <ProjectAdditionalDetail project={projectData} />
             </div>
