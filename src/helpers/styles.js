@@ -1,0 +1,113 @@
+/**
+ * Retrieves the value of a CSS variable from the root.
+ *
+ * @param {string} variableName - The name of the CSS variable (without '--').
+ * @param defaultValue
+ * @returns {string} - The value of the CSS variable.
+ */
+export const getCSSVariable = (variableName, defaultValue = '0, 0, 0') => {
+    const value = getComputedStyle(document.documentElement).getPropertyValue(`--${variableName}`).trim();
+    return value || defaultValue;
+};
+
+/**
+ * Retrieves and formats a CSS color variable.
+ * Converts space-separated values to comma-separated if necessary.
+ * Returns a string in the format 'rgb(r, g, b)'.
+ *
+ * @param {string} variableName - The name of the CSS variable (without '--').
+ * @param {string} defaultColor - The default color to return if the variable is not found or malformed.
+ * @returns {string} - The formatted RGB color string.
+ */
+export const getFormattedColor = (variableName, defaultColor = '0, 0, 0') => {
+    const value = getComputedStyle(document.documentElement).getPropertyValue(`--${variableName}`).trim();
+
+    if (!value) {
+        console.warn(`CSS variable --${variableName} is not defined. Using default color.`);
+        return defaultColor;
+    }
+    if (value.includes(',')) {
+        return value.replace(/\s+/g, '').replace(/,+/g, ','); // Clean up any extra spaces or commas
+    } else {
+        const parts = value.split(/\s+/);
+        if (parts.length === 3) {
+            return parts.join(', ');
+        } else {
+            console.warn(`CSS variable --${variableName} is malformed. Expected 3 values, got ${parts.length}. Using default color.`);
+            return defaultColor;
+        }
+    }
+};
+
+export const colorPalette = {
+    primary: {
+        background: "bg-primary/10",
+        text: "text-primary",
+        svgColor: "svg-primary",
+        svgFill: "fill-primary",
+        badge: "bg-primary",
+    },
+    secondary: {
+        background: "bg-secondary/10",
+        text: "text-secondary",
+        svgColor: "svg-secondary",
+        svgFill: "fill-secondary",
+        badge: "bg-secondary",
+    },
+    success: {
+        background: "bg-success/10",
+        text: "text-success",
+        svgColor: "svg-success",
+        svgFill: "fill-success",
+        badge: "bg-success",
+    },
+    danger: {
+        background: "bg-danger/10",
+        text: "text-danger",
+        svgColor: "svg-danger",
+        svgFill: "fill-danger",
+        badge: "bg-danger",
+    },
+    warning: {
+        background: "bg-warning/10",
+        text: "text-warning",
+        svgColor: "svg-warning",
+        svgFill: "fill-warning",
+        badge: "bg-warning",
+    },
+    info: {
+        background: "bg-info/10",
+        text: "text-info",
+        svgColor: "svg-info",
+        svgFill: "fill-info",
+        badge: "bg-info",
+    },
+    gray: {
+        background: "bg-gray/10",
+        text: "text-gray",
+        svgColor: "svg-gray",
+        svgFill: "fill-gray",
+        badge: "bg-gray",
+    },
+    purple: {
+        background: "bg-purple/10",
+        text: "text-purple",
+        svgColor: "svg-purple",
+        svgFill: "fill-purple",
+        badge: "bg-purple",
+    },
+    orange: {
+        background: "bg-orange/10",
+        text: "text-orange",
+        svgColor: "svg-orange",
+        svgFill: "fill-orange",
+        badge: "bg-orange",
+    },
+    default: {
+        background: "bg-primary/10",
+        text: "text-primary",
+        svgColor: "svg-primary",
+        svgFill: "fill-primary",
+        badge: "bg-primary",
+    },
+};
