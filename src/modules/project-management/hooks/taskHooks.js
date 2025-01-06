@@ -96,7 +96,7 @@ export const useTaskModal = (refetch) => {
     reset();
     setTaskData(null);
     setIsEditMode(false);
-    setTimeout(() => setIsModalOpen(false), 200);
+    setTimeout(() => setIsModalOpen(false), 300);
   };
 
   // Handle form submission

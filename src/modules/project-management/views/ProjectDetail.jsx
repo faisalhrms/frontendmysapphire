@@ -13,7 +13,7 @@ import {
 import ProjectTeam from "@modules/project-management/components/project/ProjectTeam.jsx";
 import Discussion from "@components/Discussion.jsx";
 import UploadModal from "@modules/project-management/components/model/UploadModal.jsx";
-import ProjectDashboard from "../components/project/Projectdashboard";
+// import ProjectDashboard from "../components/project/Projectdashboard";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -68,21 +68,28 @@ const ProjectDetail = () => {
           </div>
 
           <div className="xl:col-span-3 col-span-12">
-            <div className="bg-white shadow-md rounded-lg mb-4 ">
-              <ProjectDashboard />
-            </div>
+            {/*<div className="bg-white shadow-md rounded-lg mb-4 ">*/}
+            {/*  <ProjectDashboard />*/}
+            {/*</div>*/}
             <div className="bg-white shadow-md rounded-lg p-4 mb-4">
               <ProjectAdditionalDetail project={projectData} />
             </div>
             <div className="bg-white shadow-md rounded-lg p-4 mb-4">
               <ProjectTeam users={projectData.users} />
             </div>
-          </div>
-        </div>
-      )}
+            { projectData.attachments.length > 0 &&
+                (
+                    <div className="bg-white shadow-md rounded-lg p-4 mb-4">
+                      <ProjectAttachment attachments={projectData.attachments}/>
+                    </div>
+                 )
+             }
+                    </div>
+              </div>
+              )}
 
-      {isUploadModalOpen && (
-        <UploadModal
+            {isUploadModalOpen && (
+                <UploadModal
           control={control}
           errors={errors}
           isSubmitting={isSubmitting}
