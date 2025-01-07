@@ -18,13 +18,15 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
           linkedin: editData.linkedin || "",
           twitter: editData.twitter || "",
           tiktok: editData.tiktok || "",
-        }
+             }
       : {
           facebook: "",
           instagram: "",
           linkedin: "",
           twitter: "",
           tiktok: "",
+          companyName: "",
+         
         },
   });
 

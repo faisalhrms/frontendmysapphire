@@ -39,9 +39,6 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
     }
   };
 
-  
- 
-
   const columns = [
     { Header: "Employee", accessor: "employee_code" },
     { Header: "Name", accessor: "name" },
@@ -67,7 +64,7 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
               <i className="ri-edit-line"></i>
             </button>
             <button
-              onClick={() =>getDownloadByEmpCode(employee_code)}
+              onClick={() => getDownloadByEmpCode(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
               <i className="ri-file-pdf-line"></i>
