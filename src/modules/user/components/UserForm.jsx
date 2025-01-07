@@ -16,41 +16,34 @@ import {formatDate} from "@helpers/dateTime.js";
 import {Link} from "react-router-dom";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import userEditSchema from "@modules/user/schemas/userEditSchema.js";
-const passwordPolicies = [
-    { id: 1, text: "At least 8 characters long", regex: /.{8,}/ },
-    { id: 2, text: "At least one uppercase letter", regex: /[A-Z]/ },
-    { id: 3, text: "At least one lowercase letter", regex: /[a-z]/ },
-    { id: 4, text: "At least one number", regex: /\d/ },
-    { id: 5, text: "At least one special character", regex: /[@$!%*?&]/ },
-];
+import {usePasswordPolicy} from "@hooks/passPolicyHooks.js";
+import PassPolicy from "@components/PassPolicy.jsx";
+
 const UserForm = ({ userData}) => {
-    const [password, setPassword] = useState("");
-    const [policyStatus, setPolicyStatus] = useState(
-        passwordPolicies.map((policy) => ({ ...policy, satisfied: false }))
-    );
-    const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
+    const {
+        password,
+        handlePasswordChange,
+        policyStatus,
+    } = usePasswordPolicy(userData?.password || ""); // Initialize with existing password if available
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        setValue,
+    } = useForm({
         resolver: zodResolver(userEditSchema),
         defaultValues: {
-            ...userData
-        }
+            ...userData,
+            password: password, // Ensure password is part of default values
+        },
     });
 
     const { handleUserSubmit } = useUserForm(userData);
-    const handlePasswordChange = (e) => {
-        const newPassword = e.target.value;
-        setPassword(newPassword);
 
-        // Update policy status
-        setPolicyStatus(
-            passwordPolicies.map((policy) => ({
-                ...policy,
-                satisfied: policy.regex.test(newPassword),
-            }))
-        );
-    };
     useEffect(() => {
         if (userData) {
-            Object.keys(userData).forEach(key => {
+            Object.keys(userData).forEach((key) => {
                 setValue(key, userData[key]);
             });
         }
@@ -165,7 +158,7 @@ const UserForm = ({ userData}) => {
                                         <div className="flex flex-wrap items-center">
                                             <div className="me-2 font-semibold">Gender :</div>
                                             <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender==="M" ? "Male" : "Female"}</span>
+                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender === "M" ? "Male" : "Female"}</span>
                                         </div>
                                     </li>
                                     <li className="list-group-item">
@@ -206,6 +199,7 @@ const UserForm = ({ userData}) => {
                                     />
                                 </div>
 
+                                {/* Password Input */}
                                 <div className="xl:col-span-12 col-span-12 relative">
                                     <FormInput
                                         type="password"
@@ -213,38 +207,15 @@ const UserForm = ({ userData}) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Password"
-                                        onChange={handlePasswordChange}
+                                        onChange={(e) => {
+                                            handlePasswordChange(e);
+                                            setValue("password", e.target.value);
+                                        }}
                                         value={password}
                                     />
-                                    <div className="relative group inline-block">
-                                        {/* Icon */}
-                                        <span className="absolute right-3 bottom-6  cursor-pointer">
-            <i className="ri-information-line text-2xl text-primary"></i>
-        </span>
-                                        {/* Tooltip */}
-                                        <div
-                                            className="absolute hidden group-hover:flex flex-col bg-white border border-gray-200 shadow-lg rounded-md p-4 text-sm text-gray-700 w-64 right-0 mt-8 z-50">
-                                            <p className="font-semibold text-gray-900 mb-2">Password Policies:</p>
-                                            <ul>
-                                                {policyStatus.map((policy) => (
-                                                    <li
-                                                        key={policy.id}
-                                                        className={`flex items-center gap-2 ${
-                                                            policy.satisfied ? "text-green" : "text-red"
-                                                        }`}
-                                                    >
-                                                        <i
-                                                            className={`${
-                                                                policy.satisfied ? "ri-check-line" : "ri-close-line"
-                                                            } text-lg`}
-                                                        ></i>
-                                                        {policy.text}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <PassPolicy policyStatus={policyStatus}/> {/* Use PassPolicy component */}
                                 </div>
+
                                 {/* Group IDs Async Select */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FormAsyncSelect
@@ -255,9 +226,10 @@ const UserForm = ({ userData}) => {
                                         placeholder="Groups"
                                         apiUrl="/select/roles/"
                                         queryKeyBase="groups"
-                                        preselectedOptions={formatOptions(userData, 'groups')}
+                                        preselectedOptions={formatOptions(userData, "groups")}
                                     />
                                 </div>
+
                                 {/* Superuser Checkbox */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FormCheckbox
@@ -265,7 +237,6 @@ const UserForm = ({ userData}) => {
                                         label="Superuser"
                                         control={control}
                                         errors={errors}
-
                                     />
                                 </div>
 
@@ -279,8 +250,6 @@ const UserForm = ({ userData}) => {
                                         className="mt-1"
                                     />
                                 </div>
-
-
                             </div>
                         </div>
 
@@ -291,7 +260,6 @@ const UserForm = ({ userData}) => {
                         </div>
                     </div>
                 </div>
-
             </div>
         </form>
     );
