@@ -137,6 +137,7 @@ const DigitalSignatures = () => {
                 >
                   Social
                 </button>
+                
                 <button
                   onClick={() => setActiveTab("template")}
                   className={`m-1 block w-full ${
