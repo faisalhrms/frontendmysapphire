@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 
 const SrList = () => {
     const [apiUrl, setApiUrl] = useState("-");
     const {status} = useParams();
+    const [searchParams] = useSearchParams();
 
     const navigate = useNavigate();
 
@@ -14,11 +15,13 @@ const SrList = () => {
         navigate(`/module/srm/taskgeneratedform/${id}`);
     };
 
-    useEffect(() => {
+  useEffect(() => {
         if (status) {
-            setApiUrl(`dashboard/status/${status}`);
+            // Create a string from the searchParams
+            const paramsString = searchParams.toString();
+            setApiUrl(`dashboard/status/${status}${paramsString ? `?${paramsString}` : ""}`);
         }
-    }, [status]);
+    }, [status, searchParams]);
 
     const columns = [
         {
@@ -53,7 +56,20 @@ const SrList = () => {
             Cell: ({value}) =>
                 value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : "",
         },
+             ...(status === "Completed"
+            ? [
+                {
+                    Header: "Completed At",
+                    accessor: "completed_at",
+                    Cell: ({value}) =>
+                        value
+                            ? format(new Date(value), "yyyy-MM-dd hh:mm a")
+                            : "-",
+                },
+            ]
+            : []),
         {Header: "Requester", accessor: "reporter"},
+
         {
             Header: "Assignee",
             accessor: "sr_tasks",
@@ -88,7 +104,7 @@ const SrList = () => {
                 activepage="Sr dashboard"
                 mainpage={status}
             />
-            <DataTable columns={columns} apiUrl={apiUrl} title="SR Dashboard"/>
+            <DataTable columns={columns} apiUrl={apiUrl} title={status}/>
         </>
     );
 };
