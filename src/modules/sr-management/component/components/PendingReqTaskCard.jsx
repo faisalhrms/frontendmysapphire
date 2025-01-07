@@ -3,6 +3,7 @@ import face5 from "@assets/images/faces/5.jpg";
 import SRAttachment from "@modules/sr-management/component/SRAttachment.jsx";
 
 const PendingReqTaskCard = ({pendingReqData = {}}) => {
+    console.log(pendingReqData);
     return (
 
         <div className="xl:col-span-3 col-span-12">
@@ -16,6 +17,34 @@ const PendingReqTaskCard = ({pendingReqData = {}}) => {
                         <p className="opacity-70">{pendingReqData.company?.name || "No Company"}</p>
                     </div>
                 </div>
+                <hr className="my-1 border-t border-white opacity-50"/>
+                <p className="font-semibold text-white">Concern Emp Details</p>
+                <hr className="my-1 border-t mb-1 border-white opacity-50"/>
+
+                <div className="grid grid-cols-2 mb-2 gap-x-4 gap-y-2 text-white">
+                    <div>
+                        <div>
+                            <p className="font-semibold">
+                                {pendingReqData?.on_behalf_of
+                                    ? "On Behalf: "
+                                    : pendingReqData?.employee_info?.concern_person || "Employee: "}
+                            </p>
+                        </div>
+                        <p className="opacity-70">{pendingReqData?.employee_info?.concern_person || "-"}</p>
+                    </div>
+                    <div>
+                        <p className="font-semibold">Reporter Location:</p>
+                        <p className="opacity-70">{pendingReqData?.employee_info?.reporter_location?.name || "-"}</p>
+                    </div>
+                    <div>
+                        <p className="font-semibold">Emp Code:</p>
+                        <p className="opacity-70">{pendingReqData?.employee_info?.employee_code || "-"}</p>
+                    </div>
+                </div>
+                <hr className="my-1 border-t border-white opacity-50"/>
+                <p className="font-semibold text-white">SR Details</p>
+                <hr className="my-1 border-t mb-1 border-white opacity-50"/>
+
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-white">
                     <div>
                         <p className="font-semibold">SR#:</p>

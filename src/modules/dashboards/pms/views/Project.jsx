@@ -61,7 +61,7 @@ const ProjectStats = ({ projectId }) => {
 
         <div className="col-span-12 lg:col-span-8">
           <div className="box">
-            <div className="box-body mb-4">
+            <div className="box-body ">
               {isLoading ? (
                 <LoadingSpinner />
               ) : colors.length > 0 ? (
