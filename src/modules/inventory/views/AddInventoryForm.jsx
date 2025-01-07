@@ -57,213 +57,191 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="xl:col-span-4 col-span-12">
                     <FormAsyncSelect
-                      name="Site_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Site"
-                      apiUrl="/select/locations"
-                      queryKeyBase="locations"
-                      clientSideSearch={true}
-                      preselectedOptions={formatOptions(
-                        equipmentData,
-                        "location"
-                      )}
+                        name="Site_id"
+                        control={control}
+                        errors={errors}
+                        placeholder="Site"
+                        apiUrl="/select/equipment-sites/"
+                        queryKeyBase="locations"
+                        clientSideSearch={true}
+                        preselectedOptions={formatOptions(
+                            equipmentData,
+                            "location"
+                        )}
+                        saveOptionEndpoint="/select/equipment-sites/"
+                        allowSaveNewOption={true}
                     />
                   </div>
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormAsyncSelect
-                      name="department_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Department"
-                      apiUrl="/select/departments"
-                      queryKeyBase="departments"
-                      clientSideSearch={true}
-                      preselectedOptions={formatOptions(
-                        equipmentData,
-                        "department"
-                      )}
+                        name="department_id"
+                        control={control}
+                        errors={errors}
+                        placeholder="Department"
+                        apiUrl="/select/departments"
+                        queryKeyBase="departments"
+                        clientSideSearch={true}
+                        preselectedOptions={formatOptions(
+                            equipmentData,
+                            "department"
+                        )}
                     />
                   </div>
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormAsyncSelect
-                      name="location_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Physical Location"
-                      apiUrl="/select/physical-locations/"
-                      queryKeyBase="locations"
-                      clientSideSearch={true}
+                        name="location_id"
+                        control={control}
+                        errors={errors}
+                        placeholder="Physical Location"
+                        apiUrl="/select/equipment-locations/"
+                        queryKeyBase="locations"
+                        clientSideSearch={true}
 
-                      preselectedOptions={formatOptions(
-                        equipmentData,
-                        "location"
-                      )}
-                      saveOptionEndpoint="/select/physical-locations/"
-                      allowSaveNewOption={true}
+                        preselectedOptions={formatOptions(
+                            equipmentData,
+                            "location"
+                        )}
+                        saveOptionEndpoint="/select/equipment-locations/"
+                        allowSaveNewOption={true}
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
                     <FormInput
-                      type="code"
-                      name="code"
-                      control={control}
-                      errors={errors}
-                      placeholder="Code"
+                        type="code"
+                        name="code"
+                        control={control}
+                        errors={errors}
+                        placeholder="Code"
                     />
                   </div>
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormAsyncSelect
-                      name="type_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Type"
-                      apiUrl="/select/types/"
-                      queryKeyBase="types"
-                      clientSideSearch={true}
+                        name="type_id"
+                        control={control}
+                        errors={errors}
+                        placeholder="Type"
+                        apiUrl="/select/equipment-types/"
+                        queryKeyBase="types"
+                        clientSideSearch={true}
 
-                      preselectedOptions={formatOptions(equipmentData, "type")}
-                      saveOptionEndpoint="/select/types/"
-                      allowSaveNewOption={true}
+                        preselectedOptions={formatOptions(equipmentData, "type")}
+                        saveOptionEndpoint="/select/equipment-types/"
+                        allowSaveNewOption={true}
                     />
                   </div>
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormInput
-                      name="asset_code"
-                      control={control}
-                      errors={errors}
-                      placeholder="Asset Code"
+                        name="asset_code"
+                        control={control}
+                        errors={errors}
+                        placeholder="Asset Code"
                     />
                   </div>
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormInput
-                      name="serial_no"
-                      control={control}
-                      errors={errors}
-                      placeholder="Serial No"
+                        name="serial_no"
+                        control={control}
+                        errors={errors}
+                        placeholder="Serial No"
                     />
                   </div>
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormInput
-                      type="number"
-                      name="part_no"
-                      control={control}
-                      errors={errors}
-                      placeholder="Part No"
-                      min="0"
+                        type="number"
+                        name="part_no"
+                        control={control}
+                        errors={errors}
+                        placeholder="Part No"
+                        min="0"
                     />
                   </div>
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormSelect
-                      name="status_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Status"
-                      options={equipmentStatuses}
-                      label="Status"
-                    />
-                  </div>
-
-                  <div className="xl:col-span-4 col-span-12">
-                    <FormAsyncSelect
-                      name="custodian_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Custodian"
-                      apiUrl="/select/users"
-                      queryKeyBase="users"
-                      clientSideSearch={true}
-                      preselectedOptions={formatOptions(
-                        equipmentData,
-                        "users",
-                        "id",
-                        "full_name"
-                      )}
-                    />
-                  </div>
-                  <div className="xl:col-span-4 col-span-12">
-                    <FormInput
-                      name="employee_code"
-                      control={control}
-                      errors={errors}
-                      placeholder="Employee_code"
-                    />
-                  </div>
-                  <div className="xl:col-span-4 col-span-12">
-                    <FormAsyncSelect
-                      name="grade"
-                      control={control}
-                      errors={errors}
-                      placeholder="Grade"
-                       apiUrl="/select/grades/"
-                      queryKeyBase="users"
-                      clientSideSearch={true}
-                    />
-                  </div>
-                  <div className="xl:col-span-4 col-span-12">
-                    <FormInput
-                      name="previous custodian"
-                      control={control}
-                      errors={errors}
-                      placeholder="Previous custodian"
-                    />
-                  </div>
-                  <div className="xl:col-span-4 col-span-12">
-                    <FormInput
-                      name="updated"
-                      control={control}
-                      errors={errors}
-                      placeholder="Updated"
-                    />
-                  </div>
-                  <div className="xl:col-span-4 col-span-12">
-                    <FormInput
-                      name="updated by"
-                      control={control}
-                      errors={errors}
-                      placeholder="Updated By"
+                        name="status_id"
+                        control={control}
+                        errors={errors}
+                        placeholder="Status"
+                        options={equipmentStatuses}
+                        label="Status"
                     />
                   </div>
 
                   <div className="xl:col-span-6 col-span-12">
+                    <FormAsyncSelect
+                        name="custodian_id"
+                        control={control}
+                        errors={errors}
+                        placeholder="Custodian"
+                        apiUrl="/select/users"
+                        queryKeyBase="users"
+                        clientSideSearch={true}
+                        preselectedOptions={formatOptions(
+                            equipmentData,
+                            "users",
+                            "id",
+                            "full_name"
+                        )}
+                    />
+                  </div>
+
+                  <div className="xl:col-span-6 col-span-12">
+                    <FormAsyncSelect
+                        name="custodian_id"
+                        control={control}
+                        errors={errors}
+                        placeholder="Previous Custodian"
+                        apiUrl="/select/users"
+                        queryKeyBase="users"
+                        clientSideSearch={true}
+                        preselectedOptions={formatOptions(
+                            equipmentData,
+                            "users",
+                            "id",
+                            "full_name"
+                        )}
+                    />
+                  </div>
+
+
+                  <div className="xl:col-span-6 col-span-12">
                     <FormTextarea
-                      name="description"
-                      control={control}
-                      errors={errors}
-                      placeholder="Description"
-                      rows={5}
+                        name="description"
+                        control={control}
+                        errors={errors}
+                        placeholder="Description"
+                        rows={5}
                     />
                   </div>
                   <div className="xl:col-span-6 col-span-12">
                     <FormTextarea
-                      name="specs"
-                      control={control}
-                      errors={errors}
-                      placeholder="Specification"
-                      rows={5}
+                        name="specs"
+                        control={control}
+                        errors={errors}
+                        placeholder="Specification"
+                        rows={5}
                     />
                   </div>
                   <div className="col-span-12">
                     <GalleryUpload
-                      currentValue={equipmentData?.attachment_ids}
-                      files={equipmentData?.attachments}
-                      inputName="attachment_ids"
-                      placeholder="Select Attachments"
-                      control={control}
-                      errors={errors}
+                        currentValue={equipmentData?.attachment_ids}
+                        files={equipmentData?.attachments}
+                        inputName="attachment_ids"
+                        placeholder="Select Attachments"
+                        control={control}
+                        errors={errors}
                     />
                   </div>
                 </div>
               </div>
               <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
-                <FormButton isLoading={isSubmitting} />
+                <FormButton isLoading={isSubmitting}/>
               </div>
             </div>
           </div>
@@ -274,11 +252,11 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
               </div>
               <div className="box-body">
                 <FormInput
-                  type="date"
-                  name="purchased_at"
-                  control={control}
-                  errors={errors}
-                  label={false}
+                    type="date"
+                    name="purchased_at"
+                    control={control}
+                    errors={errors}
+                    label={false}
                   placeholder="Purchase Date"
                 />
               </div>

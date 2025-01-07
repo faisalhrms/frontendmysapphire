@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {
     createProject,
-    getProjectById,
+    getProjectById, getProjectDashboardStats,
     getProjectMilestonesWithTasks,
     getProjects, getProjectStats,
     toggleFavouriteProject,
@@ -169,3 +169,15 @@ export const useUploadProjectModal = (refetch, type = 'P') => {
         isUploadModalOpen,
     };
 };
+
+export const useProjectDashboardStatistics = () => {
+    const { data = [], isLoading, refetch } = useQuery({
+        queryKey: ['projectDashboardStatistics'],
+        queryFn: () => getProjectDashboardStats(),
+        enabled: true,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
+
+    return { data, isLoading, refetch };
+}
