@@ -57,7 +57,7 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
               onClick={() => onOpenModal(id)}
               className="ti-btn ti-btn-danger ti-btn-sm"
             >
-              <i class="ri-delete-bin-6-line"></i>
+              <i className="ri-delete-bin-6-line"></i>
             </button>
 
             <button
@@ -70,13 +70,13 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
               onClick={() =>getDownloadByEmpCode(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
-              <i class="ri-file-pdf-line"></i>
+              <i className="ri-file-pdf-line"></i>
             </button>
             <button
               onClick={() => downloadAllSignatures(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
-              <i class="ri-download-2-line"></i>
+              <i className="ri-download-2-line"></i>
             </button>
           </div>
         );
