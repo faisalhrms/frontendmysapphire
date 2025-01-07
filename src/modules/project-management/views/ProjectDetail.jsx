@@ -14,6 +14,7 @@ import ProjectTeam from "@modules/project-management/components/project/ProjectT
 import Discussion from "@components/Discussion.jsx";
 import UploadModal from "@modules/project-management/components/model/UploadModal.jsx";
 import ProjectStats from "../components/project/ProjectStats.jsx";
+import ProjectStatistics from "../components/project/ProjectStatistics.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -65,7 +66,9 @@ const ProjectDetail = () => {
               storeEndPoint={`/pms/projects/${id}/discussion/`}
               getEndPoint={`/pms/projects/${id}/discussions/`}
             />
+            <ProjectStatistics/>
           </div>
+
 
           <div className="xl:col-span-3 col-span-12">
             <div className="bg-white shadow-md rounded-lg mb-4 ">

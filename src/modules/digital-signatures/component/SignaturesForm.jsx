@@ -2,8 +2,7 @@ import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
-import GalleryUpload from "@components/GalleryUpload.jsx";
-import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+
 import TemplateSignature from "./TemplateSignature";
 
 const SignatureForm = ({
@@ -236,7 +235,6 @@ const SignatureForm = ({
                 onClick={() => {
                   setPreviewData({});
                   handleHide();
-                  
                 }}
               >
                 Clear

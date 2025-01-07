@@ -14,6 +14,8 @@ export const PMS_ROUTES = {
     DETAIL: {
       path: "/module/projects/detail/:id",
     },
+   
+   
   },
   TASK: {
     DETAIL: {
@@ -50,4 +52,6 @@ export const MODULE_ROUTES = [
     component: () =>
       import(`/src/modules/project-management/views/TaskDetail.jsx`),
   },
+ 
+  
 ];

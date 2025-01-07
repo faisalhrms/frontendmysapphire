@@ -30,7 +30,7 @@ const ProjectStats = ({projectId}) => {
                    return <ProjectStatItem item={item} key={item.status} />
                   })
                 }
-                <div className="p-6 pb-2">
+                {/* <div className="p-6 pb-2">
                   <p className="text-[.9375rem] font-semibold">
                     Tasks Statistics
                     <span className="text-muted font-normal"> (Last 6 months) :</span>
@@ -40,7 +40,7 @@ const ProjectStats = ({projectId}) => {
                         <ApexChart colors={colors} series={ data.n_months.series } categories={ data.n_months.categories } />
                       )}
                   </div>
-                </div>
+                </div> */}
               </>
           )}
         </div>

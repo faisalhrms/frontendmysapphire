@@ -15,7 +15,7 @@ const ApexChart = ({
                        categories,
                        chartType = 'bar',
                        colors = ["#845adf", "#28d193", "#ffbe14", "#23b7e5"],
-                       height = 210,
+                       height = 400,
                        stacked = true,
                        columnWidth = "25%",
                        gridBorderColor = "#f2f5f7",
