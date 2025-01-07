@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useProjectStatistics } from "@modules/project-management/hooks/projectHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import { Projectdata } from "@modules/dashboards/pms/views/projectdata";
+// import { Projectdata } from "../views/projectdata.jsx";
 import ProjectStatItem from "@modules/project-management/components/project/ProjectStatItem.jsx";
 import ApexChart from "@components/charts/ApexChart.jsx";
 import {
@@ -47,7 +47,7 @@ const ProjectStats = ({ projectId }) => {
         mainpage={"Poject"}
       />
       <div className="grid grid-cols-12 gap-4 max-w-[1250px]">
-        <div className="col-span-12 lg:col-span-6">
+        <div className="col-span-12 lg:col-span-4">
           {isLoading ? (
             <LoadingSpinner />
           ) : (
@@ -59,13 +59,14 @@ const ProjectStats = ({ projectId }) => {
           )}
         </div>
 
-        <div className="col-span-12 lg:col-span-6">
+        <div className="col-span-12 lg:col-span-8">
           <div className="box">
             <div className="box-body mb-4">
               {isLoading ? (
                 <LoadingSpinner />
               ) : colors.length > 0 ? (
                 <ApexChart
+                  height={725}
                   colors={colors}
                   series={data?.n_months?.series}
                   categories={data?.n_months?.categories}
@@ -76,7 +77,7 @@ const ProjectStats = ({ projectId }) => {
             </div>
           </div>
 
-          <div className="box">
+          {/* <div className="box">
             <div className="box-body py-3 px-1">
               <div id="sessions">
                 <Projectdata />
@@ -98,7 +99,7 @@ const ProjectStats = ({ projectId }) => {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
