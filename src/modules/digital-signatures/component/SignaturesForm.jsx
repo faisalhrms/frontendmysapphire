@@ -236,6 +236,7 @@ const SignatureForm = ({
                 onClick={() => {
                   setPreviewData({});
                   handleHide();
+                  
                 }}
               >
                 Clear
