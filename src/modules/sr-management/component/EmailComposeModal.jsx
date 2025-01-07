@@ -1,83 +1,90 @@
-import React, { useMemo, useEffect } from "react";
-import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import React, { useMemo, useEffect, useState } from "react";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import { useForm } from "react-hook-form";
 import api from "@config/axiosConfig.js";
+import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
 
-const EmailComposeModal = ({ isOpen, onClose, serviceRequest }) => {
+const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
+    const [includePreviousThread, setIncludePreviousThread] = useState(false);
+
     const {
         control,
         handleSubmit,
         reset,
-        watch,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
             to_email: [],
             cc_email: [],
             message: "",
-        }
+        },
     });
 
-    // Format options to match the expected format of FormAsyncSelect
     const formatEmails = (emails) =>
-        Array.isArray(emails) ? emails.map((email) => ({ value: email, label: email })) : [];
+        Array.isArray(emails)
+            ? emails.map((email) => ({
+                  value: email.trim(),
+                  label: email.trim(),
+              }))
+            : [];
 
-    // Prepare preselected options for "To" field
     const preselectedToEmails = useMemo(() => {
-        const reporterEmail = serviceRequest?.reporter_email;
-        return reporterEmail ? [{ value: reporterEmail, label: reporterEmail }] : [];
-    }, [serviceRequest]);
+        const reporterEmail = user?.email;
+        return reporterEmail
+            ? [{ label: reporterEmail, value: reporterEmail }]
+            : [];
+    }, [user?.email]);
 
-    // Prepare preselected options for "CC" field
     const preselectedCcEmails = useMemo(() => {
-        return formatEmails(serviceRequest?.cc_emails || []);
+        return (serviceRequest?.cc_email || []).map((email) => ({
+            label: email,
+            value: email,
+        }));
     }, [serviceRequest]);
 
-    // Reset form values when modal opens
-    useEffect(() => {
-        if (isOpen) {
-            const defaultValues = {
-                to_email: preselectedToEmails,
-                cc_email: preselectedCcEmails,
-                message: "",
-            };
-            reset(defaultValues);
-        }
-    }, [isOpen, reset, preselectedToEmails, preselectedCcEmails]);
-
-const handleSave = async (data) => {
-
-    // Ensure the 'to_email' array contains the email values, not the entire object
-    const toEmails = data.to_email && Array.isArray(data.to_email)
-        ? data.to_email.map(item => item?.value || item) // Ensure you're accessing 'value'
-        : [];
-
-    const ccEmails = data.cc_email && Array.isArray(data.cc_email)
-        ? data.cc_email.map(item => item?.value || item) // Same for CC emails
-        : [];
-
-
-    const payload = {
-        service_request_id: serviceRequest.id,
-        message: data.message,
-        to_email: toEmails,
-        cc_email: ccEmails,
-        send_email: true,
+    const resetModalState = () => {
+        const defaultValues = {
+            to_email: preselectedToEmails,
+            cc_email: preselectedCcEmails,
+            message: "",
+        };
+        reset(defaultValues);
+        setIncludePreviousThread(false);
     };
 
+    useEffect(() => {
+        if (isOpen) {
+            resetModalState();
+        }
+    }, [isOpen, preselectedToEmails, preselectedCcEmails]);
 
-    try {
-        await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
-        onClose();
-    } catch (error) {
-        console.error("Error sending email:", error);
-    }
-};
+    const handleSave = async (data) => {
+        const toEmails = data.to_email && Array.isArray(data.to_email)
+            ? data.to_email.map((item) => item?.value || item)
+            : [];
 
+        const ccEmails = data.cc_email && Array.isArray(data.cc_email)
+            ? data.cc_email.map((item) => item?.value || item)
+            : [];
 
+        const payload = {
+            service_request_id: serviceRequest.id,
+            message: data.message,
+            to_email: toEmails,
+            cc_email: ccEmails,
+            send_email: true,
+            previous_thread: includePreviousThread,
+        };
 
+        try {
+            await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
+            resetModalState();
+            onClose();
+        } catch (error) {
+            console.error("Error sending email:", error);
+        }
+    };
 
     return (
         <div
@@ -92,7 +99,10 @@ const handleSave = async (data) => {
                     <div className="ti-modal-header flex justify-between items-center p-4 border-b">
                         <h6 className="modal-title text-[1rem] font-semibold">Compose Email</h6>
                         <button
-                            onClick={onClose}
+                            onClick={() => {
+                                resetModalState();
+                                onClose();
+                            }}
                             type="button"
                             className="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor"
                         >
@@ -103,7 +113,7 @@ const handleSave = async (data) => {
                     <form onSubmit={handleSubmit(handleSave)}>
                         <div className="ti-modal-body px-4 py-3 space-y-4">
                             <div className="xl:col-span-12 col-span-12">
-                                <FormAsyncSelect
+                                <SRAsyncSelect
                                     label="To"
                                     isMulti
                                     name="to_email"
@@ -113,11 +123,11 @@ const handleSave = async (data) => {
                                     apiUrl="/select/users/email"
                                     queryKeyBase="users-email"
                                     preselectedOptions={preselectedToEmails}
-                                    allowSaveNewOption={false}
+                                    allowSaveNewOption
                                 />
                             </div>
                             <div className="xl:col-span-12 col-span-12">
-                                <FormAsyncSelect
+                                <SRAsyncSelect
                                     label="CC"
                                     isMulti
                                     name="cc_email"
@@ -127,7 +137,7 @@ const handleSave = async (data) => {
                                     apiUrl="/select/users/email"
                                     queryKeyBase="cc-email"
                                     preselectedOptions={preselectedCcEmails}
-                                    allowSaveNewOption={false}
+                                    allowSaveNewOption
                                 />
                             </div>
                             <div>
@@ -139,10 +149,25 @@ const handleSave = async (data) => {
                                     rows={6}
                                 />
                             </div>
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id="previous-thread"
+                                    checked={includePreviousThread}
+                                    onChange={(e) => setIncludePreviousThread(e.target.checked)}
+                                    className="mr-2"
+                                />
+                                <label htmlFor="previous-thread" className="text-sm">
+                                    Include Previous Thread
+                                </label>
+                            </div>
                         </div>
                         <div className="ti-modal-footer flex justify-end gap-2 p-4 border-t">
                             <button
-                                onClick={onClose}
+                                onClick={() => {
+                                    resetModalState();
+                                    onClose();
+                                }}
                                 type="button"
                                 className="ti-btn ti-btn-primary-full ti-btn-loader m-2"
                             >
