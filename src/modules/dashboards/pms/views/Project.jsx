@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useProjectStatistics } from "@modules/project-management/hooks/projectHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import { Projectdata } from "../Projectdata.jsx";
+import { Projectdata } from "@/Projectdata.jsx";
 import ProjectStatItem from "@modules/project-management/components/project/ProjectStatItem.jsx";
 import ApexChart from "@components/charts/ApexChart.jsx";
 import {
