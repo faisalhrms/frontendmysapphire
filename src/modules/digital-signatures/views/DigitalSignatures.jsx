@@ -10,10 +10,11 @@ import { getSignature, saveSignature } from "../services/Service";
 const DigitalSignatures = () => {
   const [activeTab, setActiveTab] = useState("details");
   const [data, setData] = useState({});
-  const [editData, setEditData] = useState(null);
+  const [editData, setEditData] = useState({});
   const [hide, setHide] = useState(false);
+  const [tempStep, setTempStep] = useState(1);
 
-  console.log("check", hide);
+  console.log("check", tempStep);
 
   const handleHide = () => {
     try {
@@ -21,6 +22,10 @@ const DigitalSignatures = () => {
     } catch (error) {
       console.error("Error toggling hide:", error);
     }
+  };
+
+  const handleChangeTemplate = (step) => {
+    setTempStep(step);
   };
 
   const handleSubmitData = async (data1, step) => {
@@ -37,6 +42,7 @@ const DigitalSignatures = () => {
       }
 
       setData(updatedData);
+      setEditData(updatedData);
 
       if (step === 1) {
         setActiveTab("social");
@@ -52,11 +58,14 @@ const DigitalSignatures = () => {
     } catch (error) {}
   };
 
+  console.log(data);
+
   const handleSavedDataFetch = async (Code, step) => {
     try {
       console.log(Code, step);
       setActiveTab("details");
       const data = await getSignature(Code);
+      console.log(data);
       setEditData(data);
     } catch (error) {
       console.error("Error fetching saved data:", error);
@@ -116,7 +125,6 @@ const DigitalSignatures = () => {
                 aria-label="Tabs"
                 className="md:flex block !justify-start whitespace-nowrap"
               >
-           
                 <button
                   onClick={() => setActiveTab("details")}
                   className={`m-1 block w-full ${
@@ -137,7 +145,7 @@ const DigitalSignatures = () => {
                 >
                   Social
                 </button>
-                
+
                 <button
                   onClick={() => setActiveTab("template")}
                   className={`m-1 block w-full ${
@@ -186,6 +194,7 @@ const DigitalSignatures = () => {
                   editData={editData}
                   hide={hide}
                   handleHide={handleHide}
+                  tempStep={tempStep}
                 />
               </div>
             )}
@@ -200,6 +209,7 @@ const DigitalSignatures = () => {
                 <SocialSignature
                   handleSubmitData={handleSubmitData}
                   editData={editData}
+                  tempStep={tempStep}
                 />
               </div>
             )}
@@ -211,7 +221,12 @@ const DigitalSignatures = () => {
                 aria-labelledby="template"
                 role="tabpanel"
               >
-                <TemplateSignature handleHide={handleHide} />
+                <TemplateSignature
+                  handleHide={handleHide}
+                  editData={editData}
+                  handleChangeTemplate={handleChangeTemplate}
+                  tempStep={"all"}
+                />
               </div>
             )}
 

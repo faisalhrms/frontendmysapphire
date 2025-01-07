@@ -11,26 +11,37 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
     setValue,
     watch,
   } = useForm({
-    defaultValues: editData
-      ? {
-          facebook: editData.facebook || "",
-          instagram: editData.instagram || "",
-          linkedin: editData.linkedin || "",
-          twitter: editData.twitter || "",
-          tiktok: editData.tiktok || "",
-             }
-      : {
-          facebook: "",
-          instagram: "",
-          linkedin: "",
-          twitter: "",
-          tiktok: "",
-          companyName: "",
-         
-        },
+    defaultValues: {
+      facebook: editData.facebook || "",
+      instagram: editData.instagram || "",
+      linkedin: editData.linkedin || "",
+      twitter: editData.twitter || "",
+      tiktok: editData.tiktok || "",
+    },
   });
 
   const [previewData, setPreviewData] = useState({});
+
+  useEffect(() => {
+    const payload = {
+      companyName: editData?.company?.name || "",
+      employee_code: editData?.employee_code || "",
+      name: editData?.name || "",
+      designation: editData?.designation || "",
+      department: editData?.department || "",
+      website: editData?.website || "",
+      phone: editData?.phone || "",
+      mobile: editData?.mobile || "",
+      email: editData?.email || "",
+      address: editData?.address || "",
+      facebook: editData.facebook || "",
+      instagram: editData.instagram || "",
+      linkedin: editData.linkedin || "",
+      twitter: editData.twitter || "",
+      tiktok: editData.tiktok || "",
+    };
+    setPreviewData(payload);
+  }, [editData]);
 
   useEffect(() => {
     const subscription = watch((formData) => {
@@ -122,30 +133,19 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
             <div className="box-body border border-gray-300 rounded-md p-4 bg-gray-50">
               <div className="mb-4 text-gray-700 font-semibold">Preview</div>
               <div className="space-y-2 border border-dashed border-gray-300 rounded-md p-4 bg-white">
-                {previewData.facebook && (
+                {previewData && (
                   <div>
-                    <strong>Facebook:</strong> {previewData.facebook}
+                    <strong>Template:</strong>
                   </div>
                 )}
-                {previewData.instagram && (
-                  <div>
-                    <strong>Instagram:</strong> {previewData.instagram}
-                  </div>
-                )}
-                {previewData.linkedin && (
-                  <div>
-                    <strong>LinkedIn:</strong> {previewData.linkedin}
-                  </div>
-                )}
-                {previewData.twitter && (
-                  <div>
-                    <strong>Twitter:</strong> {previewData.twitter}
-                  </div>
-                )}
-                {previewData.tiktok && (
-                  <div>
-                    <strong>TikTok:</strong> {previewData.tiktok}
-                  </div>
+                {Object.keys(previewData).map(
+                  (key) =>
+                    previewData[key] && (
+                      <div key={key}>
+                        <strong>{key.replace(/_/g, " ")}:</strong>{" "}
+                        {previewData[key]}
+                      </div>
+                    )
                 )}
               </div>
               <div className="mt-4 flex justify-end gap-4">
