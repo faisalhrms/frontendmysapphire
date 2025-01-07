@@ -121,7 +121,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Members"
-                                        apiUrl={`/select/users?department_id=${pendingReqData.department.id}`}
+                                        apiUrl={`/select/users?sub_department_id=${pendingReqData.sub_department.id}`}
                                         queryKeyBase="users"
                                         preselectedOptions={formatOptions(pendingReqData, "users", "id", "full_name")}
                                     />

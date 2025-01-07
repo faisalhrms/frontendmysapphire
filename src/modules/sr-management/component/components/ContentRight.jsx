@@ -101,7 +101,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                           <textarea
                               className="form-control text-sm mb-1"
                               rows="3"
-                              value={serviceRequest?.remarks}
+                              value={serviceRequest?.remarks || ""}
                               readOnly={true}
                           />
 
