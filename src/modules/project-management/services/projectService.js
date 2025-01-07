@@ -99,3 +99,13 @@ export const getProjectStats = async (id = null, months = 12) => {
         Notify.error(error.response?.data?.message || 'Failed to get project statistics');
     }
 };
+
+
+export const getProjectDashboardStats = async () => {
+    try {
+        const response = await api.get(`/dashboard/pms/statistics/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || 'Failed to get project dashboard statistics');
+    }
+};

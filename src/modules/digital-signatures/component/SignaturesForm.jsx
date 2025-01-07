@@ -2,8 +2,6 @@ import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
-import GalleryUpload from "@components/GalleryUpload.jsx";
-import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import TemplateSignature from "./TemplateSignature";
 
 const SignatureForm = ({
@@ -19,14 +17,15 @@ const SignatureForm = ({
     formState: { errors, isSubmitting },
     setValue,
     watch,
+    reset,
   } = useForm({
     defaultValues: editData
       ? {
           companyName: editData.company?.name || "",
           employee_code: editData.employee_code || "",
-          name: editData.name || null,
+          name: editData.name || "",
           designation: editData.designation || "",
-          department: editData.department || null,
+          department: editData.department || "",
           website: editData.website || "",
           phone: editData.phone || "",
           mobile: editData.mobile || "",
@@ -34,10 +33,22 @@ const SignatureForm = ({
           address: editData.address || "",
           attachment_ids: editData.attachment_ids || [],
         }
-      : {},
+      : {
+          companyName: "",
+          employee_code: "",
+          name: "",
+          designation: "",
+          department: "",
+          website: "",
+          phone: "",
+          mobile: "",
+          email: "",
+          address: "",
+        },
   });
 
   const [previewData, setPreviewData] = useState({});
+  const [templateName, setTemplateName] = useState("");
 
   useEffect(() => {
     const subscription = watch((formData) => {
@@ -50,13 +61,31 @@ const SignatureForm = ({
     handleSubmitData(formData, 1);
   };
 
+  const handleClear = () => {
+    reset({
+      companyName: "",
+      employee_code: "",
+      name: "",
+      designation: "",
+      department: "",
+      website: "",
+      phone: "",
+      mobile: "",
+      email: "",
+      address: "",
+    });
+    setPreviewData({});
+    setTemplateName("");
+    handleHide();
+  };
+
   return (
     <>
       <div className="grid grid-cols-12 gap-x-4">
         <div className="xxl:col-span-8 col-span-12 sm:col-span-8">
           <div className="box">
             <div className="box-header">
-              <div className="box-title">SignatureForm</div>
+              <div className="box-title">Signature Form</div>
             </div>
             <div className="box-body">
               <form onSubmit={handleSubmit(onSubmit)}>
@@ -183,61 +212,26 @@ const SignatureForm = ({
             </div>
 
             <div className="border border-dashed border-gray-300 rounded-md p-4 bg-white">
-              {previewData.companyName && (
+              {templateName && (
                 <div>
-                  <strong>Company Name:</strong> {previewData.companyName}
+                  <strong>Template:</strong> {templateName}
                 </div>
               )}
-              {previewData.employee_code && (
-                <div>
-                  <strong>Employee Code:</strong> {previewData.employee_code}
-                </div>
-              )}
-              {previewData.designation && (
-                <div>
-                  <strong>Designation:</strong> {previewData.designation}
-                </div>
-              )}
-              {previewData.department && (
-                <div>
-                  <strong>Department:</strong> {previewData.department}
-                </div>
-              )}
-              {previewData.website && (
-                <div>
-                  <strong>Website:</strong> {previewData.website}
-                </div>
-              )}
-              {previewData.phone && (
-                <div>
-                  <strong>Phone:</strong> {previewData.phone}
-                </div>
-              )}
-              {previewData.mobile && (
-                <div>
-                  <strong>Mobile:</strong> {previewData.mobile}
-                </div>
-              )}
-              {previewData.email && (
-                <div>
-                  <strong>Email:</strong> {previewData.email}
-                </div>
-              )}
-              {previewData.address && (
-                <div>
-                  <strong>Address:</strong> {previewData.address}
-                </div>
+              {Object.keys(previewData).map(
+                (key) =>
+                  previewData[key] && (
+                    <div key={key}>
+                      <strong>{key.replace(/_/g, " ")}:</strong>{" "}
+                      {previewData[key]}
+                    </div>
+                  )
               )}
               {hide && <TemplateSignature title={false} />}
             </div>
             <div className="mt-4 flex justify-end gap-4 mb-4 mr-4">
               <button
                 className="px-4 py-2 text-sm font-medium rounded-md ti-btn-primary-full"
-                onClick={() => {
-                  setPreviewData({});
-                  handleHide();
-                  
-                }}
+                onClick={handleClear}
               >
                 Clear
               </button>

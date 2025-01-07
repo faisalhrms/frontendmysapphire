@@ -131,6 +131,7 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
             <EmailComposeModal
                 isOpen={isEmailModalOpen}
                 serviceRequest={serviceRequest}
+                user={user}
                 onClose={handleCloseEmailModal}
             />
         </div>
