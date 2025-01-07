@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import CountUp from "react-countup";
 import {getChangeStyles, getStatusStyles} from "@helpers/statusStyles.js";
+import PercentageIcon from "@components/PercentageIcon.jsx";
 
 const ProjectStatItem = ({ item }) => {
     const { status, last_month, total, percentage_change } = item;
@@ -37,18 +38,7 @@ const ProjectStatItem = ({ item }) => {
                                 Last Month
                             </span>
                         </h4>
-                        <p className="text-muted text-[.6875rem] mb-0 leading-none">
-                            {arrowIconClass && (
-                                <i
-                                    className={`${arrowIconClass} me-1 align-middle ${changeClass}`}
-                                    aria-label={ariaLabel}
-                                ></i>
-                            )}
-                            <span className={`${changeClass} me-1 font-semibold`}>
-                                {percentage_change}
-                            </span>
-                            <span>This Month</span>
-                        </p>
+                        <PercentageIcon percentage_change={percentage_change} arrowIconClass={arrowIconClass} changeClass={changeClass} ariaLabel={ariaLabel} />
                     </div>
                 </div>
             </div>

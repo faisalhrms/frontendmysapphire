@@ -33,7 +33,7 @@ export const DASHBOARD_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: DASHBOARD_ROUTES.PROJECT.path,
-        component: () => import(`/src/modules/dashboards/pms/views/Project.jsx`),
+        component: () => import(`/src/modules/dashboards/pms/views/ProjectDashboard.jsx`),
         permission: DASHBOARD_ROUTES.PROJECT.permission,
     },
     {
