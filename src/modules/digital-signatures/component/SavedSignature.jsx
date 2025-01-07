@@ -67,14 +67,9 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
               onClick={() => getDownloadByEmpCode(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
-              <i className="ri-file-pdf-line"></i>
-            </button>
-            <button
-              onClick={() => downloadAllSignatures(employee_code)}
-              className="ti-btn ti-btn-primary ti-btn-sm"
-            >
               <i className="ri-download-2-line"></i>
             </button>
+           
           </div>
         );
       },
