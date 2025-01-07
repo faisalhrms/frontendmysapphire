@@ -116,7 +116,7 @@ const DigitalSignatures = () => {
                 aria-label="Tabs"
                 className="md:flex block !justify-start whitespace-nowrap"
               >
-                {/* Tabs */}
+           
                 <button
                   onClick={() => setActiveTab("details")}
                   className={`m-1 block w-full ${
