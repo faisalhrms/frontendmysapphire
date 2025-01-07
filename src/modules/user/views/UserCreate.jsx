@@ -70,6 +70,7 @@ const CreateUser = () => {
                                             control={control}
                                             errors={errors}
                                             placeholder="Password"
+
                                         />
                                     </div>
 

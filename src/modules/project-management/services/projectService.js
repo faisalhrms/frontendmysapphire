@@ -90,3 +90,12 @@ export const uploadProjects = async (formData) => {
         throw new Error(error.response?.data?.message || 'An error occurred');
     }
 };
+
+export const getProjectStats = async (id = null, months = 12) => {
+    try {
+        const response = await api.get(`/pms/projects/statistics/?${id != null ? `project_id=${id}&` : ''}num_months=${months}`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || 'Failed to get project statistics');
+    }
+};

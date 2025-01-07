@@ -104,9 +104,9 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
   return (
     <>
       <PageHeader
-        currentpage="Task Generated "
-        activepage="sr dashboard"
-        mainpage="Add"
+        currentpage="Task Generated"
+        activepage="SR Assignment"
+        mainpage="Task Generated"
       />
       <div className="dark:bg-bodybg p-4 rounded-lg my-6  ">
         <ConfirmationModal
