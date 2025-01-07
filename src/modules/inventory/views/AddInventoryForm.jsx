@@ -7,12 +7,13 @@ import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import equipmentSchema from "@modules/inventory/schemas/equipmentSchema.js";
 import { useEquipmentForm } from "@modules/inventory/hooks/inventoryHooks.js";
-import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import { formatOptions } from "@helpers/formatters.js";
 
 import GalleryUpload from "@components/GalleryUpload.jsx";
+import {currencies} from "@modules/subscription/services/subscriptionService.js";
+import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 
 const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
   const {
@@ -92,13 +93,16 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       placeholder="Physical Location"
-                      apiUrl="/select/locations"
+                      apiUrl="/select/physical-locations/"
                       queryKeyBase="locations"
                       clientSideSearch={true}
+
                       preselectedOptions={formatOptions(
                         equipmentData,
                         "location"
                       )}
+                      saveOptionEndpoint="/select/physical-locations/"
+                      allowSaveNewOption={true}
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
@@ -117,10 +121,13 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       placeholder="Type"
-                      apiUrl="/select/types"
+                      apiUrl="/select/types/"
                       queryKeyBase="types"
                       clientSideSearch={true}
+
                       preselectedOptions={formatOptions(equipmentData, "type")}
+                      saveOptionEndpoint="/select/types/"
+                      allowSaveNewOption={true}
                     />
                   </div>
 
@@ -159,6 +166,7 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       placeholder="Status"
+                      options={equipmentStatuses}
                       label="Status"
                     />
                   </div>
@@ -194,7 +202,7 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       placeholder="Grade"
-                      // apiUrl="/select/users"
+                       apiUrl="/select/grades/"
                       queryKeyBase="users"
                       clientSideSearch={true}
                     />
