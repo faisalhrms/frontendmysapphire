@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TaskClosedTable from "@modules/sr-management/closed-task-section/views/TaskClosedTable.jsx";
 
 const SrManagement = () => {
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("pending-task");
 
 
   return (
@@ -19,9 +19,9 @@ const SrManagement = () => {
           <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
               <nav aria-label="Tabs" className="md:flex block !justify-start whitespace-nowrap">
                   <button
-                      onClick={() => setActiveTab("pending")}
+                      onClick={() => setActiveTab("pending-task")}
                       className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                          activeTab === "pending"
+                          activeTab === "pending-task"
                               ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                               : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
                       }`}
@@ -29,9 +29,9 @@ const SrManagement = () => {
                       Task Pending
                   </button>
                   <button
-                      onClick={() => setActiveTab("task")}
+                      onClick={() => setActiveTab("generated-task")}
                       className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                          activeTab === "task"
+                          activeTab === "generated-task"
                               ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                               : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
                       }`}
@@ -39,9 +39,9 @@ const SrManagement = () => {
                       Task Generated
                   </button>
                   <button
-                      onClick={() => setActiveTab("completed")}
+                      onClick={() => setActiveTab("completed-task")}
                       className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                          activeTab === "completed"
+                          activeTab === "completed-task"
                               ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                               : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
                       }`}
@@ -49,9 +49,9 @@ const SrManagement = () => {
                       Task Completed
                   </button>
                   <button
-                      onClick={() => setActiveTab("closed")}
+                      onClick={() => setActiveTab("closed-task")}
                       className={`m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                          activeTab === "closed"
+                          activeTab === "closed-task"
                               ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                               : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
                       }`}
@@ -62,10 +62,10 @@ const SrManagement = () => {
           </div>
 
             <div className="box-content bg-white">
-                {activeTab === "pending" && <PendingRequestsTable/>}
-                {activeTab === "task" && <TaskGeneratedTable/>}
-                {activeTab === "completed" && <CompletedTasksTable/>}
-                {activeTab === "closed" && <TaskClosedTable/>}
+                {activeTab === "pending-task" && <PendingRequestsTable/>}
+                {activeTab === "generated-task" && <TaskGeneratedTable/>}
+                {activeTab === "completed-task" && <CompletedTasksTable/>}
+                {activeTab === "closed-task" && <TaskClosedTable/>}
             </div>
         </div>
       </div>

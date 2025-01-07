@@ -9,7 +9,7 @@ const TaskGeneratedTable = () => {
     const navigate = useNavigate();
 
     const onViewTask = (id) => {
-        navigate(`/module/srm/taskgeneratedform/${id}`);
+        navigate(`/module/srm/taskclosedform/${id}`);
     };
 
     const columns = [

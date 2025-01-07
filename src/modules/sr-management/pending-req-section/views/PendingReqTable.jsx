@@ -12,7 +12,7 @@ const PendingRequestsTable = () => {
   const [selectedSRId, setSelectedSRId] = useState(null);
 
   const onCreateTask = (id) => {
-    navigate(`/module/srm/createtask/${id}`);
+    navigate(`/module/srm/taskpending/${id}`);
   };
 
   const onOpenModal = (id) => {

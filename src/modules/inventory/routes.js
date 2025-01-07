@@ -15,6 +15,9 @@ export const INVENTORY_ROUTES = {
     },
     EDIT:{
         path:'/module/equipment/summary',  
+    },
+    SUMMARY:{
+        path:'/module/equipment/transaction',  
     }
 
 }
@@ -38,5 +41,11 @@ export const MODULE_ROUTES = [
         path: INVENTORY_ROUTES.EDIT.path,
         component: () => import(`/src/modules/inventory/views/EquipmentSummary.jsx`),
         permission: INVENTORY_ROUTES.EDIT.permission,
-    }
+    },
+    {
+        path: INVENTORY_ROUTES.SUMMARY.path,
+        component: () => import(`/src/modules/inventory/views/AddTransactionToInventory.jsx`),
+        // permission: INVENTORY_ROUTES.SUMMARY.permission,
+    },
+    
 ]

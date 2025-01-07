@@ -48,7 +48,7 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
       <form onSubmit={handleSubmit(handleEquipmentSubmit)}>
         <div className="grid grid-cols-12 gap-x-6 md:flex">
-          <div className="xxl:col-span-9">
+          <div className="xxl:col-span-9 col-span-12">
             <div className="box">
               <div className="box-header">
                 <div className="box-title"> Equipment Info</div>
@@ -156,8 +156,10 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
                       control={control}
                       errors={errors}
                       placeholder="Part No"
+                      min="0"
                     />
                   </div>
+
                   <div className="xl:col-span-4 col-span-12">
                     <FormSelect
                       name="status_id"
@@ -265,7 +267,7 @@ const AddEquipmentForm = ({ equipmentData, isEditMode = false }) => {
               </div>
             </div>
           </div>
-          <div className="xxl:col-span-3">
+          <div className="xxl:col-span-3  col-span-12">
             <div className="box">
               <div className="box-header">
                 <div className="box-title"> Purchase Date</div>

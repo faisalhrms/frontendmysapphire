@@ -876,6 +876,18 @@ Background Image
   @apply fill-primary;
 }
 
+.svg-secondary {
+  @apply fill-secondary;
+}
+
+.svg-warning {
+  @apply fill-warning;
+}
+
+.svg-orange {
+  @apply fill-orange;
+}
+
 .svg-danger {
   @apply fill-danger;
 }
