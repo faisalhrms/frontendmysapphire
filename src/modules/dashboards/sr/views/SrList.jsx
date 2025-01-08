@@ -5,7 +5,7 @@ import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 
 const SrList = () => {
-    const [apiUrl, setApiUrl] = useState("-");
+    const [apiUrl, setApiUrl] = useState(null);
     const {status} = useParams();
     const [searchParams] = useSearchParams();
 
@@ -15,13 +15,14 @@ const SrList = () => {
         navigate(`/module/srm/taskgeneratedform/${id}`);
     };
 
-  useEffect(() => {
-        if (status) {
-            // Create a string from the searchParams
-            const paramsString = searchParams.toString();
-            setApiUrl(`dashboard/status/${status}${paramsString ? `?${paramsString}` : ""}`);
-        }
-    }, [status, searchParams]);
+useEffect(() => {
+    if (status) {
+        const paramsString = searchParams.toString();
+        setApiUrl(`dashboard/status/${status}${paramsString ? `?${paramsString}` : ""}`);
+    } else {
+        setApiUrl(null); // Ensure no invalid API calls
+    }
+}, [status, searchParams]);
 
     const columns = [
         {
@@ -104,9 +105,14 @@ const SrList = () => {
                 activepage="Sr dashboard"
                 mainpage={status}
             />
-            <DataTable columns={columns} apiUrl={apiUrl} title={status}/>
+            {apiUrl ? (
+                <DataTable columns={columns} apiUrl={apiUrl} title={status} />
+            ) : (
+                <p className="text-center text-gray-500">No data available</p>
+            )}
         </>
     );
 };
+
 
 export default SrList;

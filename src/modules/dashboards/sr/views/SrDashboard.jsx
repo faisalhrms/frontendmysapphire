@@ -34,6 +34,7 @@ const SrDashboard = () => {
     const handleCardClick = (status) => {
         const currentValues = getValues()
         const filters = {
+            company_id: currentValues.company_id || "",
             store_region_id: currentValues.store_region_id || "",
             city_id: currentValues.city_id || "",
             location_id: currentValues.location_id || "",
@@ -65,6 +66,7 @@ const SrDashboard = () => {
     const onSearchClick = () => {
         const formValues = getValues()
         const filters = {
+            company_id: formValues.company_id || "",
             store_region_id: formValues.store_region_id || "",
             city_id: formValues.city_id || "",
             location_id: formValues.location_id || "",
@@ -113,6 +115,19 @@ const SrDashboard = () => {
                         <div className="box">
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
+                                    <div className="xl:col-span-3 col-span-12">
+                                        <FormAsyncSelect
+                                            label={false}
+                                            name="company_id"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Company"
+                                            apiUrl="/select/companies"
+                                            queryKeyBase="companies"
+                                            clientSideSearch
+                                            preselectedOptions={[]}
+                                        />
+                                    </div>
                                     <div className="xl:col-span-3 col-span-12">
                                         <FormAsyncSelect
                                             label={false}
