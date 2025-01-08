@@ -43,6 +43,7 @@ const SignatureForm = ({
     const subscription = watch((formData) => {
       console.log(formData);
       setPreviewData(formData);
+      handleSubmitData(formData);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
