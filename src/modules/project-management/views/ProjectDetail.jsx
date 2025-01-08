@@ -66,7 +66,7 @@ const ProjectDetail = () => {
               storeEndPoint={`/pms/projects/${id}/discussion/`}
               getEndPoint={`/pms/projects/${id}/discussions/`}
             />
-            <ProjectStatistics/>
+            <ProjectStatistics projectId={id} />
           </div>
 
 

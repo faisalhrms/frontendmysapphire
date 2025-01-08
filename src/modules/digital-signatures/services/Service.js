@@ -14,8 +14,8 @@ export const getSignature = async (data) => {
   console.table(data);
   try {
     const response = await api.get(`/signatures/${data}/`);
-    console.log(response);
-    return response?.data?.data;
+    console.log(response?.data);
+    return response?.data;
   } catch (error) {
     console.error("Error fetching discount data:", error);
   }
@@ -66,5 +66,26 @@ export const getDownloadAllS = async () => {
     return response?.data;
   } catch (error) {
     console.error("Error fetching discount data:", error);
+  }
+};
+export const getdeleteByEmpCode = async (employee_code) => {
+  try {
+    const response = await api.get(`/signatures/delete/${employee_code}`);
+    return response?.data;
+  } catch (error) {
+    console.error("Error deleting signature:", error);
+    throw error;
+  }
+};
+export const updateSignature = async (employee_code, updateData) => {
+  try {
+    const response = await api.put(
+      `/signatures/update/${employee_code}/`,
+      updateData
+    );
+    return response?.data;
+  } catch (error) {
+    console.error("Error updating signature:", error);
+    throw error;
   }
 };
