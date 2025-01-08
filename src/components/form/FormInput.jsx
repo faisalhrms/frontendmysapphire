@@ -18,6 +18,10 @@ const FormInput = ({ name, control, errors, placeholder, type = "text", classNam
 
                     if (type === 'date') {
                         inputValue = inputValue ? new Date(inputValue).toISOString().slice(0, 10) : '';
+                    } else if (type === 'datetime-local') {
+                        inputValue = inputValue
+                            ? new Date(inputValue).toISOString().slice(0, 16)
+                            : '';
                     } else if (type === 'number') {
                         inputValue = inputValue ? Number(inputValue) : '';
                     }

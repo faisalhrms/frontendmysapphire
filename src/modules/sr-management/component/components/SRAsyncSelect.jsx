@@ -12,23 +12,24 @@ const ensureArray = (data) => Array.isArray(data) ? data : [];
 const MemoizedSelect = React.memo(Select);
 const MemoizedCreatableSelect = React.memo(CreatableSelect);
 const SRAsyncSelect = ({
-                           name,
-                           label = true,
-                           control,
-                           errors,
-                           placeholder,
-                           className = "",
-                           apiUrl,
-                           debounceDelay = 300,
-                           queryKeyBase,
-                           isMulti = false,
-                           clientSideSearch = false,
-                           preselectedOptions = [],
-                           saveOptionEndpoint = "",
-                           allowSaveNewOption = false,
-                           onOptionSelect, // New prop
-                           ...rest
-                       }) => {
+    name,
+    label = true,
+    control,
+    errors,
+    placeholder,
+    className = "",
+    apiUrl,
+    debounceDelay = 300,
+    queryKeyBase,
+    isMulti = false,
+    clientSideSearch = false,
+    preselectedOptions = [],
+    saveOptionEndpoint = "",
+    allowSaveNewOption = false,
+    onOptionSelect,
+    onOptionSelectKey, // New prop for dynamic key selection
+    ...rest
+}) => {
     const [search, setSearch] = useState('');
     const [hasBeenFocused, setHasBeenFocused] = useState(false);
     const [allOptions, setAllOptions] = useState([]);
@@ -42,7 +43,7 @@ const SRAsyncSelect = ({
 
     const fetchOptions = useCallback(async (search) => {
         try {
-            const response = await api.get(apiUrl, {params: {search}});
+            const response = await api.get(apiUrl, { params: { search } });
             return ensureArray(response.data?.data);
         } catch (error) {
             console.error('Error fetching options:', error);
@@ -50,7 +51,7 @@ const SRAsyncSelect = ({
         }
     }, [apiUrl]);
 
-    const {data: options = [], isLoading, refetch} = useQuery({
+    const { data: options = [], isLoading } = useQuery({
         queryKey: [queryKeyBase, search],
         queryFn: () => fetchOptions(search),
         enabled: !clientSideSearch && hasBeenFocused && menuIsOpen,
@@ -81,58 +82,11 @@ const SRAsyncSelect = ({
         return Array.from(uniqueOptions.values());
     }, [filteredOptions, preselectedOptions]);
 
-
     useEffect(() => {
         return () => {
             debouncedSearch.cancel();
         };
     }, [debouncedSearch]);
-
-    const handleCreateOption = async (newOptionLabel, field) => {
-        const newOption = await saveNewOption(newOptionLabel);
-        if (newOption) {
-            setSelectedOptions(prev => {
-                return [...prev, newOption].filter((v, i, a) => a.findIndex(t => t.value === v.value) === i);
-            });
-            if (isMulti) {
-                field.onChange([...(field.value || []), newOption.value]);
-            } else {
-                field.onChange(newOption.value);
-            }
-        }
-    };
-
-    // // Instead of calling the returned data `newOption`, call it `updatedList`
-    // const handleCreateOption = async (newOptionLabel, field) => {
-    //     const updatedList = await saveNewOption(newOptionLabel);
-    //     if (updatedList && Array.isArray(updatedList)) {
-    //         setAllOptions(updatedList);
-    //         const newlyCreatedItem = updatedList.find(
-    //             opt => opt.label.toLowerCase() === newOptionLabel.toLowerCase()
-    //         );
-    //         if (newlyCreatedItem) {
-    //             if (isMulti) {
-    //                 field.onChange([...(field.value || []), newlyCreatedItem.value]);
-    //                 setSelectedOptions(prev => [...prev, newlyCreatedItem]);
-    //             } else {
-    //                 field.onChange(newlyCreatedItem.value);
-    //                 setSelectedOptions([newlyCreatedItem]);
-    //             }
-    //         }
-    //     }
-    // };
-
-
-    const saveNewOption = async (newOptionLabel) => {
-        if (!allowSaveNewOption || !saveOptionEndpoint) return;
-        try {
-            const {data} = await api.post(saveOptionEndpoint, {label: newOptionLabel});
-            return data.data; // Ensure this includes both value and label
-        } catch (error) {
-            console.error('Error saving new option:', error);
-            return null;
-        }
-    };
 
     return (
         <>
@@ -140,7 +94,7 @@ const SRAsyncSelect = ({
             <Controller
                 name={name}
                 control={control}
-                render={({field}) => {
+                render={({ field }) => {
                     const value = isMulti
                         ? selectedOptions.map(opt => optionsWithSelected.find(o => o.value === opt.value) || opt)
                         : optionsWithSelected.find(opt => opt.value === field.value) || null;
@@ -157,25 +111,21 @@ const SRAsyncSelect = ({
                             placeholder={`Select ${placeholder}`}
                             options={optionsWithSelected}
                             isLoading={isLoading}
-                            onChange={(selectedOption, actionMeta) => {
-                                if (actionMeta.action === 'create-option') {
-                                    handleCreateOption(actionMeta.option.label, field);
-                                } else {
-                                    const selectedValues = isMulti
-                                        ? selectedOption.map(opt => opt.value)
-                                        : selectedOption?.value;
+                            onChange={(selectedOption) => {
+                                setSelectedOptions(isMulti
+                                    ? selectedOption.map(opt => optionsWithSelected.find(o => o.value === opt.value) || opt)
+                                    : selectedOption ? [selectedOption] : []
+                                );
 
-                                    setSelectedOptions(isMulti
-                                        ? selectedOption.map(opt => optionsWithSelected.find(o => o.value === opt.value) || opt)
-                                        : selectedOption ? [selectedOption] : []
-                                    );
+                                field.onChange(isMulti
+                                    ? selectedOption.map(opt => opt.value)
+                                    : selectedOption?.value);
 
-                                    field.onChange(selectedValues);
-
-                                    if (onOptionSelect) {
-                                        const selectedEmail = selectedOption?.email || selectedOption || "";
-                                        onOptionSelect(selectedEmail);
-                                    }
+                                if (onOptionSelect) {
+                                    const selectedData = onOptionSelectKey
+                                        ? selectedOption?.[onOptionSelectKey] // Extract specific key
+                                        : selectedOption; // Pass full object if no key is specified
+                                    onOptionSelect(selectedData);
                                 }
                             }}
                             onBlur={field.onBlur}
@@ -198,8 +148,7 @@ const SRAsyncSelect = ({
                     );
                 }}
             />
-
-            <ErrorMessage message={errors[name]?.message}/>
+            <ErrorMessage message={errors[name]?.message} />
         </>
     );
 };

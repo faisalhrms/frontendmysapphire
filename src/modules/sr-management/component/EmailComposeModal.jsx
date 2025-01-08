@@ -21,19 +21,9 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
         },
     });
 
-    const formatEmails = (emails) =>
-        Array.isArray(emails)
-            ? emails.map((email) => ({
-                  value: email.trim(),
-                  label: email.trim(),
-              }))
-            : [];
-
     const preselectedToEmails = useMemo(() => {
         const reporterEmail = user?.email;
-        return reporterEmail
-            ? [{ label: reporterEmail, value: reporterEmail }]
-            : [];
+        return reporterEmail ? [{ label: reporterEmail, value: reporterEmail }] : [];
     }, [user?.email]);
 
     const preselectedCcEmails = useMemo(() => {
@@ -41,32 +31,22 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
             label: email,
             value: email,
         }));
-    }, [serviceRequest]);
-
-    const resetModalState = () => {
-        const defaultValues = {
-            to_email: preselectedToEmails,
-            cc_email: preselectedCcEmails,
-            message: "",
-        };
-        reset(defaultValues);
-        setIncludePreviousThread(false);
-    };
+    }, [serviceRequest?.cc_email]);
 
     useEffect(() => {
         if (isOpen) {
-            resetModalState();
+            reset({
+                to_email: preselectedToEmails,
+                cc_email: preselectedCcEmails,
+                message: "",
+            });
+            setIncludePreviousThread(false);
         }
-    }, [isOpen, preselectedToEmails, preselectedCcEmails]);
+    }, [isOpen, reset, preselectedToEmails, preselectedCcEmails]);
 
     const handleSave = async (data) => {
-        const toEmails = data.to_email && Array.isArray(data.to_email)
-            ? data.to_email.map((item) => item?.value || item)
-            : [];
-
-        const ccEmails = data.cc_email && Array.isArray(data.cc_email)
-            ? data.cc_email.map((item) => item?.value || item)
-            : [];
+        const toEmails = data.to_email.map((item) => item.value || item);
+        const ccEmails = data.cc_email.map((item) => item.value || item);
 
         const payload = {
             service_request_id: serviceRequest.id,
@@ -79,7 +59,12 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
 
         try {
             await api.post(`/sr-task/${serviceRequest.id}/send-email/`, payload);
-            resetModalState();
+            reset({
+                to_email: preselectedToEmails,
+                cc_email: preselectedCcEmails,
+                message: "",
+            });
+            setIncludePreviousThread(false);
             onClose();
         } catch (error) {
             console.error("Error sending email:", error);
@@ -89,9 +74,7 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
     return (
         <div
             id="email-compose"
-            className={`hs-overlay fixed inset-0 z-50 bg-black/40 transition-all duration-300 ${
-                isOpen ? "block" : "hidden"
-            }`}
+            className={`hs-overlay fixed inset-0 z-50 bg-black/40 transition-all duration-300 ${isOpen ? "block" : "hidden"}`}
             tabIndex={-1}
         >
             <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex min-h-[calc(100%-3.5rem)] items-center justify-center max-w-2xl mx-auto my-auto">
@@ -99,56 +82,48 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
                     <div className="ti-modal-header flex justify-between items-center p-4 border-b">
                         <h6 className="modal-title text-[1rem] font-semibold">Compose Email</h6>
                         <button
-                            onClick={() => {
-                                resetModalState();
-                                onClose();
-                            }}
+                            onClick={onClose}
                             type="button"
                             className="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor"
                         >
-                            <span className="sr-only">Close</span>
                             <i className="ri-close-line"></i>
                         </button>
                     </div>
                     <form onSubmit={handleSubmit(handleSave)}>
                         <div className="ti-modal-body px-4 py-3 space-y-4">
-                            <div className="xl:col-span-12 col-span-12">
-                                <SRAsyncSelect
-                                    label="To"
-                                    isMulti
-                                    name="to_email"
-                                    control={control}
-                                    errors={errors}
-                                    placeholder="To"
-                                    apiUrl="/select/users/email"
-                                    queryKeyBase="users-email"
-                                    preselectedOptions={preselectedToEmails}
-                                    allowSaveNewOption
-                                />
-                            </div>
-                            <div className="xl:col-span-12 col-span-12">
-                                <SRAsyncSelect
-                                    label="CC"
-                                    isMulti
-                                    name="cc_email"
-                                    control={control}
-                                    errors={errors}
-                                    placeholder="CC"
-                                    apiUrl="/select/users/email"
-                                    queryKeyBase="cc-email"
-                                    preselectedOptions={preselectedCcEmails}
-                                    allowSaveNewOption
-                                />
-                            </div>
-                            <div>
-                                <FormTextarea
-                                    name="message"
-                                    control={control}
-                                    errors={errors}
-                                    placeholder="Write your email message here"
-                                    rows={6}
-                                />
-                            </div>
+                            <SRAsyncSelect
+                                key={`to-email-${isOpen}`}
+                                label="To"
+                                isMulti
+                                name="to_email"
+                                control={control}
+                                errors={errors}
+                                placeholder="To"
+                                apiUrl="/select/users/email"
+                                queryKeyBase="users-email"
+                                preselectedOptions={preselectedToEmails}
+                                allowSaveNewOption
+                            />
+                            <SRAsyncSelect
+                                key={`cc-email-${isOpen}`}
+                                label="CC"
+                                isMulti
+                                name="cc_email"
+                                control={control}
+                                errors={errors}
+                                placeholder="CC"
+                                apiUrl="/select/users/email"
+                                queryKeyBase="cc-email"
+                                preselectedOptions={preselectedCcEmails}
+                                allowSaveNewOption
+                            />
+                            <FormTextarea
+                                name="message"
+                                control={control}
+                                errors={errors}
+                                placeholder="Write your email message here"
+                                rows={6}
+                            />
                             <div className="flex items-center">
                                 <input
                                     type="checkbox"
@@ -164,10 +139,7 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
                         </div>
                         <div className="ti-modal-footer flex justify-end gap-2 p-4 border-t">
                             <button
-                                onClick={() => {
-                                    resetModalState();
-                                    onClose();
-                                }}
+                                onClick={onClose}
                                 type="button"
                                 className="ti-btn ti-btn-primary-full ti-btn-loader m-2"
                             >

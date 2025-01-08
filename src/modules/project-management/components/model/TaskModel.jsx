@@ -1,6 +1,6 @@
 import React, {useMemo, useCallback, useEffect, useState} from "react";
 import FormInput from "@components/form/FormInput.jsx";
-import {formatOptions, toTitleCase} from "@helpers/formatters.js";
+import {formatOptions} from "@helpers/formatters.js";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
@@ -8,7 +8,6 @@ import { taskStatuses } from "@modules/project-management/services/taskService.j
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {priorities} from "@modules/project-management/services/projectService.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
-import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 
 const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false}) => {
     const [data, setData]    = useState(taskData);
@@ -59,7 +58,7 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                             </div>
                                             <div className="col-span-6">
                                                 <FormInput
-                                                    type="date"
+                                                    type="datetime-local"
                                                     name="started_at"
                                                     control={control}
                                                     errors={errors}
@@ -70,7 +69,7 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                             </div>
                                             <div className="col-span-6">
                                                 <FormInput
-                                                    type="date"
+                                                    type="datetime-local"
                                                     name="ended_at"
                                                     control={control}
                                                     errors={errors}

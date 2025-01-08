@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
+import TemplateSignature from "./TemplateSignature";
 
-const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
+const SignatureForm = ({ handleSubmitData, isEditMode = false,tempStep, editData }) => {
   const {
     control,
     handleSubmit,
@@ -11,26 +12,37 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
     setValue,
     watch,
   } = useForm({
-    defaultValues: editData
-      ? {
-          facebook: editData.facebook || "",
-          instagram: editData.instagram || "",
-          linkedin: editData.linkedin || "",
-          twitter: editData.twitter || "",
-          tiktok: editData.tiktok || "",
-             }
-      : {
-          facebook: "",
-          instagram: "",
-          linkedin: "",
-          twitter: "",
-          tiktok: "",
-          companyName: "",
-         
-        },
+    defaultValues: {
+      facebook: editData.facebook || "",
+      instagram: editData.instagram || "",
+      linkedin: editData.linkedin || "",
+      twitter: editData.twitter || "",
+      tiktok: editData.tiktok || "",
+    },
   });
 
   const [previewData, setPreviewData] = useState({});
+
+  useEffect(() => {
+    const payload = {
+      companyName: editData?.company?.name || "",
+      employee_code: editData?.employee_code || "",
+      name: editData?.name || "",
+      designation: editData?.designation || "",
+      department: editData?.department || "",
+      website: editData?.website || "",
+      phone: editData?.phone || "",
+      mobile: editData?.mobile || "",
+      email: editData?.email || "",
+      address: editData?.address || "",
+      facebook: editData.facebook || "",
+      instagram: editData.instagram || "",
+      linkedin: editData.linkedin || "",
+      twitter: editData.twitter || "",
+      tiktok: editData.tiktok || "",
+    };
+    setPreviewData(payload);
+  }, [editData]);
 
   useEffect(() => {
     const subscription = watch((formData) => {
@@ -45,8 +57,8 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
 
   return (
     <>
-      <div className="grid grid-cols-12 gap-x-6">
-        <div className="xxl:col-span-9 col-span-12 sm:col-span-9">
+      <div className="grid grid-cols-12 gap-x-4">
+        <div className="  xxl:col-span-5 col-span-12 sm:col-span-5">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Social Media</div>
@@ -101,7 +113,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
                       control={control}
                       errors={errors}
                       label={true}
-                      placeholder="TikTok Username"
+                      placeholder="TikTok  Username"
                     />
                   </div>
                 </div>
@@ -114,49 +126,35 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false, editData }) => {
           </div>
         </div>
 
-        <div className="xxl:col-span-3 col-span-12 sm:col-span-3">
+        <div className=" xxl:col-span-7 col-span-12 sm:col-span-7      ">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Preview</div>
             </div>
-            <div className="box-body border border-gray-300 rounded-md p-4 bg-gray-50">
-              <div className="mb-4 text-gray-700 font-semibold">Preview</div>
-              <div className="space-y-2 border border-dashed border-gray-300 rounded-md p-4 bg-white">
-                {previewData.facebook && (
-                  <div>
-                    <strong>Facebook:</strong> {previewData.facebook}
-                  </div>
-                )}
-                {previewData.instagram && (
-                  <div>
-                    <strong>Instagram:</strong> {previewData.instagram}
-                  </div>
-                )}
-                {previewData.linkedin && (
-                  <div>
-                    <strong>LinkedIn:</strong> {previewData.linkedin}
-                  </div>
-                )}
-                {previewData.twitter && (
-                  <div>
-                    <strong>Twitter:</strong> {previewData.twitter}
-                  </div>
-                )}
-                {previewData.tiktok && (
-                  <div>
-                    <strong>TikTok:</strong> {previewData.tiktok}
-                  </div>
-                )}
-              </div>
-              <div className="mt-4 flex justify-end gap-4">
-                <button
-                  className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md"
-                  onClick={() => setPreviewData({})}
-                >
-                  Clear
-                </button>
-              </div>
+
+            <div className="border border-dashed border-gray-300 rounded-md p-4 bg-white">
+
+                <div>
+                  <strong>Template:</strong>
+                </div>
+
+              {
+                <TemplateSignature
+                  title={false}
+                  editData={editData}
+                  previewData={previewData}
+                  tempStep={tempStep}
+                />
+              }
             </div>
+            {/* <div className="mt-4 flex justify-end gap-4 mb-4 mr-4">
+              <button
+                className="px-4 py-2 text-sm font-medium rounded-md ti-btn-primary-full"
+                onClick={handleClear}
+              >
+                Clear
+              </button>
+            </div> */}
           </div>
         </div>
       </div>

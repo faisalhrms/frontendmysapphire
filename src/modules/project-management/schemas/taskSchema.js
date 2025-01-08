@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { dateSchema } from "@helpers/schema.js";
+import {dateSchema, dateTimeSchema} from "@helpers/schema.js";
 import {prioritiesEnum} from "@modules/project-management/schemas/projectSchema.js";
 
 // Enum for Status
@@ -22,9 +22,9 @@ const taskSchema = z.object({
   
   status: statusEnum.default("in_progress"),
 
-  started_at: dateSchema('Started'),
+  started_at: dateTimeSchema('Started'),
 
-  ended_at: dateSchema('Started'),
+  ended_at: dateTimeSchema('Started'),
   attachment_ids: z.array(z.number()),
   user_ids: z.array(z.number().int().positive("User ID must be a positive integer"))
     .min(1, "At least one user ID is required"),

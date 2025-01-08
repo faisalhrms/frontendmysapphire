@@ -48,7 +48,7 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
     }
   };
   const updateSignature = async () => {
-   try {
+    try {
       const result = await updateSignature(employeeCode, updateData);
       console.log("Updated successfully:", result);
     } catch (error) {
@@ -75,7 +75,7 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
             </button>
 
             <button
-              onClick={() => updateSignature(employee_code)}
+            onClick={() => handleSavedDataFetch(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
               <i className="ri-edit-line"></i>
@@ -86,7 +86,6 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
             >
               <i className="ri-download-2-line"></i>
             </button>
-           
           </div>
         );
       },
