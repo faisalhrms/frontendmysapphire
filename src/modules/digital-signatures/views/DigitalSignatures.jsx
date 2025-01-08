@@ -7,6 +7,7 @@ import SavedSignature from "../component/SavedSignature";
 import axios from "axios";
 import {getSignature, saveSignature, updateSignature} from "../services/Service";
 import Notify from "@helpers/toastNotifications.js";
+import api from "@config/axiosConfig.js";
 
 const DigitalSignatures = () => {
     const [activeTab, setActiveTab] = useState("details");
@@ -96,36 +97,23 @@ const DigitalSignatures = () => {
 
 
 const downloadAllScripts = async () => {
-  try {
-    const response = await axios.get(`/signatures/download-all`, {
-      responseType: "blob", // Ensures binary data is correctly fetched
-    });
-
-    if (!response || !response.data) {
-      throw new Error("No file data received from the server.");
+    try {
+        const response = await api.get('/signatures/download-all/', {
+            responseType: 'blob',
+        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'all_signatures_scripts.zip');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.error("Error downloading scripts:", error);
+        Notify.error("Failed to download scripts. Please try again.");
     }
-
-    // Check if Content-Disposition header exists
-    const contentDisposition = response.headers["content-disposition"];
-    const filename = contentDisposition
-      ? contentDisposition.split("filename=")[1]?.replace(/"/g, "")?.trim()
-      : "all_signatures_scripts.zip"; // Fallback filename
-
-    // Create a Blob from the response data
-    const blob = new Blob([response.data], { type: "application/zip" });
-
-    // Use browser's built-in download functionality
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  } catch (error) {
-    console.error("Error downloading the ZIP file:", error.message);
-  }
 };
+
 
 
 
