@@ -19,12 +19,12 @@ const InventoryList = () => {
             Header: "Actions",
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
-                    <Link to={`${INVENTORY_ROUTES.EDIT.path}/${row.original.id}`}>
+                    <Link to={`/module/equipment/edit/${row.original.id}`}>
                         <button className="ti-btn ti-btn-primary ti-btn-sm">
                             <i className="ri-edit-line"></i>
                         </button>
                     </Link>
-                    <Link to={`${INVENTORY_ROUTES.DETAIL.path}/${row.original.id}`}>
+                    <Link to={`/module/equipment/detail/${row.original.id}`}>
                         <button className="ti-btn ti-btn-info ti-btn-sm">
                             <i className="ri-eye-line"></i>
                         </button>

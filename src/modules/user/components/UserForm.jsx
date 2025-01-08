@@ -1,11 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { statuses } from "@modules/user/services/userService.js";
-import userSchema from "@modules/user/schemas/userSchema.js";
 import FormInput from "@components/form/FormInput.jsx";
-import FormSelect from "@components/form/FormSelect.jsx";
-
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import {formatOptions} from "@helpers/formatters.js";
