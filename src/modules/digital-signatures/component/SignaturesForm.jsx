@@ -10,6 +10,7 @@ const SignatureForm = ({
   editData,
   hide,
   handleHide,
+  tempStep,
 }) => {
   const {
     control,
@@ -19,43 +20,49 @@ const SignatureForm = ({
     watch,
     reset,
   } = useForm({
-    defaultValues: editData
-      ? {
-          companyName: editData.company?.name || "",
-          employee_code: editData.employee_code || "",
-          name: editData.name || "",
-          designation: editData.designation || "",
-          department: editData.department || "",
-          website: editData.website || "",
-          phone: editData.phone || "",
-          mobile: editData.mobile || "",
-          email: editData.email || "",
-          address: editData.address || "",
-          attachment_ids: editData.attachment_ids || [],
-        }
-      : {
-          companyName: "",
-          employee_code: "",
-          name: "",
-          designation: "",
-          department: "",
-          website: "",
-          phone: "",
-          mobile: "",
-          email: "",
-          address: "",
-        },
+    defaultValues: {
+      companyName: editData?.company?.name || "",
+      employee_code: editData?.employee_code || "",
+      name: editData?.name || "",
+      designation: editData?.designation || "",
+      department: editData?.department || "",
+      website: editData?.website || "",
+      phone: editData?.phone || "",
+      mobile: editData?.mobile || "",
+      email: editData?.email || "",
+      address: editData?.address || "",
+    },
   });
+
+  console.log(editData);
 
   const [previewData, setPreviewData] = useState({});
   const [templateName, setTemplateName] = useState("");
 
   useEffect(() => {
     const subscription = watch((formData) => {
+      console.log(formData);
       setPreviewData(formData);
+      handleSubmitData(formData);
     });
     return () => subscription.unsubscribe();
   }, [watch]);
+
+  useEffect(() => {
+    const payload = {
+      companyName: editData?.company?.name || "",
+      employee_code: editData?.employee_code || "",
+      name: editData?.name || "",
+      designation: editData?.designation || "",
+      department: editData?.department || "",
+      website: editData?.website || "",
+      phone: editData?.phone || "",
+      mobile: editData?.mobile || "",
+      email: editData?.email || "",
+      address: editData?.address || "",
+    };
+    setPreviewData(payload);
+  }, [editData]);
 
   const onSubmit = (formData) => {
     handleSubmitData(formData, 1);
@@ -119,8 +126,6 @@ const SignatureForm = ({
                       placeholder="Employee Name"
                       apiUrl="/select/employees/"
                       queryKeyBase="employees Name"
-                      isMulti={false}
-                      preselectedOptions={[]}
                     />
                   </div>
                   <div className="xl:col-span-4 col-span-12">
@@ -226,7 +231,14 @@ const SignatureForm = ({
                     </div>
                   )
               )}
-              {hide && <TemplateSignature title={false} />}
+              {
+                <TemplateSignature
+                  title={false}
+                  editData={editData}
+                  previewData={previewData}
+                  tempStep={tempStep}
+                />
+              }
             </div>
             <div className="mt-4 flex justify-end gap-4 mb-4 mr-4">
               <button
