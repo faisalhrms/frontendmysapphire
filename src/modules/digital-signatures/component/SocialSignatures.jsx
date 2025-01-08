@@ -138,15 +138,6 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false,tempStep, editData
                   <strong>Template:</strong>
                 </div>
 
-              {Object.keys(previewData).map(
-                (key) =>
-                  previewData[key] && (
-                    <div key={key}>
-                      <strong>{key.replace(/_/g, " ")}:</strong>{" "}
-                      {previewData[key]}
-                    </div>
-                  )
-              )}
               {
                 <TemplateSignature
                   title={false}

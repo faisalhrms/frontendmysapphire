@@ -75,7 +75,7 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
             </button>
 
             <button
-              onClick={() => fetchSignature(employee_code)}
+            onClick={() => handleSavedDataFetch(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
               <i className="ri-edit-line"></i>

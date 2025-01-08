@@ -14,41 +14,41 @@ import fileIcon from "@assets/images/icon/008-file.png";
 
 
 const generateIcon = (attachment) => {
-    const { file_type, small_url, file_name } = attachment;
+    const { extension, file, file_name } = attachment;
     let imgStyle = "height: 40px; width: 40px;";
 
-    if (file_type?.startsWith("image")) {
-        return `<img style="object-fit: contain;" src="${small_url}" alt="${file_name}">`;
+    if (extension === ".png" || extension === ".jpg" || extension === ".jpeg" || extension === ".gif") {
+        return `<img style="object-fit: contain;" src="${file}" alt="${file_name}">`;
     }
 
-    if (file_type?.startsWith("video")) {
+    if (extension === ".mp4" || extension === ".avi" || extension === ".mov") {
         return `<img src="${videoIcon}" alt="${file_name}" style="${imgStyle}">`;
     }
 
-    if (file_type?.includes("x-zip-compressed") || file_type?.includes("/zip")) {
+    if (extension === ".zip" || extension === ".rar") {
         return `<img src="${zipIcon}" alt="${file_name}" style="${imgStyle}">`;
     }
 
-    if (file_type?.includes("/pdf")) {
+    if (extension === ".pdf") {
         return `<img src="${pdfIcon}" alt="${file_name}" style="${imgStyle}">`;
     }
 
-    if (file_type?.includes("/msword") || file_type?.includes("wordprocessingml")) {
+    if (extension === ".doc" || extension === ".docx") {
         return `<img src="${wordIcon}" alt="${file_name}" style="${imgStyle}">`;
     }
 
-    if (file_type?.includes("spreadsheetml") || file_type?.includes("excel")) {
+    if (extension === ".xls" || extension === ".xlsx") {
         return `<img src="${excelIcon}" alt="${file_name}" style="${imgStyle}">`;
     }
 
-    if (file_type?.includes("presentation")) {
+    if (extension === ".ppt" || extension === ".pptx") {
         return `<img src="${powerpointIcon}" alt="${file_name}" style="${imgStyle}">`;
     }
 
-    if (file_type?.includes("audio") || file_type?.startsWith("audio")) {
+    if (extension === ".mp3" || extension === ".wav" || extension === ".ogg") {
         return `
             <audio controls style="width: 60px; margin-top: 10px;">
-                <source src="${small_url}" type="${file_type}">
+                <source src="${file}" type="audio/${extension.slice(1)}">
                 Your browser does not support the audio tag.
             </audio>
         `;
@@ -56,6 +56,7 @@ const generateIcon = (attachment) => {
 
     return `<img src="${fileIcon}" alt="${file_name}" style="${imgStyle}">`;
 };
+
 const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
     if (!discussion || !control) {
         console.error("Missing required props in SRDiscussionItem:", { discussion, control });
