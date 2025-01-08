@@ -66,7 +66,7 @@ const ApexChart = ({
             categories: categories,
             labels: {
                 show: true,
-                position: 'bottom', // Ensures labels are at the bottom
+                position: 'bottom',
                 style: {
                     colors: labelColor,
                     fontSize: fontSize,

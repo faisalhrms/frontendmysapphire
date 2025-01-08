@@ -11,6 +11,8 @@ export const statusColorMapping = {
     "Cancelled": "danger",
     "On Hold": "warning",
     "Overall": "primary",
+    "Active": "primary",
+    "Archived": "danger"
 };
 
 /**
