@@ -20,8 +20,8 @@ export const createProject = async (payload) => {
         Notify.success(response.data.message);
         return response.data.data;
     } catch (error) {
-
         Notify.error(error.response?.data?.message);
+        throw new Error(error.response?.data?.message || 'An error occurred');
     }
 };
 
@@ -34,6 +34,7 @@ export const updateProject = async (id, payload) => {
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
+        throw new Error(error.response?.data?.message || 'An error occurred');
     }
 };
 
@@ -77,6 +78,7 @@ export const toggleFavouriteProject = async (id, isFavourite) => {
         return response.data.data;
     }catch (error){
         Notify.error(error.response?.data?.message);
+        throw new Error(error.response?.data?.message || 'An error occurred');
     }
 }
 

@@ -74,14 +74,14 @@ const ProjectDetail = () => {
             <div className="bg-white shadow-md rounded-lg mb-4 ">
               <ProjectStats projectId={projectData.id} />
             </div>
-            <div className="rounded-lg p-1">
+            <div className="rounded-lg">
               <ProjectAdditionalDetail project={projectData} />
             </div>
-            <div className="rounded-lg p-1 mb-4">
+            <div className="rounded-lg">
               <ProjectTeam users={projectData.users} />
             </div>
             {projectData.attachments.length > 0 && (
-              <div className="rounded-lg p-2 mb-4">
+              <div className="rounded-lg">
                 <ProjectAttachment attachments={projectData.attachments} />
               </div>
             )}

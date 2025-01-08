@@ -30,7 +30,6 @@ export const useProjects = (page = 1, size = 8, search) => {
     };
 };
 
-// Custom hook for handling form
 export const useProjectForm = (projectData, isEditMode) => {
     const navigate = useNavigate();
 
