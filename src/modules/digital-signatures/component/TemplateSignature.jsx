@@ -17,8 +17,8 @@ const TemplateSignature = ({
               <div className="box-title">Templates Signatures</div>
             </div>
           )}
-  
-  {tempStep == "all" || tempStep == 1 ? (
+
+          {tempStep == "all" || tempStep == 1 ? (
             <div className="box-body" onClick={() => handleChangeTemplate(1)}>
               <div className="flex items-center border border-gray-300 rounded-lg p-4 max-w-xl shadow-md bg-white">
                 <div className="w-1/3 flex justify-center items-center">
@@ -29,17 +29,17 @@ const TemplateSignature = ({
                   />
                 </div>
 
-                <div className="border-l-2 bg-yellow-500 mx-4 h-24"></div>
+                <div className="border-l-2 bg-warning mx-4 h-28"></div>
 
                 <div className="w-2/3">
                   <h2 className="text-lg font-bold text-blue-800">
                     {(previewData ? previewData?.name : editData?.name) ||
-                      "Numan Khan"}
+                      "Template_Signature"}
                   </h2>
                   <p className="text-sm text-gray-600">
                     {(previewData
-                      ? previewData?.employee_code
-                      : editData?.employee_code) || "MIS | IT"}
+                      ? previewData?.department
+                      : editData?.department) || "MIS | IT"}
                   </p>
 
                   <div className="mt-2 space-y-2">
@@ -106,8 +106,6 @@ const TemplateSignature = ({
             ""
           )}
 
-
-        
           {/* {tempStep == "all" || tempStep == 4 ? (
             <div className="box-body" onClick={() => handleChangeTemplate(4)}>
               <div className="flex items-center border p-4 md:p-6 shadow-md rounded-md max-w-full md:max-w-md bg-white">
@@ -330,10 +328,9 @@ const TemplateSignature = ({
           ) : (
             ""
           )} */}
-        </div> 
         </div>
       </div>
-   
+    </div>
   );
 };
 
