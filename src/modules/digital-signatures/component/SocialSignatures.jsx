@@ -58,7 +58,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false,tempStep, editData
   return (
     <>
       <div className="grid grid-cols-12 gap-x-4">
-        <div className="xxl:col-span-8 col-span-12 sm:col-span-8">
+        <div className="  xxl:col-span-5 col-span-12 sm:col-span-5">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Social Media</div>
@@ -113,7 +113,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false,tempStep, editData
                       control={control}
                       errors={errors}
                       label={true}
-                      placeholder="TikTok Username"
+                      placeholder="TikTok  Username"
                     />
                   </div>
                 </div>
@@ -126,7 +126,7 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false,tempStep, editData
           </div>
         </div>
 
-        <div className="xxl:col-span-4 col-span-12 sm:col-span-4">
+        <div className=" xxl:col-span-7 col-span-12 sm:col-span-7      ">
           <div className="box">
             <div className="box-header">
               <div className="box-title">Preview</div>

@@ -120,7 +120,7 @@ const DigitalSignatures = () => {
       <div className="grid grid-cols-12 gap-6">
         <div className="xl:col-span-12 col-span-12">
           <div className="box">
-            <div className="box-header flex flex-col sm:flex-row justify-between items-center w-full p-4 rounded-md">
+            <div className="box-header flex flex-col sm:flex-row justify-between items-center w-full p-2 rounded-md">
               <nav
                 aria-label="Tabs"
                 className="md:flex block !justify-start whitespace-nowrap"
