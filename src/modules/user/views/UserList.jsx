@@ -45,7 +45,7 @@ const UserList = () => {
             Cell: ({ row }) => (
                 <div className="flex items-center">
                     <Avatar
-                        avatar={row.original.avatar ? row.original.avatar.file_url : null}
+                        avatar={row.original.avatar ? row.original.avatar : null}
                         size='md'
                         parentClasses='bg-primary/10 !fill-primary'
                     />
