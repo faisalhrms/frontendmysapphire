@@ -94,8 +94,8 @@ const SignatureForm = ({
                                         control={control}
                                         errors={errors}
                                         placeholder="Company"
-                                        apiUrl="/select/companies"
-                                        queryKeyBase="companies"
+                                        apiUrl="/select/companies_with_logo"
+                                        queryKeyBase="companies_with_logo"
                                         clientSideSearch
                                         preselectedOptions={[]}
                                         onOptionSelect={(logo) => setCompanyLogo(logo)} // Handle logo dynamically
