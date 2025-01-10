@@ -44,15 +44,21 @@ export const getDownloadByEmpCode = async (employeeCode) => {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `${employeeCode}_OutlookSignature.ps1`);
+
+    const contentDisposition = response.headers["content-disposition"];
+    const fileName = contentDisposition
+      ? contentDisposition.split("filename=")[1]?.replace(/"/g, "")
+      : `signature_${employeeCode}.zip`;
+
+    link.setAttribute("download", fileName);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("Error downloading the script:", error.message);
+    console.error("Error downloading file for employee code:", error);
   }
 };
-
 
 export const getDownloadAllS = async () => {
   try {
@@ -62,15 +68,17 @@ export const getDownloadAllS = async () => {
     console.error("Error fetching discount data:", error);
   }
 };
+
 export const getdeleteByEmpCode = async (employee_code) => {
   try {
-    const response = await api.get(`/signatures/delete/${employee_code}`);
+    const response = await api.delete(`/signatures/delete/${employee_code}/`);
     return response?.data;
   } catch (error) {
     console.error("Error deleting signature:", error);
     throw error;
   }
 };
+
 export const updateSignature = async (employee_code, updateData) => {
   try {
     const response = await api.put(

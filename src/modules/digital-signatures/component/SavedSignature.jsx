@@ -39,7 +39,8 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
       console.log(error);
     }
   };
-  const getdeleteByEmpCode = async (employee_code) => {
+
+  const handleDelete = async (employee_code) => {
     try {
       const result = await getdeleteByEmpCode(employee_code);
       console.log("Deleted successfully:", result);
@@ -47,6 +48,7 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
       console.error("Error during deletion:", error.message);
     }
   };
+
   const updateSignature = async () => {
     try {
       const result = await updateSignature(employeeCode, updateData);
@@ -68,14 +70,14 @@ const SavedSignature = ({ onEdit, handleSavedDataFetch }) => {
         return (
           <div className="flex space-x-1">
             <button
-              onClick={() => getdeleteByEmpCode(id)}
+              onClick={() => handleDelete(id)}
               className="ti-btn ti-btn-danger ti-btn-sm"
             >
               <i className="ri-delete-bin-6-line"></i>
             </button>
 
             <button
-            onClick={() => handleSavedDataFetch(employee_code)}
+              onClick={() => handleSavedDataFetch(employee_code)}
               className="ti-btn ti-btn-primary ti-btn-sm"
             >
               <i className="ri-edit-line"></i>
