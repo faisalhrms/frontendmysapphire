@@ -23,12 +23,29 @@ const UserList = () => {
 
     const columns = [
         {
+            Header: 'Actions',
+            accessor: 'id', // Adding accessor for better performance
+            Cell: ({ value }) => (
+                <HasPermission permission='change_user'>
+                    <div className="flex space-x-2">
+                        <button
+                            onClick={() => handleEdit(value)}
+                            className="ti-btn ti-btn-primary ti-btn-sm"
+                            title="Edit User"
+                        >
+                            <i className="ri-edit-line"></i>
+                        </button>
+                    </div>
+                </HasPermission>
+            ),
+        },
+        {
             Header: 'Name',
             accessor: 'full_name',
             Cell: ({ row }) => (
                 <div className="flex items-center">
                     <Avatar
-                        avatar={row.original.avatar ? row.original.avatar.file_url : null}
+                        avatar={row.original.avatar ? row.original.avatar : null}
                         size='md'
                         parentClasses='bg-primary/10 !fill-primary'
                     />
@@ -171,23 +188,23 @@ const UserList = () => {
                 </div>
             ),
         },
-        {
-            Header: 'Actions',
-            accessor: 'id', // Adding accessor for better performance
-            Cell: ({ value }) => (
-                <HasPermission permission='change_user'>
-                    <div className="flex space-x-2">
-                        <button
-                            onClick={() => handleEdit(value)}
-                            className="ti-btn ti-btn-primary ti-btn-sm"
-                            title="Edit User"
-                        >
-                            <i className="ri-edit-line"></i>
-                        </button>
-                    </div>
-                </HasPermission>
-            ),
-        },
+        // {
+        //     Header: 'Actions',
+        //     accessor: 'id', // Adding accessor for better performance
+        //     Cell: ({ value }) => (
+        //         <HasPermission permission='change_user'>
+        //             <div className="flex space-x-2">
+        //                 <button
+        //                     onClick={() => handleEdit(value)}
+        //                     className="ti-btn ti-btn-primary ti-btn-sm"
+        //                     title="Edit User"
+        //                 >
+        //                     <i className="ri-edit-line"></i>
+        //                 </button>
+        //             </div>
+        //         </HasPermission>
+        //     ),
+        // },
     ];
 
     const buttons = (
