@@ -71,7 +71,7 @@ export const getDownloadAllS = async () => {
 
 export const getdeleteByEmpCode = async (employee_code) => {
   try {
-    const response = await api.delete(`/signatures/delete/${employee_code}`);
+    const response = await api.delete(`/signatures/delete/${employee_code}/`);
     return response?.data;
   } catch (error) {
     console.error("Error deleting signature:", error);
