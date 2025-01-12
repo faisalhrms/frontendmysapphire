@@ -6,6 +6,8 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import ProjectAnalysisCard from "@modules/dashboards/pms/components/ProjectAnalysisCard.jsx";
 import ProjectTableCard from "@modules/dashboards/pms/components/ProjectTableCard.jsx";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import ProjectSummaryStats from "@modules/project-management/components/project/ProjectSummaryStats.jsx";
+import ProjectUserSummaryStats from "@modules/project-management/components/project/ProjectUserSummaryStats.jsx";
 
 
 const ProjectDashboard = () => {
@@ -34,7 +36,13 @@ const ProjectDashboard = () => {
                                 <RecentProjectCard
                                     projects={data.recent_projects}
                                 />
-                                <ProjectTableCard />
+                                <div className="xl:col-span-5 col-span-12">
+                                    <ProjectSummaryStats summary={data.project_summary} statsFetching={isLoading} heading='Project Summary' />
+                                </div>
+                                <div className="xl:col-span-7 col-span-12">
+                                    <ProjectUserSummaryStats summary={data.user_summary} statsFetching={isLoading}/>
+                                </div>
+                                <ProjectTableCard/>
                             </div>
                         </>
                     )

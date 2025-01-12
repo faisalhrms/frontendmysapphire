@@ -3,7 +3,7 @@ import {dateSchema, dateTimeSchema} from "@helpers/schema.js";
 import {prioritiesEnum} from "@modules/project-management/schemas/projectSchema.js";
 
 // Enum for Status
-export const statusEnum = z.enum(["open", "in_progress", "on_hold", "completed", "Cancelled"], {
+export const statusEnum = z.enum(["open", "in_progress", "on_hold", "completed", "cancelled"], {
   errorMap: () => "Status must be 'open', 'in progress', 'on hold', 'completed' or 'cancelled'",
 });
 
@@ -24,8 +24,9 @@ const taskSchema = z.object({
 
   started_at: dateTimeSchema('Started'),
 
-  ended_at: dateTimeSchema('Started'),
+  ended_at: dateTimeSchema('Ended'),
   attachment_ids: z.array(z.number()),
+  team_ids: z.array(z.number()),
   user_ids: z.array(z.number().int().positive("User ID must be a positive integer"))
     .min(1, "At least one user ID is required"),
   

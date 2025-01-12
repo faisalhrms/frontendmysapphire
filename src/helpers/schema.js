@@ -19,15 +19,13 @@ export const dateSchema = (fieldName, isOptional = false) => {
 
 export const dateTimeSchema = (fieldName, isOptional = false) => {
     let schema = z
-        .string()
-        .regex(
-            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/,
-            `${fieldName} must be in YYYY-MM-DDTHH:mm format`
-        );
+        .string();
+
     if (!isOptional) {
         schema = schema.or(z.null()).refine(val => val !== null, {
             message: `${fieldName} is required`,
         });
     }
+
     return isOptional ? schema.optional().or(z.null()) : schema;
 };
