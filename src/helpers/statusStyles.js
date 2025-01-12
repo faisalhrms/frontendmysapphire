@@ -8,11 +8,14 @@ export const statusColorMapping = {
     "Open": "primary",
     "In Progress": "secondary",
     "Completed": "success",
+    "Completed On Time": "success",
     "Cancelled": "danger",
+    "Archived": "danger",
+    "Overdue": "danger",
     "On Hold": "warning",
+    "Completed Late": "warning",
     "Overall": "primary",
     "Active": "primary",
-    "Archived": "danger"
 };
 
 /**
@@ -65,7 +68,7 @@ export const getChangeStyles = (percentage_change) => {
 export const mapSeriesToColors = (series, statusColorMapping, defaultColor = '0, 0, 0') => {
     if (series && Array.isArray(series)) {
         return series.map((seriesItem) => {
-            const colorName = statusColorMapping[seriesItem.name];
+            const colorName = statusColorMapping[seriesItem.name || seriesItem];
             if (colorName) {
                 const rgbValues = getFormattedColor(colorName, defaultColor);
                 return `rgb(${rgbValues})`;

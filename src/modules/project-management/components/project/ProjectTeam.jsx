@@ -18,7 +18,7 @@ const ProjectTeam = ({ users }) => {
         <div className="box-header flex items-center justify-between">
           <div className="box-title mb-2">
             Team Members
-            <span className="badge bg-primary/10 !rounded-full text-primary">
+            <span className="badge bg-primary/10 !rounded-full text-primary ml-2">
               {users.length}
             </span>
           </div>
