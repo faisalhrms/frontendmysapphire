@@ -13,30 +13,6 @@ const SubscriptionList = () => {
     const queryParams = new URLSearchParams(location.search);
     const filterType = queryParams.get("filter");
     const columns = [
-        { Header: "Platform Name", accessor: "name" },
-        {Header: 'Status', Cell: ({ row }) => (
-           <span className={ getBadgeClasses(row.original.status) }>{ toTitleCase(row.original.status) }</span>
-         )},
-        {Header: 'Type', Cell: ({ row }) => (
-                toTitleCase(row.original.type)
-            )},
-        { Header: "Vendor", accessor: "vendor.name" },
-        { Header: "Reminder Days", accessor: "reminder_days" },
-        {
-            Header: "Amount",
-            accessor: "amount",
-            Cell: ({ value }) => formatAmountWithCommas(value),
-        },
-        {Header: 'Departments', Cell: ({ row }) => (
-                <span className='space-x-1 rtl:space-x-reverse'>
-                    {(
-                        row.original.departments.map(department => (
-                            <span key={department.id} className="badge bg-primary/10 text-primary">{toTitleCase(department.name)}</span>
-                        ))
-                    )}
-                </span>
-            )
-        },
         {
             Header: 'Actions',
             Cell: ({row}) => (
@@ -62,6 +38,55 @@ const SubscriptionList = () => {
 
                 ),
             },
+        { Header: "Platform Name", accessor: "name" },
+        {Header: 'Status', Cell: ({ row }) => (
+           <span className={ getBadgeClasses(row.original.status) }>{ toTitleCase(row.original.status) }</span>
+         )},
+        {Header: 'Type', Cell: ({ row }) => (
+                toTitleCase(row.original.type)
+            )},
+        { Header: "Vendor", accessor: "vendor.name" },
+        { Header: "Reminder Days", accessor: "reminder_days" },
+        {
+            Header: "Amount",
+            accessor: "amount",
+            Cell: ({ value }) => formatAmountWithCommas(value),
+        },
+        {Header: 'Departments', Cell: ({ row }) => (
+                <span className='space-x-1 rtl:space-x-reverse'>
+                    {(
+                        row.original.departments.map(department => (
+                            <span key={department.id} className="badge bg-primary/10 text-primary">{toTitleCase(department.name)}</span>
+                        ))
+                    )}
+                </span>
+            )
+        },
+        // {
+        //     Header: 'Actions',
+        //     Cell: ({row}) => (
+
+        //             <div className="flex space-x-2">
+        //                 <HasPermission permission="change_subscription">
+        //           <Link to={`/module/subscription/edit/${row.original.id }`}>
+        //                 <button
+        //                  className="ti-btn ti-btn-primary ti-btn-sm">
+        //                     <i className="ri-edit-line"></i>
+        //                 </button>
+        //                 </Link>
+        //                 </HasPermission>
+        //                 <HasPermission permission="view_subscription">
+        //                 <Link to={`/module/subscription/detail/${row.original.id }`}>
+        //                     <button
+        //                         className="ti-btn ti-btn-info ti-btn-sm">
+        //                         <i className="ri-eye-line"></i>
+        //                     </button>
+        //                 </Link>
+        //                 </HasPermission>
+        //             </div>
+
+        //         ),
+        //     },
     ];
 
     const buttons = (

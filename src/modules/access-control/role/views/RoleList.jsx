@@ -22,8 +22,6 @@ const Role = () => {
     };
 
     const columns = [
-        { Header: 'ID', accessor: 'id' },
-        { Header: 'Name', accessor: 'name' },
         {
             Header: 'Actions',
             Cell: ({ row }) => {
@@ -53,6 +51,9 @@ const Role = () => {
               }
 
         },
+        { Header: 'ID', accessor: 'id' },
+        { Header: 'Name', accessor: 'name' },
+       
     ];
 
     const buttons = (
