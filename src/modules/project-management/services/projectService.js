@@ -29,12 +29,11 @@ export const createProject = async (payload) => {
 export const updateProject = async (id, payload) => {
     try {
         const response = await api.put(`/pms/projects/${id}/`, payload);
-
         Notify.success(response.data.message);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
-        throw new Error(error.response?.data?.message || 'An error occurred');
+        throw error;
     }
 };
 

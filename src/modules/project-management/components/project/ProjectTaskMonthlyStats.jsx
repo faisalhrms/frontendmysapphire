@@ -1,5 +1,3 @@
-import { useProjectStatistics } from "@modules/project-management/hooks/projectHooks.js";
-
 import React, { useMemo } from "react";
 
 import ApexChart from "@components/charts/ApexChart.jsx";
@@ -8,12 +6,11 @@ import {
   statusColorMapping,
 } from "@helpers/statusStyles.js";
 
-const ProjectStatistics = ({ projectId }) => {
-  const { data, isLoading, refetch } = useProjectStatistics(projectId);
+const ProjectTaskMonthlyStats = ({ months, statsFetching }) => {
 
   const colors = useMemo(() => {
-    return mapSeriesToColors(data?.n_months?.series, statusColorMapping);
-  }, [data?.n_months?.series]);
+    return mapSeriesToColors(months?.series, statusColorMapping);
+  }, []);
 
   return (
     <div className="xl:col-span-3 col-span-12">
@@ -27,9 +24,10 @@ const ProjectStatistics = ({ projectId }) => {
             <div id="task-list-stats">
               {colors.length > 0 && (
                 <ApexChart
+                  columnWidth='70%'
                   colors={colors}
-                  series={data.n_months.series}
-                  categories={data.n_months.categories}
+                  series={months.series}
+                  categories={months.categories}
                 />
               )}
             </div>
@@ -40,4 +38,4 @@ const ProjectStatistics = ({ projectId }) => {
   );
 };
 
-export default ProjectStatistics ;
+export default ProjectTaskMonthlyStats ;

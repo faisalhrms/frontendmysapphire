@@ -15,6 +15,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import uploadProjectSchema from "@modules/project-management/schemas/uploadProjectSchema.js";
 import {uploadTasks} from "@modules/project-management/services/taskService.js";
 import {uploadMilestones} from "@modules/project-management/services/milestoneService.js";
+import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.js";
 
 export const useProjects = (page = 1, size = 8, search) => {
     const query = useQuery({
@@ -32,6 +33,7 @@ export const useProjects = (page = 1, size = 8, search) => {
 
 export const useProjectForm = (projectData, isEditMode) => {
     const navigate = useNavigate();
+    const { haveConflict, conflicts, handleConflict, closeConflictModal } = useConflictHook();
 
     const handleProjectSubmit = async (data) => {
         try {
@@ -42,11 +44,16 @@ export const useProjectForm = (projectData, isEditMode) => {
             }
             navigate('/module/projects');
         } catch (error) {
-            console.error('Error:', error.message);
+            if (error.response) {
+                const { status, data: errorData } = error.response;
+                if (status === 409) {
+                    handleConflict(errorData);
+                }
+            }
         }
     };
 
-    return { handleProjectSubmit };
+    return { handleProjectSubmit, haveConflict, conflicts, closeConflictModal };
 };
 
 export const useProject = (id) => {
@@ -81,7 +88,7 @@ export const useProjectMilestonesWithTasks = (projectId) => {
 }
 
 export const useProjectStatistics = (projectId = null, months = 6) => {
-    const { data = [], isLoading, refetch } = useQuery({
+    const { data: statistics = [], isLoading: statsFetching } = useQuery({
         queryKey: ['projectStatistics', projectId],
         queryFn: () => getProjectStats(projectId, months),
         enabled: true,
@@ -89,7 +96,7 @@ export const useProjectStatistics = (projectId = null, months = 6) => {
         refetchOnWindowFocus: false,
     });
 
-    return { data, isLoading, refetch };
+    return { statistics, statsFetching };
 }
 
 export const useToggleFavouriteProject = () => {

@@ -7,19 +7,22 @@ import ProjectAttachment from "@modules/project-management/components/project/Pr
 import ProjectTree from "@modules/project-management/components/project/ProjectTree.jsx";
 import {
   useProject,
-  useProjectMilestonesWithTasks,
+  useProjectMilestonesWithTasks, useProjectStatistics,
   useUploadProjectModal,
 } from "@modules/project-management/hooks/projectHooks.js";
 import ProjectTeam from "@modules/project-management/components/project/ProjectTeam.jsx";
 import Discussion from "@components/Discussion.jsx";
 import UploadModal from "@modules/project-management/components/model/UploadModal.jsx";
-import ProjectStats from "../components/project/ProjectStats.jsx";
-import ProjectStatistics from "../components/project/ProjectStatistics.jsx";
+import ProjectTaskStatusStats from "../components/project/ProjectTaskStatusStats.jsx";
+import ProjectTaskMonthlyStats from "../components/project/ProjectTaskMonthlyStats.jsx";
+import ProjectSummaryStats from "@modules/project-management/components/project/ProjectSummaryStats.jsx";
+import ProjectUserSummaryStats from "@modules/project-management/components/project/ProjectUserSummaryStats.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const { projectData } = useProject(id);
   const { milestones, isLoading, refetch } = useProjectMilestonesWithTasks(id);
+  const { statistics, statsFetching } = useProjectStatistics(id);
   const [importType, setImportType] = useState("M");
   const {
     openUploadModal,
@@ -45,62 +48,70 @@ const ProjectDetail = () => {
         mainpage={projectData ? projectData.project_no : "PRJ - 00000000"}
       />
       {projectData && (
-        <div className="grid grid-cols-12 gap-6">
-          <div className="xl:col-span-9 col-span-12">
-            <ProjectSummary
-              project={projectData}
-              handleUploadModal={handleUploadModal}
-            />
-            <ProjectTree
-              projectId={projectData.id}
-              projectStatus={projectData.status}
-              startedAt={projectData.started_at}
-              endedAt={projectData.ended_at}
-              milestones={milestones}
-              isLoading={isLoading}
-              refetch={refetch}
-              handleUploadModal={handleUploadModal}
-            />
-            <Discussion
-              title="Project Discussions"
-              storeEndPoint={`/pms/projects/${id}/discussion/`}
-              getEndPoint={`/pms/projects/${id}/discussions/`}
-            />
-            <ProjectStatistics projectId={id} />
-          </div>
-
-
-          <div className="xl:col-span-3 col-span-12">
-            <div className="bg-white shadow-md rounded-lg mb-4 ">
-              <ProjectStats projectId={projectData.id} />
-            </div>
-            <div className="rounded-lg">
-              <ProjectAdditionalDetail project={projectData} />
-            </div>
-            <div className="rounded-lg">
-              <ProjectTeam users={projectData.users} />
-            </div>
-            {projectData.attachments.length > 0 && (
-              <div className="rounded-lg">
-                <ProjectAttachment attachments={projectData.attachments} />
+          <>
+            <div className="grid grid-cols-12 gap-6">
+              <div className="xl:col-span-9 col-span-12">
+                <ProjectSummary
+                    project={projectData}
+                    handleUploadModal={handleUploadModal}
+                />
+                <ProjectTree
+                    projectId={projectData.id}
+                    projectStatus={projectData.status}
+                    startedAt={projectData.started_at}
+                    endedAt={projectData.ended_at}
+                    milestones={milestones}
+                    isLoading={isLoading}
+                    refetch={refetch}
+                    handleUploadModal={handleUploadModal}
+                />
+                <Discussion
+                    title="Project Discussions"
+                    storeEndPoint={`/pms/projects/${id}/discussion/`}
+                    getEndPoint={`/pms/projects/${id}/discussions/`}
+                />
+                <ProjectTaskMonthlyStats months={statistics.n_months} statsFetching={statsFetching}/>
               </div>
+              <div className="xl:col-span-3 col-span-12">
+                <div className="bg-white shadow-md rounded-lg mb-4 ">
+                  <ProjectTaskStatusStats monthOverMonth={statistics?.month_over_month} statsFetching={statsFetching}/>
+                </div>
+                <div className="rounded-lg">
+                  <ProjectAdditionalDetail project={projectData}/>
+                </div>
+                <div className="rounded-lg">
+                  <ProjectTeam users={projectData.users}/>
+                </div>
+                {projectData.attachments.length > 0 && (
+                    <div className="rounded-lg">
+                      <ProjectAttachment attachments={projectData.attachments}/>
+                    </div>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-6">
+              <div className="xl:col-span-5 col-span-12">
+                <ProjectSummaryStats summary={statistics.task_summary} statsFetching={statsFetching}/>
+              </div>
+                <div className="xl:col-span-7 col-span-12">
+                    <ProjectUserSummaryStats summary={statistics.user_summary} statsFetching={statsFetching}/>
+                </div>
+            </div>
+          </>
+      )}
+
+        {isUploadModalOpen && (
+            <UploadModal
+                control={control}
+                errors={errors}
+                    isSubmitting={isSubmitting}
+                    handleSubmit={handleSubmit}
+                    onSubmit={onSubmit}
+                    closeModal={closeUploadModal}
+                />
             )}
-          </div>
-        </div>
-      )}
+          </>
+      );
+      };
 
-      {isUploadModalOpen && (
-        <UploadModal
-          control={control}
-          errors={errors}
-          isSubmitting={isSubmitting}
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
-          closeModal={closeUploadModal}
-        />
-      )}
-    </>
-  );
-};
-
-export default ProjectDetail;
+      export default ProjectDetail;

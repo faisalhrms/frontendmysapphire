@@ -6,8 +6,8 @@ export const prioritiesEnum = z.enum(["low", "medium", "high"], {
 });
 
 
-export const statusEnum = z.enum(["active", "archived", "on_hold"], {
-    errorMap: () => "Status must be 'active', 'on hold', or 'archived'",
+export const statusEnum = z.enum(["active", "archived", "on_hold", "completed"], {
+    errorMap: () => "Status must be 'active', 'on hold', 'archived' or completed",
 });
 
 
@@ -23,6 +23,7 @@ const projectSchema = z.object({
     started_at: dateSchema('Started'),
     ended_at: dateSchema('Ended'),
     manager_id: z.number().min(1, "Manager is required"),
+    workspace_id: z.number().min(1, "Workspace is required"),
     tag_ids: z.array(z.number()).min(1, "At least one tag must be assigned"),
     attachment_ids: z.array(z.number()),
     user_ids: z.array(z.number()).min(1, "At least one member must be assigned"),
