@@ -7,7 +7,7 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 const ProjectSummaryStats = ({summary, statsFetching, heading = 'Task Summary'}) => {
     const colors = useMemo(() => {
         return mapSeriesToColors(summary?.labels, statusColorMapping);
-    }, [summary?.labels]);
+    }, []);
 
     return (<div className="box">
             <div className="box-header justify-between">

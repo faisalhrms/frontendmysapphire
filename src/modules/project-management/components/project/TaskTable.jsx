@@ -99,7 +99,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                                                 </HasPermission>
 
                                         <HasPermission permission='change_task'>
-                                        { task.status === "under_approval" ? ('') : (
+                                        {task.status === "completed" || task.status === "under_approval" ? ('') : (
                                             <Tooltip
                                                 id={`edit-tooltip-${task.id}-edit`}
                                                 tooltipContent={`Edit (${task.name})`}
