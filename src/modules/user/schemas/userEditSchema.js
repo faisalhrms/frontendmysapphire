@@ -10,8 +10,6 @@ const statusEnum = z.enum(["active", "suspended", "deactivated"], {
 const userUpdateSchema = z.object({
     password: z
         .string()
-        .min(6, { message: "Password must be at least 6 characters long" })
-        .max(50, { message: "Password must not exceed 50 characters" })
         .optional(),
     is_superuser: z.boolean().optional(),
     is_active: z.boolean().optional(),

@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
 import { toTitleCase } from "@helpers/formatters.js";
 
-const InventoryList = () => {
+const EquipmentList = () => {
     const columns = [
         { Header: "Code", accessor: "code" },
-        { Header: "Description", accessor: "description" },
+
         { Header: "Serial No", accessor: "serial_no" },
         { Header: "Status", accessor: "status", Cell: ({ value }) => toTitleCase(value) },
         { Header: "Custodian", accessor: "custodian.full_name" },
@@ -19,12 +19,12 @@ const InventoryList = () => {
             Header: "Actions",
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
-                    <Link to={`${INVENTORY_ROUTES.EDIT.path}/${row.original.id}`}>
+                    <Link to={`/module/equipment/edit/${row.original.id}`}>
                         <button className="ti-btn ti-btn-primary ti-btn-sm">
                             <i className="ri-edit-line"></i>
                         </button>
                     </Link>
-                    <Link to={`${INVENTORY_ROUTES.DETAIL.path}/${row.original.id}`}>
+                    <Link to={`/module/equipment/detail/${row.original.id}`}>
                         <button className="ti-btn ti-btn-info ti-btn-sm">
                             <i className="ri-eye-line"></i>
                         </button>
@@ -55,4 +55,4 @@ const InventoryList = () => {
     );
 };
 
-export default InventoryList;
+export default EquipmentList;
