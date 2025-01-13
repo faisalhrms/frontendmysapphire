@@ -16,6 +16,7 @@ const FormSelect = ({ name, label = true, control, errors, options, placeholder,
                     <Select
                         {...field}
                         {...rest}
+                        isClearable={true}
                         className={`w-full !rounded-sm border ${errors[name] ? 'border-red' : ''} ${className}`}
                         classNamePrefix="Select2"
                         placeholder={placeholder}

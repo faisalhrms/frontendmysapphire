@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import ProjectSummary from "@modules/project-management/components/project/ProjectSummary.jsx";
 import ProjectAdditionalDetail from "@modules/project-management/components/project/ProjectAdditionalDetail.jsx";
@@ -17,12 +17,16 @@ import ProjectTaskStatusStats from "../components/project/ProjectTaskStatusStats
 import ProjectTaskMonthlyStats from "../components/project/ProjectTaskMonthlyStats.jsx";
 import ProjectSummaryStats from "@modules/project-management/components/project/ProjectSummaryStats.jsx";
 import ProjectUserSummaryStats from "@modules/project-management/components/project/ProjectUserSummaryStats.jsx";
+import IconTabs from "@components/IconTabs.jsx";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const { projectData } = useProject(id);
   const { milestones, isLoading, refetch } = useProjectMilestonesWithTasks(id);
-  const { statistics, statsFetching } = useProjectStatistics(id);
+
+  const { statistics, statsFetching, statsRefetch, statsError } = useProjectStatistics(id, 6, { enabled: false });
+
   const [importType, setImportType] = useState("M");
   const {
     openUploadModal,
@@ -40,6 +44,12 @@ const ProjectDetail = () => {
     openUploadModal(id);
   };
 
+  const handleTabChange = (tabId) => {
+    if (tabId === "overview") {
+      statsRefetch();
+    }
+  };
+
   return (
     <>
       <PageHeader
@@ -47,71 +57,120 @@ const ProjectDetail = () => {
         activepage="Projects"
         mainpage={projectData ? projectData.project_no : "PRJ - 00000000"}
       />
+
       {projectData && (
-          <>
-            <div className="grid grid-cols-12 gap-6">
-              <div className="xl:col-span-9 col-span-12">
-                <ProjectSummary
-                    project={projectData}
-                    handleUploadModal={handleUploadModal}
-                />
-                <ProjectTree
-                    projectId={projectData.id}
-                    projectStatus={projectData.status}
-                    startedAt={projectData.started_at}
-                    endedAt={projectData.ended_at}
-                    milestones={milestones}
-                    isLoading={isLoading}
-                    refetch={refetch}
-                    handleUploadModal={handleUploadModal}
-                />
-                <Discussion
-                    title="Project Discussions"
-                    storeEndPoint={`/pms/projects/${id}/discussion/`}
-                    getEndPoint={`/pms/projects/${id}/discussions/`}
-                />
-                <ProjectTaskMonthlyStats months={statistics.n_months} statsFetching={statsFetching}/>
-              </div>
-              <div className="xl:col-span-3 col-span-12">
-                <div className="bg-white shadow-md rounded-lg mb-4 ">
-                  <ProjectTaskStatusStats monthOverMonth={statistics?.month_over_month} statsFetching={statsFetching}/>
-                </div>
-                <div className="rounded-lg">
-                  <ProjectAdditionalDetail project={projectData}/>
-                </div>
-                <div className="rounded-lg">
-                  <ProjectTeam users={projectData.users}/>
-                </div>
-                {projectData.attachments.length > 0 && (
-                    <div className="rounded-lg">
-                      <ProjectAttachment attachments={projectData.attachments}/>
-                    </div>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-6">
-              <div className="xl:col-span-5 col-span-12">
-                <ProjectSummaryStats summary={statistics.task_summary} statsFetching={statsFetching}/>
-              </div>
-                <div className="xl:col-span-7 col-span-12">
-                    <ProjectUserSummaryStats summary={statistics.user_summary} statsFetching={statsFetching}/>
-                </div>
-            </div>
-          </>
+          <div className="col-span-12 md:col-span-6 xxl:!col-span-4">
+            <IconTabs
+                tabs={[
+                  {
+                    id: "summary",
+                    label: "Summary",
+                    icon: (
+                        <i className='bx bx-task'></i>
+                    ),
+                    content: (
+                        <div className="grid grid-cols-12 gap-6">
+                          <div className="xl:col-span-9 col-span-12">
+                            <ProjectSummary
+                                project={projectData}
+                                handleUploadModal={handleUploadModal}
+                            />
+                            <ProjectTree
+                                projectId={projectData.id}
+                                projectStatus={projectData.status}
+                                startedAt={projectData.started_at}
+                                endedAt={projectData.ended_at}
+                                milestones={milestones}
+                                isLoading={isLoading}
+                                refetch={refetch}
+                                handleUploadModal={handleUploadModal}
+                            />
+                            <Discussion
+                                title="Project Discussions"
+                                storeEndPoint={`/pms/projects/${id}/discussion/`}
+                                getEndPoint={`/pms/projects/${id}/discussions/`}
+                            />
+                          </div>
+                          <div className="xl:col-span-3 col-span-12">
+                            <div className="rounded-lg">
+                              <ProjectAdditionalDetail project={projectData} />
+                            </div>
+                            <div className="rounded-lg">
+                              <ProjectTeam users={projectData.users} />
+                            </div>
+                            {projectData.attachments.length > 0 && (
+                                <div className="rounded-lg">
+                                  <ProjectAttachment attachments={projectData.attachments} />
+                                </div>
+                            )}
+                          </div>
+                        </div>
+                    ),
+                  },
+                  {
+                    id: "overview",
+                    label: "Overview",
+                    icon: (
+                        <i className='bx bx-bar-chart'></i>
+                    ),
+                    content: (
+                        <>
+                          {statsFetching ? (
+                              <LoadingSpinner />
+                          ) : statistics?.month_over_month ? (
+                              <>
+                                    <div className="grid grid-cols-12 gap-6">
+                                      <div className="xl:col-span-9 col-span-12">
+                                        <ProjectTaskMonthlyStats
+                                            months={statistics.n_months}
+                                            statsFetching={statsFetching}
+                                        />
+                                      </div>
+                                      <div className="xl:col-span-3 col-span-12">
+                                        <div className="bg-white shadow-md rounded-lg mb-4">
+                                          <ProjectTaskStatusStats
+                                              monthOverMonth={statistics?.month_over_month}
+                                              statsFetching={statsFetching}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-12 gap-6">
+                                      <div className="xl:col-span-5 col-span-12">
+                                        <ProjectSummaryStats
+                                            summary={statistics.task_summary}
+                                            statsFetching={statsFetching}
+                                        />
+                                      </div>
+                                      <div className="xl:col-span-7 col-span-12">
+                                        <ProjectUserSummaryStats
+                                            summary={statistics.user_summary}
+                                            statsFetching={statsFetching}
+                                        />
+                                      </div>
+                                    </div>
+                              </>
+                          ) : null}
+                        </>
+                    )
+                  },
+                ]}
+                onTabChange={handleTabChange}
+            />
+          </div>
       )}
+      {isUploadModalOpen && (
+          <UploadModal
+              control={control}
+              errors={errors}
+              isSubmitting={isSubmitting}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+              closeModal={closeUploadModal}
+          />
+      )}
+    </>
+  );
+};
 
-        {isUploadModalOpen && (
-            <UploadModal
-                control={control}
-                errors={errors}
-                    isSubmitting={isSubmitting}
-                    handleSubmit={handleSubmit}
-                    onSubmit={onSubmit}
-                    closeModal={closeUploadModal}
-                />
-            )}
-          </>
-      );
-      };
-
-      export default ProjectDetail;
+export default ProjectDetail;

@@ -38,10 +38,10 @@ export const updateProject = async (id, payload) => {
 };
 
 
-export const getProjects = async (page, size, s) => {
+export const getProjects = async (page, size, s, workspaces = null, status = null, priority = null) => {
     try {
         const response = await api.get(`/pms/projects/datatable/`, {
-            params: { skip: (page - 1) * size, limit: size, s },
+            params: { skip: (page - 1) * size, limit: size, s, workspaces: workspaces, status: status, priority: priority },
         });
         return response.data.data;
     } catch (error) {

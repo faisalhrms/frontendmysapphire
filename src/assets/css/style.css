@@ -13445,9 +13445,9 @@ input[type=color i]::-webkit-color-swatch {
   @apply hidden;
 }
 
-.Select2__indicator svg {
-  @apply hidden !important;
-}
+/*.Select2__indicator svg {*/
+/*  @apply hidden !important;*/
+/*}*/
 
 .Select2__single-value div {
   @apply flex items-center !important;
@@ -13459,6 +13459,10 @@ input[type=color i]::-webkit-color-swatch {
 
 .Select2__option--is-selected {
   @apply bg-primary text-white !important;
+}
+
+.css-tj5bde-Svg {
+  width: 15px;
 }
 
 .react-datepicker__day--selected,

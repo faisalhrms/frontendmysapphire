@@ -151,7 +151,7 @@ const FormAsyncSelect = ({
                             isMulti={isMulti}
                             className={`w-full !rounded-sm border ${errors[name] ? '!border-red' : ''} ${className}`}
                             classNamePrefix="Select2"
-                            placeholder={`Select ${placeholder}`}
+                            placeholder={`${placeholder}`}
                             options={optionsWithSelected}
                             isLoading={isLoading}
                             onChange={(selectedOption, actionMeta) => {
