@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
 import { toTitleCase } from "@helpers/formatters.js";
 
-const InventoryList = () => {
+const EquipmentList = () => {
     const columns = [
         { Header: "Code", accessor: "code" },
-        { Header: "Description", accessor: "description" },
+
         { Header: "Serial No", accessor: "serial_no" },
         { Header: "Status", accessor: "status", Cell: ({ value }) => toTitleCase(value) },
         { Header: "Custodian", accessor: "custodian.full_name" },
@@ -55,4 +55,4 @@ const InventoryList = () => {
     );
 };
 
-export default InventoryList;
+export default EquipmentList;

@@ -1,6 +1,6 @@
 
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import InventoryForm from "@modules/inventory/components/InventoryForm.jsx";
+import InventoryForm from "@modules/inventory/components/EquipmentForm.jsx";
 
 const SubscriptionCreate = () => {
     return (

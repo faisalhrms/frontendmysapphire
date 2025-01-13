@@ -10,6 +10,12 @@ const equipmentStatus = z.enum([
     'sold_to_employee',
     'write_off',
 ]);
+const subEquipmentSchema = z.object({
+    type_id: z.number().min(1, "Type is required"),
+    description: z.string().nonempty("Description is required"),
+    qty: z.number().min(1, "Quantity must be at least 1"),
+    status: z.string().nonempty("Status is required"),
+});
 
 const equipmentSchema = z.object({
     equipment_site_id: z.number().min(1, "Site is required").optional(),
@@ -32,7 +38,8 @@ const equipmentSchema = z.object({
     store_comm_ready: z.boolean().optional(),
     description: z.string().max(1000, "Description can be at most 1000 characters").optional(),
     specs: z.string().max(500, "Specs can be at most 500 characters").optional(),
-
+    sub_equipments: z.array(subEquipmentSchema).optional(),
 });
 
 export default equipmentSchema;
+

@@ -5,7 +5,7 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 
 import {useEquipment} from "@modules/inventory/hooks/inventoryHooks.js";
 
-import InventoryForm from "@modules/inventory/components/InventoryForm.jsx";
+import InventoryForm from "@modules/inventory/components/EquipmentForm.jsx";
 
 const EquipmentEdit = () => {
     const { id } = useParams();
