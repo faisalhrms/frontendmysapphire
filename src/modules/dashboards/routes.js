@@ -57,7 +57,7 @@ export const MODULE_ROUTES = [
     },
     {
         path: DASHBOARD_ROUTES.SR.path,
-        component: () => import(`/src/modules/dashboards/sr/views/SrDashboard.jsx`),
+        component: () => import(`/src/modules/dashboards/sr/views/SrTabs.jsx`),
         permission: DASHBOARD_ROUTES.SR.permission,
     },
     {

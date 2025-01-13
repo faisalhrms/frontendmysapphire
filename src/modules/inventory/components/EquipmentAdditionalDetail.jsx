@@ -2,7 +2,7 @@ import {getBadgeClasses} from "@helpers/badges.js";
 import {toTitleCase} from "@helpers/formatters.js";
 import {Link} from "react-router-dom";
 
-const EquipmentAdditionalDetail = ({equipment}) => {
+const EquipmentAdditionalDetail = ({equipmentData}) => {
     return (
         <>
             <div className="box">
@@ -29,36 +29,55 @@ const EquipmentAdditionalDetail = ({equipment}) => {
                             <table className="table whitespace-nowrap min-w-full">
                                 <tbody>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold">ID :</span></td>
-                                    <td>{equipment.equipment_no}</td>
+                                    <td><span className="font-semibold"> Equipment Code :</span></td>
+                                    <td>{equipmentData.code}</td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold">Type :</span></td>
-                                    <td>{toTitleCase(equipment.type)}</td>
+                                    <td><span className="font-semibold"> Equipment Site :</span></td>
+                                    <td>{equipmentData.equipment_site.name}</td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold">Status :</span></td>
+                                    <td><span className="font-semibold">Department :</span></td>
+                                    <td>{toTitleCase(equipmentData.department.name)}</td>
+
+                                </tr>
+                                <tr className="border-b border-defaultborder">
+                                    <td><span className="font-semibold">Equipment Type :</span></td>
                                     <td>
                                         <span
-                                            className="font-semibold text-secondary">{toTitleCase(equipment.status)}</span>
+                                            className="font-semibold text-secondary">{toTitleCase(equipmentData.equipment_type.name)}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold">Priority :</span></td>
+                                    <td><span className="font-semibold">Location :</span></td>
                                     <td>
                                         <span
-                                            className={getBadgeClasses(equipment.priority)}>{toTitleCase(equipment.priority)}</span>
+                                            className={getBadgeClasses(equipmentData.priority)}>{toTitleCase(equipmentData.location.name)}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold">Tags :</span></td>
-                                    <td className='space-x-1 rtl:space-x-reverse'>
-                                        {equipment.tags.map(tag => (
-                                            <span key={tag.id}
-                                                  className="badge bg-primary/10 text-primary">{toTitleCase(tag.name)}</span>
-                                        ))}
+                                    <td><span className="font-semibold">Serial No :</span></td>
+                                    <td>
+                                        <span
+                                        >{toTitleCase(equipmentData.serial_no)}</span>
                                     </td>
                                 </tr>
+                                <tr className="border-b border-defaultborder">
+                                    <td><span className="font-semibold">Part No :</span></td>
+                                    <td>
+                                        <span
+                                        >{toTitleCase(equipmentData.part_no)||"----"}</span>
+                                    </td>
+                                </tr>
+                                <tr className="border-b border-defaultborder">
+                                    <td><span className="font-semibold">Asset No :</span></td>
+                                    <td>
+                                        <span
+                                        >{toTitleCase(equipmentData.asset_code)||"----"}</span>
+                                    </td>
+                                </tr>
+
+
                                 </tbody>
                             </table>
                         </div>
