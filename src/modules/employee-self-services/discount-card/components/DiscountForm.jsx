@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
@@ -27,7 +25,7 @@ const DiscountForm = ({
     } else if (selectedOption === "card_no" && filteredData?.card_no) {
       setSearchResult(`Card No: ${filteredData?.card_no}`);
     } else {
-      setSearchResult("No data available");
+      setSearchResult("");
     }
     handleSearch();
   };
