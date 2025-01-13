@@ -15,6 +15,33 @@ export const formatOptions = (data, key, valueKey = 'id', labelKey = 'name') => 
     }];
 };
 
+export const formatOptionsWithConcatenation = (data, key, valueKey = 'id', labelKeys = ['name']) => {
+    if (!data || !data[key]) return [];
+
+    const item = data[key];
+    if (Array.isArray(item)) {
+        return item.map(item => ({
+            value: item[valueKey],
+            label: labelKeys
+                .map((labelKey, index) =>
+                    index === 1 ? `(${item[labelKey]})` : item[labelKey]
+                )
+                .filter(value => value)
+                .join(' '),
+        }));
+    }
+
+    return [{
+        value: item[valueKey],
+        label: labelKeys
+            .map((labelKey, index) =>
+                index === 1 ? `(${item[labelKey]})` : item[labelKey]
+            )
+            .filter(value => value)
+            .join(' '),
+    }];
+};
+
 export const formatAmountWithCommas = (amount) => {
     if (typeof amount !== 'number' && isNaN(Number(amount))) return amount;
     return Number(amount).toLocaleString('en-US');
@@ -68,4 +95,3 @@ export const generateSidebarItem = (path = '', type = '', title = '', position =
         children,
     };
 };
-

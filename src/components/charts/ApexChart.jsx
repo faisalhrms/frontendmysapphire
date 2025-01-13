@@ -12,7 +12,8 @@ import ReactApexChart from 'react-apexcharts';
  */
 const ApexChart = ({
                        series,
-                       categories,
+                       categories = [],
+                       labels = [],
                        chartType = 'bar',
                        colors = ["#845adf", "#28d193", "#ffbe14", "#23b7e5"],
                        height = 400,
@@ -29,6 +30,7 @@ const ApexChart = ({
                    }) => {
 
     const options = useMemo(() => ({
+        labels: labels,
         chart: {
             type: chartType,
             height: height,
@@ -46,6 +48,38 @@ const ApexChart = ({
                 columnWidth: columnWidth,
                 ...additionalOptions.plotOptions?.bar,
             },
+            pie: {
+                expandOnClick: false,
+                donut: {
+                    size: '80%',
+                    background: 'transparent',
+                    labels: {
+                        show: true,
+                        name: {
+                            show: true,
+                            fontSize: '20px',
+                            color: '#495057',
+                            offsetY: -4
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '18px',
+                            color: undefined,
+                            offsetY: 8,
+                        },
+                        total: {
+                            show: true,
+                            showAlways: true,
+                            label: 'Total',
+                            fontSize: '22px',
+                            fontWeight: 600,
+                            color: '#495057',
+                        }
+
+                    }
+                },
+                ...additionalOptions.plotOptions?.pie,
+            },
             ...additionalOptions.plotOptions,
         },
         grid: {
@@ -56,7 +90,7 @@ const ApexChart = ({
             enabled: false,
             ...additionalOptions.dataLabels,
         },
-        colors: colors, // Use the passed colors
+        colors: colors,
         stroke: {
             show: true,
             colors: ["transparent"],
@@ -154,13 +188,18 @@ const ApexChart = ({
 };
 
 ApexChart.propTypes = {
-    series: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            data: PropTypes.arrayOf(PropTypes.number).isRequired,
-        })
-    ).isRequired,
-    categories: PropTypes.arrayOf(PropTypes.string).isRequired,
+    series: PropTypes.oneOfType([
+        PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+                data: PropTypes.arrayOf(PropTypes.number).isRequired,
+            })
+        ).isRequired,
+        PropTypes.arrayOf(PropTypes.number).isRequired,
+        PropTypes.number.isRequired,
+    ]).isRequired,
+    categories: PropTypes.arrayOf(PropTypes.string),
+    labels: PropTypes.arrayOf(PropTypes.string),
     chartType: PropTypes.oneOf(['bar', 'line', 'area', 'pie', 'donut']),
     colors: PropTypes.arrayOf(PropTypes.string),
     height: PropTypes.number,

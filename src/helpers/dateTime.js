@@ -4,8 +4,8 @@ const MS_IN_HOUR = MS_IN_MINUTE * 60;
 const MS_IN_DAY = MS_IN_HOUR * 24;
 const WORKING_HOURS_PER_DAY = 8; // 8-hour workday
 
-// Function to check if a date falls on a weekend (Saturday or Sunday)
-const isWeekend = (date) => date.getDay() === 6 || date.getDay() === 0; // Saturday (6) or Sunday (0)
+
+const isWeekend = (date) => date.getDay() === 6 || date.getDay() === 0;
 
 export const formatDate = (dateString, format = 'MMM dd, yyyy') => {
     const date = new Date(dateString);
@@ -91,4 +91,16 @@ export const calculateEffort = (startedAt, endedAt) => {
 
     // Return the formatted result as "00H : 00M : 00S"
     return `${hours.toString().padStart(2, '0')}H : ${minutes.toString().padStart(2, '0')}M : ${seconds.toString().padStart(2, '0')}S`;
+};
+
+
+export const formatDateTimeLocal = (dateTime) => {
+    if (!dateTime) return "";
+    const date = new Date(dateTime);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
