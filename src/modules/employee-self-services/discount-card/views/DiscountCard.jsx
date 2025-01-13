@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import DiscountForm from "../components/DiscountForm";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { useSelector } from "react-redux";
 import fetchDiscountData from "../../services/discount-card/DiscountCard";
+
 import Notify from "@helpers/toastNotifications.js";
 
 const DiscountCard = () => {
@@ -11,36 +11,44 @@ const DiscountCard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("Yes");
 
   const user = useSelector((state) => state.auth.user);
+  console.log(user)
 
   const handleFetchData = async (email = "", cardNo = "") => {
     setIsLoading(true);
-    setErrorMessage("");
+
     try {
-      if (!email && !cardNo) {
-        setErrorMessage("Both email and card number cannot be empty.");
+      if (!email) {
+        setErrorMessage("Email is required for the search.");
         setIsLoading(false);
         return;
       }
 
-      const data = await fetchDiscountData(email, cardNo);
+      setErrorMessage("");
 
-      if (!data?.card_no) {
-        setErrorMessage("No card found for this user.");
-        setFilteredData(null);
+      const data = await fetchDiscountData(email, cardNo || "");
+
+      if (data?.card_no === null || data?.card_no === "") {
+        setErrorMessage("This user has no card number.");
       } else {
         setFilteredData(data);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      Notify.error("An error occurred while fetching data.");
+      Notify.error('Login successful!');
       setErrorMessage("Failed to fetch data. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user?.email) {
+      handleFetchData(user.email);
+    }
+  }, [user?.email]);
 
   const handleSearch = () => {
     if (selectedOption === "email") {
@@ -58,6 +66,12 @@ const DiscountCard = () => {
 
   return (
       <>
+        {/* <AlertModal
+        isVisible={true}
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+      /> */}
+
         <PageHeader
             currentpage="Detail Discount Card"
             activepage="Discount Card"
@@ -73,7 +87,6 @@ const DiscountCard = () => {
             handleSearch={handleSearch}
             filteredData={filteredData}
             data={filteredData?.data}
-            errorMessage={errorMessage}
         />
       </>
   );

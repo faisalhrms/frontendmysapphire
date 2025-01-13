@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
 import HasPermission from "@components/HasPermission.jsx";
 import LoadingSpinner from "../../../../components/LoadingSpinner.jsx";
-
 
 const DiscountForm = ({
                           selectedOption,
@@ -15,7 +14,6 @@ const DiscountForm = ({
                           handleSearch,
                           filteredData,
                           data,
-                          errorMessage,
                       }) => {
     return (
         <div className="col-span-12 xl:col-span-6">
@@ -57,7 +55,9 @@ const DiscountForm = ({
             <div className="flex flex-col items-center space-y-6 mt-10 mb-10 rounded-3xl">
                 <div className="text-black p-6 rounded-3xl shadow-2xl max-w-full md:max-w-3xl w-full border bg-white">
                     {isLoading ? (
+
                         <LoadingSpinner />
+
                     ) : (
                         <>
                             <div className="flex flex-col items-center mb-4">
@@ -65,15 +65,11 @@ const DiscountForm = ({
                                 <h4 className="text-xl md:text-2xl font-semibold mb-2">
                                     {filteredData?.name || "N/A"}
                                 </h4>
-
-                                {filteredData?.card_no && (
-                                    <h6 className="text-sm opacity-80">
-                                        Card No: {filteredData.card_no}
-                                    </h6>
-                                )}
-
-                                {!filteredData && errorMessage && (
-                                    <p className="text-red-500 mt-2">{errorMessage}</p>
+                                <h6 className="text-sm opacity-80">
+                                    Card No. {filteredData?.card_no || "N/A"}
+                                </h6>
+                                {!filteredData && (
+                                    <p className="text-red-500 mt-2">Data not available</p>
                                 )}
                             </div>
 
