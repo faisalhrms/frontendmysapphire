@@ -10,7 +10,7 @@ const fetchDiscountData = async (email = "", cardNo = "") => {
 
     return {
       name: filteredData?.name || "N/A",
-      card_no: filteredData?.card_no || "N/A",
+      card_no: filteredData?.card_no || "",
       data: [
         {
           title: "Allowed Balance",
@@ -34,7 +34,7 @@ const fetchDiscountData = async (email = "", cardNo = "") => {
     console.error("Error fetching discount data:", error);
     return {
       name: "N/A",
-      card_no: "N/A",
+      // card_no: "N/A",
       
       // data: [
       //   {

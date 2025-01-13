@@ -1,6 +1,6 @@
 import React, {useMemo, useCallback, useEffect, useState} from "react";
 import FormInput from "@components/form/FormInput.jsx";
-import {formatOptions} from "@helpers/formatters.js";
+import {formatOptions, formatOptionsWithConcatenation} from "@helpers/formatters.js";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
@@ -12,8 +12,9 @@ import GalleryUpload from "@components/GalleryUpload.jsx";
 const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false}) => {
     const [data, setData]    = useState(taskData);
 
-    const formattedUsers = useMemo(() => formatOptions(data, "users", "id", "full_name"), [data]);
+    const formattedUsers = useMemo(() => formatOptionsWithConcatenation(data, "users", "id", ['full_name', 'email']), [data]);
     const formattedTags  = useMemo(() => formatOptions(data, "tags", "id", "name"), [data]);
+    const formattedTeams  = useMemo(() => formatOptions(data, "teams", "id", "name"), [data]);
     const handleClose        = useCallback(() => closeModal(), [closeModal]);
     useEffect(() => {
         setData(taskData);
@@ -56,6 +57,20 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     placeholder="Task Name"
                                                 />
                                             </div>
+                                            <div className="col-span-12">
+                                                <FormAsyncSelect
+                                                    isMulti={true}
+                                                    name="team_ids"
+                                                    control={control}
+                                                    errors={errors}
+                                                    placeholder="Teams"
+                                                    apiUrl="/select/pms/teams/"
+                                                    queryKeyBase="pms_teams"
+                                                    preselectedOptions={formattedTeams}
+                                                    saveOptionEndpoint="/select/pms/team/"
+                                                    allowSaveNewOption={true}
+                                                />
+                                            </div>
                                             <div className="col-span-6">
                                                 <FormInput
                                                     type="datetime-local"
@@ -79,8 +94,6 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                 />
                                             </div>
                                             <div className="col-span-6">
-
-
                                                 <FormSelect
                                                     name="status"
                                                     control={control}
@@ -92,11 +105,9 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     <div className=" mt-1 text-red">Current Status is Rejected
                                                     </div>
                                                 )}
-
-
                                             </div>
                                             <div className="col-span-6">
-                                            <FormSelect
+                                                <FormSelect
                                                     name="priority"
                                                     control={control}
                                                     errors={errors}
@@ -113,14 +124,13 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     errors={errors}
                                                     placeholder="Assigned To"
                                                     apiUrl={`/select/project/${projectId}/users/`}
-                                                    queryKeyBase="users"
+                                                    queryKeyBase="project_users"
                                                     preselectedOptions={formattedUsers}
                                                 />
                                             </div>
                                             <div className="col-span-6">
 
                                                 <FormAsyncSelect
-
                                                     isMulti={true}
                                                     name="tag_ids"
                                                     control={control}
