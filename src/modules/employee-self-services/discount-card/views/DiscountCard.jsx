@@ -1,9 +1,9 @@
+
 import React, { useEffect, useState } from "react";
 import DiscountForm from "../components/DiscountForm";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { useSelector } from "react-redux";
 import fetchDiscountData from "../../services/discount-card/DiscountCard";
-
 import Notify from "@helpers/toastNotifications.js";
 
 const DiscountCard = () => {
@@ -42,12 +42,6 @@ const DiscountCard = () => {
     }
   };
 
-  useEffect(() => {
-    if (user?.email) {
-      handleFetchData(user.email);
-    }
-  }, [user?.email]);
-
   const handleSearch = () => {
     if (selectedOption === "email") {
       handleFetchData(searchQuery, "");
@@ -63,25 +57,25 @@ const DiscountCard = () => {
   };
 
   return (
-    <>
-      <PageHeader
-        currentpage="Detail Discount Card"
-        activepage="Discount Card"
-        mainpage="Discount Card"
-      />
-      <DiscountForm
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        handleKeyDown={handleKeyDown}
-        isLoading={isLoading}
-        handleSearch={handleSearch}
-        filteredData={filteredData}
-        data={filteredData?.data}
-        errorMessage={errorMessage}
-      />
-    </>
+      <>
+        <PageHeader
+            currentpage="Detail Discount Card"
+            activepage="Discount Card"
+            mainpage="Discount Card"
+        />
+        <DiscountForm
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleKeyDown={handleKeyDown}
+            isLoading={isLoading}
+            handleSearch={handleSearch}
+            filteredData={filteredData}
+            data={filteredData?.data}
+            errorMessage={errorMessage}
+        />
+      </>
   );
 };
 
