@@ -14,7 +14,7 @@ export const INVENTORY_ROUTES = {
         // permission: 'equipment_read'
     },
     EDIT:{
-        path:'/module/equipment/summary',  
+        path:'/module/equipment/edit/:id',
     },
     SUMMARY:{
         path:'/module/equipment/transaction',  
@@ -24,28 +24,28 @@ export const INVENTORY_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: INVENTORY_ROUTES.READ.path,
-        component: () => import(`/src/modules/inventory/views/InventoryList.jsx`),
+        component: () => import(`/src/modules/inventory/views/EquipmentList.jsx`),
         permission: INVENTORY_ROUTES.READ.permission,
     },
     {
         path: INVENTORY_ROUTES.ADD.path,
-        component: () => import(`/src/modules/inventory/views/AddInventoryForm.jsx`),
+        component: () => import(`/src/modules/inventory/components/EquipmentForm.jsx`),
         permission: INVENTORY_ROUTES.ADD.permission,
     },
     {
         path: INVENTORY_ROUTES.DETAIL.path,
-        component: () => import(`/src/modules/inventory/views/InventoryDetail.jsx`),
+        component: () => import(`/src/modules/inventory/views/EquipmentDetail.jsx`),
         permission: INVENTORY_ROUTES.DETAIL.permission,
     },
     {
         path: INVENTORY_ROUTES.EDIT.path,
-        component: () => import(`/src/modules/inventory/views/EquipmentSummary.jsx`),
-        permission: INVENTORY_ROUTES.EDIT.permission,
+        component: () => import(`/src/modules/inventory/views/EquipmentEdit.jsx`),
+        // permission: INVENTORY_ROUTES.EDIT.permission,
     },
-    {
-        path: INVENTORY_ROUTES.SUMMARY.path,
-        component: () => import(`/src/modules/inventory/views/AddTransactionToInventory.jsx`),
-        // permission: INVENTORY_ROUTES.SUMMARY.permission,
-    },
+    // {
+    //     path: INVENTORY_ROUTES.SUMMARY.path,
+    //     component: () => import(`/src/modules/inventory/views/ReAssignEquipment.jsx`),
+    //     // permission: INVENTORY_ROUTES.SUMMARY.permission,
+    // },
     
 ]

@@ -35,26 +35,23 @@ export const getDownloadByEmpCode = async (employeeCode) => {
     const response = await api.get(`/signatures/download/${employeeCode}`, {
       responseType: "blob",
     });
+
     if (!response || !response.data) {
       throw new Error("No file data received from the server.");
     }
+
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    const contentDisposition = response.headers["content-disposition"];
-    const fileName = contentDisposition
-      ? contentDisposition.split("filename=")[1]?.replace(/"/g, "")
-      : `signature_${employeeCode}.zip`;
-    link.setAttribute("download", fileName);
+    link.setAttribute("download", `${employeeCode}_OutlookSignature.ps1`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("Error downloading file for employee code:", error);
-    throw error;
+    console.error("Error downloading the script:", error.message);
   }
 };
+
 
 export const getDownloadAllS = async () => {
   try {

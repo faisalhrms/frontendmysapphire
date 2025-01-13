@@ -14,7 +14,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 INVENTORY_ROUTES.READ.path,
                 'link',
-                'IT Equipments',
+                'Equipments List',
                 5,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
