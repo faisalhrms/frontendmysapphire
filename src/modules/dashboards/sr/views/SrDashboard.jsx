@@ -87,7 +87,6 @@ const SrDashboard = () => {
 
     return (
         <>
-            <PageHeader currentpage="SR Dashboard" activepage="SR Management" mainpage="SR Dashboard"/>
             <div className="grid grid-cols-12 gap-x-6 mb-1">
                 <div className="xl:col-span-12 lg:col-span-6 md:col-span-6 sm:col-span-6 col-span-12">
                     <div className="btn-list md:mt-0 mt-0 float-end">

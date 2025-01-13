@@ -17,30 +17,43 @@ const DiscountCard = () => {
 
   const handleFetchData = async (email = "", cardNo = "") => {
     setIsLoading(true);
-    setErrorMessage("");
+
     try {
-      if (!email && !cardNo) {
-        setErrorMessage("Both email and card number cannot be empty.");
+      if (selectedOption === "email" && !email) {
+        setErrorMessage("Email is required for the search.");
+        setIsLoading(false);
+        return;
+      }
+      if (selectedOption === "card_no" && !cardNo) {
+        setErrorMessage("Card Number is required for the search.");
         setIsLoading(false);
         return;
       }
 
-      const data = await fetchDiscountData(email, cardNo);
+      setErrorMessage("");
 
-      if (!data?.card_no) {
-        setErrorMessage("No card found for this user.");
-        setFilteredData(null);
+      const data = await fetchDiscountData(email, cardNo);
+      if (!data) {
+        setErrorMessage("No data found.");
+      } else if (!data.card_no) {
+        setErrorMessage("This user has no card number.");
       } else {
         setFilteredData(data);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      Notify.error("An error occurred while fetching data.");
-      setErrorMessage("Failed to fetch data. Please try again.");
+      Notify.error("Failed to fetch data. Please try again.");
+      setErrorMessage("Failed to fetch data.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user?.email) {
+      handleFetchData(user.email);
+    }
+  }, [user?.email]);
 
   const handleSearch = () => {
     if (selectedOption === "email") {
@@ -73,7 +86,6 @@ const DiscountCard = () => {
             handleSearch={handleSearch}
             filteredData={filteredData}
             data={filteredData?.data}
-            errorMessage={errorMessage}
         />
       </>
   );

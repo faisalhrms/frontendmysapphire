@@ -5,7 +5,7 @@ import Avatar from "@components/Avatar.jsx";
 import { Link } from "react-router-dom";
 
 const ProjectTeam = ({ users }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const toggleAccordion = (e) => {
     e.preventDefault();

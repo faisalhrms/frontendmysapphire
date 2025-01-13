@@ -17,12 +17,12 @@ const ProjectCard = ({ project, openModal, refetch }) => {
                         <Tooltip
                             id={`project-tooltip-${project.id}`}
                             text={`(${project.project_no}) ${project.name}`}
-                            tooltipContent={`Project Number: ${project.project_no}`}
+                            tooltipContent={`Project: ${project.name}`}
                         >
                             <Link
                                 to={`/module/projects/detail/${project.id}`}
                                 className="font-semibold text-[.875rem] block text-truncate project-list-title">
-                                {project.name}
+                                {project.project_no}
                             </Link>
                         </Tooltip>
                         <span className="text-[#8c9097] dark:text-white/50 block text-[0.75rem]">Total <strong
@@ -79,7 +79,9 @@ const ProjectCard = ({ project, openModal, refetch }) => {
                         </div>
                     </div>
                     <div className="font-semibold mb-1">Description :</div>
-                    <p className="text-[#8c9097] dark:text-white/50 mb-3">{getExcerptFromText(project.description, 200)}</p>
+                    <p className="text-[#8c9097] dark:text-white/50 min-h-[50px] max-h-[50px] overflow-auto">
+                        {getExcerptFromText(project.description, 70)}
+                    </p>
                     <div className="font-semibold mb-1">Status :</div>
                     <ProgressBar
                         total={project.total_tasks}
@@ -88,7 +90,8 @@ const ProjectCard = ({ project, openModal, refetch }) => {
                 </div>
                 <div className="box-footer flex items-center justify-between">
                     <div>
-                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
+                        <span
+                            className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
                         <span className="font-semibold block">{formatDate(project.started_at)}</span>
                     </div>
                     <div className="text-end">
