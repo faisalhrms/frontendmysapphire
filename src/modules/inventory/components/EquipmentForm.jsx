@@ -245,7 +245,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                         </div>
                     </div>
 
-                    {/* Use the extracted SubEquipmentTable component here */}
+
                     <SubEquipmentTable
                         fields={fields}
                         append={append}

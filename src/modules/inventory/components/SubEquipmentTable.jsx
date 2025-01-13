@@ -16,7 +16,7 @@ const SubEquipmentTable = ({ fields, append, remove, control, errors }) => {
                 <div className="flex justify-end mb-2">
                     <button
                         type="button"
-                        className="btn btn-primary"
+                        className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-secondary  btn-wave"
                         onClick={() =>
                             append({
                                 type_id: "",
@@ -115,7 +115,7 @@ const SubEquipmentTable = ({ fields, append, remove, control, errors }) => {
                             <td className="px-4 py-2 text-right">
                                 <button
                                     type="button"
-                                    className="btn btn-danger"
+                                    className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-danger  btn-wave"
                                     onClick={() => remove(index)}
                                 >
                                     Remove
