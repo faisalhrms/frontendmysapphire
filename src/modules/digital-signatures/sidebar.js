@@ -7,7 +7,7 @@ export const sidebarMenu = [
     generateSidebarItem(
         DIGITAL_SIGNATURES_ROUTES.READ.path,
         'link',
-        'Digital Signatures',
+        'Dynamic Signatures',
         5,
         'bx bx-message-square-edit',
         DIGITAL_SIGNATURES_ROUTES.READ.permission,

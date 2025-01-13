@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from "react";
-import FormTextarea from "@components/form/FormTextarea.jsx";
+import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import { useForm } from "react-hook-form";
 import api from "@config/axiosConfig.js";
@@ -22,16 +22,24 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
     });
 
     const preselectedToEmails = useMemo(() => {
-        const reporterEmail = user?.email;
-        return reporterEmail ? [{ label: reporterEmail, value: reporterEmail }] : [];
-    }, [user?.email]);
-
-    const preselectedCcEmails = useMemo(() => {
-        return (serviceRequest?.cc_email || []).map((email) => ({
+        // Combine serviceRequest.to_email with serviceRequest.to_emails and remove duplicates
+        const emails = [...new Set([...(serviceRequest?.to_email || []), ...(serviceRequest?.to_emails || [])])];
+        return emails.map((email) => ({
             label: email,
             value: email,
         }));
-    }, [serviceRequest?.cc_email]);
+    }, [serviceRequest?.to_email, serviceRequest?.to_emails]);
+
+    const preselectedCcEmails = useMemo(() => {
+        const reporterEmail = user?.email;
+        const ccEmails = serviceRequest?.cc_email || [];
+        const allCcEmails = [...new Set(reporterEmail ? [reporterEmail, ...ccEmails] : ccEmails)];
+
+        return allCcEmails.map((email) => ({
+            label: email,
+            value: email,
+        }));
+    }, [serviceRequest?.cc_email, user?.email]);
 
     useEffect(() => {
         if (isOpen) {
@@ -117,13 +125,20 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
                                 preselectedOptions={preselectedCcEmails}
                                 allowSaveNewOption
                             />
-                            <FormTextarea
-                                name="message"
-                                control={control}
-                                errors={errors}
-                                placeholder="Write your email message here"
-                                rows={6}
-                            />
+                            <div className="col-span-12">
+                                <FormRichTextarea
+                                    name="message"
+                                    control={control}
+                                    errors={errors}
+                                    placeholder="Write your email message here"
+                                    editorOptions={{
+                                        height: 150,
+                                        buttonList: [
+                                            ["bold", "italic", "underline", "strike"],
+                                        ],
+                                    }}
+                                />
+                            </div>
                             <div className="flex items-center">
                                 <input
                                     type="checkbox"

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { Link } from "react-router-dom";
 import ProjectCard from "@modules/project-management/components/ProjectCard.jsx";
-import {useProjects, useUploadProjectModal} from "@modules/project-management/hooks/projectHooks.js";
+import {useProjectFilter, useProjects, useUploadProjectModal} from "@modules/project-management/hooks/projectHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import Pagination from "@components/Pagination.jsx";
 import { useMilestoneModal } from "@modules/project-management/hooks/milestoneHooks.js";
@@ -11,10 +11,25 @@ import { useSearchHook } from "@hooks/useSearchHook.js";
 import HasPermission from "@components/HasPermission.jsx";
 import UploadModal from "@modules/project-management/components/model/UploadModal.jsx";
 import sampleFile from "@assets/files/sample_upload_projects_with_milestones_tasks.xlsx";
+import WorkspaceDropdown from "@components/dropdowns/WorkspaceDropdown.jsx";
+import {useWatch} from "react-hook-form";
+import ProjectStatusDropdown from "@modules/project-management/components/dropdowns/ProjectStatusDropdown.jsx";
+import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
 
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
-    const { data, isLoading, refetch } = useProjects(currentPage, 8, searchTerm);
+    const { filterControl,
+        filterSubmit,
+        filterErrors,
+        isFiltering
+    } = useProjectFilter()
+
+    const workspaces = useWatch({ control: filterControl, name: "workspaces" });
+    const status = useWatch({ control: filterControl, name: "status" });
+    const priority = useWatch({ control: filterControl, name: "priority" });
+
+    const { data, isLoading, refetch } = useProjects(currentPage, 8, searchTerm, workspaces, status, priority);
+
     const [startedAt, setStartedAt] = useState(null);
     const [endedAt, setEndedAt] = useState(null);
     const totalPages = Math.ceil(data?.total / 8) || 0;
@@ -49,38 +64,41 @@ const ProjectList = () => {
         isUploadModalOpen,
     } = useUploadProjectModal(refetch, 'P')
 
+
     return (
         <>
-            <PageHeader currentpage="Project Management System" />
+            <PageHeader currentpage="Project Management System"/>
             <div className="grid grid-cols-12 gap-6">
-                <div className="xl:col-span-12 col-span-12">
+                <div className="col-span-12">
                     <div className="box custom-box">
                         <div className="box-body p-4">
-                            <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div className="flex items-center justify-between gap-4">
                                 <HasPermission permission='add_project'>
-                                    <div className="flex flex-wrap gap-1 newproject">
-                                        <Link to="/module/projects/create"
-                                              className="ti-btn ti-btn-primary-full me-2 !mb-0">
+                                    <div className="flex items-center gap-2">
+                                        <Link to="/module/projects/create" className="ti-btn ti-btn-primary-full !mb-0">
                                             <i className="ri-add-line me-1 font-semibold align-middle"></i>
                                             New Project
                                         </Link>
-                                        <button
-                                            onClick={openUploadModal}
-                                            type='button'
-                                            className="ti-btn ti-btn-info me-2 !mb-0">
-                                            <i className="ri-file-upload-line me-1 font-semibold align-middle"></i>
-                                            Upload Projects
-                                        </button>
-                                        <a
-                                            href={sampleFile}
-                                            download="sample_upload_projects_with_milestones_tasks.xlsx"
-                                            className="ti-btn ti-btn-success me-2 !mb-0">
-                                            <i className="ri-file-download-line me-1 font-semibold align-middle"></i>
-                                            Download Sample File
-                                        </a>
                                     </div>
                                 </HasPermission>
-                                <div className="flex" role="search">
+                                <div className="flex items-center gap-4 flex-1">
+                                    <WorkspaceDropdown
+                                        name='workspaces'
+                                        control={filterControl}
+                                        errors={filterErrors}
+                                        multiple={true}
+                                        saveNewOption={false}
+                                    />
+                                    <ProjectStatusDropdown
+                                        control={filterControl}
+                                        errors={filterErrors}
+                                    />
+                                    <ProjectPriorityDropdown
+                                        control={filterControl}
+                                        errors={filterErrors}
+                                    />
+                                </div>
+                                <div className="flex items-center">
                                     <input
                                         className="form-control me-2"
                                         type="search"
@@ -89,16 +107,42 @@ const ProjectList = () => {
                                         onChange={handleSearchChange}
                                     />
                                 </div>
+                                <HasPermission permission='add_project'>
+                                    <div className="hs-dropdown ti-dropdown ms-2">
+                                        <button type="button" aria-label="button"
+                                                className="ti-btn ti-btn-primary ti-btn-sm" aria-expanded="false">
+                                            <i className="ti ti-dots-vertical"></i>
+                                        </button>
+                                        <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
+                                            <li>
+                                                <a
+                                                    onClick={openUploadModal}
+                                                    className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block">
+                                                    Upload Project
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href={sampleFile}
+                                                    download="sample_upload_projects_with_milestones_tasks.xlsx"
+                                                    className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block">
+                                                    Download Sample File
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </HasPermission>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+
             <div className="grid grid-cols-12 gap-x-6">
                 {isLoading ? (
                     <div className="col-span-12">
-                        <LoadingSpinner />
+                        <LoadingSpinner/>
                     </div>
                 ) : data?.rows?.length > 0 ? (
                     data.rows.map(project => (
