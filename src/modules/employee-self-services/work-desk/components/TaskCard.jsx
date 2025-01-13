@@ -19,26 +19,29 @@ const TaskList = ({ tasks, statusLabel }) => {
                         <div className="box task-pending-card">
                             <div className="box-body">
                             <div className="flex justify-between flex-wrap gap-2">
-                                    <div>
-                                        <p className="font-semibold mb-4 flex items-center">
-                                            {task.request_title}
-                                        </p>
-                                        <p className="mb-4">Assigned On: <span
-                                            className="text-[0.75rem] mb-1 text-[#8c9097] dark:text-white/50">
+                                <div>
+                                    <p className="font-semibold mb-2 flex items-center text-primary">
+                                        {task.sr_number}
+                                    </p>
+                                    <p className="font-semibold mb-4 flex items-center">
+                                        {task.request_title}
+                                    </p>
+                                    <p className="mb-2">Assigned On: <span
+                                        className="text-[0.75rem] mb-1 text-[#8c9097] dark:text-white/50">
                                             {new Date(task.created_at).toLocaleDateString()}
                                         </span></p>
-                                        <p className="mb-4">Need By Date: <span
-                                            className="text-[0.75rem] mb-1 text-[#8c9097] dark:text-white/50">
+                                    <p className="mb-2">Need By Date: <span
+                                        className="text-[0.75rem] mb-1 text-[#8c9097] dark:text-white/50">
                                             {task.need_by_date ? new Date(task.need_by_date).toLocaleDateString() : "N/A"}
                                         </span></p>
-                                        <p className="mb-4">Assigned To: <span
-                                            className="text-[0.75rem] mb-1 text-[#8c9097] dark:text-white/50">
+                                    <p className="mb-2">Assigned To: <span
+                                        className="text-[0.75rem] mb-1 text-[#8c9097] dark:text-white/50">
                                             {task.assignee || "N/A"}
                                         </span></p>
-                                    </div>
-                                    <div>
-                                        <div className="btn-list">
-                                            <button type="button" aria-label="button" onClick={() => onViewTask(task.id)}
+                                </div>
+                                <div>
+                                    <div className="btn-list">
+                                        <button type="button" aria-label="button" onClick={() => onViewTask(task.id)}
                                                     className="ti-btn ti-btn-sm ti-btn-primary me-[0.375rem]">
                                                 <i className="ri-eye-line"></i>
                                             </button>
