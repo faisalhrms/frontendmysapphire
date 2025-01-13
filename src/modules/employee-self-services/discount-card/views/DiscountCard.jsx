@@ -1,9 +1,9 @@
+
 import React, { useEffect, useState } from "react";
 import DiscountForm from "../components/DiscountForm";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { useSelector } from "react-redux";
 import fetchDiscountData from "../../services/discount-card/DiscountCard";
-
 import Notify from "@helpers/toastNotifications.js";
 
 const DiscountCard = () => {
@@ -11,34 +11,39 @@ const DiscountCard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("Yes");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const user = useSelector((state) => state.auth.user);
-  console.log(user)
 
   const handleFetchData = async (email = "", cardNo = "") => {
     setIsLoading(true);
 
     try {
-      if (!email) {
+      if (selectedOption === "email" && !email) {
         setErrorMessage("Email is required for the search.");
+        setIsLoading(false);
+        return;
+      }
+      if (selectedOption === "card_no" && !cardNo) {
+        setErrorMessage("Card Number is required for the search.");
         setIsLoading(false);
         return;
       }
 
       setErrorMessage("");
 
-      const data = await fetchDiscountData(email, cardNo || "");
-
-      if (data?.card_no === null || data?.card_no === "") {
+      const data = await fetchDiscountData(email, cardNo);
+      if (!data) {
+        setErrorMessage("No data found.");
+      } else if (!data.card_no) {
         setErrorMessage("This user has no card number.");
       } else {
         setFilteredData(data);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      Notify.error('Login successful!');
-      setErrorMessage("Failed to fetch data. Please try again.");
+      Notify.error("Failed to fetch data. Please try again.");
+      setErrorMessage("Failed to fetch data.");
     } finally {
       setIsLoading(false);
     }
@@ -66,12 +71,6 @@ const DiscountCard = () => {
 
   return (
       <>
-        {/* <AlertModal
-        isVisible={true}
-        message={errorMessage}
-        onClose={() => setErrorMessage("")}
-      /> */}
-
         <PageHeader
             currentpage="Detail Discount Card"
             activepage="Discount Card"

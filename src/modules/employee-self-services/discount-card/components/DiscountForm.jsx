@@ -1,3 +1,4 @@
+
 import React from "react";
 import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
@@ -55,9 +56,7 @@ const DiscountForm = ({
             <div className="flex flex-col items-center space-y-6 mt-10 mb-10 rounded-3xl">
                 <div className="text-black p-6 rounded-3xl shadow-2xl max-w-full md:max-w-3xl w-full border bg-white">
                     {isLoading ? (
-
                         <LoadingSpinner />
-
                     ) : (
                         <>
                             <div className="flex flex-col items-center mb-4">
