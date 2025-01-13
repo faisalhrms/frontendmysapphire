@@ -36,7 +36,7 @@ export const useEquipmentForm = (equipmentData, isEditMode) => {
             } else {
                 await createEquipment(data);
             }
-            navigate('/module/equipments');
+            // navigate('/module/equipments');
         } catch (error) {
             console.error('Error:', error.message);
         }
