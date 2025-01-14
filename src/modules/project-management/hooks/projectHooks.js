@@ -17,6 +17,7 @@ import {uploadTasks} from "@modules/project-management/services/taskService.js";
 import {uploadMilestones} from "@modules/project-management/services/milestoneService.js";
 import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.js";
 import projectFilterSchema from "@modules/project-management/schemas/projectFilterSchema.js";
+import projectDashboardFilterSchema from "@modules/project-management/schemas/projectDashboardFilterSchema.js";
 
 export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null) => {
     const query = useQuery({
@@ -196,14 +197,14 @@ export const useProjectFilter = () => {
     }
 }
 
-export const useProjectDashboardStatistics = () => {
-    const { data = [], isLoading, refetch } = useQuery({
-        queryKey: ['projectDashboardStatistics'],
-        queryFn: () => getProjectDashboardStats(),
-        enabled: true,
+export const useProjectDashboardStatistics = (filters) => {
+    const { data = {}, isLoading } = useQuery({
+        queryKey: ['projectDashboardStatistics', filters],
+        queryFn: () => getProjectDashboardStats(filters),
+        enabled: !!filters,
         keepPreviousData: true,
         refetchOnWindowFocus: false,
     });
 
-    return { data, isLoading, refetch };
+    return { data, isLoading };
 }
