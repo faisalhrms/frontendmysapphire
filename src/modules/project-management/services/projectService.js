@@ -108,5 +108,6 @@ export const getProjectDashboardStats = async () => {
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || 'Failed to get project dashboard statistics');
+        throw error
     }
 };

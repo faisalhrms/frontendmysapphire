@@ -10,6 +10,7 @@ import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import ServiceRequestCard from "@modules/employee-self-services/service-request/components/ServiceRequestCard.jsx";
 import {useSelector} from "react-redux";
+import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
 
 const ServiceRequestForm = ({
                                 serviceData,
@@ -62,7 +63,7 @@ const ServiceRequestForm = ({
     const selectedSubDepartment = watch("sub_department_id");
 
     const handleEmailSelect = (email) => {
-        setValue("to_email", [email]);
+        setValue("to_email", [email?.email]);
     };
 
     const {saveAsDraft, submitRequest} = useServiceRequestForm(
@@ -169,7 +170,7 @@ const ServiceRequestForm = ({
                                     />
                                 </div>
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormAsyncSelect
+                                    <SRAsyncSelect
                                         label="Sub Department"
                                         name="sub_department_id"
                                         control={control}
