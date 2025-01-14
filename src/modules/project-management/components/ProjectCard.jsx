@@ -22,7 +22,7 @@ const ProjectCard = ({ project, openModal, refetch }) => {
                             <Link
                                 to={`/module/projects/detail/${project.id}`}
                                 className="font-semibold text-[.875rem] block text-truncate project-list-title">
-                                {project.project_no}
+                                {getExcerptFromText(project.name, 20)}
                             </Link>
                         </Tooltip>
                         <span className="text-[#8c9097] dark:text-white/50 block text-[0.75rem]">Total <strong
