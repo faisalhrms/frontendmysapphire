@@ -13,7 +13,6 @@ import Authentication from "@modules/layouts/Authentication.jsx";
 import Error from "@modules/errors/Error.jsx";
 import App from "@modules/layouts/App.jsx";
 import Toast from "@components/Toast.jsx";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import ForgotPassView from "@modules/auth/views/ForgotPassView.jsx";
 
 const queryClient = new QueryClient({
