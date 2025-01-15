@@ -12,16 +12,19 @@ import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
 import DepartmentDropdown from "@components/dropdowns/DepartmentDropdown.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
 import {view_type} from "@modules/dashboards/sr/services/srDashboardService.js";
+import SubDepartmentDropdown from "@components/dropdowns/SubDepartmentDropdown.jsx";
 
 const PersonView = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState({
         company_id: null,
         department_id: null,
+        sub_department_id: null,
         view_type: null,
     });
     const [company, setCompany] = useState(null);
     const [department, setDepartment] = useState(null);
+    const [subDepartment, setSubDepartment] = useState(null);
 
     const handleCompanySelect = useCallback((id) => {
         setCompany(id)
@@ -30,13 +33,20 @@ const PersonView = () => {
 
     const handleDepartmentSelect = useCallback((id) => {
         setDepartment(id)
+        setSubDepartment(null)
     }, []);
+
+    const handleSubDepartmentSelect = useCallback((id) => {
+        setSubDepartment(id)
+    }, []);
+
     const {data, isLoading, refetch} = usePersonViewDashboardStatistics(filters);
 
     const {control, getValues, formState: {errors}, reset} = useForm({
         defaultValues: {
             company_id: "",
             department_id: "",
+            sub_department_id: "",
             view_type: "",
         },
     });
@@ -50,6 +60,7 @@ const PersonView = () => {
         setFilters({
             company_id: formValues.company_id || null,
             department_id: formValues.department_id || null,
+            sub_department_id: formValues.sub_department_id || null,
             view_type: formValues.view_type || null,
         });
         refetch();
@@ -57,7 +68,7 @@ const PersonView = () => {
 
     const onClearFilters = () => {
         reset();
-        setFilters({company_id: null, department_id: null, view_type: null});
+        setFilters({company_id: null, department_id: null,sub_department_id: null, view_type: null});
         refetch();
     };
 
@@ -95,6 +106,14 @@ const PersonView = () => {
                                             control={control}
                                             errors={errors}
                                             onDepartmentSelect={handleDepartmentSelect}
+                                        />
+                                    </div>
+                                    <div className="xl:col-span-3 col-span-12">
+                                        <SubDepartmentDropdown
+                                            department_id={department}
+                                            control={control}
+                                            errors={errors}
+                                            onSubDepartmentSelect={handleSubDepartmentSelect}
                                         />
                                     </div>
                                     <div className="xl:col-span-3 col-span-12">
