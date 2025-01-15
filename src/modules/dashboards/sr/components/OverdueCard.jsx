@@ -12,7 +12,7 @@ const completedOverdue = ({ data }) => {
         <div className="xl:col-span-6 col-span-6">
             <div className="box">
                 <div className="box-header justify-between">
-                    <div className="box-title">Overdue Analysis</div>
+                    <div className="box-title">Overdue</div>
                 </div>
                 <div className="box-body">
                     <div id="completedOverdueAnalysis">
