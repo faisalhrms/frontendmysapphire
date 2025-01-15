@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useCallback, useState} from "react"
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useNavigate} from "react-router-dom"
@@ -9,6 +9,8 @@ import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx"
 import {monthDashboard, yearDashboard} from "@modules/sr-management/services/srServices.js"
 import srSchema from "@modules/sr-management/schema/srSchema.js"
 import Rating from "@mui/material/Rating"
+import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
+import DepartmentDropdown from "@components/dropdowns/DepartmentDropdown.jsx";
 
 const SrDashboard = () => {
     const [showFilters, setShowFilters] = useState(false)
@@ -26,7 +28,17 @@ const SrDashboard = () => {
         defaultValues: {}
     })
     const {serviceRequest, applyFilters, downloadExcel} = useServiceRequest()
+    const [company, setCompany] = useState(null);
+    const [department, setDepartment] = useState(null);
 
+    const handleCompanySelect = useCallback((id) => {
+        setCompany(id)
+        setDepartment(null)
+    }, []);
+
+    const handleDepartmentSelect = useCallback((id) => {
+        setDepartment(id)
+    }, []);
     const toggleFilters = () => {
         setShowFilters((prev) => !prev)
     }
@@ -115,16 +127,11 @@ const SrDashboard = () => {
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormAsyncSelect
-                                            label={false}
-                                            name="company_id"
+                                        <CompanyDropdown
                                             control={control}
                                             errors={errors}
-                                            placeholder="Company"
-                                            apiUrl="/select/companies"
-                                            queryKeyBase="companies"
-                                            clientSideSearch
-                                            preselectedOptions={[]}
+                                            onCompanySelect={handleCompanySelect}
+
                                         />
                                     </div>
                                     <div className="xl:col-span-3 col-span-12">
@@ -167,16 +174,11 @@ const SrDashboard = () => {
                                         />
                                     </div>
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormAsyncSelect
-                                            label={false}
-                                            name="department_id"
+                                        <DepartmentDropdown
+                                            company_id={company}
                                             control={control}
                                             errors={errors}
-                                            placeholder="Department"
-                                            apiUrl="/select/departments"
-                                            queryKeyBase="departments"
-                                            clientSideSearch
-                                            preselectedOptions={[]}
+                                            onDepartmentSelect={handleDepartmentSelect}
                                         />
                                     </div>
                                     <div className="xl:col-span-3 col-span-12">

@@ -14,6 +14,7 @@ import { useEquipmentForm } from "@modules/inventory/hooks/inventoryHooks.js";
 
 
 import SubEquipmentTable from "./SubEquipmentTable.jsx";
+import FormCheckbox from "@components/form/FormCheckbox.jsx";
 
 const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
@@ -47,7 +48,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
     return (
         <form onSubmit={handleSubmit(handleEquipmentSubmit)}>
-            <div className="grid grid-cols-12 gap-x-6 md:flex">
+            <div className="grid grid-cols-12 gap-x-6">
                 <div className="xxl:col-span-9 col-span-12">
                       <div className="box">
                         <div className="box-header">
@@ -245,17 +246,21 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                         </div>
                     </div>
 
+                    {
+                        isEditMode===true&&(
+                            <SubEquipmentTable
+                                fields={fields}
+                                append={append}
+                                remove={remove}
+                                control={control}
+                                errors={errors}
+                            />
+                        )
+                    }
 
-                    <SubEquipmentTable
-                        fields={fields}
-                        append={append}
-                        remove={remove}
-                        control={control}
-                        errors={errors}
-                    />
                 </div>
 
-                {/* ====================== RIGHT SECTION (Dates) ====================== */}
+                {/* ====================== RIGHT SECTION (Dates & Checkboxes) ====================== */}
                 <div className="xxl:col-span-3 col-span-12">
                     {/* Purchase Date */}
                     <div className="box">
@@ -307,7 +312,38 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                             />
                         </div>
                     </div>
+
+                    {/* Store Communication Ready Checkbox */}
+                    <div className="box">
+                        <div className="box-header">
+                            <div className="box-title">Store Communication Ready</div>
+                        </div>
+                        <div className="box-body">
+                            <FormCheckbox
+                                name="store_comm_ready"
+                                label="Store Communication Ready"
+                                control={control}
+                                errors={errors}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Antivirus Checkbox */}
+                    <div className="box">
+                        <div className="box-header">
+                            <div className="box-title">Antivirus</div>
+                        </div>
+                        <div className="box-body">
+                            <FormCheckbox
+                                name="antivirus"
+                                label="Antivirus"
+                                control={control}
+                                errors={errors}
+                            />
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </form>
     );

@@ -25,12 +25,15 @@ const PendingReqTaskForm = ({pendingReqData}) => {
             ...pendingReqData,
             location_id: pendingReqData?.location?.id,
             sr_type: pendingReqData?.sr_type?.id || null,
+            team_group_id: pendingReqData?.team_group?.id || null,
             started_at: createdAtDate,
             ended_at: endedAtDate,
             user_ids: (pendingReqData.users || []).map((user) => user.id),
             description: pendingReqData.description || "",
         },
     });
+
+    console.log("pendingReqData", pendingReqData);
 
     const {handleTaskSubmit} = usePendingReqTaskForm(pendingReqData);
 
@@ -90,7 +93,27 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         }}
                                     />
                                 </div>
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-12 col-span-12">
+                                    <FormInput
+                                        type="text"
+                                        readOnly
+                                        name="to_email"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="To"
+                                    />
+                                </div>
+                                <div className="xl:col-span-12 col-span-12">
+                                    <FormInput
+                                        type="text"
+                                        readOnly
+                                        name="cc_email"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="CC"
+                                    />
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         label="SR Type"
                                         name="sr_type"
@@ -113,7 +136,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         }}
                                     />
                                 </div>
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         label="Members"
                                         isMulti
@@ -124,6 +147,18 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         apiUrl={`/select/users?sub_department_id=${pendingReqData.sub_department.id}`}
                                         queryKeyBase="users"
                                         preselectedOptions={formatOptions(pendingReqData, "users", "id", "full_name")}
+                                    />
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormAsyncSelect
+                                        label="Team Group"
+                                        name="team_group_id"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Team Group"
+                                        apiUrl={`/select/teams/groups/?sub_department_id=${pendingReqData.sub_department.id}`}
+                                        queryKeyBase="team_groups"
+                                        preselectedOptions={formatOptions(pendingReqData, "team_groups", "id", "name")}
                                     />
                                 </div>
                                 <div className="xl:col-span-4 col-span-12">
@@ -154,6 +189,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         min={createdAtDate}
                                     />
                                 </div>
+
                                 <div className="col-span-12">
                                     <FormRichTextarea
                                         name="description"
@@ -161,11 +197,9 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         errors={errors}
                                         placeholder="Description"
                                         editorOptions={{
-                                            height: 300,
+                                            height: 280,
                                             buttonList: [
                                                 ["bold", "italic", "underline", "strike"],
-                                                ["font", "fontSize", "fontColor", "hiliteColor"],
-                                                ["align", "list", "table"],
                                             ],
                                         }}
                                     />

@@ -66,17 +66,16 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                     <td><span className="font-semibold">Part No :</span></td>
                                     <td>
                                         <span
-                                        >{toTitleCase(equipmentData.part_no)||"----"}</span>
+                                        >{toTitleCase(equipmentData.part_no) || "----"}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Asset No :</span></td>
                                     <td>
                                         <span
-                                        >{toTitleCase(equipmentData.asset_code)||"----"}</span>
+                                        >{toTitleCase(equipmentData.asset_code) || "----"}</span>
                                     </td>
                                 </tr>
-
 
                                 </tbody>
                             </table>
