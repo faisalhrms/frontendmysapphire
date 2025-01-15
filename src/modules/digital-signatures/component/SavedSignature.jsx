@@ -145,7 +145,7 @@ const SavedSignature = ({onEdit, handleSavedDataFetch}) => {
               show={isModalOpen}
               message="Are you sure you want to delete this signature?"
               onConfirm={onConfirmDelete}
-              onClose={onCloseModal}
+              onCancel={onCloseModal}
           />
         </div>
     );
