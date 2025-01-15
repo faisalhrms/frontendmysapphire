@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
-import {Controller} from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import ErrorMessage from '@components/form/ErrorMessage.jsx';
 import api from '@config/axiosConfig.js';
 
@@ -11,6 +11,7 @@ const ensureArray = (data) => Array.isArray(data) ? data : [];
 
 const MemoizedSelect = React.memo(Select);
 const MemoizedCreatableSelect = React.memo(CreatableSelect);
+
 const FormAsyncSelect = ({
                              name,
                              label = true,
@@ -26,7 +27,7 @@ const FormAsyncSelect = ({
                              preselectedOptions = [],
                              saveOptionEndpoint = "",
                              allowSaveNewOption = false,
-                             onOptionSelect, // New prop
+                             onSelectChange,
                              ...rest
                          }) => {
     const [search, setSearch] = useState('');
@@ -34,15 +35,29 @@ const FormAsyncSelect = ({
     const [allOptions, setAllOptions] = useState([]);
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState(preselectedOptions);
-    const debouncedSearch = useMemo(() => debounce(setSearch, debounceDelay), [debounceDelay]);
 
+    // Debounced search handler
+    const debouncedSetSearch = useMemo(
+        () => debounce((value) => setSearch(value), debounceDelay),
+        [debounceDelay]
+    );
+
+    // Cleanup debounce on unmount
+    useEffect(() => {
+        return () => {
+            debouncedSetSearch.cancel();
+        };
+    }, [debouncedSetSearch]);
+
+    // Update selected options when preselectedOptions change
     useEffect(() => {
         setSelectedOptions(preselectedOptions);
     }, [preselectedOptions]);
 
-    const fetchOptions = useCallback(async (search) => {
+    // Fetch options from API
+    const fetchOptions = useCallback(async (searchTerm) => {
         try {
-            const response = await api.get(apiUrl, { params: { search } });
+            const response = await api.get(apiUrl, { params: { search: searchTerm } });
             return ensureArray(response.data?.data);
         } catch (error) {
             console.error('Error fetching options:', error);
@@ -50,7 +65,8 @@ const FormAsyncSelect = ({
         }
     }, [apiUrl]);
 
-    const { data: options = [], isLoading, refetch } = useQuery({
+    // React Query to fetch options based on search
+    const { data: options = [], isLoading } = useQuery({
         queryKey: [queryKeyBase, search],
         queryFn: () => fetchOptions(search),
         enabled: !clientSideSearch && hasBeenFocused && menuIsOpen,
@@ -58,22 +74,25 @@ const FormAsyncSelect = ({
         refetchOnWindowFocus: false,
     });
 
+    // Fetch all options for client-side search when menu is open
     useEffect(() => {
         if (clientSideSearch && menuIsOpen) {
             const fetchAllOptions = async () => {
-                const options = await fetchOptions('');
-                setAllOptions(ensureArray(options));
+                const fetchedOptions = await fetchOptions('');
+                setAllOptions(ensureArray(fetchedOptions));
             };
             fetchAllOptions();
         }
     }, [clientSideSearch, menuIsOpen, fetchOptions]);
 
+    // Memoized filtered options based on search
     const filteredOptions = useMemo(() => {
         return clientSideSearch
             ? allOptions.filter(option => option.label.toLowerCase().includes(search.toLowerCase()))
             : options;
     }, [clientSideSearch, allOptions, options, search]);
 
+    // Ensure selected options are included in the options list
     const optionsWithSelected = useMemo(() => {
         const uniqueOptions = new Map(filteredOptions.map(opt => [opt.value, opt]));
         selectedOptions.forEach(opt => {
@@ -82,57 +101,40 @@ const FormAsyncSelect = ({
         return Array.from(uniqueOptions.values());
     }, [filteredOptions, selectedOptions]);
 
-    useEffect(() => {
-        return () => {
-            debouncedSearch.cancel();
-        };
-    }, [debouncedSearch]);
+    // Save new option to the server
+    const saveNewOption = useCallback(async (newOptionLabel) => {
+        if (!allowSaveNewOption || !saveOptionEndpoint) return null;
+        try {
+            const { data } = await api.post(saveOptionEndpoint, { label: newOptionLabel });
+            return data.data; // Ensure this includes both value and label
+        } catch (error) {
+            console.error('Error saving new option:', error);
+            return null;
+        }
+    }, [allowSaveNewOption, saveOptionEndpoint]);
 
-    const handleCreateOption = async (newOptionLabel, field) => {
+    // Handle option creation
+    const handleCreateOption = useCallback(async (newOptionLabel, field) => {
         const newOption = await saveNewOption(newOptionLabel);
         if (newOption) {
             setSelectedOptions(prev => {
-                return [...prev, newOption].filter((v, i, a) => a.findIndex(t => t.value === v.value) === i);
+                const updated = [...prev, newOption];
+                return Array.from(new Map(updated.map(opt => [opt.value, opt])).values());
             });
             if (isMulti) {
-                field.onChange([...(field.value || []), newOption.value]);
+                const updatedValues = [...(field.value || []), newOption.value];
+                field.onChange(updatedValues);
+                if (onSelectChange) {
+                    onSelectChange(updatedValues);
+                }
             } else {
                 field.onChange(newOption.value);
+                if (onSelectChange) {
+                    onSelectChange(newOption.value);
+                }
             }
         }
-    };
-
-    // // Instead of calling the returned data `newOption`, call it `updatedList`
-    // const handleCreateOption = async (newOptionLabel, field) => {
-    //     const updatedList = await saveNewOption(newOptionLabel);
-    //     if (updatedList && Array.isArray(updatedList)) {
-    //         setAllOptions(updatedList);
-    //         const newlyCreatedItem = updatedList.find(
-    //             opt => opt.label.toLowerCase() === newOptionLabel.toLowerCase()
-    //         );
-    //         if (newlyCreatedItem) {
-    //             if (isMulti) {
-    //                 field.onChange([...(field.value || []), newlyCreatedItem.value]);
-    //                 setSelectedOptions(prev => [...prev, newlyCreatedItem]);
-    //             } else {
-    //                 field.onChange(newlyCreatedItem.value);
-    //                 setSelectedOptions([newlyCreatedItem]);
-    //             }
-    //         }
-    //     }
-    // };
-
-
-    const saveNewOption = async (newOptionLabel) => {
-                 if (!allowSaveNewOption || !saveOptionEndpoint) return;
-                 try {
-                         const { data } = await api.post(saveOptionEndpoint, { label: newOptionLabel });
-                         return data.data; // Ensure this includes both value and label
-                     } catch (error) {
-                         console.error('Error saving new option:', error);
-                         return null;
-               }
-       };
+    }, [saveNewOption, isMulti]);
 
     return (
         <>
@@ -144,6 +146,44 @@ const FormAsyncSelect = ({
                     const value = isMulti ? (Array.isArray(field.value) ? field.value : []) : field.value;
                     const SelectComponent = allowSaveNewOption ? MemoizedCreatableSelect : MemoizedSelect;
 
+                    // Memoized onChange handler
+                    const handleChange = useCallback((selectedOption, actionMeta) => {
+                        if (actionMeta.action === 'create-option') {
+                            handleCreateOption(actionMeta.option.label, field);
+                        } else {
+                            const selectedValues = isMulti
+                                ? selectedOption.map(opt => opt.value)
+                                : selectedOption?.value;
+
+                            setSelectedOptions(isMulti
+                                ? selectedOption.map(opt => optionsWithSelected.find(opt2 => opt2.value === opt.value))
+                                : selectedOption ? [selectedOption] : []
+                            );
+
+                            field.onChange(selectedValues);
+
+                            if (onSelectChange) {
+                                onSelectChange(selectedValues);
+                            }
+                        }
+                    }, [handleCreateOption, isMulti, onSelectChange, optionsWithSelected, field]);
+
+                    // Memoized onInputChange handler
+                    const handleInputChange = useCallback((inputValue) => {
+                        if (clientSideSearch) {
+                            setSearch(inputValue);
+                        } else {
+                            debouncedSetSearch(inputValue);
+                        }
+                    }, [clientSideSearch, debouncedSetSearch]);
+
+                    // Determine the current value for the select component
+                    const selectValue = useMemo(() => {
+                        return isMulti
+                            ? optionsWithSelected.filter(option => value.includes(option.value))
+                            : optionsWithSelected.find(option => option.value === value) || null;
+                    }, [isMulti, optionsWithSelected, value]);
+
                     return (
                         <SelectComponent
                             {...field}
@@ -151,51 +191,22 @@ const FormAsyncSelect = ({
                             isMulti={isMulti}
                             className={`w-full !rounded-sm border ${errors[name] ? '!border-red' : ''} ${className}`}
                             classNamePrefix="Select2"
-                            placeholder={`Select ${placeholder}`}
+                            placeholder={placeholder}
                             options={optionsWithSelected}
                             isLoading={isLoading}
-                            onChange={(selectedOption, actionMeta) => {
-
-                                if (actionMeta.action === 'create-option') {
-                                    handleCreateOption(actionMeta.option.label, field);
-                                } else {
-                                    const selectedValues = isMulti
-                                        ? selectedOption.map(opt => opt.value)
-                                        : selectedOption?.value;
-
-                                    setSelectedOptions(isMulti
-                                        ? selectedOption.map(opt => optionsWithSelected.find(opt2 => opt2.value === opt.value))
-                                        : selectedOption ? [selectedOption] : []
-                                    );
-
-                                    field.onChange(selectedValues);
-
-
-                                    if (onOptionSelect) {
-                                        const selectedEmail = selectedOption?.email || selectedOption || "";
-                                        onOptionSelect(selectedEmail);
-                                    }
-                                }
-                            }}
+                            onChange={handleChange}
                             onBlur={field.onBlur}
                             onMenuOpen={() => {
                                 setMenuIsOpen(true);
                                 if (!hasBeenFocused) setHasBeenFocused(true);
                             }}
                             onMenuClose={() => setMenuIsOpen(false)}
-                            onInputChange={(inputValue) => {
-                                if (clientSideSearch) {
-                                    setSearch(inputValue);
-                                } else {
-                                    debouncedSearch(inputValue);
-                                }
-                            }}
-                            value={isMulti
-                                ? optionsWithSelected.filter(option => value.includes(option.value))
-                                : optionsWithSelected.find(option => option.value === value) || null
-                            }
+                            onInputChange={handleInputChange}
+                            value={selectValue}
                             isClearable
                             isSearchable
+                            loadingMessage={() => 'Loading data...'}
+                            noOptionsMessage={() => 'No data found.'}
                         />
                     );
                 }}

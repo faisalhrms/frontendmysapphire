@@ -8,12 +8,14 @@ import {formatOptions, formatOptionsWithConcatenation} from "@helpers/formatters
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import projectSchema from "@modules/project-management/schemas/projectSchema.js";
-import {priorities, projectStatuses} from "@modules/project-management/services/projectService.js";
+import {priorities} from "@modules/project-management/services/projectService.js";
 import {useProjectForm} from "@modules/project-management/hooks/projectHooks.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormToggle from "@components/form/FormToggle.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import ConflictModal from "@modules/project-management/components/model/ConflictModal.jsx";
+import ProjectStatusDropdown from "@modules/project-management/components/dropdowns/ProjectStatusDropdown.jsx";
+import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
 
 const ProjectForm = ({ projectData, isEditMode = false }) => {
     const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
@@ -231,13 +233,9 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                             <div className="box-title"> Status</div>
                         </div>
                         <div className="box-body">
-                            <FormSelect
-                                label={false}
-                                name="status"
+                            <ProjectStatusDropdown
                                 control={control}
                                 errors={errors}
-                                options={projectStatuses}
-                                placeholder="Status"
                             />
                         </div>
                     </div>
@@ -246,13 +244,9 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                             <div className="box-title"> Priority</div>
                         </div>
                         <div className="box-body">
-                            <FormSelect
-                                label={false}
-                                name="priority"
+                            <ProjectPriorityDropdown
                                 control={control}
                                 errors={errors}
-                                options={priorities}
-                                placeholder="Priority"
                             />
                         </div>
                     </div>

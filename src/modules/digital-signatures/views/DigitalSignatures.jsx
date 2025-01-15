@@ -4,10 +4,8 @@ import SignatureForm from "../component/SignaturesForm";
 import SocialSignature from "../component/SocialSignatures";
 import TemplateSignature from "../component/TemplateSignature";
 import SavedSignature from "../component/SavedSignature";
-import axios from "axios";
 import {getSignature, saveSignature, updateSignature} from "../services/Service";
 import Notify from "@helpers/toastNotifications.js";
-import api from "@config/axiosConfig.js";
 
 const DigitalSignatures = () => {
     const [activeTab, setActiveTab] = useState("details");
@@ -96,23 +94,6 @@ const DigitalSignatures = () => {
     };
 
 
-const downloadAllScripts = async () => {
-    try {
-        const response = await api.get('/signatures/download-all/', {
-            responseType: 'blob',
-        });
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'all_signatures_scripts.zip');
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-    } catch (error) {
-        console.error("Error downloading scripts:", error);
-        Notify.error("Failed to download scripts. Please try again.");
-    }
-};
 
 
 
@@ -175,17 +156,6 @@ const downloadAllScripts = async () => {
                                     Saved
                                 </button>
                             </nav>
-                            {activeTab === "saved" && (
-                                <div className="flex right">
-                                    <button
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-md bg-primary flex items-center gap-2 hover:bg-primary-dark"
-                                        onClick={downloadAllScripts}
-                                    >
-                                        <i className="bx bxs-download"></i>
-                                        All Download
-                                    </button>
-                                </div>
-                            )}
                         </div>
                     </div>
 

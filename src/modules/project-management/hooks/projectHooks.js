@@ -16,11 +16,13 @@ import uploadProjectSchema from "@modules/project-management/schemas/uploadProje
 import {uploadTasks} from "@modules/project-management/services/taskService.js";
 import {uploadMilestones} from "@modules/project-management/services/milestoneService.js";
 import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.js";
+import projectFilterSchema from "@modules/project-management/schemas/projectFilterSchema.js";
+import projectDashboardFilterSchema from "@modules/project-management/schemas/projectDashboardFilterSchema.js";
 
-export const useProjects = (page = 1, size = 8, search) => {
+export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null) => {
     const query = useQuery({
-        queryKey: ['projects', page, size, search],
-        queryFn: () => getProjects(page, size, search),
+        queryKey: ['projects', page, size, search, workspaces, status, priority],
+        queryFn: () => getProjects(page, size, search, workspaces, status, priority),
         keepPreviousData: false,
         staleTime: 0,
     });
@@ -87,16 +89,22 @@ export const useProjectMilestonesWithTasks = (projectId) => {
     return { milestones, isLoading, refetch };
 }
 
-export const useProjectStatistics = (projectId = null, months = 6) => {
-    const { data: statistics = [], isLoading: statsFetching } = useQuery({
+export const useProjectStatistics = (projectId = null, months = 6, options = {}) => {
+    const {
+        data: statistics = [],
+        isLoading: statsFetching,
+        refetch: statsRefetch,
+        error: statsError,
+    } = useQuery({
         queryKey: ['projectStatistics', projectId],
         queryFn: () => getProjectStats(projectId, months),
-        enabled: true,
+        enabled: options.enabled || false,
         keepPreviousData: true,
         refetchOnWindowFocus: false,
+        ...options,
     });
 
-    return { statistics, statsFetching };
+    return { statistics, statsFetching, statsRefetch, statsError };
 }
 
 export const useToggleFavouriteProject = () => {
@@ -176,14 +184,27 @@ export const useUploadProjectModal = (refetch, type = 'P') => {
     };
 };
 
-export const useProjectDashboardStatistics = () => {
-    const { data = [], isLoading, refetch } = useQuery({
-        queryKey: ['projectDashboardStatistics'],
-        queryFn: () => getProjectDashboardStats(),
-        enabled: true,
+export const useProjectFilter = () => {
+    const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+        resolver: zodResolver(projectFilterSchema),
+    });
+
+    return {
+        filterControl : control,
+        filterSubmit: handleSubmit,
+        filterErrors: errors,
+        isFiltering: isSubmitting
+    }
+}
+
+export const useProjectDashboardStatistics = (filters) => {
+    const { data = {}, isLoading } = useQuery({
+        queryKey: ['projectDashboardStatistics', filters],
+        queryFn: () => getProjectDashboardStats(filters),
+        enabled: !!filters,
         keepPreviousData: true,
         refetchOnWindowFocus: false,
     });
 
-    return { data, isLoading, refetch };
+    return { data, isLoading };
 }
