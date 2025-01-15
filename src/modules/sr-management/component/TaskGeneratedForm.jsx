@@ -13,6 +13,7 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 import { SELF_SERVICES_ROUTES } from "@modules/employee-self-services/routes.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
 
 function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
   const {
@@ -85,7 +86,7 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
         </div>
       </div>
       <div className="flex items-center space-x-4 w-1/3">
-        <FormAsyncSelect
+        <SRAsyncSelect
           label={false}
           name="status"
           control={control}
@@ -94,7 +95,6 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
           apiUrl="select/sr/statuses"
           queryKeyBase="statuses"
           clientSideSearch={true}
-          preselectedOptions={userOptions}
           onOptionSelect={handleStatusChange}
         />
       </div>

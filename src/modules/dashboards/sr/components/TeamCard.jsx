@@ -30,7 +30,7 @@ const TeamCard = ({ data }) => {
                                                 />
                                             </span>
                                             <div className="ms-4 leading-none">
-                                                <span className="font-semibold">{item.full_name}</span>
+                                                <span className="font-semibold">{item.full_name || item.team_group}</span>
                                             </div>
                                         </div>
                                         {/* Circular Count */}
