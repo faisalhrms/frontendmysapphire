@@ -7,7 +7,7 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import {useEquipment} from "@modules/inventory/hooks/inventoryHooks.js";
 import EquipmentSummary from "@modules/inventory/components/EquipmentSummary.jsx";
 import EquipmentAdditionalDetail from "@modules/inventory/components/EquipmentAdditionalDetail.jsx";
-
+import SubEquipmentDetail from "@modules/inventory/components/SubEquipmentDetail.jsx"
 const EquipmentDetail = () => {
     const { id } = useParams();
     const { equipmentData } = useEquipment(id);
@@ -36,13 +36,16 @@ const EquipmentDetail = () => {
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-9 col-span-12">
                     <EquipmentSummary id={id} equipmentData={equipmentData}/>
-                    <EquipmentHistory id={equipmentData.id}/>
+                    {/*<EquipmentHistory id={equipmentData.id}/>*/}
+                    <SubEquipmentDetail equipmentData={equipmentData}/>
+
                 </div>
 
                 <div className="xl:col-span-3 col-span-12">
                     <EquipmentAdditionalDetail
                         equipmentData={equipmentData}
                     />
+
                     {/*<SubscriptionDepartments departments={departments} />*/}
                     {/*{equipmentData.attachments.length >0&&(<SubscriptionAttachment attachments={equipmentData.attachments} />)}*/}
                 </div>
