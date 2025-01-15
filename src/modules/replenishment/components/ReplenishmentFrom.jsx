@@ -121,24 +121,10 @@ const ReplenishmentFrom = () => {
   return (
       <>
           {
-            currentStatus === 'completed' ?
-                <div class="alert alert-primary flex items-center" role="alert">
-                  <svg className="sm:flex-shrink-0 me-2 svg-primary" xmlns="http://www.w3.org/2000/svg" height="1.5rem"
-                       viewBox="0 0 24 24" width="1.5rem" fill="#000000">
-                    <path d="M0 0h24v24H0V0z" fill="none"></path>
-                    <path
-                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
-                  </svg>
-                  <div> The data was last updated on {formatDate(lastUpdatedAt, 'MMM dd, yyyy - HH:mm')}. The current
-                    status of
-                    data import is {currentStatus}. The system holds data
-                    from {formatDate(minSoldAt)} to {formatDate(maxSoldAt)}.
-                  </div>
-                </div>
-                  :
-                <div class="alert alert-danger flex items-center" role="alert">
+            currentStatus === 'in_progress' ?
+                <div className="alert alert-danger flex items-center" role="alert">
                   <svg className="sm:flex-shrink-0 me-2 fill-danger" xmlns="http://www.w3.org/2000/svg"
-                       enable-background="new 0 0 24 24" height="1.5rem" viewBox="0 0 24 24" width="1.5rem"
+                       enableBackground="new 0 0 24 24" height="1.5rem" viewBox="0 0 24 24" width="1.5rem"
                        fill="#000000">
                     <g>
                       <rect fill="none" height="24" width="24"></rect>
@@ -156,24 +142,37 @@ const ReplenishmentFrom = () => {
                   </svg>
                   <div> Data import is currently in progress. Please try again later.</div>
                 </div>
+                :
+                <div className="alert alert-primary flex items-center" role="alert">
+                  <svg className="sm:flex-shrink-0 me-2 svg-primary" xmlns="http://www.w3.org/2000/svg" height="1.5rem"
+                       viewBox="0 0 24 24" width="1.5rem" fill="#000000">
+                    <path d="M0 0h24v24H0V0z" fill="none"></path>
+                    <path
+                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+                  </svg>
+                  <div> The data was last updated on {formatDate(lastUpdatedAt, 'MMM dd, yyyy - HH:mm')}. The system
+                    holds data
+                    from {formatDate(minSoldAt)} to {formatDate(maxSoldAt)}.
+                  </div>
+                </div>
           }
         <form onSubmit={handleSubmit(handleReport)}>
-                  <ul className="list-group list-group-flush">
-                    <li className="list-group-item !border !border-defaultborder dark:!border-defaultborder/10 !border-t-0 !border-e-0 !border-s-0">
-                      <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                        <div className="xl:col-span-4 col-span-12">
-                          <label
-                              className="text-[1rem] mb-1 font-semibold"
-                              title="Configuration"
-                          >
-                            Configuration
-                          </label>
-                          <p
-                              className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50"
-                              title="Configure your replenishment settings here."
-                          >
-                            Configure your replenishment settings here. Enable or disable
-                            features like splitting recommendations based on your
+          <ul className="list-group list-group-flush">
+            <li className="list-group-item !border !border-defaultborder dark:!border-defaultborder/10 !border-t-0 !border-e-0 !border-s-0">
+              <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                <div className="xl:col-span-4 col-span-12">
+                  <label
+                      className="text-[1rem] mb-1 font-semibold"
+                      title="Configuration"
+                  >
+                    Configuration
+                  </label>
+                  <p
+                      className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50"
+                      title="Configure your replenishment settings here."
+                  >
+                    Configure your replenishment settings here. Enable or disable
+                    features like splitting recommendations based on your
                             preference.
                           </p>
                         </div>

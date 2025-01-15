@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 import Tooltip from '@components/Tooltip.jsx';
 import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import HasPermission from "@components/HasPermission.jsx";
+import Avatar from "@components/Avatar.jsx";
 
 const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, startedAt = null, endedAt = null, isChild = false}) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
@@ -19,6 +20,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
 
                     <thead className="table-active">
                     <tr className="border-b border-defaultborder">
+                        <th scope="col" className="text-center">Actions</th>
                         <th scope="col" className="text-center">{isChild ? "Sub Task No" : "Task No"}</th>
                         <th scope="col" className="text-center">{isChild ? "Sub Task Name" : "Task Name"}</th>
                         <th scope="col" className="text-center">Status</th>
@@ -26,12 +28,46 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                         <th scope="col" className="text-center">Started At</th>
                         <th scope="col" className="text-center">Ended At</th>
                         <th scope="col" className="text-center">Assigned To</th>
-                        <th scope="col" className="text-center">Actions</th>
+                        <th scope="col" className="text-center">Created By</th>
                     </tr>
                     </thead>
                     <tbody>
                     {tasks.map((task) => (<React.Fragment key={task.id}>
                         <tr className="border-b border-defaultborder text-[#8c9097] dark:text-white/50">
+                            <td>
+                                    <span className='flex space-x-2'>
+                                          <HasPermission permission='add_task'>
+                                            {task.status === 'active' || task.status === 'in_progress' && projectStatus === 'active' && milestoneStatus === 'active' && (
+                                                <Tooltip
+                                                    id={`add-tooltip-${task.id}-add`}
+                                                    tooltipContent={`Add Sub Task To (${task.name})`}
+                                                >
+
+                                                    <button
+                                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.id)}
+                                                        className='ti-btn ti-btn-success ti-btn-sm'>
+                                                        <i className="ri-add-circle-line align-middle"></i>
+                                                    </button>
+                                                </Tooltip>)}
+
+                                                </HasPermission>
+
+                                        <HasPermission permission='change_task'>
+                                        {task.status === "completed" || task.status === "under_approval" ? ('') : (
+                                            <Tooltip
+                                                id={`edit-tooltip-${task.id}-edit`}
+                                                tooltipContent={`Edit (${task.name})`}
+                                            >
+                                                <button
+                                                    onClick={() => openTaskModal(task.id, startedAt, endedAt, null, true)}
+                                                    className='ti-btn ti-btn-primary ti-btn-sm'>
+                                                    <i className="ri-edit-line align-middle"></i>
+                                                </button>
+                                            </Tooltip>)}
+                                        </HasPermission>
+
+                                    </span>
+                            </td>
                             <td>
                                     <span className="flex items-center">
                                         <span className="text-primary" onClick={() => toggleSubTasks(task.id)}>
@@ -80,41 +116,14 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                             <td>{formatDate(task.ended_at)}</td>
                             <td><AvatarList users={task.users} max={4}/></td>
                             <td>
-
-                                    <span className='flex space-x-2'>
-                                          <HasPermission permission='add_task'>
-                                            {task.status === 'active' || task.status === 'in_progress' && projectStatus === 'active' && milestoneStatus === 'active' &&(
-                                                <Tooltip
-                                                    id={`add-tooltip-${task.id}-add`}
-                                                    tooltipContent={`Add Sub Task To (${task.name})`}
-                                                >
-
-                                                    <button
-                                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.id)}
-                                                        className='ti-btn ti-btn-success ti-btn-sm'>
-                                                        <i className="ri-add-circle-line align-middle"></i>
-                                                    </button>
-                                                </Tooltip>)}
-
-                                                </HasPermission>
-
-                                        <HasPermission permission='change_task'>
-                                        {task.status === "completed" || task.status === "under_approval" ? ('') : (
-                                            <Tooltip
-                                                id={`edit-tooltip-${task.id}-edit`}
-                                                tooltipContent={`Edit (${task.name})`}
-                                            >
-                                                <button
-                                                    onClick={() => openTaskModal(task.id, startedAt, endedAt, null, true)}
-                                                    className='ti-btn ti-btn-primary ti-btn-sm'>
-                                                    <i className="ri-edit-line align-middle"></i>
-                                                </button>
-                                            </Tooltip>)}
-                                        </HasPermission>
-
-                                    </span>
+                                <div className="flex items-center flex-wrap">
+                                    <div className="me-2 leading-none">
+                                        <Avatar avatar={task?.created_by?.avatar} size='xs'/>
+                                    </div>
+                                    <span
+                                        className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{toTitleCase(task?.created_by?.full_name)}</span>
+                                </div>
                             </td>
-
                         </tr>
                         {activeTaskId === task.id && task.children && task.children.length > 0 && (<tr>
                             <td colSpan="8">
@@ -125,7 +134,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                     </tbody>
                 </table>
             </div>
-        </>);
+    </>);
 };
 
 export default TaskTable
