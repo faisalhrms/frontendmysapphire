@@ -363,8 +363,7 @@ const ReplenishmentFrom = () => {
                               className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50"
                               title="Define the date range for the forecast."
                           >
-                            Define the date range for your forecast. Select the start and
-                            end dates to specify the timeframe for the analysis.
+                            Enter the Reason Code to categorize entries, set the Plan Ship Date and Plan Receive Date to define shipment schedules, and add any Comments to provide additional context or instructions.
                           </p>
                         </div>
                         <div className="xl:col-span-8 col-span-12">
