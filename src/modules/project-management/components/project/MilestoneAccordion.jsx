@@ -1,10 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { getExcerptFromText, toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses, getStatusClasses } from "@helpers/badges.js";
 import TaskTable from "@modules/project-management/components/project/TaskTable.jsx";
 import { formatDate } from "@helpers/dateTime.js";
 import Tooltip from '@components/Tooltip.jsx';
 import HasPermission from "@components/HasPermission.jsx";
+import Avatar from "@components/Avatar.jsx";
 
 const MilestoneAccordion = ({ milestones, projectStatus, openMilestoneModal, openTaskModal, handleUploadModal }) => {
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
@@ -42,7 +43,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, openMilestoneModal, ope
                                 type="button"
                                 onClick={() => toggleMilestone(milestone.id)}>
                                 <div className="grid grid-cols-12 gap-6 w-full">
-                                    <div className="xl:col-span-4 col-span-12 border-r border-defaultborder">
+                                    <div className="xl:col-span-3 col-span-12 border-r border-defaultborder">
                                     <span className="flex items-center">
                                         {milestone.children.length > 0 &&
                                             <span className="text-primary">
@@ -83,22 +84,35 @@ const MilestoneAccordion = ({ milestones, projectStatus, openMilestoneModal, ope
                                     </span>
 
                                     </div>
-                                    <div className="xl:col-span-1 col-span-12">
+                                    <div className="xl:col-span-1 col-span-12 border-r border-defaultborder">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Status</p>
                                         <p className={getStatusClasses(milestone.status)}>{toTitleCase(milestone.status)}</p>
                                     </div>
-                                    <div className="xl:col-span-1 col-span-12">
+                                    <div className="xl:col-span-1 col-span-12 border-r border-defaultborder">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Priority</p>
                                         <span
                                             className={getBadgeClasses(milestone.priority)}>{toTitleCase(milestone.priority)}</span>
                                     </div>
-                                    <div className="xl:col-span-2 col-span-12 border-r border-defaultborder">
-                                        <p className="font-semibold mb-[1.4px] text-[0.813rem]">Started At</p>
-                                        <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{formatDate(milestone.started_at)}</p>
+                                    <div className="xl:col-span-3 col-span-12 border-r border-defaultborder">
+                                        <div className="grid grid-cols-12 gap-6 w-full">
+                                            <div className="xl:col-span-6 col-span-12 border-r border-defaultborder">
+                                                <p className="font-semibold mb-[1.4px] text-[0.813rem]">Started At</p>
+                                                <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{formatDate(milestone.started_at)}</p>
+                                            </div>
+                                            <div className="xl:col-span-6 col-span-12">
+                                                <p className="font-semibold mb-[1.4px] text-[0.813rem]">Ended At</p>
+                                                <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{formatDate(milestone.ended_at)}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="xl:col-span-2 col-span-12 border-r border-defaultborder">
-                                        <p className="font-semibold mb-[1.4px] text-[0.813rem]">Ended At</p>
-                                        <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{formatDate(milestone.ended_at)}</p>
+                                        <p className="font-semibold mb-[1.4px] text-[0.813rem]">Created By</p>
+                                        <div className="flex items-center flex-wrap">
+                                            <div className="me-2 leading-none">
+                                                <Avatar avatar={milestone?.created_by?.avatar} size='xs' />
+                                            </div>
+                                            <span className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{toTitleCase(milestone?.created_by?.full_name)}</span>
+                                        </div>
                                     </div>
                                     <div className="xl:col-span-2 col-span-12">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Action</p>
@@ -106,41 +120,41 @@ const MilestoneAccordion = ({ milestones, projectStatus, openMilestoneModal, ope
                                             <HasPermission permission='change_project'>
                                                 <Tooltip
                                                     id={`edit-tooltip-${milestone.id}`}
-                                                    tooltipContent={`Edit Milestone (${milestone.name})`}
-                                                >
+                                                        tooltipContent={`Edit Milestone (${milestone.name})`}
+                                                    >
                                                 <span className="ti-btn ti-btn-primary !py-1 !px-2 !text-[0.75rem]"
                                                       onClick={() => openMilestoneModal(milestone.id, true)}>
                                                     <i className="ri-edit-line align-middle"></i>
                                                 </span>
-                                                </Tooltip>
-                                                <Tooltip
-                                                    id={`upload-tasks-tooltip-${milestone.id}`}
-                                                    tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}
-                                                >
+                                                    </Tooltip>
+                                                    <Tooltip
+                                                        id={`upload-tasks-tooltip-${milestone.id}`}
+                                                        tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}
+                                                    >
                                                 <span className="ti-btn ti-btn-info !py-1 !px-2 !text-[0.75rem]"
                                                       onClick={() => handleUploadModal(milestone.id, 'T')}>
                                                     <i className="ri-file-upload-line align-middle"></i>
                                                 </span>
-                                                </Tooltip>
-                                            </HasPermission>
-                                            <HasPermission permission='add_project'>
-                                                {projectStatus === 'active' && milestone.status === 'active' && (
-                                                    <Tooltip
-                                                        id={`add-tooltip-${milestone.id}`}
-                                                        tooltipContent={`Add New Task In (${milestone.name})`}
-                                                    >
+                                                    </Tooltip>
+                                                </HasPermission>
+                                                <HasPermission permission='add_project'>
+                                                    {projectStatus === 'active' && milestone.status === 'active' && (
+                                                        <Tooltip
+                                                            id={`add-tooltip-${milestone.id}`}
+                                                            tooltipContent={`Add New Task In (${milestone.name})`}
+                                                        >
                                                     <span
                                                         className="ti-btn ti-btn-success !py-1 !px-2 !text-[0.75rem] ms-1"
                                                         onClick={() => openTaskModal(milestone.id, milestone.started_at, milestone.ended_at)}
                                                     >
                                                         <i className="ri-add-circle-line align-middle"></i>
                                                     </span>
-                                                    </Tooltip>
-                                                )}
-                                            </HasPermission>
+                                                        </Tooltip>
+                                                    )}
+                                                </HasPermission>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                             </button>
                             {milestone.children.length > 0 && activeMilestoneId === milestone.id && (
                                 <div

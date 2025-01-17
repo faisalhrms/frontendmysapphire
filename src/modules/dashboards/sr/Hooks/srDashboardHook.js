@@ -1,15 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPersonViewDashboardStats } from "@modules/dashboards/sr/services/srDashboardService.js";
 
-export const usePersonViewDashboardStatistics = () => {
-    const { data = { categories: [], series: [] }, isLoading, refetch } = useQuery({
-        queryKey: ["personViewDashboardStatistics"],
-        queryFn: () => getPersonViewDashboardStats(),
-        enabled: true,
+export const usePersonViewDashboardStatistics = (filters) => {
+    const { data = {}, isLoading, refetch } = useQuery({
+        queryKey: ["personViewDashboardStatistics", filters],
+        queryFn: () => getPersonViewDashboardStats(filters),
         keepPreviousData: true,
         refetchOnWindowFocus: false,
     });
-    console.log(data);
-    return { data, isLoading, refetch };
 
+    return { data, isLoading, refetch };
 };

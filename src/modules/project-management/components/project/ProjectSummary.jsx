@@ -4,6 +4,8 @@ import {calculateEffort, formatDate} from "@helpers/dateTime.js";
 import Avatar from "@components/Avatar.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import sampleFile from "@assets/files/sample_upload_milestones_with_tasks_in_project.xlsx";
+import ProgressBar from "@components/ProgressBar.jsx";
+import React from "react";
 
 const ProjectSummary = ({project, handleUploadModal}) => {
     return (
@@ -71,11 +73,11 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                             <span
                                 className="block text-[#8c9097] dark:text-white/50 text-[0.75rem] mb-1">Progress</span>
                             <div className="flex items-center flex-wrap">
-                                <div className="progress progress-xs progress-animate flex-grow me-2"
-                                     style={{width: '70%'}}>
-                                    <div className="progress-bar bg-primary"></div>
-                                </div>
-                                <div className="text-[#8c9097] dark:text-white/50 text-[.6875rem]">0%</div>
+                                <ProgressBar
+                                    total={project.total_tasks}
+                                    completed={project.completed_tasks}
+                                    withStatus={false}
+                                />
                             </div>
                         </div>
                         <div>

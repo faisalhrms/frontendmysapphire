@@ -12,6 +12,7 @@ import ConfirmationModal from "@modules/sr-management/component/ConfirmationModa
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 import { SELF_SERVICES_ROUTES } from "@modules/employee-self-services/routes.js";
+import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
 
 function TaskCompletedForm({ generatedReqData = {}, serviceRequest = {} }) {
     const { control, handleSubmit, formState: { errors }, setValue,watch } = useForm({});
@@ -78,7 +79,7 @@ function TaskCompletedForm({ generatedReqData = {}, serviceRequest = {} }) {
                 </div>
             </div>
             <div className="flex items-center space-x-4 w-1/3">
-                <FormAsyncSelect
+                <SRAsyncSelect
                     label={false}
                     name="status"
                     control={control}
@@ -87,7 +88,6 @@ function TaskCompletedForm({ generatedReqData = {}, serviceRequest = {} }) {
                     apiUrl="select/sr/statuses"
                     queryKeyBase="statuses"
                     clientSideSearch={true}
-                    preselectedOptions={userOptions}
                     onOptionSelect={handleStatusChange}
                 />
             </div>
