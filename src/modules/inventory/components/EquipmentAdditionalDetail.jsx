@@ -1,6 +1,7 @@
 import {getBadgeClasses} from "@helpers/badges.js";
 import {toTitleCase} from "@helpers/formatters.js";
 import {Link} from "react-router-dom";
+import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 
 const EquipmentAdditionalDetail = ({equipmentData}) => {
     return (
@@ -37,15 +38,17 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                     <td>{equipmentData.equipment_site.name}</td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold">Department :</span></td>
-                                    <td>{toTitleCase(equipmentData.department.name)}</td>
+                                    <td><span className="font-semibold">Status :</span></td>
 
+                                <td > <span className={getBadgeClasses(equipmentData.status)}> { toTitleCase(equipmentStatuses.find(status => status.value === equipmentData.status)?.label ||
+                                    "-")}
+                                </span></td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Equipment Type :</span></td>
                                     <td>
                                         <span
-                                            className="font-semibold text-secondary">{toTitleCase(equipmentData.equipment_type.name)}</span>
+                                            >{equipmentData.equipment_type.name}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">

@@ -7,7 +7,7 @@ export const equipmentStatuses = [
     { value: 'faulty', label: 'Faulty' },
     { value: 'functional', label: 'Functional' },
     { value: 'lost', label: 'Lost' },
-    { value: 'sold_to_employee', label: 'Sold to Employee' },
+    { value: 'sold_to_employee', label: 'Sold To Employee' },
     { value: 'write_off', label: 'Write Off' },
 ];
 
