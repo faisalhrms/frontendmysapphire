@@ -58,6 +58,14 @@ export const sidebarMenu = [
                 '',
                 DASHBOARD_ROUTES.SR.permission,
             ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.Equipment.path,
+                'link',
+                'Equipment Dashboard',
+                7,
+                '',
+                DASHBOARD_ROUTES.Equipment.permission,
+            )
         ]
     ),
 ];

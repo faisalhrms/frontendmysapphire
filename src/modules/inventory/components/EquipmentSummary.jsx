@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import {formatAmountWithCommas} from "@helpers/formatters.js";
+import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
 import {formatDate} from "@helpers/dateTime.js";
 import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 
@@ -52,9 +52,9 @@ const EquipmentSummary = ({id,equipmentData}) => {
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div>
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Status</span>
-                            <span className="block text-[.875rem] font-semibold"> {
-                                equipmentStatuses.find(status => status.value === equipmentData.status)?.label || "-"
-                            }
+                            <span className="block text-[.875rem] font-semibold">
+                                {toTitleCase(equipmentData.department.name)}
+
                             </span>
                         </div>
                         <div>

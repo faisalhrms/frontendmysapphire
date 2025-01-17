@@ -27,6 +27,10 @@ export const DASHBOARD_ROUTES = {
     SR_LIST: {
         path: '/dashboards/sr/sr-list/:status',
         permission: 'sr_dashboard'
+    },
+    Equipment:{
+        path:'dashboards/equipment',
+        permission:'eq_dashboard',
     }
 }
 
@@ -65,6 +69,13 @@ export const MODULE_ROUTES = [
         component: () => import(`/src/modules/dashboards/sr/views/SrList.jsx`),
         permission: DASHBOARD_ROUTES.SR_LIST.permission,
 
+    },
+    {
+        path: DASHBOARD_ROUTES.Equipment.path,
+        component: () => import(`/src/modules/dashboards/eq/views/EquipmentDashboard.jsx`),
+        permission: DASHBOARD_ROUTES.Equipment.permission,
+
     }
+
 ];
 
