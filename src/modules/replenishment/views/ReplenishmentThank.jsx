@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { formatAmountWithCommas } from "@helpers/formatters.js";
-import createEventSource from "@config/eventSourceConfig.js";
 import ProgressBar from "@modules/replenishment/components/ProgressBar.jsx";
+import {REPLENISHMENT_ROUTES} from "@modules/replenishment/routes.js";
+import Notify from "@helpers/toastNotifications.js";
 
 const ReplenishmentThank = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const {
     forecast_days,
     message,
@@ -24,27 +26,42 @@ const ReplenishmentThank = () => {
   const [reportFileUrl, setReportFileUrl] = useState(file_url);
 
   useEffect(() => {
-    if (!task_id) return;
-    const eventSource = createEventSource(`/scm/report/progress/${task_id}`);
+    if (!task_id) {
+      Notify.error("No report task found.");
+      navigate(REPLENISHMENT_ROUTES.READ.path);
+      return;
+    }
+    const socket = new WebSocket(`${import.meta.env.VITE_WEEBHOOK_URL}/ws/scm_report/${task_id}/`);
 
-    eventSource.onmessage = function (event) {
-      const progressData = JSON.parse(event.data);
-      console.log("Report Progress:", progressData);
-      setReportProgress(progressData.progress);
-      setMsg(progressData.message);
-      setReportStatus(progressData.status);
-      setReportFileUrl(progressData.file_url);
-      setReportFileName(progressData.file_name);
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
     };
 
-    // Handling error during SSE connection
-    eventSource.onerror = function (error) {
-      console.error("EventSource error:", error);
-      eventSource.close();
+    socket.onmessage = (event) => {
+      try {
+        const progressData = JSON.parse(event.data);
+        console.log("Report Progress:", progressData);
+
+        setReportProgress(progressData.progress);
+        setMsg(progressData.message);
+        setReportStatus(progressData.status);
+        setReportFileUrl(progressData.file_url);
+        setReportFileName(progressData.file_name);
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
     };
 
     return () => {
-      eventSource.close();
+      socket.close();
     };
   }, [task_id]);
 

@@ -13,6 +13,9 @@ const pendingReqTaskSchema = () => z.object({
     sr_type: z
         .number()
         .min(1, {message: "SR Type is required and must be a valid number"}),
+    team_group_id: z
+        .number()
+        .min(1, {message: "Team Group is required"}),
     location_id: z
         .number()
         .min(1, {message: "Select a location"}),

@@ -57,7 +57,7 @@ const ReplenishmentHistory = () => {
             Cell: ({ row }) => (
                 <div className="flex items-center">
                     <Avatar
-                        avatar={row.original.created_by.avatar ? row.original.created_by.avatar.file_url : null}
+                        avatar={row.original.created_by.avatar ? row.original.created_by.avatar : null}
                         size='sm'
                         parentClasses='bg-primary/10 !fill-primary'
                     />
