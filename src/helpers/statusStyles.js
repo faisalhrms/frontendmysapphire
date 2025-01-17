@@ -16,6 +16,12 @@ export const statusColorMapping = {
     "Completed Late": "warning",
     "Overall": "primary",
     "Active": "primary",
+    "Brand New": "success",
+    "Faulty": "danger",
+    "Functional": "primary",
+    "Lost": "warning",
+    "Sold To Employee": "secondary",
+    "Write Off": "warning",
 };
 
 /**
@@ -25,6 +31,7 @@ export const statusColorMapping = {
  * @returns {Object} An object containing style classes for different parts of the component.
  */
 export const getStatusStyles = (status) => {
+    console.log(`this is statuses`,status);
     const mainColor = statusColorMapping[status] || "default";
     return colorPalette[mainColor] || colorPalette["default"];
 };

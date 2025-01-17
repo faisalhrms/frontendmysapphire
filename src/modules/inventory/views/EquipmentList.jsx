@@ -3,13 +3,17 @@ import DataTable from "@components/DataTable.jsx";
 import { Link } from "react-router-dom";
 import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
 import { toTitleCase } from "@helpers/formatters.js";
+import {getBadgeClasses} from "@helpers/badges.js";
+import React from "react";
 
 const EquipmentList = () => {
     const columns = [
         { Header: "Code", accessor: "code" },
 
         { Header: "Serial No", accessor: "serial_no" },
-        { Header: "Status", accessor: "status", Cell: ({ value }) => toTitleCase(value) },
+        {Header: 'Status', Cell: ({ row }) => (
+                <span className={ getBadgeClasses(row.original.status) }>{ toTitleCase(row.original.status) }</span>
+            )},
         { Header: "Custodian", accessor: "custodian.full_name" },
         { Header: "Department", accessor: "department" },
         { Header: "Equipment Site", accessor: "equipment_site" },

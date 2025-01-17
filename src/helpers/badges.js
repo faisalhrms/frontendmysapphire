@@ -24,7 +24,13 @@ const badgeStyles = {
     suspended: warning,
     deactivated: danger,
     pending:warning,
-    inactive:danger
+    inactive:danger,
+    brand_new:success, // Green
+    faulty: danger, // Red
+    functional: secondary, // Blue
+    lost: warning, // Yellow
+    sold_to_employee: success, // Purple
+    write_off: danger, // Gray
 };
 
 const statusStyles = {
@@ -37,7 +43,13 @@ const statusStyles = {
     active:txtSuccess,
     archived:txtWarning,
     pending:warning,
-    inactive:txtDanger
+    inactive:txtDanger,
+    brand_new:txtSuccess, // Green
+    faulty: txtDanger, // Red
+    functional: txtSecondary, // Blue
+    lost: warning, // Yellow
+    sold_to_employee: txtSuccess, // Purple
+    write_off: txtDanger, // Gray
 
 };
 
