@@ -1,4 +1,5 @@
 // src/modules/user/components/CreateUser.jsx
+
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,10 +10,24 @@ import FormButton from "@components/form/FormButton.jsx";
 import FileUpload from "@components/FileUpload.jsx";
 import { useUserForm } from "@modules/user/hooks/userHooks.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
+import PassPolicy from "@components/PassPolicy.jsx";
 
-// The form submission function
 const CreateUser = () => {
-    const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    // usePasswordPolicy hook
+    const {
+        password,
+        handlePasswordChange,
+        policyStatus,
+    } = usePasswordPolicy("");
+
+    // useForm
+    const {
+        control,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        setValue,
+    } = useForm({
         resolver: zodResolver(userCreateSchema),
         defaultValues: {
             password: "",
@@ -20,34 +35,33 @@ const CreateUser = () => {
             is_active: true,
             avatar: 0,
             employee: 0,
-            group_ids: []
-        }
+            group_ids: [],
+        },
     });
 
-    const { handleUserSubmit, formErrors } = useUserForm(null); // Pass null as we are creating a new user
+    const { handleUserSubmit, formErrors } = useUserForm(null);
 
+    // On form submit
     const onSubmit = (data) => {
-        // Handle form submission
         handleUserSubmit({
             password: data.password,
             is_superuser: data.is_superuser,
             is_active: data.is_active,
             avatar: data.avatar,
             employee: data.employee,
-            group_ids: data.group_ids
+            group_ids: data.group_ids,
         });
     };
 
     return (
         <>
-            <PageHeader currentpage="Add User" activepage="Users" mainpage="Add User"/>
+            <PageHeader currentpage="Add User" activepage="Users" mainpage="Add User" />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-12 gap-x-6">
-                    {/* Right side form fields for user creation */}
                     <div className="col-span-12">
                         <div className="box">
                             <div className="box-header">
-                                <div className="box-title"> User Info</div>
+                                <div className="box-title">User Info</div>
                             </div>
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
@@ -63,15 +77,21 @@ const CreateUser = () => {
                                     </div>
 
                                     {/* Password */}
-                                    <div className="xl:col-span-4 col-span-12">
+                                    <div className="xl:col-span-4 col-span-12 relative">
                                         <FormInput
                                             type="password"
                                             name="password"
                                             control={control}
                                             errors={errors}
                                             placeholder="Password"
-
+                                            onChange={(e) => {
+                                                handlePasswordChange(e);
+                                                setValue("password", e.target.value);
+                                            }}
+                                            value={password}
                                         />
+                                        {/* Pass password to PassPolicy */}
+                                        <PassPolicy policyStatus={policyStatus} password={password} />
                                     </div>
 
                                     {/* Employee (LOV) */}
@@ -85,7 +105,7 @@ const CreateUser = () => {
                                             queryKeyBase="employees"
                                             isMulti={false}
                                             preselectedOptions={[]}
-                                            errorMessage={formErrors?.employee?.[0]} // Display error if exists
+                                            errorMessage={formErrors?.employee?.[0]}
                                         />
                                     </div>
 
@@ -100,7 +120,7 @@ const CreateUser = () => {
                                             apiUrl="/select/roles/"
                                             queryKeyBase="roles"
                                             preselectedOptions={[]}
-                                            errorMessage={formErrors?.group_ids?.[0]} // Display error if exists
+                                            errorMessage={formErrors?.group_ids?.[0]}
                                         />
                                     </div>
 

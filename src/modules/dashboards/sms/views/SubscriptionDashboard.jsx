@@ -2,10 +2,7 @@
 
 import React from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import { Link } from "react-router-dom";
 import SubscriptionCard from "@modules/dashboards/sms/components/SubscriptionCard.jsx";
-import SubscriptionDataTable from "@modules/dashboards/sms/components/SubscriptionDataTable.jsx";
-import { Basicechart, Basicline, Sourcedata } from "../subData/subData.jsx";
 import { useSubscriptionCharts } from "@modules/dashboards/sms/hooks/subscriptionHook.js";
 import SubscriptionListCard from "@modules/dashboards/sms/components/SubscriptionListCard.jsx";
 import { useSubscriptionSummary, useActiveAndPendingSubscriptions } from "@modules/dashboards/sms/hooks/subscriptionHook.js";
@@ -28,8 +25,7 @@ const SubscriptionDashboard = () => {
         return <LoadingSpinner/>; // Replace with your loading component if you have one
     }
 
-    // Define a mapping from subscription names to routes
-    // New logic matching your actual data names
+
     const subscriptionRoutesMap = {
         "Total Active": `${SUBSCRIPTION_ROUTES.READ.path}?filter=total-active`,
         "Paid": `${SUBSCRIPTION_ROUTES.READ.path}?filter=paid`,
