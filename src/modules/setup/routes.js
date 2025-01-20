@@ -20,8 +20,7 @@ export const SETUP_ROUTES = {
         },
         {
             path: SETUP_ROUTES.ADD.path,
-            component: () => import('@modules/setup/components/Company.jsx'),
-
+            component: () => import('@modules/setup/views/CompanyEdit.jsx'),
         },
         {
             path: SETUP_ROUTES.EDIT.path,
