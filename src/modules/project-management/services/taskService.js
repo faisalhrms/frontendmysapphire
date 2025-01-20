@@ -34,7 +34,7 @@ export const updateTask = async (id, taskData) => {
 
 export const uploadTasks = async (milestoneId, formData) => {
     try {
-        const response = await api.post(`tasks/${milestoneId}/upload`, formData);
+        const response = await api.post(`/pms/tasks/upload/${milestoneId}/`, formData);
         Notify.success(response.data.message);
         return response.data;
     } catch (error) {
@@ -42,7 +42,6 @@ export const uploadTasks = async (milestoneId, formData) => {
         throw new Error(error.response?.data?.message || 'An error occurred');
     }
 };
-
 
 export const getTaskById = async (id) => {
     try {
@@ -52,26 +51,6 @@ export const getTaskById = async (id) => {
         Notify.error(error.response?.data?.message);
     }
 };
-export const getTaskDiscussions = async (taskId) => {
-    try {
-        const response = await api.get(`/projects/1/discussions`);
-        return response.data.data;
-    } catch (error) {
-        Notify.error(error.response?.data?.message || 'Failed to get project discussions');
-    }
-};
-
-export const storeTaskDiscussion = async (taskId, payload) => {
-    try {
-        const response = await api.post(`/projects/1/discussions`, payload);
-
-        return response.data.data;
-    } catch (error) {
-        Notify.error(error.response?.data?.message);
-        throw error
-    }
-};
-
 
 
 export const getTaskWithChild = async (id) => {

@@ -37,7 +37,7 @@ export const getMilestoneById = async (id) => {
 
 export const uploadMilestones = async (projectId, formData) => {
     try {
-        const response = await api.post(`milestones/${projectId}/upload`, formData);
+        const response = await api.post(`/pms/milestones/upload/${projectId}/`, formData);
         Notify.success(response.data.message);
         return response.data;
     } catch (error) {
