@@ -11,8 +11,10 @@ import {formatOptions} from "@helpers/formatters.js";
 import {usePendingReqTaskForm} from "@modules/sr-management/Hooks/PendingServiceReqHook.js";
 import PendingReqTaskCard from "@modules/sr-management/component/components/PendingReqTaskCard.jsx";
 import pendingReqTaskSchema from "@modules/sr-management/schema/PendingReqCreateSchema.js";
+import {useSelector} from "react-redux";
 
 const PendingReqTaskForm = ({pendingReqData}) => {
+    const { user } = useSelector((state) => state.auth);
     const createdAtDate = pendingReqData?.created_at
         ? format(new Date(pendingReqData.created_at), "yyyy-MM-dd")
         : "";
@@ -120,7 +122,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="SR Type"
-                                        apiUrl="/select/sr-types"
+                                        apiUrl={`/select/sr-types?sub_department_id=${pendingReqData.sub_department.id}`}
                                         queryKeyBase="sr_types"
                                         clientSideSearch
                                         preselectedOptions={
