@@ -30,7 +30,7 @@ export const DASHBOARD_ROUTES = {
     },
     Equipment:{
         path:'dashboards/equipment',
-        permission:'eq_dashboard',
+        permission:'it_equipment_dashboard',
     }
 }
 

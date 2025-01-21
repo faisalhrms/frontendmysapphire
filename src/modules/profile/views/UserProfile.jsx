@@ -2,25 +2,26 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formatOptions } from "@helpers/formatters.js";
 import { formatDate } from "@helpers/dateTime.js";
-import userEditSchema from "@modules/user/schemas/userEditSchema.js";
 import FormInput from "@components/form/FormInput.jsx";
-import FormSelect from "@components/form/FormSelect.jsx";
-import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import FileUpload from "@components/FileUpload.jsx";
 import Avatar from "@components/Avatar.jsx";
-import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import profileEditSchema from "@modules/profile/schemas/profileEditSchema.js";
-import {useProfileForm} from "@modules/profile/hooks/profileHooks.js";
+import { useProfileForm } from "@modules/profile/hooks/profileHooks.js";
+import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
+import PassPolicy from "@components/PassPolicy.jsx";
 
 const UserProfile = () => {
     const userData = useSelector((state) => state.auth.user);
 
-
+    const {
+        password,
+        handlePasswordChange,
+        policyStatus,
+    } = usePasswordPolicy(userData?.password || "");
     const {
         control,
         handleSubmit,
@@ -30,6 +31,7 @@ const UserProfile = () => {
         resolver: zodResolver(profileEditSchema),
         defaultValues: {
             ...userData,
+            password,
         },
     });
 
@@ -41,178 +43,210 @@ const UserProfile = () => {
         }
     }, [userData, setValue]);
 
-    const {handleProfileUpdate} = useProfileForm(userData);
+    const { handleProfileUpdate } = useProfileForm(userData);
 
     return (
         <>
-            <PageHeader currentpage={`Edit Profile`} activepage="User" mainpage="Edit Profile"/>
+            <PageHeader currentpage="Edit Profile" activepage="User" mainpage="Edit Profile" />
 
             <form onSubmit={handleSubmit(handleProfileUpdate)}>
-            <div className="grid grid-cols-12 gap-x-6">
-                <div className="xxl:col-span-5 xl:col-span-12 col-span-12">
-                    <div className="box overflow-hidden">
-                        <div className="box-body !p-0">
-                            <div className="sm:flex items-start p-6 main-profile-cover">
-                                <Avatar avatar={userData.avatar} size='xxl' parentClasses='me-4'/>
-                                <div className="flex-grow main-profile-info">
-                                    <div className="flex items-center !justify-between">
-                                        <h6 className="font-semibold mb-1 text-white text-[1rem]">{userData.full_name} ({userData.employee.emp_code})</h6>
-                                    </div>
-                                    <p className="mb-1 !text-white  opacity-[0.7]">{userData.employee.position.name}</p>
-                                    <p className="text-[0.75rem] text-white mb-6 opacity-[0.5]">
-                                        <span className="me-4 inline-flex"><i
-                                            className="ri-building-line me-1 align-middle"></i>{userData.employee.company.name}</span>
-                                        <span className="inline-flex"><i
-                                            className="ri-map-pin-line me-1 align-middle"></i>{userData.employee.location.name}</span>
-                                    </p>
-                                    <div className="flex mb-0">
-                                        <div className="me-6"><p
-                                            className="font-bold text-[1rem] text-white text-shadow mb-0">{formatDate(userData.employee.service_started_at)}</p>
-                                            <p
-                                                className="mb-0 text-[.6875rem] opacity-[0.5] text-white">Service
-                                                started date</p></div>
-                                        <div className="me-6">
-
-                                            <p className="font-bold text-[1rem] text-white text-shadow mb-0">
-
-                                                {userData.is_active ? "Active" : "Not Active"}
-                                            </p>
-                                            <p className="mb-0 text-[.6875rem] opacity-[0.5] text-white">Service
-                                                status</p>
+                <div className="grid grid-cols-12 gap-x-6">
+                    <div className="xxl:col-span-5 xl:col-span-12 col-span-12">
+                        <div className="box overflow-hidden">
+                            <div className="box-body !p-0">
+                                <div className="sm:flex items-start p-6 main-profile-cover">
+                                    <Avatar avatar={userData.avatar} size="xxl" parentClasses="me-4" />
+                                    <div className="flex-grow main-profile-info">
+                                        <div className="flex items-center !justify-between">
+                                            <h6 className="font-semibold mb-1 text-white text-[1rem]">
+                                                {userData.full_name} ({userData.employee.emp_code})
+                                            </h6>
+                                        </div>
+                                        <p className="mb-1 !text-white  opacity-[0.7]">
+                                            {userData.employee.position.name}
+                                        </p>
+                                        <p className="text-[0.75rem] text-white mb-6 opacity-[0.5]">
+                      <span className="me-4 inline-flex">
+                        <i className="ri-building-line me-1 align-middle"></i>
+                          {userData.employee.company.name}
+                      </span>
+                                            <span className="inline-flex">
+                        <i className="ri-map-pin-line me-1 align-middle"></i>
+                                                {userData.employee.location.name}
+                      </span>
+                                        </p>
+                                        <div className="flex mb-0">
+                                            <div className="me-6">
+                                                <p className="font-bold text-[1rem] text-white text-shadow mb-0">
+                                                    {formatDate(userData.employee.service_started_at)}
+                                                </p>
+                                                <p className="mb-0 text-[.6875rem] opacity-[0.5] text-white">
+                                                    Service started date
+                                                </p>
+                                            </div>
+                                            <div className="me-6">
+                                                <p className="font-bold text-[1rem] text-white text-shadow mb-0">
+                                                    {userData.is_active ? "Active" : "Not Active"}
+                                                </p>
+                                                <p className="mb-0 text-[.6875rem] opacity-[0.5] text-white">
+                                                    Service status
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="p-6 border-b border-dashed dark:border-defaultborder/10"><p
-                                className="text-[.9375rem] mb-2 me-6 font-semibold">Contact Information :</p>
-                                <div className="text-[#8c9097] dark:text-white/50">
-                                    <p className="mb-2">
-                                        <span
-                                            className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
-                                            <i className="ri-mail-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
-                                        </span>
-                                        {userData.email}
-                                    </p>
-                                    <p className="mb-2">
-                                        <span
-                                            className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
-                                            <i className="ri-phone-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
-                                        </span>
-                                        {userData.employee.phone}
-                                    </p>
-                                    <p className="mb-2">
-                                        <span
-                                            className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
-                                            <i className="ri-map-pin-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
-                                        </span>
-                                        {userData.employee.city?.name}
-                                    </p>
+
+                                {/* Contact Information */}
+                                <div className="p-6 border-b border-dashed dark:border-defaultborder/10">
+                                    <p className="text-[.9375rem] mb-2 me-6 font-semibold">Contact Information :</p>
+                                    <div className="text-[#8c9097] dark:text-white/50">
+                                        <p className="mb-2">
+                      <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                        <i className="ri-mail-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                      </span>
+                                            {userData.email}
+                                        </p>
+                                        <p className="mb-2">
+                      <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                        <i className="ri-phone-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                      </span>
+                                            {userData.employee.phone}
+                                        </p>
+                                        <p className="mb-2">
+                      <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                        <i className="ri-map-pin-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                      </span>
+                                            {userData.employee.city?.name}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                            {userData?.line_manager &&
-                                (
+
+                                {/* Line Manager Info */}
+                                {userData?.line_manager && (
                                     <div className="p-6 border-b border-dashed dark:border-defaultborder/10">
                                         <p className="text-[.9375rem] mb-2 me-6 font-semibold">Line Manager :</p>
                                         <ul className="list-group">
                                             <li className="list-group-item">
                                                 <div className="sm:flex items-start">
-                                                    <Avatar avatar={userData?.line_manager?.avatar}/>
+                                                    <Avatar avatar={userData?.line_manager?.avatar} />
                                                     <div className="sm:ms-2 ms-0 sm:mt-0 mt-1 font-semibold flex-grow">
-                                                        <p
-                                                            className="mb-0 leading-none">{userData?.line_manager?.full_name}</p>
-                                                        <span
-                                                            className="text-[.6875rem] text-[#8c9097] dark:text-white/50 opacity-[0.7]">{userData?.line_manager?.email}</span>
+                                                        <p className="mb-0 leading-none">
+                                                            {userData?.line_manager?.full_name}
+                                                        </p>
+                                                        <span className="text-[.6875rem] text-[#8c9097] dark:text-white/50 opacity-[0.7]">
+                              {userData?.line_manager?.email}
+                            </span>
                                                     </div>
                                                     <Link
                                                         to={`/module/users/edit/${userData?.line_manager?.id}`}
-                                                        className="ti-btn ti-btn-light !py-1 !px-2 !text-[0.75rem]">
+                                                        className="ti-btn ti-btn-light !py-1 !px-2 !text-[0.75rem]"
+                                                    >
                                                         View
                                                     </Link>
                                                 </div>
                                             </li>
                                         </ul>
                                     </div>
-                                )
-                            }
-                            <div className="p-6">
-                                <p className="text-[.9375rem] mb-2 me-6 font-semibold">Other Information :</p>
-                                <ul className="list-group">
-                                    <li className="list-group-item">
-                                        <div className="flex flex-wrap items-center">
-                                            <div className="me-2 font-semibold">Emp code :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.emp_code}</span>
-                                        </div>
-                                    </li>
-                                    <li className="list-group-item">
-                                        <div className="flex flex-wrap items-center">
-                                            <div className="me-2 font-semibold">Father name :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.father_name}</span>
-                                        </div>
-                                    </li>
-                                    <li className="list-group-item">
-                                        <div className="flex flex-wrap items-center">
-                                            <div className="me-2 font-semibold">Gender :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender === "M" ? "Male" : "Female"}</span>
-                                        </div>
-                                    </li>
-                                    <li className="list-group-item">
-                                        <div className="flex flex-wrap items-center">
-                                        <div className="me-2 font-semibold">Department :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.department.name}</span>
-                                        </div>
-                                    </li>
-                                    <li className="list-group-item">
-                                        <div className="flex flex-wrap items-center">
-                                            <div className="me-2 font-semibold">Cnic :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>
-                                        </div>
-                                    </li>
-                                </ul>
+                                )}
+
+                                {/* Other Information */}
+                                <div className="p-6">
+                                    <p className="text-[.9375rem] mb-2 me-6 font-semibold">Other Information :</p>
+                                    <ul className="list-group">
+                                        <li className="list-group-item">
+                                            <div className="flex flex-wrap items-center">
+                                                <div className="me-2 font-semibold">Emp code :</div>
+                                                <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                          {userData.employee.emp_code}
+                        </span>
+                                            </div>
+                                        </li>
+                                        <li className="list-group-item">
+                                            <div className="flex flex-wrap items-center">
+                                                <div className="me-2 font-semibold">Father name :</div>
+                                                <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                          {userData.employee.father_name}
+                        </span>
+                                            </div>
+                                        </li>
+                                        <li className="list-group-item">
+                                            <div className="flex flex-wrap items-center">
+                                                <div className="me-2 font-semibold">Gender :</div>
+                                                <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                          {userData.employee.gender === "M" ? "Male" : "Female"}
+                        </span>
+                                            </div>
+                                        </li>
+                                        <li className="list-group-item">
+                                            <div className="flex flex-wrap items-center">
+                                                <div className="me-2 font-semibold">Department :</div>
+                                                <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                          {userData?.employee.department.name}
+                        </span>
+                                            </div>
+                                        </li>
+                                        <li className="list-group-item">
+                                            <div className="flex flex-wrap items-center">
+                                                <div className="me-2 font-semibold">Cnic :</div>
+                                                <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                          {userData?.employee.cnic}
+                        </span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Edit Profile Form Section */}
+                    <div className="xxl:col-span-7">
+                        <div className="box">
+                            <div className="box-header">
+                                <div className="box-title">Edit Profile</div>
+                            </div>
+                            <div className="box-body">
+                                <div className="grid grid-cols-12 gap-4">
+                                    {/* Avatar Upload */}
+                                    <div className="xl:col-span-12 col-span-12">
+                                        <FileUpload
+                                            // Adjust based on your backend's structure
+                                            currentValue={userData?.avatar?.file_url}
+                                            file={userData?.avatar}
+                                            inputName="avatar_id"
+                                            control={control}
+                                            errors={errors}
+                                        />
+                                    </div>
+
+                                    {/* Password + PassPolicy */}
+                                    <div className="xl:col-span-12 col-span-12 relative">
+                                        <FormInput
+                                            type="password"
+                                            name="password"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Password"
+                                            onChange={(e) => {
+                                                // 3) Update local password state and form state
+                                                handlePasswordChange(e);
+                                                setValue("password", e.target.value);
+                                            }}
+                                            value={password}
+                                        />
+                                        {/* Display the pass policy tooltip */}
+                                        <PassPolicy policyStatus={policyStatus} password={password} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
+                                <FormButton isLoading={isSubmitting} />
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div className="xxl:col-span-7">
-                    <div className="box">
-                        <div className="box-header">
-                            <div className="box-title">Edit Profile</div>
-                        </div>
-                        <div className="box-body">
-                            <div className="grid grid-cols-12 gap-4">
-                                <div className="xl:col-span-12 col-span-12">
-                                    <FileUpload
-                                        currentValue={userData?.avatar?.file_url} // Updated to match payload structure
-                                        file={userData?.avatar}
-                                        inputName="avatar_id"
-                                        control={control}
-                                        errors={errors}
-                                    />
-                                </div>
-                                <div className="xl:col-span-12 col-span-12">
-                                    <FormInput
-                                        type="password"
-                                        name="password"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Password"
-                                    />
-                                </div>
-
-                            </div>
-                        </div>
-                        <div
-                            className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
-                            <FormButton isLoading={isSubmitting}/>
-                        </div>
-                    </div>
-                </div>
-            </div>
             </form>
         </>
     );

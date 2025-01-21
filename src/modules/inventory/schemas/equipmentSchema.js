@@ -38,6 +38,7 @@ const equipmentSchema = z.object({
     store_comm_ready: z.boolean().optional(),
     description: z.string().max(1000, "Description can be at most 1000 characters").optional(),
     specs: z.string().max(500, "Specs can be at most 500 characters").optional(),
+    attachment_ids: z.array(z.number()).nullable().optional(),
     sub_equipments: z.array(subEquipmentSchema).optional(),
 });
 
