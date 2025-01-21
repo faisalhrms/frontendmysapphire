@@ -57,7 +57,7 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                     <div className="flex items-center">
                         <div className="ms-2">
                             <div className="font-semibold mb-1">Description :</div>
-                            <p className="text-[#8c9097] dark:text-white/50 min-h-[50px] max-h-[50px] overflow-auto">
+                            <p className="text-[#8c9097] dark:text-white/50">
                                 {project.description}
                             </p>
                         </div>
