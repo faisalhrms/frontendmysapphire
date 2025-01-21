@@ -8,17 +8,6 @@ import React from "react";
 
 const EquipmentList = () => {
     const columns = [
-        { Header: "Code", accessor: "code" },
-
-        { Header: "Serial No", accessor: "serial_no" },
-        {Header: 'Status', Cell: ({ row }) => (
-                <span className={ getBadgeClasses(row.original.status) }>{ toTitleCase(row.original.status) }</span>
-            )},
-        { Header: "Custodian", accessor: "custodian.full_name" },
-        { Header: "Department", accessor: "department" },
-        { Header: "Equipment Site", accessor: "equipment_site" },
-        { Header: "Equipment Type", accessor: "equipment_type" },
-        { Header: "Location", accessor: "location" },
         {
             Header: "Actions",
             Cell: ({ row }) => (
@@ -36,6 +25,18 @@ const EquipmentList = () => {
                 </div>
             ),
         },
+        { Header: "Code", accessor: "code" },
+
+        { Header: "Serial No", accessor: "serial_no" },
+        {Header: 'Status', Cell: ({ row }) => (
+                <span className={ getBadgeClasses(row.original.status) }>{ toTitleCase(row.original.status) }</span>
+            )},
+        { Header: "Custodian", accessor: "custodian.full_name" },
+        { Header: "Department", accessor: "department" },
+        { Header: "Equipment Site", accessor: "equipment_site" },
+        { Header: "Equipment Type", accessor: "equipment_type" },
+        { Header: "Location", accessor: "location" },
+
     ];
 
     const buttons = (

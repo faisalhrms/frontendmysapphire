@@ -140,8 +140,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                             "id",
                                             "name"
                                         )}
-                                        saveOptionEndpoint="/select/equipment/type/"
-                                        allowSaveNewOption={true}
+
                                     />
                                 </div>
 
