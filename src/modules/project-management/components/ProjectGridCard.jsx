@@ -8,7 +8,7 @@ import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
-const ProjectCard = ({ project, openModal, refetch }) => {
+const ProjectGridCard = ({ project, openModal, refetch }) => {
     return (
         <>
             <div className="box custom-box">
@@ -104,4 +104,4 @@ const ProjectCard = ({ project, openModal, refetch }) => {
     );
 };
 
-export default ProjectCard;
+export default ProjectGridCard;
