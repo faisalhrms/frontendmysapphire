@@ -57,6 +57,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
   }, [subscriptionData, setValue]);
 
   // NEW: Auto-calculate "Per Month Amount" based on Payment Cycle & Amount
+// NEW: Auto-calculate "Per Month Amount" based on Payment Cycle & Amount
   useEffect(() => {
     if (subscriptionType !== "paid") {
       return; // only do this for paid subscriptions
@@ -83,10 +84,13 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
         break;
     }
 
-    // Update "per_month_amount"
-    setValue("per_month_amount", calculated);
-  }, [subscriptionType, watchPaymentCycle, watchAmount, setValue]);
+    // Round to two decimal places
+    calculated = Math.round((calculated + Number.EPSILON) * 100) / 100;
 
+    // Update "per_month_amount"
+    setValue("per_month_amount", calculated.toFixed(2));
+  }, [subscriptionType, watchPaymentCycle, watchAmount, setValue]);
+  
   return (
       <form onSubmit={handleSubmit(handleSubscriptionSubmit)}>
         <div className="grid grid-cols-12 gap-x-6">
