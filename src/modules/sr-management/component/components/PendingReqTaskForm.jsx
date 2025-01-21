@@ -146,7 +146,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Members"
-                                        apiUrl={`/select/users?sub_department_id=${user.employee.sub_department.id}`}
+                                        apiUrl={`/select/users?sub_department_id=${pendingReqData.sub_department.id}`}
                                         queryKeyBase="users"
                                         preselectedOptions={formatOptions(pendingReqData, "users", "id", "full_name")}
                                     />
@@ -158,7 +158,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Team Group"
-                                        apiUrl={`/select/teams/groups/?sub_department_id=${user.employee.sub_department.id}`}
+                                        apiUrl={`/select/teams/groups/?sub_department_id=${pendingReqData.sub_department.id}`}
                                         queryKeyBase="team_groups"
                                         preselectedOptions={formatOptions(pendingReqData, "team_groups", "id", "name")}
                                     />
