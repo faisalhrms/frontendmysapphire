@@ -95,3 +95,4 @@ export const generateSidebarItem = (path = '', type = '', title = '', position =
         children,
     };
 };
+
