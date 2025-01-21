@@ -104,4 +104,4 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
     );
 };
 
-export default ProjectGridCard;
+export default React.memo(ProjectGridCard);
