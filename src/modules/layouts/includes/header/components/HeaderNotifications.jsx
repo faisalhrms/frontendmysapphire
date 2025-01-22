@@ -5,16 +5,7 @@ import SimpleBar from 'simplebar-react';
 const HeaderNotifications = () => {
 
     const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            color: 'primary',
-            avatarColor: '!bg-primary',
-            icon: 'ti-gift',
-            text1: 'Your Order Has Been Shipped',
-            text2: 'Order No: 123456 Has Shipped To Your Delivery Address',
-            class: '',
-            class1: ''
-        }
+
     ]);
 
     const handleNotificationClose = (e, index) => {

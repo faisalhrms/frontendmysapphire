@@ -138,6 +138,7 @@ const ProjectList = () => {
                                                 className="ti-btn ti-btn-primary ti-btn-sm" aria-expanded="false">
                                             <i className="ti ti-dots-vertical"></i>
                                         </button>
+
                                         <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
                                             <li>
                                                 <a
