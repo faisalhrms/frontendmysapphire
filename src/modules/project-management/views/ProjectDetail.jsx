@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import ProjectSummary from "@modules/project-management/components/project/ProjectSummary.jsx";
 import ProjectAdditionalDetail from "@modules/project-management/components/project/ProjectAdditionalDetail.jsx";

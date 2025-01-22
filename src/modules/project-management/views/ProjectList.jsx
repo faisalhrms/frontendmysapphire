@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { Link } from "react-router-dom";
-import ProjectGridCard from "@modules/project-management/components/ProjectGridCard.jsx";
 import {useProjectFilter, useProjects, useUploadProjectModal} from "@modules/project-management/hooks/projectHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import Pagination from "@components/Pagination.jsx";
