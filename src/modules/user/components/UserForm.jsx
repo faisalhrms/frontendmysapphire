@@ -1,21 +1,22 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@components/form/FormInput.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormButton from "@components/form/FormButton.jsx";
-import {formatOptions} from "@helpers/formatters.js";
-import {useUserForm} from "@modules/user/hooks/userHooks.js";
+import { formatOptions } from "@helpers/formatters.js";
+import { useUserForm } from "@modules/user/hooks/userHooks.js";
 import FileUpload from "@components/FileUpload.jsx";
 import Avatar from "@components/Avatar.jsx";
-import {formatDate} from "@helpers/dateTime.js";
-import {Link} from "react-router-dom";
+import { formatDate } from "@helpers/dateTime.js";
+import { Link } from "react-router-dom";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import userEditSchema from "@modules/user/schemas/userEditSchema.js";
-import {usePasswordPolicy} from "@hooks/passPolicyHooks.js";
+import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
 import PassPolicy from "@components/PassPolicy.jsx";
 
-const UserForm = ({ userData}) => {
+const UserForm = ({ userData }) => {
+    // Custom hook that tracks password changes & returns policy status
     const {
         password,
         handlePasswordChange,
@@ -31,7 +32,7 @@ const UserForm = ({ userData}) => {
         resolver: zodResolver(userEditSchema),
         defaultValues: {
             ...userData,
-            password: password, // Ensure password is part of default values
+            password, // Ensure password is part of default values
         },
     });
 
@@ -52,130 +53,151 @@ const UserForm = ({ userData}) => {
                     <div className="box overflow-hidden">
                         <div className="box-body !p-0">
                             <div className="sm:flex items-start p-6 main-profile-cover">
-                                <Avatar avatar={userData.avatar} size='xxl' parentClasses='me-4'/>
+                                <Avatar avatar={userData.avatar} size="xxl" parentClasses="me-4" />
                                 <div className="flex-grow main-profile-info">
                                     <div className="flex items-center !justify-between">
-                                        <h6 className="font-semibold mb-1 text-white text-[1rem]">{userData.full_name} ({userData.employee.emp_code})</h6>
+                                        <h6 className="font-semibold mb-1 text-white text-[1rem]">
+                                            {userData.full_name} ({userData.employee.emp_code})
+                                        </h6>
                                     </div>
-                                    <p className="mb-1 !text-white  opacity-[0.7]">{userData.employee.position.name}</p>
+                                    <p className="mb-1 !text-white  opacity-[0.7]">
+                                        {userData.employee.position.name}
+                                    </p>
                                     <p className="text-[0.75rem] text-white mb-6 opacity-[0.5]">
-                                        <span className="me-4 inline-flex"><i
-                                            className="ri-building-line me-1 align-middle"></i>{userData.employee.company.name}</span>
-                                        <span className="inline-flex"><i
-                                            className="ri-map-pin-line me-1 align-middle"></i>{userData.employee.location.name}</span>
+                    <span className="me-4 inline-flex">
+                      <i className="ri-building-line me-1 align-middle"></i>
+                        {userData.employee.company.name}
+                    </span>
+                                        <span className="inline-flex">
+                      <i className="ri-map-pin-line me-1 align-middle"></i>
+                                            {userData.employee.location.name}
+                    </span>
                                     </p>
                                     <div className="flex mb-0">
-                                        <div className="me-6"><p
-                                            className="font-bold text-[1rem] text-white text-shadow mb-0">{formatDate(userData.employee.service_started_at)}</p>
-                                            <p
-                                                className="mb-0 text-[.6875rem] opacity-[0.5] text-white">Service
-                                                started date</p></div>
                                         <div className="me-6">
-
                                             <p className="font-bold text-[1rem] text-white text-shadow mb-0">
-
+                                                {formatDate(userData.employee.service_started_at)}
+                                            </p>
+                                            <p className="mb-0 text-[.6875rem] opacity-[0.5] text-white">
+                                                Service started date
+                                            </p>
+                                        </div>
+                                        <div className="me-6">
+                                            <p className="font-bold text-[1rem] text-white text-shadow mb-0">
                                                 {userData.is_active ? "Active" : "Not Active"}
                                             </p>
-                                            <p className="mb-0 text-[.6875rem] opacity-[0.5] text-white">Service
-                                                status</p>
+                                            <p className="mb-0 text-[.6875rem] opacity-[0.5] text-white">
+                                                Service status
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-6 border-b border-dashed dark:border-defaultborder/10"><p
-                                className="text-[.9375rem] mb-2 me-6 font-semibold">Contact Information :</p>
+                            <div className="p-6 border-b border-dashed dark:border-defaultborder/10">
+                                <p className="text-[.9375rem] mb-2 me-6 font-semibold">
+                                    Contact Information :
+                                </p>
                                 <div className="text-[#8c9097] dark:text-white/50">
                                     <p className="mb-2">
-                                        <span
-                                            className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
-                                            <i className="ri-mail-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
-                                        </span>
+                    <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                      <i className="ri-mail-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                    </span>
                                         {userData.email}
                                     </p>
                                     <p className="mb-2">
-                                        <span
-                                            className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
-                                            <i className="ri-phone-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
-                                        </span>
+                    <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                      <i className="ri-phone-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                    </span>
                                         {userData.employee.phone}
                                     </p>
                                     <p className="mb-2">
-                                        <span
-                                            className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
-                                            <i className="ri-map-pin-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
-                                        </span>
+                    <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                      <i className="ri-map-pin-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                    </span>
                                         {userData.employee.city?.name}
                                     </p>
                                 </div>
                             </div>
-                            {userData?.line_manager &&
-                                (
-                                    <div className="p-6 border-b border-dashed dark:border-defaultborder/10">
-                                        <p className="text-[.9375rem] mb-2 me-6 font-semibold">Line Manager :</p>
-                                        <ul className="list-group">
-                                            <li className="list-group-item">
-                                                <div className="sm:flex items-start">
-                                                    <Avatar avatar={userData?.line_manager?.avatar}/>
-                                                    <div className="sm:ms-2 ms-0 sm:mt-0 mt-1 font-semibold flex-grow">
-                                                        <p
-                                                            className="mb-0 leading-none">{userData?.line_manager?.full_name}</p>
-                                                        <span
-                                                            className="text-[.6875rem] text-[#8c9097] dark:text-white/50 opacity-[0.7]">{userData?.line_manager?.email}</span>
-                                                    </div>
-                                                    <Link
-                                                        to={`/module/users/edit/${userData?.line_manager?.id}`}
-                                                        className="ti-btn ti-btn-light !py-1 !px-2 !text-[0.75rem]">
-                                                        View
-                                                    </Link>
+                            {userData?.line_manager && (
+                                <div className="p-6 border-b border-dashed dark:border-defaultborder/10">
+                                    <p className="text-[.9375rem] mb-2 me-6 font-semibold">
+                                        Line Manager :
+                                    </p>
+                                    <ul className="list-group">
+                                        <li className="list-group-item">
+                                            <div className="sm:flex items-start">
+                                                <Avatar avatar={userData?.line_manager?.avatar} />
+                                                <div className="sm:ms-2 ms-0 sm:mt-0 mt-1 font-semibold flex-grow">
+                                                    <p className="mb-0 leading-none">
+                                                        {userData?.line_manager?.full_name}
+                                                    </p>
+                                                    <span className="text-[.6875rem] text-[#8c9097] dark:text-white/50 opacity-[0.7]">
+                            {userData?.line_manager?.email}
+                          </span>
                                                 </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )
-                            }
+                                                <Link
+                                                    to={`/module/users/edit/${userData?.line_manager?.id}`}
+                                                    className="ti-btn ti-btn-light !py-1 !px-2 !text-[0.75rem]"
+                                                >
+                                                    View
+                                                </Link>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                             <div className="p-6">
-                                <p className="text-[.9375rem] mb-2 me-6 font-semibold">Other Information :</p>
+                                <p className="text-[.9375rem] mb-2 me-6 font-semibold">
+                                    Other Information :
+                                </p>
                                 <ul className="list-group">
                                     <li className="list-group-item">
                                         <div className="flex flex-wrap items-center">
                                             <div className="me-2 font-semibold">Emp code :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.emp_code}</span>
+                                            <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                        {userData.employee.emp_code}
+                      </span>
                                         </div>
                                     </li>
                                     <li className="list-group-item">
                                         <div className="flex flex-wrap items-center">
                                             <div className="me-2 font-semibold">Father name :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData.employee.father_name}</span>
+                                            <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                        {userData.employee.father_name}
+                      </span>
                                         </div>
                                     </li>
                                     <li className="list-group-item">
                                         <div className="flex flex-wrap items-center">
                                             <div className="me-2 font-semibold">Gender :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">   {userData.employee.gender === "M" ? "Male" : "Female"}</span>
+                                            <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                        {userData.employee.gender === "M" ? "Male" : "Female"}
+                      </span>
                                         </div>
                                     </li>
                                     <li className="list-group-item">
                                         <div className="flex flex-wrap items-center">
                                             <div className="me-2 font-semibold">Department :</div>
-                                            <span
-                                                className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.department.name}</span>
+                                            <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                        {userData?.employee.department.name}
+                      </span>
                                         </div>
                                     </li>
-                                    {/*<li className="list-group-item">*/}
-                                    {/*    <div className="flex flex-wrap items-center">*/}
-                                    {/*        <div className="me-2 font-semibold">Cnic :</div>*/}
-                                    {/*        <span*/}
-                                    {/*            className="text-[0.75rem] text-[#8c9097] dark:text-white/50">{userData?.employee.cnic}</span>*/}
-                                    {/*    </div>*/}
-                                    {/*</li>*/}
+                                    {/* If needed, uncomment CNIC */}
+                                    {/*<li className="list-group-item">
+                    <div className="flex flex-wrap items-center">
+                      <div className="me-2 font-semibold">Cnic :</div>
+                      <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                        {userData?.employee.cnic}
+                      </span>
+                    </div>
+                  </li>*/}
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div className="xxl:col-span-7">
                     <div className="box">
                         <div className="box-header">
@@ -195,7 +217,7 @@ const UserForm = ({ userData}) => {
                                     />
                                 </div>
 
-                                {/* Password Input */}
+                                {/* Password Input + Policy Tooltip */}
                                 <div className="xl:col-span-12 col-span-12 relative">
                                     <FormInput
                                         type="password"
@@ -209,7 +231,8 @@ const UserForm = ({ userData}) => {
                                         }}
                                         value={password}
                                     />
-                                    <PassPolicy policyStatus={policyStatus}/> {/* Use PassPolicy component */}
+                                    {/* Integrate PassPolicy here, passing both policyStatus and password */}
+                                    <PassPolicy policyStatus={policyStatus} password={password} />
                                 </div>
 
                                 {/* Group IDs Async Select */}
@@ -251,8 +274,9 @@ const UserForm = ({ userData}) => {
 
                         {/* Submit Button */}
                         <div
-                            className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
-                            <FormButton isLoading={isSubmitting}/>
+                            className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end"
+                        >
+                            <FormButton isLoading={isSubmitting} />
                         </div>
                     </div>
                 </div>

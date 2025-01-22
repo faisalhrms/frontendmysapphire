@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { Link } from "react-router-dom";
-import ProjectCard from "@modules/project-management/components/ProjectCard.jsx";
+import ProjectGridCard from "@modules/project-management/components/ProjectGridCard.jsx";
 import {useProjectFilter, useProjects, useUploadProjectModal} from "@modules/project-management/hooks/projectHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import Pagination from "@components/Pagination.jsx";
@@ -15,6 +15,10 @@ import WorkspaceDropdown from "@components/dropdowns/WorkspaceDropdown.jsx";
 import {useWatch} from "react-hook-form";
 import ProjectStatusDropdown from "@modules/project-management/components/dropdowns/ProjectStatusDropdown.jsx";
 import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
+import {useDispatch, useSelector} from 'react-redux';
+import {setViewType} from "@modules/project-management/redux/pmsSlice.js";
+import ProjectGridItems from "@modules/project-management/components/ProjectGridItems.jsx";
+import ProjectListItems from "@modules/project-management/components/ProjectListItems.jsx";
 
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
@@ -64,6 +68,12 @@ const ProjectList = () => {
         isUploadModalOpen,
     } = useUploadProjectModal(refetch, 'P')
 
+    const viewType = useSelector((state) => state.pms.viewType);
+    const dispatch = useDispatch();
+
+    const handleViewChange = (viewType) => {
+        dispatch(setViewType(viewType));
+    };
 
     return (
         <>
@@ -106,6 +116,22 @@ const ProjectList = () => {
                                         aria-label="Search"
                                         onChange={handleSearchChange}
                                     />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className={`ti-btn ti-btn-sm ${viewType === 'grid' ? 'ti-btn-outline-primary' : 'ti-btn-primary'}`}
+                                        onClick={() => handleViewChange('grid')}
+                                        title="Grid View"
+                                    >
+                                        <i className="ti ti-grid-dots"></i>
+                                    </button>
+                                    <button
+                                        className={`ti-btn ti-btn-sm ${viewType === 'list' ? 'ti-btn-outline-primary' : 'ti-btn-primary'}`}
+                                        onClick={() => handleViewChange('list')}
+                                        title="List View"
+                                    >
+                                        <i className="ti ti-list"></i>
+                                    </button>
                                 </div>
                                 <HasPermission permission='add_project'>
                                     <div className="hs-dropdown ti-dropdown ms-2">
@@ -170,15 +196,10 @@ const ProjectList = () => {
                         <LoadingSpinner/>
                     </div>
                 ) : data?.rows?.length > 0 ? (
-                    data.rows.map(project => (
-                        <div className="xxl:col-span-3 xl:col-span-4 md:col-span-6 col-span-12" key={project.id}>
-                            <ProjectCard
-                                openModal={() => handleOpenMilestoneModal(project)}
-                                project={project}
-                                refetch={refetch}
-                            />
-                        </div>
-                    ))
+                        viewType === 'grid' ?
+                            (<ProjectGridItems rows={data.rows} handleOpenMilestoneModal={handleOpenMilestoneModal} refetch={refetch} />)
+                                :
+                            (<ProjectListItems rows={data.rows} handleOpenMilestoneModal={handleOpenMilestoneModal} refetch={refetch} />)
                 ) : (
                     <div className="col-span-12 flex items-center justify-center h-64">
                         <p className="text-lg text-gray-500">There are no projects related to you.</p>
