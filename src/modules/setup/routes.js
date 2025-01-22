@@ -1,33 +1,58 @@
 export const SETUP_ROUTES = {
+    COMPANY: {
         READ: {
             path: '/module/setup',
+            // permission: 'view_company',
         },
-        ADD: {
+        CREATE: {
             path: '/module/setup/add/',
+            // permission: 'add_company',
+        },
+        EDIT: {
+            path: '/module/setup/edit',
+            // permission: 'change_company',
 
         },
-       EDIT:{
-        path:'/module/setup/edit',
-       },
-       
-
-    };
-
-    export const MODULE_ROUTES = [
-        {
-            path: SETUP_ROUTES.READ.path,
-            component: () => import("@modules/setup/views/CompanyList.jsx"),
+    },
+    SR_TYPE: {
+        READ: {
+            path: '/module/sr',
+            permission: 'view_srtype',
         },
-        {
-            path: SETUP_ROUTES.ADD.path,
-            component: () => import('@modules/setup/components/Company.jsx'),
-
+        CREATE: {
+            path: '/module/sr/add/',
+            // permission: 'create_srtype',
         },
-        {
-            path: SETUP_ROUTES.EDIT.path,
-            component: () => import('@modules/setup/views/CompanyEdit.jsx'),
-
+        EDIT: {
+            path: '/module/sr/edit',
+            // permission: 'change_srtype',
         },
+    },
+};
 
-
-    ];
+export const MODULE_ROUTES = [
+    {
+        path: SETUP_ROUTES.COMPANY.READ.path,
+        component: () => import('@modules/setup/views/CompanyList.jsx'),
+    },
+    {
+        path: SETUP_ROUTES.COMPANY.CREATE.path,
+        component: () => import('@modules/setup/components/Company.jsx'),
+    },
+    {
+        path: SETUP_ROUTES.COMPANY.EDIT.path,
+        component: () => import('@modules/setup/views/CompanyEdit.jsx'),
+    },
+    {
+        path: SETUP_ROUTES.SR_TYPE.READ.path,
+        component: () => import('@modules/setup/views/SrTypeList.jsx'),
+    },
+    {
+        path: SETUP_ROUTES.SR_TYPE.CREATE.path,
+        component: () => import('@modules/setup/views/SrTypes.jsx'),
+    },
+    {
+        path: SETUP_ROUTES.SR_TYPE.EDIT.path,
+        component: () => import('@modules/setup/views/SrTypesEdit.jsx'),
+    },
+];

@@ -113,6 +113,7 @@ const ProjectList = () => {
                                                 className="ti-btn ti-btn-primary ti-btn-sm" aria-expanded="false">
                                             <i className="ti ti-dots-vertical"></i>
                                         </button>
+
                                         <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
                                             <li>
                                                 <a
@@ -132,6 +133,30 @@ const ProjectList = () => {
                                         </ul>
                                     </div>
                                 </HasPermission>
+                                <div className="hs-dropdown ti-dropdown ms-2">
+                                    <button type="button" aria-label="button"
+                                            className="ti-btn ti-btn-primary ti-btn-sm" aria-expanded="false">
+                                        <i className="ti ti-dots-vertical"></i>
+                                    </button>
+
+                                    <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
+                                        <li>
+                                            <a
+                                                // onClick={openUploadModal}
+                                                className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block">
+                                               list View
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a
+                                                // href={sampleFile}
+                                                download="sample_upload_projects_with_milestones_tasks.xlsx"
+                                                className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block">
+                                               Card view
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

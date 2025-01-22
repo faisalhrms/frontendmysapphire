@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import CompanyForm from "@modules/company/components/CompanyForm.jsx";
+import Company from "@modules/company/components/Company.jsx";
 
 
 const CompanyEdit = () => {
@@ -11,11 +11,11 @@ const CompanyEdit = () => {
   return (
     <div>
       <PageHeader
-        currentpage="Edit Equipment"
-        activepage="Equipment"
-        mainpage="Edit Equipment"
+        currentpage="Edit Company"
+        activepage="Company "
+        mainpage="Edit Company"
       />
-      <CompanyForm isEditMode={true} />
+      <Company isEditMode={true} />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import DiscountForm from "../components/DiscountForm";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
@@ -17,6 +16,8 @@ const DiscountCard = () => {
 
   const handleFetchData = async (email = "", cardNo = "") => {
     setIsLoading(true);
+    setFilteredData(null);
+    setErrorMessage("");
 
     try {
       if (selectedOption === "email" && !email) {
@@ -30,13 +31,9 @@ const DiscountCard = () => {
         return;
       }
 
-      setErrorMessage("");
-
       const data = await fetchDiscountData(email, cardNo);
-      if (!data) {
-        setErrorMessage("No data found.");
-      } else if (!data.card_no) {
-        setErrorMessage("This user has no card number.");
+      if (!data || !data.card_no) {
+        setErrorMessage("This user data is not available.");
       } else {
         setFilteredData(data);
       }
@@ -85,7 +82,7 @@ const DiscountCard = () => {
             isLoading={isLoading}
             handleSearch={handleSearch}
             filteredData={filteredData}
-            data={filteredData?.data}
+            errorMessage={errorMessage}
         />
       </>
   );
