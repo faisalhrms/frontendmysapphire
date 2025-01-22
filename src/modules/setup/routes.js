@@ -2,7 +2,7 @@ export const SETUP_ROUTES = {
     COMPANY: {
         READ: {
             path: '/module/setup',
-            permission: 'view_company',
+                permission: 'view_company',
         },
         CREATE: {
             path: '/module/setup/add/',
@@ -27,7 +27,8 @@ export const SETUP_ROUTES = {
             path: '/module/sr/edit',
             permission: 'change_srtype',
         },
-    },
+    }, READ: undefined
+
 };
 
 export const MODULE_ROUTES = [
