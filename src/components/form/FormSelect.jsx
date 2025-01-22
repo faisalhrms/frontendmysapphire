@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form';
 import Select from 'react-select';
 import ErrorMessage from '@components/form/ErrorMessage.jsx';
 
-const FormSelect = ({ name, label = true, control, errors, options, placeholder, className = "", ...rest }) => {
+const FormSelect = ({ name, label = true, control, errors, options, placeholder, className = "", isClearable = true, onSelectChange, ...rest }) => {
     return (
         <>
             {label &&
@@ -16,14 +16,24 @@ const FormSelect = ({ name, label = true, control, errors, options, placeholder,
                     <Select
                         {...field}
                         {...rest}
-                        isClearable={true}
+                        isClearable={isClearable}
                         className={`w-full !rounded-sm border ${errors[name] ? 'border-red' : ''} ${className}`}
                         classNamePrefix="Select2"
                         placeholder={placeholder}
                         options={options}
-                        onChange={option => field.onChange(option ? option.value : '')}
+                        onChange={(option) => {
+                            const value = option ? option.value : '';
+                            field.onChange(value);
+                            if (onSelectChange) {
+                                onSelectChange(value);
+                            }
+                        }}
                         onBlur={field.onBlur}
                         value={options ? options.find(option => option.value === field.value) : null}
+                        menuPortalTarget={document.body}
+                        styles={{
+                            menuPortal: (base) => ({ ...base, zIndex: 9999 })
+                        }}
                     />
                 )}
             />

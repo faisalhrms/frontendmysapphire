@@ -11,9 +11,9 @@ const CompanyEdit = () => {
   return (
     <div>
       <PageHeader
-        currentpage="Edit Equipment"
-        activepage="Equipment"
-        mainpage="Edit Equipment"
+        currentpage="Edit Company"
+        activepage="Company "
+        mainpage="Edit Company"
       />
       <CompanyForm isEditMode={true} />
     </div>

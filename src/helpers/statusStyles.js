@@ -21,7 +21,7 @@ export const statusColorMapping = {
     "Functional": "primary",
     "Lost": "warning",
     "Sold To Employee": "secondary",
-    "Write Off": "warning",
+    "Write Off": "gray",
 };
 
 /**

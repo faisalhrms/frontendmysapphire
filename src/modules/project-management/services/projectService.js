@@ -4,6 +4,7 @@ import Notify from "@helpers/toastNotifications.js";
 export const projectStatuses = [
     { value: 'active', label: 'Active' },
     { value: 'on_hold', label: 'On Hold' },
+    { value: 'completed', label: 'Completed' },
     { value: 'archived', label: 'Archived' }
 ];
 

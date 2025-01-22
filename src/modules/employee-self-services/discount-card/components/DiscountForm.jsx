@@ -14,7 +14,7 @@ const DiscountForm = ({
                           isLoading,
                           handleSearch,
                           filteredData,
-                          data,
+                          errorMessage,
                       }) => {
     return (
         <div className="col-span-12 xl:col-span-6">
@@ -57,6 +57,11 @@ const DiscountForm = ({
                 <div className="text-black p-6 rounded-3xl shadow-2xl max-w-full md:max-w-3xl w-full border bg-white">
                     {isLoading ? (
                         <LoadingSpinner />
+                    ) : errorMessage ? (
+                        <div className="flex flex-col items-center">
+                            <img src={Logo} alt="Sapphire Logo" className="h-7 w-40 mb-4" />
+                            <p className="text-red-500 text-lg">{errorMessage}</p>
+                        </div>
                     ) : (
                         <>
                             <div className="flex flex-col items-center mb-4">
@@ -67,13 +72,10 @@ const DiscountForm = ({
                                 <h6 className="text-sm opacity-80">
                                     Card No. {filteredData?.card_no || "N/A"}
                                 </h6>
-                                {!filteredData && (
-                                    <p className="text-red-500 mt-2">Data not available</p>
-                                )}
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                {data?.map(({ title, value }, index) => (
+                                {filteredData?.data?.map(({ title, value }, index) => (
                                     <div
                                         key={index}
                                         className="flex flex-col items-center border rounded-lg p-4 bg-white"
