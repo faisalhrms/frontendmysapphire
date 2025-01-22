@@ -2,13 +2,14 @@ import {
   createTask,
   updateTask,
   getTaskById,
-  getTaskWithChild
+  getTaskWithChild, updateTaskStatus
 } from "@modules/project-management/services/taskService.js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
 import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
+import {useState, useEffect, useCallback} from "react";
 import {useQuery} from "@tanstack/react-query";
+import {toggleFavouriteProject} from "@modules/project-management/services/projectService.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -170,3 +171,20 @@ export const useTaskWithChild = (taskId) => {
 
   return { task, isLoading, refetch };
 }
+
+export const useUpdateTaskStatus = () => {
+  const [isLoading, setLoading] = useState(false);
+
+  const handleTaskStatus = useCallback(async (id, status) => {
+    setLoading(true);
+    try {
+      return await updateTaskStatus(id, status);
+    } catch (err) {
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { handleTaskStatus, isLoading };
+};

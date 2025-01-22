@@ -1,7 +1,7 @@
 import React from 'react'
 import TaskTable from '../project/TaskTable'
 
-const TaskTree = ({ task, openTaskModal }) => {
+const TaskTree = ({ task, openTaskModal, refetch }) => {
   return (
 
     <>
@@ -17,7 +17,7 @@ const TaskTree = ({ task, openTaskModal }) => {
           </div>
       </div>
         <div className="box-body">
-         <TaskTable tasks={task.children} openTaskModal={openTaskModal} isChild={true}  />
+         <TaskTable tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch}  />
         </div>
       </div>
     </>

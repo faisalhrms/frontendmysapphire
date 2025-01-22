@@ -24,7 +24,7 @@ const ProjectAdditionalDetail = ({project}) => {
                     </Link>
                 </div>
                 <div id="additional-detail-collapse-heading"
-                     className="hs-collapse w-full overflow-hidden transition-[height] duration-300"
+                     className="hs-collapse w-full overflow-hidden transition-[height] duration-300 hidden"
                      aria-labelledby="additional-detail-collapse">
                     <div className="box-body !p-0">
                         <div className="table-responsive">

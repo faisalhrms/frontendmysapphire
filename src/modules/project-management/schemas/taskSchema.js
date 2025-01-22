@@ -3,8 +3,8 @@ import {dateSchema, dateTimeSchema} from "@helpers/schema.js";
 import {prioritiesEnum} from "@modules/project-management/schemas/projectSchema.js";
 
 // Enum for Status
-export const statusEnum = z.enum(["open", "in_progress", "on_hold", "completed", "cancelled"], {
-  errorMap: () => "Status must be 'open', 'in progress', 'on hold', 'completed' or 'cancelled'",
+export const statusEnum = z.enum(["open", 'not_started', "in_progress", "on_hold", "completed", "cancelled"], {
+  errorMap: () => "Status must be 'open', 'not_started', 'in progress', 'on hold', 'completed' or 'cancelled'",
 });
 
 const taskSchema = z.object({
