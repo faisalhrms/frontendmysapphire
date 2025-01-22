@@ -21,6 +21,8 @@ const SubscriptionList = () => {
     const columns = [
         {
             Header: "Actions",
+            accessor: 'id',
+            disableSortBy: true,
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
                     <HasPermission permission="change_subscription">

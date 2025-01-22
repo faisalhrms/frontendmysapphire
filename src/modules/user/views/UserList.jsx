@@ -24,7 +24,8 @@ const UserList = () => {
     const columns = [
         {
             Header: 'Actions',
-            accessor: 'id', // Adding accessor for better performance
+            accessor: 'id',
+            disableSortBy: true,// Adding accessor for better performance
             Cell: ({ value }) => (
                 <HasPermission permission='change_user'>
                     <div className="flex space-x-2">
@@ -38,6 +39,7 @@ const UserList = () => {
                     </div>
                 </HasPermission>
             ),
+
         },
         {
             Header: 'Name',
@@ -156,6 +158,7 @@ const UserList = () => {
                     </span>
                 );
             },
+
         },
         {
             Header: 'Is Super User',

@@ -51,7 +51,7 @@ const EquipmentSummary = ({id,equipmentData}) => {
                 <div className="box-footer">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div>
-                            <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Status</span>
+                            <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Department</span>
                             <span className="block text-[.875rem] font-semibold">
                                 {toTitleCase(equipmentData.department.name)}
 
