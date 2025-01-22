@@ -1,6 +1,5 @@
 import { generateSidebarItem } from "@helpers/formatters.js";
 import { SETUP_ROUTES } from "@modules/setup/routes.js";
-import {SRM_ROUTES} from "@modules/sr-management/routes.js";
 
 export const sidebarMenu = [
     generateSidebarItem(
