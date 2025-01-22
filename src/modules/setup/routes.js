@@ -2,15 +2,15 @@ export const SETUP_ROUTES = {
     COMPANY: {
         READ: {
             path: '/module/setup',
-            // permission: 'view_company',
+            permission: 'view_company',
         },
         CREATE: {
             path: '/module/setup/add/',
-            // permission: 'add_company',
+            permission: 'add_company',
         },
         EDIT: {
             path: '/module/setup/edit',
-            // permission: 'change_company',
+            permission: 'change_company',
 
         },
     },
@@ -21,11 +21,11 @@ export const SETUP_ROUTES = {
         },
         CREATE: {
             path: '/module/sr/add/',
-            // permission: 'create_srtype',
+            permission: 'create_srtype',
         },
         EDIT: {
             path: '/module/sr/edit',
-            // permission: 'change_srtype',
+            permission: 'change_srtype',
         },
     },
 };
@@ -37,7 +37,7 @@ export const MODULE_ROUTES = [
     },
     {
         path: SETUP_ROUTES.COMPANY.CREATE.path,
-        component: () => import('@modules/setup/components/Company.jsx'),
+        component: () => import('@modules/setup/components/CompanyForm.jsx'),
     },
     {
         path: SETUP_ROUTES.COMPANY.EDIT.path,
