@@ -14,6 +14,7 @@ export const createUser = async (userData) => {
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);
+        throw Error(error.response?.data?.message || 'An error occurred while updating the user.');
     }
 };
 

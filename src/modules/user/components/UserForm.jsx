@@ -14,14 +14,14 @@ import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import userEditSchema from "@modules/user/schemas/userEditSchema.js";
 import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
 import PassPolicy from "@components/PassPolicy.jsx";
+import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
 
 const UserForm = ({ userData }) => {
-    // Custom hook that tracks password changes & returns policy status
     const {
         password,
         handlePasswordChange,
         policyStatus,
-    } = usePasswordPolicy(userData?.password || ""); // Initialize with existing password if available
+    } = usePasswordPolicy(userData?.password || "");
 
     const {
         control,
@@ -32,7 +32,7 @@ const UserForm = ({ userData }) => {
         resolver: zodResolver(userEditSchema),
         defaultValues: {
             ...userData,
-            password, // Ensure password is part of default values
+            password,
         },
     });
 
@@ -232,7 +232,7 @@ const UserForm = ({ userData }) => {
                                         value={password}
                                     />
                                     {/* Integrate PassPolicy here, passing both policyStatus and password */}
-                                    <PassPolicy policyStatus={policyStatus} password={password} />
+                                    <PassPolicy policyStatus={policyStatus} password={password}/>
                                 </div>
 
                                 {/* Group IDs Async Select */}
@@ -246,6 +246,19 @@ const UserForm = ({ userData }) => {
                                         apiUrl="/select/roles/"
                                         queryKeyBase="groups"
                                         preselectedOptions={formatOptions(userData, "groups")}
+                                    />
+                                </div>
+
+                                <div className="xl:col-span-12 col-span-12">
+                                    <CompanyDropdown
+                                        name='company_right_ids'
+                                        control={control}
+                                        errors={errors}
+                                        haveLabel={true}
+                                        placeholder='Company Rights'
+                                        multiple={true}
+                                        data={userData}
+                                        dataKey='company_rights'
                                     />
                                 </div>
 
@@ -276,7 +289,7 @@ const UserForm = ({ userData }) => {
                         <div
                             className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end"
                         >
-                            <FormButton isLoading={isSubmitting} />
+                            <FormButton isLoading={isSubmitting}/>
                         </div>
                     </div>
                 </div>

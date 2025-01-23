@@ -14,6 +14,7 @@ import HasPermission from "@components/HasPermission.jsx";
 import ConflictModal from "@modules/project-management/components/model/ConflictModal.jsx";
 import ProjectStatusDropdown from "@modules/project-management/components/dropdowns/ProjectStatusDropdown.jsx";
 import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
+import WorkspaceDropdown from "@components/dropdowns/WorkspaceDropdown.jsx";
 
 const ProjectForm = ({ projectData, isEditMode = false }) => {
     const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
@@ -34,7 +35,8 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
     }, [projectData, setValue]);
 
     const forCustomer = useWatch({ control, name: "for_customer" });
-    const company_id = useWatch({ control, name: "company_id" });
+    const company = useWatch({ control, name: "company_id" });
+    const department = useWatch({ control, name: "department_id" });
     return (
 
         <>
@@ -66,8 +68,8 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                             control={control}
                                             errors={errors}
                                             placeholder="Department"
-                                            apiUrl={`/select/departments/${company_id ? `?company_id=${company_id}` : ''}`}
-                                            queryKeyBase={`departments${company_id ? `${company_id}` : ''}`}
+                                            apiUrl={`/select/departments/${company ? `?company_id=${company}` : ''}`}
+                                            queryKeyBase={`departments${company ? `${company}` : ''}`}
                                             clientSideSearch={true}
                                             preselectedOptions={formatOptions(projectData, 'department')}
                                         />
@@ -174,17 +176,13 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                             <div className="box-title"> Workspace</div>
                         </div>
                         <div className="box-body">
-                            <FormAsyncSelect
-                                label={false}
-                                name="workspace_id"
+                            <WorkspaceDropdown
+                                company_id={company}
+                                department_id={department}
+                                name='workspace_id'
                                 control={control}
                                 errors={errors}
-                                placeholder="Workspace"
-                                apiUrl={`/select/pms/workspaces/`}
-                                queryKeyBase={`pms_workspaces`}
-                                preselectedOptions={formatOptions(projectData, 'workspace')}
-                                saveOptionEndpoint="/select/pms/workspace/"
-                                allowSaveNewOption={true}
+                                saveNewOption={true}
                             />
                         </div>
                     </div>
