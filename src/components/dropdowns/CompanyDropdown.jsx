@@ -7,10 +7,11 @@ const CompanyDropdown = ({
                              errors,
                              data,
                              multiple = false,
-                             key = 'company',
+                             dataKey = 'company',
                              classes = '',
                              haveLabel = false,
                              name = 'company_id',
+                             placeholder='Company',
                              onCompanySelect
                          }) => {
     return (
@@ -20,11 +21,11 @@ const CompanyDropdown = ({
             name={name}
             control={control}
             errors={errors}
-            placeholder="Company"
+            placeholder={placeholder}
             apiUrl="/select/companies/"
             queryKeyBase="companies"
             clientSideSearch={true}
-            preselectedOptions={data ? formatOptions(data, key) : []}
+            preselectedOptions={data ? formatOptions(data, dataKey) : []}
             className={classes}
             onSelectChange={onCompanySelect}
         />

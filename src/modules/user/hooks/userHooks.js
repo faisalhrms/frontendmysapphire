@@ -9,16 +9,12 @@ export const useUserForm = (userData) => {
     const handleUserSubmit = async (data) => {
 
         try {
-            // If userData is present, update user; otherwise, create a new user
             if (userData) {
-
-                // Update user logic
                 await updateUser(userData.id, data);
             } else {
-                // Create new user logic
                 await createUser(data);
             }
-            navigate('/module/users');  // Redirect after successful submission
+            navigate('/module/users');
         } catch (error) {
             console.error('Error:', error.message);
         }
