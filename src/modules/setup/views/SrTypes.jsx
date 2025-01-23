@@ -20,6 +20,7 @@ const SrTypes = () => {
         try {
             const response = await api.get(`/setups/service-requests/${id}/`);
             const data = await response?.data?.data;
+            console.log(data)
             setSaveData(data);
         } catch (error) {
             Notify.error(error.response?.data?.message || "Failed to update Service Request");
@@ -35,17 +36,27 @@ const SrTypes = () => {
 
     const handleSubmitData = async(formData,step) => {
         try{
+            const payload = {
+                name: saveData?.name,
+                short_name: saveData?.short_name,
+                sr_type_joins: [
+                    {
+                        department_id: saveData?.department||formData?.department,
+                        sub_department_id: saveData?.sub_department||formData?.sub_department
+                    }
+                ]
+            };
 
             console.log(step)
             if(step!=undefined){
                 setSaveData(formData);
                 try {
                     if(id){
-                        const response = await api.put(`/setups/service-requests/${id}/`, {...formData})
+                        const response = await api.put(`/setups/service-requests/${id}/`, payload)
                         Notify.success("Successfully updated Service Request");
                         router("/module/sr")
                     }else{
-                        const response = await api.post(`/setups/service-requests/`,saveData)
+                        const response = await api.post(`/setups/service-requests/`,payload)
                         Notify.success("Successfully Created ..!");
                         router("/module/sr")
                     }

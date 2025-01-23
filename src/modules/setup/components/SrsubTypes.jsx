@@ -25,7 +25,7 @@ const SrsubTypesForm = ({ handleSubmitData, saveData }) => {
     const [departmentOptions, setDepartmentOptions] = useState([]);
     const [subDepartmentOptions, setSubDepartmentOptions] = useState([]);
     const [companyOptions, setCompanyOptions] = useState([]);
-    console.log(companyOptions);
+
 
     const [selectedDepartment, setSelectedDepartment] = useState(
         saveData?.sr_type_joins?.[0]?.department || null
