@@ -32,10 +32,9 @@ const userCreateSchema = z.object({
         invalid_type_error: "Employee ID must be a number",
     }),
     group_ids: z
-        .array(z.number().positive({ message: "Group IDs must be positive numbers" }))
-        .min(1, { message: "At least one role is required" }),
-    // Uncomment if 'status' is required
-    // status: statusEnum.default("active"),
+        .array(z.number().positive({ message: "Group IDs must be positive numbers" })).optional(),
+    company_right_ids: z
+        .array(z.number().positive({ message: "Company IDs must be positive numbers" })).optional(),
 });
 
 export default userCreateSchema;

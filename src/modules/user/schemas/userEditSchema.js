@@ -20,6 +20,11 @@ const userUpdateSchema = z.object({
             invalid_type_error: "Group IDs must be an array of positive numbers",
         })
         .optional(),
+    company_right_ids: z
+        .array(z.number().positive({ message: "Company IDs must be positive numbers" }), {
+            invalid_type_error: "Company IDs must be an array of positive numbers",
+        })
+        .optional(),
     status: statusEnum.optional(),
 });
 

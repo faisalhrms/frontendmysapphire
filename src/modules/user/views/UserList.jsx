@@ -191,6 +191,23 @@ const UserList = () => {
                 </div>
             ),
         },
+        {
+            Header: 'Company Rights',
+            accessor: 'company_rights',
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {Array.isArray(value) && value.length > 0 ? (
+                        [...new Set(value)].map((right, index) => (
+                            <span key={index} className="badge bg-primary/10 text-primary">
+                                {toTitleCase(right.name)}
+                            </span>
+                        ))
+                    ) : (
+                        <span className="badge bg-gray-200 text-gray-800">No Company Rights</span>
+                    )}
+                </div>
+            ),
+        },
         // {
         //     Header: 'Actions',
         //     accessor: 'id', // Adding accessor for better performance
