@@ -80,7 +80,7 @@ console.log(error)
 
     return (
         <>
-            <PageHeader currentpage="Sr Types" />
+            <PageHeader currentpage={id?"Edit Sr Types":"Sr Types"} />
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">

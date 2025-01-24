@@ -52,7 +52,6 @@ const CompanyList = () => {
             Header: "Department",
             accessor: "sr_type_joins",
             Cell: ({ row }) => {
-                // Access the first sr_type_joins entry and display the department name
                 const departmentName = row?.original?.sr_type_joins?.[0]?.department?.name || "";
                 return <span>{departmentName}</span>;
             },
@@ -61,7 +60,6 @@ const CompanyList = () => {
             Header: "Sub Department",
             accessor: "sub_department",
             Cell: ({ row }) => {
-                // Access the first sr_type_joins entry and display the department name
                 const departmentName = row?.original?.sr_type_joins?.[0]?.sub_department?.name || "";
                 return <span>{departmentName}</span>;
             },
@@ -82,7 +80,7 @@ const CompanyList = () => {
 
     return (
         <>
-            <PageHeader currentpage="SrType" mainpage="Edit SrType" />
+            <PageHeader currentpage="SrType" mainpage=" SrType" />
             <DataTable
                 columns={columns}
                 title="Sr Type"
