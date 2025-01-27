@@ -42,8 +42,8 @@ const SrsubTypesForm = ({ handleSubmitData, saveData }) => {
                         debounceDelay={300}
                         onSelectChange={(selected) => {
                             setValue("company_id", selected || null);
-                            setValue("department", null); // Reset department
-                            setValue("sub_department", null); // Reset sub-department
+                            setValue("department", null);
+                            setValue("sub_department", null);
                         }}
                     />
                 </div>
@@ -61,7 +61,7 @@ const SrsubTypesForm = ({ handleSubmitData, saveData }) => {
                         debounceDelay={300}
                         onSelectChange={(selected) => {
                             setValue("department", selected || null);
-                            setValue("sub_department", null); // Reset sub-department
+                            setValue("sub_department", null);
                         }}
                     />
                 </div>
@@ -91,3 +91,5 @@ const SrsubTypesForm = ({ handleSubmitData, saveData }) => {
 };
 
 export default SrsubTypesForm;
+SrsubTypesForm.jsx
+

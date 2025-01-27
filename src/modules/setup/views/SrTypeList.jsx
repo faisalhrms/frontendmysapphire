@@ -1,43 +1,39 @@
 import React, { useEffect, useState } from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toTitleCase } from "@helpers/formatters.js";
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 const CompanyList = () => {
-    const router = useNavigate()
-
-  const updateServiceRequest = async (id, serviceRequestData) => {
-
-    router("/module/sr/add/");
+    const router = useNavigate();
 
 
+    const updateSrType = async (id, srTypeData) => {
 
+        router("/module/sr/add/");
     };
 
     const columns = [
         {
             Header: "Actions",
             Cell: ({ row }) => {
-
                 console.log(row);
 
-               return (
-
-                <div className="flex space-x-2">
-
-                    <Link
-                        to="/module/sr/add/"
-                        state={{ id: row.original.id }}
-                    >
-                        <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
-                            <i className="ri-edit-line"></i>
-                        </button>
-                    </Link>
-                </div>
-            )},
+                return (
+                    <div className="flex space-x-2">
+                        <Link
+                            to="/module/sr/add/"
+                            state={{ id: row.original.id }}
+                        >
+                            <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
+                                <i className="ri-edit-line"></i>
+                            </button>
+                        </Link>
+                    </div>
+                );
+            },
         },
         {
             Header: "Name",
@@ -46,13 +42,14 @@ const CompanyList = () => {
         {
             Header: "Short Name",
             accessor: "short_name",
-            Cell: ({value}) => toTitleCase(value),
+            Cell: ({ value }) => toTitleCase(value),
         },
         {
             Header: "Department",
             accessor: "sr_type_joins",
             Cell: ({ row }) => {
-                const departmentName = row?.original?.sr_type_joins?.[0]?.department?.name || "";
+                const departmentName =
+                    row?.original?.sr_type_joins?.[0]?.department?.name || "";
                 return <span>{departmentName}</span>;
             },
         },
@@ -60,11 +57,11 @@ const CompanyList = () => {
             Header: "Sub Department",
             accessor: "sub_department",
             Cell: ({ row }) => {
-                const departmentName = row?.original?.sr_type_joins?.[0]?.sub_department?.name || "";
+                const departmentName =
+                    row?.original?.sr_type_joins?.[0]?.sub_department?.name || "";
                 return <span>{departmentName}</span>;
             },
         },
-
     ];
 
     const buttons = (
@@ -80,11 +77,11 @@ const CompanyList = () => {
 
     return (
         <>
-            <PageHeader currentpage="SrType" mainpage=" SrType" />
+            <PageHeader currentpage="SrType" mainpage="SrType" />
             <DataTable
                 columns={columns}
                 title="Sr Type"
-                apiUrl="/setups/service-requests/datatable/"
+                apiUrl="/setups/sr-types/datatable/"
                 buttons={buttons}
             />
         </>
