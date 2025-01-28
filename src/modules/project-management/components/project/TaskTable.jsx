@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {getExcerptFromText, toTitleCase} from "@helpers/formatters.js";
-import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
+import {getBadgeClasses} from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
 import {Link} from "react-router-dom";
@@ -8,12 +8,15 @@ import Tooltip from '@components/Tooltip.jsx';
 import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
+import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 
-const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, startedAt = null, endedAt = null, isChild = false}) => {
+const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
+
     const toggleSubTasks = (taskId) => {
         setActiveTaskId(prevId => (prevId === taskId ? null : taskId));
     };
+
     return (<>
             <div className={`table-responsive`}>
                 <table className="table whitespace-nowrap table-bordered min-w-full">
@@ -37,7 +40,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                             <td>
                                     <span className='flex space-x-2'>
                                           <HasPermission permission='add_task'>
-                                            {task.status === 'active' || task.status === 'in_progress' && projectStatus === 'active' && milestoneStatus === 'active' && (
+                                            { projectStatus === 'active' && milestoneStatus === 'active' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
                                                     tooltipContent={`Add Sub Task To (${task.name})`}
@@ -53,7 +56,6 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                                                 </HasPermission>
 
                                         <HasPermission permission='change_task'>
-                                        {task.status === "completed" || task.status === "under_approval" ? ('') : (
                                             <Tooltip
                                                 id={`edit-tooltip-${task.id}-edit`}
                                                 tooltipContent={`Edit (${task.name})`}
@@ -63,7 +65,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                                                     className='ti-btn ti-btn-primary ti-btn-sm'>
                                                     <i className="ri-edit-line align-middle"></i>
                                                 </button>
-                                            </Tooltip>)}
+                                            </Tooltip>
                                         </HasPermission>
 
                                     </span>
@@ -94,40 +96,36 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                                     <span className="flex items-center">
                                         <Tooltip
                                             id={`task-tooltip-${task.id}`}
-                                            tooltipContent={`${task.name}`}
-                                        >
+                                            tooltipContent={`${task.name}`}>
                                             <p className="font-semibold mb-[1.4px] text-[0.813rem] ms-2">
                                                 {getExcerptFromText(task.name, 30)}
                                             </p>
                                         </Tooltip>
-
-
                                         {task.children && (<span className="badge bg-primary text-white ms-2">
                                                 {task.children.length}
                                             </span>)}
                                     </span>
                             </td>
-
-
-                            <td><span className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</span></td>
+                            <td className="min-w-[200px]">
+                                <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch} />
+                            </td>
                             <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                             </td>
                             <td>{formatDate(task.started_at)}</td>
                             <td>{formatDate(task.ended_at)}</td>
                             <td><AvatarList users={task.users} max={4}/></td>
-                            <td>
+                            <td className="min-w-[180px]">
                                 <div className="flex items-center flex-wrap">
                                     <div className="me-2 leading-none">
                                         <Avatar avatar={task?.created_by?.avatar} size='xs'/>
                                     </div>
-                                    <span
-                                        className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{toTitleCase(task?.created_by?.full_name)}</span>
+                                    <span className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{toTitleCase(task?.created_by?.full_name)}</span>
                                 </div>
                             </td>
                         </tr>
                         {activeTaskId === task.id && task.children && task.children.length > 0 && (<tr>
                             <td colSpan="8">
-                                <TaskTable tasks={task.children} openTaskModal={openTaskModal} isChild={true}/>
+                                <TaskTable tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch}/>
                             </td>
                         </tr>)}
                     </React.Fragment>))}
@@ -137,4 +135,4 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
     </>);
 };
 
-export default TaskTable
+export default React.memo(TaskTable)

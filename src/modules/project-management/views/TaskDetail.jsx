@@ -43,7 +43,7 @@ const TaskDetail = () => {
           <div className="xl:col-span-9 col-span-12">
             <TaskSummary task={task} openTaskModal={openTaskModal} />
             {task.children.length > 0 && (
-              <TaskTree task={task} openTaskModal={openTaskModal} />
+              <TaskTree task={task} openTaskModal={openTaskModal} refetch={refetch} />
             )}
             <Discussion
               title="Task Discussions"

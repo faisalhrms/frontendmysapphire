@@ -3,9 +3,7 @@ import { useForm } from "react-hook-form";
 import React, {useEffect} from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
-import {useLocation, useNavigate} from "react-router-dom";
-import api from "@config/axiosConfig.js";
-import Notify from "@helpers/toastNotifications.js";
+
 
 const SrTypesForm = ({ handleSubmitData, editData,saveData }) => {
     const {
@@ -28,22 +26,10 @@ const SrTypesForm = ({ handleSubmitData, editData,saveData }) => {
 
 
     const onSubmit = async(formData) => {
-        console.log("Submitting Form Data:", formData); // Log data to console
-        handleSubmitData(formData); // Send data to the handler
+        console.log("Submitting Form Data:", formData);
+        handleSubmitData(formData);
 
-        // try {
-        //     if(id){
-        //         const response = await api.put(`/setups/service-requests/${id}/`,formData)
-        //         Notify.success("Successfully updated Service Request");
-        //         router("/module/sr")
-        //     }else{
-        //         const response = await api.post(`/setups/service-requests/`,formData)
-        //         Notify.success("Successfully Created ..!");
-        //         router("/module/sr")
-        //     }
-        // }catch(error){
-        //
-        // }
+
 
     };
 

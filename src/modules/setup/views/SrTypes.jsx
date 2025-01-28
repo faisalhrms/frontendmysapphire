@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import SrTypeForm from "@modules/setup/components/SrTypeForm.jsx";
@@ -13,63 +12,73 @@ const SrTypes = () => {
     const router = useNavigate();
     const location = useLocation();
     const { id } = location.state || {};
-    const  [saveData, setSaveData] = useState({});
+    const [saveData, setSaveData] = useState({});
     console.log(saveData);
 
-    const handleFetch = async(id)=>{
+    const handleFetch = async(id) => {
         try {
-            const response = await api.get(`/setups/service-requests/${id}/`);
+            const response = await api.get(`/setups/sr-types/${id}/`);
             const data = await response?.data?.data;
+            console.log(data);
             setSaveData(data);
         } catch (error) {
-            Notify.error(error.response?.data?.message || "Failed to update Service Request");
+            Notify.error(error.response?.data?.message || "Failed to update Sr Type");
             throw error;
         }
-    }
+    };
 
-    useEffect(()=>{
-        if(id){
-            handleFetch(id)
+    useEffect(() => {
+        if(id) {
+            handleFetch(id);
         }
-    },[id])
+    }, [id]);
 
-    const handleSubmitData = async(formData,step) => {
-        try{
+    const handleSubmitData = async(formData, step) => {
+        try {
+            const payload = {
+                name: saveData?.name,
+                short_name: saveData?.short_name,
+                sr_type_joins: [
+                    {
+                        department_id: saveData?.department || formData?.department,
+                        sub_department_id: saveData?.sub_department || formData?.sub_department
+                    }
+                ]
+            };
 
-            console.log(step)
-            if(step!=undefined){
+            console.log(step);
+            if(step !== undefined) {
                 setSaveData(formData);
                 try {
-                    if(id){
-                        const response = await api.put(`/setups/service-requests/${id}/`, {...formData})
-                        Notify.success("Successfully updated Service Request");
-                        router("/module/sr")
-                    }else{
-                        const response = await api.post(`/setups/service-requests/`,saveData)
-                        Notify.success("Successfully Created ..!");
-                        router("/module/sr")
+                    if(id) {
+                        const response = await api.put(`/setups/sr-types/${id}/`, payload);
+                        Notify.success("Successfully updated Sr Type");
+                        router("/module/sr");
+                    } else {
+                        const response = await api.post(`/setups/sr-types/`, payload);
+
+                        Notify.success("Successfully Created Sr Type..!");
+                        router("/module/sr");
                     }
-                }catch(error){
+                } catch(error) {
 
                 }
-
-            }else{
+            } else {
                 console.log("Submitting Form Data:", formData);
                 setSaveData((prevData) => ({
-                    ...prevData, // Spread the previous state
-                    ...formData, // Merge the new data
+                    ...prevData,
+                    ...formData,
                 }));
-
-                setActiveTab("sr-type-assignment")
+                setActiveTab("sr-type-assignment");
             }
-        }catch(error){
-console.log(error)
+        } catch(error) {
+            console.log(error);
         }
-    }
+    };
 
     return (
         <>
-            <PageHeader currentpage="Sr Types" />
+            <PageHeader currentpage={id ? "Edit Sr Types" : "Sr Types"} />
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
@@ -98,7 +107,6 @@ console.log(error)
                                 >
                                     Sr Type Assignment
                                 </button>
-
                             </nav>
                         </div>
                         <div className="box-body">
@@ -112,7 +120,6 @@ console.log(error)
                                     <SrsubTypesForm saveData={saveData} handleSubmitData={handleSubmitData}/>
                                 </div>
                             )}
-
                         </div>
                     </div>
                 </div>

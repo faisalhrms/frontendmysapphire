@@ -82,6 +82,7 @@ const ProjectTree = ({ projectId, projectStatus, startedAt, endedAt, milestones,
                   openTaskModal={openTaskModal}
                   openMilestoneModal={openMilestoneModal}
                   handleUploadModal={handleUploadModal}
+                  refetch={refetch}
             />
           )}
         </div>

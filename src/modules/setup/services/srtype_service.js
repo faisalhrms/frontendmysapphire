@@ -1,46 +1,45 @@
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
-export const createServiceRequest = async (serviceRequestData) => {
+export const createSrType = async (srTypeData) => {
   try {
-    const response = await api.post("/setups/service-requests/", serviceRequestData);
-    Notify.success("Service Request Created Successfully!");
+    const response = await api.post("/setups/sr-types/", srTypeData);
+    Notify.success("Sr Type Created Successfully!");
     return response.data;
   } catch (error) {
-    Notify.error(error.response?.data?.message || "Failed to create Service Request");
+    Notify.error(error.response?.data?.message || "Failed to create Sr Type");
     throw error;
   }
 };
 
-export const getServiceRequests = async () => {
+export const getSrTypes = async () => {
   try {
-    const response = await api.get("/setups/service-requests/datatable/");
+    const response = await api.get("/setups/sr-types/datatable/");
     return response.data;
   } catch (error) {
-    Notify.error(error.response?.data?.message || "Failed to fetch Service Requests");
+    Notify.error(error.response?.data?.message || "Failed to fetch Sr Types");
     throw error;
   }
 };
 
-export const getServiceRequestById = async (id) => {
+export const getSrTypeById = async (id) => {
   try {
-    const response = await api.get(`/setups/service-requests/${id}/`);
+    const response = await api.get(`/setups/sr-types/${id}/`);
     return response?.data?.data;
   } catch (error) {
-    Notify.error(error.response?.data?.message || "Failed to fetch Service Request details");
+    Notify.error(error.response?.data?.message || "Failed to fetch Sr Type details");
     throw error;
   }
 };
 
-export const updateServiceRequest = async (id, serviceRequestData) => {
+export const updateSrType = async (id, srTypeData) => {
   try {
-    const response = await api.get(`/setups/service-requests/${id}/`, serviceRequestData);
-    Notify.success("Service Request Updated Successfully!");
+
+    const response = await api.get(`/setups/sr-types/${id}/`, srTypeData);
+    Notify.success("Sr Type Updated Successfully!");
     return response.data;
   } catch (error) {
-    Notify.error(error.response?.data?.message || "Failed to update Service Request");
+    Notify.error(error.response?.data?.message || "Failed to update Sr Type");
     throw error;
   }
 };
-
-

@@ -1,5 +1,3 @@
-// src/modules/user/components/CreateUser.jsx
-
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +10,7 @@ import { useUserForm } from "@modules/user/hooks/userHooks.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
 import PassPolicy from "@components/PassPolicy.jsx";
+import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
 
 const CreateUser = () => {
     // usePasswordPolicy hook
@@ -36,6 +35,7 @@ const CreateUser = () => {
             avatar: 0,
             employee: 0,
             group_ids: [],
+            company_right_ids: []
         },
     });
 
@@ -50,6 +50,7 @@ const CreateUser = () => {
             avatar: data.avatar,
             employee: data.employee,
             group_ids: data.group_ids,
+            company_right_ids: data.company_right_ids
         });
     };
 
@@ -77,7 +78,7 @@ const CreateUser = () => {
                                     </div>
 
                                     {/* Password */}
-                                    <div className="xl:col-span-4 col-span-12 relative">
+                                    <div className="xl:col-span-3 col-span-12 relative">
                                         <FormInput
                                             type="password"
                                             name="password"
@@ -91,11 +92,11 @@ const CreateUser = () => {
                                             value={password}
                                         />
                                         {/* Pass password to PassPolicy */}
-                                        <PassPolicy policyStatus={policyStatus} password={password} />
+                                        <PassPolicy policyStatus={policyStatus} password={password}/>
                                     </div>
 
                                     {/* Employee (LOV) */}
-                                    <div className="xl:col-span-4 col-span-12">
+                                    <div className="xl:col-span-3 col-span-12">
                                         <FormAsyncSelect
                                             name="employee"
                                             control={control}
@@ -110,7 +111,7 @@ const CreateUser = () => {
                                     </div>
 
                                     {/* Group IDs (Multi Select from Roles) */}
-                                    <div className="xl:col-span-4 col-span-12">
+                                    <div className="xl:col-span-3 col-span-12">
                                         <FormAsyncSelect
                                             isMulti={true}
                                             name="group_ids"
@@ -124,12 +125,23 @@ const CreateUser = () => {
                                         />
                                     </div>
 
+                                    <div className="xl:col-span-3 col-span-12">
+                                        <CompanyDropdown
+                                            name='company_right_ids'
+                                            control={control}
+                                            errors={errors}
+                                            haveLabel={true}
+                                            placeholder='Company Rights'
+                                            multiple={true}
+                                        />
+                                    </div>
+
                                     {/* is_superuser Toggle */}
                                     <div className="xl:col-span-12 col-span-12 flex items-center space-x-2">
                                         <Controller
                                             name="is_superuser"
                                             control={control}
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <div className="custom-toggle-switch flex items-center">
                                                     <input
                                                         id="toggleswitch_is_superuser"
@@ -138,7 +150,8 @@ const CreateUser = () => {
                                                         onChange={(e) => field.onChange(e.target.checked)}
                                                         className="hidden"
                                                     />
-                                                    <label htmlFor="toggleswitch_is_superuser" className="label-info"></label>
+                                                    <label htmlFor="toggleswitch_is_superuser"
+                                                           className="label-info"></label>
                                                     <span className="ml-2">Is Superuser?</span>
                                                 </div>
                                             )}
@@ -150,7 +163,7 @@ const CreateUser = () => {
                                         <Controller
                                             name="is_active"
                                             control={control}
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <div className="custom-toggle-switch flex items-center">
                                                     <input
                                                         id="toggleswitch_is_active"
@@ -159,7 +172,8 @@ const CreateUser = () => {
                                                         onChange={(e) => field.onChange(e.target.checked)}
                                                         className="hidden"
                                                     />
-                                                    <label htmlFor="toggleswitch_is_active" className="label-info"></label>
+                                                    <label htmlFor="toggleswitch_is_active"
+                                                           className="label-info"></label>
                                                     <span className="ml-2">Is Active?</span>
                                                 </div>
                                             )}
@@ -167,8 +181,9 @@ const CreateUser = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
-                                <FormButton isLoading={isSubmitting} />
+                            <div
+                                className="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
+                                <FormButton isLoading={isSubmitting}/>
                             </div>
                         </div>
                     </div>

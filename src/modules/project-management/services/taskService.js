@@ -2,7 +2,8 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const taskStatuses = [
-    { value: 'open', label: 'open' },
+    { value: 'open', label: 'Open' },
+    { value: 'not_started', label: 'Not Started' },
     { value: 'in_progress', label: 'In Progress' },
     { value: 'on_hold', label: 'On Hold' },
     { value: 'completed', label: 'Completed' },
@@ -61,3 +62,14 @@ export const getTaskWithChild = async (id) => {
        Notify.error(error.response?.data?.message);
     }
 };
+
+export const updateTaskStatus = async (id, status) => {
+    try {
+        const response = await api.post(`/pms/tasks/${id}/update-status/`, {status: status});
+        Notify.success(response.data.message);
+        return response.data.data;
+    }catch (error){
+        Notify.error(error.response?.data?.message);
+        throw Error(error.response?.data?.message || 'An error occurred');
+    }
+}

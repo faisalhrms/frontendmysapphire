@@ -1,14 +1,14 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import React, { useCallback, useEffect, useState } from "react";
 import api from "@config/axiosConfig.js";
 import FormButton from "@components/form/FormButton.jsx";
-
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 
 const SrsubTypesForm = ({ handleSubmitData, saveData }) => {
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting }, // Ensure isSubmitting is destructured
+        formState: { errors, isSubmitting },
         setValue,
         watch,
     } = useForm({
@@ -21,107 +21,6 @@ const SrsubTypesForm = ({ handleSubmitData, saveData }) => {
         },
     });
 
-
-    const [departmentOptions, setDepartmentOptions] = useState([]);
-    const [subDepartmentOptions, setSubDepartmentOptions] = useState([]);
-    const [companyOptions, setCompanyOptions] = useState([]);
-    console.log(companyOptions);
-
-    const [selectedDepartment, setSelectedDepartment] = useState(
-        saveData?.sr_type_joins?.[0]?.department || null
-    );
-    const [selectedSubDepartment, setSelectedSubDepartment] = useState(
-        saveData?.sr_type_joins?.[0]?.sub_department || null
-    );
-    const [selectedCompany, setSelectedCompany] = useState(
-        saveData?.sr_type_joins?.[0]?.department?.company_id || null
-    );
-
-    // Fetch Departments
-    const fetchDepartments = useCallback(async () => {
-        try {
-            const response = await api.get("/select/departments");
-            const formattedOptions = response.data.data.map((item) => ({
-                value: item.value,
-                label: item.label,
-            }));
-            console.log(response.data.data)
-            setDepartmentOptions(formattedOptions);
-
-            // Set default department
-            if (saveData?.sr_type_joins?.[0]?.department?.id) {
-                const defaultDepartment = formattedOptions.find(
-                    (option) => option.value === saveData.sr_type_joins[0].department.id
-                );
-                if (defaultDepartment) {
-                    setSelectedDepartment(defaultDepartment);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching departments:", error);
-        }
-    }, [saveData]);
-
-    // Fetch Sub-Departments
-    const fetchSubDepartments = useCallback(async (departmentId) => {
-        try {
-            const response = await api.get(`/select/sub-departments/`);
-            const formattedOptions = response.data.data.map((item) => ({
-                value: item.value,
-                label: item.label,
-            }));
-            setSubDepartmentOptions(formattedOptions);
-
-            // Set default sub-department
-            if (saveData?.sr_type_joins?.[0]?.sub_department?.id) {
-                const defaultSubDepartment = formattedOptions.find(
-                    (option) => option.value === saveData.sr_type_joins[0].sub_department.id
-                );
-                if (defaultSubDepartment) {
-                    setSelectedSubDepartment(defaultSubDepartment);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching sub-departments:", error);
-        }
-    }, [saveData]);
-
-    // Fetch Companies
-    const fetchCompanies = useCallback(async () => {
-        try {
-            const response = await api.get("/select/companies");
-            const formattedOptions = response.data.data.map((item) => ({
-                value: item.value,
-                label: item.label,
-            }));
-
-            console.log(response.data.data)
-            setCompanyOptions(formattedOptions);
-
-            // Set default company
-            if (saveData?.sr_type_joins?.[0]?.department?.company_id) {
-                const defaultCompany = formattedOptions.find(
-                    (option) => option.value === saveData.sr_type_joins[0].department.company_id
-                );
-                if (defaultCompany) {
-                    setSelectedCompany(defaultCompany);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching companies:", error);
-        }
-    }, [saveData]);
-
-    // Fetch data on mount
-    useEffect(() => {
-        fetchDepartments();
-        fetchCompanies();
-
-        if (saveData?.sr_type_joins?.[0]?.department?.id) {
-            fetchSubDepartments(saveData.sr_type_joins[0].department.id);
-        }
-    }, [fetchDepartments, fetchCompanies, fetchSubDepartments, saveData]);
-
     const onSubmit = (formData) => {
         console.log("Form Data Submitted:", formData);
         handleSubmitData(formData, 1);
@@ -130,97 +29,67 @@ const SrsubTypesForm = ({ handleSubmitData, saveData }) => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-12 gap-4">
-                {/* Company Dropdown */}
+                {/* Company */}
                 <div className="xl:col-span-4 col-span-12">
-                    <label className="block mb-2 text-sm font-medium text-black">Company</label>
-                    <select
-                        value={selectedCompany?.value || ""}
-                        onChange={(e) => {
-                            const selectedOption = companyOptions.find(
-                                (option) => option.value === parseInt(e.target.value, 10)
-                            );
-                            setSelectedCompany(selectedOption);
-                            setValue("company_id", selectedOption?.value || null);
-                        }}
-                        className="block w-full px-3 py-1.5 text-sm border border-gray-300 bg-white rounded-sm shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="" disabled>
-                            Select a Company
-                        </option>
-                        {companyOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* Department Dropdown */}
-                <div className="xl:col-span-4 col-span-12">
-                    <label className="block mb-2 text-sm font-medium text-black">Department</label>
-                    <select
-                        value={selectedDepartment?.value || ""}
-                        onChange={(e) => {
-                            const selectedOption = departmentOptions.find(
-                                (option) => option.value === parseInt(e.target.value, 10)
-                            );
-                            setSelectedDepartment(selectedOption);
-                            setValue("department", selectedOption?.value || null);
-
-                            // Reset Sub-Department when Department changes
-                            setSelectedSubDepartment(null);
+                    <FormAsyncSelect
+                        name="company_id"
+                        label="Company"
+                        control={control}
+                        errors={errors}
+                        placeholder="Select a Company"
+                        apiUrl="/select/companies"
+                        queryKeyBase="companies"
+                        debounceDelay={300}
+                        onSelectChange={(selected) => {
+                            setValue("company_id", selected || null);
+                            setValue("department", null);
                             setValue("sub_department", null);
-
-                            // Fetch Sub-Departments
-                            if (selectedOption?.value) {
-                                fetchSubDepartments(selectedOption.value);
-                            }
                         }}
-                        className="block w-full px-3 py-1.5 text-sm border border-gray-300 bg-white rounded-sm shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="" disabled>
-                            Select a Department
-                        </option>
-                        {departmentOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                    />
                 </div>
 
-                {/* Sub-Department Dropdown */}
+                {/* Department */}
                 <div className="xl:col-span-4 col-span-12">
-                    <label className="block mb-2 text-sm font-medium text-black">Sub-Department</label>
-                    <select
-                        value={selectedSubDepartment?.value || ""}
-                        onChange={(e) => {
-                            const selectedOption = subDepartmentOptions.find(
-                                (option) => option.value === parseInt(e.target.value, 10)
-                            );
-                            setSelectedSubDepartment(selectedOption);
-                            setValue("sub_department", selectedOption?.value || null);
+                    <FormAsyncSelect
+                        name="department"
+                        label="Department"
+                        control={control}
+                        errors={errors}
+                        placeholder="Select a Department"
+                        apiUrl={`/select/departments?company_id=${watch("company_id") || ""}`}
+                        queryKeyBase="departments"
+                        debounceDelay={300}
+                        onSelectChange={(selected) => {
+                            setValue("department", selected || null);
+                            setValue("sub_department", null);
                         }}
-                        className="block w-full px-3 py-1.5 text-sm border border-gray-300 bg-white rounded-sm shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="" disabled>
-                            Select a Sub-Department
-                        </option>
-                        {subDepartmentOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                    />
                 </div>
 
+                {/* Sub-Department */}
+                <div className="xl:col-span-4 col-span-12">
+                    <FormAsyncSelect
+                        name="sub_department"
+                        label="Sub-Department"
+                        control={control}
+                        errors={errors}
+                        placeholder="Select a Sub-Department"
+                        apiUrl={`/select/sub-departments?department_id=${watch("department") || ""}`}
+                        queryKeyBase="subDepartments"
+                        debounceDelay={300}
+                        onSelectChange={(selected) => setValue("sub_department", selected || null)}
+                    />
+                </div>
+
+                {/* Submit Button */}
                 <div className="col-span-12 flex justify-end">
-                    <FormButton isLoading={isSubmitting} type="submit"/>
+                    <FormButton isLoading={isSubmitting} type="submit" />
                 </div>
-
             </div>
         </form>
     );
 };
 
 export default SrsubTypesForm;
+SrsubTypesForm.jsx
+
