@@ -161,7 +161,7 @@ const removeExistingAttachment = (attachmentId) => {
             >
               <input
                 type="file"
-                className="border rounded-md py-2 px-3 w-full"
+                className="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50 file:me-4 file:py-2 file:px-4 file:rounded-s-sm file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary focus-visible:outline-none"
                 onChange={(event) => handleFileChange(event, index)}
               />
               <div className="flex items-center flex-shrink-0 ml-2">
