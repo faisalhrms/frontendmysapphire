@@ -29,7 +29,6 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                                     <i className="ri-file-upload-line me-1 font-semibold align-middle"></i>
                                     Upload Milestones
                                 </button>
-
                                 <Link
                                     to={`/module/projects/edit/${project.id}`}
                                     className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
