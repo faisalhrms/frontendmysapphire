@@ -10,6 +10,7 @@ const EquipmentList = () => {
     const columns = [
         {
             Header: "Actions",
+            accessor: 'id',
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
                     <Link to={`/module/equipment/edit/${row.original.id}`}>
@@ -28,7 +29,7 @@ const EquipmentList = () => {
         { Header: "Code", accessor: "code" },
 
         { Header: "Serial No", accessor: "serial_no" },
-        {Header: 'Status', Cell: ({ row }) => (
+        {Header: 'Status',accessor: "status", Cell: ({ row }) => (
                 <span className={ getBadgeClasses(row.original.status) }>{ toTitleCase(row.original.status) }</span>
             )},
         { Header: "Custodian", accessor: "custodian.full_name" },

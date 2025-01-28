@@ -1,6 +1,7 @@
 import {calculateEffort, formatDate} from "@helpers/dateTime.js";
 import React from "react";
 import HasPermission from "@components/HasPermission.jsx";
+import ProgressBar from "@components/ProgressBar.jsx";
 
 const TaskSummary = ({task, openTaskModal}) => {
     return (
@@ -59,19 +60,18 @@ const TaskSummary = ({task, openTaskModal}) => {
                                 className="block text-[.875rem] font-semibold dark:text-defaulttextcolor/70 {formatDate(task.ended_at)}">{formatDate(task.ended_at)}</span>
                         </div>
                         <div className="task-details-progress">
-                            <span
-                                className="block text-[#8c9097] dark:text-white/50 text-[0.75rem] mb-1">Progress</span>
+                            <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem] mb-1">Progress</span>
                             <div className="flex items-center flex-wrap">
-                                <div className="progress progress-xs progress-animate flex-grow me-2"
-                                     style={{width: '70%'}}>
-                                    <div className="progress-bar bg-primary"></div>
-                                </div>
-                                <div className="text-[#8c9097] dark:text-white/50 text-[.6875rem]">0%</div>
+                                <ProgressBar
+                                    value={task.progress}
+                                    withStatus={false}
+                                />
                             </div>
                         </div>
                         <div>
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Efforts</span>
-                            <span className="block text-[.875rem]  dark:text-defaulttextcolor/70 font-semibold">{ calculateEffort(task.started_at, task.ended_at) }</span>
+                            <span
+                                className="block text-[.875rem]  dark:text-defaulttextcolor/70 font-semibold">{calculateEffort(task.started_at, task.ended_at)}</span>
                         </div>
                     </div>
                 </div>
