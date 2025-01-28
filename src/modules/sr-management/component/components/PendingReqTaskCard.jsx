@@ -27,7 +27,7 @@ const PendingReqTaskCard = ({pendingReqData = {}}) => {
                             <p className="font-semibold">
                                 {pendingReqData?.on_behalf_of
                                     ? "On Behalf: "
-                                    : pendingReqData?.employee_info?.concern_person || "Employee: "}
+                                    : "Reporter Name: "}
                             </p>
                         </div>
                         <p className="opacity-70">{pendingReqData?.employee_info?.concern_person || "-"}</p>
