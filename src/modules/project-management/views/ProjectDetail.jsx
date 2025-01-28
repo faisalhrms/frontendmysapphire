@@ -89,6 +89,7 @@ const ProjectDetail = () => {
                                 title="Project Discussions"
                                 storeEndPoint={`/pms/projects/${id}/discussion/`}
                                 getEndPoint={`/pms/projects/${id}/discussions/`}
+                                users={projectData.users}
                             />
                           </div>
                           <div className="xl:col-span-3 col-span-12">
