@@ -73,8 +73,14 @@ const ServiceRequestCard = ({serviceData = {}, currentUser}) => {
                         >
                             <option>Select Status</option>
                             <option value="Closed">Closed</option>
-                            <option value="In-Progress">ReOpen</option>
+                            <option value="In-Progress" disabled={
+                                serviceData?.closed_at
+                                && (new Date() - new Date(serviceData.closed_at)) / (1000 * 60 * 60 * 24) > 5
+                            }>
+                                ReOpen
+                            </option>
                         </select>
+
                     </div>
                     <div>
                         <label className="form-label text-sm mb-2">Rating</label>
