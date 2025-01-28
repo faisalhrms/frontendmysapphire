@@ -6,6 +6,7 @@ import {colorPalette, getFormattedColor} from "@helpers/styles.js";
  */
 export const statusColorMapping = {
     "Open": "primary",
+    "Expected Progress": "primary",
     "In Progress": "secondary",
     "Completed": "success",
     "Completed On Time": "success",
@@ -16,10 +17,13 @@ export const statusColorMapping = {
     "Completed Late": "warning",
     "Overall": "primary",
     "Active": "primary",
+    "Actual Progress": "success",
     "Brand New": "success",
     "Faulty": "danger",
+    "Overdue Tasks": "danger",
     "Functional": "primary",
     "Lost": "warning",
+    "Variance": "warning-fade",
     "Sold To Employee": "secondary",
     "Write Off": "gray",
 };
@@ -31,7 +35,6 @@ export const statusColorMapping = {
  * @returns {Object} An object containing style classes for different parts of the component.
  */
 export const getStatusStyles = (status) => {
-    console.log(`this is statuses`,status);
     const mainColor = statusColorMapping[status] || "default";
     return colorPalette[mainColor] || colorPalette["default"];
 };
@@ -77,8 +80,7 @@ export const mapSeriesToColors = (series, statusColorMapping, defaultColor = '0,
         return series.map((seriesItem) => {
             const colorName = statusColorMapping[seriesItem.name || seriesItem];
             if (colorName) {
-                const rgbValues = getFormattedColor(colorName, defaultColor);
-                return `rgb(${rgbValues})`;
+               return getFormattedColor(colorName, defaultColor);
             }
             return `rgb(${defaultColor})`;
         });

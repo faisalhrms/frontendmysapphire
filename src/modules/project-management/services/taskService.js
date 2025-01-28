@@ -5,8 +5,11 @@ export const taskStatuses = [
     { value: 'open', label: 'Open' },
     { value: 'not_started', label: 'Not Started' },
     { value: 'in_progress', label: 'In Progress' },
-    { value: 'on_hold', label: 'On Hold' },
+    { value: 'half_completed', label: 'Half Completed' },
+    { value: 'near_completion', label: 'Near Completion' },
     { value: 'completed', label: 'Completed' },
+    { value: 'reopened', label: 'Reopened' },
+    { value: 'on_hold', label: 'On Hold' },
     { value: 'cancelled', label: 'Cancelled' },
 ];
 

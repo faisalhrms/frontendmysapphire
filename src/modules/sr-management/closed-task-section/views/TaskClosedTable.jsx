@@ -2,7 +2,7 @@ import React from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
-import { string } from "zod";
+import {string} from "zod";
 
 const TaskGeneratedTable = () => {
 
@@ -58,6 +58,7 @@ const TaskGeneratedTable = () => {
         },
         {
             Header: "Status",
+            accessor: "status",
             Cell: ({row}) => {
                 const {sr_tasks} = row.original;
                 if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
