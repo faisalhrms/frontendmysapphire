@@ -27,12 +27,15 @@ export const getFormattedColor = (variableName, defaultColor = '0, 0, 0') => {
         return defaultColor;
     }
     if (value.includes(',')) {
-        return value.replace(/\s+/g, '').replace(/,+/g, ','); // Clean up any extra spaces or commas
+        return value.replace(/\s+/g, '').replace(/,+/g, ',');
     } else {
         const parts = value.split(/\s+/);
         if (parts.length === 3) {
-            return parts.join(', ');
-        } else {
+            return `rgb(${parts.join(', ')})`;
+        } else if (parts.length === 4){
+            return `rgba(${parts.join(', ')})`;
+        }else
+         {
             console.warn(`CSS variable --${variableName} is malformed. Expected 3 values, got ${parts.length}. Using default color.`);
             return defaultColor;
         }

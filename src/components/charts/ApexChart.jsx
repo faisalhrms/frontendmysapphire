@@ -35,6 +35,21 @@ const ApexChart = ({
             type: chartType,
             height: height,
             stacked: stacked,
+            zoom: {
+                enabled: true,
+                type: 'xy',
+            },
+            toolbar: {
+                show: true,
+                tools: {
+                    zoom: true,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
+                    reset: true,
+                    download: true,
+                },
+            },
             events: {
                 mounted: (chart) => {
                     chart.windowResizeHandler();
@@ -121,7 +136,7 @@ const ApexChart = ({
                 },
                 ...additionalOptions.xaxis?.title,
             },
-            ...(!additionalOptions.xaxis?.labels?.position && additionalOptions.xaxis),
+            ...additionalOptions.xaxis,
         },
         yaxis: {
             title: {
@@ -158,6 +173,43 @@ const ApexChart = ({
             horizontalAlign: 'center',
             ...additionalOptions.legend,
         },
+        responsive: [
+            {
+                breakpoint: 1024,
+                options: {
+                    chart: {
+                        height: 400,
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -45,
+                            style: {
+                                fontSize: '10px',
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                breakpoint: 768,
+                options: {
+                    chart: {
+                        height: 300,
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -45,
+                            style: {
+                                fontSize: '8px',
+                            },
+                        },
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                },
+            },
+        ],
         ...additionalOptions,
     }), [
         chartType,

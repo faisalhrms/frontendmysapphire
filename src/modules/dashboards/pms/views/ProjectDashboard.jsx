@@ -4,6 +4,7 @@ import ProjectDashboardFilter from "@modules/dashboards/pms/components/ProjectDa
 import useFilters from "@hooks/useFilters.js";
 import ProjectDashboardStats from "@modules/dashboards/pms/components/ProjectDashboardStats.jsx";
 import HasPermission from "@components/HasPermission.jsx";
+import RiskManagementChart from "@modules/dashboards/pms/components/RiskManagementChart.jsx";
 
 
 const ProjectDashboard = () => {
