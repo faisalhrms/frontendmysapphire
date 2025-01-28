@@ -57,6 +57,7 @@ const TaskCompletedTable = () => {
         },
         {
             Header: "Status",
+            accessor: "status",
             Cell: ({row}) => {
                 const {sr_tasks} = row.original;
                 if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {

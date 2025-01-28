@@ -56,14 +56,7 @@ const LaptopList = () => {
     ];
 
     // Action buttons (e.g., "Add Laptop")
-    const buttons = (
-        <div className="grid grid-cols-1 sm:grid-cols-1">
-            {/* If you have a route constant, use that. Otherwise, hardcode your path */}
-            <Link to="/module/equipment/add" className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
-                <i className="ri-add-line font-semibold align-middle"></i> Add Laptop
-            </Link>
-        </div>
-    );
+
 
     return (
         <>
@@ -72,7 +65,6 @@ const LaptopList = () => {
                 columns={columns}
                 title="Laptop List"
                 apiUrl="/equipments/laptop-datatable/"
-                buttons={buttons}
             />
         </>
     );

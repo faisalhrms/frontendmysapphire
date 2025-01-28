@@ -13,6 +13,17 @@ const EquipmentSummary = ({id,equipmentData}) => {
                         <Link
                             to={`/module/equipment/edit/${id}`}
 
+                            className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-warning  btn-wave"
+                        >
+                            <i className="ri-folder-5-line align-middle me-1 font-semibold"></i>Equipment History
+                        </Link>
+
+
+                    </div>
+                    <div>
+                        <Link
+                            to={`/module/equipment/edit/${id}`}
+
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-secondary  btn-wave"
                         >
                             <i className="ri-edit-line align-middle me-1 font-semibold"></i>Edit Equipment
@@ -22,7 +33,7 @@ const EquipmentSummary = ({id,equipmentData}) => {
                     </div>
                     <div>
                         <Link
-                            to={`/module/Equipment/reassign/${id}`}
+                            to={`/module/equipment/equipment-reassign/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-primary  btn-wave"
                         >

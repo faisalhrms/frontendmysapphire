@@ -6,7 +6,8 @@ import {
     getEquipments,
     updateEquipment,
     equipmentStatuses,
-    toggleFavouriteEquipment
+    toggleFavouriteEquipment,
+    reAssignEquipment
 } from "@modules/inventory/services/inventoryService.js"; // Assuming services exist here
 import { useNavigate } from "react-router-dom";
 
@@ -93,4 +94,21 @@ export const useToggleFavouriteEquipment = () => {
     }, []);
 
     return { handleToggleFavourite, isLoading };
+};
+
+export const useReAssignEquipment = () => {
+    const navigate = useNavigate();
+
+    const handleReAssign = async (formData) => {
+        try {
+            const data = await reAssignEquipment(formData);
+            // On success, you might want to navigate somewhere or refetch data
+            // For example:
+            // navigate('/module/equipments');
+        } catch (err) {
+            console.error("Reassign error:", err);
+        }
+    };
+
+    return { handleReAssign };
 };

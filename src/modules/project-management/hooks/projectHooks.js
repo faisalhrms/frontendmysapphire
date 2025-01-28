@@ -2,8 +2,8 @@ import {useCallback, useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {
     createProject,
-    getProjectById, getProjectDashboardStats,
-    getProjectMilestonesWithTasks,
+    getProjectById, getProjectDashboardStats, getProjectMilestoneDashboardStats,
+    getProjectMilestonesWithTasks, getProjectMilestoneTaskDashboardStats,
     getProjects, getProjectStats,
     toggleFavouriteProject,
     updateProject, uploadProjects
@@ -197,11 +197,23 @@ export const useProjectFilter = () => {
     }
 }
 
-export const useProjectDashboardStatistics = (filters) => {
+export const useProjectMilestoneDashboardStatistics = (projectId) => {
     const { data = {}, isLoading } = useQuery({
-        queryKey: ['projectDashboardStatistics', filters],
-        queryFn: () => getProjectDashboardStats(filters),
-        enabled: !!filters,
+        queryKey: ['projectMilestoneDashboardStatistics', projectId],
+        queryFn: () => getProjectMilestoneDashboardStats(projectId),
+        enabled: !!projectId,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
+
+    return { data, isLoading };
+}
+
+export const useProjectMilestoneTaskDashboardStatistics = (milestoneId) => {
+    const { data = {}, isLoading } = useQuery({
+        queryKey: ['projectMilestoneTaskDashboardStatistics', milestoneId],
+        queryFn: () => getProjectMilestoneTaskDashboardStats(milestoneId),
+        enabled: !!milestoneId,
         keepPreviousData: true,
         refetchOnWindowFocus: false,
     });
