@@ -27,6 +27,10 @@ export const INVENTORY_ROUTES = {
     EQUIPMENT_REPORT:{
         path:'/module/equipment/equipment-report',
         permission: 'view_equipment',
+    },
+    EQUIPMENT_REASSIGN:{
+        path:'/module/equipment/equipment-reassign/:id',
+        permission: 'add_equipment',
     }
 
 }
@@ -58,6 +62,11 @@ export const MODULE_ROUTES = [
     {
         path:INVENTORY_ROUTES.EQUIPMENT_REPORT.path,
         component:()=>import(`/src/modules/inventory/views/EquipmentReportList.jsx`),
+        permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
+    },
+    {
+        path:INVENTORY_ROUTES.EQUIPMENT_REASSIGN.path,
+        component:()=>import(`/src/modules/inventory/views/ReAssignEquipment.jsx`),
         permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
     }
     // {
