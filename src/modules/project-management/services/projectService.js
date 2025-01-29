@@ -112,3 +112,23 @@ export const getProjectDashboardStats = async () => {
         throw error
     }
 };
+
+export const getProjectMilestoneDashboardStats = async (projectId) => {
+    try {
+        const response = await api.get(`/dashboard/pms/${projectId}/milestone/statistics/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || 'Failed to get project dashboard milestone statistics');
+        throw error
+    }
+}
+
+export const getProjectMilestoneTaskDashboardStats = async (milestoneId) => {
+    try {
+        const response = await api.get(`/dashboard/pms/${milestoneId}/tasks/statistics/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || 'Failed to get project dashboard milestone tasks statistics');
+        throw error
+    }
+};

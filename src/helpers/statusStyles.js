@@ -27,7 +27,6 @@ export const statusColorMapping = {
     "Sold To Employee": "secondary",
     "Write Off": "gray",
 };
-
 /**
  * Retrieves the style classes based on the status.
  *
