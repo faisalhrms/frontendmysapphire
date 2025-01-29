@@ -92,7 +92,7 @@ const MilestonesStatsModal = React.memo(({ projectId, onClose }) => {
                                     }}
                                     colors={colors}
                                     categories={data.categories}
-                                    height="90%"
+                                    height={500}
                                     series={data.series}
                                     xAxisTitle="Milestones"
                                     onPointClick={handlePointClick}

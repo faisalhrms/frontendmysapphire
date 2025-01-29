@@ -6,6 +6,7 @@ import ReactApexChart from 'react-apexcharts';
  * ApexChart Component
  *
  * Renders an ApexCharts chart with customizable series, categories, colors, and other options.
+ * Wrapped in a scrollable container for horizontal scrolling.
  *
  * @param {Object} props - Component props
  * @returns {JSX.Element} The rendered chart component
@@ -28,6 +29,7 @@ const ApexChart = ({
                        xAxisTitle = '',
                        yAxisTitle = '',
                        onPointClick = () => {},
+                       chartWidth = 800,
                    }) => {
 
     const defaultOptions = useMemo(() => ({
@@ -131,7 +133,6 @@ const ApexChart = ({
         },
         xaxis: {
             categories: categories,
-            tickPlacement: 'on',
             axisBorder: {
                 show: true,
                 color: labelColor,
@@ -262,13 +263,18 @@ const ApexChart = ({
         xAxisTitle,
         yAxisTitle,
     ]);
+
     return (
-        <ReactApexChart
-            options={defaultOptions}
-            series={series}
-            type={chartType}
-            height={height}
-        />
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+            <div style={{ width: chartWidth, minWidth: '100%' }}>
+                <ReactApexChart
+                    options={defaultOptions}
+                    series={series}
+                    type={chartType}
+                    height={height}
+                />
+            </div>
+        </div>
     );
 };
 
@@ -299,6 +305,7 @@ ApexChart.propTypes = {
     xAxisTitle: PropTypes.string,
     yAxisTitle: PropTypes.string,
     onPointClick: PropTypes.func,
+    chartWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 export default ApexChart;
