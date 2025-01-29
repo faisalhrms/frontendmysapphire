@@ -61,6 +61,7 @@ const RiskAnalysisChart = ({ data }) => {
                                 height={500}
                                 series={data.series}
                                 onPointClick={handlePointClick}
+                                chartWidth={2000}
                             />
                         </div>
                     </div>

@@ -57,8 +57,9 @@ const TasksStatsModal = React.memo(({ milestoneId, onClose }) => {
                                         },
                                     }}
                                     categories={data.categories}
-                                    height="90%"
+                                    height={500}
                                     series={data.series}
+                                    chartWidth={2000}
                                     xAxisTitle="Tasks"
                                     yAxisTitle="Progress"
                                 />
