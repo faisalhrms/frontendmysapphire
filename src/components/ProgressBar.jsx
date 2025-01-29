@@ -3,8 +3,8 @@ const calculateProgress = (total, completed) => {
     return Math.round((completed / total) * 100);
 };
 
-const ProgressBar = ({ total, completed, status = 'Completed', barColor = 'bg-primary', withStatus = true }) => {
-    const progressValue = calculateProgress(total, completed);
+const ProgressBar = ({ value = null, total = null, completed = null, status = 'Completed', barColor = 'bg-primary', withStatus = true}) => {
+    const progressValue = value !== null ? value : calculateProgress(total, completed);
     {
         if (withStatus){
             return (

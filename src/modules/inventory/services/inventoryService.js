@@ -67,3 +67,16 @@ export const toggleFavouriteEquipment = async (id, is_favourite) => {
         Notify.error(error.response?.data?.message);
     }
 };
+
+export const reAssignEquipment = async (payload) => {
+    try {
+        // Assuming your endpoint is POST /equipment-transactions/
+        // If it's different (e.g. POST /equipment-transactions/create/), adjust accordingly.
+        const response = await api.post("/equipment-transactions/", payload);
+        Notify.success(response.data.message);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error reassigning equipment.");
+        throw error;
+    }
+};

@@ -18,6 +18,7 @@ const ProjectSummaryStats = ({summary, statsFetching, heading = 'Task Summary'})
             <div className="box-body !p-0">
                 {statsFetching ? (<LoadingSpinner/>) : (<div className="p-6 pb-2">
                         <ApexChart
+                            chartWidth={200}
                             colors={colors}
                             chartType='donut'
                             height={250}

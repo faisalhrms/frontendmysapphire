@@ -9,14 +9,33 @@ export const sidebarMenu = [
         'sub',
         'IT Equipments',
         6,
-        'bx-cog',
+        'bx-box',
         '',
         [
+
+            generateSidebarItem(
+                INVENTORY_ROUTES.LAPTOP_LIST.path,
+                'link',
+                'Laptop List',
+                1,
+                'bx-laptop',
+                INVENTORY_ROUTES.READ.permission
+            ),
             generateSidebarItem(
                 INVENTORY_ROUTES.READ.path,
                 'link',
                 'Equipments List',
-                5,
+                2,
+                'bx-laptop',
+                INVENTORY_ROUTES.READ.permission
+            ),
+
+
+            generateSidebarItem(
+                INVENTORY_ROUTES.EQUIPMENT_REPORT.path,
+                'link',
+                'Equipments Report',
+                3,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
             )

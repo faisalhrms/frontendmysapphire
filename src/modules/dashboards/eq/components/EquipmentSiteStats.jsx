@@ -29,8 +29,7 @@ const EquipmentSiteStats = ({ equipmentsBySite, statsFetching }) => {
     const colors = useMemo(() => {
         return categories.map((_, index) => {
             const colorKey = colorKeys[index % colorKeys.length];
-            const rgb = getFormattedColor(colorKey);
-            return `rgb(${rgb})`;
+            return getFormattedColor(colorKey);
         });
     }, [categories, colorKeys]);
 

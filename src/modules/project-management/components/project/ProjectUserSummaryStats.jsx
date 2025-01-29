@@ -10,7 +10,8 @@ const ProjectUserSummaryStats = ({summary, statsFetching, heading = 'Resource Pl
         return mapSeriesToColors(summary?.series, statusColorMapping);
     }, []);
 
-    return (<div className="box">
+    return (
+        <div className="box">
             <div className="box-header justify-between">
                 <div className="box-title">Resource Planning Summary</div>
             </div>

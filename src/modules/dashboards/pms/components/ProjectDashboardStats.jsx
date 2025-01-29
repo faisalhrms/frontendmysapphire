@@ -7,6 +7,7 @@ import ProjectUserSummaryStats from "@modules/project-management/components/proj
 import ProjectTableCard from "@modules/dashboards/pms/components/ProjectTableCard.jsx";
 import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
 import React from "react";
+import RiskAnalysisChart from "@modules/dashboards/pms/components/RiskManagementChart.jsx";
 
 const ProjectDashboardStats = ({filters}) => {
     const {data, isLoading} = useFetchWithFilters('/dashboard/pms/statistics/', filters);
@@ -36,10 +37,11 @@ const ProjectDashboardStats = ({filters}) => {
                     <div className="xl:col-span-7 col-span-12">
                         <ProjectUserSummaryStats summary={data.user_summary} statsFetching={isLoading}/>
                     </div>
-                    <ProjectTableCard/>
-                </div>
-            </>
-        )
-}
+                        <RiskAnalysisChart data={data.project_risk_summary}/>
+                        <ProjectTableCard/>
+                    </div>
+                </>
+                )
+                }
 
-export default React.memo(ProjectDashboardStats)
+                export default React.memo(ProjectDashboardStats)

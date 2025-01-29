@@ -11,6 +11,7 @@ import srSchema from "@modules/sr-management/schema/srSchema.js"
 import Rating from "@mui/material/Rating"
 import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
 import DepartmentDropdown from "@components/dropdowns/DepartmentDropdown.jsx";
+import SubDepartmentDropdown from "@components/dropdowns/SubDepartmentDropdown.jsx";
 
 const SrDashboard = () => {
     const [showFilters, setShowFilters] = useState(false)
@@ -30,6 +31,7 @@ const SrDashboard = () => {
     const {serviceRequest, applyFilters, downloadExcel} = useServiceRequest()
     const [company, setCompany] = useState(null);
     const [department, setDepartment] = useState(null);
+    const [subDepartment, setSubDepartment] = useState(null);
 
     const handleCompanySelect = useCallback((id) => {
         setCompany(id)
@@ -42,7 +44,9 @@ const SrDashboard = () => {
     const toggleFilters = () => {
         setShowFilters((prev) => !prev)
     }
-
+    const handleSubDepartmentSelect = useCallback((id) => {
+        setSubDepartment(id)
+    }, []);
     const handleCardClick = (status) => {
         const currentValues = getValues()
         const filters = {
@@ -51,6 +55,7 @@ const SrDashboard = () => {
             city_id: currentValues.city_id || "",
             location_id: currentValues.location_id || "",
             department_id: currentValues.department_id || "",
+            sub_department_id: currentValues.sub_department_id || "",
             month: currentValues.month || "",
             year_dashboard: currentValues.year_dashboard || ""
         }
@@ -83,6 +88,7 @@ const SrDashboard = () => {
             city_id: formValues.city_id || "",
             location_id: formValues.location_id || "",
             department_id: formValues.department_id || "",
+            sub_department_id: formValues.sub_department_id || "",
             month: formValues.month || "",
             year_dashboard: formValues.year_dashboard || ""
         }
@@ -179,6 +185,14 @@ const SrDashboard = () => {
                                             control={control}
                                             errors={errors}
                                             onDepartmentSelect={handleDepartmentSelect}
+                                        />
+                                    </div>
+                                    <div className="xl:col-span-3 col-span-12">
+                                        <SubDepartmentDropdown
+                                            department_id={department}
+                                            control={control}
+                                            errors={errors}
+                                            onSubDepartmentSelect={handleSubDepartmentSelect}
                                         />
                                     </div>
                                     <div className="xl:col-span-3 col-span-12">

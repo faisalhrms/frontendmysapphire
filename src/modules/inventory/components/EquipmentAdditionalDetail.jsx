@@ -35,7 +35,7 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold"> Equipment Site :</span></td>
-                                    <td>{equipmentData.equipment_site.name}</td>
+                                    <td>{equipmentData.equipment_site?.name}</td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Status :</span></td>
@@ -48,35 +48,35 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                     <td><span className="font-semibold">Equipment Type :</span></td>
                                     <td>
                                         <span
-                                            >{equipmentData.equipment_type.name}</span>
+                                            >{equipmentData.equipment_type?.name}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Location :</span></td>
                                     <td>
                                         <span
-                                            className={getBadgeClasses(equipmentData.priority)}>{toTitleCase(equipmentData.location.name)}</span>
+                                            className={getBadgeClasses(equipmentData?.priority)}>{toTitleCase(equipmentData?.location?.name)}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Serial No :</span></td>
                                     <td>
                                         <span
-                                        >{toTitleCase(equipmentData.serial_no)}</span>
+                                        >{toTitleCase(equipmentData?.serial_no)}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Part No :</span></td>
                                     <td>
                                         <span
-                                        >{toTitleCase(equipmentData.part_no) || "----"}</span>
+                                        >{toTitleCase(equipmentData?.part_no) || "----"}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Asset No :</span></td>
                                     <td>
                                         <span
-                                        >{toTitleCase(equipmentData.asset_code) || "----"}</span>
+                                        >{toTitleCase(equipmentData?.asset_code) || "----"}</span>
                                     </td>
                                 </tr>
 

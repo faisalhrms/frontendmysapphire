@@ -6,6 +6,7 @@ import ReactApexChart from 'react-apexcharts';
  * ApexChart Component
  *
  * Renders an ApexCharts chart with customizable series, categories, colors, and other options.
+ * Wrapped in a scrollable container for horizontal scrolling.
  *
  * @param {Object} props - Component props
  * @returns {JSX.Element} The rendered chart component
@@ -27,18 +28,42 @@ const ApexChart = ({
                        additionalOptions = {},
                        xAxisTitle = '',
                        yAxisTitle = '',
+                       onPointClick = () => {},
+                       chartWidth = 800,
                    }) => {
 
-    const options = useMemo(() => ({
+    const defaultOptions = useMemo(() => ({
         labels: labels,
         chart: {
             type: chartType,
             height: height,
             stacked: stacked,
-            events: {
-                mounted: (chart) => {
-                    chart.windowResizeHandler();
+            zoom: {
+                enabled: true,
+                type: 'xy',
+                autoScaleYaxis: true,
+            },
+            pan: {
+                enabled: true,
+                type: 'x',
+            },
+            toolbar: {
+                show: true,
+                offsetX: 0,
+                offsetY: 0,
+                tools: {
+                    download: true,
+                    selection: true,
+                    zoom: true,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
                 },
+                ...additionalOptions.chart?.toolbar,
+            },
+            events: {
+                dataPointSelection: onPointClick,
+                ...additionalOptions.chart?.events,
             },
             ...additionalOptions.chart,
         },
@@ -84,6 +109,16 @@ const ApexChart = ({
         },
         grid: {
             borderColor: gridBorderColor,
+            xaxis: {
+                lines: {
+                    show: false,
+                },
+            },
+            yaxis: {
+                lines: {
+                    show: true,
+                },
+            },
             ...additionalOptions.grid,
         },
         dataLabels: {
@@ -98,6 +133,22 @@ const ApexChart = ({
         },
         xaxis: {
             categories: categories,
+            axisBorder: {
+                show: true,
+                color: labelColor,
+                height: 1,
+                width: '100%',
+                offsetX: 0,
+                offsetY: 0
+            },
+            axisTicks: {
+                show: true,
+                borderType: 'solid',
+                color: labelColor,
+                height: 0,
+                offsetX: 0,
+                offsetY: 0
+            },
             labels: {
                 show: true,
                 position: 'bottom',
@@ -121,7 +172,7 @@ const ApexChart = ({
                 },
                 ...additionalOptions.xaxis?.title,
             },
-            ...(!additionalOptions.xaxis?.labels?.position && additionalOptions.xaxis),
+            ...additionalOptions.xaxis,
         },
         yaxis: {
             title: {
@@ -158,7 +209,43 @@ const ApexChart = ({
             horizontalAlign: 'center',
             ...additionalOptions.legend,
         },
-        ...additionalOptions,
+        responsive: [
+            {
+                breakpoint: 1024,
+                options: {
+                    chart: {
+                        height: 400,
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -45,
+                            style: {
+                                fontSize: '10px',
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                breakpoint: 768,
+                options: {
+                    chart: {
+                        height: 300,
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -45,
+                            style: {
+                                fontSize: '8px',
+                            },
+                        },
+                    },
+                    legend: {
+                        position: 'bottom',
+                    },
+                },
+            },
+        ],
     }), [
         chartType,
         height,
@@ -178,12 +265,16 @@ const ApexChart = ({
     ]);
 
     return (
-        <ReactApexChart
-            options={options}
-            series={series}
-            type={chartType}
-            height={height}
-        />
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+            <div style={{ width: chartWidth, minWidth: '100%' }}>
+                <ReactApexChart
+                    options={defaultOptions}
+                    series={series}
+                    type={chartType}
+                    height={height}
+                />
+            </div>
+        </div>
     );
 };
 
@@ -202,7 +293,7 @@ ApexChart.propTypes = {
     labels: PropTypes.arrayOf(PropTypes.string),
     chartType: PropTypes.oneOf(['bar', 'line', 'area', 'pie', 'donut']),
     colors: PropTypes.arrayOf(PropTypes.string),
-    height: PropTypes.number,
+    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     stacked: PropTypes.bool,
     columnWidth: PropTypes.string,
     gridBorderColor: PropTypes.string,
@@ -213,6 +304,8 @@ ApexChart.propTypes = {
     additionalOptions: PropTypes.object,
     xAxisTitle: PropTypes.string,
     yAxisTitle: PropTypes.string,
+    onPointClick: PropTypes.func,
+    chartWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 export default ApexChart;

@@ -123,6 +123,7 @@ Background Image
   --primary-rgb: 132, 90 ,223;
   --secondary:	35 183 229;
   --warning: 245 184 73;
+  --warning-fade: 245 184 73 0.3;
   --info: 73 182 245;
   --success: 38 191 148;
   --danger:	230 83 60;

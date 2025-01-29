@@ -53,6 +53,7 @@ const SubscriptionList = () => {
         },
         {
             Header: "Type",
+
             Cell: ({ row }) => toTitleCase(row.original.type),
         },
         { Header: "Vendor", accessor: "vendor.name" },
@@ -65,6 +66,7 @@ const SubscriptionList = () => {
         },
         {
             Header: "Departments",
+            accessor: "departments",
             Cell: ({ row }) => (
                 <span className="space-x-1 rtl:space-x-reverse">
           {row.original.departments.map((department) => (
