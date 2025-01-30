@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import face5 from "@assets/images/faces/5.jpg";
 import {useServiceRequestForm} from "@modules/employee-self-services/hooks/service-request/ServiceRequestHook.js";
+import Avatar from "@components/Avatar.jsx";
 
 const ServiceRequestCard = ({serviceData = {}, currentUser}) => {
     const [remarks, setFeedback] = useState(serviceData.remarks || "");
@@ -17,14 +18,13 @@ const ServiceRequestCard = ({serviceData = {}, currentUser}) => {
         };
         await submitFeedback(serviceData?.id, feedbackData);
     };
-
     return (
+
         <div className="xl:col-span-3 col-span-12">
             <div className="box bg-primary">
                 <div className="flex items-start bg-primary p-4 rounded-xl shadow-md">
-                    <span className="avatar avatar-xl avatar-rounded mr-4">
-                        <img src={face5} alt="Profile" className="rounded-full w-16 h-16"/>
-                    </span>
+                    <Avatar avatar={serviceData?.employee_info?.avatar} size="xl" parentClasses="me-4"/>
+
                     <div className="flex-grow text-white">
                         <h6 className="font-semibold text-lg mb-1">
                             {serviceData?.reporter || currentUser?.full_name}

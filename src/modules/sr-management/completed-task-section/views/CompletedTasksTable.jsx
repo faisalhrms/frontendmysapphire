@@ -2,6 +2,8 @@ import React from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {toTitleCase} from "@helpers/formatters.js";
 
 const TaskCompletedTable = () => {
 
@@ -42,6 +44,25 @@ const TaskCompletedTable = () => {
         },
         {Header: "Requester", accessor: "reporter"},
         {
+            Header: "Priority",
+            accessor: "priority",
+            Cell: ({row}) => {
+                const {sr_tasks} = row.original;
+                if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
+                    return (
+                        <div className="flex flex-wrap gap-1">
+                            {sr_tasks.map((task, index) => (
+                                <span key={index} className={getBadgeClasses(task.priority)}>
+                            {toTitleCase(task.priority)}
+                        </span>
+                            ))}
+                        </div>
+                    );
+                }
+                return <span className="text-gray-500">No Tasks</span>;
+            },
+        },
+        {
             Header: "Assignee",
             accessor: "sr_tasks",
             Cell: ({value}) => {
@@ -50,9 +71,18 @@ const TaskCompletedTable = () => {
                         task.assignees.map(a => a.name)
                     );
                     const uniqueAssignees = [...new Set(allAssignees)];
-                    return uniqueAssignees.join(", ");
+
+                    return (
+                        <div className="flex flex-wrap gap-1">
+                            {uniqueAssignees.map((assignee, index) => (
+                                <span key={index} className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                            {assignee}
+                        </span>
+                            ))}
+                        </div>
+                    );
                 }
-                return "No Assignees";
+                return <span className="text-gray-500">No Assignees</span>;
             },
         },
         {

@@ -1,5 +1,5 @@
-import React from "react";
-import {useForm} from "react-hook-form";
+import React, {useEffect} from "react";
+import {useForm, useWatch} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {format} from "date-fns";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
@@ -12,9 +12,11 @@ import {usePendingReqTaskForm} from "@modules/sr-management/Hooks/PendingService
 import PendingReqTaskCard from "@modules/sr-management/component/components/PendingReqTaskCard.jsx";
 import pendingReqTaskSchema from "@modules/sr-management/schema/PendingReqCreateSchema.js";
 import {useSelector} from "react-redux";
+import FormSelect from "@components/form/FormSelect.jsx";
+import {priorities} from "@modules/sr-management/services/Pending.js";
 
 const PendingReqTaskForm = ({pendingReqData}) => {
-    const { user } = useSelector((state) => state.auth);
+    const {user} = useSelector((state) => state.auth);
     const createdAtDate = pendingReqData?.created_at
         ? format(new Date(pendingReqData.created_at), "yyyy-MM-dd")
         : "";
@@ -26,16 +28,28 @@ const PendingReqTaskForm = ({pendingReqData}) => {
         defaultValues: {
             ...pendingReqData,
             location_id: pendingReqData?.location?.id,
-            sr_type: pendingReqData?.sr_type?.id || null,
-            team_group_id: pendingReqData?.team_group?.id || null,
+            sr_type: pendingReqData?.sr_type?.id,
+            team_group_id: pendingReqData?.team_group?.id,
             started_at: createdAtDate,
             ended_at: endedAtDate,
             user_ids: (pendingReqData.users || []).map((user) => user.id),
             description: pendingReqData.description || "",
+            priority: pendingReqData.priority || "low",
+            sla_hours: pendingReqData.sla_hours || "",
+
         },
     });
+    const selectedPriority = useWatch({control, name: "priority"});
 
-    console.log("pendingReqData", pendingReqData);
+    useEffect(() => {
+        if (selectedPriority) {
+            const priority = priorities.find((p) => p.value === selectedPriority);
+            if (priority) {
+                setValue("sla_hours", priority.sla_hours);
+            }
+        }
+    }, [selectedPriority, setValue]);
+
 
     const {handleTaskSubmit} = usePendingReqTaskForm(pendingReqData);
 
@@ -58,12 +72,12 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                 }
             )}
         >
-            <div className="grid grid-cols-12 gap-x-6">
-                <div className="xxl:col-span-9">
+            <div className="grid grid-cols-12 gap-x-4">
+                <div className="md:col-span-9 sm:col-span-12 col-span-12">
                     <div className="box">
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-8 col-span-12">
                                     <FormInput
                                         name="request_title"
                                         control={control}
@@ -72,7 +86,7 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         readOnly
                                     />
                                 </div>
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         label="Requester Location"
                                         name="location_id"
@@ -93,26 +107,6 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         onChange={(selected) => {
                                             setValue("location_id", selected?.value || null); // Set location_id value
                                         }}
-                                    />
-                                </div>
-                                <div className="xl:col-span-12 col-span-12">
-                                    <FormInput
-                                        type="text"
-                                        readOnly
-                                        name="to_email"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="To"
-                                    />
-                                </div>
-                                <div className="xl:col-span-12 col-span-12">
-                                    <FormInput
-                                        type="text"
-                                        readOnly
-                                        name="cc_email"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="CC"
                                     />
                                 </div>
                                 <div className="xl:col-span-4 col-span-12">
@@ -136,6 +130,24 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         onChange={(selected) => {
                                             setValue("sr_type", selected?.value || null);
                                         }}
+                                    />
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormSelect
+                                        name="priority"
+                                        control={control}
+                                        errors={errors}
+                                        options={priorities}
+                                        placeholder="Priority"
+                                    />
+                                </div>
+                                <div className={`xl:col-span-4 col-span-12`}>
+                                    <FormInput
+                                        type="number"
+                                        name="sla_hours"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="SLA Hours"
                                     />
                                 </div>
                                 <div className="xl:col-span-4 col-span-12">
