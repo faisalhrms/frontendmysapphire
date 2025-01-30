@@ -95,7 +95,6 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         placeholder="Requester Location"
                                         apiUrl="/select/locations"
                                         queryKeyBase="locations"
-                                        clientSideSearch
                                         preselectedOptions={
                                             pendingReqData?.location
                                                 ? [{
@@ -118,7 +117,6 @@ const PendingReqTaskForm = ({pendingReqData}) => {
                                         placeholder="SR Type"
                                         apiUrl={`/select/sr-types?sub_department_id=${pendingReqData.sub_department.id}`}
                                         queryKeyBase="sr_types"
-                                        clientSideSearch
                                         preselectedOptions={
                                             pendingReqData?.sr_type
                                                 ? [{
