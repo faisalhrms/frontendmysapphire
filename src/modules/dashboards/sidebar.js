@@ -65,7 +65,15 @@ export const sidebarMenu = [
                 7,
                 '',
                 DASHBOARD_ROUTES.Equipment.permission,
-            )
+            ),
+                generateSidebarItem(
+                    DASHBOARD_ROUTES.obs.path,
+                    'link',
+                    'shopify',
+                    8,
+                    '',
+
+                )
         ]
     ),
 ];
