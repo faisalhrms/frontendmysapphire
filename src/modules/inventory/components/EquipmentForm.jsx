@@ -15,6 +15,7 @@ import { useEquipmentForm } from "@modules/inventory/hooks/inventoryHooks.js";
 
 import SubEquipmentTable from "./SubEquipmentTable.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
+import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
 
 const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
@@ -188,21 +189,15 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
                                 {/* ---------- Custodian ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
-                                    <FormAsyncSelect
+                                    <CustodianDropdown
+                                        haveLabel={true}
                                         name="custodian_id"
                                         control={control}
                                         errors={errors}
-                                        placeholder="Custodian"
-                                        apiUrl="/select/users"
-                                        queryKeyBase="users"
-                                        clientSideSearch={true}
-                                        preselectedOptions={formatOptions(
-                                            equipmentData,
-                                            "custodian",
-                                            "id",
-                                            "full_name"
-                                        )}
+                                        data={equipmentData}
+                                        onCustodianSelect={(selected) => console.log("Custodian Selected:", selected)}
                                     />
+
                                 </div>
 
                                 {/* ---------- Description ---------- */}
