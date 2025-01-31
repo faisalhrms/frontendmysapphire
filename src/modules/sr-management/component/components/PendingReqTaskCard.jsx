@@ -31,36 +31,36 @@ const PendingReqTaskCard = ({pendingReqData = {}}) => {
                             </div>
                         </div>
 
-                        <div className="p-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[#8c9097] dark:text-white/50">
+                        <div className="p-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[#8c9097] dark:text-white/20">
                             <div>
                                 <p className="font-semibold">SR#:</p>
-                                <p className="opacity-70">{pendingReqData.sr_number || "No SR Number"}</p>
+                                <p className="opacity-90">{pendingReqData.sr_number || "No SR Number"}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">Department:</p>
-                                <p className="opacity-70">{pendingReqData.department?.name || "No Department"}</p>
+                                <p className="opacity-90">{pendingReqData.department?.name || "No Department"}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">Sub-Department:</p>
-                                <p className="opacity-70">{pendingReqData.sub_department?.name || "No Sub-Department"}</p>
+                                <p className="opacity-90">{pendingReqData.sub_department?.name || "No Sub-Department"}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">Location:</p>
-                                <p className="opacity-70">{pendingReqData.location?.name || "No Location"}</p>
+                                <p className="opacity-90">{pendingReqData.location?.name || "No Location"}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">SR Type:</p>
-                                <p className="opacity-70">{pendingReqData.sr_type?.name || "No SR Type"}</p>
+                                <p className="opacity-90">{pendingReqData.sr_type?.name || "No SR Type"}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">Time Created:</p>
-                                <p className="opacity-70">
+                                <p className="opacity-90">
                                     {pendingReqData.created_at ? new Date(pendingReqData.created_at).toLocaleString() : "No Date"}
                                 </p>
                             </div>
                             <div>
                                 <p className="font-semibold">Need By Date:</p>
-                                <p className="opacity-70">
+                                <p className="opacity-90">
                                     {pendingReqData.need_by_date ? new Date(pendingReqData.need_by_date).toLocaleDateString() : "No Need By Date"}
                                 </p>
                             </div>
