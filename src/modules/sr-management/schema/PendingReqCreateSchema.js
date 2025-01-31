@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {dateSchema} from "@helpers/schema.js";
+import {prioritiesEnum} from "@modules/sr-management/services/Pending.js";
 
 const pendingReqTaskSchema = () => z.object({
 
@@ -19,6 +20,17 @@ const pendingReqTaskSchema = () => z.object({
     location_id: z
         .number()
         .min(1, {message: "Select a location"}),
+    priority: prioritiesEnum.default("low"),
+    sla_hours: z.union([
+        z.number().min(1, "SLA Hours must be a number greater than 0"),
+        z.string().refine((val) => {
+            const num = Number(val);
+            return !isNaN(num) && num > 0;
+        }, {
+            message: "SLA Hours must be a number greater than 0"
+        })
+    ]),
+
     description: z
         .string()
         .nullable()

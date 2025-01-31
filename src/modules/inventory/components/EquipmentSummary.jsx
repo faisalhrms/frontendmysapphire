@@ -11,7 +11,7 @@ const EquipmentSummary = ({id,equipmentData}) => {
                     <div className="box-title">Equipment Details</div>
                     <div>
                         <Link
-                            to={`/module/equipment/edit/${id}`}
+                            to={`/module/equipment/equipment-history/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-warning  btn-wave"
                         >
@@ -69,25 +69,37 @@ const EquipmentSummary = ({id,equipmentData}) => {
                             </span>
                         </div>
                         <div>
+                            <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Site</span>
+                            <span className="block text-[.875rem] font-semibold">
+                                {toTitleCase(equipmentData.equipment_site.name)}
+
+                            </span>
+                        </div>
+
+                        <div>
+
+
+
+
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment Purchase Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.purchase_date)|| "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.purchase_date) || "-"}</span>
                         </div>
                         <div>
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment HandOver Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.handover_date)|| "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.handover_date) || "-"}</span>
                         </div>
                         <div>
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment Maturity Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.maturity_date)|| "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.maturity_date) || "-"}</span>
                         </div>
 
                     </div>

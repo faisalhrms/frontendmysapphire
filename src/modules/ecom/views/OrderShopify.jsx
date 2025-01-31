@@ -1,15 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import OrderBookingShopify from "../components/OrderBookingShopify.jsx";
 import OperationsAgingPerformance from "@modules/ecom/components/OperationsAgingPerformance.jsx";
 import {internationalData, localData , columns} from "@modules/ecom/components/utils.js";
-
+import PerformanceRatios from "@modules/ecom/components/PerformanceRatios.jsx";
+import MegaSaleForm from "@modules/ecom/components/MegaSaleForm.jsx";
 const OrderShopify = () => {
     const [activeTab, setActiveTab] = useState("orderBooking");
     const [showFilters, setShowFilters] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to today's date
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [filteredLocalData, setFilteredLocalData] = useState([]);
     const [filteredInternationalData, setFilteredInternationalData] = useState([]);
     const [filteredLocalFiscalData, setFilteredLocalFiscalData] = useState([]);
@@ -71,7 +71,7 @@ const OrderShopify = () => {
 
     return (
         <>
-            <PageHeader currentpage="E comm" />
+            <PageHeader currentpage="E-Commerce" />
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
@@ -100,6 +100,28 @@ const OrderShopify = () => {
                                 onClick={() => setActiveTab("agingPerformance")}
                             >
                                 Operations Aging Performance
+                            </Link>
+                            <Link
+                                to="#"
+                                className={`px-4 py-3 text-[0.9rem] font-medium rounded-md transition-all ${
+                                    activeTab === "Performance Ratios"
+                                        ? "bg-primary text-white shadow-md"
+                                        : "bg-gray-100 hover:bg-gray-200"
+                                }`}
+                                onClick={() => setActiveTab("Performance Ratios")}
+                            >
+                                Performance Ratios
+                            </Link>
+                            <Link
+                                to="#"
+                                className={`px-4 py-3 text-[0.9rem] font-medium rounded-md transition-all ${
+                                    activeTab === "megaSaleForm"
+                                        ? "bg-primary text-white shadow-md"
+                                        : "bg-gray-100 hover:bg-gray-200"
+                                }`}
+                                onClick={() => setActiveTab("megaSaleForm")}
+                            >
+                                Mega Sale
                             </Link>
                         </nav>
 
@@ -153,7 +175,7 @@ const OrderShopify = () => {
                         )}
                         {activeTab === "agingPerformance" && (
                             <div className="mt-10">
-                               {/*<OperationPerformance />*/}
+
                                 <OperationsAgingPerformance
                                     localTitle="Local"
                                     internationalTitle="International"
@@ -163,6 +185,22 @@ const OrderShopify = () => {
                                 />
                             </div>
                       )}
+                        {activeTab === "Performance Ratios" && (
+                            <div className="mt-10">
+
+                                <PerformanceRatios
+
+                                />
+                            </div>
+                        )}
+                        {activeTab === "megaSaleForm" && (
+                            <div className="mt-10">
+
+                                <MegaSaleForm
+
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

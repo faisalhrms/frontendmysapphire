@@ -1,4 +1,3 @@
-
 import React from "react";
 import OperationsTable from "@modules/ecom/components/OperationsTable.jsx";
 const ShopifyForm = ({ localTitle, internationalTitle, columns, localData, internationalData }) => {

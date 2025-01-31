@@ -33,10 +33,7 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                     <td><span className="font-semibold"> Equipment Code :</span></td>
                                     <td>{equipmentData.code}</td>
                                 </tr>
-                                <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold"> Equipment Site :</span></td>
-                                    <td>{equipmentData.equipment_site?.name}</td>
-                                </tr>
+
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Status :</span></td>
 

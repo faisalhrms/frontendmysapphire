@@ -149,7 +149,6 @@ const ServiceRequestForm = ({
                                         placeholder="Location"
                                         apiUrl="/select/locations"
                                         queryKeyBase="locations"
-                                        clientSideSearch={true}
                                         preselectedOptions={formatOptions(serviceData, "location")}
                                     />
                                 </div>
@@ -162,7 +161,6 @@ const ServiceRequestForm = ({
                                         placeholder="Department"
                                         apiUrl="/select/departments"
                                         queryKeyBase="departments"
-                                        clientSideSearch={true}
                                         preselectedOptions={formatOptions(
                                             serviceData,
                                             "department"
@@ -178,7 +176,6 @@ const ServiceRequestForm = ({
                                         placeholder="Sub Department"
                                         apiUrl={`/select/sub-departments?department_id=${selectedDepartment}`}
                                         queryKeyBase={`subdepartments-${selectedDepartment}`}
-                                        clientSideSearch={true}
                                         preselectedOptions={formatOptions(
                                             serviceData,
                                             "sub_department"
@@ -196,7 +193,6 @@ const ServiceRequestForm = ({
                                         placeholder="SR Type"
                                         apiUrl={`/select/sr-types?sub_department_id=${selectedSubDepartment}`}
                                         queryKeyBase={`srtype-${selectedSubDepartment}`}
-                                        clientSideSearch={true}
                                         preselectedOptions={formatOptions(serviceData, "sr_type")}
                                         isDisabled={!selectedSubDepartment}
                                     />
@@ -237,7 +233,6 @@ const ServiceRequestForm = ({
                                             placeholder="On Behalf Of Employee"
                                             apiUrl="/select/users/email/"
                                             queryKeyBase="employees"
-                                            clientSideSearch={true}
                                             preselectedOptions={formatOptions(serviceData, "on_behalf_employee")}
                                         />
                                     </div>
