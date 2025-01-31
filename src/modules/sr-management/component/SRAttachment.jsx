@@ -92,18 +92,19 @@ const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) 
                 </div>
             </PerfectScrollbar>
 
-            <div className="box-footer border-t p-3 flex items-center justify-between gap-2 rounded-md">
-                <div className="flex-grow">
-                    <label className="block">
+            <div className="box-footer border-t p-2 flex items-center justify-between gap-2 rounded-md">
+                <div className="flex-grow !text-xs">
+                    <label className="block !text-xs">
                         <span className="sr-only">Choose Files</span>
                         <input
                             type="file"
-                            ref={fileInputRef} // Reference the input field
+                            ref={fileInputRef}
                             onChange={handleFileChange}
-                            className="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50 file:me-4 file:py-2 file:px-4 file:rounded-s-sm file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary focus-visible:outline-none"
+                            className="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm !text-xs focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50 file:me-4 file:py-2 file:px-4 file:rounded-s-sm file:border-0 file:!text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-primary focus-visible:outline-none"
                         />
                     </label>
                 </div>
+
                 <button
                     type="button"
                     className="bg-primary text-white text-[0.75rem] px-4 py-2 rounded-full hover:bg-primary/90"
