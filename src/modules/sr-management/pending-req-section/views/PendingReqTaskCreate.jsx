@@ -13,7 +13,7 @@ const PendingReqTaskCreate = () => {
 
     return (
        <>
-           <PageHeader currentpage="Create Task" activepage="Pending Request" mainpage="Pending Request" />
+           <PageHeader currentpage="Create SR Task" activepage="Pending Request" mainpage="Pending Request" />
            {
                pendingReqData && (
                    <PendingReqTaskForm currentReqId={id} pendingReqData={pendingReqData}/>

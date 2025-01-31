@@ -5,6 +5,8 @@ import {useForm} from "react-hook-form";
 import Discussion from "@components/Discussion.jsx";
 import SRDiscussion from "@modules/sr-management/component/SRDiscussion.jsx";
 import ModelRight from "@components/ModalRight.jsx";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {toTitleCase} from "@helpers/formatters.js";
 
 function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,10 +19,30 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
             description: serviceRequest.description || "",
         },
     });
+const getSlaBadgeClasses = (slaHours) => {
+
+    if (slaHours >= 48) {
+        return "bg-green-500/10 text-green-500 px-2 py-1 rounded-md"; // Low SLA
+    } else if (slaHours >= 24) {
+        return "bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-md"; // Medium SLA
+    } else if (slaHours > 0) {
+        return "bg-red-500/10 text-red-500 px-2 py-1 rounded-md"; // High SLA
+    }
+    return "bg-gray-500/10 text-gray-500 px-2 py-1 rounded-md"; // Default case
+};
+
+const chunkArray = (arr, size) => {
+    const chunks = [];
+    for (let i = 0; i < arr.length; i += size) {
+        chunks.push(arr.slice(i, i + size));
+    }
+    return chunks;
+};
+
 
 
     return (
-        <div className="w-full lg:w-3/5  rounded-lg dark:bg-bodybg">
+        <div className="w-full lg:w-4/5  rounded-lg dark:bg-bodybg">
             <ModelRight isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
             <div className="box shadow-md  dark:border dark:border-gray-700 rounded-lg overflow-hidden">
                 <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
@@ -90,11 +112,62 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                         </tr>
                         <tr>
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                                Priority:
+                            </td>
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200">
+                                {generatedReqData?.priority ? (
+                                    <span className={getBadgeClasses(generatedReqData.priority)}>
+                                 {toTitleCase(generatedReqData.priority)}
+                                  </span>
+                                ) : (
+                                    <span className="text-gray-500">-</span>
+                                )}
+                            </td>
+
+
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                                SLA Hours:
+                            </td>
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200">
+                                {generatedReqData?.sla_hours ? (
+                                    <span className={getSlaBadgeClasses(generatedReqData.sla_hours)}>
+                                 {(generatedReqData.sla_hours)} : Hours
+                                  </span>
+                                ) : (
+                                    <span className="text-gray-500">-</span>
+                                )}
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
                                 CC Employee:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200">
-                                {serviceRequest.cc_email_names || "-"}{" "}
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200">
+                                {serviceRequest.cc_email_names ? (
+                                    <div>
+                                        {chunkArray(serviceRequest.cc_email_names.split(","), 3).map((chunk, chunkIndex) => (
+                                            <div key={chunkIndex} className="flex gap-2 mb-1">
+                                                {chunk.map((email, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-md dark:bg-gray-700 dark:text-gray-200"
+                                                    >
+                                {email.trim()}
+                            </span>
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <span className="text-gray-500 text-xs">-</span>
+                                )}
                             </td>
+                        </tr>
+
+
+                        <tr>
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
                                 On Behalf Of:
                             </td>
