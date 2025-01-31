@@ -61,9 +61,30 @@ const PendingRequestsTable = () => {
         {
             Header: "SR Time",
             accessor: "created_at",
-            Cell: ({value}) => (value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : ""),
+            Cell: ({value}) => (
+                value ? (
+                    <span className="bg-info/10 text-info px-2 py-1 rounded-md">
+                {format(new Date(value), "yyyy-MM-dd hh:mm a")}
+            </span>
+                ) : (
+                    <span className="text-gray-500">N/A</span>
+                )
+            ),
         },
-        {Header: "Requester", accessor: "reporter"},
+
+        {
+            Header: "Requester",
+            accessor: "reporter",
+            Cell: ({value}) => (
+                value ? (
+                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                {value}
+            </span>
+                ) : (
+                    <span className="text-gray-500">N/A</span>
+                )
+            ),
+        },
         {Header: "Assignee", accessor: "assignee"},
 
     ];
