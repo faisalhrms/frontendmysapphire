@@ -55,16 +55,16 @@ const chunkArray = (arr, size) => {
                     <table className="w-full text-sm text-gray-600">
                         <tbody>
                         <tr className="border-b border-gray-200">
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Sr #
                             </td>
-                            <td className="py-3 text-gray-700  text-normal dark:text-gray-200">
+                            <td className="py-3 text-gray-700  text-normal dark:text-gray-200 text-xs">
                                 {serviceRequest.sr_number}
                             </td>
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Created At:
                             </td>
-                            <td className="py-3 text-gray-700 text-normal dark:text-gray-400">
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-400 text-xs">
                                 {serviceRequest.created_at
                                     ? new Date(serviceRequest.created_at).toLocaleString()
                                     : "No Date"}
@@ -72,33 +72,33 @@ const chunkArray = (arr, size) => {
                         </tr>
 
                         <tr className="border-b border-gray-200">
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Need By Date:
                             </td>
-                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200">
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
                                 {serviceRequest.need_by_date
                                     ? new Date(serviceRequest.need_by_date).toLocaleDateString()
                                     : "No Need By Date"}
                             </td>
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Created By:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-400">
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-400 text-xs">
                                 {serviceRequest.reporter}
                             </td>
                         </tr>
                         <tr>
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Status:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200">
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200 text-xs">
                   <span className="badge bg-primary/10 text-primary">
                     {selectedStatus?.label
                         ? selectedStatus?.label
                         : generatedReqData?.status || "-"}
                   </span>
                             </td>
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Progress:
                             </td>
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
@@ -111,10 +111,10 @@ const chunkArray = (arr, size) => {
                             </td>
                         </tr>
                         <tr>
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Priority:
                             </td>
-                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200">
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
                                 {generatedReqData?.priority ? (
                                     <span className={getBadgeClasses(generatedReqData.priority)}>
                                  {toTitleCase(generatedReqData.priority)}
@@ -125,10 +125,10 @@ const chunkArray = (arr, size) => {
                             </td>
 
 
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 SLA Hours:
                             </td>
-                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200">
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
                                 {generatedReqData?.sla_hours ? (
                                     <span className={getSlaBadgeClasses(generatedReqData.sla_hours)}>
                                  {(generatedReqData.sla_hours)} : Hours
@@ -141,7 +141,7 @@ const chunkArray = (arr, size) => {
 
                         </tr>
                         <tr>
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 CC Employee:
                             </td>
                             <td className="py-3 text-gray-700 text-normal dark:text-gray-200">
@@ -168,10 +168,10 @@ const chunkArray = (arr, size) => {
 
 
                         <tr>
-                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 On Behalf Of:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200">
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200 text-xs">
                                 {" "}
                                 {serviceRequest.on_behalf_of
                                     ? serviceRequest.on_behalf_employee
@@ -200,7 +200,6 @@ const chunkArray = (arr, size) => {
                                     control={control}
                                     errors={errors}
                                     readOnly
-                                    placeholder="Description"
                                     editorOptions={{
                                         height: 300,
                                         buttonList: []
