@@ -1,6 +1,16 @@
 import React from "react";
 import MegaInterTable from "../components/MegaInterTable.jsx"
 import MegaSaleTable from "@modules/ecom/components/MegaSaleTable.jsx";
+import MegaITransitTable from "@modules/ecom/components/MegaITransitTable.jsx";
+import {
+    agingData,
+    totals,
+    megacancelledOrdersData,
+    megacancelledOrdersTotals,
+    returnPercentageData, returnPercentageTotal
+} from "@modules/ecom/components/utils.js";
+import MegaCancelledOrdersTable from "@modules/ecom/components/MegaCncellationOrderTable.jsx";
+import MegaReturnPercentageTable from "@modules/ecom/components/MegaReturnPercentageTable.jsx";
 
 const PerformanceRatios = () => {
 
@@ -36,20 +46,33 @@ const PerformanceRatios = () => {
         localData.reduce((sum, row) => sum + row.total, 0),
     ];
 
+
     return (
         <>
-        <div className="flex flex-wrap md:flex-nowrap gap-6 p-4">
+            <div className="flex flex-wrap md:flex-nowrap gap-6 p-2">
 
-            <MegaSaleTable title="Local" headers={localHeaders} data={localData} totals={totalLocalData} />
-            <MegaInterTable title="International" headers={internationalHeaders} data={internationalData} totals={totalInternationalData} />
+                <MegaSaleTable title="Local" headers={localHeaders} data={localData} totals={totalLocalData}/>
+                <MegaInterTable title="International" headers={internationalHeaders} data={internationalData}
+                                totals={totalInternationalData}/>
 
-        </div>
-        <div className="flex flex-wrap md:flex-nowrap gap-6 p-4">
-            <MegaSaleTable  title="Local + International"
-                           headers={localHeaders}
-                           data={localData}
-                           totals={totalLocalData} />
-        </div>
+            </div>
+            <div className="flex flex-wrap md:flex-nowrap gap-6 p-2">
+                <MegaSaleTable title="Local + International"
+                               headers={localHeaders}
+                               data={localData}
+                               totals={totalLocalData}/>
+                <MegaITransitTable title="Courier Aging" data={agingData} totals={totals}/>
+
+
+            </div>
+            <div className="flex flex-wrap md:flex-nowrap gap-6 p-2">
+
+                <MegaCancelledOrdersTable title="Cancelled Orders" data={megacancelledOrdersData}
+                                          totals={megacancelledOrdersTotals}/>
+                <MegaReturnPercentageTable title=" Return" data={returnPercentageData}
+                                           total={returnPercentageTotal}/>
+
+            </div>
         </>
     );
 };
