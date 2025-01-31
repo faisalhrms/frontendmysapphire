@@ -78,12 +78,12 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {} }) {
             <i className="ri-add-line font-semibold align-middle"></i> Sub Task
           </button>
         </div>
-        <div className="flex">
-          <button className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
-            <i className="bi bi-link-45deg font-semibold align-middle"></i> Link
-            Task
-          </button>
-        </div>
+        {/*<div className="flex">*/}
+        {/*  <button className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">*/}
+        {/*    <i className="bi bi-link-45deg font-semibold align-middle"></i> Link*/}
+        {/*    Task*/}
+        {/*  </button>*/}
+        {/*</div>*/}
       </div>
       <div className="flex items-center space-x-4 w-1/3">
         <SRAsyncSelect

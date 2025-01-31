@@ -1,5 +1,16 @@
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
+import {z} from "zod";
+
+export const prioritiesEnum = z.enum(["low", "medium", "high"], {
+    errorMap: () => "Priority must be 'low', 'medium', or 'high'",
+});
+
+export const priorities = [
+    { value: 'low', label: 'Low',sla_hours: 48 },
+    { value: 'medium', label: 'Medium',sla_hours: 24 },
+    { value: 'high', label: 'High',sla_hours: 8 }
+];
 
 export const createTask = async (id, requestData) => {
   try {
