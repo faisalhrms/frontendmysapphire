@@ -9,6 +9,7 @@ import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {priorities} from "@modules/project-management/services/projectService.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormToggle from "@components/form/FormToggle.jsx";
+import UserDropdown from "@components/dropdowns/UserDropdown.jsx";
 
 const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false}) => {
     const [data, setData]    = useState(taskData);
@@ -130,7 +131,6 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                 />
                                             </div>
                                             <div className="col-span-6">
-
                                                 <FormAsyncSelect
                                                     isMulti={true}
                                                     name="tag_ids"
@@ -144,6 +144,14 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     allowSaveNewOption={true}
                                                 />
                                             </div>
+                                                <UserDropdown
+                                                    name='external_user_ids'
+                                                    haveLabel={true}
+                                                    control={control}
+                                                    errors={errors}
+                                                    data={taskData}
+                                                    dataKey='external_users'
+                                                />
                                             <div className="col-span-12">
                                                 <FormToggle
                                                     label={true}
