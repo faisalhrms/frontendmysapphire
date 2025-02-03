@@ -31,7 +31,8 @@ export const DASHBOARD_ROUTES = {
     Equipment:{
         path:'dashboards/equipment',
         permission:'it_equipment_dashboard',
-    }
+    },
+
 }
 
 export const MODULE_ROUTES = [
@@ -75,7 +76,8 @@ export const MODULE_ROUTES = [
         component: () => import(`/src/modules/dashboards/eq/views/EquipmentDashboard.jsx`),
         permission: DASHBOARD_ROUTES.Equipment.permission,
 
-    }
+    },
+
 
 ];
 

@@ -6,7 +6,7 @@ import { getExcerptFromText, toTitleCase } from "@helpers/formatters.js";
 import { formatDate } from "@helpers/dateTime.js";
 import Avatar from "@components/Avatar.jsx";
 
-const TaskApprovalCard = ({ approval, onApprove, onReject }) => {
+const TaskApprovalCard = ({ approval, onApprove, onReject, onSuggestion }) => {
     return (
         <div className="box custom-box">
             <div className="box-header items-center !justify-center flex-wrap !flex">
@@ -29,7 +29,11 @@ const TaskApprovalCard = ({ approval, onApprove, onReject }) => {
                 <div className="flex items-center justify-between mb-3">
                     <div>
                         <div className="font-semibold mb-1">Requester:</div>
-                        <Avatar avatar={approval.requester.avatar} />
+                        <Avatar avatar={approval.requester.avatar}/>
+                    </div>
+                    <div>
+                        <div className="font-semibold mb-1">Approval Type:</div>
+                        <span className={getBadgeClasses(approval.approval_type)}>{toTitleCase(approval.approval_type)}</span>
                     </div>
                     <div className="text-end">
                         <div className="font-semibold mb-1">Priority :</div>
@@ -38,7 +42,24 @@ const TaskApprovalCard = ({ approval, onApprove, onReject }) => {
                 </div>
                 <div className="font-semibold mb-1">Description :</div>
                 <p className="text-[#8c9097] dark:text-white/50 mb-3">{getExcerptFromText(approval.task.description, 200)}</p>
-
+                {
+                    approval.challenges &&
+                    (
+                        <>
+                            <div className="font-semibold mb-1">Challenges :</div>
+                            <p className="text-[#8c9097] dark:text-white/50 mb-3">{approval.challenges}</p>
+                        </>
+                    )
+                }
+                {
+                    approval.support_required &&
+                    (
+                        <>
+                            <div className="font-semibold mb-1">Support Required :</div>
+                            <p className="text-[#8c9097] dark:text-white/50 mb-3">{approval.support_required}</p>
+                        </>
+                    )
+                }
                 <div className="flex mt-5 items-center justify-between">
                     <div>
                         <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
@@ -50,7 +71,7 @@ const TaskApprovalCard = ({ approval, onApprove, onReject }) => {
                     </div>
                     <div className="text-end">
                         <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Submission Date :</span>
-                        <span className="font-semibold block">{formatDate(approval.created_at)}</span>
+                        <span className="font-semibold block">{formatDate(approval.created_at, 'MMM dd, yyyy - HH:mm')}</span>
                     </div>
                 </div>
             </div>
@@ -61,6 +82,13 @@ const TaskApprovalCard = ({ approval, onApprove, onReject }) => {
                             className="ti-btn ti-btn-sm ti-btn-success me-[0.375rem]"
                             onClick={onApprove}
                     ><i className="bx bxs-like"></i>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" aria-label="Approve"
+                            className="ti-btn ti-btn-sm ti-btn-secondary me-[0.375rem]"
+                            onClick={onSuggestion}
+                    ><i className='bx bxs-bulb'></i>
                     </button>
                 </div>
                 <div className="text-end">

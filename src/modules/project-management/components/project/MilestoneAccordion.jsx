@@ -6,10 +6,22 @@ import {formatDate} from "@helpers/dateTime.js";
 import Tooltip from '@components/Tooltip.jsx';
 import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
+import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
+import {useTaskOverdueModal} from "@modules/project-management/hooks/taskHooks.js";
 
-const MilestoneAccordion = ({
-                                milestones, projectStatus, openMilestoneModal, openTaskModal, handleUploadModal, refetch
-                            }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, openMilestoneModal, openTaskModal, handleUploadModal, refetch }) => {
+
+    const {
+        taskName,
+        openTaskOverdueModal,
+        closeTaskOverdueModal,
+        control,
+        errors,
+        isSubmitting,
+        handleSubmit,
+        onOverdueTaskSubmit,
+        isOverdueTaskModalOpen
+    } = useTaskOverdueModal(refetch)
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 
     const toggleMilestone = (id) => {
@@ -31,8 +43,9 @@ const MilestoneAccordion = ({
         return count;
     };
 
-    return (<>
-        <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
+    return (
+        <>
+            <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
             <div className="hs-accordion-group">
                 {Array.isArray(milestones) && milestones.map((milestone) => (<div
                     className={`hs-accordion accordion-item ${milestone.priority === 'low' ? 'custom-accordion-primary' : (milestone.priority === 'medium' ? 'custom-accordion-secondary' : 'custom-accordion-danger')}`}
@@ -141,7 +154,7 @@ const MilestoneAccordion = ({
                                                     >
                                                     <span
                                                         className="ti-btn ti-btn-success !py-1 !px-2 !text-[0.75rem] ms-1"
-                                                        onClick={() => openTaskModal(milestone.id, milestone.started_at, milestone.ended_at)}
+                                                        onClick={() => openTaskModal(milestone.id, milestone.started_at, milestone.ended_at, milestone.requires_approval)}
                                                     >
                                                         <i className="ri-add-circle-line align-middle"></i>
                                                     </span>
@@ -166,13 +179,27 @@ const MilestoneAccordion = ({
                                 endedAt={milestone.ended_at}
                                 openTaskModal={openTaskModal}
                                 refetch={refetch}
+                                openTaskOverdueModal={openTaskOverdueModal}
                             />
                         </div>
                     </div>)}
                 </div>))}
             </div>
         </div>
-    </>);
+            {
+                isOverdueTaskModalOpen &&
+                    <TaskOverdueModal
+                        taskName={taskName}
+                        control={control}
+                        errors={errors}
+                        isSubmitting={isSubmitting}
+                        handleSubmit={handleSubmit}
+                        onSubmit={onOverdueTaskSubmit}
+                        closeModal={closeTaskOverdueModal}
+                    />
+            }
+        </>
+    );
 };
 
 export default React.memo(MilestoneAccordion);

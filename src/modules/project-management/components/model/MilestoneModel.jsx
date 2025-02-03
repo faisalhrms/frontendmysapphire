@@ -4,6 +4,7 @@ import {priorities, projectStatuses} from "@modules/project-management/services/
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import {useCallback} from "react";
+import FormToggle from "@components/form/FormToggle.jsx";
 
 
   const MilestoneModel = ({ control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, isEditMode = false, startedAt, endedAt  }) => {
@@ -77,6 +78,16 @@ import {useCallback} from "react";
                     />
                   </div>
                   <div className="col-span-12">
+                    <FormToggle
+                        label={true}
+                        placeholder='Requires Approval'
+                        toggleClasses=''
+                        name="requires_approval"
+                        control={control}
+                        errors={errors}
+                    />
+                  </div>
+                  <div className="col-span-12">
                     <FormTextarea
                         name="description"
                         control={control}
@@ -88,14 +99,14 @@ import {useCallback} from "react";
                 </div>
               </div>
               <div className="ti-modal-footer">
-                <FormButton isLoading={isSubmitting} />
+                <FormButton isLoading={isSubmitting}/>
               </div>
             </form>
           </div>
         </div>
       </div>
   );
-};
+  };
 
 export default MilestoneModel;
 

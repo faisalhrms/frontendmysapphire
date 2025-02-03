@@ -34,6 +34,8 @@ export const usePendingReqTaskForm = (pendingReqData) => {
         sr_type_id: data.sr_type || pendingReqData.sr_type,
         team_group_id: data.team_group_id || pendingReqData.team_group_id,
         description: data.description,
+        priority: data.priority,
+        sla_hours: data.sla_hours,
         started_at: data.started_at || new Date().toISOString().split('T')[0],
         ended_at: data.ended_at || null,
         user_ids: Array.isArray(data.user_ids) ? data.user_ids : [data.user_ids],

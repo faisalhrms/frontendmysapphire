@@ -147,6 +147,16 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         errors={errors}
                                     />
                                 </div>
+                                <div className='col-span-12'>
+                                    <FormToggle
+                                        label={true}
+                                        placeholder='Requires Approval'
+                                        toggleClasses=''
+                                        name="requires_approval"
+                                        control={control}
+                                        errors={errors}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div

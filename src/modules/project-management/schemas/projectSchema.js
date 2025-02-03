@@ -13,6 +13,7 @@ export const statusEnum = z.enum(["active", "archived", "on_hold", "completed"],
 
 const projectSchema = z.object({
     for_customer: z.boolean().default(false),
+    requires_approval: z.boolean().default(false),
     customer_id: z.number().nullable().default(null),
     company_id: z.number().nullable().default(null),
     department_id: z.number().nullable().default(null),

@@ -9,6 +9,7 @@ const milestoneSchema = z.object({
     ended_at: dateSchema('Ended'),
     status: statusEnum.default("active"),
     priority: prioritiesEnum.default("medium"),
+    requires_approval: z.boolean().default(false),
 }).refine(data => {
     if (data.ended_at) {
         return new Date(data.ended_at) >= new Date(data.started_at);
