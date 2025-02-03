@@ -3,7 +3,7 @@ import React from "react";
 const PerformanceCourierTable = ({ title, data, totals }) => {
     return (
 
-        <div className="w-1/2 bg-white p-4 shadow-md rounded-lg">
+        <div className="w-full  bg-white p-4 shadow-md rounded-lg">
             <h2 className="text-lg font-bold text-black px-4 py-2 rounded-t">{title}</h2>
 
             <div className="overflow-x-auto">
