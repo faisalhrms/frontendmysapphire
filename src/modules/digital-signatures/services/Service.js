@@ -82,3 +82,11 @@ export const updateSignature = async (employee_code, updateData) => {
     throw error;
   }
 };
+export const getDynamicTemplates = async () => {
+  try {
+    const response = await api.get("/signatures/dynamic_templates");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

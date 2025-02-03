@@ -14,49 +14,42 @@ const DigitalSignatures = () => {
     const [hide, setHide] = useState(false);
     const [tempStep, setTempStep] = useState(1);
 
-    console.log("check", tempStep);
-
     const handleHide = () => {
         try {
             setHide(!hide);
         } catch (error) {
-            console.error("Error toggling hide:", error);
+            console.error(error);
         }
     };
 
-    const handleChangeTemplate = (step) => {
-        setTempStep(step);
+    const handleChangeTemplate = (templateId) => {
+        setTempStep(templateId);
+        setEditData({...editData, signature_template_id: templateId});
     };
 
     const handleSubmitData = async (data1, step) => {
         try {
             const updatedData = {...editData, ...data1};
-
             if (!updatedData?.employee_code) {
                 Notify.error("Employee code is undefined in the updated data.");
                 return;
             }
-
             setData(updatedData);
             setEditData(updatedData);
-
             if (step === 1) {
                 setActiveTab("social");
             } else if (step === 2) {
                 try {
-                    console.log("Saving or updating signature data...");
                     let saveResponse;
                     if (editData?.id) {
                         saveResponse = await updateSignature(updatedData.employee_code, updatedData);
                     } else {
                         saveResponse = await saveSignature(updatedData);
                     }
-
                     if (saveResponse) {
                         Notify.success("Signature data saved successfully.");
                         const savedData = await getSignature(updatedData.employee_code);
                         setData(savedData);
-                        console.log("Saved data fetched successfully:", savedData);
                     } else {
                         Notify.error("Failed to save signature data.");
                     }
@@ -68,35 +61,24 @@ const DigitalSignatures = () => {
                             .join(" | ") ||
                         error.message ||
                         "An unexpected error occurred.";
-                    console.error("Error saving signature data:", errorMessage);
                     Notify.error(errorMessage);
                 }
             }
         } catch (error) {
             Notify.error("An unexpected error occurred. Please try again.");
-            console.error("Error in handleSubmitData:", error);
+            console.error(error);
         }
     };
-
-
-    console.log(data);
 
     const handleSavedDataFetch = async (Code, step) => {
         try {
-            console.log(Code, step);
             setActiveTab("details");
             const data = await getSignature(Code);
-            console.log(data);
             setEditData(data);
         } catch (error) {
-            console.error("Error fetching saved data:", error);
+            console.error(error);
         }
     };
-
-
-
-
-
 
     return (
         <>
@@ -108,12 +90,8 @@ const DigitalSignatures = () => {
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
                     <div className="box">
-                        <div
-                            className="box-header flex flex-col sm:flex-row justify-between items-center w-full p-2 rounded-md">
-                            <nav
-                                aria-label="Tabs"
-                                className="md:flex block !justify-start whitespace-nowrap"
-                            >
+                        <div className="box-header flex flex-col sm:flex-row justify-between items-center w-full p-2 rounded-md">
+                            <nav aria-label="Tabs" className="md:flex block !justify-start whitespace-nowrap">
                                 <button
                                     onClick={() => setActiveTab("details")}
                                     className={`m-1 block w-full ${
@@ -134,7 +112,6 @@ const DigitalSignatures = () => {
                                 >
                                     Social
                                 </button>
-
                                 <button
                                     onClick={() => setActiveTab("template")}
                                     className={`m-1 block w-full ${
@@ -158,15 +135,9 @@ const DigitalSignatures = () => {
                             </nav>
                         </div>
                     </div>
-
                     <div className="tab-content grid grid-cols-12 gap-6 w-full">
                         {activeTab === "details" && (
-                            <div
-                                className="tab-pane col-span-12 md:col-span-12 show active"
-                                id="details"
-                                aria-labelledby="details"
-                                role="tabpanel"
-                            >
+                            <div className="tab-pane col-span-12 md:col-span-12 show active">
                                 <SignatureForm
                                     handleSubmitData={handleSubmitData}
                                     editData={editData}
@@ -176,14 +147,8 @@ const DigitalSignatures = () => {
                                 />
                             </div>
                         )}
-
                         {activeTab === "social" && (
-                            <div
-                                className="tab-pane col-span-12 md:col-span-12"
-                                id="social"
-                                aria-labelledby="social"
-                                role="tabpanel"
-                            >
+                            <div className="tab-pane col-span-12 md:col-span-12">
                                 <SocialSignature
                                     handleSubmitData={handleSubmitData}
                                     editData={editData}
@@ -191,14 +156,8 @@ const DigitalSignatures = () => {
                                 />
                             </div>
                         )}
-
                         {activeTab === "template" && (
-                            <div
-                                className="tab-pane col-span-12 md:col-span-12"
-                                id="template"
-                                aria-labelledby="template"
-                                role="tabpanel"
-                            >
+                            <div className="tab-pane col-span-12 md:col-span-12">
                                 <TemplateSignature
                                     handleHide={handleHide}
                                     editData={editData}
@@ -207,14 +166,8 @@ const DigitalSignatures = () => {
                                 />
                             </div>
                         )}
-
                         {activeTab === "saved" && (
-                            <div
-                                className="tab-pane col-span-12"
-                                id="saved"
-                                aria-labelledby="saved"
-                                role="tabpanel"
-                            >
+                            <div className="tab-pane col-span-12">
                                 <SavedSignature handleSavedDataFetch={handleSavedDataFetch}/>
                             </div>
                         )}

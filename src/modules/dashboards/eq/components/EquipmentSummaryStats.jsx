@@ -41,6 +41,7 @@ const EquipmentSummaryStats = ({ summary, statsFetching, heading = 'Equipment Su
                             chartType='donut'
                             height={250}
                             labels={chartData.labels}
+                            chartWidth='70%'
                             additionalOptions={{
                                 legend: { position: 'left' },
                                 stroke: {

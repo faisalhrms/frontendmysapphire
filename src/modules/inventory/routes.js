@@ -31,6 +31,14 @@ export const INVENTORY_ROUTES = {
     EQUIPMENT_REASSIGN:{
         path:'/module/equipment/equipment-reassign/:id',
         permission: 'add_equipment',
+    },
+    EQUIPMENT_SITE_WISE:{
+      path:'/module/equipment/equipment-site-wise',
+      permission: 'view_equipment',
+    },
+    EQUIPMENT_HISTORY:{
+        path:'/module/equipment/equipment-history/:id',
+        permission: 'view_equipment',
     }
 
 }
@@ -65,9 +73,19 @@ export const MODULE_ROUTES = [
         permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
     },
     {
+      path:INVENTORY_ROUTES.EQUIPMENT_SITE_WISE.path,
+      component:()=>import(`/src/modules/inventory/views/EquipmentSiteWiseReport.jsx`),
+      permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
+    },
+    {
         path:INVENTORY_ROUTES.EQUIPMENT_REASSIGN.path,
         component:()=>import(`/src/modules/inventory/views/ReAssignEquipment.jsx`),
         permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
+    },
+    {
+        path:INVENTORY_ROUTES.EQUIPMENT_HISTORY.path,
+        component:()=>import(`/src/modules/inventory/views/EquipmentHistory.jsx`),
+        permission: INVENTORY_ROUTES.EQUIPMENT_HISTORY.permission
     }
     // {
     //     path: INVENTORY_ROUTES.SUMMARY.path,
