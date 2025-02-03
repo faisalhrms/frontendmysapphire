@@ -29,7 +29,7 @@ const taskSchema = z.object({
   team_ids: z.array(z.number()),
   user_ids: z.array(z.number().int().positive("User ID must be a positive integer"))
     .min(1, "At least one user ID is required"),
-  
+  external_user_ids: z.array(z.number().int().positive("External User ID must be a positive integer")).optional(),
   tag_ids: z.array(z.number().int().positive("Tag ID must be a positive integer"))
     .min(1, "At least one tag ID is required"),
 }).refine(data => {
