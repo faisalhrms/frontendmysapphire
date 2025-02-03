@@ -87,3 +87,16 @@ export const updateOverdueTask = async (id, payload) => {
         throw Error(error.response?.data?.message || 'An error occurred');
     }
 };
+
+
+export const fetchTasks = async (limit, offset, status = '') => {
+    try {
+        const url = `/pms/tasks/kanban/?limit=${limit}&offset=${offset}${status ? `&status=${status}` : ''}`;
+        const response = await api.get(url);  // Use axios's get method instead of fetch
+        return response.data;  // Return the data from the API response
+    } catch (error) {
+        // Notify on error with a generic error message or the one from the API response
+        Notify.error(error.response?.data?.message || 'Failed to fetch tasks');
+        throw error; // Rethrow the error so the calling code can handle it
+    }
+};

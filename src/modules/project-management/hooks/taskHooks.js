@@ -2,8 +2,10 @@ import {
   createTask,
   updateTask,
   getTaskById,
-  getTaskWithChild, updateTaskStatus, updateOverdueTask
+  getTaskWithChild, updateTaskStatus, updateOverdueTask,fetchTasks
 } from "@modules/project-management/services/taskService.js";
+import { useDispatch } from 'react-redux';
+import { setTasks, setPagination } from '@modules/project-management/redux/taskSlice.js';
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
 import { useForm } from "react-hook-form";
@@ -250,5 +252,32 @@ export const useTaskOverdueModal = (refetch) => {
     handleSubmit,
     onOverdueTaskSubmit,
     isOverdueTaskModalOpen
+  };
+};
+
+
+export const useTasks = (pagination, status = '') => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Fetch tasks when component mounts or when pagination changes
+    const fetchData = async () => {
+      try {
+        const response = await fetchTasks(pagination.limit, pagination.offset, status);
+        // Dispatch tasks and update pagination
+        dispatch(setTasks(response.data));
+        dispatch(setPagination({ ...pagination, offset: pagination.offset + pagination.limit }));
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      }
+    };
+
+    fetchData();
+  }, [pagination, status, dispatch]);
+
+  return {
+    // Tasks data is managed in Redux store, no need to return it here.
+    loading: false,  // You can manage loading state if you like
+    error: null, // You can manage error state as well
   };
 };
