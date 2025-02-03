@@ -66,11 +66,13 @@ const PerformanceRatios = () => {
 
             </div>
             <div className="flex flex-wrap md:flex-nowrap gap-6 p-2">
-
                 <MegaCancelledOrdersTable title="Cancelled Orders" data={megacancelledOrdersData}
                                           totals={megacancelledOrdersTotals}/>
+
+
                 <MegaReturnPercentageTable title=" Return" data={returnPercentageData}
                                            total={returnPercentageTotal}/>
+                
 
             </div>
         </>

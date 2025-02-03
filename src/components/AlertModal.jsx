@@ -10,7 +10,7 @@ function AlertModal({
                         btnTxt = "Delete",
                         isOpen = false,
                         needInput = false,
-                        inputLabel = "Comments",
+                        inputLabel = "Comments/Suggestions",
                         inputType = "textarea",
                         isSubmitting = false,
                         onConfirm,
@@ -82,7 +82,6 @@ function AlertModal({
                                         {inputType === "textarea" && (
                                             <textarea
                                                 rows="3"
-                                                type="text"
                                                 className="form-control"
                                                 value={input}
                                                 onChange={(e) => setInput(e.target.value)}

@@ -2,7 +2,7 @@ import {
   createTask,
   updateTask,
   getTaskById,
-  getTaskWithChild, updateTaskStatus
+  getTaskWithChild, updateTaskStatus, updateOverdueTask
 } from "@modules/project-management/services/taskService.js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import {useState, useEffect, useCallback} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {toggleFavouriteProject} from "@modules/project-management/services/projectService.js";
+import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -63,7 +64,7 @@ export const useTaskModal = (refetch) => {
     fetchTask();
   }, [id, isEditMode, reset]);
 
-  const openTaskModal = (id = null,startedAt,endedAt, parent = null, isEditMode = false) => {
+  const openTaskModal = (id = null, startedAt, endedAt, approval = false, parent = null, isEditMode = false) => {
 
     setId(id);
     setMilestoneDates({ startedAt, endedAt });
@@ -75,7 +76,8 @@ export const useTaskModal = (refetch) => {
         priority: "medium",
         description: "",
         parent: parent,
-        start_date: "", // Reset the start and end date
+        requires_approval: approval,
+        start_date: "",
         end_date: ""
       });
     }
@@ -187,4 +189,66 @@ export const useUpdateTaskStatus = () => {
   }, []);
 
   return { handleTaskStatus, isLoading };
+};
+
+export const useTaskOverdueModal = (refetch) => {
+  const [id, setId] = useState(null);
+  const [taskName, setTaskName] = useState(null);
+  const [isOverdueTaskModalOpen, setIsModalOpen] = useState(false);
+
+  const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
+    resolver: zodResolver(taskOverdueSchema),
+  });
+
+  const openTaskOverdueModal = (id, oldDueDate, taskName) => {
+    setId(id);
+    setTaskName(taskName);
+      reset({
+        challenges: "",
+        requested_due_date: oldDueDate,
+        support_required: ""
+      });
+    setIsModalOpen(true)
+    setTimeout(() => {
+      const modal = document.getElementById("taskOverdueModal");
+      if (modal) {
+        window.HSOverlay.open(modal);
+        modal.classList.add('open');
+      }
+    })
+  };
+
+  const closeTaskOverdueModal = () => {
+    const modal = document.getElementById("taskOverdueModal");
+    if (modal) {
+      window.HSOverlay.close(modal);
+    }
+    reset();
+    setId(null)
+    setTimeout(() => setIsModalOpen(false), 300);
+  };
+
+  const onOverdueTaskSubmit = async (data) => {
+    try {
+      const response = await updateOverdueTask(id, data);
+      if (response.status){
+        closeTaskOverdueModal();
+        refetch()
+      }
+    } catch (error) {
+      console.error("Failed to submit task:", error.message);
+    }
+  };
+
+  return {
+    taskName,
+    openTaskOverdueModal,
+    closeTaskOverdueModal,
+    control,
+    errors,
+    isSubmitting,
+    handleSubmit,
+    onOverdueTaskSubmit,
+    isOverdueTaskModalOpen
+  };
 };

@@ -78,6 +78,7 @@ const ProjectDetail = () => {
                             <ProjectTree
                                 projectId={projectData.id}
                                 projectStatus={projectData.status}
+                                approval={projectData.requires_approval}
                                 startedAt={projectData.started_at}
                                 endedAt={projectData.ended_at}
                                 milestones={milestones}

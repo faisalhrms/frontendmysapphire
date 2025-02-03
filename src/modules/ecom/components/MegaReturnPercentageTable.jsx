@@ -2,7 +2,7 @@ import React from "react";
 
 const MegaReturnPercentageTable = ({ title, data, total }) => {
     return (
-        <div className="w-2/5 bg-white p-4 shadow-md rounded-lg">
+        <div className="w-3/5   bg-white p-4 shadow-md rounded-lg">
             <h2 className="text-lg font-bold text-black bg-red-800 px-4 py-2 rounded-t">{title}</h2>
             <table className="min-w-full border-collapse border border-gray-400">
                 <thead className="bg-gray-200 text-black text-sm">

@@ -76,3 +76,14 @@ export const updateTaskStatus = async (id, status) => {
         throw Error(error.response?.data?.message || 'An error occurred');
     }
 }
+
+export const updateOverdueTask = async (id, payload) => {
+    try {
+        const response = await api.post(`/pms/tasks/${id}/request-overdue-task/`, payload);
+        Notify.success(response.data.message);
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+        throw Error(error.response?.data?.message || 'An error occurred');
+    }
+};
