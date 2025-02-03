@@ -2,7 +2,7 @@ import React from "react";
 
 const MegaSaleTable = ({ title, headers, data, totals }) => {
     return (
-        <div className="w-full bg-white p-4 shadow-md rounded-lg mb-6">
+        <div className="w-2/5 bg-white p-4 shadow-md rounded-lg mb-6">
             <h2 className="text-lg font-bold text-black  px-4 py-2 rounded-t">{title}</h2>
             <table className="min-w-full border border-gray-400">
                 <thead className="bg-gray-200 text-black text-sm">

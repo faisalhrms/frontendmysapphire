@@ -2,7 +2,7 @@ import React from "react";
 
 const MegaInterTable = ({ title, headers, data, totals }) => {
     return (
-        <div className="w-full bg-white p-4 shadow-md rounded-lg mb-6">
+        <div className="w-3/5 bg-white p-4 shadow-md rounded-lg mb-6">
 
             <h2 className="text-lg font-bold text-black bg-red-800 px-4 py-2 rounded-t">{title}</h2>
 
