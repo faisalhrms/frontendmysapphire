@@ -32,11 +32,7 @@ export const DASHBOARD_ROUTES = {
         path:'dashboards/equipment',
         permission:'it_equipment_dashboard',
     },
-    obs:{
-        path:'dashboards/OrderBooking',
-        permission:'it_orderBooking_dashboard',
 
-    }
 }
 
 export const MODULE_ROUTES = [
@@ -81,13 +77,7 @@ export const MODULE_ROUTES = [
         permission: DASHBOARD_ROUTES.Equipment.permission,
 
     },
-    {
-        path: DASHBOARD_ROUTES.obs.path,
-        component: () => import(`/src/modules/dashboards/obs/views/OrderShopify.jsx`),
-        permission: DASHBOARD_ROUTES.obs.permission,
 
-
-    }
 
 ];
 
