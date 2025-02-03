@@ -50,7 +50,7 @@ export const useMilestoneModal = (refetch) => {
         fetchMilestone();
     }, [id, isEditMode, reset]);
 
-    const openMilestoneModal = (id = null, isEditMode = false) => {
+    const openMilestoneModal = (id = null, isEditMode = false, approval = false) => {
         setId(id);
         setIsEditMode(isEditMode);
         if (!isEditMode) {
@@ -58,6 +58,7 @@ export const useMilestoneModal = (refetch) => {
                 status: "active",
                 priority: "medium",
                 description: "",
+                requires_approval: approval
             });
         }
         const modal = document.getElementById('milestoneModal');

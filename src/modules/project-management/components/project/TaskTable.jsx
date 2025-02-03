@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {getExcerptFromText, toTitleCase} from "@helpers/formatters.js";
-import {getBadgeClasses} from "@helpers/badges.js";
+import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
 import {Link} from "react-router-dom";
@@ -10,7 +10,7 @@ import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 
-const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch }) => {
+const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
 
     const toggleSubTasks = (taskId) => {
@@ -20,7 +20,6 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
     return (<>
             <div className={`table-responsive`}>
                 <table className="table whitespace-nowrap table-bordered min-w-full">
-
                     <thead className="table-active">
                     <tr className="border-b border-defaultborder">
                         <th scope="col" className="text-center">Actions</th>
@@ -35,37 +34,54 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                     </tr>
                     </thead>
                     <tbody>
-                    {tasks.map((task) => (<React.Fragment key={task.id}>
-                        <tr className="border-b border-defaultborder text-[#8c9097] dark:text-white/50">
+                    {tasks.map((task) => (
+                        <React.Fragment key={task.id}>
+                            <tr className={`border-b border-defaultborder text-[#8c9097] dark:text-white/50 ${task.is_overdue ? 'bg-danger/10 text-danger' : ''}`}>
                             <td>
                                     <span className='flex space-x-2'>
+                                        {
+                                            task.is_overdue &&
+                                            <Tooltip
+                                                id={`add-tooltip-${task.id}-overdue`}
+                                                tooltipContent={`Request For Change (${task.name}) Due Date`}
+                                            >
+                                                <button
+                                                    onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name)}
+                                                    className='ti-btn ti-btn-danger ti-btn-sm'>
+                                                    <i className="ri-calendar-2-line align-middle"></i>
+                                                </button>
+                                            </Tooltip>
+                                        }
                                           <HasPermission permission='add_task'>
-                                            { projectStatus === 'active' && milestoneStatus === 'active' && (
+                                            { projectStatus === 'active' && milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
                                                     tooltipContent={`Add Sub Task To (${task.name})`}
                                                 >
-
                                                     <button
-                                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.id)}
+                                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.requires_approval, task.id)}
                                                         className='ti-btn ti-btn-success ti-btn-sm'>
                                                         <i className="ri-add-circle-line align-middle"></i>
                                                     </button>
-                                                </Tooltip>)}
+                                                </Tooltip>
+                                            )
+                                            }
 
-                                                </HasPermission>
+                                          </HasPermission>
 
                                         <HasPermission permission='change_task'>
-                                            <Tooltip
-                                                id={`edit-tooltip-${task.id}-edit`}
-                                                tooltipContent={`Edit (${task.name})`}
-                                            >
-                                                <button
-                                                    onClick={() => openTaskModal(task.id, startedAt, endedAt, null, true)}
-                                                    className='ti-btn ti-btn-primary ti-btn-sm'>
-                                                    <i className="ri-edit-line align-middle"></i>
-                                                </button>
-                                            </Tooltip>
+                                            { task.status !== 'under_approval' &&
+                                                <Tooltip
+                                                    id={`edit-tooltip-${task.id}-edit`}
+                                                    tooltipContent={`Edit (${task.name})`}
+                                                >
+                                                    <button
+                                                        onClick={() => openTaskModal(task.id, startedAt, endedAt, task.requires_approval, null, true)}
+                                                        className='ti-btn ti-btn-primary ti-btn-sm'>
+                                                        <i className="ri-edit-line align-middle"></i>
+                                                    </button>
+                                                </Tooltip>
+                                            }
                                         </HasPermission>
 
                                     </span>
@@ -107,7 +123,12 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                                     </span>
                             </td>
                             <td className="min-w-[200px]">
-                                <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch} />
+                                {
+                                    task.status !== 'under_approval' ?
+                                        <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
+                                        :
+                                        <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
+                                }
                             </td>
                             <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                             </td>
@@ -123,11 +144,11 @@ const TaskTable = ({projectStatus, tasks, openTaskModal,milestoneStatus, started
                                 </div>
                             </td>
                         </tr>
-                        {activeTaskId === task.id && task.children && task.children.length > 0 && (<tr>
-                            <td colSpan="8">
-                                <TaskTable tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch}/>
-                            </td>
-                        </tr>)}
+                            {activeTaskId === task.id && task.children && task.children.length > 0 && (<tr>
+                                <td colSpan="8">
+                                    <TaskTable projectStatus={projectStatus} milestoneStatus={milestoneStatus} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
+                                </td>
+                            </tr>)}
                     </React.Fragment>))}
                     </tbody>
                 </table>
