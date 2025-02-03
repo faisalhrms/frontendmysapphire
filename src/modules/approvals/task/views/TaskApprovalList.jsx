@@ -9,7 +9,7 @@ import AlertModal from "@components/AlertModal.jsx";
 const TaskApprovalList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const { data, isLoading, refetch } = useTaskApprovals(currentPage, 6);
-    const totalPages = Math.ceil(data?.total / 6) || 0;
+    const totalPages = Math.ceil(data?.total / 8) || 0;
     const { handleTaskApprovalSubmit } = useTaskApprovalForm();
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
@@ -19,6 +19,58 @@ const TaskApprovalList = () => {
     const [actionType, setActionType] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const getModalType = (actionType) => {
+        switch (actionType) {
+            case "approved":
+                return "success";
+            case "changes_suggested":
+                return "primary";
+            case "rejected":
+                return "danger";
+            default:
+                return "secondary";
+        }
+    };
+
+    const getModalTitle = (actionType) => {
+        switch (actionType) {
+            case "approved":
+                return "Approve Task";
+            case "rejected":
+                return "Reject Task";
+            case "changes_suggested":
+                return "Suggest Changes";
+            default:
+                return "Confirm Action";
+        }
+    };
+
+    const getModalMessage = (actionType) => {
+        switch (actionType) {
+            case "approved":
+                return "Are you sure you want to approve this task?";
+            case "rejected":
+                return "Are you sure you want to reject this task?";
+            case "changes_suggested":
+                return "Are you sure you want to suggest changes to this task?";
+            default:
+                return "Are you sure you want to proceed with this action?";
+        }
+    };
+
+    const getModalButtonText = (actionType) => {
+        switch (actionType) {
+            case "approved":
+                return "Approve";
+            case "rejected":
+                return "Reject";
+            case "changes_suggested":
+                return "Suggest";
+            default:
+                return "Confirm";
+        }
+    };
 
     const handleActionClick = (id, type) => {
         setSelectedId(id);
@@ -54,6 +106,7 @@ const TaskApprovalList = () => {
                                 key={approval.id}
                                 approval={approval}
                                 onApprove={() => handleActionClick(approval.id, "approved")}
+                                onSuggestion={() => handleActionClick(approval.id, "changes_suggested")}
                                 onReject={() => handleActionClick(approval.id, "rejected")}
                             />
                         </div>
@@ -72,10 +125,10 @@ const TaskApprovalList = () => {
                 <AlertModal
                     id="task-approval"
                     isOpen={isModalOpen}
-                    type={actionType === "approved" ? "success" : "danger"}
-                    title={actionType === "approved" ? "Approve Task" : "Reject Task"}
-                    message={`Are you sure you want to ${actionType} this task?`}
-                    btnTxt={actionType === "approved" ? "Approve" : "Reject"}
+                    type={getModalType(actionType)}
+                    title={getModalTitle(actionType)}
+                    message={getModalMessage(actionType)}
+                    btnTxt={getModalButtonText(actionType)}
                     isSubmitting={isSubmitting}
                     needInput={true}
                     inputLabel="Comments"

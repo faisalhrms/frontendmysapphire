@@ -53,7 +53,7 @@ const ProjectList = () => {
     const handleOpenMilestoneModal = (project) => {
         setStartedAt(project.started_at);
         setEndedAt(project.ended_at);
-        openMilestoneModal(project.id, false);
+        openMilestoneModal(project.id, false, project.requires_approval);
     };
 
     const {

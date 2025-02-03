@@ -13,7 +13,7 @@ const taskSchema = z.object({
     .max(1000, "Task name must be at most 1000 characters long"),
   
   parent: z.union([z.number().int().positive("Parent must be a positive integer"), z.null()]).optional(),
-  
+  requires_approval: z.boolean().default(false),
   description: z.string()
     .min(1, "Description is required")
     .max(1000, "Description must be at most 1000 characters long"),

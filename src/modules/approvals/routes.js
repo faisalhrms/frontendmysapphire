@@ -1,12 +1,9 @@
 export const APPROVAL_ROUTES = {
     TASK: {
         path: '/module/approvals/task',
-        permission: 'approval_task',
+        permission: 'manage_task_approvals',
 
 },
-
-
-
 }
 
 export const MODULE_ROUTES = [

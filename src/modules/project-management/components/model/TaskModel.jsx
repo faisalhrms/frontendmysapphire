@@ -8,6 +8,7 @@ import { taskStatuses } from "@modules/project-management/services/taskService.j
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {priorities} from "@modules/project-management/services/projectService.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
+import FormToggle from "@components/form/FormToggle.jsx";
 
 const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false}) => {
     const [data, setData]    = useState(taskData);
@@ -141,6 +142,16 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     preselectedOptions={formattedTags}
                                                     saveOptionEndpoint="/select/tag/"
                                                     allowSaveNewOption={true}
+                                                />
+                                            </div>
+                                            <div className="col-span-12">
+                                                <FormToggle
+                                                    label={true}
+                                                    placeholder='Requires Approval'
+                                                    toggleClasses=''
+                                                    name="requires_approval"
+                                                    control={control}
+                                                    errors={errors}
                                                 />
                                             </div>
                                             <div className="col-span-12">

@@ -9,7 +9,7 @@ import { useTaskModal } from "@modules/project-management/hooks/taskHooks.js";
 import HasPermission from "@components/HasPermission.jsx";
 import sampleFile from "@assets/files/sample_upload_tasks_against_milestone.xlsx";
 
-const ProjectTree = ({ projectId, projectStatus, startedAt, endedAt, milestones, isLoading, refetch, handleUploadModal }) => {
+const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, milestones, isLoading, refetch, handleUploadModal }) => {
   const {
     openMilestoneModal,
     closeMilestoneModal,
@@ -55,7 +55,7 @@ const ProjectTree = ({ projectId, projectStatus, startedAt, endedAt, milestones,
                 {projectStatus === 'active' && (
                     <button
                         type="button"
-                        onClick={() => openMilestoneModal(projectId, false)}
+                        onClick={() => openMilestoneModal(projectId, false, approval)}
                         className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
                     >
                       <i className="ri-add-line font-semibold align-middle"></i> Add Milestone

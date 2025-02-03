@@ -10,11 +10,11 @@ const TaskSummary = ({task, openTaskModal}) => {
                 <div className="box-header justify-between">
                     <div className="box-title">Task Summary</div>
                     <div className="btn-list">
-                        <HasPermission permission='task_create'>
+                        <HasPermission permission='task_update'>
                         {
                             task.status!=='on_hold' && task.status!=='completed'&& (
                                 <button type="button"
-                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.id)}
+                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.requires_approval, task.id)}
                                         className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 mr-3 !px-2 !text-[0.75rem]">
                                     <i className="ri-add-line font-semibold align-middle"></i> Add Sub task
                                 </button>
@@ -28,7 +28,7 @@ const TaskSummary = ({task, openTaskModal}) => {
                             task.status !== 'under_approval' && task.status !== 'completed' && (
                                 <button
                                     className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                                    onClick={() => openTaskModal(task.id, task.milestone.started_at, task.milestone.ended_at, null, true)}>
+                                    onClick={() => openTaskModal(task.id, task.milestone.started_at, task.milestone.ended_at, task.requires_approval, null, true)}>
                                     <i className="ri-edit-line me-1 align-middle"></i>Edit Task
                                 </button>
                             )
