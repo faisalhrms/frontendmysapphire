@@ -30,6 +30,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                         <th scope="col" className="text-center">Started At</th>
                         <th scope="col" className="text-center">Ended At</th>
                         <th scope="col" className="text-center">Assigned To</th>
+                        <th scope="col" className="text-center">External Users</th>
                         <th scope="col" className="text-center">Created By</th>
                     </tr>
                     </thead>
@@ -37,7 +38,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                     {tasks.map((task) => (
                         <React.Fragment key={task.id}>
                             <tr className={`border-b border-defaultborder text-[#8c9097] dark:text-white/50 ${task.is_overdue ? 'bg-danger/10 text-danger' : ''}`}>
-                            <td>
+                                <td>
                                     <span className='flex space-x-2'>
                                         {
                                             task.is_overdue &&
@@ -52,8 +53,8 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                                 </button>
                                             </Tooltip>
                                         }
-                                          <HasPermission permission='add_task'>
-                                            { projectStatus === 'active' && milestoneStatus === 'active' && task.status !== 'under_approval' && (
+                                        <HasPermission permission='add_task'>
+                                            {projectStatus === 'active' && milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
                                                     tooltipContent={`Add Sub Task To (${task.name})`}
@@ -70,7 +71,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                           </HasPermission>
 
                                         <HasPermission permission='change_task'>
-                                            { task.status !== 'under_approval' &&
+                                            {task.status !== 'under_approval' &&
                                                 <Tooltip
                                                     id={`edit-tooltip-${task.id}-edit`}
                                                     tooltipContent={`Edit (${task.name})`}
@@ -85,8 +86,8 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                         </HasPermission>
 
                                     </span>
-                            </td>
-                            <td>
+                                </td>
+                                <td>
                                     <span className="flex items-center">
                                         <span className="text-primary" onClick={() => toggleSubTasks(task.id)}>
                                             {task.children && task.children.length > 0 && (<svg
@@ -107,8 +108,8 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                             {task.task_no}
                                         </Link>
                                     </span>
-                            </td>
-                            <td>
+                                </td>
+                                <td>
                                     <span className="flex items-center">
                                         <Tooltip
                                             id={`task-tooltip-${task.id}`}
@@ -121,29 +122,32 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                                 {task.children.length}
                                             </span>)}
                                     </span>
-                            </td>
-                            <td className="min-w-[200px]">
-                                {
-                                    task.status !== 'under_approval' ?
-                                        <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
-                                        :
-                                        <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
-                                }
-                            </td>
-                            <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
-                            </td>
-                            <td>{formatDate(task.started_at)}</td>
-                            <td>{formatDate(task.ended_at)}</td>
-                            <td><AvatarList users={task.users} max={4}/></td>
-                            <td className="min-w-[180px]">
-                                <div className="flex items-center flex-wrap">
-                                    <div className="me-2 leading-none">
-                                        <Avatar avatar={task?.created_by?.avatar} size='xs'/>
+                                </td>
+                                <td className="min-w-[200px]">
+                                    {
+                                        task.status !== 'under_approval' ?
+                                            <TaskStatusDropdown status={task.status} taskId={task.id}
+                                                                refetch={refetch}/>
+                                            :
+                                            <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
+                                    }
+                                </td>
+                                <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
+                                </td>
+                                <td>{formatDate(task.started_at)}</td>
+                                <td>{formatDate(task.ended_at)}</td>
+                                <td><AvatarList users={task.users} max={4}/></td>
+                                <td><AvatarList users={task.external_users} max={4}/></td>
+                                <td className="min-w-[180px]">
+                                    <div className="flex items-center flex-wrap">
+                                        <div className="me-2 leading-none">
+                                            <Avatar avatar={task?.created_by?.avatar} size='xs'/>
+                                        </div>
+                                        <span
+                                            className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{toTitleCase(task?.created_by?.full_name)}</span>
                                     </div>
-                                    <span className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{toTitleCase(task?.created_by?.full_name)}</span>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                             {activeTaskId === task.id && task.children && task.children.length > 0 && (<tr>
                                 <td colSpan="8">
                                     <TaskTable projectStatus={projectStatus} milestoneStatus={milestoneStatus} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
