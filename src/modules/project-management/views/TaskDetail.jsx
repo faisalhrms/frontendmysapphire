@@ -39,8 +39,8 @@ const TaskDetail = () => {
       {isLoading ? (
         <LoadingSpinner />
       ) : (
-        <div className="grid grid-cols-12 gap-6">
-          <div className="xl:col-span-9 col-span-12">
+        <div className="grid grid-cols-12 gap-6 min-h-screen">
+          <div className="xl:col-span-9 sm:col-span-9 col-span-12 min-h-screen">
             <TaskSummary task={task} openTaskModal={openTaskModal} />
             {task.children.length > 0 && (
               <TaskTree task={task} openTaskModal={openTaskModal} refetch={refetch} />
@@ -51,7 +51,7 @@ const TaskDetail = () => {
               getEndPoint={`/pms/tasks/${id}/discussions/`}
             />
           </div>
-          <div className="xl:col-span-3 col-span-12">
+          <div className="xl:col-span-3 sm:col-span-3 col-span-12 sticky top-0 self-start ">
             <TaskAdditionalDetail task={task} />
             <ProjectTeam users={task.users} />
             {task.attachments.length > 0 && (
