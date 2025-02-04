@@ -1,38 +1,83 @@
-// hooks/useKanbanStatusInfinite.js
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchKanbanTasks } from "../services/taskService.js";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+    fetchKanbanTasksAll,
+    fetchKanbanTasksByStatus
+} from "@modules/project-management/services/taskService.js";
 
-export function useKanbanStatusInfinite(statusKey, enabled = true) {
-    return useInfiniteQuery({
-        // The query key is an array
-        queryKey: ["kanbanTasks", statusKey],
+/**
+ * A hook that loads all Kanban data once,
+ * then provides a 'loadMore' method for each status column.
+ */
+export function useKanbanStatusInfinite() {
+    const [kanbanData, setKanbanData] = useState({});
 
-        // The function that fetches data
-        queryFn: async ({ pageParam = 0 }) => {
-            // pageParam = offset
-            const result = await fetchKanbanTasks({
+    const [loadingStatus, setLoadingStatus] = useState(null);
+
+    // Single React Query to fetch *all* statuses/tasks initially
+    const {
+        isLoading,
+        isError,
+        error,
+    } = useQuery({
+        queryKey: ["kanbanBoard"],      // Unique key for the entire board
+        queryFn: async () => {
+            // Fetch up to 5 tasks per status initially (adjust if desired)
+            const response = await fetchKanbanTasksAll(5);
+            console.log(response);
+            setKanbanData(response.data || {});
+            return response.data;
+
+        },
+       
+        // Optionally configure staleTime, refetchOnWindowFocus, etc.
+        // staleTime: Infinity,
+    });
+
+    /**
+     * loadMore(statusKey): fetch next batch for that status only
+     */
+    const loadMore = async (statusKey) => {
+        try {
+            setLoadingStatus(statusKey);
+
+            // Current tasks for that column
+            const currentTasks = kanbanData[statusKey]?.tasks || [];
+            const offset = currentTasks.length;
+
+            // Fetch next 5 tasks
+            const response = await fetchKanbanTasksByStatus({
                 status: statusKey,
                 limit: 5,
-                offset: pageParam,
+                offset,
             });
-            return result;
-        },
 
-        // Determine the next page offset
-        getNextPageParam: (lastPage, allPages) => {
-            const columnData = lastPage?.data?.[statusKey];
-            if (!columnData) return undefined;
+            const newTasks = response.data?.[statusKey]?.tasks || [];
+            const updatedKanbanData = { ...kanbanData };
 
-            const totalCount = columnData.task_count || 0;
-            const loadedTasksCount = allPages.reduce((sum, page) => {
-                const tasks = page?.data?.[statusKey]?.tasks || [];
-                return sum + tasks.length;
-            }, 0);
+            updatedKanbanData[statusKey] = {
+                ...updatedKanbanData[statusKey],
+                tasks: [...currentTasks, ...newTasks],
+                // Update the total count if the API returns an updated number
+                task_count:
+                    response.data?.[statusKey]?.task_count ??
+                    updatedKanbanData[statusKey].task_count,
+            };
 
-            return loadedTasksCount < totalCount ? loadedTasksCount : undefined;
-        },
+            setKanbanData(updatedKanbanData);
+            setLoadingStatus(null);
+        } catch (err) {
+            setLoadingStatus(null);
+            // Optionally handle error here or let React Query handle it
+        }
+    };
 
-        // Enable/disable the query
-        enabled,
-    });
+    return {
+        kanbanData,
+        isLoading,
+        isError,
+        error,
+        loadMore,
+        loadingStatus,
+    };
 }

@@ -88,22 +88,35 @@ export const updateOverdueTask = async (id, payload) => {
         throw Error(error.response?.data?.message || 'An error occurred');
     }
 };
-
-
-export const fetchKanbanTasks = async (params = {}) => {
+// Fetch all statuses at once, each with a certain limit of tasks
+export const fetchKanbanTasksAll = async (limit = 5) => {
     try {
-        // e.g. { status, limit, offset }
+        // We’ll pass a single limit that your backend can use
+        // for each status, e.g. 5 tasks per status.
         const searchParams = new URLSearchParams({
-            limit: params.limit || 5,
-            offset: params.offset || 0,
+            limit, // e.g. 5
+            offset: 0,
         });
 
-        if (params.status) {
-            searchParams.append("status", params.status);
-        }
+        const response = await api.get(`/pms/tasks/kanban/?${searchParams.toString()}`);
+        return response.data; // { data: { open: {...}, in_progress: {...}, ...}, status: true, message: "..."}
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching Kanban tasks");
+        throw error;
+    }
+};
 
-        const response = await api.get(`/pms/tasks/kanban/?${searchParams}`);
-        return response.data; // Typically { data: {...}, status: true, message: "..."}
+// Fetch tasks for one specific status with pagination
+export const fetchKanbanTasksByStatus = async ({ status, limit = 5, offset = 0 }) => {
+    try {
+        const searchParams = new URLSearchParams({
+            status,
+            limit,  // e.g. 5
+            offset, // e.g. current number of tasks loaded
+        });
+
+        const response = await api.get(`/pms/tasks/kanban/?${searchParams.toString()}`);
+        return response.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || "Error fetching Kanban tasks");
         throw error;
