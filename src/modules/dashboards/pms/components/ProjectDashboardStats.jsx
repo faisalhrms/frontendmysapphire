@@ -24,15 +24,12 @@ const ProjectDashboardStats = ({filters}) => {
                         />))}
                 </div>
                 <div className="grid grid-cols-12 gap-x-6">
-                    <ProjectAnalysisCard
-                        data={data.monthly_series}
-                    />
+                    <ProjectAnalysisCard data={data.monthly_series} />
                     <RecentProjectCard
                         projects={data.recent_projects}
                     />
                     <div className="xl:col-span-5 col-span-12">
-                        <ProjectSummaryStats summary={data.project_summary} statsFetching={isLoading}
-                                             heading='Project Summary'/>
+                        <ProjectSummaryStats summary={data.project_summary} statsFetching={isLoading} heading='Project Summary'/>
                     </div>
                     <div className="xl:col-span-7 col-span-12">
                         <ProjectUserSummaryStats summary={data.user_summary} statsFetching={isLoading}/>

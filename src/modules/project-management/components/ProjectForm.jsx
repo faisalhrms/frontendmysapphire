@@ -41,8 +41,8 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
 
         <>
             <form onSubmit={handleSubmit(handleProjectSubmit)}>
-            <div className="grid grid-cols-12 gap-x-6">
-                <div className="xxl:col-span-9 xl:col-span-12 lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+            <div className="grid grid-cols-12 gap-x-6 min-h-screen">
+                <div className="xxl:col-span-9 xl:col-span-8 lg:col-span-8  sm:col-span-8 col-span-12">
                     <div className="box">
                         <div className="box-header">
                             <div className="box-title"> Project Info</div>
@@ -50,7 +50,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
                                 <HasPermission permission='manage_project'>
-                                    <div className="xl:col-span-6 col-span-12">
+                                    <div className="xl:col-span-6  col-span-12">
                                         <FormAsyncSelect
                                             name="company_id"
                                             control={control}
@@ -78,7 +78,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                 {
                                     forCustomer &&
                                     (
-                                        <div className="xl:col-span-6 col-span-12">
+                                        <div className="xl:col-span-6  col-span-12">
                                             <FormAsyncSelect
                                                 name="customer_id"
                                                 control={control}
@@ -165,7 +165,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                         </div>
                     </div>
                 </div>
-                <div className="xxl:col-span-3 xl:col-span-12 lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+                <div className="xxl:col-span-3 xl:col-span-4 lg:col-span-4 sm:col-span-4 col-span-12 sticky top-0 self-start ">
                     <HasPermission permission='manage_customer_project'>
                         <div className="box">
                             <div className="box-header">

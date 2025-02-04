@@ -26,6 +26,7 @@ const ProjectAnalysisCard = ({ data }) => {
                             height={355}
                             series={data.series}
                             categories={data.categories}
+                            baseWidthPerCategory={20}
                         />
                     </div>
                 </div>
