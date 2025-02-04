@@ -893,6 +893,47 @@ Background Image
   @apply fill-danger;
 }
 
+.svg-info {
+  @apply fill-info;
+}
+
+.svg-blue {
+  @apply fill-blue;
+}
+
+.svg-purple {
+  @apply fill-purple;
+}
+
+.svg-orange {
+  @apply fill-orange;
+}
+
+.svg-red {
+  @apply fill-red;
+}
+
+.svg-yellow {
+  @apply fill-yellow;
+}
+
+.svg-teal {
+  @apply fill-teal;
+}
+
+.svg-green {
+  @apply fill-green;
+}
+
+.svg-cyan {
+  @apply fill-cyan;
+}
+
+.svg-indigo {
+  @apply fill-indigo;
+}
+
+
 .nft-auction-time {
   @apply absolute top-[3.5rem] end-4 py-1 px-2 bg-[#ffffff26] rounded-[0.3rem] backdrop-blur-[1.875rem];
 }

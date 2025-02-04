@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 const ProjectAdditionalDetail = ({project}) => {
     return(
         <>
-            <div className="box">
+            <div className="box sticky top-0 self-start">
                 <div className="box-header justify-between">
                     
                     <div className="box-title">

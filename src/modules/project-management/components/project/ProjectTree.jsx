@@ -1,14 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, {useMemo, useState} from 'react';
 import '@assets/css/custom/project.css';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import MilestoneAccordion from "@modules/project-management/components/project/MilestoneAccordion.jsx";
 import MilestoneModel from "@modules/project-management/components/model/MilestoneModel.jsx";
-import { useMilestoneModal } from "@modules/project-management/hooks/milestoneHooks.js";
+import {useMilestoneModal} from "@modules/project-management/hooks/milestoneHooks.js";
 import TaskModel from "@modules/project-management/components/model/TaskModel.jsx";
-import { useTaskModal } from "@modules/project-management/hooks/taskHooks.js";
+import {useTaskModal} from "@modules/project-management/hooks/taskHooks.js";
 import HasPermission from "@components/HasPermission.jsx";
 import sampleFile from "@assets/files/sample_upload_tasks_against_milestone.xlsx";
-import {recursiveFilter} from "@modules/project-management/hooks/projectHooks.js";
+import {useMilestoneSearch} from "@modules/project-management/hooks/projectHooks.js";
 
 const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, milestones = [], isLoading, refetch, handleUploadModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -40,10 +40,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, m
 
   const filteredMilestones = useMemo(() => {
     if (!searchTerm.trim()) return milestones;
-
-    const filtered = recursiveFilter(milestones, searchTerm);
-    console.log('Filtered Milestones with Full Expansion:', filtered);
-    return filtered;
+    return useMilestoneSearch(milestones, searchTerm);
   }, [searchTerm, milestones]);
 
   return (

@@ -30,7 +30,14 @@ const ApexChart = ({
                        yAxisTitle = '',
                        onPointClick = () => {},
                        chartWidth = 800,
+                       baseWidthPerCategory = 400,
                    }) => {
+
+    const dynamicChartWidth = useMemo(() => {
+        const numCategories = categories?.length || 1;
+        const computedWidth = numCategories * baseWidthPerCategory;
+        return Math.max(computedWidth, chartWidth);
+    }, [categories]);
 
     const defaultOptions = useMemo(() => ({
         labels: labels,
@@ -266,7 +273,7 @@ const ApexChart = ({
 
     return (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-            <div style={{ width: chartWidth, minWidth: '100%' }}>
+            <div style={{ width: dynamicChartWidth, minWidth: '100%' }}>
                 <ReactApexChart
                     options={defaultOptions}
                     series={series}
