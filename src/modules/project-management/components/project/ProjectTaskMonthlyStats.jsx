@@ -28,11 +28,12 @@ const ProjectTaskMonthlyStats = ({ months, statsFetching }) => {
                   <div id="task-list-stats">
                     {colors.length > 0 && (
                         <ApexChart
-                            height={722}
-                            columnWidth='70%'
+                            height={500}
+                            columnWidth='50%'
                             colors={colors}
                             series={months.series}
                             categories={months.categories}
+                            baseWidthPerCategory={150}
                         />
                     )}
                   </div>

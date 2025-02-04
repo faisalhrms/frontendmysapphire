@@ -4,7 +4,7 @@ import ApexChart from "@components/charts/ApexChart.jsx";
 import {mapSeriesToColors, statusColorMapping,} from "@helpers/statusStyles.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const ProjectUserSummaryStats = ({summary, statsFetching, heading = 'Resource Planning Summary'}) => {
+const ProjectUserSummaryStats = ({summary, statsFetching, height = 315}) => {
 
     const colors = useMemo(() => {
         return mapSeriesToColors(summary?.series, statusColorMapping);
@@ -19,7 +19,7 @@ const ProjectUserSummaryStats = ({summary, statsFetching, heading = 'Resource Pl
                 {statsFetching ? (<LoadingSpinner/>) : (<div className="p-6 pb-2">
                         <ApexChart
                             colors={colors}
-                            height={315}
+                            height={height}
                             columnWidth='80%'
                             categories={summary.categories}
                             series={summary.series}
@@ -29,6 +29,7 @@ const ProjectUserSummaryStats = ({summary, statsFetching, heading = 'Resource Pl
                                     width: 2,
                                 }
                             }}
+                            baseWidthPerCategory={200}
                         />
                     </div>)}
             </div>
