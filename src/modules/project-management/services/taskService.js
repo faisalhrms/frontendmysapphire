@@ -11,8 +11,9 @@ export const taskStatuses = [
     { value: 'reopened', label: 'Reopened' },
     { value: 'on_hold', label: 'On Hold' },
     { value: 'cancelled', label: 'Cancelled' },
+    { key: "rejected", label: "Rejected" },
+    { key: "under_approval", label: "Under Approval" },
 ];
-
 
 export const createTask = async (milestone_id, data) => {
     try {
@@ -89,14 +90,22 @@ export const updateOverdueTask = async (id, payload) => {
 };
 
 
-export const fetchTasks = async (limit, offset, status = '') => {
+export const fetchKanbanTasks = async (params = {}) => {
     try {
-        const url = `/pms/tasks/kanban/?limit=${limit}&offset=${offset}${status ? `&status=${status}` : ''}`;
-        const response = await api.get(url);  // Use axios's get method instead of fetch
-        return response.data;  // Return the data from the API response
+        // e.g. { status, limit, offset }
+        const searchParams = new URLSearchParams({
+            limit: params.limit || 5,
+            offset: params.offset || 0,
+        });
+
+        if (params.status) {
+            searchParams.append("status", params.status);
+        }
+
+        const response = await api.get(`/pms/tasks/kanban/?${searchParams}`);
+        return response.data; // Typically { data: {...}, status: true, message: "..."}
     } catch (error) {
-        // Notify on error with a generic error message or the one from the API response
-        Notify.error(error.response?.data?.message || 'Failed to fetch tasks');
-        throw error; // Rethrow the error so the calling code can handle it
+        Notify.error(error.response?.data?.message || "Error fetching Kanban tasks");
+        throw error;
     }
 };
