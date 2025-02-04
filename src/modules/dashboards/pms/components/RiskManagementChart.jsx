@@ -35,7 +35,7 @@ const RiskAnalysisChart = ({ data }) => {
                     <div className="box-body">
                         <div id="projectAnalysis">
                             <ApexChart
-                                columnWidth="25%"
+                                columnWidth="15%"
                                 additionalOptions={{
                                     legend: { position: 'top' },
                                     plotOptions: {
@@ -61,7 +61,6 @@ const RiskAnalysisChart = ({ data }) => {
                                 height={500}
                                 series={data.series}
                                 onPointClick={handlePointClick}
-                                chartWidth={2000}
                             />
                         </div>
                     </div>
