@@ -220,7 +220,7 @@ export const useProjectMilestoneTaskDashboardStatistics = (milestoneId) => {
 
     return { data, isLoading };
 }
-export const recursiveFilter = (items, searchTerm) => {
+export const useMilestoneSearch = (items, searchTerm) => {
     return items
         .map(item => {
             const matches = item.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -228,7 +228,7 @@ export const recursiveFilter = (items, searchTerm) => {
             if (matches) {
                 return { ...item, children: item.children || [] };
             } else if (item.children && item.children.length > 0) {
-                const filteredChildren = recursiveFilter(item.children, searchTerm);
+                const filteredChildren = useMilestoneSearch(item.children, searchTerm);
                 if (filteredChildren.length > 0) {
                     return { ...item, children: filteredChildren };
                 }
