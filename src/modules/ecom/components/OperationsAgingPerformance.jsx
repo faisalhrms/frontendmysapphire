@@ -5,13 +5,73 @@ const ShopifyForm = ({ localTitle, internationalTitle, columns, localData, inter
         <div className="grid grid-cols-12 gap-6 mt-4">
             <div className="col-span-12">
                 <div className="box">
-
                     <div className="box-body">
                         <div className="overflow-hidden">
-                            <div className="grid grid-cols-2 gap-4">
-                                <OperationsTable title={localTitle} columns={columns} data={localData} />
-                                <OperationsTable title={internationalTitle} columns={columns} data={internationalData} />
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Pending Liability (Based on Shopify order
+                                        landing date)</h5>
+                                    <OperationsTable title={localTitle} columns={columns} data={localData}/>
+                                </div>
+                                <div>
+                                    <OperationsTable title="International" columns={columns} data={internationalData}/>
+                                </div>
                             </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <OperationsTable title="Local+International" columns={columns} data={localData}/>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <h5 className="text-white bg-danger p-2"> Un-Approved Orders at Ginkgo</h5>
+                                    <OperationsTable title={localTitle} columns={columns} data={localData}/>
+                                </div>
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Fulfillment Aging (Orders pending from
+                                        Approved Date in Ginkgo)</h5>
+                                    <OperationsTable title="Sale Not Punched in D365" columns={columns} data={internationalData}/>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Dispatched in Ginkgo but not Picked by
+                                        Courier</h5>
+                                    <OperationsTable title="Un-Approved Orders at Ginkgo" columns={columns} data={internationalData}/>
+                                </div>
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Fulfillment Aging (Orders pending from
+                                        Approved Date in Ginkgo)</h5>
+                                    <OperationsTable
+                                        title="Fulfillment Aging (Orders pending from Approved Date in Ginkgo)" columns={columns} data={localData}/>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <OperationsTable title="Dispatched in Ginkgo but not Picked by Courier" columns={columns} data={localData}/>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Sale Not Punched in D365</h5>
+                                    <OperationsTable columns={columns} data={internationalData}/>
+                                </div>
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Punched in D365 but not dispatched in
+                                        Ginkgo</h5>
+                                    <OperationsTable columns={columns} data={localData}/>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <OperationsTable title="In-Transit to Customer" columns={columns} data={localData}/>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Aging from Return date marked by
+                                        courier</h5> <OperationsTable  columns={columns} data={localData}/>
+                                </div>
+                                <div>
+                                    <h5 className="text-white bg-danger p-2">Aging from Pickup/Dispatch date</h5>
+                                    <OperationsTable columns={columns} data={localData}/>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

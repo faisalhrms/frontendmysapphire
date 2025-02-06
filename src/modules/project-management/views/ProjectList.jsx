@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { Link } from "react-router-dom";
 import {useProjectFilter, useProjects, useUploadProjectModal} from "@modules/project-management/hooks/projectHooks.js";
@@ -18,7 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setViewType} from "@modules/project-management/redux/pmsSlice.js";
 import ProjectGridItems from "@modules/project-management/components/ProjectGridItems.jsx";
 import ProjectListItems from "@modules/project-management/components/ProjectListItems.jsx";
-
+import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
     const { filterControl,
@@ -74,6 +74,16 @@ const ProjectList = () => {
         dispatch(setViewType(viewType));
     };
 
+    useEffect(() => {
+        dispatch(setFilters(
+            {
+                workspace: null,
+                status: status,
+                priority: priority
+            }
+            ));
+    }, [status, priority]);
+
     return (
         <>
             <PageHeader currentpage="Project Management System"/>
@@ -97,14 +107,17 @@ const ProjectList = () => {
                                         errors={filterErrors}
                                         multiple={true}
                                         saveNewOption={false}
+
                                     />
                                     <ProjectStatusDropdown
                                         control={filterControl}
                                         errors={filterErrors}
+
                                     />
                                     <ProjectPriorityDropdown
                                         control={filterControl}
                                         errors={filterErrors}
+
                                     />
                                 </div>
                                 <div className="flex items-center">
