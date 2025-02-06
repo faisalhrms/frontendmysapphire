@@ -18,6 +18,7 @@ import {uploadMilestones} from "@modules/project-management/services/milestoneSe
 import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.js";
 import projectFilterSchema from "@modules/project-management/schemas/projectFilterSchema.js";
 import projectDashboardFilterSchema from "@modules/project-management/schemas/projectDashboardFilterSchema.js";
+import {useSelector} from "react-redux";
 
 export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null) => {
     const query = useQuery({
@@ -185,8 +186,13 @@ export const useUploadProjectModal = (refetch, type = 'P') => {
 };
 
 export const useProjectFilter = () => {
+    const filters = useSelector((state) => state.pms.filters);
     const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(projectFilterSchema),
+        defaultValues: {
+            status: filters.status,
+            priority: filters.priority,
+        },
     });
 
     return {
