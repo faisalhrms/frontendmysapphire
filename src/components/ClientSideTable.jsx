@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import {Link} from "react-router-dom";
+import useFullScreen from "@hooks/useFullScreen.js";
 
 const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table' }) => {
     const { headers } = config;
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
+
+    const { isFullscreen, handleFullscreenClick } = useFullScreen()
 
     useEffect(() => {
         const lowercasedFilter = searchTerm.toLowerCase();
@@ -17,10 +21,10 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table' 
     }, [searchTerm, data]);
 
     return (
-        <div className="box custom-card">
+        <div className={`box custom-card ${isFullscreen ? 'box-fullscreen' : ''}`}>
             <div className="box-header justify-between">
                 <div className="box-title">{title}</div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center gap-2">
                     <input
                         className="ti-form-control form-control-sm"
                         type="text"
@@ -28,6 +32,9 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table' 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
+                    <Link aria-label="anchor" to="#" className="terms-fullscreen" onClick={handleFullscreenClick}>
+                        <i className="ri-fullscreen-line"></i>
+                    </Link>
                 </div>
             </div>
 
