@@ -46,12 +46,15 @@ const statusStyles = {
     archived: txtWarning,
     pending: warning,
     inactive: txtDanger,
-    brand_new: txtSuccess, // Green
-    faulty: txtDanger, // Red
-    functional: txtSecondary, // Blue
-    lost: warning, // Yellow
-    sold_to_employee: txtSuccess, // Purple
-    write_off: txtDanger, // Gray
+    brand_new: txtSuccess,
+    faulty: txtDanger,
+    functional: txtSecondary,
+    lost: warning,
+    sold_to_employee: txtSuccess,
+    write_off: txtDanger,
+    High: txtDanger,
+    Low: txtSuccess,
+    Medium: txtWarning,
 
 };
 

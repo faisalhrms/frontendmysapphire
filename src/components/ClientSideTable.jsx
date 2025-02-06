@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import ProgressBar from "@components/ProgressBar";
 
-const statusColors = {
-    success: "bg-success/10 text-success",
-    warning: "bg-warning-100 text-warning-800",
-    red: "bg-danger text-red-800",
-    yellow: "bg-warning text-warning-800",
-    green: "bg-success text-success-800",
-};
-
-const Table = ({ tableConfig, data }) => {
-    const { headers = [] } = tableConfig || {};
+const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table' }) => {
+    const { headers } = config;
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredData, setFilteredData] = useState(data || []);
+    const [filteredData, setFilteredData] = useState(data);
 
     useEffect(() => {
         const lowercasedFilter = searchTerm.toLowerCase();
@@ -28,7 +19,7 @@ const Table = ({ tableConfig, data }) => {
     return (
         <div className="box custom-card">
             <div className="box-header justify-between">
-                <div className="box-title">Milestone Status</div>
+                <div className="box-title">{title}</div>
                 <div className="flex flex-wrap gap-2">
                     <input
                         className="ti-form-control form-control-sm"
@@ -53,20 +44,11 @@ const Table = ({ tableConfig, data }) => {
                         <tbody>
                         {filteredData.length > 0 && headers.length > 0 ? (
                             filteredData.map((rowData, rowIndex) => (
-                                <tr key={rowIndex} className="border border-inherit border-solid !text-center   hover:bg-gray-100">
+                                <tr key={rowIndex}
+                                    className="border border-inherit border-solid !text-center hover:bg-gray-100">
                                     {headers.map((header, colIndex) => (
-                                        <td key={colIndex} className="p-3 text-sm t text-gray-700 !text-center ">
-                                            {header.accessor === "actual_progress" || header.accessor === "expected_progress" ? (
-                                                <ProgressBar value={rowData[header.accessor]} withStatus={false} />
-                                            ) : header.accessor === "overdue_tasks" ? (
-                                                <span className="text-danger font-semibold !text-center ">{rowData[header.accessor] || "0"}</span>
-                                            ) : header.accessor === "risk_level" ? (
-                                                <span className="bg-danger/10 text-danger px-2 py-1 rounded-md font-semibold !text-center ">
-                                                    {rowData[header.accessor] || "N/A"}
-                                                </span>
-                                            ) : (
-                                                rowData[header.accessor] || "N/A"
-                                            )}
+                                        <td key={colIndex} className={`p-3 text-sm text-gray-700 ${header.align || '!text-center'}`}>
+                                            {rowData[header.accessor] || "N/A"}
                                         </td>
                                     ))}
                                 </tr>
@@ -84,18 +66,12 @@ const Table = ({ tableConfig, data }) => {
     );
 };
 
-Table.propTypes = {
-    tableConfig: PropTypes.shape({
+ClientSideTable.propTypes = {
+    config: PropTypes.shape({
         headers: PropTypes.array,
     }),
     data: PropTypes.array,
+    title: PropTypes.string,
 };
 
-Table.defaultProps = {
-    tableConfig: {
-        headers: [],
-    },
-    data: [],
-};
-
-export default Table;
+export default React.memo(ClientSideTable);
