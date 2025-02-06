@@ -21,10 +21,10 @@ export const PMS_ROUTES = {
     DETAIL: {
       path: "/module/tasks/detail/:id",
     },
+    KANBAN:{
+      path: "/module/task/kanban-board"
+    }
   },
-  TASK_KANBAN_BOARD:{
-    path:"/module/task/kanban-board"
-  }
 };
 
 export const MODULE_ROUTES = [
@@ -55,10 +55,11 @@ export const MODULE_ROUTES = [
     component: () =>
       import(`/src/modules/project-management/views/TaskDetail.jsx`),
   },
-  {
-    path:PMS_ROUTES.TASK_KANBAN_BOARD.path,
-    component:()=>import(`/src/modules/project-management/views/TaskKanban.jsx`),
-  },
- 
+  // {
+  //   path:PMS_ROUTES.TASK.KANBAN.path,
+  //   component:()=>
+  //       import(`/src/modules/project-management/views/TaskKanban.jsx`),
+  // },
+  //
   
 ];

@@ -89,11 +89,11 @@ const TaskKanBan = () => {
                 <div className="ynex-kanban-board text-defaulttextcolor dark:text-defaulttextcolor/70 text-defaultsize">
                     <div className="flex overflow-x-auto">
                         {/* Loop through all task statuses */}
-                        {taskStatuses.map(({ value: statusKey, label: statusLabel }) => {
+                        {taskStatuses.map(({ value: statusKey, label: statusLabel }, index) => {
                             const statusData = kanbanData?.[statusKey];
                             if (!statusData || !statusData.tasks || statusData.tasks.length === 0) {
                                 return (
-                                    <div className="kanban-tasks-type min-w-[320px]" key={statusKey}>
+                                    <div className="kanban-tasks-type min-w-[320px]" key={`${statusKey}-${index}`}>
                                         <div className="mb-4">
                                             <span className="block font-semibold text-[.9375rem]">{statusLabel} - 0</span>
                                         </div>
@@ -111,7 +111,7 @@ const TaskKanBan = () => {
                             const filteredTasks = filterTasks(tasks);
 
                             return (
-                                <div className={`kanban-tasks-type ${statusKey} min-w-[320px]`} key={statusKey}>
+                                <div className={`kanban-tasks-type ${statusKey} min-w-[320px]`} key={`${statusKey}-${index}`}>
                                     <div className="mb-4">
                                         <div className="flex justify-between items-center">
                                             <span className="block font-semibold text-[.9375rem]">
@@ -121,7 +121,7 @@ const TaskKanBan = () => {
                                     </div>
 
                                     <div className="kanban-tasks">
-                                        <PerfectScrollbar className="h-[560px]">
+                                        <PerfectScrollbar className="h-[300px]">
                                             {filteredTasks.length > 0 ? (
                                                 <>
                                                     {filteredTasks.map((task) => (
