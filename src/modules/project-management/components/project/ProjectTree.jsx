@@ -40,8 +40,14 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, m
 
   const filteredMilestones = useMemo(() => {
     if (!searchTerm.trim()) return milestones;
-    return useMilestoneSearch(milestones, searchTerm);
+
+    if (milestones && milestones.length > 0) {
+      return useMilestoneSearch(milestones, searchTerm);
+    } else {
+      return [];
+    }
   }, [searchTerm, milestones]);
+
 
   return (
       <>

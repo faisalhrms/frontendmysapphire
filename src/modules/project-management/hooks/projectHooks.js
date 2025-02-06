@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {
-    createProject,
+    createProject, deleteProject,
     getProjectById, getProjectDashboardStats, getProjectMilestoneDashboardStats,
     getProjectMilestonesWithTasks, getProjectMilestoneTaskDashboardStats,
     getProjects, getProjectStats,
@@ -18,6 +18,7 @@ import {uploadMilestones} from "@modules/project-management/services/milestoneSe
 import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.js";
 import projectFilterSchema from "@modules/project-management/schemas/projectFilterSchema.js";
 import projectDashboardFilterSchema from "@modules/project-management/schemas/projectDashboardFilterSchema.js";
+import {useSelector} from "react-redux";
 
 export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null) => {
     const query = useQuery({
@@ -185,8 +186,13 @@ export const useUploadProjectModal = (refetch, type = 'P') => {
 };
 
 export const useProjectFilter = () => {
+    const filters = useSelector((state) => state.pms.filters);
     const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(projectFilterSchema),
+        defaultValues: {
+            status: filters.status,
+            priority: filters.priority,
+        },
     });
 
     return {
@@ -220,6 +226,7 @@ export const useProjectMilestoneTaskDashboardStatistics = (milestoneId) => {
 
     return { data, isLoading };
 }
+
 export const useMilestoneSearch = (items, searchTerm) => {
     return items
         .map(item => {
@@ -236,4 +243,27 @@ export const useMilestoneSearch = (items, searchTerm) => {
             return null;
         })
         .filter(item => item !== null);
+};
+
+
+export const useProjectDelete = (refetch) => {
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const deleteProjectHandler = async (projectId) => {
+        try {
+            setIsDeleting(true);
+            const response = await deleteProject(projectId);
+            if (response) {
+                refetch();
+            }
+        } catch (err) {
+
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+    return {
+        deleteProjectHandler,
+        isDeleting,
+    };
 };

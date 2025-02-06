@@ -257,10 +257,10 @@ const OrderShopify = () => {
       const fyobData = { fiscalYear: 2025, period: selectedDate }; 
       try {
         setLoad(true);
-        const response = await localfyobInt(fyobData); // API call
+        const response = await localfyobInt(fyobData);
         if (response) {
-          // Assuming the API response contains `localFiscalData` in the structure you want
-          setFilteredLocalFiscalData(response?.data); // Set data in the state
+
+          setFilteredLocalFiscalData(response?.data);
         } else {
           setFilteredLocalFiscalData([
             {

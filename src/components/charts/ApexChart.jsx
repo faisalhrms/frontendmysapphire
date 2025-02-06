@@ -31,6 +31,7 @@ const ApexChart = ({
                        onPointClick = () => {},
                        chartWidth = 800,
                        baseWidthPerCategory = 400,
+                       children,
                    }) => {
 
     const dynamicChartWidth = useMemo(() => {
@@ -269,6 +270,9 @@ const ApexChart = ({
         additionalOptions,
         xAxisTitle,
         yAxisTitle,
+        chartWidth,
+        baseWidthPerCategory,
+        children
     ]);
 
     return (
@@ -280,6 +284,12 @@ const ApexChart = ({
                     type={chartType}
                     height={height}
                 />
+                {
+                    children &&
+                     (
+                        children
+                    )
+                }
             </div>
         </div>
     );
@@ -313,6 +323,8 @@ ApexChart.propTypes = {
     yAxisTitle: PropTypes.string,
     onPointClick: PropTypes.func,
     chartWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    baseWidthPerCategory: PropTypes.number,
+    children: PropTypes.node,
 };
 
 export default ApexChart;
