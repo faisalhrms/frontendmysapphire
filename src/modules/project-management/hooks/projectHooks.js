@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {
-    createProject,
+    createProject, deleteProject,
     getProjectById, getProjectDashboardStats, getProjectMilestoneDashboardStats,
     getProjectMilestonesWithTasks, getProjectMilestoneTaskDashboardStats,
     getProjects, getProjectStats,
@@ -220,6 +220,7 @@ export const useProjectMilestoneTaskDashboardStatistics = (milestoneId) => {
 
     return { data, isLoading };
 }
+
 export const useMilestoneSearch = (items, searchTerm) => {
     return items
         .map(item => {
@@ -236,4 +237,27 @@ export const useMilestoneSearch = (items, searchTerm) => {
             return null;
         })
         .filter(item => item !== null);
+};
+
+
+export const useProjectDelete = (refetch) => {
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const deleteProjectHandler = async (projectId) => {
+        try {
+            setIsDeleting(true);
+            const response = await deleteProject(projectId);
+            if (response) {
+                refetch();
+            }
+        } catch (err) {
+
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+    return {
+        deleteProjectHandler,
+        isDeleting,
+    };
 };

@@ -8,7 +8,11 @@ import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
+import {useProjectDelete} from "@modules/project-management/hooks/projectHooks.js";
 const ProjectGridCard = ({ project, openModal, refetch }) => {
+
+    const { deleteProjectHandler, isDeleting } = useProjectDelete(refetch);
+
     return (
         <>
             <div className="box custom-box">
@@ -47,7 +51,6 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                                 </Link>
                             </li>
                             </HasPermission>
-
                             <li>
                                 <Link
                                     to={`/module/projects/detail/${project.id}`}
@@ -55,13 +58,22 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                                     <i className="ri-eye-line me-1 align-middle"></i>View
                                 </Link>
                             </li>
-                            <HasPermission permission='add_project'>
-                            {project.status==='active'&& (<li>
-                                <button onClick={() => openModal(project.id, false)}
+                            <HasPermission permission='delete_project'>
+                                <button onClick={() => deleteProjectHandler(project.id)}
+                                        disabled={isDeleting}
                                         className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
-                                    <i className="ri-add-line me-1 align-middle"></i>Milestone
+                                    <i className="ri-delete-bin-2-line me-1 align-middle"></i>Delete
                                 </button>
-                            </li>)}
+                            </HasPermission>
+                            <HasPermission permission='add_project'>
+                                {project.status==='active'&& (
+                                    <li>
+                                        <button onClick={() => openModal(project.id, false)}
+                                                className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
+                                            <i className="ri-add-line me-1 align-middle"></i>Milestone
+                                        </button>
+                                    </li>
+                                )}
                             </HasPermission>
                         </ul>
                     </div>

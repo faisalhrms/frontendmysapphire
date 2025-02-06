@@ -98,6 +98,7 @@ const MilestonesStatsModal = React.memo(({ projectId, onClose }) => {
                                     onPointClick={handlePointClick}
                                 />
                             </div>
+
                         ) : (
                             <div className="flex justify-center items-center flex-grow">
                                 <p>No milestone details available.</p>
