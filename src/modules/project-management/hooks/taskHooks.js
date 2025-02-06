@@ -2,10 +2,9 @@ import {
   createTask,
   updateTask,
   getTaskById,
-  getTaskWithChild, updateTaskStatus, updateOverdueTask
+  getTaskWithChild, updateTaskStatus, updateOverdueTask, fetchKanbanTasksAll,
+  fetchKanbanTasksByStatus
 } from "@modules/project-management/services/taskService.js";
-import { useDispatch } from 'react-redux';
-import { setTasks, setPagination } from '@modules/project-management/redux/taskSlice.js';
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
 import { useForm } from "react-hook-form";
@@ -255,4 +254,89 @@ export const useTaskOverdueModal = (refetch) => {
   };
 };
 
+//Taskkanban
+
+export function useSearch() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  return { searchQuery, handleSearchChange };
+}
+
+/**
+ * Custom hook to handle priority filter functionality
+ */
+export function usePriorityFilter() {
+  const [priorityFilter, setPriorityFilter] = useState(null);
+
+  const handlePriorityFilterChange = (selectedOption) => {
+    setPriorityFilter(selectedOption);
+  };
+
+  const handleClearPriorityFilter = () => {
+    setPriorityFilter(null); // Reset priority filter
+  };
+
+  return { priorityFilter, handlePriorityFilterChange, handleClearPriorityFilter };
+}
+
+/**
+ * Custom hook to fetch Kanban data with infinite scrolling
+ */
+export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
+  const [kanbanData, setKanbanData] = useState({});
+  const [loadingStatus, setLoadingStatus] = useState(null);
+
+  const {
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["kanbanBoard", filterPriority, searchQuery],      // Unique key for the entire board
+    queryFn: async () => {
+      const response = await fetchKanbanTasksAll(5);
+      setKanbanData(response.data || {});
+      return response.data;
+    },
+    refetchOnWindowFocus: true, // Refetch when window is focused
+    staleTime: 0,
+  });
+
+  const loadMore = async (statusKey) => {
+    try {
+      setLoadingStatus(statusKey);
+
+      const currentTasks = kanbanData[statusKey]?.tasks || [];
+      const offset = currentTasks.length;
+
+      const response = await fetchKanbanTasksByStatus({
+        status: statusKey,
+        limit: 5,
+        offset,
+        filterPriority,
+        searchQuery,
+      });
+
+      const newTasks = response.data?.[statusKey]?.tasks || [];
+      const updatedKanbanData = { ...kanbanData };
+
+      updatedKanbanData[statusKey] = {
+        ...updatedKanbanData[statusKey],
+        tasks: [...currentTasks, ...newTasks],
+        task_count: response.data?.[statusKey]?.task_count ?? updatedKanbanData[statusKey].task_count,
+      };
+
+      setKanbanData(updatedKanbanData);
+      setLoadingStatus(null);
+    } catch (err) {
+      setLoadingStatus(null);
+    }
+  };
+
+  return { kanbanData, isLoading, isError, error, loadMore, loadingStatus, refetch };
+}
 

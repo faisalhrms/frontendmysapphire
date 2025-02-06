@@ -1,8 +1,7 @@
 import React from "react";
-import AvatarList from "@components/AvatarList.jsx"; // Assuming AvatarList is a separate component to render avatars
+import AvatarList from "@components/AvatarList.jsx";
 
 const TaskCard = ({ task }) => {
-    // Fallbacks if any field is missing
     const startedAt = task.started_at
         ? new Date(task.started_at).toLocaleDateString()
         : "N/A";
@@ -14,7 +13,6 @@ const TaskCard = ({ task }) => {
             <div className="box-body !p-0">
                 <div className="p-4 kanban-board-head">
 
-                    {/* Top row: Created date & Days left */}
                     <div className="flex text-[#8c9097] dark:text-white/50 justify-between mb-1 text-[.75rem] font-semibold">
                         <div>
                             <i className="ri-time-line align-middle" /> Created - {startedAt}
@@ -22,7 +20,6 @@ const TaskCard = ({ task }) => {
                         <div>{daysLeft}</div>
                     </div>
 
-                    {/* Task No, Tags, Status, Priority badges (optional) */}
                     <div className="flex items-center justify-between">
                         <div className="task-badges flex items-center gap-1 flex-wrap">
                             {/* Task No */}
@@ -60,12 +57,10 @@ const TaskCard = ({ task }) => {
                     </div>
                 </div>
 
-                {/* Bottom row: Avatars, progress, etc. */}
                 <div className="p-4 border-t dark:border-defaultborder/10 border-dashed">
                     <div className="flex items-center justify-between">
                         <AvatarList users={task.users} />
-                        {/* If you have progress or other info, you could show it here */}
-                        {/* <div>Progress: {task.progress || 0}%</div> */}
+
                     </div>
                 </div>
             </div>
