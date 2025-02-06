@@ -2,7 +2,8 @@ import {
   createTask,
   updateTask,
   getTaskById,
-  getTaskWithChild, updateTaskStatus, updateOverdueTask
+  getTaskWithChild, updateTaskStatus, updateOverdueTask, fetchKanbanTasksAll,
+  fetchKanbanTasksByStatus
 } from "@modules/project-management/services/taskService.js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
@@ -11,6 +12,7 @@ import {useState, useEffect, useCallback} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {toggleFavouriteProject} from "@modules/project-management/services/projectService.js";
 import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
+import taskFilterSchema from "@modules/project-management/schemas/TaskFilterSchema.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -252,3 +254,95 @@ export const useTaskOverdueModal = (refetch) => {
     isOverdueTaskModalOpen
   };
 };
+
+//Taskkanban
+
+export function useSearch() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  return { searchQuery, handleSearchChange };
+}
+
+/**
+ * Custom hook to handle priority filter functionality
+ */
+
+export const useTaskFilter = () => {
+  const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
+    resolver: zodResolver(taskFilterSchema),
+    defaultValues: {
+      priority: null, // Default priority filter is null
+    },
+  });
+
+  return {
+    filterControl: control,
+    filterSubmit: handleSubmit,
+    filterErrors: errors,
+    isFiltering: isSubmitting,
+    resetFilter: reset, // Optional: Add a reset function if needed
+  };
+};
+/**
+ * Custom hook to fetch Kanban data with infinite scrolling
+ */
+export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
+  const [kanbanData, setKanbanData] = useState({});
+  const [loadingStatus, setLoadingStatus] = useState(null);
+
+  console.log(`this is filterPriority`, filterPriority);  // Check the value of filterPriority
+
+  const {
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["kanbanBoard", filterPriority, searchQuery],
+    queryFn: async () => {
+      const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority);
+      setKanbanData(response.data || {});
+      return response.data;
+    },
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+  });
+
+  const loadMore = async (statusKey) => {
+    try {
+      setLoadingStatus(statusKey);
+
+      const currentTasks = kanbanData[statusKey]?.tasks || [];
+      const offset = currentTasks.length;
+
+      const response = await fetchKanbanTasksByStatus({
+        status: statusKey,
+        limit: 5,
+        offset,
+        search: searchQuery,
+        filterPriority,
+      });
+
+      const newTasks = response.data?.[statusKey]?.tasks || [];
+      const updatedKanbanData = { ...kanbanData };
+
+      updatedKanbanData[statusKey] = {
+        ...updatedKanbanData[statusKey],
+        tasks: [...currentTasks, ...newTasks],
+        task_count: response.data?.[statusKey]?.task_count ?? updatedKanbanData[statusKey].task_count,
+      };
+
+      setKanbanData(updatedKanbanData);
+      setLoadingStatus(null);
+    } catch (err) {
+      setLoadingStatus(null);
+    }
+  };
+
+  return { kanbanData, isLoading, isError, error, loadMore, loadingStatus, refetch };
+}
+
