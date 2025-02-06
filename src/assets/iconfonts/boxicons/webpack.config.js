@@ -55,6 +55,7 @@ module.exports = {
       footer: getWrapper('footer'),
     }),
   ],
+
 };
 
 function getWrapper(type) {

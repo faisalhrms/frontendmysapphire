@@ -1,10 +1,10 @@
 export const columns = [
     "Candela Store",
-    "0 ~ 3 Days (Normal)",
-    "4 ~ 5 Days",
-    "6 ~ 8 Days",
-    "9 ~ 10 Days",
-    "+ 10 Days",
+    "0~3 ",
+    "4~5 ",
+    "6~8 ",
+    "9~10 ",
+    "+10",
     "Total"
 ];
 

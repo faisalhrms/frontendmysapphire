@@ -11,8 +11,9 @@ export const taskStatuses = [
     { value: 'reopened', label: 'Reopened' },
     { value: 'on_hold', label: 'On Hold' },
     { value: 'cancelled', label: 'Cancelled' },
+    { key: "rejected", label: "Rejected" },
+    { key: "under_approval", label: "Under Approval" },
 ];
-
 
 export const createTask = async (milestone_id, data) => {
     try {
@@ -85,5 +86,38 @@ export const updateOverdueTask = async (id, payload) => {
     } catch (error) {
         Notify.error(error.response?.data?.message);
         throw Error(error.response?.data?.message || 'An error occurred');
+    }
+};
+export const fetchKanbanTasksAll = async (limit = 5, search = '', filterPriority = '') => {
+    try {
+        const searchParams = new URLSearchParams({
+            limit,
+            offset: 0,
+            search,
+            filterPriority
+        });
+
+        const response = await api.get(`/pms/tasks/kanban/?${searchParams.toString()}`);
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching Kanban tasks");
+        throw error;
+    }
+};
+export const fetchKanbanTasksByStatus = async ({ status, limit = 5, offset = 0, search = '', filterPriority = '' }) => {
+    try {
+        const searchParams = new URLSearchParams({
+            status,
+            limit,
+            offset,
+            search,
+            filterPriority
+        });
+
+        const response = await api.get(`/pms/tasks/kanban/?${searchParams.toString()}`);
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching Kanban tasks");
+        throw error;
     }
 };
