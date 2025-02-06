@@ -32,19 +32,6 @@ const TaskCard = ({ task }) => {
                 </span>
                             )}
 
-                            {/* (Optional) Status */}
-                            {task.status && (
-                                <span className="badge bg-warning/10 text-warning">
-                  {task.status}
-                </span>
-                            )}
-
-                            {/* (Optional) Priority */}
-                            {task.priority && (
-                                <span className="badge bg-danger/10 text-danger">
-                  {task.priority}
-                </span>
-                            )}
                         </div>
                     </div>
 
@@ -60,7 +47,12 @@ const TaskCard = ({ task }) => {
                 <div className="p-4 border-t dark:border-defaultborder/10 border-dashed">
                     <div className="flex items-center justify-between">
                         <AvatarList users={task.users} />
-
+                        {/* (Optional) Priority */}
+                        {task.priority && (
+                            <span className="badge bg-danger/10 text-danger">
+                  {task.priority}
+                </span>
+                        )}
                     </div>
                 </div>
             </div>
