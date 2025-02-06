@@ -22,7 +22,6 @@ const useTaskForm = (isEditMode) => {
           ?  await updateTask(id, taskData)
           :  await createTask(id, taskData)
     } catch (error) {
-      console.error("Error submitting task:", error.message);
       throw error;
     }
   };
@@ -293,8 +292,6 @@ export const useTaskFilter = () => {
 export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
   const [kanbanData, setKanbanData] = useState({});
   const [loadingStatus, setLoadingStatus] = useState(null);
-
-  console.log(`this is filterPriority`, filterPriority);  // Check the value of filterPriority
 
   const {
     isLoading,
