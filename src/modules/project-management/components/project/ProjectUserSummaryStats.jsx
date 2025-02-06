@@ -16,22 +16,26 @@ const ProjectUserSummaryStats = ({summary, statsFetching, height = 315}) => {
                 <div className="box-title">Resource Planning Summary</div>
             </div>
             <div className="box-body !p-0">
-                {statsFetching ? (<LoadingSpinner/>) : (<div className="p-6 pb-2">
-                        <ApexChart
-                            colors={colors}
-                            height={height}
-                            columnWidth='80%'
-                            categories={summary.categories}
-                            series={summary.series}
-                            stacked={false}
-                            additionalOptions={{
-                                stroke: {
-                                    width: 2,
-                                }
-                            }}
-                            baseWidthPerCategory={200}
-                        />
-                    </div>)}
+                {statsFetching ? (<LoadingSpinner/>) : (
+                    <>
+                        <div className="p-6 pb-2">
+                            <ApexChart
+                                colors={colors}
+                                height={height}
+                                columnWidth='80%'
+                                categories={summary.categories}
+                                series={summary.series}
+                                stacked={false}
+                                additionalOptions={{
+                                    stroke: {
+                                        width: 2,
+                                    }
+                                }}
+                                baseWidthPerCategory={200}
+                            />
+                        </div>
+                    </>
+                )}
             </div>
         </div>);
 };
