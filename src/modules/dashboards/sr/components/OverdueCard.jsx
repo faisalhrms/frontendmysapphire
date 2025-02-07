@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import ApexChart from "@components/charts/ApexChart.jsx";
 import {mapSeriesToColors, statusColorMapping} from "@helpers/statusStyles.js";
 
-const completedOverdue = ({ data }) => {
+const completedOverdue = ({data}) => {
 
     const colors = useMemo(() => {
         return mapSeriesToColors(data?.series, statusColorMapping);
@@ -18,11 +18,11 @@ const completedOverdue = ({ data }) => {
                     <div id="completedOverdueAnalysis">
                         <ApexChart
                             additionalOptions={{
-                                grid: { show: true },
-                                legend: { position: 'top' }
+                                grid: {show: true},
+                                legend: {position: 'top'}
                             }}
-                            columnWidth='90%'
                             height={350}
+                            baseWidthPerCategory={50}
                             series={data.series}
                             categories={data.categories}
                         />
