@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from "react-router-dom";
 import AvatarList from "@components/AvatarList.jsx";
 import { formatDate } from "@helpers/dateTime.js";
@@ -9,28 +8,11 @@ import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
-import { useProjectDelete } from "@modules/project-management/hooks/projectHooks.js";
-import DeleteModal from "@components/modals/DeleteModal.jsx"
+import {useDelete} from "@hooks/useDelete.js";
 
 const ProjectGridCard = ({ project, openModal, refetch }) => {
-    const { deleteProjectHandler, isDeleting } = useProjectDelete(refetch);
 
-    // ✅ Added state for Delete Modal
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedProject, setSelectedProject] = useState(null);
-
-    const openDeleteModal = (projectId) => {
-        setSelectedProject(projectId);
-        setIsModalOpen(true);
-    };
-
-    const confirmDelete = async () => {
-        if (selectedProject) {
-            await deleteProjectHandler(selectedProject);
-            setIsModalOpen(false);
-            setSelectedProject(null);
-        }
-    };
+    const { handleDeleteClick } = useDelete();
 
     return (
         <>
@@ -80,8 +62,7 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             </li>
                             <HasPermission permission='delete_project'>
                                 <button
-                                    onClick={() => openDeleteModal(project.id)}
-                                    disabled={isDeleting}
+                                    onClick={() => handleDeleteClick(`/pms/projects/${project.id}/delete/`, project.name, refetch)}
                                     className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
                                     <i className="ri-delete-bin-2-line me-1 align-middle"></i>Delete
                                 </button>
@@ -132,12 +113,6 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                     </div>
                 </div>
             </div>
-
-            <DeleteModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onConfirm={confirmDelete}
-            />
         </>
     );
 };

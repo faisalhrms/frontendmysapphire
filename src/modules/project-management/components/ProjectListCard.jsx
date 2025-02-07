@@ -8,9 +8,7 @@ import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
-import {useProjectDelete} from "@modules/project-management/hooks/projectHooks.js";
 const ProjectListCard = ({ project, openModal, refetch }) => {
-    const { deleteProjectHandler, isDeleting } = useProjectDelete(refetch);
     return (
         <>
             <div className="box custom-box">

@@ -1,8 +1,8 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {
-    createProject, deleteProject,
-    getProjectById, getProjectDashboardStats, getProjectMilestoneDashboardStats,
+    createProject,
+    getProjectById, getProjectMilestoneDashboardStats,
     getProjectMilestonesWithTasks, getProjectMilestoneTaskDashboardStats,
     getProjects, getProjectStats,
     toggleFavouriteProject,
@@ -17,7 +17,6 @@ import {uploadTasks} from "@modules/project-management/services/taskService.js";
 import {uploadMilestones} from "@modules/project-management/services/milestoneService.js";
 import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.js";
 import projectFilterSchema from "@modules/project-management/schemas/projectFilterSchema.js";
-import projectDashboardFilterSchema from "@modules/project-management/schemas/projectDashboardFilterSchema.js";
 import {useSelector} from "react-redux";
 
 export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null) => {
@@ -243,27 +242,4 @@ export const useMilestoneSearch = (items, searchTerm) => {
             return null;
         })
         .filter(item => item !== null);
-};
-
-
-export const useProjectDelete = (refetch) => {
-    const [isDeleting, setIsDeleting] = useState(false);
-
-    const deleteProjectHandler = async (projectId) => {
-        try {
-            setIsDeleting(true);
-            const response = await deleteProject(projectId);
-            if (response) {
-                refetch();
-            }
-        } catch (err) {
-
-        } finally {
-            setIsDeleting(false);
-        }
-    };
-    return {
-        deleteProjectHandler,
-        isDeleting,
-    };
 };
