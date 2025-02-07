@@ -15,5 +15,5 @@ export const taskBorderStyles = {
 export const getTaskBorderClass = (status) => {
     if (!status) return ''; // Return an empty string if no status is provided
     const normalizedStatus = status.toLowerCase();
-    return taskBorderStyles[normalizedStatus] || 'border-t-[3px] border-solid border-gray/30'; // Default to gray if no matching status
+    return taskBorderStyles[normalizedStatus] || 'border-t-[3px] border-solid border-gray/30';
 };

@@ -274,7 +274,7 @@ export const useTaskFilter = () => {
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(taskFilterSchema),
     defaultValues: {
-      priority: null, // Default priority filter is null
+      priority: null,
     },
   });
 
@@ -290,6 +290,7 @@ export const useTaskFilter = () => {
  * Custom hook to fetch Kanban data with infinite scrolling
  */
 export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
+  console.log(searchQuery)
   const [kanbanData, setKanbanData] = useState({});
   const [loadingStatus, setLoadingStatus] = useState(null);
 
@@ -305,7 +306,6 @@ export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
       setKanbanData(response.data || {});
       return response.data;
     },
-    refetchOnWindowFocus: true,
     staleTime: 0,
   });
 
