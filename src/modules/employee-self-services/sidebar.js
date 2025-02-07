@@ -30,6 +30,13 @@ export const sidebarMenu=[
                 'Discount Card',
                 3,
                 ''
+            ),
+            generateSidebarItem(
+                SELF_SERVICES_ROUTES.SERVICES.DIGITAL_PROFILE.path,
+                'link',
+                'Digital Profile',
+                4,
+                ''
             )
             ]
     )
