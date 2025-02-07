@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
 import useFullScreen from "@hooks/useFullScreen.js";
+import SimpleBar from "simplebar-react";
 
-const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table' }) => {
+const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table', height = '250px' }) => {
     const { headers } = config;
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
 
-    const { isFullscreen, handleFullscreenClick } = useFullScreen()
+    const { isFullscreen, handleFullscreenClick } = useFullScreen();
+    const containerHeight = isFullscreen ? "calc(100vh - 100px)" : height;
 
     useEffect(() => {
         const lowercasedFilter = searchTerm.toLowerCase();
@@ -37,8 +39,8 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table' 
                     </Link>
                 </div>
             </div>
-
-            <div className="box-body">
+            <SimpleBar style={{ maxHeight: containerHeight }}>
+                <div className="box-body">
                 <div className="overflow-x-auto">
                     <table className="table min-w-full whitespace-nowrap table-hover border table-bordered">
                         <thead>
@@ -69,6 +71,7 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table' 
                     </table>
                 </div>
             </div>
+            </SimpleBar>
         </div>
     );
 };
