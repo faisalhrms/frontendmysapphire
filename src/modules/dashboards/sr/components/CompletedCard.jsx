@@ -21,7 +21,7 @@ const CompletedCard = ({ data }) => {
                                 grid: { show: true },
                                 legend: { position: 'top' }
                             }}
-                            columnWidth='90%'
+                            baseWidthPerCategory={50}
                             height={350}
                             series={data.series}
                             categories={data.categories}

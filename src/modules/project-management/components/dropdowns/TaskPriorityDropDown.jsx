@@ -7,7 +7,7 @@ const TaskPriorityDropDown = ({ control, errors, haveLabel = false }) => {
         <FormSelect
             label={haveLabel}
             name="priority"
-            control={control} // Make sure this is correctly handled
+            control={control}
             errors={errors}
             options={priorities}
             placeholder="Priority"

@@ -57,14 +57,17 @@ const PendingRequestsTable = () => {
         {Header: "SR #", accessor: "sr_number"},
         {Header: "Task Type", accessor: "sr_type.name"},
         {Header: "Requester Location", accessor: "location.name"},
-        {Header: "Request Title", accessor: "request_title"},
+        {Header: "Request Title", accessor: "request_title",
+            Cell: ({value}) =>
+                value ? (value.length > 25 ? `${value.slice(0, 25)}...` : value) : "-"
+        },
         {
             Header: "SR Time",
             accessor: "created_at",
             Cell: ({value}) => (
                 value ? (
                     <span className="bg-info/10 text-info px-2 py-1 rounded-md">
-                {format(new Date(value), "yyyy-MM-dd hh:mm a")}
+                {format(new Date(value), "MMM d, yyyy, h:mm a")}
             </span>
                 ) : (
                     <span className="text-gray-500">N/A</span>

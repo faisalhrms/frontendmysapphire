@@ -55,11 +55,9 @@ export const MODULE_ROUTES = [
     component: () =>
       import(`/src/modules/project-management/views/TaskDetail.jsx`),
   },
-  // {
-  //   path:PMS_ROUTES.TASK.KANBAN.path,
-  //   component:()=>
-  //       import(`/src/modules/project-management/views/TaskKanban.jsx`),
-  // },
-  //
-  
+  {
+    path:PMS_ROUTES.TASK.KANBAN.path,
+    component:()=>
+        import(`/src/modules/project-management/views/TaskKanban.jsx`),
+  },
 ];
