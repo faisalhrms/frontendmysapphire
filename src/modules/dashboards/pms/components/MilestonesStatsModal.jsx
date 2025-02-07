@@ -5,6 +5,7 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import TasksStatsModal from "@modules/dashboards/pms/components/TasksStatsModal.jsx";
 import {mapSeriesToColors, statusColorMapping} from "@helpers/statusStyles.js";
 import {useProjectMilestoneDashboardStatistics} from "@modules/project-management/hooks/projectHooks.js";
+import MilestoneStatsTable from "@modules/dashboards/pms/components/MilestoneStatsTable.jsx";
 
 const MilestonesStatsModal = React.memo(({ projectId, onClose }) => {
 
@@ -97,10 +98,12 @@ const MilestonesStatsModal = React.memo(({ projectId, onClose }) => {
                                     xAxisTitle="Milestones"
                                     onPointClick={handlePointClick}
                                 />
+                                <hr className="border-t border-gray-200 mt-2"/>
+                                <MilestoneStatsTable rows={data?.details}/>
                             </div>
                         ) : (
                             <div className="flex justify-center items-center flex-grow">
-                                <p>No milestone details available.</p>
+                            <p>No milestone details available.</p>
                             </div>
                         )}
                     </div>

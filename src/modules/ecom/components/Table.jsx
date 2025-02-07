@@ -62,7 +62,7 @@ const Table = ({ title, headers = [], data = [], loading }) => {
                <LoadingSpinner />
              </td>
            </tr>
-           
+
             ) : data.length > 0 ? (
               data.map((row, rowIndex) => (
                 <tr
@@ -131,3 +131,4 @@ const Table = ({ title, headers = [], data = [], loading }) => {
 };
 
 export default Table;
+
