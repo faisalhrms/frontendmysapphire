@@ -1,19 +1,20 @@
-import React, { useEffect } from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import TaskCard from "@modules/project-management/components/task/TaskCard.jsx";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import mediaSvg from "@assets/images/media/media-83.svg";
-import { taskStatuses } from "@modules/project-management/services/taskService.js";
-import { useSearch, useTaskFilter, useKanbanStatusInfinite } from "@modules/project-management/hooks/taskHooks.js";
-import TaskPriorityDropdown from "@modules/project-management/components/dropdowns/TaskPriorityDropdown.jsx";
-import { useWatch } from "react-hook-form";
+import React, { useEffect } from 'react';
+import PageHeader from '@modules/layouts/includes/PageHeader.jsx';
+import KanbanColumn from '@modules/project-management/components/task/KanbanColumn.jsx';  // Import the new KanbanColumn component
+import LoadingSpinner from '@components/LoadingSpinner.jsx';
+import { taskStatuses } from '@modules/project-management/services/taskService.js';
+import { useSearch, useTaskFilter, useKanbanStatusInfinite } from '@modules/project-management/hooks/taskHooks.js';
+import TaskPriorityDropdown from '@modules/project-management/components/dropdowns/TaskPriorityDropdown.jsx';
+import { useWatch } from 'react-hook-form';
 
 const TaskKanBan = () => {
     const { searchQuery, handleSearchChange } = useSearch();
     const { filterControl, filterErrors, resetFilter } = useTaskFilter();
-    const priority = useWatch({ control: filterControl, name: "priority" });
-    const { kanbanData, isLoading, isError, error, loadMore, loadingStatus, refetch } = useKanbanStatusInfinite({ filterPriority: priority, searchQuery });
+    const priority = useWatch({ control: filterControl, name: 'priority' });
+    const { kanbanData, isLoading, isError, error, loadMore, loadingStatus, refetch } = useKanbanStatusInfinite({
+        filterPriority: priority,
+        searchQuery,
+    });
 
     useEffect(() => {
         refetch();
@@ -24,7 +25,6 @@ const TaskKanBan = () => {
         return tasks
             .filter((task) => task.name.toLowerCase().includes(searchQuery.toLowerCase())) // Filter tasks by search query
             .filter((task) => {
-                // Apply the priority filter if it is set
                 const filterPriority = filterControl?.priority?.value; // Ensure the value is correctly extracted
                 return filterPriority ? task.priority === filterPriority : true; // if no priority is set, do not filter by priority
             });
@@ -83,71 +83,28 @@ const TaskKanBan = () => {
                 </div>
             ) : isError ? (
                 <div className="text-center text-red-500 mt-4">
-                    {error?.message || "Error loading Kanban board"}
+                    {error?.message || 'Error loading Kanban board'}
                 </div>
             ) : (
                 <div className="ynex-kanban-board text-defaulttextcolor dark:text-defaulttextcolor/70 text-defaultsize">
                     <div className="flex overflow-x-auto">
                         {/* Loop through all task statuses */}
-                        {taskStatuses.map(({ value: statusKey, label: statusLabel }, index) => {
+                        {taskStatuses.map(({value: statusKey, label: statusLabel}) => {
                             const statusData = kanbanData?.[statusKey];
-                            if (!statusData || !statusData.tasks || statusData.tasks.length === 0) {
-                                return (
-                                    <div className="kanban-tasks-type min-w-[320px]" key={`${statusKey}-${index}`}>
-                                        <div className="mb-4">
-                                            <span className="block font-semibold text-[.9375rem]">{statusLabel} - 0</span>
-                                        </div>
-                                        <PerfectScrollbar className="h-[560px]">
-                                            <div className="text-center text-sm text-gray-500 bg-white rounded-md dark:text-white/50">
-                                                <img src={mediaSvg} alt="No tasks available" className="mx-auto" />
-                                            </div>
-                                        </PerfectScrollbar>
-                                    </div>
-                                );
-                            }
-
-                            const tasks = statusData.tasks || [];
-                            const totalCount = statusData.task_count || 0;
-                            const filteredTasks = filterTasks(tasks);
+                            const tasks = statusData?.tasks || [];
+                            const totalCount = statusData?.task_count || 0;
 
                             return (
-                                <div className={`kanban-tasks-type ${statusKey} min-w-[320px]`} key={`${statusKey}-${index}`}>
-                                    <div className="mb-4">
-                                        <div className="flex justify-between items-center">
-                                            <span className="block font-semibold text-[.9375rem]">
-                                                {statusLabel} - {totalCount}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="kanban-tasks">
-                                        <PerfectScrollbar className="h-[300px]">
-                                            {filteredTasks.length > 0 ? (
-                                                <>
-                                                    {filteredTasks.map((task) => (
-                                                        <TaskCard key={task.id} task={task} />
-                                                    ))}
-
-                                                    {filteredTasks.length < totalCount && (
-                                                        <div className="m-4 text-center">
-                                                            <button
-                                                                className="ti-btn ti-btn-primary"
-                                                                onClick={() => loadMore(statusKey)}
-                                                                disabled={loadingStatus === statusKey}
-                                                            >
-                                                                {loadingStatus === statusKey ? "Loading..." : "View More"}
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <div className="text-center text-sm text-gray-500 bg-white rounded-md dark:text-white/50">
-                                                    <img src={mediaSvg} alt="No tasks available" className="mx-auto" />
-                                                </div>
-                                            )}
-                                        </PerfectScrollbar>
-                                    </div>
-                                </div>
+                                <KanbanColumn
+                                    key={`${statusKey}-${statusLabel}`}  // Use combination of statusKey and statusLabel as the unique key
+                                    statusKey={statusKey}
+                                    statusLabel={statusLabel}
+                                    tasks={tasks}
+                                    loadMore={loadMore}
+                                    loadingStatus={loadingStatus}
+                                    totalCount={totalCount}
+                                    filterTasks={filterTasks}
+                                />
                             );
                         })}
                     </div>
