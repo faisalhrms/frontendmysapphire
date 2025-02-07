@@ -39,11 +39,24 @@ const TaskGeneratedTable = () => {
                 value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"
         },
 
-        {
-            Header: "SR Time", accessor: "created_at",
-            Cell: ({value}) => value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : "",
+           {
+            Header: "SR Time",
+            accessor: "created_at",
+            Cell: ({value}) => (
+                value ? (
+                    <span className="bg-info/10 text-info px-2 py-1 rounded-md">
+                {format(new Date(value), "MMM d, yyyy, h:mm a")}
+            </span>
+                ) : (
+                    <span className="text-gray-500">N/A</span>
+                )
+            ),
         },
-        {Header: "Requester", accessor: "reporter"},
+        {Header: "Requester", accessor: "reporter"
+        ,
+            Cell: ({value}) =>
+                value ? (value.length > 25 ? `${value.slice(0, 25)}...` : value) : "-"
+        },
         {
             Header: "Priority",
             accessor: "priority",

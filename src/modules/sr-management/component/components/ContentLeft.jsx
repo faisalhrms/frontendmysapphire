@@ -19,26 +19,25 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
             description: serviceRequest.description || "",
         },
     });
-const getSlaBadgeClasses = (slaHours) => {
+    const getSlaBadgeClasses = (slaHours) => {
 
-    if (slaHours >= 48) {
-        return "bg-green-500/10 text-green-500 px-2 py-1 rounded-md"; // Low SLA
-    } else if (slaHours >= 24) {
-        return "bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-md"; // Medium SLA
-    } else if (slaHours > 0) {
-        return "bg-red-500/10 text-red-500 px-2 py-1 rounded-md"; // High SLA
-    }
-    return "bg-gray-500/10 text-gray-500 px-2 py-1 rounded-md"; // Default case
-};
+        if (slaHours >= 48) {
+            return "bg-green-500/10 text-green-500 px-2 py-1 rounded-md"; // Low SLA
+        } else if (slaHours >= 24) {
+            return "bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-md"; // Medium SLA
+        } else if (slaHours > 0) {
+            return "bg-red-500/10 text-red-500 px-2 py-1 rounded-md"; // High SLA
+        }
+        return "bg-gray-500/10 text-gray-500 px-2 py-1 rounded-md"; // Default case
+    };
 
-const chunkArray = (arr, size) => {
-    const chunks = [];
-    for (let i = 0; i < arr.length; i += size) {
-        chunks.push(arr.slice(i, i + size));
-    }
-    return chunks;
-};
-
+    const chunkArray = (arr, size) => {
+        const chunks = [];
+        for (let i = 0; i < arr.length; i += size) {
+            chunks.push(arr.slice(i, i + size));
+        }
+        return chunks;
+    };
 
 
     return (
@@ -190,25 +189,20 @@ const chunkArray = (arr, size) => {
                     </h2>
                 </div>
 
-                <div className="p-4 pt-2">
-                    <table className="w-full text-sm text-gray-600">
-                        <tbody>
-                        <tr>
-                            <td className="py-2 text-gray-700 text-normal dark:text-gray-200">
-                                <FormRichTextarea
-                                    name="description"
-                                    control={control}
-                                    errors={errors}
-                                    readOnly
-                                    editorOptions={{
-                                        height: 300,
-                                        buttonList: []
-                                    }}
-                                />
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div className="p-3 pt-2">
+
+                    <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
+                        <FormRichTextarea
+                            name="description"
+                            control={control}
+                            errors={errors}
+                            readOnly
+                            editorOptions={{
+                                height: 300,
+                                buttonList: []
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
 

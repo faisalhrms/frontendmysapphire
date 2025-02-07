@@ -10,10 +10,7 @@ const SrManagement = () => {
 
 
   return (
-      <div className="p-4">
-        <div className="mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">Server Request Management</h2>
-        </div>
+      <div className="p-3">
 
         <div className="box">
           <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
