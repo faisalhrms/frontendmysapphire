@@ -14,7 +14,11 @@ export const taskStatuses = [
     { key: "rejected", label: "Rejected" },
     { key: "under_approval", label: "Under Approval" },
 ];
-
+export const priorities = [
+    { value: 'low', label: 'Low' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'high', label: 'High' }
+];
 export const createTask = async (milestone_id, data) => {
     try {
         const response = await api.post(`/pms/tasks/create/${milestone_id}/`, data);
@@ -88,14 +92,20 @@ export const updateOverdueTask = async (id, payload) => {
         throw Error(error.response?.data?.message || 'An error occurred');
     }
 };
+
+
 export const fetchKanbanTasksAll = async (limit = 5, search = '', filterPriority = '') => {
     try {
+        // Only add filterPriority to the URL if it's not empty
         const searchParams = new URLSearchParams({
             limit,
             offset: 0,
             search,
-            filterPriority
         });
+
+        if (filterPriority) {
+            searchParams.append("filterPriority", filterPriority); // Add filterPriority only if it's a valid value
+        }
 
         const response = await api.get(`/pms/tasks/kanban/?${searchParams.toString()}`);
         return response.data;
@@ -104,6 +114,7 @@ export const fetchKanbanTasksAll = async (limit = 5, search = '', filterPriority
         throw error;
     }
 };
+
 export const fetchKanbanTasksByStatus = async ({ status, limit = 5, offset = 0, search = '', filterPriority = '' }) => {
     try {
         const searchParams = new URLSearchParams({
@@ -111,8 +122,11 @@ export const fetchKanbanTasksByStatus = async ({ status, limit = 5, offset = 0, 
             limit,
             offset,
             search,
-            filterPriority
         });
+
+        if (filterPriority) {
+            searchParams.append("filterPriority", filterPriority); // Add filterPriority only if it's a valid value
+        }
 
         const response = await api.get(`/pms/tasks/kanban/?${searchParams.toString()}`);
         return response.data;
