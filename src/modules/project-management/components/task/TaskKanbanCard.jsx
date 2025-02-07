@@ -1,25 +1,23 @@
 import React from "react";
 import AvatarList from "@components/AvatarList.jsx";
-import { getTaskBorderClass } from "@helpers/KanbanStatuses.js"; // Import the function
+import { getTaskBorderClass } from "@helpers/KanbanStatuses.js";
+import {toTitleCase} from "@helpers/formatters.js";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {formatDate} from "@helpers/dateTime.js";
 
-const TaskCard = ({ task }) => {
-    const startedAt = task.started_at
-        ? new Date(task.started_at).toLocaleDateString()
-        : "N/A";
+const TaskKanbanCard = ({ task }) => {
 
-    // Set the daysLeft or default message
     const daysLeft = task.days_left != null ? `${task.days_left} days left` : "No deadline";
 
     return (
-        <div className={`box kanban-tasks ${getTaskBorderClass(task.status)}`}> {/* Apply border class dynamically */}
+        <div className={`box kanban-tasks ${getTaskBorderClass(task.status)}`}>
             <div className="box-body !p-0">
                 <div className="p-4 kanban-board-head">
                     <div className="flex text-[#8c9097] dark:text-white/50 justify-between mb-1 text-[.75rem] font-semibold">
                         <div>
-                            <i className="ri-time-line align-middle" /> Created - {startedAt}
+                            <i className="ri-time-line align-middle" /> Created - {formatDate(task.started_at)}
                         </div>
 
-                        {/* Conditionally render the status message based on task's status */}
                         {task.status === "completed" ? (
                             <div className="text-success">
                                 <i className="ri-check-fill me-1 align-middle"></i>Done
@@ -35,19 +33,17 @@ const TaskCard = ({ task }) => {
 
                     <div className="flex items-center justify-between">
                         <div className="task-badges flex items-center gap-1 flex-wrap">
-                            {/* Task No */}
                             <span className="badge bg-light text-default">{task.task_no}</span>
-
-                            {/* Tags */}
-                            {task.tags && task.tags.length > 0 && (
-                                <span className="badge bg-primary/10 text-primary">
-                                    {task.tags.map((t) => t.name).join(", ")}
-                                </span>
-                            )}
+                            <span className='space-x-1 rtl:space-x-reverse'>
+                                {(
+                                    task?.tags?.map(tag => (
+                                        <span key={tag.id} className="badge bg-primary/10 text-primary">{ toTitleCase(tag.name) }</span>
+                                    ))
+                                )}
+                            </span>
                         </div>
                     </div>
 
-                    {/* Task title & description */}
                     <div className="kanban-content !mt-1">
                         <h6 className="font-semibold mb-1 text-[.9375rem]">{task.name}</h6>
                         <div className="kanban-task-description">
@@ -58,12 +54,8 @@ const TaskCard = ({ task }) => {
 
                 <div className="p-4 border-t dark:border-defaultborder/10 border-dashed">
                     <div className="flex items-center justify-between">
-                        <AvatarList users={task.users} />
-                        {task.priority && (
-                            <span className="badge bg-danger/10 text-danger">
-                                {task.priority}
-                            </span>
-                        )}
+                        <AvatarList users={task.users}/>
+                        <span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                     </div>
                 </div>
             </div>
@@ -71,4 +63,4 @@ const TaskCard = ({ task }) => {
     );
 };
 
-export default TaskCard;
+export default TaskKanbanCard;

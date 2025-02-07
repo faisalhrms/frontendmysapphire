@@ -1,14 +1,12 @@
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import TaskCard from '@modules/project-management/components/task/TaskCard.jsx';
+import TaskKanbanCard from '@modules/project-management/components/task/TaskKanbanCard.jsx';
 import mediaSvg from '@assets/images/media/media-83.svg';
 
-const KanbanColumn = ({ statusKey, statusLabel, tasks, loadMore, loadingStatus, totalCount, filterTasks }) => {
-    const filteredTasks = filterTasks(tasks);
+const TaskKanbanList = ({ statusKey, statusLabel, tasks, loadMore, loadingStatus, totalCount }) => {
 
     return (
         <div className={`kanban-tasks-type ${statusKey} min-w-[320px]`} key={statusKey}>
-            {/* Sticky Header for Status */}
             <div className="mb-4 sticky top-0  z-10">
                 <div className="flex justify-between items-center p-2">
                     <span className="block font-semibold text-[.9375rem]">
@@ -18,13 +16,12 @@ const KanbanColumn = ({ statusKey, statusLabel, tasks, loadMore, loadingStatus, 
             </div>
 
             <div className="kanban-tasks">
-                {/* Scrollable task container */}
                 <PerfectScrollbar style={{ height: '560px' }}>
                     <div>
-                        {filteredTasks.length > 0 ? (
+                        {tasks.length > 0 ? (
                             <>
-                                {filteredTasks.map((task) => (
-                                    <TaskCard key={task.id} task={task} />
+                                {tasks.map((task) => (
+                                    <TaskKanbanCard key={task.id} task={task} />
                                 ))}
                             </>
                         ) : (
@@ -36,8 +33,7 @@ const KanbanColumn = ({ statusKey, statusLabel, tasks, loadMore, loadingStatus, 
                 </PerfectScrollbar>
             </div>
 
-            {/* View More button outside the scrollable area */}
-            {filteredTasks.length < totalCount && (
+            {tasks.length < totalCount && (
                 <div className="m-4 text-center">
                     <button
                         className="ti-btn ti-btn-primary"
@@ -52,4 +48,4 @@ const KanbanColumn = ({ statusKey, statusLabel, tasks, loadMore, loadingStatus, 
     );
 };
 
-export default KanbanColumn;
+export default TaskKanbanList;

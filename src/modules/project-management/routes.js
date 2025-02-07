@@ -60,6 +60,4 @@ export const MODULE_ROUTES = [
     component:()=>
         import(`/src/modules/project-management/views/TaskKanban.jsx`),
   },
-
-  
 ];
