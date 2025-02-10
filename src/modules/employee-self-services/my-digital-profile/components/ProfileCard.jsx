@@ -2,9 +2,22 @@ import React from "react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import Logo from "@assets/images/company-logos/sapphire.png";
 import { QRCodeCanvas } from "qrcode.react";
+import QRCode from "qrcode";
 
 const ProfileCard = ({ isLoading, errorMessage, filteredData }) => {
-const qrValue = filteredData ? `${import.meta.env.VITE_API_BASE_URL}${filteredData.profile_url}` : "";
+  const qrValue = filteredData ? `${window.location.origin}${filteredData.profile_url}` : "";
+  const downloadQRCode = async () => {
+    try {
+      const dataUrl = await QRCode.toDataURL(qrValue, { width: 128 });
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = "qr-code.png";
+      link.click();
+    } catch (error) {
+      console.error("Error generating QR Code", error);
+    }
+  };
+
   return isLoading ? (
     <LoadingSpinner />
   ) : errorMessage ? (
@@ -32,10 +45,9 @@ const qrValue = filteredData ? `${import.meta.env.VITE_API_BASE_URL}${filteredDa
           <div className="mt-6 space-y-2">
             <p className="flex items-center space-x-2 text-gray-800">
               <i className="ri-mail-line"></i>
-              <a href={`mailto:${filteredData?.email}`} style={{color: "#0c4c91"}}>
+              <a href={`mailto:${filteredData?.email}`} style={{ color: "#0c4c91" }}>
                 {filteredData?.email}
               </a>
-
             </p>
             <p className="flex items-center space-x-2 text-gray-800">
               <i className="ri-global-line"></i>
@@ -59,8 +71,11 @@ const qrValue = filteredData ? `${import.meta.env.VITE_API_BASE_URL}${filteredDa
         <div className="text-center">
           <img src={filteredData?.company?.logo?.file_url} alt="Sapphire Logo" className="w-28 mb-8" />
           <div className="border border-gray-300 p-2">
-            <QRCodeCanvas value={qrValue} size={100} />
+            <QRCodeCanvas id="qrCodeCanvas" value={qrValue} size={100} />
           </div>
+          <button onClick={downloadQRCode} className="ti-btn ti-btn-secondary ti-btn-sm mt-3">
+            <i className="ri-download-line"></i>
+          </button>
         </div>
       </div>
     </div>
