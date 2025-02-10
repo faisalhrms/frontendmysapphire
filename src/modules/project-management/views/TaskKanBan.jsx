@@ -3,7 +3,7 @@ import PageHeader from '@modules/layouts/includes/PageHeader.jsx';
 import TaskKanbanList from '@modules/project-management/components/task/TaskKanbanList.jsx';
 import LoadingSpinner from '@components/LoadingSpinner.jsx';
 import { taskStatuses } from '@modules/project-management/services/taskService.js';
-import { useTaskFilter, useKanbanStatusInfinite } from '@modules/project-management/hooks/taskHooks.js';
+import {  useKanbanStatusInfinite } from '@modules/project-management/hooks/taskHooks.js';
 import TaskPriorityDropdown from '@modules/project-management/components/dropdowns/TaskPriorityDropdown.jsx';
 import { useWatch } from 'react-hook-form';
 import {useSearchHook} from "@hooks/useSearchHook.js";

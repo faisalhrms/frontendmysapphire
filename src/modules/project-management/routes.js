@@ -58,6 +58,6 @@ export const MODULE_ROUTES = [
   {
     path:PMS_ROUTES.TASK.KANBAN.path,
     component:()=>
-        import(`/src/modules/project-management/views/TaskKanban.jsx`),
+        import(`/src/modules/project-management/views/TaskKanBan.jsx`),
   },
 ];

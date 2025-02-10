@@ -3,7 +3,7 @@ import {
   updateTask,
   getTaskById,
   getTaskWithChild, updateTaskStatus, updateOverdueTask, fetchKanbanTasksAll,
-  fetchKanbanTasksByStatus
+
 } from "@modules/project-management/services/taskService.js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
@@ -256,43 +256,10 @@ export const useTaskOverdueModal = (refetch) => {
 
 //Taskkanban
 
-export function useSearch() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  return { searchQuery, handleSearchChange };
-}
-
-/**
- * Custom hook to handle priority filter functionality
- */
-
-export const useTaskFilter = () => {
-  const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
-    resolver: zodResolver(taskFilterSchema),
-    defaultValues: {
-      priority: null,
-    },
-  });
-
-  return {
-    filterControl: control,
-    filterSubmit: handleSubmit,
-    filterErrors: errors,
-    isFiltering: isSubmitting,
-    resetFilter: reset, // Optional: Add a reset function if needed
-  };
-};
-/**
- * Custom hook to fetch Kanban data with infinite scrolling
- */
 export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
-  console.log(searchQuery)
   const [kanbanData, setKanbanData] = useState({});
   const [loadingStatus, setLoadingStatus] = useState(null);
+  const [page, setPage] = useState(0); // Keep track of current page (pagination)
 
   const {
     isLoading,
@@ -300,46 +267,24 @@ export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["kanbanBoard", filterPriority, searchQuery],
+    queryKey: ["kanbanBoard", filterPriority, searchQuery, page], // The query key now includes page for pagination
     queryFn: async () => {
-      const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority);
-      setKanbanData(response.data || {});
+      const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, page);
+      setKanbanData((prevData) => ({
+        ...prevData,
+        ...response.data, // Merge the new data with the existing data
+      }));
       return response.data;
     },
+    keepPreviousData: true, // Keep previous data while loading the next page
     staleTime: 0,
   });
 
-  const loadMore = async (statusKey) => {
-    try {
-      setLoadingStatus(statusKey);
-
-      const currentTasks = kanbanData[statusKey]?.tasks || [];
-      const offset = currentTasks.length;
-
-      const response = await fetchKanbanTasksByStatus({
-        status: statusKey,
-        limit: 5,
-        offset,
-        search: searchQuery,
-        filterPriority,
-      });
-
-      const newTasks = response.data?.[statusKey]?.tasks || [];
-      const updatedKanbanData = { ...kanbanData };
-
-      updatedKanbanData[statusKey] = {
-        ...updatedKanbanData[statusKey],
-        tasks: [...currentTasks, ...newTasks],
-        task_count: response.data?.[statusKey]?.task_count ?? updatedKanbanData[statusKey].task_count,
-      };
-
-      setKanbanData(updatedKanbanData);
-      setLoadingStatus(null);
-    } catch (err) {
-      setLoadingStatus(null);
-    }
-  };
+  // Load more function
+  const loadMore = useCallback(() => {
+    setLoadingStatus('loading');
+    setPage((prevPage) => prevPage + 1); // Increment the page number for pagination
+  }, []);
 
   return { kanbanData, isLoading, isError, error, loadMore, loadingStatus, refetch };
 }
-
