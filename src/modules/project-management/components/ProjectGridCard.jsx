@@ -8,10 +8,11 @@ import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
-import {useProjectDelete} from "@modules/project-management/hooks/projectHooks.js";
+import {useDelete} from "@hooks/useDelete.js";
+
 const ProjectGridCard = ({ project, openModal, refetch }) => {
 
-    const { deleteProjectHandler, isDeleting } = useProjectDelete(refetch);
+    const { handleDeleteClick } = useDelete();
 
     return (
         <>
@@ -29,13 +30,14 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                                 {getExcerptFromText(project.name, 20)}
                             </Link>
                         </Tooltip>
-                        <span className="text-[#8c9097] dark:text-white/50 block text-[0.75rem]">Total <strong
-                            className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed</span>
+                        <span className="text-[#8c9097] dark:text-white/50 block text-[0.75rem]">
+                            Total <strong className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed
+                        </span>
                     </div>
 
                     <ProjectFavourite project={project} refetch={refetch}/>
                     <div className="hs-dropdown ti-dropdown">
-                    <a aria-label="anchor" href="#"
+                        <a aria-label="anchor" href="#"
                            className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium"
                            aria-expanded="false">
                             <i className="fe fe-more-vertical"></i>
@@ -43,13 +45,13 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
 
                         <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
                             <HasPermission permission='change_project'>
-                            <li>
-                                <Link
-                                    to={`/module/projects/edit/${project.id}`}
-                                    className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex">
-                                    <i className="ri-edit-line me-1 align-middle"></i>Edit
-                                </Link>
-                            </li>
+                                <li>
+                                    <Link
+                                        to={`/module/projects/edit/${project.id}`}
+                                        className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex">
+                                        <i className="ri-edit-line me-1 align-middle"></i>Edit
+                                    </Link>
+                                </li>
                             </HasPermission>
                             <li>
                                 <Link
@@ -59,14 +61,14 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                                 </Link>
                             </li>
                             <HasPermission permission='delete_project'>
-                                <button onClick={() => deleteProjectHandler(project.id)}
-                                        disabled={isDeleting}
-                                        className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
+                                <button
+                                    onClick={() => handleDeleteClick(`/pms/projects/${project.id}/delete/`, project.name, refetch)}
+                                    className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
                                     <i className="ri-delete-bin-2-line me-1 align-middle"></i>Delete
                                 </button>
                             </HasPermission>
                             <HasPermission permission='add_project'>
-                                {project.status==='active'&& (
+                                {project.status === 'active' && (
                                     <li>
                                         <button onClick={() => openModal(project.id, false)}
                                                 className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
@@ -102,8 +104,7 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                 </div>
                 <div className="box-footer flex items-center justify-between">
                     <div>
-                        <span
-                            className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
+                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
                         <span className="font-semibold block">{formatDate(project.started_at)}</span>
                     </div>
                     <div className="text-end">

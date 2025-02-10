@@ -132,14 +132,3 @@ export const getProjectMilestoneTaskDashboardStats = async (milestoneId) => {
         throw error
     }
 };
-
-export const deleteProject = async (projectId) => {
-    try {
-        const response = await api.delete(`/pms/projects/${projectId}/delete/`);
-        Notify.success(response.data.message);
-        return response.data;
-    } catch (error) {
-        Notify.error(error.response?.data?.message || 'Failed to delete project');
-        throw error
-    }
-};
