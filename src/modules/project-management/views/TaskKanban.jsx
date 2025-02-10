@@ -7,7 +7,7 @@ import { useKanbanStatusInfinite } from '@modules/project-management/hooks/taskH
 import { useWatch } from 'react-hook-form';
 import {useSearchHook} from "@hooks/useSearchHook.js";
 import useFilters from "@hooks/useFilters.js";
-import TaskPriorityDropDown from "@modules/project-management/components/dropdowns/TaskPriorityDropdown.jsx";
+import TaskPriorityDropDown from "@modules/project-management/components/dropdowns/TaskPriorityDropDown.jsx";
 
 const TaskKanban = () => {
     const {  searchTerm,
