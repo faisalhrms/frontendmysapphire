@@ -5,7 +5,6 @@ import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import {toTitleCase} from "@helpers/formatters.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
-import SimpleBar from "simplebar-react";
 
 const TaskStatsTable = ({ rows }) => {
 
@@ -31,9 +30,7 @@ const TaskStatsTable = ({ rows }) => {
     };
 
     return (
-        <SimpleBar style={{ height :" 300px"}}>
-            <ClientSideTable config={tableConfig} data={tableData} title='Tasks'/>
-        </SimpleBar>
+        <ClientSideTable config={tableConfig} data={tableData} title='Tasks'/>
     )
 }
 export default React.memo(TaskStatsTable)

@@ -19,6 +19,8 @@ import {setViewType} from "@modules/project-management/redux/pmsSlice.js";
 import ProjectGridItems from "@modules/project-management/components/ProjectGridItems.jsx";
 import ProjectListItems from "@modules/project-management/components/ProjectListItems.jsx";
 import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
+import DeleteModal from "@components/modals/DeleteModal.jsx";
+
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
     const { filterControl,
@@ -225,6 +227,8 @@ const ProjectList = () => {
                     heading='Upload Projects'
                 />
             }
+
+            <DeleteModal />
         </>
     );
 };

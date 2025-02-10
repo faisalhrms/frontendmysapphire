@@ -35,7 +35,7 @@ const ProjectDashboardStats = ({filters}) => {
                         <ProjectUserSummaryStats summary={data.user_summary} statsFetching={isLoading}/>
                     </div>
                         <RiskAnalysisChart data={data.project_risk_summary}/>
-                        <ProjectTableCard/>
+                        <ProjectTableCard />
                     </div>
                 </>
                 )

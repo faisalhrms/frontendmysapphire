@@ -30,9 +30,7 @@ const MilestoneStatsTable = ({ rows }) => {
         ],
     };
     return (
-        <SimpleBar style={{ height :" 300px"}}>
-            <ClientSideTable config={tableConfig} data={tableData} title='Milestones'/>
-        </SimpleBar>
+        <ClientSideTable config={tableConfig} data={tableData} title='Milestones'/>
     )
 }
 export default React.memo(MilestoneStatsTable)
