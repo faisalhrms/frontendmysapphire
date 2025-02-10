@@ -8,7 +8,9 @@ import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
 import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
+import {useDelete} from "@hooks/useDelete.js";
 const ProjectListCard = ({ project, openModal, refetch }) => {
+    const { handleDeleteClick } = useDelete();
     return (
         <>
             <div className="box custom-box">
@@ -52,7 +54,8 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                     id={`project-tooltip-delete-${project.id}`}
                                     text={`(${project.project_no}) ${project.name}`}
                                     tooltipContent={`Delete Project: ${project.name}`}>
-                                    <button onClick={() => deleteProjectHandler(project.id)} className="avatar !rounded-full avatar-sm bg-light !text-defaulttextcolor">
+                                    <button className="avatar !rounded-full avatar-sm bg-light !text-defaulttextcolor"
+                                            onClick={() => handleDeleteClick(`/pms/projects/${project.id}/delete/`, project.name, refetch)}>
                                         <span><i className="bi bi-trash3"></i></span>
                                     </button>
                                 </Tooltip>
