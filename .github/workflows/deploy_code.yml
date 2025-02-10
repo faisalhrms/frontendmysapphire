@@ -38,7 +38,7 @@ jobs:
           cd /var/www/html/web_portal/frontend_react
           git pull
 
-       
+          npm install
           npm run build
         
           sudo systemctl reload  nginx
@@ -85,6 +85,7 @@ jobs:
           cd /var/www/html/web_portal/frontend_react
           git pull
 
+          npm install
           npm run build
           
           sudo systemctl reload  nginx

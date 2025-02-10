@@ -4,10 +4,10 @@ import TaskKanbanList from '@modules/project-management/components/task/TaskKanb
 import LoadingSpinner from '@components/LoadingSpinner.jsx';
 import { taskStatuses } from '@modules/project-management/services/taskService.js';
 import { useKanbanStatusInfinite } from '@modules/project-management/hooks/taskHooks.js';
-import TaskPriorityDropdown from '@modules/project-management/components/dropdowns/TaskPriorityDropdown.jsx';
 import { useWatch } from 'react-hook-form';
 import {useSearchHook} from "@hooks/useSearchHook.js";
 import useFilters from "@hooks/useFilters.js";
+import TaskPriorityDropDown from "@modules/project-management/components/dropdowns/TaskPriorityDropdown.jsx";
 
 const TaskKanban = () => {
     const {  searchTerm,
@@ -47,7 +47,7 @@ const TaskKanban = () => {
                             <div className="md:flex items-center justify-between flex-wrap gap-4">
                                 <div className="grid grid-cols-12 gap-2 md:w-[30%]">
                                     <div className="xl:col-span-7 col-span-12 flex items-center gap-2">
-                                        <TaskPriorityDropdown
+                                        <TaskPriorityDropDown
                                             control={control}
                                             errors={errors}
                                             haveLabel={false}
