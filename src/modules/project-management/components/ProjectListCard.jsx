@@ -6,9 +6,9 @@ import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
-import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
+import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 const ProjectListCard = ({ project, openModal, refetch }) => {
     const { handleDeleteClick } = useDelete();
     return (
@@ -26,7 +26,7 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                 <span><i className="bi bi-eye"></i></span>
                             </Link>
                         </Tooltip>
-                        <HasPermission permission='change_project'>
+                        <HasProjectPermission globalPermission='change_project' users={project.users}>
                             <Tooltip
                                 id={`project-tooltip-edit-${project.id}`}
                                 text={`(${project.project_no}) ${project.name}`}
@@ -36,20 +36,16 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                     <span><i className="bi bi-pencil"></i></span>
                                 </Link>
                             </Tooltip>
-                        </HasPermission>
-                            <HasPermission permission='add_project'>
-                                {project.status==='active'&&
-                                    <Tooltip
-                                        id={`project-tooltip-add-${project.id}`}
-                                        text={`(${project.project_no}) ${project.name}`}
-                                        tooltipContent={`Add Milestone In Project: ${project.name}`}>
-                                        <button onClick={() => openModal(project.id, false)} className="avatar !rounded-full avatar-sm bg-light !text-defaulttextcolor">
-                                            <span><i className="bi bi-plus-circle"></i></span>
-                                        </button>
-                                    </Tooltip>
-                                }
-                            </HasPermission>
-                        <HasPermission permission='delete_project'>
+                            <Tooltip
+                                id={`project-tooltip-add-${project.id}`}
+                                text={`(${project.project_no}) ${project.name}`}
+                                tooltipContent={`Add Milestone In Project: ${project.name}`}>
+                                <button onClick={() => openModal(project.id, false)} className="avatar !rounded-full avatar-sm bg-light !text-defaulttextcolor">
+                                    <span><i className="bi bi-plus-circle"></i></span>
+                                </button>
+                            </Tooltip>
+                        </HasProjectPermission>
+                        <HasProjectPermission globalPermission='delete_project' users={project.users}>
                                 <Tooltip
                                     id={`project-tooltip-delete-${project.id}`}
                                     text={`(${project.project_no}) ${project.name}`}
@@ -59,7 +55,7 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                         <span><i className="bi bi-trash3"></i></span>
                                     </button>
                                 </Tooltip>
-                        </HasPermission>
+                        </HasProjectPermission>
                     </div>
                     <div className="ms-2 mb-2">
                         <h5 className="font-semibold mb-0 flex items-center">

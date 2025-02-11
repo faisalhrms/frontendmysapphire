@@ -96,3 +96,38 @@ export const generateSidebarItem = (path = '', type = '', title = '', position =
     };
 };
 
+
+export const formatMappedData = (
+    data,                  // The array of data to be mapped
+    referenceData,         // The reference data array to match with
+    keyToMatch = 'user_id', // The key in `data` that corresponds to the key in `referenceData`
+    referenceKey = 'id',   // The key in `referenceData` to match with `keyToMatch`
+    labelKeys = ['full_name', 'email'],  // Keys in `referenceData` to format the label
+    formatFn = (item, label) => label   // Optional formatting function to further format the label
+) => {
+    if (!data || !referenceData) return [];
+
+    const referenceMap = referenceData.reduce((map, item) => {
+        map[item[referenceKey]] = item;
+        return map;
+    }, {});
+
+    return data.map(item => {
+        const referenceItem = referenceMap[item[keyToMatch]];
+
+        if (referenceItem) {
+            const label = labelKeys
+                .map((labelKey, index) =>
+                    index === 1 ? `(${referenceItem[labelKey]})` : referenceItem[labelKey]
+                )
+                .join(' ');
+
+            return {
+                value: referenceItem[referenceKey],
+                label: formatFn(referenceItem, label),
+            };
+        }
+        return null;
+    }).filter(option => option !== null);
+};
+

@@ -21,7 +21,7 @@ const FormCheckbox = ({ name, label, control, errors,placeholder, className = ""
                             type="checkbox"
                             {...field}
                             {...rest}
-                            checked={!!field.value} // Ensure this binds to form value correctly
+                            checked={!!field.value}
                             onChange={(e) => field.onChange(e.target.checked)}
                             className={`form-checkbox-input ${errors[name] ? 'border-red' : ''}`}
                         />

@@ -6,13 +6,12 @@ import MilestoneModel from "@modules/project-management/components/model/Milesto
 import {useMilestoneModal} from "@modules/project-management/hooks/milestoneHooks.js";
 import TaskModel from "@modules/project-management/components/model/TaskModel.jsx";
 import {useTaskModal} from "@modules/project-management/hooks/taskHooks.js";
-import HasPermission from "@components/HasPermission.jsx";
 import sampleFile from "@assets/files/sample_upload_tasks_against_milestone.xlsx";
 import {useMilestoneSearch} from "@modules/project-management/hooks/projectHooks.js";
+import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 
-const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, milestones = [], isLoading, refetch, handleUploadModal }) => {
+const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, projectUsers, milestones = [], isLoading, refetch, handleUploadModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
-
   const {
     openMilestoneModal,
     closeMilestoneModal,
@@ -63,7 +62,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, m
                   onChange={(e) => setSearchTerm(e.target.value)}
               />
               <div className="flex space-x-2">
-                <HasPermission permission='add_project'>
+                <HasProjectPermission globalPermission='change_project' users={projectUsers}>
                   <a
                       href={sampleFile}
                       download="sample_upload_tasks_against_milestone.xlsx"
@@ -72,16 +71,13 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, m
                     <i className="ri-file-download-line me-1 align-middle"></i>
                     Download Sample File
                   </a>
-                  {projectStatus === 'active' && (
-                      <button
-                          type="button"
-                          onClick={() => openMilestoneModal(projectId, false, approval)}
-                          className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                      >
+                  <button
+                      type="button"
+                      onClick={() => openMilestoneModal(projectId, false, approval)}
+                      className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
                         <i className="ri-add-line font-semibold align-middle"></i> Add Milestone
-                      </button>
-                  )}
-                </HasPermission>
+                  </button>
+                </HasProjectPermission>
                 <button
                     type="button"
                     onClick={refetch}
@@ -100,6 +96,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, m
             ) : (
                 <MilestoneAccordion
                     projectStatus={projectStatus}
+                    projectUsers={projectUsers}
                     milestones={filteredMilestones}
                     openTaskModal={openTaskModal}
                     openMilestoneModal={openMilestoneModal}
