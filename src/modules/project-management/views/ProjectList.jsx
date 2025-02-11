@@ -20,6 +20,7 @@ import ProjectGridItems from "@modules/project-management/components/ProjectGrid
 import ProjectListItems from "@modules/project-management/components/ProjectListItems.jsx";
 import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
 import DeleteModal from "@components/modals/DeleteModal.jsx";
+import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
 
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
@@ -133,6 +134,13 @@ const ProjectList = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
+                                        className={`ti-btn ti-btn-secondary`}
+                                        data-hs-overlay="#pms_demo_modal"
+                                        title="Watch Demo"
+                                    >
+                                        <i className='bx bx-video'></i>
+                                    </button>
+                                    <button
                                         className={`ti-btn ti-btn-sm ${viewType === 'grid' ? 'ti-btn-outline-primary' : 'ti-btn-primary'}`}
                                         onClick={() => handleViewChange('grid')}
                                         title="Grid View"
@@ -228,6 +236,7 @@ const ProjectList = () => {
                 />
             }
 
+            <PmsDemoModal />
             <DeleteModal />
         </>
     );
