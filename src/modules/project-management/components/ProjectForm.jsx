@@ -15,6 +15,7 @@ import ConflictModal from "@modules/project-management/components/model/Conflict
 import ProjectStatusDropdown from "@modules/project-management/components/dropdowns/ProjectStatusDropdown.jsx";
 import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
 import WorkspaceDropdown from "@components/dropdowns/WorkspaceDropdown.jsx";
+import ProjectMembers from "@modules/project-management/components/project/ProjectMembers.jsx";
 
 const ProjectForm = ({ projectData, isEditMode = false }) => {
     const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
@@ -22,6 +23,9 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
         defaultValues: {
             status: "active",
             priority: "medium",
+            members: (projectData?.members && projectData.members.length > 0)
+                ? projectData.members
+                : [{ user_id: null, can_view_only: false, email_notification: true }],
             ...projectData
         }
     });
@@ -42,7 +46,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
         <>
             <form onSubmit={handleSubmit(handleProjectSubmit)}>
             <div className="grid grid-cols-12 gap-x-6 min-h-screen">
-                <div className="xxl:col-span-9 xl:col-span-8 lg:col-span-8  sm:col-span-8 col-span-12">
+                <div className="xxl:col-span-8 xl:col-span-8 lg:col-span-8  sm:col-span-8 col-span-12">
                     <div className="box">
                         <div className="box-header">
                             <div className="box-title"> Project Info</div>
@@ -99,7 +103,8 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         placeholder="Project Name"
                                     />
                                 </div>
-                                <div className={`${forCustomer ? 'xl:col-span-4 col-span-12' : 'xl:col-span-6 col-span-12'}`}>
+                                <div
+                                    className={`${forCustomer ? 'xl:col-span-4 col-span-12' : 'xl:col-span-6 col-span-12'}`}>
                                     <FormAsyncSelect
                                         name="manager_id"
                                         control={control}
@@ -110,7 +115,8 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         preselectedOptions={formatOptionsWithConcatenation(projectData, 'manager', 'id', ['full_name', 'email'])}
                                     />
                                 </div>
-                                <div className={`${forCustomer ? 'xl:col-span-4 col-span-12' : 'xl:col-span-6 col-span-12'}`}>
+                                <div
+                                    className={`${forCustomer ? 'xl:col-span-4 col-span-12' : 'xl:col-span-6 col-span-12'}`}>
                                     <FormInput
                                         type="date"
                                         name="started_at"
@@ -119,13 +125,32 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         placeholder="Start Date"
                                     />
                                 </div>
-                                <div className={`${forCustomer ? 'xl:col-span-4 col-span-12' : 'xl:col-span-6 col-span-12'}`}>
+                                <div
+                                    className={`${forCustomer ? 'xl:col-span-4 col-span-12' : 'xl:col-span-6 col-span-12'}`}>
                                     <FormInput
                                         type="date"
                                         name="ended_at"
                                         control={control}
                                         errors={errors}
                                         placeholder="End Date"
+                                    />
+                                </div>
+                                <div className='xl:col-span-6 col-span-12'>
+                                    <WorkspaceDropdown
+                                        company_id={company}
+                                        department_id={department}
+                                        name='workspace_id'
+                                        control={control}
+                                        errors={errors}
+                                        saveNewOption={true}
+                                        haveLabel={true}
+                                    />
+                                </div>
+                                <div className='xl:col-span-6 col-span-12'>
+                                    <ProjectPriorityDropdown
+                                        control={control}
+                                        errors={errors}
+                                        haveLabel={true}
                                     />
                                 </div>
                                 <div className="col-span-12">
@@ -165,7 +190,8 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                         </div>
                     </div>
                 </div>
-                <div className="xxl:col-span-3 xl:col-span-4 lg:col-span-4 sm:col-span-4 col-span-12 sticky top-0 self-start ">
+                <div
+                    className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 sm:col-span-4 col-span-12 sticky top-0 self-start ">
                     <HasPermission permission='manage_customer_project'>
                         <div className="box">
                             <div className="box-header">
@@ -183,17 +209,10 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                     </HasPermission>
                     <div className="box">
                         <div className="box-header">
-                            <div className="box-title"> Workspace</div>
+                            <div className="box-title"> Members</div>
                         </div>
                         <div className="box-body">
-                            <WorkspaceDropdown
-                                company_id={company}
-                                department_id={department}
-                                name='workspace_id'
-                                control={control}
-                                errors={errors}
-                                saveNewOption={true}
-                            />
+                            <ProjectMembers data={projectData} control={control} errors={errors}/>
                         </div>
                     </div>
                     <div className="box">
@@ -218,24 +237,6 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                     </div>
                     <div className="box">
                         <div className="box-header">
-                            <div className="box-title"> Members</div>
-                        </div>
-                        <div className="box-body">
-                            <FormAsyncSelect
-                                label={false}
-                                isMulti={true}
-                                name="user_ids"
-                                control={control}
-                                errors={errors}
-                                placeholder="Members"
-                                apiUrl="/select/users/"
-                                queryKeyBase="users"
-                                preselectedOptions={formatOptionsWithConcatenation(projectData, 'users', 'id', ['full_name', 'email'])}
-                            />
-                        </div>
-                    </div>
-                    <div className="box">
-                        <div className="box-header">
                             <div className="box-title"> Status</div>
                         </div>
                         <div className="box-body">
@@ -245,23 +246,13 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                             />
                         </div>
                     </div>
-                    <div className="box">
-                        <div className="box-header">
-                            <div className="box-title"> Priority</div>
-                        </div>
-                        <div className="box-body">
-                            <ProjectPriorityDropdown
-                                control={control}
-                                errors={errors}
-                            />
-                        </div>
-                    </div>
                 </div>
             </div>
-        </form>
+            </form>
             {
                 haveConflict &&
-                <ConflictModal conflicts={conflicts} heading='Conflicts in milestones/tasks kindly fix this first' closeModal={closeConflictModal} />
+                <ConflictModal conflicts={conflicts} heading='Conflicts in milestones/tasks kindly fix this first'
+                               closeModal={closeConflictModal}/>
             }
         </>
     );
