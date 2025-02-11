@@ -5,7 +5,7 @@ import {useProject} from "@modules/project-management/hooks/projectHooks.js";
 
 const ProjectEdit = () => {
     const { id } = useParams();
-    const { projectData } = useProject(id);
+    const { projectData } = useProject(id, true);
 
     return (
         <>
