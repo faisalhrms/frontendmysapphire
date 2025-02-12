@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {getExcerptFromText, toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
@@ -9,13 +9,18 @@ import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
+import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
+import {useSelector} from "react-redux";
 
-const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
 
     const toggleSubTasks = (taskId) => {
         setActiveTaskId(prevId => (prevId === taskId ? null : taskId));
     };
+
+    const userId = useSelector((state) => state.auth.user?.id);
+    const projectUser = useMemo(() => projectUsers.find(user => user.id === userId), [projectUsers, userId]);
 
     return (<>
             <div className={`table-responsive`}>
@@ -40,20 +45,24 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                             <tr className={`border-b border-defaultborder text-[#8c9097] dark:text-white/50 ${task.is_overdue ? 'bg-danger/10 text-danger' : ''}`}>
                                 <td>
                                     <span className='flex space-x-2'>
-                                        {
-                                            task.is_overdue &&
-                                            <Tooltip
-                                                id={`add-tooltip-${task.id}-overdue`}
-                                                tooltipContent={`Request For Change (${task.name}) Due Date`}
-                                            >
-                                                <button
-                                                    onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name)}
-                                                    className='ti-btn ti-btn-danger ti-btn-sm'>
-                                                    <i className="ri-calendar-2-line align-middle"></i>
-                                                </button>
-                                            </Tooltip>
-                                        }
-                                        <HasPermission permission='add_task'>
+                                     {(() => {
+                                         if (!projectUser?.can_view_only) {
+                                             return (
+                                                 task.is_overdue &&
+                                                 <Tooltip
+                                                     id={`add-tooltip-${task.id}-overdue`}
+                                                     tooltipContent={`Request For Change (${task.name}) Due Date`}
+                                                 >
+                                                     <button
+                                                         onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name)}
+                                                         className='ti-btn ti-btn-danger ti-btn-sm'>
+                                                         <i className="ri-calendar-2-line align-middle"></i>
+                                                     </button>
+                                                 </Tooltip>
+                                             )
+                                         }
+                                     })()}
+                                        <HasProjectPermission globalPermission='add_task' users={projectUsers}>
                                             {projectStatus === 'active' && milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
@@ -68,9 +77,9 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                             )
                                             }
 
-                                          </HasPermission>
+                                          </HasProjectPermission>
 
-                                        <HasPermission permission='change_task'>
+                                        <HasProjectPermission globalPermission='change_task' users={projectUsers}>
                                             {task.status !== 'under_approval' &&
                                                 <Tooltip
                                                     id={`edit-tooltip-${task.id}-edit`}
@@ -83,7 +92,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                                     </button>
                                                 </Tooltip>
                                             }
-                                        </HasPermission>
+                                        </HasProjectPermission>
 
                                     </span>
                                 </td>
@@ -124,13 +133,16 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                                     </span>
                                 </td>
                                 <td className="min-w-[200px]">
-                                    {
-                                        task.status !== 'under_approval' ?
-                                            <TaskStatusDropdown status={task.status} taskId={task.id}
-                                                                refetch={refetch}/>
-                                            :
+                                    {(() => {
+                                        if (projectUser?.can_view_only) {
+                                            return <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>;
+                                        }
+                                        return task.status !== 'under_approval' ? (
+                                            <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch} />
+                                        ) : (
                                             <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
-                                    }
+                                        );
+                                    })()}
                                 </td>
                                 <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                                 </td>
@@ -150,7 +162,7 @@ const TaskTable = ({projectStatus, tasks, openTaskModal, milestoneStatus, starte
                             </tr>
                             {activeTaskId === task.id && task.children && task.children.length > 0 && (<tr>
                                 <td colSpan="8">
-                                    <TaskTable projectStatus={projectStatus} milestoneStatus={milestoneStatus} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
+                                    <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
                                 </td>
                             </tr>)}
                     </React.Fragment>))}

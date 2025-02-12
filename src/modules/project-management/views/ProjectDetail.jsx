@@ -73,6 +73,7 @@ const ProjectDetail = () => {
                                   approval={projectData.requires_approval}
                                   startedAt={projectData.started_at}
                                   endedAt={projectData.ended_at}
+                                  projectUsers={projectData.users}
                                   milestones={milestones}
                                   isLoading={isLoading}
                                   refetch={refetch}

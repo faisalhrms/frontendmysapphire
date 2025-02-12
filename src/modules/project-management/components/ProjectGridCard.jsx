@@ -6,9 +6,9 @@ import { getExcerptFromText, toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import Tooltip from '@components/Tooltip.jsx';
 import ProjectFavourite from "@modules/project-management/components/project/ProjectFavourite.jsx";
-import HasPermission from "@components/HasPermission.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
+import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 
 const ProjectGridCard = ({ project, openModal, refetch }) => {
 
@@ -44,7 +44,7 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                         </a>
 
                         <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
-                            <HasPermission permission='change_project'>
+                            <HasProjectPermission globalPermission='change_project' users={project.users}>
                                 <li>
                                     <Link
                                         to={`/module/projects/edit/${project.id}`}
@@ -52,7 +52,13 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                                         <i className="ri-edit-line me-1 align-middle"></i>Edit
                                     </Link>
                                 </li>
-                            </HasPermission>
+                                <li>
+                                    <button onClick={() => openModal(project.id, false)}
+                                            className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
+                                        <i className="ri-add-line me-1 align-middle"></i>Milestone
+                                    </button>
+                                </li>
+                            </HasProjectPermission>
                             <li>
                                 <Link
                                     to={`/module/projects/detail/${project.id}`}
@@ -60,23 +66,13 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                                     <i className="ri-eye-line me-1 align-middle"></i>View
                                 </Link>
                             </li>
-                            <HasPermission permission='delete_project'>
+                            <HasProjectPermission globalPermission='delete_project' users={project.users}>
                                 <button
                                     onClick={() => handleDeleteClick(`/pms/projects/${project.id}/delete/`, project.name, refetch)}
                                     className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
                                     <i className="ri-delete-bin-2-line me-1 align-middle"></i>Delete
                                 </button>
-                            </HasPermission>
-                            <HasPermission permission='add_project'>
-                                {project.status === 'active' && (
-                                    <li>
-                                        <button onClick={() => openModal(project.id, false)}
-                                                className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex focus:outline-none appearance-none">
-                                            <i className="ri-add-line me-1 align-middle"></i>Milestone
-                                        </button>
-                                    </li>
-                                )}
-                            </HasPermission>
+                            </HasProjectPermission>
                         </ul>
                     </div>
                 </div>

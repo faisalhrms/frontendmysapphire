@@ -17,7 +17,7 @@ const TaskTree = ({ task, openTaskModal, refetch }) => {
           </div>
       </div>
         <div className="box-body">
-         <TaskTable tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch}  />
+            <TaskTable projectUsers={task.project_users} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch}  />
         </div>
       </div>
     </>

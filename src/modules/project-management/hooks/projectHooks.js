@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {
-    createProject,
+    createProject, editProjectById,
     getProjectById, getProjectMilestoneDashboardStats,
     getProjectMilestonesWithTasks, getProjectMilestoneTaskDashboardStats,
     getProjects, getProjectStats,
@@ -58,13 +58,13 @@ export const useProjectForm = (projectData, isEditMode) => {
     return { handleProjectSubmit, haveConflict, conflicts, closeConflictModal };
 };
 
-export const useProject = (id) => {
+export const useProject = (id, forEdit = false) => {
     const [projectData, setProjectData] = useState(null);
 
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const data = await getProjectById(id);
+                const data = forEdit ? await editProjectById(id) : await getProjectById(id);
                 setProjectData(data);
             } catch (error) {
                 console.log(error.message);
