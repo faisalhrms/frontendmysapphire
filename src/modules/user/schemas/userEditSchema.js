@@ -50,6 +50,7 @@ const userUpdateSchema = z.object({
     password: passwordSchema,
     is_superuser: z.boolean().optional(),
     is_active: z.boolean().optional(),
+    send_email_on_update:z.boolean().default(false),
     avatar_id: z.union([z.string().length(0), z.number(), z.null()]).optional(),
     group_ids: z
         .array(z.number().positive({ message: "Group IDs must be positive numbers" }), {
