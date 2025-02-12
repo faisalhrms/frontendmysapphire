@@ -263,7 +263,7 @@ const UserForm = ({ userData }) => {
                                 </div>
 
                                 {/* Superuser Checkbox */}
-                                <div className="xl:col-span-12 col-span-12">
+                                <div className="xl:col-span-6 col-span-12">
                                     <FormCheckbox
                                         name="is_superuser"
                                         label="Superuser"
@@ -271,6 +271,18 @@ const UserForm = ({ userData }) => {
                                         errors={errors}
                                     />
                                 </div>
+
+                                {/* Send Email On Update Checkbox */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormCheckbox
+                                        name="send_email_on_update"
+                                        label="Send Email On Update"
+                                        control={control}
+                                        errors={errors}
+                                        defaultChecked={false} // Ensure this is unchecked by default
+                                    />
+                                </div>
+
 
                                 {/* Active Status Checkbox */}
                                 <div className="xl:col-span-12 col-span-12">
@@ -282,6 +294,8 @@ const UserForm = ({ userData }) => {
                                         className="mt-1"
                                     />
                                 </div>
+
+
                             </div>
                         </div>
 
