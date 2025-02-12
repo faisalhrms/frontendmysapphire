@@ -1,29 +1,28 @@
-import React, {useEffect, useMemo} from 'react';
+import React, { useMemo, useState } from 'react';
 import PageHeader from '@modules/layouts/includes/PageHeader.jsx';
 import TaskKanbanList from '@modules/project-management/components/task/TaskKanbanList.jsx';
 import LoadingSpinner from '@components/LoadingSpinner.jsx';
 import { taskStatuses } from '@modules/project-management/services/taskService.js';
-import {  useKanbanStatusInfinite } from '@modules/project-management/hooks/taskHooks.js';
+import { useKanbanStatusInfinite } from '@modules/project-management/hooks/taskHooks.js';
 import TaskPriorityDropdown from '@modules/project-management/components/dropdowns/TaskPriorityDropdown.jsx';
 import { useWatch } from 'react-hook-form';
-import {useSearchHook} from "@hooks/useSearchHook.js";
+import { useSearchHook } from "@hooks/useSearchHook.js";
 import useFilters from "@hooks/useFilters.js";
-import TaskPriorityDropDown from "@modules/project-management/components/dropdowns/TaskPriorityDropDown.jsx";
+import TaskFilterDropdown from "@modules/project-management/components/dropdowns/TaskFilterDropdown.jsx";
 
 const TaskKanban = () => {
-    const {  searchTerm,
-        handleSearchChange } = useSearchHook();
+    const { searchTerm, handleSearchChange } = useSearchHook();
 
     const {
         control,
         handleSubmit,
         errors,
-        getFilters
     } = useFilters(
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'priority'},
+                    { name: 'priority' },
+                    { name: 'filterColumns' },
                 ],
             }),
             []
@@ -31,11 +30,34 @@ const TaskKanban = () => {
     );
 
     const priority = useWatch({ control, name: 'priority' });
+    const [selectedColumns, setSelectedColumns] = useState([]); // Track selected columns (statuses)
 
     const { kanbanData, isLoading, isError, error, loadMore, loadingStatus } = useKanbanStatusInfinite({
         filterPriority: priority,
         searchQuery: searchTerm,
     });
+
+    // Update the selected columns whenever the user selects or deselects task statuses
+    const handleColumnFilterChange = (selectedStatuses) => {
+        console.log('trigger', selectedStatuses); // Check if selected statuses are being passed correctly
+        setSelectedColumns(selectedStatuses); // Update selected columns in the parent
+    };
+
+    // Client-side filtering of tasks based on selected statuses
+    const filteredKanbanData = useMemo(() => {
+        if (selectedColumns.length === 0) {
+            return kanbanData;
+        }
+
+        const filteredData = {};
+        taskStatuses.forEach(({ value }) => {
+            if (selectedColumns.includes(value)) {
+                filteredData[value] = kanbanData[value]; // Only include columns that match selected statuses
+            }
+        });
+
+        return filteredData;
+    }, [selectedColumns, kanbanData]);
 
     return (
         <>
@@ -48,7 +70,7 @@ const TaskKanban = () => {
                             <div className="md:flex items-center justify-between flex-wrap gap-4">
                                 <div className="grid grid-cols-12 gap-2 md:w-[30%]">
                                     <div className="xl:col-span-7 col-span-12 flex items-center gap-2">
-                                        <TaskPriorityDropDown
+                                        <TaskPriorityDropdown
                                             control={control}
                                             errors={errors}
                                             haveLabel={false}
@@ -56,6 +78,15 @@ const TaskKanban = () => {
                                     </div>
                                 </div>
 
+                                {/* Column Filter Dropdown */}
+                                <TaskFilterDropdown
+                                    control={control}
+                                    errors={errors}
+                                    selectedStatuses={selectedColumns}
+                                    onChange={handleColumnFilterChange}  // Update selected statuses
+                                />
+
+                                {/* Search Bar */}
                                 <div className="flex" role="search">
                                     <input
                                         className="form-control w-full !rounded-sm me-2"
@@ -70,6 +101,7 @@ const TaskKanban = () => {
                     </div>
                 </div>
             </div>
+
             {isLoading ? (
                 <div className="text-center mt-4">
                     <LoadingSpinner />
@@ -77,23 +109,24 @@ const TaskKanban = () => {
             ) : (
                 <div className="ynex-kanban-board text-defaulttextcolor dark:text-defaulttextcolor/70 text-defaultsize">
                     <div className="flex overflow-x-auto">
-                        {taskStatuses.map(({value: statusKey, label: statusLabel}) => {
-                            const statusData = kanbanData?.[statusKey];
-                            const tasks = statusData?.tasks || [];
-                            const totalCount = statusData?.task_count || 0;
-
-                            return (
-                                <TaskKanbanList
-                                    key={`${statusKey}-${statusLabel}`}
-                                    statusKey={statusKey}
-                                    statusLabel={statusLabel}
-                                    tasks={tasks}
-                                    loadMore={loadMore}
-                                    loadingStatus={loadingStatus}
-                                    totalCount={totalCount}
-                                />
-                            );
-                        })}
+                        {Object.keys(filteredKanbanData).length === 0 ? (
+                            <div className="text-center mt-4">No tasks match the selected filters.</div>
+                        ) : (
+                            Object.keys(filteredKanbanData).map((statusKey) => {
+                                const statusData = filteredKanbanData[statusKey] || {};
+                                return (
+                                    <TaskKanbanList
+                                        key={statusKey}
+                                        statusKey={statusKey}
+                                        statusLabel={taskStatuses.find(status => status.value === statusKey)?.label || statusKey}
+                                        tasks={statusData.tasks || []}
+                                        loadMore={loadMore}
+                                        loadingStatus={loadingStatus}
+                                        totalCount={statusData.task_count || 0}
+                                    />
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             )}

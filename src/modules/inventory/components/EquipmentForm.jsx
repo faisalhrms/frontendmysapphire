@@ -66,7 +66,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         placeholder="Site"
                                         apiUrl="/select/locations/"
                                         queryKeyBase="locations"
-                                        clientSideSearch={true}
+                                        clientSideSearch={false}
                                         preselectedOptions={formatOptions(
                                             equipmentData,
                                             "equipment_site"

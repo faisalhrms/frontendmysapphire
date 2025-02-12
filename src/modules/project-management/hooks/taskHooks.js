@@ -256,10 +256,10 @@ export const useTaskOverdueModal = (refetch) => {
 
 //Taskkanban
 
-export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
+export function useKanbanStatusInfinite({ filterPriority, searchQuery, selectedStatuses }) {
   const [kanbanData, setKanbanData] = useState({});
   const [loadingStatus, setLoadingStatus] = useState(null);
-  const [page, setPage] = useState(0); // Keep track of current page (pagination)
+  const [page, setPage] = useState(0); // Track current page (pagination)
 
   const {
     isLoading,
@@ -267,12 +267,12 @@ export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["kanbanBoard", filterPriority, searchQuery, page], // The query key now includes page for pagination
+    queryKey: ["kanbanBoard", filterPriority, searchQuery, page], // Keep the existing filters
     queryFn: async () => {
-      const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, page);
+      const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, page); // Fetch all data without status filtering
       setKanbanData((prevData) => ({
         ...prevData,
-        ...response.data, // Merge the new data with the existing data
+        ...response.data, // Merge new data with existing data
       }));
       return response.data;
     },
@@ -283,7 +283,7 @@ export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
   // Load more function
   const loadMore = useCallback(() => {
     setLoadingStatus('loading');
-    setPage((prevPage) => prevPage + 1); // Increment the page number for pagination
+    setPage((prevPage) => prevPage + 1); // Increment page number for pagination
   }, []);
 
   return { kanbanData, isLoading, isError, error, loadMore, loadingStatus, refetch };
