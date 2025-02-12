@@ -8,6 +8,7 @@ import Avatar from "@components/Avatar.jsx";
 import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
 import {useTaskOverdueModal} from "@modules/project-management/hooks/taskHooks.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
+import SimpleBar from "simplebar-react";
 
 const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch }) => {
 
@@ -45,8 +46,9 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
 
     return (
         <>
+            <SimpleBar className='max-h-[450px]'>
             <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
-            <div className="hs-accordion-group">
+                <div className="hs-accordion-group">
                 {Array.isArray(milestones) && milestones.map((milestone) => (<div
                     className={`hs-accordion accordion-item ${milestone.priority === 'low' ? 'custom-accordion-primary' : (milestone.priority === 'medium' ? 'custom-accordion-secondary' : 'custom-accordion-danger')}`}
                     key={milestone.id}>
@@ -181,7 +183,8 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                     )}
                 </div>))}
             </div>
-        </div>
+            </div>
+            </SimpleBar>
             {
                 isOverdueTaskModalOpen &&
                     <TaskOverdueModal

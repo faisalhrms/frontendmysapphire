@@ -2,7 +2,6 @@ import React from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {getBadgeClasses} from "@helpers/badges.js";
-import SimpleBar from "simplebar-react";
 
 const MilestoneStatsTable = ({ rows }) => {
 

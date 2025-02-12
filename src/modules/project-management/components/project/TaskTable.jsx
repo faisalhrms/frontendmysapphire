@@ -6,7 +6,6 @@ import AvatarList from "@components/AvatarList.jsx";
 import {Link} from "react-router-dom";
 import Tooltip from '@components/Tooltip.jsx';
 import {PMS_ROUTES} from "@modules/project-management/routes.js";
-import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
@@ -42,7 +41,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                     </tr>
                     </thead>
                     <tbody>
-                    {tasks.map((task) => (
+                        {tasks.map((task) => (
                         <React.Fragment key={task.id}>
                             <tr className={`border-b border-defaultborder}`}>
                                 <td>
@@ -139,8 +138,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td>
                                     <div className="flex items-center">
                                         {
-                                            task.completion_timeline
-                                           ?
+                                            task.completion_timeline !== null && task.completion_timeline >= 0 ?
                                             <span className="me-6 text-success text-[1rem]">
                                                 <Tooltip
                                                     id={`task-tooltip-${task.id}-info`}
