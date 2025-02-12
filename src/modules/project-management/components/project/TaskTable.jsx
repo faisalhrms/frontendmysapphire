@@ -23,28 +23,30 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
     const projectUser = useMemo(() => projectUsers.find(user => user.id === userId), [projectUsers, userId]);
 
     return (<>
-            <div className={`table-responsive`}>
+            <div className={`table-responsive task-table`}>
                 <table className="table whitespace-nowrap table-bordered min-w-full">
-                    <thead className="table-active">
+                    <thead>
                     <tr className="border-b border-defaultborder">
-                        <th scope="col" className="text-center">Actions</th>
-                        <th scope="col" className="text-center">{isChild ? "Sub Task No" : "Task No"}</th>
-                        <th scope="col" className="text-center">{isChild ? "Sub Task Name" : "Task Name"}</th>
-                        <th scope="col" className="text-center">Status</th>
-                        <th scope="col" className="text-center">Priority</th>
-                        <th scope="col" className="text-center">Started At</th>
-                        <th scope="col" className="text-center">Ended At</th>
-                        <th scope="col" className="text-center">Assigned To</th>
-                        <th scope="col" className="text-center">External Users</th>
-                        <th scope="col" className="text-center">Created By</th>
+                        <th scope="col">Actions</th>
+                        <th scope="col">{isChild ? "Sub Task Name" : "Task Name"}</th>
+                        <th scope="col">Person</th>
+                        <th scope="col">Teams</th>
+                        <th scope="col">Deadline</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Completion Date</th>
+                        <th scope="col">Status Completion Timeline</th>
+                        <th scope="col">Priority</th>
+                        <th scope="col">Started At</th>
+                        <th scope="col">External Users</th>
+                        <th scope="col">Created By</th>
                     </tr>
                     </thead>
                     <tbody>
                     {tasks.map((task) => (
                         <React.Fragment key={task.id}>
-                            <tr className={`border-b border-defaultborder text-[#8c9097] dark:text-white/50 ${task.is_overdue ? 'bg-danger/10 text-danger' : ''}`}>
+                            <tr className={`border-b border-defaultborder}`}>
                                 <td>
-                                    <span className='flex space-x-2'>
+                                    <span className={`${!projectUser?.can_view_only ? 'flex space-x-2' : ''}`}>
                                      {(() => {
                                          if (!projectUser?.can_view_only) {
                                              return (
@@ -62,7 +64,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                              )
                                          }
                                      })()}
-                                        <HasProjectPermission globalPermission='add_task' users={projectUsers}>
+                                        <HasProjectPermission globalPermission='add_task' users={projectUsers} needIcon={true}>
                                             {projectStatus === 'active' && milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
@@ -97,66 +99,115 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                     </span>
                                 </td>
                                 <td>
-                                    <span className="flex items-center">
-                                        <span className="text-primary" onClick={() => toggleSubTasks(task.id)}>
-                                            {task.children && task.children.length > 0 && (<svg
-                                                className={`w-4 h-4 mr-2 cursor-pointer text-dark ${activeTaskId === task.id ? 'transform rotate-90' : ''}`}
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor">
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M9 5l7 7-7 7"
-                                                />
-                                            </svg>)}
+                                    <span className="flex items-center text-[0.80rem] text-[#323338]">
+                                        <span onClick={() => toggleSubTasks(task.id)}>
+                                            {task.children && task.children.length > 0 && (
+                                                <svg
+                                                    className={`w-4 h-4 mr-2 cursor-pointer text-dark ${activeTaskId === task.id ? 'transform rotate-90' : ''}`}
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M9 5l7 7-7 7"
+                                                    />
+                                                </svg>
+                                            )}
                                         </span>
                                         <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
-                                            {task.task_no}
+                                            {getExcerptFromText(task.name, 30)}
+                                            {task.children && task.children.length > 0 && (
+                                                <span className="badge bg-primary/10 text-primary ms-2">
+                                                    {task.children.length}
+                                                </span>
+                                            )
+                                            }
                                         </Link>
                                     </span>
                                 </td>
+                                <td className='text-center'><AvatarList users={task.users} max={4}/></td>
                                 <td>
-                                    <span className="flex items-center">
-                                        <Tooltip
-                                            id={`task-tooltip-${task.id}`}
-                                            tooltipContent={`${task.name}`}>
-                                            <p className="font-semibold mb-[1.4px] text-[0.813rem] ms-2">
-                                                {getExcerptFromText(task.name, 30)}
-                                            </p>
-                                        </Tooltip>
-                                        {task.children && (<span className="badge bg-primary text-white ms-2">
-                                                {task.children.length}
-                                            </span>)}
-                                    </span>
+                                    {(
+                                        task.teams?.map(team => (
+                                            <span key={team.id}>{toTitleCase(team.name)}</span>
+                                        ))
+                                    )}
+                                </td>
+                                <td>
+                                    <div className="flex items-center">
+                                        {
+                                            task.completion_timeline
+                                           ?
+                                            <span className="me-6 text-success text-[1rem]">
+                                                <Tooltip
+                                                    id={`task-tooltip-${task.id}-info`}
+                                                    tooltipContent={`${task.completion_timeline < 0 ? `Done ${Math.abs(task.completion_timeline)} days after deadline` : 'Done on time'} `}
+                                                >
+                                                    {
+                                                        task.completion_timeline && task.completion_timeline >= 0
+                                                            ?
+                                                            <i className="ri-check-double-line cursor-pointer"></i>
+                                                            :
+                                                            <i className="ri-information-line cursor-pointer"></i>
+                                                    }
+                                                </Tooltip>
+                                            </span>
+                                           :
+                                                (
+                                                    task.is_overdue ?
+                                                        <span className="me-6 text-danger text-[1rem]">
+                                                            <Tooltip
+                                                                id={`task-tooltip-${task.id}-overdue`}
+                                                                tooltipContent={`Task is overdue by ${Math.abs(task.days_left)} days`}
+                                                            >
+                                                                <i className="ri-information-line cursor-pointer"></i>
+                                                            </Tooltip>
+                                                        </span>
+                                                        :
+                                                        <span className="me-6 text-secondary text-[1rem]">
+                                                            <Tooltip
+                                                                id={`task-tooltip-${task.id}-days_left`}
+                                                                tooltipContent={`${Math.abs(task.days_left)} days left`}
+                                                            >
+                                                                <i className="ri-information-line cursor-pointer"></i>
+                                                            </Tooltip>
+                                                        </span>
+                                                )
+                                        }
+                                        <span className={task.completed_at ? 'line-through' : (task.is_overdue ? 'line-through text-danger' : '')}>
+                                            {formatDate(task.ended_at)}
+                                        </span>
+                                    </div>
                                 </td>
                                 <td className="min-w-[200px]">
                                     {(() => {
                                         if (projectUser?.can_view_only) {
-                                            return <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>;
+                                            return <p
+                                                className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>;
                                         }
                                         return task.status !== 'under_approval' ? (
-                                            <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch} />
+                                            <TaskStatusDropdown status={task.status} taskId={task.id}
+                                                                refetch={refetch}/>
                                         ) : (
                                             <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
                                         );
                                     })()}
                                 </td>
+                                <td>{formatDate(task.completed_at)}</td>
+                                <td className='text-center'>{task.completion_timeline}</td>
                                 <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                                 </td>
                                 <td>{formatDate(task.started_at)}</td>
-                                <td>{formatDate(task.ended_at)}</td>
-                                <td><AvatarList users={task.users} max={4}/></td>
                                 <td><AvatarList users={task.external_users} max={4}/></td>
                                 <td className="min-w-[180px]">
                                     <div className="flex items-center flex-wrap">
                                         <div className="me-2 leading-none">
                                             <Avatar avatar={task?.created_by?.avatar} size='xs'/>
                                         </div>
-                                        <span
-                                            className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{toTitleCase(task?.created_by?.full_name)}</span>
+                                        <span>{toTitleCase(task?.created_by?.full_name)}</span>
                                     </div>
                                 </td>
                             </tr>

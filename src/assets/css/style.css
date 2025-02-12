@@ -13820,3 +13820,34 @@ input[type=color i]::-webkit-color-swatch {
 .sun-editor .se-toolbar {
   z-index: 2 !important;
 }
+.task-table{
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 14px;
+}
+.task-table table{
+  border-color: #d0d4e4;
+  padding: 0.37rem 0.75rem;
+  border-left-color: rgb(196, 196, 196);
+  border-top-color: rgb(196, 196, 196);
+  border-left-width: 9px;
+}
+
+.task-table table thead tr th {
+  font-size: unset;
+  font-weight: unset;
+  text-align: center;
+}
+
+.task-table table td {
+  text-align: center;
+  font-size: 12px;
+  font-weight: unset;
+}
+
+.task-table table tr {
+  border-color: #d0d4e4;
+}
+
+.task-table table.table-bordered tr > :not([hidden]) ~ :not([hidden]) {
+  border-color: #d0d4e4;
+}
