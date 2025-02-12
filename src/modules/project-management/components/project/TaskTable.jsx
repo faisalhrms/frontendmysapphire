@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import {getExcerptFromText, toTitleCase} from "@helpers/formatters.js";
+import {toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
@@ -10,6 +10,8 @@ import Avatar from "@components/Avatar.jsx";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useSelector} from "react-redux";
+import SimpleBar from "simplebar-react";
+import ProgressBar from "@components/ProgressBar.jsx";
 
 const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
@@ -21,8 +23,10 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
     const userId = useSelector((state) => state.auth.user?.id);
     const projectUser = useMemo(() => projectUsers.find(user => user.id === userId), [projectUsers, userId]);
 
-    return (<>
-            <div className={`table-responsive task-table`}>
+    return (
+        <>
+            <SimpleBar className='max-h-[500px]'>
+                <div className={`table-responsive task-table`}>
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
@@ -34,6 +38,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                         <th scope="col">Status</th>
                         <th scope="col">Completion Date</th>
                         <th scope="col">Status Completion Timeline</th>
+                        <th scope="col">Progress</th>
                         <th scope="col">Priority</th>
                         <th scope="col">Started At</th>
                         <th scope="col">External Users</th>
@@ -41,7 +46,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                     </tr>
                     </thead>
                     <tbody>
-                        {tasks.map((task) => (
+                    {tasks.map((task) => (
                         <React.Fragment key={task.id}>
                             <tr className={`border-b border-defaultborder}`}>
                                 <td>
@@ -117,7 +122,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                             )}
                                         </span>
                                         <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
-                                            {getExcerptFromText(task.name, 30)}
+                                            {task.name}
                                             {task.children && task.children.length > 0 && (
                                                 <span className="badge bg-primary/10 text-primary ms-2">
                                                     {task.children.length}
@@ -138,18 +143,18 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td>
                                     <div className="flex items-center">
                                         {
-                                            task.completion_timeline !== null && task.completion_timeline >= 0 ?
+                                            task.completion_timeline !== null ?
                                             <span className="me-6 text-success text-[1rem]">
                                                 <Tooltip
                                                     id={`task-tooltip-${task.id}-info`}
                                                     tooltipContent={`${task.completion_timeline < 0 ? `Done ${Math.abs(task.completion_timeline)} days after deadline` : 'Done on time'} `}
                                                 >
                                                     {
-                                                        task.completion_timeline && task.completion_timeline >= 0
+                                                        task.completion_timeline < 0
                                                             ?
-                                                            <i className="ri-check-double-line cursor-pointer"></i>
-                                                            :
                                                             <i className="ri-information-line cursor-pointer"></i>
+                                                            :
+                                                            <i className="ri-check-double-line cursor-pointer"></i>
                                                     }
                                                 </Tooltip>
                                             </span>
@@ -183,12 +188,10 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td className="min-w-[200px]">
                                     {(() => {
                                         if (projectUser?.can_view_only) {
-                                            return <p
-                                                className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>;
+                                            return <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>;
                                         }
                                         return task.status !== 'under_approval' ? (
-                                            <TaskStatusDropdown status={task.status} taskId={task.id}
-                                                                refetch={refetch}/>
+                                            <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
                                         ) : (
                                             <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
                                         );
@@ -196,6 +199,11 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 </td>
                                 <td>{formatDate(task.completed_at)}</td>
                                 <td className='text-center'>{task.completion_timeline}</td>
+                                <td className="min-w-[200px]">
+                                    <div className='flex items-center'>
+                                        <ProgressBar value={task.progress} barColor='!bg-success' withStatus={false} />
+                                    </div>
+                                </td>
                                 <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                                 </td>
                                 <td>{formatDate(task.started_at)}</td>
@@ -209,16 +217,20 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                     </div>
                                 </td>
                             </tr>
-                            {activeTaskId === task.id && task.children && task.children.length > 0 && (<tr>
-                                <td colSpan="8">
-                                    <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
-                                </td>
-                            </tr>)}
+                                {activeTaskId === task.id && task.children && task.children.length > 0 && (
+                                    <tr>
+                                    <td colSpan="8">
+                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
+                                    </td>
+                                    </tr>
+                                )}
                     </React.Fragment>))}
                     </tbody>
                 </table>
             </div>
-    </>);
+            </SimpleBar>
+        </>
+    );
 };
 
 export default React.memo(TaskTable)

@@ -34,6 +34,7 @@ const TaskStatusDropdown = ({ status, taskId, refetch }) => {
             placeholder="Status"
             isClearable={false}
             onSelectChange={handleStatusChange}
+            className='select-sm'
         />
     );
 };

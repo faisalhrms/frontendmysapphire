@@ -46,7 +46,6 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
 
     return (
         <>
-            <SimpleBar className='max-h-[450px]'>
             <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
                 <div className="hs-accordion-group">
                 {Array.isArray(milestones) && milestones.map((milestone) => (<div
@@ -184,7 +183,6 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                 </div>))}
             </div>
             </div>
-            </SimpleBar>
             {
                 isOverdueTaskModalOpen &&
                     <TaskOverdueModal

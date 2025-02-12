@@ -13822,7 +13822,7 @@ input[type=color i]::-webkit-color-swatch {
 }
 .task-table{
   border-top-left-radius: 10px;
-  border-bottom-left-radius: 14px;
+  border-bottom-left-radius: 10px;
 }
 .task-table table{
   border-color: #d0d4e4;
@@ -13842,6 +13842,7 @@ input[type=color i]::-webkit-color-swatch {
   text-align: center;
   font-size: 12px;
   font-weight: unset;
+  padding: 0.40rem 0.95rem;
 }
 
 .task-table table tr {
@@ -13850,4 +13851,8 @@ input[type=color i]::-webkit-color-swatch {
 
 .task-table table.table-bordered tr > :not([hidden]) ~ :not([hidden]) {
   border-color: #d0d4e4;
+}
+
+.select-sm .Select2__control {
+  min-height: 20px !important;
 }

@@ -7,6 +7,6 @@ export const MEDIA_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: MEDIA_ROUTES.READ.path,
-        component: () => import(`/src/modules/media/views/Media.jsx`),
+        component: () => import(`@modules/media/views/Media.jsx`),
     },
 ]
