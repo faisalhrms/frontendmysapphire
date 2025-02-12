@@ -60,6 +60,15 @@ export const getProjectById = async (id) => {
     }
 };
 
+export const editProjectById = async (id) => {
+    try {
+        const response = await api.get(`/pms/projects/${id}/edit/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
 
 export const getProjectMilestonesWithTasks = async (id) => {
     try {
