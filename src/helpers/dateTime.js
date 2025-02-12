@@ -8,6 +8,9 @@ const WORKING_HOURS_PER_DAY = 8; // 8-hour workday
 const isWeekend = (date) => date.getDay() === 6 || date.getDay() === 0;
 
 export const formatDate = (dateString, format = 'MMM dd, yyyy') => {
+    if (!dateString){
+        return '';
+    }
     const date = new Date(dateString);
 
     if (isNaN(date.getTime())) return '';
