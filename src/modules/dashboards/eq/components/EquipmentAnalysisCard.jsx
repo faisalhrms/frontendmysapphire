@@ -56,7 +56,7 @@ const EquipmentAnalysisCard = ({ data }) => {
                         categories={categories}
                         series={series}
                         type="bar"
-                        height={330}
+                        height={410}
                     />
                 </div>
             </div>
