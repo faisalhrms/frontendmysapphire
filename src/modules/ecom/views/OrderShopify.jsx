@@ -308,17 +308,7 @@ const OrderShopify = () => {
     fetchData();
   }, [selectedDate]);
 
-//   useEffect(() => {
-//     const currentDate = new Date();
-//     const formattedDate = currentDate.toISOString().split("T")[0];
-//     if (selectedDate === formattedDate) {
-//       setFilteredLocalDataPerform(localData);
-//       setFilteredInternationalDataPerform(internationalData);
-//     } else {
-//       setFilteredLocalDataPerform([]);
-//       setFilteredInternationalDataPerform([]);
-//     }
-//   }, [selectedDate]);
+
 
   let filteredInternationalFiscalData;
   return (
