@@ -8,7 +8,6 @@ import Avatar from "@components/Avatar.jsx";
 import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
 import {useTaskOverdueModal} from "@modules/project-management/hooks/taskHooks.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
-import SimpleBar from "simplebar-react";
 
 const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch }) => {
 

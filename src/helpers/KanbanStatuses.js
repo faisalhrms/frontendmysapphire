@@ -13,7 +13,7 @@ export const taskBorderStyles = {
 };
 
 export const getTaskBorderClass = (status) => {
-    if (!status) return ''; // Return an empty string if no status is provided
+    if (!status) return '';
     const normalizedStatus = status.toLowerCase();
     return taskBorderStyles[normalizedStatus] || 'border-t-[3px] border-solid border-gray/30';
 };

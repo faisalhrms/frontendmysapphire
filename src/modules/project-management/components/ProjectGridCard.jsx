@@ -9,6 +9,7 @@ import ProjectFavourite from "@modules/project-management/components/project/Pro
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
+import TextAvatar from "@components/TextAvatar.jsx";
 
 const ProjectGridCard = ({ project, openModal, refetch }) => {
 
@@ -18,6 +19,7 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
         <>
             <div className="box custom-box">
                 <div className="box-header items-center !justify-center flex-wrap !flex">
+                    <TextAvatar item={project.company} />
                     <div className="flex-grow">
                         <Tooltip
                             id={`project-tooltip-${project.id}`}
@@ -31,7 +33,8 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             </Link>
                         </Tooltip>
                         <span className="text-[#8c9097] dark:text-white/50 block text-[0.75rem]">
-                            Total <strong className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed
+                            Total <strong
+                            className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed
                         </span>
                     </div>
 
