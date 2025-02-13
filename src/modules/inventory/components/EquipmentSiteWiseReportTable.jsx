@@ -7,67 +7,104 @@ import { useDataTable } from "@hooks/dataTableHooks.js";
 const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Report' }) => {
     const { data, isLoading } = useDataTable(apiUrl, 10);
 
-    const rows = Array.isArray(data?.data?.rows) ? data.data.rows : [];
+    // Process data with null handling
+    const processedData = useMemo(() => {
+        if (!data?.data?.rows) return [];
+        return data.data.rows.map(row => ({
+            ...row,
+            equipment_types: (row.equipment_types || []).map(et => ({
+                name: et.name || 'Unknown Type',
+                quantity: et.quantity || 0
+            }))
+        }));
+    }, [data]);
 
+    // Generate unique sites with null handling
     const siteNames = useMemo(() => {
         const sites = new Set();
-        rows.forEach(row => {
-            sites.add(row.site_name);
+        processedData.forEach(row => {
+            const site = row.site_name || 'Unknown Site';
+            sites.add(site);
         });
         return Array.from(sites);
-    }, [rows]);
+    }, [processedData]);
 
+    // Generate equipment types with null handling
     const equipmentTypes = useMemo(() => {
         const types = new Set();
-        rows.forEach(row => {
-            row.equipment_types.forEach(eq => {
-                types.add(eq.name);
+        processedData.forEach(row => {
+            row.equipment_types.forEach(et => {
+                types.add(et.name);
             });
         });
         return Array.from(types);
-    }, [rows]);
+    }, [processedData]);
 
+    // Create table data structure
     const tableData = useMemo(() => {
-        const dataMap = {};
-
-        equipmentTypes.forEach(type => {
-            dataMap[type] = {};
+        const dataMap = equipmentTypes.map(type => {
+            const row = { type, total: 0 };
             siteNames.forEach(site => {
-                dataMap[type][site] = 0;
+                row[site] = 0; // Initialize each site with 0 for this equipment type
+            });
+            return row;
+        });
+
+        processedData.forEach(row => {
+            row.equipment_types.forEach(et => {
+                const type = et.name;
+                const site = row.site_name || 'Unknown Site';
+                // Find the row for this equipment type and update the quantity for this site
+                const dataRow = dataMap.find(d => d.type === type);
+                if (dataRow) {
+                    dataRow[site] += et.quantity;
+                    dataRow.total += et.quantity;
+                }
             });
         });
 
-        rows.forEach(row => {
-            row.equipment_types.forEach(eq => {
-                dataMap[eq.name][row.site_name] = eq.quantity;
-            });
-        });
+        return dataMap;
+    }, [processedData, siteNames, equipmentTypes]);
 
-        return Object.entries(dataMap).map(([type, sites]) => ({
-            type,
-            ...sites,
-            total: Object.values(sites).reduce((sum, qty) => sum + qty, 0),
-        }));
-    }, [rows, siteNames, equipmentTypes]);
-
+    // Calculate column totals
     const columnTotals = useMemo(() => {
-        const totals = {};
+        const totals = { type: 'Total', total: 0 };
         siteNames.forEach(site => {
-            totals[site] = tableData.reduce((sum, row) => sum + row[site], 0);
+            totals[site] = tableData.reduce((sum, row) => sum + (row[site] || 0), 0);
+            totals.total += totals[site];
         });
-        totals["total"] = tableData.reduce((sum, row) => sum + row.total, 0);
         return totals;
     }, [tableData, siteNames]);
 
+    // Create react-table columns
     const columns = useMemo(() => [
-        { Header: "Type", accessor: "type" },
-        ...siteNames.map(site => ({ Header: site, accessor: site })),
-        { Header: "Total", accessor: "total" }
+        {
+            Header: 'Equipment Type',
+            accessor: 'type',
+            Cell: ({ value }) => value || 'Unknown Type'
+        },
+        ...siteNames.map(site => ({
+            Header: site,
+            accessor: site,
+            Cell: ({ value }) => value || 0
+        })),
+        {
+            Header: 'Total',
+            accessor: 'total',
+            Cell: ({ value }) => value || 0
+        }
     ], [siteNames]);
 
-    const { getTableProps, getTableBodyProps, headerGroups, rows: tableRows, prepareRow } = useTable({
+    // React-table configuration
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        rows: tableRows,
+        prepareRow
+    } = useTable({
         columns,
-        data: [...tableData, { type: "Total", ...columnTotals }],
+        data: [...tableData, columnTotals]
     });
 
     return (
@@ -83,36 +120,26 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
                     <div className="table-responsive">
                         <table {...getTableProps()} className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover">
                             <thead>
-                            {headerGroups?.map((headerGroup, headerIndex) => {
-                                const headerProps = headerGroup.getHeaderGroupProps();
-                                return (
-                                    <tr {...headerProps} key={`headerGroup-${headerIndex}`} className="border-b border-defaultborder">
-                                        {headerGroup.headers.map((column, columnIndex) => {
-                                            const columnProps = column.getHeaderProps();
-                                            return (
-                                                <th {...columnProps} key={`header-${columnIndex}`} className="text-start align-middle">
-                                                    {column.render('Header')}
-                                                </th>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
+                            {headerGroups.map(headerGroup => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map(column => (
+                                        <th {...column.getHeaderProps()} className="text-start align-middle">
+                                            {column.render('Header')}
+                                        </th>
+                                    ))}
+                                </tr>
+                            ))}
                             </thead>
                             <tbody {...getTableBodyProps()}>
-                            {tableRows.map((row, rowIndex) => {
+                            {tableRows.map(row => {
                                 prepareRow(row);
-                                const rowProps = row.getRowProps();
                                 return (
-                                    <tr {...rowProps} key={`row-${rowIndex}`} className="border-b border-defaultborder text-[0.6875rem]">
-                                        {row.cells.map((cell, cellIndex) => {
-                                            const cellProps = cell.getCellProps();
-                                            return (
-                                                <td {...cellProps} key={`cell-${rowIndex}-${cellIndex}`}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        })}
+                                    <tr {...row.getRowProps()}>
+                                        {row.cells.map(cell => (
+                                            <td {...cell.getCellProps()}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        ))}
                                     </tr>
                                 );
                             })}
