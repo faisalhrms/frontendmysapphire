@@ -4,7 +4,7 @@ import TaskKanbanCard from '@modules/project-management/components/task/TaskKanb
 import mediaSvg from '@assets/images/media/media-83.svg';
 import {toTitleCase} from "@helpers/formatters.js";
 
-const TaskKanbanList = ({ status, tasks, loadMore, loadingStatus, totalCount }) => {
+const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoading }) => {
     return (
         <div className={`kanban-tasks-type ${status} min-w-[320px]`} key={status}>
             <div className="mb-4 sticky top-0  z-10">
@@ -21,7 +21,7 @@ const TaskKanbanList = ({ status, tasks, loadMore, loadingStatus, totalCount }) 
                         {tasks.length > 0 ? (
                             <>
                                 {tasks.map((task) => (
-                                    <TaskKanbanCard key={task.id} task={task} />
+                                    <TaskKanbanCard key={task.id} task={task} refetch={refetch} />
                                 ))}
                             </>
                         ) : (
@@ -38,9 +38,9 @@ const TaskKanbanList = ({ status, tasks, loadMore, loadingStatus, totalCount }) 
                     <button
                         className="ti-btn ti-btn-primary"
                         onClick={() => loadMore(status)}
-                        disabled={loadingStatus === status}
+                        disabled={isLoading}
                     >
-                        {loadingStatus === status ? 'Loading...' : 'View More'}
+                        {isLoading ? 'Loading...' : 'View More'}
                     </button>
                 </div>
             )}

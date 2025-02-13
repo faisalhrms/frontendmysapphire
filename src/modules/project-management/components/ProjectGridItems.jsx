@@ -5,7 +5,7 @@ const ProjectGridItems = ({ rows, handleOpenMilestoneModal, refetch }) => {
 
     return (
         rows.map(project => (
-            <div className="xxl:col-span-3 xl:col-span-4 md:col-span-6 col-span-12" key={project.id}>
+            <div className="col-span-12 xl:col-span-4 xxl:col-span-4 xxxl:col-span-3" key={project.id}>
                 <ProjectGridCard
                     openModal={() => handleOpenMilestoneModal(project)}
                     project={project}
