@@ -35,6 +35,10 @@ const ProjectAdditionalDetail = ({project}) => {
                                     <td>{project.project_no}</td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
+                                    <td><span className="font-semibold">Company :</span></td>
+                                    <td>{project?.company?.full_name}</td>
+                                </tr>
+                                <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Tags :</span></td>
                                     <td className='space-x-1 rtl:space-x-reverse'>
                                         {(

@@ -2,15 +2,15 @@ import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import TaskKanbanCard from '@modules/project-management/components/task/TaskKanbanCard.jsx';
 import mediaSvg from '@assets/images/media/media-83.svg';
+import {toTitleCase} from "@helpers/formatters.js";
 
-const TaskKanbanList = ({ statusKey, statusLabel, tasks, loadMore, loadingStatus, totalCount }) => {
-
+const TaskKanbanList = ({ status, tasks, loadMore, loadingStatus, totalCount }) => {
     return (
-        <div className={`kanban-tasks-type ${statusKey} min-w-[320px]`} key={statusKey}>
+        <div className={`kanban-tasks-type ${status} min-w-[320px]`} key={status}>
             <div className="mb-4 sticky top-0  z-10">
                 <div className="flex justify-between items-center p-2">
                     <span className="block font-semibold text-[.9375rem]">
-                        {statusLabel} - {totalCount}
+                        {toTitleCase(status)} - {totalCount}
                     </span>
                 </div>
             </div>
@@ -37,10 +37,10 @@ const TaskKanbanList = ({ statusKey, statusLabel, tasks, loadMore, loadingStatus
                 <div className="m-4 text-center">
                     <button
                         className="ti-btn ti-btn-primary"
-                        onClick={() => loadMore(statusKey)}
-                        disabled={loadingStatus === statusKey}
+                        onClick={() => loadMore(status)}
+                        disabled={loadingStatus === status}
                     >
-                        {loadingStatus === statusKey ? 'Loading...' : 'View More'}
+                        {loadingStatus === status ? 'Loading...' : 'View More'}
                     </button>
                 </div>
             )}
