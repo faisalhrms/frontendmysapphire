@@ -21,7 +21,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 ECOM_ROUTES.ADD.path,
                 "link",
-                "Analysis",
+                "Analytics",
                 2,
                 "bx bx-message-square-edit",
                 ECOM_ROUTES.ADD.permission,
