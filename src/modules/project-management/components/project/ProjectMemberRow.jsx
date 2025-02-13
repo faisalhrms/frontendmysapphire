@@ -1,6 +1,5 @@
 import React, {useMemo} from "react";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import {formatMappedData} from "@helpers/formatters.js";
 import FormToggle from "@components/form/FormToggle.jsx";
 

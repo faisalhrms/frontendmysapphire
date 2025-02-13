@@ -2,8 +2,9 @@ import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { useHasPermission } from "@modules/auth/hooks/authHooks.js";
 import { useSelector } from "react-redux";
+import Tooltip from "@components/Tooltip.jsx";
 
-const HasProjectPermission = React.memo(({ globalPermission, children, users }) => {
+const HasProjectPermission = React.memo(({ globalPermission, children, users, needIcon = false }) => {
     const userId = useSelector((state) => state.auth.user?.id);  // Get current user ID from Redux state
 
     // Memoize the finding of the user to prevent recalculating on each render
@@ -11,6 +12,13 @@ const HasProjectPermission = React.memo(({ globalPermission, children, users }) 
 
     // If the user has the `can_view_only` permission, do not render anything
     if (projectUser?.can_view_only) {
+        if (needIcon){
+            return (
+                <span className="text-danger text-[1rem]">
+                    <i className="ri-lock-line"></i>
+                </span>
+            )
+        }
         return null;
     }
 

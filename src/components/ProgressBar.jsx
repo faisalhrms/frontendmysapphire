@@ -23,7 +23,7 @@ const ProgressBar = ({ value = null, total = null, completed = null, status = 'C
         }else {
             return (
                 <>
-                    <div className="progress progress-xs progress-animate flex-grow me-2" style={{width: `${progressValue}%`}}>
+                    <div className="progress progress-xs progress-animate flex-grow me-2">
                         <div className={`progress-bar ${barColor}`} style={{width: `${progressValue}%`}}></div>
                     </div>
                     <div className="text-[#8c9097] dark:text-white/50 text-[.6875rem]">{progressValue}%</div>

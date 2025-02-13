@@ -38,42 +38,42 @@ export const DASHBOARD_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: DASHBOARD_ROUTES.PROJECT.path,
-        component: () => import(`/src/modules/dashboards/pms/views/ProjectDashboard.jsx`),
+        component: () => import(`@modules/dashboards/pms/views/ProjectDashboard.jsx`),
         permission: DASHBOARD_ROUTES.PROJECT.permission,
     },
     {
         path: DASHBOARD_ROUTES.BI.path,
-        component: () => import(`/src/modules/dashboards/bi/views/BiDashboard.jsx`),
+        component: () => import(`@modules/dashboards/bi/views/BiDashboard.jsx`),
         permission:DASHBOARD_ROUTES.BI.permission,
     },
     {
         path: DASHBOARD_ROUTES.CIO.path,
-        component: () => import(`/src/modules/dashboards/cio/views/CioDashboard.jsx`),
+        component: () => import(`@modules/dashboards/cio/views/CioDashboard.jsx`),
         permission:DASHBOARD_ROUTES.CIO.permission,
     },
     {
         path: DASHBOARD_ROUTES.CS.path,
-        component: () => import(`/src/modules/dashboards/cs/views/CsDashboard.jsx`),
+        component: () => import(`@modules/dashboards/cs/views/CsDashboard.jsx`),
         permission:DASHBOARD_ROUTES.CS.permission,
     },
     {
         path: DASHBOARD_ROUTES.SUBSCRIPTION.path,
-        component:()=>import(`/src/modules/dashboards/sms/views/SubscriptionDashboard.jsx`),
+        component:()=>import(`@modules/dashboards/sms/views/SubscriptionDashboard.jsx`),
     },
     {
         path: DASHBOARD_ROUTES.SR.path,
-        component: () => import(`/src/modules/dashboards/sr/views/SrTabs.jsx`),
+        component: () => import(`@modules/dashboards/sr/views/SrTabs.jsx`),
         permission: DASHBOARD_ROUTES.SR.permission,
     },
     {
         path: DASHBOARD_ROUTES.SR_LIST.path,
-        component: () => import(`/src/modules/dashboards/sr/views/SrList.jsx`),
+        component: () => import(`@modules/dashboards/sr/views/SrList.jsx`),
         permission: DASHBOARD_ROUTES.SR_LIST.permission,
 
     },
     {
         path: DASHBOARD_ROUTES.Equipment.path,
-        component: () => import(`/src/modules/dashboards/eq/views/EquipmentDashboard.jsx`),
+        component: () => import(`@modules/dashboards/eq/views/EquipmentDashboard.jsx`),
         permission: DASHBOARD_ROUTES.Equipment.permission,
 
     },

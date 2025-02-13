@@ -11,11 +11,11 @@ export const REPLENISHMENT_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: REPLENISHMENT_ROUTES.READ.path,
-        component: () => import(`/src/modules/replenishment/views/Replenishment.jsx`),
+        component: () => import(`@modules/replenishment/views/Replenishment.jsx`),
     },
     {
         path: REPLENISHMENT_ROUTES.THANK.path,
-        component: () => import('/src/modules/replenishment/views/ReplenishmentThank.jsx')
+        component: () => import('@modules/replenishment/views/ReplenishmentThank.jsx')
     },
 
 
