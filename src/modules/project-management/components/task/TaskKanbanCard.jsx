@@ -1,13 +1,34 @@
 import React from "react";
 import AvatarList from "@components/AvatarList.jsx";
-import { getTaskBorderClass } from "@helpers/KanbanStatuses.js";
-import {toTitleCase} from "@helpers/formatters.js";
-import {getBadgeClasses} from "@helpers/badges.js";
-import {formatDate} from "@helpers/dateTime.js";
+import { toTitleCase } from "@helpers/formatters.js";
+import { getBadgeClasses } from "@helpers/badges.js";
+import { formatDate } from "@helpers/dateTime.js";
 
 const TaskKanbanCard = ({ task }) => {
 
     const daysLeft = task.days_left != null ? `${task.days_left} days left` : "No deadline";
+
+    // Define task border styles inside the component
+    const taskBorderStyles = {
+        open: 'border-t-[3px] border-solid border-primary/30',
+        not_started: 'border-t-[3px] border-solid border-secondary/30',
+        in_progress: 'border-t-[3px] border-solid border-info/30',
+        half_completed: 'border-t-[3px] border-solid border-warning/30',
+        near_completion: 'border-t-[3px] border-solid border-warning/30',
+        completed: 'border-t-[3px] border-solid border-success/30',
+        reopened: 'border-t-[3px] border-solid border-primary/30',
+        on_hold: 'border-t-[3px] border-solid border-danger/30',
+        cancelled: 'border-t-[3px] border-solid border-danger/30',
+        rejected: 'border-t-[3px] border-solid border-danger/30',
+        under_approval: 'border-t-[3px] border-solid border-info/30',
+    };
+
+    // Define the function to get the correct border class based on task status
+    const getTaskBorderClass = (status) => {
+        if (!status) return ''; // Return an empty string if no status is provided
+        const normalizedStatus = status.toLowerCase();
+        return taskBorderStyles[normalizedStatus] || 'border-t-[3px] border-solid border-gray/30';
+    };
 
     return (
         <div className={`box kanban-tasks ${getTaskBorderClass(task.status)}`}>

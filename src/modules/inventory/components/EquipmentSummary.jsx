@@ -44,16 +44,16 @@ const EquipmentSummary = ({id,equipmentData}) => {
                     </div>
                 </div>
                 <div className="box-body">
-                    <h5 className="font-semibold mb-4 task-title">Custodian: {equipmentData.custodian.full_name}</h5>
+                    <h5 className="font-semibold mb-4 task-title">Custodian: {equipmentData?.custodian?.full_name}</h5>
                     <div className="grid grid-cols-12 gap-x-6">
                         <div className="xl:col-span-6 col-span-12">
                             <div className="text-[.9375rem] font-semibold mb-2">Description:</div>
-                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData.description}</p>
+                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData?.description}</p>
 
                         </div>
                         <div className="xl:col-span-6 col-span-12">
                             <div className="text-[.9375rem] font-semibold mb-2">Specification:</div>
-                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData.specs}</p>
+                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData?.specs}</p>
 
                         </div>
 
@@ -64,14 +64,14 @@ const EquipmentSummary = ({id,equipmentData}) => {
                         <div>
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Department</span>
                             <span className="block text-[.875rem] font-semibold">
-                                {toTitleCase(equipmentData.department.name)}
+                                {toTitleCase(equipmentData?.department?.name)}
 
                             </span>
                         </div>
                         <div>
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Site</span>
                             <span className="block text-[.875rem] font-semibold">
-                                {toTitleCase(equipmentData.equipment_site.name)}
+                                {toTitleCase(equipmentData?.equipment_site?.name)}
 
                             </span>
                         </div>
@@ -85,21 +85,21 @@ const EquipmentSummary = ({id,equipmentData}) => {
                                         Equipment Purchase Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.purchase_date) || "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData?.purchase_date) || "-"}</span>
                         </div>
                         <div>
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment HandOver Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.handover_date) || "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData?.handover_date) || "-"}</span>
                         </div>
                         <div>
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment Maturity Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.maturity_date) || "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData?.maturity_date) || "-"}</span>
                         </div>
 
                     </div>

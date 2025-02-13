@@ -6,6 +6,7 @@ import CountUp from "react-countup";
 import SvgIcon from "@components/SvgIcon.jsx";
 import { toTitleCase } from "@helpers/formatters.js"; // Optional: May not be needed if labels are already formatted
 import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
+import InventorySvgIcon from "@components/InventorySvgIcon.jsx";
 
 const EquipmentStatusCard = ({ item }) => {
     const { status, count } = item;
@@ -16,19 +17,19 @@ const EquipmentStatusCard = ({ item }) => {
     const statusLabel = statusObj ? statusObj.label : "-";
     const styles = getStatusStyles(statusLabel);
     return (
-        <div className="box">
+        <div className="box transition-transform transform hover:scale-105 ">
             <div className="box-body">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center ">
                     <div>
-                        <p className="text-lg font-bold">
+                        <p className="  font-semibold ">
                             {statusLabel}
                         </p>
-                        <p className="text-2xl font-semibold">
+                        <p className="font-bold text-2xl ">
                             <CountUp end={count} />
                         </p>
                     </div>
                     <div>
-                        <SvgIcon styles={styles} />
+                        <InventorySvgIcon styles={styles} />
                     </div>
                 </div>
             </div>
