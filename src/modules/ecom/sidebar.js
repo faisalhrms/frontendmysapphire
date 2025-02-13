@@ -13,10 +13,18 @@ export const sidebarMenu = [
             generateSidebarItem(
                 ECOM_ROUTES.READ.path,
                 "link",
-                "Order Booking",
+                "Status Report",
                 1,
                 "bx bx-message-square-edit",
             ECOM_ROUTES.READ.permission,
+            ),
+            generateSidebarItem(
+                ECOM_ROUTES.ADD.path,
+                "link",
+                "Analysis",
+                2,
+                "bx bx-message-square-edit",
+                ECOM_ROUTES.ADD.permission,
             )
         ]
     )

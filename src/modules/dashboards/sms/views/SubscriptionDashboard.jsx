@@ -38,14 +38,13 @@ const SubscriptionDashboard = () => {
     return (
         <>
             <PageHeader
-                currentpage="Subscription Dashboard" // Corrected typo
+                currentpage="Subscription Dashboard"
                 activepage="Dashboard"
                 mainpage="Subscription"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
                 {summaryData.map((data, index) => {
                     const route = subscriptionRoutesMap[data.name] || SUBSCRIPTION_ROUTES.READ.path;
-                    console.log(`Rendering SubscriptionCard for "${data.name}" with route: ${route}`);
 
                     return (
                         <SubscriptionCard

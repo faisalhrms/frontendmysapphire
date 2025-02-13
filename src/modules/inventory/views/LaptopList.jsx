@@ -36,7 +36,7 @@ const LaptopList = () => {
         { Header: "Serial No", accessor: "serial_no" },
         { Header: "Custodian", accessor: "custodian" },
         { Header: "Email", accessor: "email" },
-        { Header: "Grade", accessor: "grade" },
+        { Header: "Designation", accessor: "designation" },
         { Header: "Purchase Date", accessor: "purchase_date" },
         { Header: "Handover Date", accessor: "handover_date" },
         { Header: "Maturity Date", accessor: "maturity_date" },
