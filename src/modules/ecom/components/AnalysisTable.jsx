@@ -1,46 +1,62 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
-import api from "@config/axiosConfig.js";
-import ProjectStatusDropdown from "@modules/project-management/components/dropdowns/ProjectStatusDropdown.jsx";
+import React from "react";
+import LoadingSpinner from "@components/LoadingSpinner";
 
-export default function ConversionTable() {
-    const { control, formState: { errors } } = useForm();
-    const [data, setData] = useState([]);
+const formatNumber = (num) => num?.toLocaleString() || "N/A";
+const formatPercentage = (value) => {
+    const num = parseFloat(value);
+    return {
+        value: `${num > 0 ? "" : "-"}${Math.abs(num)}%`,
+        isNegative: num < 0,
+    };
+};
 
-    useEffect(() => {
-        api.get("/setups/sr-types/datatable/")
-            .then((response) => setData(response.data))
-            .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
+    return (
+        <div className="w-full bg-white rounded-lg shadow-lg overflow-hidden mt-4 mb-4">
+            <div className="p-3 text-lg font-semibold text-gray-900 dark:text-gray-200 border-b bg-gray-100 dark:border-gray-700">
+                {title}
+            </div>
 
-    const columns = [
-        { Header: "Group", accessor: "group" },
-        { Header: "Site", accessor: "site" },
-        { Header: "Activation", accessor: "activations" },
-        { Header: "Order", accessor: "orders" },
-        { Header: "Merchandise Total", accessor: "merchandiseTotal" },
-        { Header: "Avg Merchandise Total Per Usage ", accessor: "avgMerchPerUsage" },
-        { Header: "Avg Merchandise Total Per Order  ", accessor: "avgMerchPerOrder" },
-        { Header: "Items Per Order", accessor: "itemsPerOrder" },
-        { Header: "Order Conversion" , accessor: "orderConversion" },
-    ];
-
-
-    const buttons = (
-        <div className="grid grid-cols- sm:grid-cols-1">
-            <ProjectStatusDropdown control={control} errors={errors} />
+            <div className="w-full flex justify-center items-center">
+                {loading ? (
+                    <LoadingSpinner />
+                ) : (
+                    <table className="w-full table-fixed border-collapse">
+                        <thead className="bg-gray-200 dark:border-gray-700 dark:text-gray-200 text-gray-800">
+                        <tr>
+                            {headers.map((header, index) => (
+                                <th key={index} className="p-2 border border-gray-400 dark:border-gray-700 text-center">
+                                    {header.label}
+                                </th>
+                            ))}
+                        </tr>
+                        </thead>
+                        <tbody className="text-gray-800 dark:text-gray-200">
+                        {data.length > 0 ? (
+                            data.map((row, rowIndex) => (
+                                <tr key={rowIndex} className="border border-gray-300 dark:border-gray-700 transition hover:bg-gray-100">
+                                    {headers.map((header, colIndex) => (
+                                        <td key={colIndex} className="border border-gray-400 dark:border-gray-700 text-left px-4 py-2">
+                                            {header.accessor === "orderConversion"
+                                                ? formatPercentage(row[header.accessor]).value
+                                                : formatNumber(row[header.accessor])}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={headers.length} className="p-3 text-center text-gray-500">
+                                    No Data Available
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                )}
+            </div>
         </div>
     );
+};
 
-    return (
-        <>
-            <div className="flex justify-between items-center">
-                <PageHeader currentpage="Analysis Report" />
-            </div>
-            <DataTable title="Conversion" columns={columns} data={data}  buttons={buttons}/>
-        </>
-    );
-}
-
+export default AnalysisTable;
