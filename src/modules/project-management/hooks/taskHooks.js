@@ -5,11 +5,12 @@ import {
   getTaskWithChild, updateTaskStatus, updateOverdueTask, fetchKanbanTasksAll,
 
 } from "@modules/project-management/services/taskService.js";
+import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
 import { useForm } from "react-hook-form";
 import {useState, useEffect, useCallback} from "react";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery,useInfiniteQuery} from "@tanstack/react-query";
 import {toggleFavouriteProject} from "@modules/project-management/services/projectService.js";
 import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
 import taskFilterSchema from "@modules/project-management/schemas/TaskFilterSchema.js";
@@ -254,32 +255,75 @@ export const useTaskOverdueModal = (refetch) => {
   };
 };
 
-export function useKanbanStatusInfinite({ filterPriority, searchQuery }) {
-  const [kanbanData, setKanbanData] = useState({});
-  const [page, setPage] = useState(0);
-  const [status, setStatus] = useState('');
-
-  const {
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["kanbanBoard", filterPriority, searchQuery, page, status],
-    queryFn: async () => {
-      const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, page, status);
-      setKanbanData((prevData) => ({
-        ...prevData,
-        ...response.data,
-      }));
-      return response.data;
-    },
+export function useKanbanBoard({ filterPriority, searchQuery }) {
+  const { data: initialData, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['kanbanBoard', filterPriority, searchQuery],
+    queryFn: () => fetchKanbanTasksAll(5, searchQuery, filterPriority, 0, ''),
     keepPreviousData: true,
-    staleTime: 0,
   });
 
-  const loadMore = useCallback((status) => {
-    setStatus(status)
-    setPage((prevPage) => prevPage + 1);
-  }, []);
+  const [statusTasks, setStatusTasks] = useState({});
+  const [statusOffsets, setStatusOffsets] = useState({});
 
-  return { kanbanData, isLoading, loadMore, refetch };
+  // Reset tasks and offsets when filterPriority or searchQuery changes
+  useEffect(() => {
+    setStatusTasks({});
+    setStatusOffsets({});
+    refetch(); // Refetch initial data
+  }, [filterPriority, searchQuery, refetch]);
+
+  // Update tasks and offsets when initialData changes
+  useEffect(() => {
+    if (initialData?.data) {
+      const newTasks = {};
+      const newOffsets = {};
+      Object.entries(initialData.data).forEach(([status, { tasks, task_count }]) => {
+        newTasks[status] = tasks;
+        newOffsets[status] = tasks.length;
+      });
+      setStatusTasks(newTasks);
+      setStatusOffsets(newOffsets);
+    }
+  }, [initialData]);
+  const loadMore = async (status) => {
+    const currentOffset = statusOffsets[status] || 0;
+    // Pass currentOffset as the offset parameter
+
+    const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, currentOffset, status);
+    console.log(`this is response in hook`,response)
+    const newTasks = response.data[status]?.tasks || [];
+
+    setStatusTasks(prev => ({
+      ...prev,
+      [status]: [...(prev[status] || []), ...newTasks],
+    }));
+    // Update the offset for the next load
+    setStatusOffsets(prev => ({
+      ...prev,
+      [status]: currentOffset + newTasks.length,
+    }));
+  };
+  const kanbanData = {};
+  const hasMore = {};
+
+  if (initialData?.data) {
+    Object.entries(initialData.data).forEach(([status, { task_count }]) => {
+      const loadedTasks = statusTasks[status] || [];
+      kanbanData[status] = {
+        tasks: loadedTasks,
+        task_count,
+      };
+      hasMore[status] = loadedTasks.length < task_count;
+    });
+  }
+
+  return {
+    kanbanData,
+    isLoading,
+    loadMore,
+    hasMore,
+    refetch,
+    isError,
+    error,
+  };
 }

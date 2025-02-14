@@ -24,7 +24,8 @@ export  const SELF_SERVICES_ROUTES={
             path: "/module/ess/my/digital/profile",
 
           },
-    }
+    },
+
 }
 export  const MODULE_ROUTES = [
 {
@@ -54,5 +55,8 @@ export  const MODULE_ROUTES = [
     {
         path:SELF_SERVICES_ROUTES.SERVICES.DIGITAL_PROFILE.path,
         component:()=>import('/src/modules/employee-self-services/my-digital-profile/views/DigitalProfile.jsx')
+    },
+    {
+
     }
 ]

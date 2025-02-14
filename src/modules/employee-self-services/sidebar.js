@@ -1,5 +1,6 @@
 import {generateSidebarItem} from "@helpers/formatters.js"
 import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
+import {PMS_ROUTES} from "@modules/project-management/routes.js";
 
 export const sidebarMenu=[
     generateSidebarItem(
@@ -36,6 +37,13 @@ export const sidebarMenu=[
                 'link',
                 'Digital Profile',
                 4,
+                ''
+            ),
+            generateSidebarItem(
+                PMS_ROUTES.TASK.KANBAN.path,
+                'link',
+                'Task Manager',
+                5,
                 ''
             )
             ]

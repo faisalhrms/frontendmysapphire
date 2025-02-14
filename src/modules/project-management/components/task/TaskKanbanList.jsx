@@ -1,13 +1,15 @@
+// TaskKanbanList.jsx
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import TaskKanbanCard from '@modules/project-management/components/task/TaskKanbanCard.jsx';
 import mediaSvg from '@assets/images/media/media-83.svg';
-import {toTitleCase} from "@helpers/formatters.js";
+import { toTitleCase } from '@helpers/formatters.js';
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoading }) => {
+const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoading, hasMoreTasks }) => {
     return (
-        <div className={`kanban-tasks-type ${status} min-w-[320px]`} key={status}>
-            <div className="mb-4 sticky top-0  z-10">
+        <div className={`kanban-tasks-type ${status} min-w-[320px]`}>
+            <div className="mb-4 sticky top-0 z-10">
                 <div className="flex justify-between items-center p-2">
                     <span className="block font-semibold text-[.9375rem]">
                         {toTitleCase(status)} - {totalCount}
@@ -33,14 +35,14 @@ const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoadin
                 </PerfectScrollbar>
             </div>
 
-            {tasks.length < totalCount && (
+            {hasMoreTasks && ( // Only show if there are more tasks
                 <div className="m-4 text-center">
                     <button
                         className="ti-btn ti-btn-primary"
-                        onClick={() => loadMore(status)}
+                        onClick={() => loadMore(status)} // Pass the status to loadMore
                         disabled={isLoading}
                     >
-                        {isLoading ? 'Loading...' : 'View More'}
+                        {isLoading ? <LoadingSpinner/> : 'View More'}
                     </button>
                 </div>
             )}

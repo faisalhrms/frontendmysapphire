@@ -22,7 +22,7 @@ export const PMS_ROUTES = {
       path: "/module/tasks/detail/:id",
     },
     KANBAN:{
-      path: "/module/task/kanban-board"
+      path: "/module/task/task-manager"
     }
   },
 };

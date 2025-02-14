@@ -1,35 +1,23 @@
-import React, {useMemo} from 'react';
-import PageHeader from '@modules/layouts/includes/PageHeader.jsx';
-import TaskKanbanList from '@modules/project-management/components/task/TaskKanbanList.jsx';
-import LoadingSpinner from '@components/LoadingSpinner.jsx';
-import { useKanbanStatusInfinite } from '@modules/project-management/hooks/taskHooks.js';
-import { useWatch } from 'react-hook-form';
-import {useSearchHook} from "@hooks/useSearchHook.js";
+// TaskKanban.jsx
+import React from "react";
+import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import TaskKanbanList from "@modules/project-management/components/task/TaskKanbanList.jsx";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import { useKanbanBoard } from "@modules/project-management/hooks/taskHooks.js";
+import { useSearchHook } from "@hooks/useSearchHook.js";
 import useFilters from "@hooks/useFilters.js";
 import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
+import { useWatch } from "react-hook-form";
+import { taskStatuses } from "@modules/project-management/services/taskService.js";
+
 const TaskKanban = () => {
-    const {  searchTerm,
-        handleSearchChange } = useSearchHook();
-
-    const {
-        control,
-        handleSubmit,
-        errors,
-        getFilters
-    } = useFilters(
-        useMemo(
-            () => ({
-                initialFilters: [
-                    { name: 'priority'},
-                ],
-            }),
-            []
-        )
-    );
-
+    const { searchTerm, handleSearchChange } = useSearchHook();
+    const { control, errors } = useFilters({
+        initialFilters: [{ name: 'priority' }],
+    });
     const priority = useWatch({ control, name: 'priority' });
 
-    const { kanbanData, isLoading, loadMore, refetch } = useKanbanStatusInfinite({
+    const { kanbanData, isLoading, loadMore, refetch, hasMore } = useKanbanBoard({
         filterPriority: priority,
         searchQuery: searchTerm,
     });
@@ -73,20 +61,20 @@ const TaskKanban = () => {
                 </div>
             ) : (
                 <div className="ynex-kanban-board text-defaulttextcolor dark:text-defaulttextcolor/70 text-defaultsize">
-                    <div className="flex overflow-x-auto">
-                        {kanbanData && Object.entries(kanbanData).map(([status, data]) => {
-                            return (
+                    <div className="flex overflow-x-auto space-x-4">
+                        {kanbanData &&
+                            Object.entries(kanbanData).map(([status, data]) => (
                                 <TaskKanbanList
                                     key={`task-${status}`}
                                     status={status}
                                     tasks={data.tasks}
-                                    loadMore={loadMore}
                                     totalCount={data.task_count}
+                                    loadMore={loadMore}
                                     refetch={refetch}
                                     isLoading={isLoading}
+                                    hasMoreTasks={hasMore[status]}
                                 />
-                            );
-                        })}
+                            ))}
                     </div>
                 </div>
             )}
