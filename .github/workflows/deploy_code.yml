@@ -83,7 +83,12 @@ jobs:
 
           # Navigate to project directory and update
           cd /var/www/html/web_portal/frontend_react
-          git pull
+          git checkout -- package-lock.json   # Discard changes to package-lock.json
+          git reset --hard HEAD               # Reset to match the latest commit in the current branch
+          git clean -fd                       # Remove any untracked files and directories
+
+          # Pull the latest changes
+          git pull origin main
 
           npm install
           npm run build
