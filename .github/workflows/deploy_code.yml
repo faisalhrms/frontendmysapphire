@@ -36,11 +36,8 @@ jobs:
 
           # Navigate to project directory and update
           cd /var/www/html/web_portal/frontend_react
-        
-          git fetch origin
-        
-          git pull --rebase origin staging_server
-        
+          git pull
+
           npm install
           npm run build
         
