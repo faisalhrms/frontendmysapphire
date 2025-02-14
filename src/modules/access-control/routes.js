@@ -17,6 +17,7 @@ export const ACCESS_CONTROL_ROUTES = {
     },
 };
 
+
 export const MODULE_ROUTES = [
     {
         path: ACCESS_CONTROL_ROUTES.ROLE.READ.path,

@@ -92,21 +92,26 @@ export const updateOverdueTask = async (id, payload) => {
     }
 };
 
-// Fetch Kanban Tasks (initial data load or pagination)
-export const fetchKanbanTasksAll = async (limit = 5, search = '', filterPriority = '', page = 0) => {
+
+export const fetchKanbanTasksAll = async (
+    limit = 5,
+    search = null,
+    filterPriority = null,
+    offset,
+    status = ''
+) => {
     try {
         const searchParams = new URLSearchParams({
             limit,
-            offset: page * limit, // Calculate offset based on the page number
+            offset,
             search,
+            filterPriority,
+            status,
         });
-
-        if (filterPriority) {
-            searchParams.append("filterPriority", filterPriority);
-        }
-
         const response = await api.get(`/pms/tasks/kanban/?${searchParams.toString()}`);
         return response.data;
+        // Expected structure:
+        // { data: { not_started: { tasks: [...], task_count: N }, in_progress: { tasks: [...], task_count: M }, ... }, status: true, message: "Operation successful" }
     } catch (error) {
         Notify.error(error.response?.data?.message || "Error fetching Kanban tasks");
         throw error;

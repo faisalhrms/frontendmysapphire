@@ -10,6 +10,7 @@ import Header from "@modules/layouts/includes/header/Header.jsx";
 import Sidebar from "@modules/layouts/includes/sidebar/Sidebar.jsx";
 import Footer from "@modules/layouts/includes/Footer.jsx";
 import TabToTop from "@modules/layouts/includes/TabToTop.jsx";
+import DeleteModal from "@components/modals/DeleteModal.jsx";
 
 function App() {
     const isAuthenticated = useIsAuthenticated();
@@ -57,9 +58,10 @@ function App() {
                         <Sidebar/>
                         <div className='content main-index'>
                             <div className='main-content'>
-                                <Outlet/>
+                                <Outlet />
                             </div>
                         </div>
+                        <DeleteModal />
                         <Footer/>
                     </div>
                     <TabToTop />

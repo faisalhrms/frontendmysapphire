@@ -1,14 +1,15 @@
 import React from "react";
 import AvatarList from "@components/AvatarList.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
-import { getBadgeClasses } from "@helpers/badges.js";
 import { formatDate } from "@helpers/dateTime.js";
+import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
+import {PMS_ROUTES} from "@modules/project-management/routes.js";
+import {Link} from "react-router-dom";
 
-const TaskKanbanCard = ({ task }) => {
+const  TaskKanbanCard = ({ task, refetch }) => {
 
     const daysLeft = task.days_left != null ? `${task.days_left} days left` : "No deadline";
 
-    // Define task border styles inside the component
     const taskBorderStyles = {
         open: 'border-t-[3px] border-solid border-primary/30',
         not_started: 'border-t-[3px] border-solid border-secondary/30',
@@ -23,9 +24,8 @@ const TaskKanbanCard = ({ task }) => {
         under_approval: 'border-t-[3px] border-solid border-info/30',
     };
 
-    // Define the function to get the correct border class based on task status
     const getTaskBorderClass = (status) => {
-        if (!status) return ''; // Return an empty string if no status is provided
+        if (!status) return '';
         const normalizedStatus = status.toLowerCase();
         return taskBorderStyles[normalizedStatus] || 'border-t-[3px] border-solid border-gray/30';
     };
@@ -66,17 +66,21 @@ const TaskKanbanCard = ({ task }) => {
                     </div>
 
                     <div className="kanban-content !mt-1">
+                        <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
                         <h6 className="font-semibold mb-1 text-[.9375rem]">{task.name}</h6>
                         <div className="kanban-task-description">
                             {task.description || "(No description)"}
                         </div>
+                        </Link>
                     </div>
                 </div>
 
                 <div className="p-4 border-t dark:border-defaultborder/10 border-dashed">
                     <div className="flex items-center justify-between">
                         <AvatarList users={task.users}/>
-                        <span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
+                        <div className="min-w-[9rem]">
+                            <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
+                        </div>
                     </div>
                 </div>
             </div>

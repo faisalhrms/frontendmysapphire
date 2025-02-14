@@ -1,12 +1,14 @@
 import { z } from "zod";
 import { dateSchema } from "@helpers/schema.js";
+import {projectStatuses} from "@modules/project-management/services/projectService.js";
 
 export const prioritiesEnum = z.enum(["low", "medium", "high"], {
     errorMap: () => "Priority must be 'low', 'medium', or 'high'",
 });
 
-export const statusEnum = z.enum(["active", "archived", "on_hold", "completed"], {
-    errorMap: () => "Status must be 'active', 'on hold', 'archived' or completed",
+const statusValues = projectStatuses.map((status) => status.value || status.key);
+export const statusEnum = z.enum(statusValues, {
+    errorMap: () => `Status must be one of: ${statusValues.join(", ")}`,
 });
 
 const projectMemberSchema = z.object({
@@ -30,7 +32,7 @@ const projectSchema = z
             .min(1, "Project name is required")
             .max(255, "Project name must be at most 255 characters long"),
         description: z.string().min(20, "Description is required and must have a minimum of 50 characters"),
-        status: statusEnum.default("active"),
+        status: statusEnum.default("not_started"),
         priority: prioritiesEnum.default("medium"),
         started_at: dateSchema("Started"),
         ended_at: dateSchema("Ended"),

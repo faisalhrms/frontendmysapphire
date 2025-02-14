@@ -139,11 +139,11 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                     <WorkspaceDropdown
                                         company_id={company}
                                         department_id={department}
-                                        name='workspace_id'
                                         control={control}
                                         errors={errors}
                                         saveNewOption={true}
                                         haveLabel={true}
+                                        data={projectData}
                                     />
                                 </div>
                                 <div className='xl:col-span-6 col-span-12'>

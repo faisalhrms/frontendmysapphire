@@ -7,7 +7,7 @@ const milestoneSchema = z.object({
     description: z.string().min(10, "Description must be at least 10 characters long"),
     started_at: dateSchema('Started'),
     ended_at: dateSchema('Ended'),
-    status: statusEnum.default("active"),
+    status: statusEnum.default("not_started"),
     priority: prioritiesEnum.default("medium"),
     requires_approval: z.boolean().default(false),
 }).refine(data => {

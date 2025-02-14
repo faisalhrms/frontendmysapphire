@@ -11,8 +11,9 @@ const EquipmentSummaryStats = ({ summary, statsFetching, heading = 'Equipment Su
     const chartData = useMemo(() => {
         const { total_equipments, ...statusCounts } = summary;
         const labels = Object.keys(statusCounts).map(key => {
-            // Convert snake_case to Title Case with spaces
-            return key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            // Convert snake_case to Title Case with spaces and replace "No Status" with "N/A"
+            const formattedLabel = key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            return formattedLabel === "No Status" ? "N/A" : formattedLabel;
         });
         const series = Object.values(statusCounts);
         return { labels, series };

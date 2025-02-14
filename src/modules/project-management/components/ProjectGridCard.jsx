@@ -29,7 +29,7 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             <Link
                                 to={`/module/projects/detail/${project.id}`}
                                 className="font-semibold text-[.875rem] block text-truncate project-list-title">
-                                {getExcerptFromText(project.name, 20)}
+                                {project.name}
                             </Link>
                         </Tooltip>
                         <span className="text-[#8c9097] dark:text-white/50 block text-[0.75rem]">

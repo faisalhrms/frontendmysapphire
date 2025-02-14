@@ -115,15 +115,19 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
 
             <div className="box-body">
                 {isLoading ? (
-                    <LoadingSpinner />
+                    <LoadingSpinner/>
                 ) : (
-                    <div className="table-responsive">
-                        <table {...getTableProps()} className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover">
-                            <thead>
+                    <div className="overflow-x-auto">
+                        <table {...getTableProps()}
+                               className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover">
+                            <thead className="bg-gray-100">
                             {headerGroups.map(headerGroup => (
                                 <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps()} className="text-start align-middle">
+                                    {headerGroup.headers.map((column, columnIndex) => (
+                                        <th
+                                            {...column.getHeaderProps()}
+                                            className={`text-start align-middle px-4 py-2 border-b ${columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""}`}
+                                        >
                                             {column.render('Header')}
                                         </th>
                                     ))}
@@ -135,8 +139,11 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
                                 prepareRow(row);
                                 return (
                                     <tr {...row.getRowProps()}>
-                                        {row.cells.map(cell => (
-                                            <td {...cell.getCellProps()}>
+                                        {row.cells.map((cell, columnIndex) => (
+                                            <td
+                                                {...cell.getCellProps()}
+                                                className={`px-4 py-2 border-b ${columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""}`}
+                                            >
                                                 {cell.render('Cell')}
                                             </td>
                                         ))}
@@ -149,6 +156,7 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
                 )}
             </div>
         </div>
+
     );
 };
 
