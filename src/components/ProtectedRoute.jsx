@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useHasPermission, useIsAuthenticated } from "@modules/auth/hooks/authHooks.js";

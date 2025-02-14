@@ -24,27 +24,27 @@ export const SRM_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: SRM_ROUTES.READ.path,
-        component: () => import(`/src/modules/sr-management/views/Sr.jsx`),
+        component: () => import(`@modules/sr-management/views/Sr.jsx`),
         permission: SRM_ROUTES.READ.permission,
     },
 
     {
         path: SRM_ROUTES.PENDING.path,
-        component: () => import(`/src/modules/sr-management/pending-req-section/views/PendingReqTaskCreate.jsx`),
+        component: () => import(`@modules/sr-management/pending-req-section/views/PendingReqTaskCreate.jsx`),
     },
 
     {
         path: SRM_ROUTES.GENERATED.path,
-        component: () => import(`/src/modules/sr-management/task-genrated-section/views/TaskGeneratedView.jsx`),
+        component: () => import(`@modules/sr-management/task-genrated-section/views/TaskGeneratedView.jsx`),
     },
 
     {
         path: SRM_ROUTES.COMPLETED.path,
-        component: () => import(`/src/modules/sr-management/completed-task-section/views/TaskCompletedView.jsx`),
+        component: () => import(`@modules/sr-management/completed-task-section/views/TaskCompletedView.jsx`),
     },
     {
         path: SRM_ROUTES.CLOSED.path,
-        component: () => import(`/src/modules/sr-management/closed-task-section/views/TaskClosedView.jsx`),
+        component: () => import(`@modules/sr-management/closed-task-section/views/TaskClosedView.jsx`),
     },
 
 

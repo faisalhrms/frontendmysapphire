@@ -4,7 +4,7 @@ const useLoadRoutes = () => {
     const [routes, setRoutes] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const routeFiles = import.meta.glob('/src/modules/**/routes.js');
+    const routeFiles = import.meta.glob('@modules/**/routes.js');
 
     useEffect(() => {
         const loadRoutes = async () => {

@@ -10,7 +10,7 @@ export const PROFILE_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: PROFILE_ROUTES.READ.path,
-        component: () => import(`/src/modules/profile/views/UserProfile.jsx`),
+        component: () => import(`@modules/profile/views/UserProfile.jsx`),
         // permission: USER_ROUTES.READ.permission,
     },
 

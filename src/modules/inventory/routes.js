@@ -45,51 +45,51 @@ export const INVENTORY_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: INVENTORY_ROUTES.READ.path,
-        component: () => import(`/src/modules/inventory/views/EquipmentList.jsx`),
+        component: () => import(`@modules/inventory/views/EquipmentList.jsx`),
         permission: INVENTORY_ROUTES.READ.permission,
     },
     {
         path: INVENTORY_ROUTES.ADD.path,
-        component: () => import(`/src/modules/inventory/views/AddEquipment.jsx`),
+        component: () => import(`@modules/inventory/views/AddEquipment.jsx`),
         permission: INVENTORY_ROUTES.ADD.permission,
     },
     {
         path: INVENTORY_ROUTES.DETAIL.path,
-        component: () => import(`/src/modules/inventory/views/EquipmentDetail.jsx`),
+        component: () => import(`@modules/inventory/views/EquipmentDetail.jsx`),
         permission: INVENTORY_ROUTES.DETAIL.permission,
     },
     {
         path: INVENTORY_ROUTES.EDIT.path,
-        component: () => import(`/src/modules/inventory/views/EquipmentEdit.jsx`),
+        component: () => import(`@modules/inventory/views/EquipmentEdit.jsx`),
          permission: INVENTORY_ROUTES.EDIT.permission,
     },{
         path:INVENTORY_ROUTES.LAPTOP_LIST.path,
-        component:()=>import(`/src/modules/inventory/views/LaptopList.jsx`),
+        component:()=>import(`@modules/inventory/views/LaptopList.jsx`),
         permission: INVENTORY_ROUTES.LAPTOP_LIST.permission
     },
     {
         path:INVENTORY_ROUTES.EQUIPMENT_REPORT.path,
-        component:()=>import(`/src/modules/inventory/views/EquipmentReportList.jsx`),
+        component:()=>import(`@modules/inventory/views/EquipmentReportList.jsx`),
         permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
     },
     {
       path:INVENTORY_ROUTES.EQUIPMENT_SITE_WISE.path,
-      component:()=>import(`/src/modules/inventory/views/EquipmentSiteWiseReport.jsx`),
+      component:()=>import(`@modules/inventory/views/EquipmentSiteWiseReport.jsx`),
       permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
     },
     {
         path:INVENTORY_ROUTES.EQUIPMENT_REASSIGN.path,
-        component:()=>import(`/src/modules/inventory/views/ReAssignEquipment.jsx`),
+        component:()=>import(`@modules/inventory/views/ReAssignEquipment.jsx`),
         permission: INVENTORY_ROUTES.EQUIPMENT_REPORT.permission
     },
     {
         path:INVENTORY_ROUTES.EQUIPMENT_HISTORY.path,
-        component:()=>import(`/src/modules/inventory/views/EquipmentHistory.jsx`),
+        component:()=>import(`@modules/inventory/views/EquipmentHistory.jsx`),
         permission: INVENTORY_ROUTES.EQUIPMENT_HISTORY.permission
     }
     // {
     //     path: INVENTORY_ROUTES.SUMMARY.path,
-    //     component: () => import(`/src/modules/inventory/views/ReAssignEquipment.jsx`),
+    //     component: () => import(`@modules/inventory/views/ReAssignEquipment.jsx`),
     //     // permission: INVENTORY_ROUTES.SUMMARY.permission,
     // },
     

@@ -30,31 +30,31 @@ export  const SELF_SERVICES_ROUTES={
 export  const MODULE_ROUTES = [
 {
     path:SELF_SERVICES_ROUTES.SERVICES.READ.path,
-    component:()=>import('/src/modules/employee-self-services/service-request/views/ServiceRequestList.jsx'),
+    component:()=>import('@modules/employee-self-services/service-request/views/ServiceRequestList.jsx'),
 },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.CREATE.path,
-        component:()=>import('/src/modules/employee-self-services/service-request/views/ServiceRequestCreate.jsx'),
+        component:()=>import('@modules/employee-self-services/service-request/views/ServiceRequestCreate.jsx'),
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.EDIT.path,
-        component:()=>import('/src/modules/employee-self-services/service-request/views/ServiceRequestEdit.jsx')
+        component:()=>import('@modules/employee-self-services/service-request/views/ServiceRequestEdit.jsx')
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.DETAIL.path,
-        component:()=>import('/src/modules/employee-self-services/service-request/views/ServiceRequestDetail.jsx')
+        component:()=>import('@modules/employee-self-services/service-request/views/ServiceRequestDetail.jsx')
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path,
-        component:()=>import('/src/modules/employee-self-services/work-desk/views/WorkDesk.jsx')
+        component:()=>import('@modules/employee-self-services/work-desk/views/WorkDesk.jsx')
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.DISCOUNT_CARD.path,
-        component:()=>import('/src/modules/employee-self-services/discount-card/views/DiscountCard.jsx')
+        component:()=>import('@modules/employee-self-services/discount-card/views/DiscountCard.jsx')
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.DIGITAL_PROFILE.path,
-        component:()=>import('/src/modules/employee-self-services/my-digital-profile/views/DigitalProfile.jsx')
+        component:()=>import('@modules/employee-self-services/my-digital-profile/views/DigitalProfile.jsx')
     },
     {
 
