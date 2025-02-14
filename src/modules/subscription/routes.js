@@ -29,27 +29,27 @@ export const SUBSCRIPTION_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: SUBSCRIPTION_ROUTES.READ.path,
-        component: () => import(`/src/modules/subscription/views/SubscriptionList.jsx`),
+        component: () => import(`@modules/subscription/views/SubscriptionList.jsx`),
         permission:SUBSCRIPTION_ROUTES.READ.permission,
     },
     {
         path: SUBSCRIPTION_ROUTES.CREATE.path,
-        component: () => import(`/src/modules/subscription/views/SubscriptionCreate.jsx`),
+        component: () => import(`@modules/subscription/views/SubscriptionCreate.jsx`),
          permission:SUBSCRIPTION_ROUTES.CREATE.permission,
     },
     {
         path: SUBSCRIPTION_ROUTES.EDIT.path,
-        component: () => import(`/src/modules/subscription/views/SubscriptionEdit.jsx`),
+        component: () => import(`@modules/subscription/views/SubscriptionEdit.jsx`),
          permission:SUBSCRIPTION_ROUTES.EDIT.permission,
     },
     {
         path: SUBSCRIPTION_ROUTES.DETAIL.path,
-        component: () => import(`/src/modules/subscription/views/SubscriptionDetail.jsx`),
+        component: () => import(`@modules/subscription/views/SubscriptionDetail.jsx`),
          permission:SUBSCRIPTION_ROUTES.READ.permission,
     },
     {
         path:SUBSCRIPTION_ROUTES.RENEW.path,
-        component:()=>import(`/src/modules/subscription/views/SubscriptionRenew.jsx`),
+        component:()=>import(`@modules/subscription/views/SubscriptionRenew.jsx`),
     }
   
   

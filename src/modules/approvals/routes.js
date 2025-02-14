@@ -9,7 +9,7 @@ export const APPROVAL_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: APPROVAL_ROUTES.TASK.path,
-        component: () => import(`/src/modules/approvals/task/views/TaskApprovalList.jsx`),
+        component: () => import(`@modules/approvals/task/views/TaskApprovalList.jsx`),
         permission:APPROVAL_ROUTES.TASK.permission,
     }
 ];
