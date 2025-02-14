@@ -237,7 +237,6 @@ const ProjectList = () => {
             }
 
             <PmsDemoModal />
-            <DeleteModal />
         </>
     );
 };

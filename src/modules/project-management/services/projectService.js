@@ -2,6 +2,7 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const projectStatuses = [
+    { value: 'not_started', label: 'Not Started'},
     { value: 'active', label: 'Active' },
     { value: 'on_hold', label: 'On Hold' },
     { value: 'completed', label: 'Completed' },

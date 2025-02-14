@@ -12,6 +12,7 @@ import HasProjectPermission from "@modules/project-management/components/project
 import {useSelector} from "react-redux";
 import SimpleBar from "simplebar-react";
 import ProgressBar from "@components/ProgressBar.jsx";
+import {useDelete} from "@hooks/useDelete.js";
 
 const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
@@ -22,11 +23,10 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
 
     const userId = useSelector((state) => state.auth.user?.id);
     const projectUser = useMemo(() => projectUsers.find(user => user.id === userId), [projectUsers, userId]);
-
+    const { handleDeleteClick } = useDelete();
     return (
         <>
-            <SimpleBar className='max-h-[500px]'>
-                <div className={`table-responsive task-table`}>
+            <div className={`table-responsive task-table`}>
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
@@ -38,6 +38,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                         <th scope="col">Status</th>
                         <th scope="col">Completion Date</th>
                         <th scope="col">Status Completion Timeline</th>
+                        <th scope="col">Timeline Groups</th>
                         <th scope="col">Progress</th>
                         <th scope="col">Priority</th>
                         <th scope="col">Started At</th>
@@ -99,7 +100,17 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-
+                                        <HasProjectPermission globalPermission='delete_project' users={projectUsers}>
+                                            <Tooltip
+                                                id={`delete-task-tooltip-${task.id}`}
+                                                tooltipContent={`Delete Task (${task.name})`}>
+                                                <button
+                                                    onClick={() => handleDeleteClick(`/pms/tasks/${task.id}/delete/`, task.name, refetch)}
+                                                    className='ti-btn ti-btn-danger ti-btn-sm'>
+                                                    <i className="ri-delete-bin-2-line align-middle"></i>
+                                                </button>
+                                            </Tooltip>
+                                        </HasProjectPermission>
                                     </span>
                                 </td>
                                 <td>
@@ -199,6 +210,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 </td>
                                 <td>{formatDate(task.completed_at)}</td>
                                 <td className='text-center'>{task.completion_timeline}</td>
+                                <td className='text-center'>{task.time_line_group}</td>
                                 <td className="min-w-[200px]">
                                     <div className='flex items-center'>
                                         <ProgressBar value={task.progress} barColor='!bg-success' withStatus={false} />
@@ -228,7 +240,6 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                     </tbody>
                 </table>
             </div>
-            </SimpleBar>
         </>
     );
 };

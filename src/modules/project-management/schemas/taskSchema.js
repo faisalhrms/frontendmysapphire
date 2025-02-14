@@ -1,10 +1,12 @@
 import { z } from "zod";
-import {dateSchema, dateTimeSchema} from "@helpers/schema.js";
+import {dateTimeSchema} from "@helpers/schema.js";
 import {prioritiesEnum} from "@modules/project-management/schemas/projectSchema.js";
+import {taskStatuses} from "@modules/project-management/services/taskService.js";
 
-// Enum for Status
-export const statusEnum = z.enum(["open", 'not_started', "in_progress", "on_hold", "completed", "cancelled"], {
-  errorMap: () => "Status must be 'open', 'not_started', 'in progress', 'on hold', 'completed' or 'cancelled'",
+const statusValues = taskStatuses.map((status) => status.value || status.key);
+
+export const statusEnum = z.enum(statusValues, {
+  errorMap: () => `Status must be one of: ${statusValues.join(", ")}`,
 });
 
 const taskSchema = z.object({
@@ -20,7 +22,7 @@ const taskSchema = z.object({
 
   priority: prioritiesEnum.default("medium"),
   
-  status: statusEnum.default("in_progress"),
+  status: statusEnum.default("not_started"),
 
   started_at: dateTimeSchema('Started'),
 
@@ -30,8 +32,8 @@ const taskSchema = z.object({
   user_ids: z.array(z.number().int().positive("User ID must be a positive integer"))
     .min(1, "At least one user ID is required"),
   external_user_ids: z.array(z.number().int().positive("External User ID must be a positive integer")).optional(),
-  tag_ids: z.array(z.number().int().positive("Tag ID must be a positive integer"))
-    .min(1, "At least one tag ID is required"),
+  tag_ids: z.array(z.number().int().positive("Tag ID must be a positive integer")).min(1, "At least one tag ID is required"),
+  category_id: z.union([z.number(), z.null()]).default(null),
 }).refine(data => {
   if (data.ended_at) {
     return new Date(data.ended_at) >= new Date(data.started_at);

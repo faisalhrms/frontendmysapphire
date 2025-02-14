@@ -9,6 +9,9 @@ import {useTaskModal} from "@modules/project-management/hooks/taskHooks.js";
 import sampleFile from "@assets/files/sample_upload_tasks_against_milestone.xlsx";
 import {useMilestoneSearch} from "@modules/project-management/hooks/projectHooks.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
+import SimpleBar from "simplebar-react";
+import useFullScreen from "@hooks/useFullScreen.js";
+import {Link} from "react-router-dom";
 
 const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, projectUsers, milestones = [], isLoading, refetch, handleUploadModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,10 +50,12 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
     }
   }, [searchTerm, milestones]);
 
+  const { isFullscreen, handleFullscreenClick } = useFullScreen();
+  const containerHeight = isFullscreen ? "calc(100vh - 100px)" : '500px';
 
   return (
       <>
-        <div className="box">
+        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`}>
           <div className="box-header">
             <div className="box-title">Milestone Detail</div>
             <div className="flex items-center space-x-2">
@@ -75,7 +80,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                       type="button"
                       onClick={() => openMilestoneModal(projectId, false, approval)}
                       className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
-                        <i className="ri-add-line font-semibold align-middle"></i> Add Milestone
+                    <i className="ri-add-line font-semibold align-middle"></i> Add Milestone
                   </button>
                 </HasProjectPermission>
                 <button
@@ -86,25 +91,29 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                 >
                   <i className="ri-refresh-line font-semibold align-middle"></i> Refresh
                 </button>
+                <Link aria-label="anchor" to="#" className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen" onClick={handleFullscreenClick}>
+                  <i className="ri-fullscreen-line"></i>
+                </Link>
               </div>
             </div>
           </div>
-
-          <div className="box-body">
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : (
-                <MilestoneAccordion
-                    projectStatus={projectStatus}
-                    projectUsers={projectUsers}
-                    milestones={filteredMilestones}
-                    openTaskModal={openTaskModal}
-                    openMilestoneModal={openMilestoneModal}
-                    handleUploadModal={handleUploadModal}
-                    refetch={refetch}
-                />
-            )}
-          </div>
+          <SimpleBar style={{ maxHeight: containerHeight }}>
+            <div className="box-body">
+              {isLoading ? (
+                  <LoadingSpinner/>
+              ) : (
+                  <MilestoneAccordion
+                      projectStatus={projectStatus}
+                      projectUsers={projectUsers}
+                      milestones={filteredMilestones}
+                      openTaskModal={openTaskModal}
+                      openMilestoneModal={openMilestoneModal}
+                      handleUploadModal={handleUploadModal}
+                      refetch={refetch}
+                  />
+              )}
+            </div>
+          </SimpleBar>
         </div>
 
         <MilestoneModel

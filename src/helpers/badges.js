@@ -36,9 +36,13 @@ const badgeStyles = {
 };
 
 const statusStyles = {
-    in_progress: txtSuccess,
+    in_progress: txtSecondary,
+    reopened: txtDanger,
+    near_completion: txtWarning,
     under_approval: txtSecondary,
-    open: txtPrimary,
+    half_completed: txtPrimary,
+    open: txtSecondary,
+    not_started: txtSecondary,
     on_hold: txtDanger,
     completed: txtSuccess,
     canceled: txtDanger,

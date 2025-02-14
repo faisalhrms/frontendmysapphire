@@ -73,7 +73,7 @@ export const useTaskModal = (refetch) => {
     setIsModalOpen(true);
     if (!isEditMode) {
       reset({
-        status: "in_progress",
+        status: "not_started",
         priority: "medium",
         description: "",
         parent: parent,
