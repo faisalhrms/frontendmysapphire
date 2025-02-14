@@ -34,7 +34,7 @@ export const DASHBOARD_ROUTES = {
     },
     SFD:{
         path:'dashboards/srd',
-        permission:'it_salesforce_dashboard',
+        permission:'ecom_salesforce_dashboard',
     },
 
 }
