@@ -6,7 +6,7 @@ const useMenuItems = () => {
     const permissions = useSelector((state) => state.auth.permissions);
 
     useEffect(() => {
-        const sidebarFiles = import.meta.glob('/src/modules/**/sidebar.js');
+        const sidebarFiles = import.meta.glob('@modules/**/sidebar.js');
 
         const loadMenuItems = async () => {
             let items = [];

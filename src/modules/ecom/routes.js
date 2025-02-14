@@ -1,5 +1,3 @@
-import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
-
 export const ECOM_ROUTES = {
     READ: {
         path: "/module/ecom",
@@ -14,12 +12,12 @@ export const ECOM_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: ECOM_ROUTES.READ.path,
-        component: () => import("/src/modules/ecom/views/OrderShopify.jsx"),
+        component: () => import("@modules/ecom/views/OrderShopify.jsx"),
         permission: ECOM_ROUTES.READ.permission,
     },
     {
         path: ECOM_ROUTES.ADD.path,
-        component: () => import("/src/modules/ecom/views/AnalysisReport.jsx"),
+        component: () => import("@modules/ecom/views/AnalysisReport.jsx"),
         permission: ECOM_ROUTES.ADD.permission,
     },
 ];
