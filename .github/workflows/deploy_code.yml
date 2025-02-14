@@ -37,7 +37,11 @@ jobs:
           # Navigate to project directory and update
           cd /var/www/html/web_portal/frontend_react
           git pull
+        
+          git reset --hard origin/staging_server
 
+          git pull origin staging_server
+        
           npm install
           npm run build
         
