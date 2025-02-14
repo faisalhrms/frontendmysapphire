@@ -108,6 +108,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Priority</p>
                                         <span
                                             className={getBadgeClasses(milestone.priority)}>{toTitleCase(milestone.priority)}</span>
+                                        
                                     </div>
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Started At</p>
