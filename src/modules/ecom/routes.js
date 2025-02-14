@@ -7,7 +7,7 @@ export const ECOM_ROUTES = {
     },
     ADD: {
         path: "/module/ecom/anlysisReport",
-        permission: "view_ecommerce",
+        permission: "add_ecommerce",
     }
 };
 

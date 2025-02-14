@@ -32,6 +32,10 @@ export const DASHBOARD_ROUTES = {
         path:'dashboards/equipment',
         permission:'it_equipment_dashboard',
     },
+    SFD:{
+        path:'dashboards/srd',
+        permission:'it_salesforce_dashboard',
+    },
 
 }
 
@@ -75,6 +79,12 @@ export const MODULE_ROUTES = [
         path: DASHBOARD_ROUTES.Equipment.path,
         component: () => import(`@modules/dashboards/eq/views/EquipmentDashboard.jsx`),
         permission: DASHBOARD_ROUTES.Equipment.permission,
+
+    },
+    {
+        path: DASHBOARD_ROUTES.SFD.path,
+        component: () => import(`@modules/dashboards/sfd/views/ExecutiveTabs.jsx`),
+        permission: DASHBOARD_ROUTES.SFD.permission,
 
     },
 
