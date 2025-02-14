@@ -3,6 +3,8 @@ import AvatarList from "@components/AvatarList.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { formatDate } from "@helpers/dateTime.js";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
+import {PMS_ROUTES} from "@modules/project-management/routes.js";
+import {Link} from "react-router-dom";
 
 const TaskKanbanCard = ({ task, refetch }) => {
 
@@ -64,10 +66,12 @@ const TaskKanbanCard = ({ task, refetch }) => {
                     </div>
 
                     <div className="kanban-content !mt-1">
+                        <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
                         <h6 className="font-semibold mb-1 text-[.9375rem]">{task.name}</h6>
                         <div className="kanban-task-description">
                             {task.description || "(No description)"}
                         </div>
+                        </Link>
                     </div>
                 </div>
 
