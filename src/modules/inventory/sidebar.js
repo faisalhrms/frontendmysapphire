@@ -12,12 +12,19 @@ export const sidebarMenu = [
         'bx-box',
         '',
         [
-
+            generateSidebarItem(
+                INVENTORY_ROUTES.READ.path,
+                'link',
+                'Equipments List',
+                1,
+                'bx-laptop',
+                INVENTORY_ROUTES.READ.permission
+            ),
             generateSidebarItem(
                 INVENTORY_ROUTES.LAPTOP_LIST.path,
                 'link',
                 'Laptop List',
-                1,
+                2,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
             ),
@@ -26,19 +33,12 @@ export const sidebarMenu = [
                 INVENTORY_ROUTES.EQUIPMENT_SITE_WISE.path,
                 'link',
                 'Site Wise List',
-                2,
-                'bx-laptop',
-                INVENTORY_ROUTES.READ.permission
-            ),
-
-            generateSidebarItem(
-                INVENTORY_ROUTES.READ.path,
-                'link',
-                'Equipments List',
                 3,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
             ),
+
+
 
 
             generateSidebarItem(

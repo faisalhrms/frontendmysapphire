@@ -28,7 +28,7 @@ export const statusColorMapping = {
     "Sold To Employee": "secondary",
     "Write Off": "cyan",
     "Temporary Allocation": "warning-fade",
-    "No Status":"indigo",
+    "N/A":"indigo",
     "Near Completion": "indigo",
     "Half Completed": "green",
     "Not Started": "cyan",

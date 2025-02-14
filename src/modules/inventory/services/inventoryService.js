@@ -3,7 +3,7 @@ import Notify from "@helpers/toastNotifications.js";
 
 // Equipment statuses (similar to projectStatuses in the project service)
 export const equipmentStatuses = [
-    { value: 'no_status', label: 'No Status' },
+    { value: 'no_status', label: 'N/A' },
     { value: 'brand_new', label: 'Brand New' },
     { value: 'faulty', label: 'Faulty' },
     { value: 'functional', label: 'Functional' },

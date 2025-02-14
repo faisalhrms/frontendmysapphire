@@ -254,6 +254,7 @@ export const useTaskOverdueModal = (refetch) => {
     isOverdueTaskModalOpen
   };
 };
+
 export function useKanbanBoard({ filterPriority, searchQuery }) {
   const { data: initialData, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['kanbanBoard', filterPriority, searchQuery],
@@ -287,7 +288,9 @@ export function useKanbanBoard({ filterPriority, searchQuery }) {
   const loadMore = async (status) => {
     const currentOffset = statusOffsets[status] || 0;
     // Pass currentOffset as the offset parameter
+
     const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, currentOffset, status);
+    console.log(`this is response in hook`,response)
     const newTasks = response.data[status]?.tasks || [];
 
     setStatusTasks(prev => ({

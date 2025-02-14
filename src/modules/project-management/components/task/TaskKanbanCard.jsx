@@ -6,7 +6,7 @@ import TaskStatusDropdown from "@modules/project-management/components/dropdowns
 import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import {Link} from "react-router-dom";
 
-const TaskKanbanCard = ({ task, refetch }) => {
+const  TaskKanbanCard = ({ task, refetch }) => {
 
     const daysLeft = task.days_left != null ? `${task.days_left} days left` : "No deadline";
 

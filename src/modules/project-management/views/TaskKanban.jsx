@@ -72,7 +72,7 @@ const TaskKanban = () => {
                                     loadMore={loadMore}
                                     refetch={refetch}
                                     isLoading={isLoading}
-                                    hasMoreTasks={hasMore[status]} // Pass the hasMore status
+                                    hasMoreTasks={hasMore[status]}
                                 />
                             ))}
                     </div>

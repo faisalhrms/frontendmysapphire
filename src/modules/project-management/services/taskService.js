@@ -98,7 +98,6 @@ export const fetchKanbanTasksAll = async (
     search = null,
     filterPriority = null,
     offset,
-    page = 0,
     status = ''
 ) => {
     try {

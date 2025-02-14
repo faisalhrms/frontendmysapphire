@@ -4,6 +4,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import TaskKanbanCard from '@modules/project-management/components/task/TaskKanbanCard.jsx';
 import mediaSvg from '@assets/images/media/media-83.svg';
 import { toTitleCase } from '@helpers/formatters.js';
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoading, hasMoreTasks }) => {
     return (
@@ -41,7 +42,7 @@ const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoadin
                         onClick={() => loadMore(status)} // Pass the status to loadMore
                         disabled={isLoading}
                     >
-                        {isLoading ? 'Loading...' : 'View More'}
+                        {isLoading ? <LoadingSpinner/> : 'View More'}
                     </button>
                 </div>
             )}
