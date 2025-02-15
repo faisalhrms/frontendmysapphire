@@ -1,93 +1,95 @@
+import ProjectDashboard from '@modules/dashboards/pms/views/ProjectDashboard.jsx';
+import BiDashboard from '@modules/dashboards/bi/views/BiDashboard.jsx';
+import CioDashboard from '@modules/dashboards/cio/views/CioDashboard.jsx';
+import CsDashboard from '@modules/dashboards/cs/views/CsDashboard.jsx';
+import SubscriptionDashboard from '@modules/dashboards/sms/views/SubscriptionDashboard.jsx';
+import SrTabs from '@modules/dashboards/sr/views/SrTabs.jsx';
+import SrList from '@modules/dashboards/sr/views/SrList.jsx';
+import EquipmentDashboard from '@modules/dashboards/eq/views/EquipmentDashboard.jsx';
+import ExecutiveTabs from '@modules/dashboards/sfd/views/ExecutiveTabs.jsx';
+
 export const DASHBOARD_ROUTES = {
     PROJECT: {
         path: '/dashboards/project-management-system',
         permission: 'pms_dashboard',
-
     },
-    BI:{
+    BI: {
         path: '/dashboards/business-intelligence',
         permission: 'bi_dashboard',
     },
-    CIO:{
+    CIO: {
         path: '/dashboards/chief-information-officer',
         permission: 'cio_dashboard',
     },
-    CS:{
+    CS: {
         path: '/dashboards/cyber-security',
         permission: 'cs_dashboard',
     },
-    SUBSCRIPTION:{
+    SUBSCRIPTION: {
         path: '/dashboards/subscription',
-        permission:'sms_dashboard'
+        permission: 'sms_dashboard',
     },
     SR: {
         path: '/dashboards/sr',
-         permission: 'sr_dashboard'
+        permission: 'sr_dashboard',
     },
     SR_LIST: {
         path: '/dashboards/sr/sr-list/:status',
-        permission: 'sr_dashboard'
+        permission: 'sr_dashboard',
     },
-    Equipment:{
-        path:'dashboards/equipment',
-        permission:'it_equipment_dashboard',
+    Equipment: {
+        path: '/dashboards/equipment',
+        permission: 'it_equipment_dashboard',
     },
-    SFD:{
-        path:'dashboards/srd',
-        permission:'ecom_salesforce_dashboard',
+    SFD: {
+        path: '/dashboards/srd',
+        permission: 'ecom_salesforce_dashboard',
     },
-
-}
+};
 
 export const MODULE_ROUTES = [
     {
         path: DASHBOARD_ROUTES.PROJECT.path,
-        component: () => import(`@modules/dashboards/pms/views/ProjectDashboard.jsx`),
+        component: ProjectDashboard,
         permission: DASHBOARD_ROUTES.PROJECT.permission,
     },
     {
         path: DASHBOARD_ROUTES.BI.path,
-        component: () => import(`@modules/dashboards/bi/views/BiDashboard.jsx`),
-        permission:DASHBOARD_ROUTES.BI.permission,
+        component: BiDashboard,
+        permission: DASHBOARD_ROUTES.BI.permission,
     },
     {
         path: DASHBOARD_ROUTES.CIO.path,
-        component: () => import(`@modules/dashboards/cio/views/CioDashboard.jsx`),
-        permission:DASHBOARD_ROUTES.CIO.permission,
+        component: CioDashboard,
+        permission: DASHBOARD_ROUTES.CIO.permission,
     },
     {
         path: DASHBOARD_ROUTES.CS.path,
-        component: () => import(`@modules/dashboards/cs/views/CsDashboard.jsx`),
-        permission:DASHBOARD_ROUTES.CS.permission,
+        component: CsDashboard,
+        permission: DASHBOARD_ROUTES.CS.permission,
     },
     {
         path: DASHBOARD_ROUTES.SUBSCRIPTION.path,
-        component:()=>import(`@modules/dashboards/sms/views/SubscriptionDashboard.jsx`),
+        component: SubscriptionDashboard,
     },
     {
         path: DASHBOARD_ROUTES.SR.path,
-        component: () => import(`@modules/dashboards/sr/views/SrTabs.jsx`),
+        component: SrTabs,
         permission: DASHBOARD_ROUTES.SR.permission,
     },
     {
         path: DASHBOARD_ROUTES.SR_LIST.path,
-        component: () => import(`@modules/dashboards/sr/views/SrList.jsx`),
+        component: SrList,
         permission: DASHBOARD_ROUTES.SR_LIST.permission,
-
     },
     {
         path: DASHBOARD_ROUTES.Equipment.path,
-        component: () => import(`@modules/dashboards/eq/views/EquipmentDashboard.jsx`),
+        component: EquipmentDashboard,
         permission: DASHBOARD_ROUTES.Equipment.permission,
-
     },
     {
         path: DASHBOARD_ROUTES.SFD.path,
-        component: () => import(`@modules/dashboards/sfd/views/ExecutiveTabs.jsx`),
+        component: ExecutiveTabs,
         permission: DASHBOARD_ROUTES.SFD.permission,
-
     },
-
-
 ];
-
