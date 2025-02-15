@@ -1,10 +1,18 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import {createHtmlPlugin} from "vite-plugin-html";
 
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    createHtmlPlugin({
+      inject: {
+        data: {
+          version: Date.now(),
+        },
+      },
+    }),
   ],
   base: '/',
   build: {
