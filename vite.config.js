@@ -1,9 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import {createHtmlPlugin} from "vite-plugin-html";
 
 export default defineConfig(({ mode }) => ({
-  plugins: [react()],
+  plugins: [
+    react(),
+    createHtmlPlugin({
+      inject: {
+        data: {
+          version: Date.now(),
+        },
+      },
+    }),
+  ],
   base: '/',
   build: {
     outDir: 'dist',
@@ -51,7 +61,7 @@ export default defineConfig(({ mode }) => ({
     host: '0.0.0.0',  // Expose the server to all network interfaces
     port: 5173,        // Use the default port or change if necessary
     headers: {
-      'Cache-Control': 'no-store',
+      'Cache-Control': 'public, max-age=31536000, immutable',
     },
   },
 }));

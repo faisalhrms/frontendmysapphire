@@ -41,3 +41,5 @@ temp/
 # Generated folders by React Native
 .expo
 .expo-shared
+
+.package-lock.json
