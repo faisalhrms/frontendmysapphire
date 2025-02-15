@@ -4,10 +4,10 @@ export const WORKFLOW_ROUTES = {
     },
 };
 
-export const MODULE_ROUTES = [
-    {
-
-        path: WORKFLOW_ROUTES.READ.path,
-        component: () => import('./views/WorkflowSubscription.jsx'), 
-
-    }]
+// export const MODULE_ROUTES = [
+//     {
+//
+//         path: WORKFLOW_ROUTES.READ.path,
+//         component: () => import('./views/WorkflowSubscription.jsx'),
+//
+//     }]

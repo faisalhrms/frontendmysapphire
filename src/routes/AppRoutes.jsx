@@ -12,22 +12,19 @@ const AppRoutes = () => {
     }
 
     return (
-        <React.Suspense fallback={<LoadingSpinner />}>
-            <Routes>
-                {routes.map(({ path, component, permission }) => {
-                    const LazyComponent = React.lazy(component);
-                    const uniqueKey = `${path}-${Math.random().toString(36).substr(2, 9)}`;
-                    return (
-                        <Route
-                            key={uniqueKey}
-                            path={path}
-                            element={<ProtectedRoute element={LazyComponent} permission={permission} />}
-                        />
-                    );
-                })}
-                <Route path="*" element={<Navigate to="/error/404" />} />
-            </Routes>
-        </React.Suspense>
+        <Routes>
+            {routes.map(({ path, component, permission }) => {
+                const uniqueKey = `${path}-${Math.random().toString(36).substr(2, 9)}`;
+                return (
+                    <Route
+                        key={uniqueKey}
+                        path={path}
+                        element={<ProtectedRoute element={component} permission={permission} />}
+                    />
+                );
+            })}
+            <Route path="*" element={<Navigate to="/error/404" />} />
+        </Routes>
     );
 };
 
