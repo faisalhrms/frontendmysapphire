@@ -15,7 +15,12 @@ const AppRoutes = () => {
         <React.Suspense fallback={<LoadingSpinner />}>
             <Routes>
                 {routes.map(({ path, component, permission }) => {
-                    const LazyComponent = React.lazy(component);
+                    const LazyComponent = React.lazy((component) =>
+                    component().catch((error) => {
+                        console.error('Failed to load the component:', error);
+                        window.location.reload(true);
+                    }))
+
                     const uniqueKey = `${path}-${Math.random().toString(36).substr(2, 9)}`;
                     return (
                         <Route
