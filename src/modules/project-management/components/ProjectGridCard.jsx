@@ -19,7 +19,7 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
         <>
             <div className="box custom-box">
                 <div className="box-header items-center !justify-center flex-wrap !flex">
-                    <TextAvatar item={project.company} />
+                    {/*<TextAvatar item={project.company} />*/}
                     <div className="flex-grow">
                         <Tooltip
                             id={`project-tooltip-${project.id}`}
