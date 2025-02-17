@@ -8,7 +8,7 @@ import AvatarList from "@components/AvatarList.jsx";
 import {Link} from "react-router-dom";
 import Tooltip from "@components/Tooltip.jsx";
 
-const ProjectTableCard = () => {
+const ProjectTableCard = ({filters}) => {
     const columns = [
         { Header: "Project No", accessor: "project_no" },
         {
@@ -35,6 +35,7 @@ const ProjectTableCard = () => {
         {
             Header: 'Assigned To',
             accessor: 'users',
+            disableSortBy: true,
             Cell: ({value}) => {
                 return (
                     <AvatarList users={value} />
@@ -66,6 +67,7 @@ const ProjectTableCard = () => {
         {
             Header: 'Progress',
             accessor: 'completed_tasks',
+            disableSortBy: true,
             Cell: ({ row }) => {
                 const project = row.original;
                 return (
@@ -91,7 +93,8 @@ const ProjectTableCard = () => {
             <DataTable
                 columns={columns}
                 title="All Projects"
-                apiUrl={`/pms/projects/datatable/`}
+                apiUrl={`/dashboard/pms/datatable/`}
+                filter={filters}
             />
         </div>
     )

@@ -61,7 +61,7 @@ export default defineConfig(({ mode }) => ({
     host: '0.0.0.0',  // Expose the server to all network interfaces
     port: 5173,        // Use the default port or change if necessary
     headers: {
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
+      'Cache-Control': 'no-store',
+    }
   },
 }));

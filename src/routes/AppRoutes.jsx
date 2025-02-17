@@ -12,19 +12,21 @@ const AppRoutes = () => {
     }
 
     return (
-        <Routes>
-            {routes.map(({ path, component, permission }) => {
-                const uniqueKey = `${path}-${Math.random().toString(36).substr(2, 9)}`;
-                return (
-                    <Route
-                        key={uniqueKey}
-                        path={path}
-                        element={<ProtectedRoute element={component} permission={permission} />}
-                    />
-                );
-            })}
-            <Route path="*" element={<Navigate to="/error/404" />} />
-        </Routes>
+        <React.Fragment>
+            <Routes>
+                {routes.map(({ path, component, permission }) => {
+                    const uniqueKey = `${path}-${Math.random().toString(36).substr(2, 9)}`;
+                    return (
+                        <Route
+                            key={uniqueKey}
+                            path={path}
+                            element={<ProtectedRoute element={component} permission={permission} />}
+                        />
+                    );
+                })}
+                <Route path="*" element={<Navigate to="/error/404" />} />
+            </Routes>
+        </React.Fragment>
     );
 };
 
