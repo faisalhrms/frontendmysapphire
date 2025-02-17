@@ -25,7 +25,7 @@ const UserList = () => {
         {
             Header: 'Actions',
             accessor: 'id',
-            disableSortBy: true,// Adding accessor for better performance
+            disableSortBy: true,
             Cell: ({ value }) => (
                 <HasPermission permission='change_user'>
                     <div className="flex space-x-2">

@@ -21,9 +21,9 @@ const ProtectedRoute = ({ element: Element, permission }) => {
     }
 
     return (
-        <>
+        <React.Fragment>
             <Element />
-        </>
+        </React.Fragment>
     );
 };
 

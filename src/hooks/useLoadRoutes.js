@@ -13,8 +13,6 @@ const useLoadRoutes = () => {
                 const routeModule = await routeFiles[path]();
                 if (routeModule.MODULE_ROUTES) {
                     loadedRoutes.push(...routeModule.MODULE_ROUTES);
-                } else {
-                    console.warn(`No MODULE_ROUTES found in ${path}`);
                 }
             }
             setRoutes(loadedRoutes);
