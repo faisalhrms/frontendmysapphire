@@ -1,6 +1,6 @@
 
 import React from "react";
-import AgingPendingTable from "./AgingPendingTable";
+import AgingPendingTable from "./AgingPendingTable.jsx";
 
 const AgingFormComponent = () => {
     const tables = [
