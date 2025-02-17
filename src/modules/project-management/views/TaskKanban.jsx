@@ -16,8 +16,7 @@ const TaskKanban = () => {
         initialFilters: [{ name: 'priority' }],
     });
     const priority = useWatch({ control, name: 'priority' });
-
-    const { kanbanData, isLoading, loadMore, refetch, hasMore } = useKanbanBoard({
+    const { kanbanData, isLoading, loadMore, refetch, hasMore, loadingStatuses } = useKanbanBoard({
         filterPriority: priority,
         searchQuery: searchTerm,
     });
@@ -71,7 +70,7 @@ const TaskKanban = () => {
                                     totalCount={data.task_count}
                                     loadMore={loadMore}
                                     refetch={refetch}
-                                    isLoading={isLoading}
+                                    isLoading={loadingStatuses[status] || false}
                                     hasMoreTasks={hasMore[status]}
                                 />
                             ))}

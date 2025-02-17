@@ -257,19 +257,20 @@ export const useTaskOverdueModal = (refetch) => {
 
 export function useKanbanBoard({ filterPriority, searchQuery }) {
   const { data: initialData, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['kanbanBoard', filterPriority, searchQuery],
-    queryFn: () => fetchKanbanTasksAll(5, searchQuery, filterPriority, 0, ''),
+    queryKey: ["kanbanBoard", filterPriority, searchQuery],
+    queryFn: () => fetchKanbanTasksAll(5, searchQuery, filterPriority, 0, ""),
     keepPreviousData: true,
   });
 
   const [statusTasks, setStatusTasks] = useState({});
   const [statusOffsets, setStatusOffsets] = useState({});
+  const [loadingStatuses, setLoadingStatuses] = useState({});
 
-  // Reset tasks and offsets when filterPriority or searchQuery changes
   useEffect(() => {
     setStatusTasks({});
     setStatusOffsets({});
-    refetch(); // Refetch initial data
+    setLoadingStatuses({});
+    refetch();
   }, [filterPriority, searchQuery, refetch]);
 
   // Update tasks and offsets when initialData changes
@@ -285,24 +286,33 @@ export function useKanbanBoard({ filterPriority, searchQuery }) {
       setStatusOffsets(newOffsets);
     }
   }, [initialData]);
+
   const loadMore = async (status) => {
+    setLoadingStatuses((prev) => ({ ...prev, [status]: true }));
+
     const currentOffset = statusOffsets[status] || 0;
-    // Pass currentOffset as the offset parameter
 
-    const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, currentOffset, status);
-    console.log(`this is response in hook`,response)
-    const newTasks = response.data[status]?.tasks || [];
+    try {
+      const response = await fetchKanbanTasksAll(5, searchQuery, filterPriority, currentOffset, status);
 
-    setStatusTasks(prev => ({
-      ...prev,
-      [status]: [...(prev[status] || []), ...newTasks],
-    }));
-    // Update the offset for the next load
-    setStatusOffsets(prev => ({
-      ...prev,
-      [status]: currentOffset + newTasks.length,
-    }));
+      const newTasks = response.data[status]?.tasks || [];
+
+      setStatusTasks((prev) => ({
+        ...prev,
+        [status]: [...(prev[status] || []), ...newTasks],
+      }));
+
+      setStatusOffsets((prev) => ({
+        ...prev,
+        [status]: currentOffset + newTasks.length,
+      }));
+    } catch (error) {
+      console.error(`Error loading more tasks for ${status}:`, error);
+    } finally {
+      setLoadingStatuses((prev) => ({ ...prev, [status]: false }));
+    }
   };
+
   const kanbanData = {};
   const hasMore = {};
 
@@ -320,6 +330,7 @@ export function useKanbanBoard({ filterPriority, searchQuery }) {
   return {
     kanbanData,
     isLoading,
+    loadingStatuses,
     loadMore,
     hasMore,
     refetch,
