@@ -14,7 +14,7 @@ const FilterButton = ({ isLoading = false }) => {
                     </span>
                 </>
             ) : (
-                <i className="ri-filter-3-fill  inline-block"></i>
+                <i className="ri-filter-3-fill inline-block"></i>
             )}
         </button>
     );

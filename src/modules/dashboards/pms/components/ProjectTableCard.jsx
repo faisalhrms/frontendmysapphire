@@ -35,6 +35,7 @@ const ProjectTableCard = ({filters}) => {
         {
             Header: 'Assigned To',
             accessor: 'users',
+            disableSortBy: true,
             Cell: ({value}) => {
                 return (
                     <AvatarList users={value} />
@@ -66,6 +67,7 @@ const ProjectTableCard = ({filters}) => {
         {
             Header: 'Progress',
             accessor: 'completed_tasks',
+            disableSortBy: true,
             Cell: ({ row }) => {
                 const project = row.original;
                 return (
