@@ -91,7 +91,6 @@
     "swiper": "^11.0.7",
     "tailwind-clip-path": "^1.0.0",
     "uploader": "^3.48.3",
-    "vite-plugin-html": "^3.2.2",
     "yet-another-react-lightbox": "^3.17.0",
     "zod": "^3.23.8"
   },
