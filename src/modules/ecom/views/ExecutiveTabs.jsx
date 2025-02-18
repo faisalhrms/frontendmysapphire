@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,30 +10,42 @@ import AgingForm from "../components/SalesforceDashboard/AgingForm.jsx";
 const ExecutiveTabs = () => {
     const [activeTab, setActiveTab] = useState("executiveSummary");
     const [showFilters, setShowFilters] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
 
     const getCurrentDate = () => new Date();
-    const getFixedToDate = () => new Date("2025-01-21");
+    const getDynamicFromDate = () => new Date("2025-01-21");
 
-    const [fromDate, setFromDate] = useState(getCurrentDate);
-    const [toDate, setToDate] = useState(getFixedToDate);
+    const [fromDate, setFromDate] = useState(getDynamicFromDate);
+    const [toDate, setToDate] = useState(getCurrentDate);
+    const [data, setData] = useState(null);
 
-    const resetDates = () => {
-        setFromDate(getCurrentDate());
-        setToDate(getFixedToDate());
+    const fetchData = () => {
+        console.log("Fetching data for:", fromDate, toDate);
+        setData(`Data updated for range: ${fromDate.toDateString()} - ${toDate.toDateString()}`);
     };
 
-    const toggleFilters = () => {
-        setShowFilters(!showFilters);
+    useEffect(() => {
+        fetchData();
+    }, [fromDate, toDate]);
+
+    const handleDateChange = (setter) => (date) => {
+        if (date) {
+            setter(date);
+        }
+    };
+
+    const resetDates = () => {
+        setFromDate(getDynamicFromDate());
+        setToDate(getCurrentDate());
+        setSelectedDate(new Date().toISOString().split("T")[0]);
     };
 
     return (
         <>
             <PageHeader currentpage="Salesforce Dashboard" />
 
-
             <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4">
                 <div className="flex space-x-4">
-
                     <Link
                         to="#"
                         className={`px-4 py-2 rounded-md font-medium transition-all ${
@@ -45,7 +57,6 @@ const ExecutiveTabs = () => {
                     >
                         Executive Summary
                     </Link>
-
 
                     <Link
                         to="#"
@@ -60,52 +71,50 @@ const ExecutiveTabs = () => {
                     </Link>
                 </div>
 
-                <button
-                    className="px-4 py-2 bg-primary text-white rounded-md shadow-md flex items-center"
-                    onClick={toggleFilters}
-                >
-                    ☰ Filters
-                </button>
+                {activeTab === "executiveSummary" && (
+                    <button
+                        type="button"
+                        className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                        onClick={() => {
+                            setShowFilters(!showFilters);
+                            setSelectedDate(new Date().toISOString().split("T")[0]);
+                        }}
+                    >
+                        <i className="ri-filter-3-fill inline-block"></i> Filters
+                    </button>
+                )}
             </div>
 
-
-            {showFilters && (
-                <div className="flex justify-between items-center bg-white p-2 shadow-md rounded-lg mb-4">
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center border rounded-md p-2">
-                            <span className="text-gray-600 mr-2">To:</span>
-                            <DatePicker
-                                selected={toDate}
-                                onChange={(date) => setToDate(date)}
-                                className="border-none focus:outline-none"
-                                dateFormat="dd-MMM-yyyy"
-                                minDate={getFixedToDate()}
-                                maxDate={getFixedToDate()}
-                            />
-                        </div>
-
-                        <div className="flex items-center border rounded-md p-2">
-                            <span className="text-gray-600 mr-2">From:</span>
+            {showFilters && activeTab === "executiveSummary" && (
+                <div className="bg-white p-2 mt-2 rounded-lg shadow-md">
+                    <div className="mt-2 flex justify-between">
+                        <div>
+                            <label className="block text-gray-600">From:</label>
                             <DatePicker
                                 selected={fromDate}
-                                onChange={(date) => setFromDate(date)}
-                                className="border-none focus:outline-none"
-                                dateFormat="dd-MMM-yyyy"
-                                minDate={getCurrentDate()}
-                                maxDate={getCurrentDate()}
+                                onChange={handleDateChange(setFromDate)}
+                                className="border p-2 rounded"
+                                dateFormat="yyyy-MM-dd"
                             />
                         </div>
+                        <div>
+                            <div className="block text-gray-600">To:</div>
+                            <DatePicker
+                                selected={toDate}
+                                onChange={handleDateChange(setToDate)}
+                                className="border p-2 rounded"
+                                dateFormat="yyyy-MM-dd"
+                            />
+                        </div>
+                        <button
+                            className="border xs px-2 py-2 rounded ti-btn ti-btn-primary !mb-0"
+                            onClick={resetDates}
+                        >
+                            <i className="ri-refresh-line"></i> Refresh
+                        </button>
                     </div>
-
-                    <button
-                        className="flex items-center px-4 py-2 bg-primary text-white rounded-md shadow-md hover:bg-primary-dark"
-                        onClick={resetDates}
-                    >
-                        🔄 Refresh
-                    </button>
                 </div>
             )}
-
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">

@@ -18,8 +18,8 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
     return (
         <>
             <div className="box custom-box">
-                <div className="box-header items-center !justify-center flex-wrap !flex">
-                    <TextAvatar item={project.company} />
+                <div className="box-header items-center flex-wrap !flex">
+                    <TextAvatar item={project.company}/>
                     <div className="flex-grow">
                         <Tooltip
                             id={`project-tooltip-${project.id}`}
@@ -78,12 +78,20 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             </HasProjectPermission>
                         </ul>
                     </div>
+                    <span className='space-x-1 rtl:space-x-reverse'>
+                        <span className='badge badge-md !rounded-full bg-primary/10 text-primary'> {project?.workspace?.name ? project?.workspace.name.toUpperCase() : 'N/A'}</span>
+                            {(
+                                project?.tags?.map((tag, index) => (
+                                    index < 2 ? <span key={tag.id} className="badge !rounded-full bg-light text-default">{getExcerptFromText(tag.name, 20).toUpperCase()}</span> : ''
+                                ))
+                            )}
+                        </span>
                 </div>
 
                 <div className="box-body">
                     <div className="flex items-center justify-between mb-3">
                         <div>
-                            <div className="font-semibold mb-1">Team :</div>
+                        <div className="font-semibold mb-1">Team :</div>
                             <AvatarList users={project.users}/>
                         </div>
                         <div className="text-end">
@@ -95,7 +103,7 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                     <p className="text-[#8c9097] dark:text-white/50 min-h-[50px] max-h-[50px] overflow-auto">
                         {getExcerptFromText(project.description, 70)}
                     </p>
-                    <div className="font-semibold mb-1">Status :</div>
+                    <div className="font-semibold mb-1">Progress :</div>
                     <ProgressBar
                         total={project.total_tasks}
                         completed={project.completed_tasks}
@@ -103,11 +111,15 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                 </div>
                 <div className="box-footer flex items-center justify-between">
                     <div>
-                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
+                        <span
+                            className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date</span>
                         <span className="font-semibold block">{formatDate(project.started_at)}</span>
                     </div>
+                    <div>
+                        <span className={getBadgeClasses(project.status)}>{toTitleCase(project.status)}</span>
+                    </div>
                     <div className="text-end">
-                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date :</span>
+                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date</span>
                         <span className="font-semibold block">{formatDate(project.ended_at)}</span>
                     </div>
                 </div>
