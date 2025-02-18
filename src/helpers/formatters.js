@@ -131,3 +131,6 @@ export const formatMappedData = (
     }).filter(option => option !== null);
 };
 
+export function formatNumberWithCommas(number) {
+    return new Intl.NumberFormat().format(number);
+}

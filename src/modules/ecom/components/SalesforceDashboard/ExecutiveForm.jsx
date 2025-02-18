@@ -1,69 +1,56 @@
 
 import React, { useEffect, useState } from "react";
 import ExecutiveSummaryTable from "./ExecutiveSummaryTable.jsx";
-import { fetchExecutiveSummary } from "../../services/salesforcedashboard_services.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import {formatNumberWithCommas} from "@helpers/formatters.js";
 
-const ExecutiveForm = ({ loading }) => {
-    const [summaryData, setSummaryData] = useState(null);
+const ExecutiveForm = ({ filters }) => {
+    const {data, isLoading} = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await fetchExecutiveSummary();
-                console.log(data);
-                setSummaryData(data);
-            } catch (error) {
-                console.error("Error fetching executive summary:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    if (loading || !summaryData) {
+    if (isLoading) {
         return <LoadingSpinner />;
     }
 
     const {
         summary = {},
-        total_fo_to_fulfil = "28486",
+        total_fo_to_fulfil =[] ,
         fulfilment_data = [],
-    } = summaryData;
+    } = data;
 
     const reconciliationData = [
-        { label: "Commerce Cloud", accessor: summaryData.summary.total_orders_cc },
-        { label: "Total - Orders in OMS", accessor: summaryData.summary.total_orders_summary },
+        { label: "Commerce Cloud", accessor: formatNumberWithCommas(summary.total_orders_cc) },
+        { label: "Total - Orders in OMS", accessor: formatNumberWithCommas(summary.total_orders_summary) },
         {
             label: <span style={{ color: "red", fontWeight: "bold" }}>Missing in OMS</span>,
             accessor: (
                 <div style={{ padding: "5px", borderRadius: "4px", textAlign: "right" }}>
-                    <span style={{ color: "red" }}>{summaryData.summary.missing_oms}</span>
+                    <span style={{ color: "red" }}>{formatNumberWithCommas(summary.missing_oms)}</span>
                 </div>
             ),
         },
-        { label: "Orders with Single FOs", accessor: summaryData.summary.orders_with_single_fo },
-        { label: "Orders with Multiple FOs", accessor: summaryData.summary.orders_with_multiple_fo },
-        { label: "Cancelled in OMS", accessor: summaryData.summary.cancelled },
-        { label: "In-Process with Customer Care", accessor: summaryData.summary.in_process_with_customercare },
-        { label: "Orders with Exceptions", accessor: summaryData.summary.order_with_exception },
+        { label: "Orders with Single FOs", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
+        { label: "Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.orders_with_multiple_fo) },
+        { label: "Cancelled in OMS", accessor: formatNumberWithCommas(summary.cancelled) },
+        { label: "In-Process with Customer Care", accessor: formatNumberWithCommas(summary.in_process_with_customercare) },
+        { label: "Orders with Exceptions", accessor: formatNumberWithCommas(summary.order_with_exception) },
     ];
 
     const foBreakupData = [
-        { label: "Single FO", accessor: summary.orders_with_single_fo },
-        { label: "Split-Orders with Multiple FOs", accessor: summaryData.summary.multi_fo_c },
+        { label: "Single FO", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
+        { label: "Split-Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.multi_fo_c) },
     ];
 
     const fulfillmentData = [
         {
             label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
-            accessor: <span style={{ fontWeight: "bold" }}>{String(total_fo_to_fulfil)}</span>
+            accessor: <span style={{ fontWeight: "bold" }}>{ formatNumberWithCommas(summary.total_fo_to_fulfil) }</span>
         },
         ...fulfilment_data.map(row => ({
             label: row.status.trim(),
-            accessor: String(row.value)
+            accessor: formatNumberWithCommas(row.value)
         })),
-        { label: "Reconciliation", accessor: String(summaryData.summary.reconciliation) },
+        { label: "Reconciliation", accessor: formatNumberWithCommas(summary.reconciliation) },
     ];
 
     return (
@@ -71,12 +58,12 @@ const ExecutiveForm = ({ loading }) => {
             <ExecutiveSummaryTable
                 title="Reconciliation CC vs OMS"
                 data={reconciliationData}
-                totals={["Total - Orders in OMS", summaryData.summary.total_order_oms || "28486"]}
+                totals={["Total - Orders in OMS", formatNumberWithCommas(summary.total_order_oms) ]}
             />
             <ExecutiveSummaryTable
                 title="Breakup of Orders into FO (Single/Multiple)"
                 data={foBreakupData}
-                totals={["Total FO's to Fulfill", summaryData.summary.total_fo_to_fulfil || "28486"]}
+                totals={["Total FO's to Fulfill", formatNumberWithCommas(summary.total_fo_to_fulfil) ]}
             />
             <ExecutiveSummaryTable
                 title="Orders Fulfillment Summary"
