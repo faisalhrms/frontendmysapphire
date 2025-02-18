@@ -134,11 +134,7 @@ const ExecutiveTabs = () => {
                 </div>
             </div>
 
-            {data && (
-                <div className="bg-gray-100 p-4 mt-4 rounded-lg shadow-md">
-                    <p>{data}</p>
-                </div>
-            )}
+
         </>
     );
 };
