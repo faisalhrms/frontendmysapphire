@@ -65,15 +65,7 @@ export const sidebarMenu = [
                 7,
                 '',
                 DASHBOARD_ROUTES.Equipment.permission,
-            ),
-                generateSidebarItem(
-                    DASHBOARD_ROUTES.SFD.path,
-                    'link',
-                    'Salesforce Dashboard',
-                    8,
-                    '',
-                    DASHBOARD_ROUTES.SFD.permission,
-                )
+            )
         ]
     ),
 ];
