@@ -6,7 +6,6 @@ import SubscriptionDashboard from '@modules/dashboards/sms/views/SubscriptionDas
 import SrTabs from '@modules/dashboards/sr/views/SrTabs.jsx';
 import SrList from '@modules/dashboards/sr/views/SrList.jsx';
 import EquipmentDashboard from '@modules/dashboards/eq/views/EquipmentDashboard.jsx';
-import ExecutiveTabs from '@modules/dashboards/sfd/views/ExecutiveTabs.jsx';
 
 export const DASHBOARD_ROUTES = {
     PROJECT: {
@@ -41,10 +40,7 @@ export const DASHBOARD_ROUTES = {
         path: '/dashboards/equipment',
         permission: 'it_equipment_dashboard',
     },
-    SFD: {
-        path: '/dashboards/srd',
-        permission: 'ecom_salesforce_dashboard',
-    },
+
 };
 
 export const MODULE_ROUTES = [
@@ -87,9 +83,5 @@ export const MODULE_ROUTES = [
         component: EquipmentDashboard,
         permission: DASHBOARD_ROUTES.Equipment.permission,
     },
-    {
-        path: DASHBOARD_ROUTES.SFD.path,
-        component: ExecutiveTabs,
-        permission: DASHBOARD_ROUTES.SFD.permission,
-    },
+
 ];

@@ -25,6 +25,14 @@ export const sidebarMenu = [
                 2,
                 "bx bx-message-square-edit",
                 ECOM_ROUTES.ADD.permission,
+            ),
+            generateSidebarItem(
+                ECOM_ROUTES.SFD.path,
+                'link',
+                'Salesforce Dashboard',
+                3,
+                '',
+                ECOM_ROUTES.SFD.permission,
             )
         ]
     )

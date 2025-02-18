@@ -115,38 +115,56 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
 
             <div className="box-body">
                 {isLoading ? (
-                    <LoadingSpinner/>
+                    <LoadingSpinner />
                 ) : (
                     <div className="overflow-x-auto">
-                        <table {...getTableProps()}
-                               className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover">
+                        <table
+                            {...getTableProps()}
+                            className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover"
+                        >
                             <thead className="bg-gray-100">
-                            {headerGroups.map(headerGroup => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map((column, columnIndex) => (
-                                        <th
-                                            {...column.getHeaderProps()}
-                                            className={`text-start align-middle px-4 py-2 border-b ${columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""}`}
-                                        >
-                                            {column.render('Header')}
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
+                            {headerGroups.map(headerGroup => {
+                                const { key: headerGroupKey, ...headerGroupProps } = headerGroup.getHeaderGroupProps();
+                                return (
+                                    <tr key={headerGroupKey} {...headerGroupProps}>
+                                        {headerGroup.headers.map((column, columnIndex) => {
+                                            const { key: headerKey, ...columnProps } = column.getHeaderProps();
+                                            return (
+                                                <th
+                                                    key={headerKey}
+                                                    {...columnProps}
+                                                    className={`text-start align-middle px-4 py-2 border-b ${
+                                                        columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
+                                                    }`}
+                                                >
+                                                    {column.render('Header')}
+                                                </th>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
                             </thead>
                             <tbody {...getTableBodyProps()}>
                             {tableRows.map(row => {
                                 prepareRow(row);
+                                const { key: rowKey, ...rowProps } = row.getRowProps();
                                 return (
-                                    <tr {...row.getRowProps()}>
-                                        {row.cells.map((cell, columnIndex) => (
-                                            <td
-                                                {...cell.getCellProps()}
-                                                className={`px-4 py-2 border-b ${columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""}`}
-                                            >
-                                                {cell.render('Cell')}
-                                            </td>
-                                        ))}
+                                    <tr key={rowKey} {...rowProps}>
+                                        {row.cells.map((cell, columnIndex) => {
+                                            const { key: cellKey, ...cellProps } = cell.getCellProps();
+                                            return (
+                                                <td
+                                                    key={cellKey}
+                                                    {...cellProps}
+                                                    className={`px-4 py-2 border-b ${
+                                                        columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
+                                                    }`}
+                                                >
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            );
+                                        })}
                                     </tr>
                                 );
                             })}
@@ -156,7 +174,6 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
                 )}
             </div>
         </div>
-
     );
 };
 
