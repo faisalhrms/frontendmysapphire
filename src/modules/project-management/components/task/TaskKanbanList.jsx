@@ -5,6 +5,7 @@ import TaskKanbanCard from '@modules/project-management/components/task/TaskKanb
 import mediaSvg from '@assets/images/media/media-83.svg';
 import { toTitleCase } from '@helpers/formatters.js';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import FormButton from "@components/form/FormButton.jsx";
 
 const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoading, hasMoreTasks }) => {
     return (
@@ -35,15 +36,14 @@ const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoadin
                 </PerfectScrollbar>
             </div>
 
-            {hasMoreTasks && ( // Only show if there are more tasks
+            {hasMoreTasks && (
                 <div className="m-4 text-center">
-                    <button
-                        className="ti-btn ti-btn-primary"
-                        onClick={() => loadMore(status)} // Pass the status to loadMore
-                        disabled={isLoading}
-                    >
-                        {isLoading ? <LoadingSpinner/> : 'View More'}
-                    </button>
+                    <FormButton
+                        isLoading={isLoading}
+                        text="View More"
+                        submitTxt="Loading..."
+                        onClick={() => loadMore(status)}
+                    />
                 </div>
             )}
         </div>
