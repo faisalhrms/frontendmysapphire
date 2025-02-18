@@ -36,10 +36,7 @@ jobs:
 
           # Navigate to project directory and update
           cd /var/www/html/web_portal/frontend_react
-        
-#          git checkout -- package-lock.json
-#          git reset --hard HEAD
-#          git clean -fd
+      
         
           git pull origin staging_server
 
