@@ -1,6 +1,6 @@
 import OrderShopify from "@modules/ecom/views/OrderShopify.jsx";
 import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
-import ExecutiveTabs from "@modules/ecom/views/executiveTabs.jsx";
+import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
 export const ECOM_ROUTES = {
     READ: {
         path: "/module/ecom",
