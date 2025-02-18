@@ -71,21 +71,23 @@ const ExecutiveTabs = () => {
                     </Link>
                 </div>
 
-                <button
-                    type="button"
-                    className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
-                    onClick={() => {
-                        setShowFilters(!showFilters);
-                        setSelectedDate(new Date().toISOString().split("T")[0]);
-                    }}
-                >
-                    <i className="ri-filter-3-fill inline-block"></i> Filters
-                </button>
+                {activeTab === "executiveSummary" && (
+                    <button
+                        type="button"
+                        className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                        onClick={() => {
+                            setShowFilters(!showFilters);
+                            setSelectedDate(new Date().toISOString().split("T")[0]);
+                        }}
+                    >
+                        <i className="ri-filter-3-fill inline-block"></i> Filters
+                    </button>
+                )}
             </div>
 
-            {showFilters && (
+            {showFilters && activeTab === "executiveSummary" && (
                 <div className="bg-white p-2 mt-2 rounded-lg shadow-md">
-                    <div className="mt-4 flex justify-between">
+                    <div className="mt-2 flex justify-between">
                         <div>
                             <label className="block text-gray-600">From:</label>
                             <DatePicker
@@ -96,7 +98,7 @@ const ExecutiveTabs = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-600">To:</label>
+                            <div className="block text-gray-600">To:</div>
                             <DatePicker
                                 selected={toDate}
                                 onChange={handleDateChange(setToDate)}
@@ -133,8 +135,6 @@ const ExecutiveTabs = () => {
                     </div>
                 </div>
             </div>
-
-
         </>
     );
 };

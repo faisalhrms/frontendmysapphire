@@ -27,7 +27,7 @@ const ExecutiveForm = ({ loading }) => {
 
     const {
         summary = {},
-        total_fo_to_fulfil = "28486",
+        total_fo_to_fulfil =[] ,
         fulfilment_data = [],
     } = summaryData;
 
@@ -57,7 +57,7 @@ const ExecutiveForm = ({ loading }) => {
     const fulfillmentData = [
         {
             label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
-            accessor: <span style={{ fontWeight: "bold" }}>{String(total_fo_to_fulfil)}</span>
+            accessor: <span style={{ fontWeight: "bold" }}>{String(summaryData.summary.total_fo_to_fulfil)}</span>
         },
         ...fulfilment_data.map(row => ({
             label: row.status.trim(),
@@ -71,12 +71,12 @@ const ExecutiveForm = ({ loading }) => {
             <ExecutiveSummaryTable
                 title="Reconciliation CC vs OMS"
                 data={reconciliationData}
-                totals={["Total - Orders in OMS", summaryData.summary.total_order_oms || "28486"]}
+                totals={["Total - Orders in OMS", summaryData.summary.total_order_oms ]}
             />
             <ExecutiveSummaryTable
                 title="Breakup of Orders into FO (Single/Multiple)"
                 data={foBreakupData}
-                totals={["Total FO's to Fulfill", summaryData.summary.total_fo_to_fulfil || "28486"]}
+                totals={["Total FO's to Fulfill", summaryData.summary.total_fo_to_fulfil ]}
             />
             <ExecutiveSummaryTable
                 title="Orders Fulfillment Summary"
