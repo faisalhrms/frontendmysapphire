@@ -17,13 +17,14 @@ const ProjectDashboardStats = ({filters}) => {
     return (
             <>
                 <div
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {data.statuses.map((item, index) => (<ProjectStatusCard
+                    className="grid grid-cols-3 gap-4">
+                    {data.statuses.map((item, index) => (
+                        <ProjectStatusCard
                             key={index}
                             item={item}
                         />))}
                 </div>
-                <div className="grid grid-cols-12 gap-x-6">
+                <div className="grid grid-cols-12 gap-x-6 mt-6">
                     <ProjectAnalysisCard data={data.monthly_series} />
                     <RecentProjectCard
                         projects={data.recent_projects}

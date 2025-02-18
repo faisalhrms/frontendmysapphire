@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import AnalysisTable from "@modules/ecom/components/AnalysisTable.jsx";
+import AnalysisTable from "../components/AnalysisTable.jsx";
+import PageHeader from "../../layouts/includes/PageHeader.jsx";
 
-const OrderShopify = () => {
+
+const AnalysisReport = () => {
     const [activeTab, setActiveTab] = useState("orderSource");
     const [load, setLoad] = useState(false);
 
@@ -50,4 +51,4 @@ const OrderShopify = () => {
     );
 };
 
-export default OrderShopify;
+export default AnalysisReport ;
