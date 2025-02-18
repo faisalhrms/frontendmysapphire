@@ -70,6 +70,13 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                     Total <strong
                                     className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed
                                 </span>
+                                <div className='popular-tags mb-4 space-x-2 rtl:space-x-reverse'>
+                                    {(
+                                        project.tags.map(tag => (
+                                            <span key={tag.id} className="badge !rounded-full bg-light text-default">{toTitleCase(tag.name)}</span>
+                                        ))
+                                    )}
+                                </div>
                                 <div className="font-semibold mb-1">Description :</div>
                                 <p className="text-[#8c9097] dark:text-white/50">
                                     {project.description}
@@ -80,7 +87,7 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                 </div>
                 <div className="box-footer">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <div>
+                        <div>
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Team:</span>
                             <AvatarList users={project.users}/>
                         </div>
@@ -92,6 +99,14 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                         <div>
                             <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date :</span>
                             <span className="font-semibold block">{formatDate(project.ended_at)}</span>
+                        </div>
+                        <div>
+                            <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Workspace :</span>
+                            <span className="font-semibold block"> {project?.workspace?.name ? project?.workspace.name : 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Status :</span>
+                            <span className={getBadgeClasses(project.status)}>{toTitleCase(project.status)}</span>
                         </div>
                         <div>
                             <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Priority :</span>

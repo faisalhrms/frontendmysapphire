@@ -21,6 +21,7 @@ import ProjectListItems from "@modules/project-management/components/ProjectList
 import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
 import DeleteModal from "@components/modals/DeleteModal.jsx";
 import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
+import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
 
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
@@ -33,8 +34,9 @@ const ProjectList = () => {
     const workspaces = useWatch({ control: filterControl, name: "workspaces" });
     const status = useWatch({ control: filterControl, name: "status" });
     const priority = useWatch({ control: filterControl, name: "priority" });
+    const tags = useWatch({ control: filterControl, name: "tags" });
 
-    const { data, isLoading, refetch } = useProjects(currentPage, 8, searchTerm, workspaces, status, priority);
+    const { data, isLoading, refetch } = useProjects(currentPage, 8, searchTerm, workspaces, status, priority, tags);
 
     const [startedAt, setStartedAt] = useState(null);
     const [endedAt, setEndedAt] = useState(null);
@@ -90,16 +92,15 @@ const ProjectList = () => {
     return (
         <>
             <PageHeader currentpage="Project Management System"/>
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-2">
                 <div className="col-span-12">
                     <div className="box custom-box">
                         <div className="box-body p-4">
-                            <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center justify-between gap-2">
                                 <HasPermission permission='add_project'>
                                     <div className="flex items-center gap-2">
                                         <Link to="/module/projects/create" className="ti-btn ti-btn-primary-full !mb-0">
-                                            <i className="ri-add-line me-1 font-semibold align-middle"></i>
-                                            New Project
+                                            <i className="ri-add-line font-semibold align-middle"></i>
                                         </Link>
                                     </div>
                                 </HasPermission>
@@ -120,7 +121,11 @@ const ProjectList = () => {
                                     <ProjectPriorityDropdown
                                         control={filterControl}
                                         errors={filterErrors}
-
+                                    />
+                                    <TagDropdown
+                                        control={filterControl}
+                                        errors={filterErrors}
+                                        name='tags'
                                     />
                                 </div>
                                 <div className="flex items-center">
