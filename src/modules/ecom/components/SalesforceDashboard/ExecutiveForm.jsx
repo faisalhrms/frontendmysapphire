@@ -24,8 +24,8 @@ const ExecutiveForm = () => {
         {
             label: <span style={{ color: "red", fontWeight: "bold" }}>Missing in OMS</span>,
             accessor: (
-                <div style={{ backgroundColor: "red", padding: "5px", borderRadius: "4px", textAlign: "center" }}>
-                    <span style={{ color: "black", fontWeight: "bold" }}>{summaryData.missing_oms || "9"}</span>
+                <div style={{ padding: "5px", borderRadius: "4px", textAlign: "right" }}>
+                    <span style={{ color: "red"}}>{summaryData.missing_oms || "9"}</span>
                 </div>
             )
         },
@@ -48,14 +48,14 @@ const ExecutiveForm = () => {
             label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
             accessor: summaryData.total_fo_to_fulfil
                 ? <span style={{ fontWeight: "bold" }}>{String(summaryData.total_fo_to_fulfil)}</span>
-                : "20,178"
+                : "28486"
         },
         { label: "Un-Approved FO's ", accessor: String(summaryData["Un-Approved FOs"] || "499") },
         { label: "Approved for Fulfillment ", accessor: String(summaryData["Approved FOs"] || "2041") },
         { label: "Shipped in OMS but unpicked ", accessor: String(summaryData["Shipped in OMS But not in courier_tracking"] || "642") },
         { label: "In-Transit with Courier", accessor: String(summaryData["In transit"] || "7030") },
         { label: "Delivered to Customers", accessor: String(summaryData["Deliverd"] || "19363") },
-        { label: "Returns by Courier", accessor: "196" },
+
         { label: "Reconciliation", accessor: String(summaryData.reconciliation || "-285") }
     ];
 
