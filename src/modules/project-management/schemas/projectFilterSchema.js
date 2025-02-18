@@ -7,6 +7,7 @@ const projectFilterSchema = z.object({
     workspaces: z.array(z.number()).nullable(),
     status: statusEnum.nullable().default(null),
     priority: prioritiesEnum.nullable().default(null),
+    tags: z.array(z.number()).nullable(),
 })
 
 export default projectFilterSchema;
