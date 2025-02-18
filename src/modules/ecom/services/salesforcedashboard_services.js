@@ -8,7 +8,7 @@ export const fetchExecutiveSummary = async (summaryData) => {
             "date_to": "2025-02-17"
         });
         Notify.success("Successfully Fetched Executive Summary!");
-        return response.data;
+        return response.data?.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || "Failed to fetch Executive Summary");
         throw error;
