@@ -24,7 +24,7 @@ const AgingPendingTable = ({ title, headers, data, totals }) => {
                                 <td
                                     key={cellIndex}
                                     className={`py-2 px-4 border border-gray-400 ${
-                                        key === "accessor" ? "text-left" : "text-right"
+                                        key === "accessor" ? "text-right" : "text-left"
                                     }`}
                                 >
                                     {cell}
@@ -36,7 +36,7 @@ const AgingPendingTable = ({ title, headers, data, totals }) => {
                     <tfoot>
                     <tr className="font-bold text-black bg-gray-200">
                         {totals.map((total, index) => (
-                            <td key={index} className="py-2 px-4 border border-gray-400 text-right">
+                            <td key={index} className="py-2 px-4 border border-gray-400 text-left">
                                 {total}
                             </td>
                         ))}
