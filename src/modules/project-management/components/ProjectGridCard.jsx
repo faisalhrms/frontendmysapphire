@@ -36,6 +36,14 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             Total <strong
                             className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed
                         </span>
+                        <span className='space-x-1 rtl:space-x-reverse'>
+                                {(
+                                    project?.tags?.map((tag, index) => (
+                                        index < 3 ? <span key={tag.id} className="badge !rounded-full bg-light text-default">{toTitleCase(tag.name)}</span> : ''
+                                    ))
+                                )}
+                            </span>
+
                     </div>
 
                     <ProjectFavourite project={project} refetch={refetch}/>
@@ -91,11 +99,15 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             <span className={getBadgeClasses(project.priority)}>{toTitleCase(project.priority)}</span>
                         </div>
                     </div>
+                    <div className="font-semibold mb-1">Workspace :</div>
+                    <p className="text-[#8c9097] dark:text-white/50 mb-2">
+                        {project?.workspace?.name ? project?.workspace.name : 'N/A'}
+                    </p>
                     <div className="font-semibold mb-1">Description :</div>
                     <p className="text-[#8c9097] dark:text-white/50 min-h-[50px] max-h-[50px] overflow-auto">
                         {getExcerptFromText(project.description, 70)}
                     </p>
-                    <div className="font-semibold mb-1">Status :</div>
+                    <div className="font-semibold mb-1">Progress :</div>
                     <ProgressBar
                         total={project.total_tasks}
                         completed={project.completed_tasks}
@@ -103,11 +115,15 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                 </div>
                 <div className="box-footer flex items-center justify-between">
                     <div>
-                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
+                        <span
+                            className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date</span>
                         <span className="font-semibold block">{formatDate(project.started_at)}</span>
                     </div>
+                    <div>
+                        <span className={getBadgeClasses(project.status)}>{toTitleCase(project.status)}</span>
+                    </div>
                     <div className="text-end">
-                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date :</span>
+                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date</span>
                         <span className="font-semibold block">{formatDate(project.ended_at)}</span>
                     </div>
                 </div>

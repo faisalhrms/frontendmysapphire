@@ -19,10 +19,10 @@ import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.j
 import projectFilterSchema from "@modules/project-management/schemas/projectFilterSchema.js";
 import {useSelector} from "react-redux";
 
-export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null) => {
+export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null, tags = null) => {
     const query = useQuery({
-        queryKey: ['projects', page, size, search, workspaces, status, priority],
-        queryFn: () => getProjects(page, size, search, workspaces, status, priority),
+        queryKey: ['projects', page, size, search, workspaces, status, priority, tags],
+        queryFn: () => getProjects(page, size, search, workspaces, status, priority, tags),
         keepPreviousData: false,
         staleTime: 0,
     });

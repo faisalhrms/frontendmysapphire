@@ -11,14 +11,17 @@ import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormToggle from "@components/form/FormToggle.jsx";
 import UserDropdown from "@components/dropdowns/UserDropdown.jsx";
 import ProjectCategoryDropdown from "@modules/project-management/components/dropdowns/ProjectCategoryDropdown.jsx";
+import {convertToDateTime, convertToDateTimeEnd} from "@helpers/dateTime.js";
 
 const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false}) => {
     const [data, setData]    = useState(taskData);
 
     const formattedUsers = useMemo(() => formatOptionsWithConcatenation(data, "users", "id", ['full_name', 'email']), [data]);
     const formattedTags  = useMemo(() => formatOptions(data, "tags", "id", "name"), [data]);
-    const formattedTeams  = useMemo(() => formatOptions(data, "teams", "id", "name"), [data]);
+    const formattedTeams = useMemo(() => formatOptions(data, "teams", "id", "name"), [data]);
     const handleClose        = useCallback(() => closeModal(), [closeModal]);
+    const maxDateTime = useMemo(() => convertToDateTimeEnd(endedAt));
+    const minDateTime = useMemo(() => convertToDateTime(startedAt));
     useEffect(() => {
         setData(taskData);
     }, [taskData]);
@@ -90,8 +93,8 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="Start Date"
-                                                    min={startedAt}
-                                                    max={endedAt}
+                                                    min={minDateTime}
+                                                    max={maxDateTime}
                                                 />
                                             </div>
                                             <div className="col-span-6">
@@ -101,8 +104,8 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="End Date"
-                                                    min={startedAt}
-                                                    max={endedAt}
+                                                    min={minDateTime}
+                                                    max={maxDateTime}
                                                 />
                                             </div>
                                             <div className="col-span-6">
