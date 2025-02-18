@@ -19,8 +19,8 @@ const ExecutiveForm = () => {
 
 
     const reconciliationData = [
-        { label: "Total Orders CC", accessor: summaryData.total_orders_cc || "28446" },
-        { label: "Total Orders Summary", accessor: summaryData.total_orders_summary || "28437" },
+        { label: "Commerce Cloud ", accessor: summaryData.total_orders_cc || "28446" },
+        { label: "Total - Orders in OMS", accessor: summaryData.total_orders_summary || "28437" },
         {
             label: <span style={{ color: "red", fontWeight: "bold" }}>Missing in OMS</span>,
             accessor: (
@@ -30,17 +30,17 @@ const ExecutiveForm = () => {
             )
         },
         { label: "", accessor: "" },
-        { label: "Orders with Single FO", accessor: summaryData.orders_with_single_fo || "28260" },
-        { label: "Orders with Multiple FO", accessor: summaryData.orders_with_multiple_fo || "135" },
-        { label: "Cancelled", accessor: summaryData.cancelled || "69" },
+        { label: "Orders with Single FOs ", accessor: summaryData.orders_with_single_fo || "28260" },
+        { label: "Orders with Multiple FOs", accessor: summaryData.orders_with_multiple_fo || "135" },
+        { label: "Cancelled  in OMS", accessor: summaryData.cancelled || "69" },
         { label: "In-Process with Customer Care", accessor: summaryData.in_process_with_customercare || "4" },
-        { label: "Orders with Exception", accessor: summaryData.order_with_exception || "17" },
+        { label: "Orders with Exceptions", accessor: summaryData.order_with_exception || "17" },
     ];
 
 
     const foBreakupData = [
-        { label: "Orders with Single FO", accessor: summaryData.orders_with_single_fo || "28260" },
-        { label: "Multi FO Count", accessor: summaryData.multi_fo_c || "135" },
+        { label: "Single FO'", accessor: summaryData.orders_with_single_fo || "28260" },
+        { label: "Split-Orders with Multiple FOs", accessor: summaryData.multi_fo_c || "135" },
     ];
 
     const fulfillmentData = [
