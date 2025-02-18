@@ -1,6 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+const formatNumber = (value) => {
+    if (typeof value === "number") {
+        return value.toLocaleString();
+    }
+    if (typeof value === "string" && !isNaN(value)) {
+        return Number(value).toLocaleString();
+    }
+    return value;
+};
+
 const ExecutiveSummaryTable = ({ title, data, totals }) => {
     return (
         <div className="w-3/5 bg-white p-4 shadow-md rounded-lg mb-6">
@@ -14,9 +24,11 @@ const ExecutiveSummaryTable = ({ title, data, totals }) => {
                             {Object.entries(row).map(([key, cell], cellIndex) => (
                                 <td
                                     key={cellIndex}
-                                    className={`py-2 px-4 border border-gray-200 ${key === "accessor" ? "text-right" : "text-left"}`}
+                                    className={`py-2 px-4 border border-gray-200 ${
+                                        key === "accessor" ? "text-right" : "text-left"
+                                    }`}
                                 >
-                                    {cell}
+                                    {typeof cell === "object" ? cell : formatNumber(cell)}
                                 </td>
                             ))}
                         </tr>
@@ -29,12 +41,11 @@ const ExecutiveSummaryTable = ({ title, data, totals }) => {
                     </tr>
                 )}
 
-
                 {totals.length > 0 && (
                     <tr className="bg-gray-200 text-black font-bold">
                         {totals.map((total, index) => (
                             <td key={index} className="py-2 px-4 border border-gray-400 text-left">
-                                {total}
+                                {formatNumber(total)}
                             </td>
                         ))}
                     </tr>

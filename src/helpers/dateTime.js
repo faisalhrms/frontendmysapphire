@@ -107,3 +107,15 @@ export const formatDateTimeLocal = (dateTime) => {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
+
+export const convertToDateTime = (date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString().slice(0, 16);
+};
+
+export const convertToDateTimeEnd = (date) => {
+    const d = new Date(date);
+    d.setHours(23, 59, 59, 999);
+    return d.toISOString().slice(0, 16);
+};

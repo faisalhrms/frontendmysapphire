@@ -21,7 +21,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
     const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
         resolver: zodResolver(projectSchema),
         defaultValues: {
-            status: "active",
+            status: "not_started",
             priority: "medium",
             members: (projectData?.members && projectData.members.length > 0)
                 ? projectData.members
