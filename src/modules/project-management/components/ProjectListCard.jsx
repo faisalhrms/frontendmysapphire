@@ -66,14 +66,17 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                 <h5 className="font-semibold mb-0">
                                     <Link to={`/module/projects/detail/${project.id}`}>{project.name}</Link>
                                 </h5>
-                                <span className="text-[#8c9097] dark:text-white/50 block text-xs mb-2">
+                                <span className="text-[#8c9097] dark:text-white/50 block text-xs">
                                     Total <strong
                                     className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed
                                 </span>
                                 <div className='popular-tags mb-4 space-x-2 rtl:space-x-reverse'>
+                                    <span
+                                        className='badge badge-md !rounded-full bg-primary/10 text-primary'> {project?.workspace?.name ? project?.workspace.name.toUpperCase() : 'N/A'}</span>
                                     {(
                                         project.tags.map(tag => (
-                                            <span key={tag.id} className="badge !rounded-full bg-light text-default">{toTitleCase(tag.name)}</span>
+                                            <span key={tag.id}
+                                                  className="badge !rounded-full bg-light text-default">{tag.name.toUpperCase()}</span>
                                         ))
                                     )}
                                 </div>
@@ -99,10 +102,6 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                         <div>
                             <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date :</span>
                             <span className="font-semibold block">{formatDate(project.ended_at)}</span>
-                        </div>
-                        <div>
-                            <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Workspace :</span>
-                            <span className="font-semibold block"> {project?.workspace?.name ? project?.workspace.name : 'N/A'}</span>
                         </div>
                         <div>
                             <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Status :</span>

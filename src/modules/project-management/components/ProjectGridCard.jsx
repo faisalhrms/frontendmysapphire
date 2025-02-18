@@ -18,8 +18,8 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
     return (
         <>
             <div className="box custom-box">
-                <div className="box-header items-center !justify-center flex-wrap !flex">
-                    <TextAvatar item={project.company} />
+                <div className="box-header items-center flex-wrap !flex">
+                    <TextAvatar item={project.company}/>
                     <div className="flex-grow">
                         <Tooltip
                             id={`project-tooltip-${project.id}`}
@@ -36,14 +36,6 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             Total <strong
                             className="text-defaulttextcolor">{project.completed_tasks}/{project.total_tasks}</strong> tasks completed
                         </span>
-                        <span className='space-x-1 rtl:space-x-reverse'>
-                                {(
-                                    project?.tags?.map((tag, index) => (
-                                        index < 3 ? <span key={tag.id} className="badge !rounded-full bg-light text-default">{toTitleCase(tag.name)}</span> : ''
-                                    ))
-                                )}
-                            </span>
-
                     </div>
 
                     <ProjectFavourite project={project} refetch={refetch}/>
@@ -86,12 +78,20 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             </HasProjectPermission>
                         </ul>
                     </div>
+                    <span className='space-x-1 rtl:space-x-reverse'>
+                        <span className='badge badge-md !rounded-full bg-primary/10 text-primary'> {project?.workspace?.name ? project?.workspace.name.toUpperCase() : 'N/A'}</span>
+                            {(
+                                project?.tags?.map((tag, index) => (
+                                    index < 2 ? <span key={tag.id} className="badge !rounded-full bg-light text-default">{getExcerptFromText(tag.name, 20).toUpperCase()}</span> : ''
+                                ))
+                            )}
+                        </span>
                 </div>
 
                 <div className="box-body">
                     <div className="flex items-center justify-between mb-3">
                         <div>
-                            <div className="font-semibold mb-1">Team :</div>
+                        <div className="font-semibold mb-1">Team :</div>
                             <AvatarList users={project.users}/>
                         </div>
                         <div className="text-end">
@@ -99,10 +99,6 @@ const ProjectGridCard = ({ project, openModal, refetch }) => {
                             <span className={getBadgeClasses(project.priority)}>{toTitleCase(project.priority)}</span>
                         </div>
                     </div>
-                    <div className="font-semibold mb-1">Workspace :</div>
-                    <p className="text-[#8c9097] dark:text-white/50 mb-2">
-                        {project?.workspace?.name ? project?.workspace.name : 'N/A'}
-                    </p>
                     <div className="font-semibold mb-1">Description :</div>
                     <p className="text-[#8c9097] dark:text-white/50 min-h-[50px] max-h-[50px] overflow-auto">
                         {getExcerptFromText(project.description, 70)}
