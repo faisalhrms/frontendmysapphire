@@ -5,7 +5,7 @@ import SiteDropdown from "@modules/inventory/dropdowns/SiteDropdown.jsx";
 import PhysicalLocationDropdown from "@modules/inventory/dropdowns/PhysicalLocationDropdown.jsx";
 import EquipmentTypeDropdown from "@modules/inventory/dropdowns/EquipmentTypeDropdown.jsx";
 import StatusDropdown from "@modules/inventory/dropdowns/StatusDropdown.jsx";
-import CustodianDropdown from "@components/dropdowns/CustodianDropdown.jsx";
+import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FilterClearButton from "@components/form/FilterClearButton.jsx";
 import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
