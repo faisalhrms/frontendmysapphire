@@ -2,8 +2,10 @@ import React, {useCallback, useMemo, useState} from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import ProjectDashboardFilter from "@modules/dashboards/pms/components/ProjectDashboardFilter.jsx";
 import useFilters from "@hooks/useFilters.js";
-import ProjectDashboardStats from "@modules/dashboards/pms/components/ProjectDashboardStats.jsx";
 import HasPermission from "@components/HasPermission.jsx";
+import ProjectDashboardTaskStats from "@modules/dashboards/pms/components/ProjectDashboardTaskStats.jsx";
+import IconTabs from "@components/IconTabs.jsx";
+import ProjectDashboardStats from "@modules/dashboards/pms/components/ProjectDashboardStats.jsx";
 
 
 const ProjectDashboard = () => {
@@ -43,7 +45,28 @@ const ProjectDashboard = () => {
                     <ProjectDashboardFilter control={control} errors={errors}/>
                 </form>
             </HasPermission>
-            <ProjectDashboardStats filters={filters}/>
+            <IconTabs
+                tabs={[
+                    {
+                        id: "project_overview",
+                        label: "Project Overview",
+                        icon: <i className="bx bx-task"></i>,
+                        content: (
+                            <ProjectDashboardStats filters={filters}/>
+                        ),
+                    },
+                    {
+                        id: "task_overview",
+                        label: "Task Overview",
+                        icon: <i className="bx bx-bar-chart"></i>,
+                        content: (
+                            <>
+                                <ProjectDashboardTaskStats filters={filters}/>
+                            </>
+                        ),
+                    },
+                ]}
+            />
         </>
     );
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import { toTitleCase } from "../../../../helpers/formatters.js";
+import { formatNumberWithCommas } from "@helpers/formatters.js";
 
 const TableOms = ({ apiData }) => {
     const columns = [
@@ -10,7 +11,7 @@ const TableOms = ({ apiData }) => {
             Header: "Order Value",
             accessor: "ordertotal",
             Cell: ({ value }) => (
-                <div className="text-right">{value}</div>
+                <div className="text-right">{formatNumberWithCommas(value)}</div>
             ),
         },
         {
@@ -49,7 +50,9 @@ const TableOms = ({ apiData }) => {
                                 className={`px-2 py-2 text-sm text-gray-900 
                                         ${column.accessor === "ordertotal" ? "text-right" : ""}`}
                             >
-                                {column.Cell ? column.Cell({ value: row[column.accessor] }) : row[column.accessor]}
+                                {column.Cell
+                                    ? column.Cell({ value: row[column.accessor] })
+                                    : row[column.accessor]}
                             </td>
                         ))}
                     </tr>
