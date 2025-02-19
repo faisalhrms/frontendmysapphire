@@ -12,8 +12,9 @@ const formatPercentage = (value) => {
 
 const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
     return (
+        <div className="bg-white p-4 shadow-md rounded-lg mb-6">
         <div className="w-full bg-white rounded-lg shadow-lg overflow-hidden mt-4 mb-4">
-            <div className="p-3 text-lg font-semibold text-gray-900 dark:text-gray-200 border-b bg-gray-100 dark:border-gray-700">
+            <div className="p-3 text-lg font-semibold text-gray-900 dark:text-gray-200 border-b bg-gray-100 dark:border-gray-700 text-left">
                 {title}
             </div>
 
@@ -25,7 +26,10 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                         <thead className="bg-gray-200 dark:border-gray-700 dark:text-gray-200 text-gray-800">
                         <tr>
                             {headers.map((header, index) => (
-                                <th key={index} className="p-2 border border-gray-400 dark:border-gray-700 text-center">
+                                <th
+                                    key={index}
+                                    className="p-2 border border-gray-400 dark:border-gray-700 text-center"
+                                >
                                     {header.label}
                                 </th>
                             ))}
@@ -36,7 +40,12 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                             data.map((row, rowIndex) => (
                                 <tr key={rowIndex} className="border border-gray-300 dark:border-gray-700 transition hover:bg-gray-100">
                                     {headers.map((header, colIndex) => (
-                                        <td key={colIndex} className="border border-gray-400 dark:border-gray-700 text-left px-4 py-2">
+                                        <td
+                                            key={colIndex}
+                                            className={`border border-gray-400 dark:border-gray-700 px-4 py-2 ${
+                                                header.align === "right" ? "text-right" : "text-left"
+                                            }`}
+                                        >
                                             {header.accessor === "orderConversion"
                                                 ? formatPercentage(row[header.accessor]).value
                                                 : formatNumber(row[header.accessor])}
@@ -55,6 +64,7 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                     </table>
                 )}
             </div>
+        </div>
         </div>
     );
 };
