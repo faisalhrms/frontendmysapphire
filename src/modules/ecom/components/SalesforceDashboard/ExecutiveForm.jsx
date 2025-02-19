@@ -27,25 +27,32 @@ const ExecutiveForm = ({ filters }) => {
         { label: "Commerce Cloud", accessor: formatNumberWithCommas(summary.total_orders_cc) },
         { label: "Total - Orders in OMS", accessor: formatNumberWithCommas(summary.total_orders_summary) },
         {
-            label: <span style={{ color: "red", fontWeight: "bold" }}>Missing in OMS</span>,
+            label: (
+                <span className="text-danger font-bold">
+            Missing in OMS
+        </span>
+            ),
             accessor: (
                 <div
-                    style={{ padding: "5px", borderRadius: "4px", textAlign: "right", cursor: "pointer" }}
+                    className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold"
                     onClick={async () => {
                         try {
-                            // Fetch data when the "Missing in OMS" is clicked
                             const fetchedData = await fetchDataFromAPI();
                             setApiData(fetchedData);
-                            setShowModal(true); // Open modal
+                            setShowModal(true);
                         } catch (error) {
                             console.error("Error fetching API data:", error);
                         }
                     }}
                 >
-                    <span style={{ color: "red" }}>{formatNumberWithCommas(summary.missing_oms)}</span>
+            <span className="text-danger hover:underline hover:font-bold">
+                {formatNumberWithCommas(summary.missing_oms)}
+            </span>
                 </div>
             ),
         },
+
+       
         { label: "Orders with Single FOs", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
         { label: "Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.orders_with_multiple_fo) },
         { label: "Cancelled in OMS", accessor: formatNumberWithCommas(summary.cancelled) },
