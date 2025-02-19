@@ -22,6 +22,15 @@ export const createFyobInt = async (fyobData) => {
         throw error;
     }
 };
-
+export const fetchAnalysis = async () => {
+    try {
+        const response = await api.get("ecom/analytics/fetch_order_source_cc/?date_from=2025-02-18&date_to=2025-02-18", {});
+        // Notify.success("Successfully Fetched Pending Orders!");
+        return response.data?.data;
+    } catch (error) {
+        // Notify.error(error.response?.data?.message || "Failed to fetch Pending Orders");
+        throw error;
+    }
+};
 
 
