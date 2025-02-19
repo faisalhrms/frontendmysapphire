@@ -10,7 +10,9 @@ export const statusColorMapping = {
     "In Progress": "secondary",
     "Completed": "success",
     "Completed On Time": "success",
+    "Done": "success",
     "Cancelled": "red",
+    "Delayed": "red",
     "Archived": "red",
     "Overdue": "red",
     "On Hold": "warning",
@@ -32,6 +34,7 @@ export const statusColorMapping = {
     "N/A":"indigo",
     "Near Completion": "indigo",
     "Half Completed": "green",
+    "Done Late": "green",
     "Not Started": "cyan",
 };
 /**
