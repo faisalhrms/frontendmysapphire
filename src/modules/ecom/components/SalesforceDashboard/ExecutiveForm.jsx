@@ -1,12 +1,17 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ExecutiveSummaryTable from "./ExecutiveSummaryTable.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
-import {formatNumberWithCommas} from "@helpers/formatters.js";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+import { formatNumberWithCommas } from "@helpers/formatters.js";
+import TableOms from "../../components/SalesforceDashboard/TableOms.jsx";
+import { fetchDataFromAPI } from "../../services/salesforcedashboard_services.js";
+import Model from "./Model.jsx";
 
 const ExecutiveForm = ({ filters }) => {
-    const {data, isLoading} = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters);
+    const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters);
+
+    const [showModal, setShowModal] = useState(false);
+    const [apiData, setApiData] = useState(null);
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -14,7 +19,7 @@ const ExecutiveForm = ({ filters }) => {
 
     const {
         summary = {},
-        total_fo_to_fulfil =[] ,
+        total_fo_to_fulfil = [],
         fulfilment_data = [],
     } = data;
 
@@ -22,13 +27,32 @@ const ExecutiveForm = ({ filters }) => {
         { label: "Commerce Cloud", accessor: formatNumberWithCommas(summary.total_orders_cc) },
         { label: "Total - Orders in OMS", accessor: formatNumberWithCommas(summary.total_orders_summary) },
         {
-            label: <span style={{ color: "red", fontWeight: "bold" }}>Missing in OMS</span>,
+            label: (
+                <span className="text-danger font-bold">
+            Missing in OMS
+        </span>
+            ),
             accessor: (
-                <div style={{ padding: "5px", borderRadius: "4px", textAlign: "right" }}>
-                    <span style={{ color: "red" }}>{formatNumberWithCommas(summary.missing_oms)}</span>
+                <div
+                    className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold"
+                    onClick={async () => {
+                        try {
+                            const fetchedData = await fetchDataFromAPI();
+                            setApiData(fetchedData);
+                            setShowModal(true);
+                        } catch (error) {
+                            console.error("Error fetching API data:", error);
+                        }
+                    }}
+                >
+            <span className="text-danger hover:underline hover:font-bold">
+                {formatNumberWithCommas(summary.missing_oms)}
+            </span>
                 </div>
             ),
         },
+
+       
         { label: "Orders with Single FOs", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
         { label: "Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.orders_with_multiple_fo) },
         { label: "Cancelled in OMS", accessor: formatNumberWithCommas(summary.cancelled) },
@@ -50,7 +74,8 @@ const ExecutiveForm = ({ filters }) => {
             label: row.status.trim(),
             accessor: formatNumberWithCommas(row.value)
         })),
-        { label: "Reconciliation", accessor: formatNumberWithCommas(summary.reconciliation) },
+        { label: <span style={{ fontWeight: "bold" }}>Reconciliation</span> , accessor: formatNumberWithCommas(summary.reconciliation) },
+
     ];
 
     return (
@@ -58,18 +83,24 @@ const ExecutiveForm = ({ filters }) => {
             <ExecutiveSummaryTable
                 title="Reconciliation CC vs OMS"
                 data={reconciliationData}
-                totals={["Total - Orders in OMS", formatNumberWithCommas(summary.total_order_oms) ]}
+                totals={["Total - Orders in OMS", formatNumberWithCommas(summary.total_order_oms)]}
             />
             <ExecutiveSummaryTable
                 title="Breakup of Orders into FO (Single/Multiple)"
                 data={foBreakupData}
-                totals={["Total FO's to Fulfill", formatNumberWithCommas(summary.total_fo_to_fulfil) ]}
+                totals={["Total FO's to Fulfill", formatNumberWithCommas(summary.total_fo_to_fulfil)]}
             />
             <ExecutiveSummaryTable
                 title="Orders Fulfillment Summary"
                 data={fulfillmentData}
                 totals={[]}
             />
+
+            {showModal && (
+                <Model onClose={() => setShowModal(false)}>
+                    <TableOms apiData={apiData} />
+                </Model>
+            )}
         </div>
     );
 };

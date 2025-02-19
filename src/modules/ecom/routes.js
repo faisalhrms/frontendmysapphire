@@ -11,9 +11,10 @@ export const ECOM_ROUTES = {
         permission: "ecom_analytics",
     },
     SFD: {
-        path: '/module/ecom/srd',
+        path: '/module/ecom/sfd',
         permission: 'ecom_salesforce_dashboard',
     },
+
 };
 
 export const MODULE_ROUTES = [
@@ -32,4 +33,5 @@ export const MODULE_ROUTES = [
         component: ExecutiveTabs,
         permission: ECOM_ROUTES.SFD.permission,
     },
+
 ];
