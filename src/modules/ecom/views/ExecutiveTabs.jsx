@@ -86,46 +86,50 @@ const ExecutiveTabs = () => {
             {showFilters && activeTab === "executiveSummary" && (
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="bg-white p-2 mt-2 rounded-lg shadow-md">
-                        <div className="mt-2 flex justify-between">
-                            <div>
+                        <div className="mt-2 mr-2 flex items-center">
+                            <div className="mr-2">
                                 <FormInput
                                     type="date"
                                     name="date_from"
                                     control={control}
                                     errors={errors}
                                     placeholder="From"
-                                    label={false}
+                                    label={true}
                                 />
                             </div>
-                            <div>
+                            <div className="mr-2">
                                 <FormInput
                                     type="date"
                                     name="date_to"
                                     control={control}
                                     errors={errors}
                                     placeholder="To"
-                                    label={false}
+                                    label={true}
                                 />
                             </div>
-                            <FilterButton />
+                            <div className=" mr-2 flex items-right">
+                                <FilterButton/>
+                            </div>
                         </div>
                     </div>
+
+
                 </form>
-                )}
+            )}
 
-                    <div className="grid grid-cols-12 gap-6">
-                        <div className="xl:col-span-12 col-span-12">
-                            <div className="tab-content bg-white rounded-lg shadow-md mt-4">
-                                {activeTab === "executiveSummary" && (
-                                    <div className="tab-pane show active p-6" id="generate-report"
-                                         aria-labelledby="generate-report" role="tabpanel">
-                                        <ExecutiveForm filters={filters}/>
-                                    </div>
-                                )}
+            <div className="grid grid-cols-12 gap-6">
+                <div className="xl:col-span-12 col-span-12">
+                    <div className="tab-content bg-white rounded-lg shadow-md mt-4">
+                        {activeTab === "executiveSummary" && (
+                            <div className="tab-pane show active p-6" id="generate-report"
+                                 aria-labelledby="generate-report" role="tabpanel">
+                                <ExecutiveForm filters={filters}/>
+                            </div>
+                        )}
 
-                                {activeTab === "agingLiabilities" && (
-                                    <div className="tab-pane show active p-6 mt-6" id="replenishment-history"
-                                         aria-labelledby="replenishment-history" role="tabpanel">
+                        {activeTab === "agingLiabilities" && (
+                            <div className="tab-pane show active p-6 mt-6" id="replenishment-history"
+                                 aria-labelledby="replenishment-history" role="tabpanel">
                                         <AgingForm/>
                                     </div>
                                 )}

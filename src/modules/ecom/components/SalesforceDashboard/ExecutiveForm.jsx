@@ -1,12 +1,17 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ExecutiveSummaryTable from "./ExecutiveSummaryTable.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
-import {formatNumberWithCommas} from "@helpers/formatters.js";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+import { formatNumberWithCommas } from "@helpers/formatters.js";
+import TableOms from "../../components/SalesforceDashboard/TableOms.jsx";
+import { fetchDataFromAPI } from "../../services/salesforcedashboard_services.js";
+import Model from "./Model.jsx";
 
 const ExecutiveForm = ({ filters }) => {
-    const {data, isLoading} = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters);
+    const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters);
+
+    const [showModal, setShowModal] = useState(false);
+    const [apiData, setApiData] = useState(null);
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -14,7 +19,7 @@ const ExecutiveForm = ({ filters }) => {
 
     const {
         summary = {},
-        total_fo_to_fulfil =[] ,
+        total_fo_to_fulfil = [],
         fulfilment_data = [],
     } = data;
 
@@ -24,7 +29,19 @@ const ExecutiveForm = ({ filters }) => {
         {
             label: <span style={{ color: "red", fontWeight: "bold" }}>Missing in OMS</span>,
             accessor: (
-                <div style={{ padding: "5px", borderRadius: "4px", textAlign: "right" }}>
+                <div
+                    style={{ padding: "5px", borderRadius: "4px", textAlign: "right", cursor: "pointer" }}
+                    onClick={async () => {
+                        try {
+                            // Fetch data when the "Missing in OMS" is clicked
+                            const fetchedData = await fetchDataFromAPI();
+                            setApiData(fetchedData);
+                            setShowModal(true); // Open modal
+                        } catch (error) {
+                            console.error("Error fetching API data:", error);
+                        }
+                    }}
+                >
                     <span style={{ color: "red" }}>{formatNumberWithCommas(summary.missing_oms)}</span>
                 </div>
             ),
@@ -50,7 +67,8 @@ const ExecutiveForm = ({ filters }) => {
             label: row.status.trim(),
             accessor: formatNumberWithCommas(row.value)
         })),
-        { label: "Reconciliation", accessor: formatNumberWithCommas(summary.reconciliation) },
+        { label: <span style={{ fontWeight: "bold" }}>Reconciliation</span> , accessor: formatNumberWithCommas(summary.reconciliation) },
+
     ];
 
     return (
@@ -58,18 +76,24 @@ const ExecutiveForm = ({ filters }) => {
             <ExecutiveSummaryTable
                 title="Reconciliation CC vs OMS"
                 data={reconciliationData}
-                totals={["Total - Orders in OMS", formatNumberWithCommas(summary.total_order_oms) ]}
+                totals={["Total - Orders in OMS", formatNumberWithCommas(summary.total_order_oms)]}
             />
             <ExecutiveSummaryTable
                 title="Breakup of Orders into FO (Single/Multiple)"
                 data={foBreakupData}
-                totals={["Total FO's to Fulfill", formatNumberWithCommas(summary.total_fo_to_fulfil) ]}
+                totals={["Total FO's to Fulfill", formatNumberWithCommas(summary.total_fo_to_fulfil)]}
             />
             <ExecutiveSummaryTable
                 title="Orders Fulfillment Summary"
                 data={fulfillmentData}
                 totals={[]}
             />
+
+            {showModal && (
+                <Model onClose={() => setShowModal(false)}>
+                    <TableOms apiData={apiData} />
+                </Model>
+            )}
         </div>
     );
 };
