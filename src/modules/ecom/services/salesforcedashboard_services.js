@@ -3,10 +3,7 @@ import Notify from "@helpers/toastNotifications.js";
 
 export const fetchExecutiveSummary = async () => {
     try {
-        const response = await api.get("/salesforce/fetch_executive_summary/", {
-            "date_from": "2025-01-21",
-            "date_to": "2025-02-17"
-        });
+        const response = await api.get("/salesforce/fetch_executive_summary/");
         // Notify.success("Successfully Fetched Executive Summary!");
         return response.data?.data;
     } catch (error) {
