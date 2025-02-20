@@ -57,7 +57,33 @@ const ExecutiveForm = ({ filters }) => {
         { label: "Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.orders_with_multiple_fo) },
         { label: "Cancelled in OMS", accessor: formatNumberWithCommas(summary.cancelled) },
         { label: "In-Process with Customer Care", accessor: formatNumberWithCommas(summary.in_process_with_customercare) },
-        { label: "Orders with Exceptions", accessor: formatNumberWithCommas(summary.order_with_exception) },
+        {
+            label: (
+                <span className="">
+            Orders with Exceptions
+        </span>
+            ),
+            accessor: (
+                <div
+                    className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold"
+                    onClick={async () => {
+                        try {
+                            const fetchedData = await fetchDataFromAPI();
+                            setApiData(fetchedData);
+                            setShowModal(true);
+                        } catch (error) {
+                            console.error("Error fetching API data:", error);
+                        }
+                    }}
+                >
+            <span className="text-gray-800 hover:underline hover:font-bold">
+                {formatNumberWithCommas(summary.order_with_exception)}
+            </span>
+                </div>
+            ),
+        },
+
+        // { label: "Orders with Exceptions", accessor: formatNumberWithCommas(summary.order_with_exception) },
     ];
 
     const foBreakupData = [
