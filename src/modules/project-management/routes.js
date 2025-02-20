@@ -4,6 +4,7 @@ import ProjectEdit from '@modules/project-management/views/ProjectEdit.jsx';
 import ProjectDetail from '@modules/project-management/views/ProjectDetail.jsx';
 import TaskDetail from '@modules/project-management/views/TaskDetail.jsx';
 import TaskKanban from '@modules/project-management/views/TaskKanban.jsx';
+import TaskList from '@modules/project-management/views/TaskList.jsx';
 
 export const PMS_ROUTES = {
   PROJECT: {
@@ -27,8 +28,11 @@ export const PMS_ROUTES = {
       path: "/module/tasks/detail/:id",
     },
     KANBAN: {
-      path: "/module/task/task-manager",
+      path: "/module/tasks/kanban-board",
     },
+    LIST:{
+      path: "/module/tasks",
+    }
   },
 };
 
@@ -58,5 +62,9 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.TASK.KANBAN.path,
     component: TaskKanban,
+  },
+  {
+    path: PMS_ROUTES.TASK.LIST.path,
+    component: TaskList,
   },
 ];

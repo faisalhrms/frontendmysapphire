@@ -18,7 +18,7 @@ function getNestedValue(obj, path) {
     }, obj);
 }
 
-const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, filter }) => {
+const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, filter, needHeader = true }) => {
     const {
         data,
         isLoading,
@@ -135,8 +135,8 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
                 // If val is an array, try to handle array-of-objects or array-of-strings
                 if (Array.isArray(val)) {
                     // For array of objects with "name"
-                    if (val.every((item) => item && typeof item === 'object' && item.name)) {
-                        val = val.map((item) => item.name).join(', ');
+                    if (val.every((item) => item && typeof item === 'object' && (item.name ?? item.full_name))) {
+                        val = val.map((item) => item.name ?? item.full_name).join(', ');
                     } else {
                         // generic fallback for arrays
                         val = val.map((item) =>
@@ -253,10 +253,13 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
 
     return (
         <div className="box custom-box">
-            <div className="box-header justify-between">
-                <div className="box-title">{title}</div>
-                <div className="flex items-center space-x-2">{buttons}</div>
-            </div>
+            {
+                needHeader &&
+                <div className="box-header justify-between">
+                    <div className="box-title">{title}</div>
+                    <div className="flex items-center space-x-2">{buttons}</div>
+                </div>
+            }
 
             <div className="box-body">
                 {/* Top toolbar */}

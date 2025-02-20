@@ -108,14 +108,22 @@ export const formatDateTimeLocal = (dateTime) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-export const convertToDateTime = (date) => {
+export const convertToDateTime = (date, local = true) => {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
+    if (local){
+        const localISOString = new Date(d).toLocaleString('sv-SE');
+        return localISOString.slice(0, 16);
+    }
     return d.toISOString().slice(0, 16);
 };
 
-export const convertToDateTimeEnd = (date) => {
+export const convertToDateTimeEnd = (date, local = true) => {
     const d = new Date(date);
     d.setHours(23, 59, 59, 999);
+    if (local){
+        const localISOString = new Date(d).toLocaleString('sv-SE');
+        return localISOString.slice(0, 16);
+    }
     return d.toISOString().slice(0, 16);
 };

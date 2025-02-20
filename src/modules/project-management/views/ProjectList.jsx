@@ -113,7 +113,6 @@ const ProjectList = () => {
                                         errors={filterErrors}
                                         multiple={true}
                                         saveNewOption={false}
-
                                     />
                                     <ProjectStatusDropdown
                                         control={filterControl}
@@ -162,23 +161,23 @@ const ProjectList = () => {
                                         <i className="ti ti-list"></i>
                                     </button>
 
-                                    <div className="relative">
-                                        {/* Button to toggle PeopleFilter */}
-                                        <button
-                                            className="ti-btn ti-btn-sm ti-btn-primary"
-                                            title="Filter by People"
-                                            onClick={() => setIsPeopleFilterOpen(!isPeopleFilterOpen)}
-                                        >
-                                            <i className="ti ti-user"></i>
-                                        </button>
+                                    {/*<div className="relative">*/}
+                                    {/*    /!* Button to toggle PeopleFilter *!/*/}
+                                    {/*    <button*/}
+                                    {/*        className="ti-btn ti-btn-sm ti-btn-primary"*/}
+                                    {/*        title="Filter by People"*/}
+                                    {/*        onClick={() => setIsPeopleFilterOpen(!isPeopleFilterOpen)}*/}
+                                    {/*    >*/}
+                                    {/*        <i className="ti ti-user"></i>*/}
+                                    {/*    </button>*/}
 
-                                        {/* PeopleFilter Dropdown (Properly Positioned Below) */}
-                                        {isPeopleFilterOpen && (
-                                            <div className="absolute top-full mt-2 right-0 z-50">
-                                                <PeopleFilter onClose={() => setIsPeopleFilterOpen(false)}/>
-                                            </div>
-                                        )}
-                                    </div>
+                                    {/*    /!* PeopleFilter Dropdown (Properly Positioned Below) *!/*/}
+                                    {/*    {isPeopleFilterOpen && (*/}
+                                    {/*        <div className="absolute top-full mt-2 right-0 z-50">*/}
+                                    {/*            <PeopleFilter onClose={() => setIsPeopleFilterOpen(false)}/>*/}
+                                    {/*        </div>*/}
+                                    {/*    )}*/}
+                                    {/*</div>*/}
                                 </div>
                                 <HasPermission permission='add_project'>
                                     <div className="hs-dropdown ti-dropdown ms-2">

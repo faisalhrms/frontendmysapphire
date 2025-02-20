@@ -10,18 +10,18 @@ import {priorities} from "@modules/project-management/services/projectService.js
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormToggle from "@components/form/FormToggle.jsx";
 import UserDropdown from "@components/dropdowns/UserDropdown.jsx";
-import ProjectCategoryDropdown from "@modules/project-management/components/dropdowns/ProjectCategoryDropdown.jsx";
 import {convertToDateTime, convertToDateTimeEnd} from "@helpers/dateTime.js";
 
-const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false}) => {
+const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false, isParent = true}) => {
     const [data, setData]    = useState(taskData);
 
     const formattedUsers = useMemo(() => formatOptionsWithConcatenation(data, "users", "id", ['full_name', 'email']), [data]);
     const formattedTags  = useMemo(() => formatOptions(data, "tags", "id", "name"), [data]);
     const formattedTeams = useMemo(() => formatOptions(data, "teams", "id", "name"), [data]);
     const handleClose        = useCallback(() => closeModal(), [closeModal]);
-    const maxDateTime = useMemo(() => convertToDateTimeEnd(endedAt));
-    const minDateTime = useMemo(() => convertToDateTime(startedAt));
+    const maxDateTime = isParent ? convertToDateTimeEnd(endedAt) : endedAt;
+    const minDateTime = isParent ? convertToDateTime(startedAt): endedAt;
+    console.log(startedAt, minDateTime)
     useEffect(() => {
         setData(taskData);
     }, [taskData]);

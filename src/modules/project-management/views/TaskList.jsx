@@ -3,48 +3,59 @@ import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
-import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
-// import TaskListFilter from "@modules/tasks/components/TaskListFilter.jsx";
+import {getStatusClasses} from "@helpers/badges.js";
 import useFilters from "@hooks/useFilters.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import Tooltip from "@components/Tooltip.jsx";
+import TaskListFilter from "@modules/project-management/components/task/TaskListFilter.jsx";
 
 const TaskList = () => {
-    // const {
-    //     control,
-    //     handleSubmit,
-    //     errors,
-    //     getFilters,
-    //     resetFilters,
-    // } = useFilters(
-    //     useMemo(
-    //         () => ({
-    //             initialFilters: [
-    //                 { name: "project_name" },
-    //                 { name: "milestone_name" },
-    //                 { name: "status" },
-    //                 { name: "timeline_groups" },
-    //             ],
-    //         }),
-    //         []
-    //     )
-    // );
+    const {
+        control,
+        handleSubmit,
+        errors,
+        getFilters,
+        resetFilters,
+    } = useFilters(
+        useMemo(
+            () => ({
+                initialFilters: [
+                    { name: "workspaces" },
+                    { name: "teams" },
+                    { name: "status" },
+                    { name: "tags" },
+                    { name: "deadline_from" },
+                    { name: "deadline_to" },
+                ],
+            }),
+            []
+        )
+    );
 
-    // const [filters, setFilters] = useState(getFilters());
+    const [filters, setFilters] = useState(getFilters());
 
-    // const onSubmit = useCallback((formData) => {
-    //     setFilters(formData);
-    // }, []);
-    //
-    // const onClear = useCallback(() => {
-    //     resetFilters();
-    //     setFilters(getFilters());
-    // }, [resetFilters, getFilters]);
+    const onSubmit = useCallback((formData) => {
+        setFilters(formData);
+    }, []);
+
+    const onClear = useCallback(() => {
+        resetFilters();
+        setFilters(getFilters());
+    }, [resetFilters, getFilters]);
 
     const columns = [
-        { Header: "Project", accessor: "project.name", disableSortBy: true,
+        {
+            Header: 'Workspace',
+            accessor: 'workspace.name',
+            disableSortBy: true,
+            Cell: ({ value }) => {
+                return <span className="badge badge-md !rounded-full bg-primary/10 text-primary"> {value ?? 'N/A'}</span>
+            },
+        },
+        {
+            Header: "Project", accessor: "project.name", disableSortBy: true,
             Cell: ({row}) => {
                 const project = row.original.project;
                 return (
@@ -54,6 +65,7 @@ const TaskList = () => {
                     >
                         <Link
                             to={`/module/projects/detail/${project.id}`}
+                            className='text-[0.80rem] text-[#323338]'
                             >
                             {project.name}
                         </Link>
@@ -61,7 +73,11 @@ const TaskList = () => {
                 )
             },
         },
-        { Header: "Milestone", accessor: "milestone.name", disableSortBy: true, },
+        { Header: "Milestone", accessor: "milestone.name", disableSortBy: true,
+            Cell: ({value}) => (
+                <p className='text-[0.80rem] text-[#323338]'>{value}</p>
+            )
+        },
         { Header: "Task", accessor: "name",
             Cell: ({row}) => {
                 const task = row.original;
@@ -71,8 +87,7 @@ const TaskList = () => {
                         tooltipContent={`Click To View Task: ${task.name}`}
                     >
                         <Link
-                            to={`/module/tasks/detail/${task.id}`}
-                            className="font-semibold text-[.875rem]">
+                            to={`/module/tasks/detail/${task.id}`}>
                             {task.name}
                         </Link>
                     </Tooltip>
@@ -102,7 +117,9 @@ const TaskList = () => {
             Cell: ({row}) => {
                 const users = row.original.users;
                 return (
-                    <AvatarList users={users} />
+                    <>
+                        <AvatarList users={users} />
+                    </>
                 );
             },
         },
@@ -125,8 +142,11 @@ const TaskList = () => {
             accessor: "completed_at",
             Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
         },
-        { Header: "Status Timeline", accessor: "status_completion_timeline", disableSortBy: true, },
+        { Header: "Completion Timeline", accessor: "status_completion_timeline", disableSortBy: true, },
         { Header: "Timeline Group", accessor: "timeline_groups", disableSortBy: true, },
+        { Header: "E-com Deliverable", accessor: "is_ecom",
+            Cell: ({value}) => (value ? 'Yes': 'No')
+        },
         {
             Header: 'Progress',
             accessor: 'progress',
@@ -147,7 +167,7 @@ const TaskList = () => {
                 <div className="space-x-1 rtl:space-x-reverse">
                     {Array.isArray(value) && value.length > 0 && (
                         [...new Set(value)].map((tag, index) => (
-                            <span key={index} className="badge bg-primary/10 text-primary">
+                            <span key={index} className="badge !rounded-full bg-light text-default">
                                 {toTitleCase(tag.name)}
                             </span>
                         ))
@@ -162,15 +182,16 @@ const TaskList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Tasks" mainpage="Tasks" />
-            {/*<form onSubmit={handleSubmit(onSubmit)}>*/}
-            {/*    <TaskListFilter control={control} errors={errors} onClear={onClear} />*/}
-            {/*</form>*/}
+            <PageHeader currentpage="Task List" activepage="Task" mainpage="Task List"/>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <TaskListFilter control={control} errors={errors} clearFilter={onClear} />
+            </form>
             <DataTable
                 columns={columns}
                 title="Tasks"
                 apiUrl="/pms/tasks/datatable/"
-                // filter={filters}
+                filter={filters}
+                needHeader={false}
             />
         </>
     );

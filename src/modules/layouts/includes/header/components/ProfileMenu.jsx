@@ -42,7 +42,7 @@ const ProfileMenu = () => {
                         <li>
                             <Link
                                 className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex"
-                                to={`${import.meta.env.BASE_URL}module/task/task-manager`}>
+                                to={`${import.meta.env.BASE_URL}module/tasks/kanban-board`}>
                                 <i className="ti ti-clipboard text-[1.125rem] me-2 opacity-[0.7]"></i>Task Manager
                             </Link>
                         </li>

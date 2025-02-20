@@ -1,4 +1,3 @@
-// TaskKanban.jsx
 import React from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import TaskKanbanList from "@modules/project-management/components/task/TaskKanbanList.jsx";
@@ -8,7 +7,6 @@ import { useSearchHook } from "@hooks/useSearchHook.js";
 import useFilters from "@hooks/useFilters.js";
 import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
 import { useWatch } from "react-hook-form";
-import { taskStatuses } from "@modules/project-management/services/taskService.js";
 
 const TaskKanban = () => {
     const { searchTerm, handleSearchChange } = useSearchHook();

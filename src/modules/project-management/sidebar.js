@@ -3,11 +3,37 @@ import {generateSidebarItem} from "@helpers/formatters.js";
 
 export const sidebarMenu = [
     generateSidebarItem(
-        PMS_ROUTES.PROJECT.READ.path,
-        'link',
-        'Project',
+        '',
+        'sub',
+        'PMS',
         2,
-        'bx-bulb'
-
+        'bx-bulb',
+        '',
+        [
+            generateSidebarItem(
+                PMS_ROUTES.PROJECT.READ.path,
+                "link",
+                "Projects",
+                1,
+                "bx bx-message-square-edit",
+                '',
+            ),
+            generateSidebarItem(
+                PMS_ROUTES.TASK.LIST.path,
+                "link",
+                "Task List",
+                2,
+                "bx bx-message-square-edit",
+                '',
+            ),
+            generateSidebarItem(
+                PMS_ROUTES.TASK.KANBAN.path,
+                "link",
+                "Task kanban Board",
+                1,
+                "bx bx-message-square-edit",
+                '',
+            ),
+        ]
     )
 ];
