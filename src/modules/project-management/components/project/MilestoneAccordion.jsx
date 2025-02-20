@@ -5,24 +5,11 @@ import TaskTable from "@modules/project-management/components/project/TaskTable.
 import {formatDate} from "@helpers/dateTime.js";
 import Tooltip from '@components/Tooltip.jsx';
 import Avatar from "@components/Avatar.jsx";
-import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
-import {useTaskOverdueModal} from "@modules/project-management/hooks/taskHooks.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal }) => {
 
-    const {
-        taskName,
-        openTaskOverdueModal,
-        closeTaskOverdueModal,
-        control,
-        errors,
-        isSubmitting,
-        handleSubmit,
-        onOverdueTaskSubmit,
-        isOverdueTaskModalOpen
-    } = useTaskOverdueModal(refetch)
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 
     const toggleMilestone = (id) => {
@@ -195,18 +182,6 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                 </div>))}
             </div>
             </div>
-            {
-                isOverdueTaskModalOpen &&
-                    <TaskOverdueModal
-                        taskName={taskName}
-                        control={control}
-                        errors={errors}
-                        isSubmitting={isSubmitting}
-                        handleSubmit={handleSubmit}
-                        onSubmit={onOverdueTaskSubmit}
-                        closeModal={closeTaskOverdueModal}
-                    />
-            }
         </>
     );
 };

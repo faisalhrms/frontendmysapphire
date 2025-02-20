@@ -78,9 +78,12 @@ const  TaskKanbanCard = ({ task, refetch }) => {
                 <div className="p-4 border-t dark:border-defaultborder/10 border-dashed">
                     <div className="flex items-center justify-between">
                         <AvatarList users={task.users}/>
-                        <div className="min-w-[9rem]">
-                            <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
-                        </div>
+                        {
+                            task.status !== 'under_approval' &&
+                            <div className="min-w-[9rem]">
+                                <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

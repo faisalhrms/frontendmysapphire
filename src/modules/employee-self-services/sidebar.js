@@ -38,13 +38,6 @@ export const sidebarMenu=[
                 'Digital Profile',
                 4,
                 ''
-            ),
-            generateSidebarItem(
-                PMS_ROUTES.TASK.KANBAN.path,
-                'link',
-                'Task Manager',
-                5,
-                ''
             )
             ]
     )
