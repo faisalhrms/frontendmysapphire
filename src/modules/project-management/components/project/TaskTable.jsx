@@ -37,7 +37,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                         <th scope="col">Deadline</th>
                         <th scope="col">Status</th>
                         <th scope="col">Completion Date</th>
-                        <th scope="col">Status Completion Timeline</th>
+                        <th scope="col">Completion Timeline</th>
                         <th scope="col">Timeline Groups</th>
                         <th scope="col">Progress</th>
                         <th scope="col">Priority</th>
@@ -70,7 +70,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                          }
                                      })()}
                                         <HasProjectPermission globalPermission='add_task' users={projectUsers} needIcon={true}>
-                                            {projectStatus === 'active' && milestoneStatus === 'active' && task.status !== 'under_approval' && (
+                                            {milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
                                                     tooltipContent={`Add Sub Task To (${task.name})`}
@@ -232,7 +232,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 {activeTaskId === task.id && task.children && task.children.length > 0 && (
                                     <tr>
                                     <td colSpan="8">
-                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
+                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} startedAt={task.started_at} endedAt={task.ended_at} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}/>
                                     </td>
                                     </tr>
                                 )}

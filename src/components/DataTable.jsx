@@ -18,7 +18,7 @@ function getNestedValue(obj, path) {
     }, obj);
 }
 
-const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, filter }) => {
+const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, filter, needHeader = true }) => {
     const {
         data,
         isLoading,
@@ -135,8 +135,8 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
                 // If val is an array, try to handle array-of-objects or array-of-strings
                 if (Array.isArray(val)) {
                     // For array of objects with "name"
-                    if (val.every((item) => item && typeof item === 'object' && item.name)) {
-                        val = val.map((item) => item.name).join(', ');
+                    if (val.every((item) => item && typeof item === 'object' && (item.name ?? item.full_name))) {
+                        val = val.map((item) => item.name ?? item.full_name).join(', ');
                     } else {
                         // generic fallback for arrays
                         val = val.map((item) =>
@@ -157,10 +157,19 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
 
         // 3) Blob + Download
         const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+
+        // Get current date and time for the filename in the required format (MM-DD-YYYY, h:mm:ss A)
+        const currentDate = new Date();
+        const options = { month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(currentDate);
+
+        // Construct filename
+        const fileName = `${title} Report ${formattedDate}.csv`;
+
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'datatable.csv';
+        link.download = fileName; // Use the dynamically generated file name
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -253,10 +262,13 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
 
     return (
         <div className="box custom-box">
-            <div className="box-header justify-between">
-                <div className="box-title">{title}</div>
-                <div className="flex items-center space-x-2">{buttons}</div>
-            </div>
+            {
+                needHeader &&
+                <div className="box-header justify-between">
+                    <div className="box-title">{title}</div>
+                    <div className="flex items-center space-x-2">{buttons}</div>
+                </div>
+            }
 
             <div className="box-body">
                 {/* Top toolbar */}

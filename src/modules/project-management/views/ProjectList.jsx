@@ -22,6 +22,7 @@ import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
 import DeleteModal from "@components/modals/DeleteModal.jsx";
 import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
 import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
+import PeopleFilter from "@modules/PeopleFilter/views/PeopleFilter.jsx";
 
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
@@ -40,6 +41,7 @@ const ProjectList = () => {
 
     const [startedAt, setStartedAt] = useState(null);
     const [endedAt, setEndedAt] = useState(null);
+    const [isPeopleFilterOpen, setIsPeopleFilterOpen] = useState(false);
     const totalPages = Math.ceil(data?.total / 8) || 0;
     const {
         openMilestoneModal,
@@ -111,7 +113,6 @@ const ProjectList = () => {
                                         errors={filterErrors}
                                         multiple={true}
                                         saveNewOption={false}
-
                                     />
                                     <ProjectStatusDropdown
                                         control={filterControl}
@@ -159,12 +160,30 @@ const ProjectList = () => {
                                     >
                                         <i className="ti ti-list"></i>
                                     </button>
+
+                                    {/*<div className="relative">*/}
+                                    {/*    /!* Button to toggle PeopleFilter *!/*/}
+                                    {/*    <button*/}
+                                    {/*        className="ti-btn ti-btn-sm ti-btn-primary"*/}
+                                    {/*        title="Filter by People"*/}
+                                    {/*        onClick={() => setIsPeopleFilterOpen(!isPeopleFilterOpen)}*/}
+                                    {/*    >*/}
+                                    {/*        <i className="ti ti-user"></i>*/}
+                                    {/*    </button>*/}
+
+                                    {/*    /!* PeopleFilter Dropdown (Properly Positioned Below) *!/*/}
+                                    {/*    {isPeopleFilterOpen && (*/}
+                                    {/*        <div className="absolute top-full mt-2 right-0 z-50">*/}
+                                    {/*            <PeopleFilter onClose={() => setIsPeopleFilterOpen(false)}/>*/}
+                                    {/*        </div>*/}
+                                    {/*    )}*/}
+                                    {/*</div>*/}
                                 </div>
                                 <HasPermission permission='add_project'>
                                     <div className="hs-dropdown ti-dropdown ms-2">
                                         <button type="button" aria-label="button"
                                                 className="ti-btn ti-btn-primary ti-btn-sm" aria-expanded="false">
-                                            <i className="ti ti-dots-vertical"></i>
+                                        <i className="ti ti-dots-vertical"></i>
                                         </button>
 
                                         <ul className="hs-dropdown-menu ti-dropdown-menu hidden">

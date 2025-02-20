@@ -2,7 +2,7 @@ import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {formatOptions} from "@helpers/formatters.js";
 import React from "react";
 
-const WorkspaceDropdown = ({ control, errors, data, company_id = null, department_id = null, multiple = false, key = 'workspace', classes = '', haveLabel = false, name = 'workspace_id', saveNewOption = true }) => {
+const WorkspaceDropdown = ({ control, errors, data, company_id = null, department_id = null, multiple = false, key = 'workspace', classes = '', haveLabel = false, name = 'workspace_id', saveNewOption = true, placeholder='Workspace' }) => {
     const queryParams = [];
 
     if (company_id) {
@@ -20,7 +20,7 @@ const WorkspaceDropdown = ({ control, errors, data, company_id = null, departmen
             name={name}
             control={control}
             errors={errors}
-            placeholder="Workspace"
+            placeholder={placeholder}
             preselectedOptions={data ? formatOptions(data, key) : []}
             saveOptionEndpoint="/select/pms/workspace/"
             allowSaveNewOption={saveNewOption}
