@@ -7,13 +7,13 @@ const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", l
         if (!note) return null;
 
         const formattedText = note
-            .replace(/Unapproved:/g, '<p><strong style="color: red;">Unapproved:</strong>')
-            .replace(/Approved:/g, '<p><strong style="color: red;">Approved:</strong>') //
-            .replace(/Not Picked:/g, '<p><strong style="color: red;">Not Picked:</strong>')
-            .replace(/In-Transit:/g, '<p><strong style="color: red;">In-Transit:</strong>');
+            .replace(/Unapproved:/g, '<p><strong style="color: black;">Unapproved:</strong>')
+            .replace(/Approved:/g, '<p><strong style="color: black;">Approved:</strong>') //
+            .replace(/Not Picked:/g, '<p><strong style="color: black;">Not Picked:</strong>')
+            .replace(/In-Transit:/g, '<p><strong style="color: black;">In-Transit:</strong>');
 
         return (
-            <div className="mt-4 text-xs text-right p-2 border text-danger border-gray-300 rounded bg-white">
+            <div className="mt-4 text-xs text-right p-2 border text-gray-800 border-gray-300 rounded bg-white">
                 <div dangerouslySetInnerHTML={{ __html: formattedText }} />
             </div>
         );
