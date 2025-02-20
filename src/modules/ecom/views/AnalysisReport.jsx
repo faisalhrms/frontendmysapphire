@@ -121,9 +121,8 @@ const AnalysisReport = () => {
                         </form>
                     )}
 
-                    <div className="w-64 md:w-3/5 ">
                     <OrdersBySourceChart data={analysisData} loading={false} />
-                    </div>
+
                     <div className="tab-content">
                         <div className="bg-white mt-4 rounded-lg">
                             {activeTab === "orderSource" && (

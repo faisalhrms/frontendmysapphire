@@ -4,14 +4,17 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 import TableOms from "../../components/SalesforceDashboard/TableOms.jsx";
-import { fetchDataFromAPI } from "../../services/salesforcedashboard_services.js";
+import { fetchDataFromAPI, fetchDataAPI } from "../../services/salesforcedashboard_services.js";
 import Model from "./Model.jsx";
+import Table from "../SalesforceDashboard/Table.jsx";
 
 const ExecutiveForm = ({ filters }) => {
     const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters);
-
     const [showModal, setShowModal] = useState(false);
     const [apiData, setApiData] = useState(null);
+    const [apiDatas, setApiDatas] = useState(null);
+    const [modalType, setModalType] = useState(null);
+
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -29,14 +32,15 @@ const ExecutiveForm = ({ filters }) => {
         {
             label: (
                 <span className="text-danger font-bold">
-            Missing in OMS
-        </span>
+                    Missing in OMS
+                </span>
             ),
             accessor: (
                 <div
                     className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold"
                     onClick={async () => {
                         try {
+                            setModalType('oms');
                             const fetchedData = await fetchDataFromAPI();
                             setApiData(fetchedData);
                             setShowModal(true);
@@ -45,14 +49,12 @@ const ExecutiveForm = ({ filters }) => {
                         }
                     }}
                 >
-            <span className="text-danger hover:underline hover:font-bold">
-                {formatNumberWithCommas(summary.missing_oms)}
-            </span>
+                    <span className="text-danger hover:underline hover:font-bold">
+                        {formatNumberWithCommas(summary.missing_oms)}
+                    </span>
                 </div>
             ),
         },
-
-       
         { label: "Orders with Single FOs", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
         { label: "Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.orders_with_multiple_fo) },
         { label: "Cancelled in OMS", accessor: formatNumberWithCommas(summary.cancelled) },
@@ -60,30 +62,29 @@ const ExecutiveForm = ({ filters }) => {
         {
             label: (
                 <span className="">
-            Orders with Exceptions
-        </span>
+                    Orders with Exceptions
+                </span>
             ),
             accessor: (
                 <div
                     className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold"
                     onClick={async () => {
                         try {
-                            const fetchedData = await fetchDataFromAPI();
-                            setApiData(fetchedData);
+                            setModalType('owe');
+                            const fetchedData = await fetchDataAPI();
+                            setApiDatas(fetchedData);
                             setShowModal(true);
                         } catch (error) {
                             console.error("Error fetching API data:", error);
                         }
                     }}
                 >
-            <span className="text-gray-800 hover:underline hover:font-bold">
-                {formatNumberWithCommas(summary.order_with_exception)}
-            </span>
+                    <span className="text-gray-800 hover:underline hover:font-bold">
+                        {formatNumberWithCommas(summary.order_with_exception)}
+                    </span>
                 </div>
             ),
         },
-
-        // { label: "Orders with Exceptions", accessor: formatNumberWithCommas(summary.order_with_exception) },
     ];
 
     const foBreakupData = [
@@ -94,14 +95,13 @@ const ExecutiveForm = ({ filters }) => {
     const fulfillmentData = [
         {
             label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
-            accessor: <span style={{ fontWeight: "bold" }}>{ formatNumberWithCommas(summary.total_fo_to_fulfil) }</span>
+            accessor: <span style={{ fontWeight: "bold" }}>{formatNumberWithCommas(summary.total_fo_to_fulfil)}</span>
         },
         ...fulfilment_data.map(row => ({
             label: row.status.trim(),
             accessor: formatNumberWithCommas(row.value)
         })),
-        { label: <span style={{ fontWeight: "bold" }}>Reconciliation</span> , accessor: formatNumberWithCommas(summary.reconciliation) },
-
+        { label: <span style={{ fontWeight: "bold" }}>Reconciliation</span>, accessor: formatNumberWithCommas(summary.reconciliation) },
     ];
 
     return (
@@ -124,7 +124,9 @@ const ExecutiveForm = ({ filters }) => {
 
             {showModal && (
                 <Model onClose={() => setShowModal(false)}>
-                    <TableOms apiData={apiData} />
+                    {
+                        modalType === "oms" ? <TableOms apiData={apiData} /> : <Table apiDatas={apiDatas} />
+                    }
                 </Model>
             )}
         </div>
