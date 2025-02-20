@@ -1,44 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useMemo, useCallback} from "react";
 import { Link } from "react-router-dom";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
 import ExecutiveForm from "../components/SalesforceDashboard/ExecutiveForm.jsx";
 import AgingForm from "../components/SalesforceDashboard/AgingForm.jsx";
+import FormInput from "@components/form/FormInput.jsx";
+import useFilters from "@hooks/useFilters.js";
+import FilterButton from "@components/form/FilterButton.jsx";
 
 const ExecutiveTabs = () => {
     const [activeTab, setActiveTab] = useState("executiveSummary");
     const [showFilters, setShowFilters] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
 
-    const getCurrentDate = () => new Date();
-    const getDynamicFromDate = () => new Date("2025-01-21");
+    const {
+        control,
+        handleSubmit,
+        errors,
+        getFilters
+    } = useFilters(
+        useMemo(
+            () => ({
+                initialFilters: [
+                    { name: 'date_from', defaultValue: new Date("2025-01-21").toISOString().slice(0, 10)},
+                    { name: 'date_to', defaultValue: new Date().toISOString().slice(0, 10)},
+                ],
+            }),
+            []
+        )
+    );
 
-    const [fromDate, setFromDate] = useState(getDynamicFromDate);
-    const [toDate, setToDate] = useState(getCurrentDate);
-    const [data, setData] = useState(null);
+    const [filters, setFilters] = useState(getFilters());
 
-    const fetchData = () => {
-        console.log("Fetching data for:", fromDate, toDate);
-        setData(`Data updated for range: ${fromDate.toDateString()} - ${toDate.toDateString()}`);
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [fromDate, toDate]);
-
-    const handleDateChange = (setter) => (date) => {
-        if (date) {
-            setter(date);
-        }
-    };
-
-    const resetDates = () => {
-        setFromDate(getDynamicFromDate());
-        setToDate(getCurrentDate());
-        setSelectedDate(new Date().toISOString().split("T")[0]);
-    };
+    const onSubmit = useCallback(
+        (formData) => {
+            setFilters(formData);
+        },
+        []
+    );
 
     return (
         <>
@@ -77,7 +76,6 @@ const ExecutiveTabs = () => {
                         className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                         onClick={() => {
                             setShowFilters(!showFilters);
-                            setSelectedDate(new Date().toISOString().split("T")[0]);
                         }}
                     >
                         <i className="ri-filter-3-fill inline-block"></i> Filters
@@ -86,34 +84,37 @@ const ExecutiveTabs = () => {
             </div>
 
             {showFilters && activeTab === "executiveSummary" && (
-                <div className="bg-white p-2 mt-2 rounded-lg shadow-md">
-                    <div className="mt-2 flex justify-between">
-                        <div>
-                            <label className="block text-gray-600">From:</label>
-                            <DatePicker
-                                selected={fromDate}
-                                onChange={handleDateChange(setFromDate)}
-                                className="border p-2 rounded"
-                                dateFormat="yyyy-MM-dd"
-                            />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="bg-white p-2 mt-2 rounded-lg shadow-md">
+                        <div className="mt-2 mr-2 flex items-center">
+                            <div className="mr-2">
+                                <FormInput
+                                    type="date"
+                                    name="date_from"
+                                    control={control}
+                                    errors={errors}
+                                    placeholder="From"
+                                    label={true}
+                                />
+                            </div>
+                            <div className="mr-2">
+                                <FormInput
+                                    type="date"
+                                    name="date_to"
+                                    control={control}
+                                    errors={errors}
+                                    placeholder="To"
+                                    label={true}
+                                />
+                            </div>
+                            <div className=" mr-2 flex items-right">
+                                <FilterButton/>
+                            </div>
                         </div>
-                        <div>
-                            <div className="block text-gray-600">To:</div>
-                            <DatePicker
-                                selected={toDate}
-                                onChange={handleDateChange(setToDate)}
-                                className="border p-2 rounded"
-                                dateFormat="yyyy-MM-dd"
-                            />
-                        </div>
-                        <button
-                            className="border xs px-2 py-2 rounded ti-btn ti-btn-primary !mb-0"
-                            onClick={resetDates}
-                        >
-                            <i className="ri-refresh-line"></i> Refresh
-                        </button>
                     </div>
-                </div>
+
+
+                </form>
             )}
 
             <div className="grid grid-cols-12 gap-6">
@@ -122,21 +123,21 @@ const ExecutiveTabs = () => {
                         {activeTab === "executiveSummary" && (
                             <div className="tab-pane show active p-6" id="generate-report"
                                  aria-labelledby="generate-report" role="tabpanel">
-                                <ExecutiveForm />
+                                <ExecutiveForm filters={filters}/>
                             </div>
                         )}
 
                         {activeTab === "agingLiabilities" && (
                             <div className="tab-pane show active p-6 mt-6" id="replenishment-history"
                                  aria-labelledby="replenishment-history" role="tabpanel">
-                                <AgingForm />
+                                        <AgingForm/>
+                                    </div>
+                                )}
                             </div>
-                        )}
+                        </div>
                     </div>
-                </div>
-            </div>
-        </>
-    );
-};
+                </>
+            );
+            };
 
-export default ExecutiveTabs;
+            export default ExecutiveTabs;

@@ -40,6 +40,5 @@ const ProjectDashboardStats = ({filters}) => {
                     </div>
                 </>
                 )
-                }
-
-                export default React.memo(ProjectDashboardStats)
+          }
+export default React.memo(ProjectDashboardStats)
