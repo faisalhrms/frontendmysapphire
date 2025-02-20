@@ -124,8 +124,6 @@ END:VCARD`;
       <div className="text-sm mb-4">{profileData.email}</div>
       <div className="text-lg font-semibold">Address</div>
       <div className="text-sm mb-4">{profileData.address}</div>
-      <div className="text-lg font-semibold">UAN</div>
-      <div className="text-sm mb-8">+92 42 111 000 091</div>
       <div className="flex justify-evenly mt-auto">
         <div className="w-10 h-10 border border-white rounded-full flex items-center justify-center" onClick={handleDownloadQR}>
           <i className="ri-qr-code-line text-white text-lg"/>
