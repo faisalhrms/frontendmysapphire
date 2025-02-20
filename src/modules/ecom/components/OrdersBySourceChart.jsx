@@ -14,41 +14,56 @@ const OrdersBySourceChart = ({ data, loading }) => {
     }, [data]);
 
     return (
-        <div className="bg-white shadow rounded-lg p-4 w-64 md:w-3/5 mt-4 ">
-            <div className="flex justify-between items-center mb-4">
-                <div className="font-semibold text-lg">Orders by Source Group</div>
-            </div>
-
-            <div className="flex justify-center">
-                {loading ? (
-                    <LoadingSpinner />
-                ) : (
-                    <ApexChart
-                        chartType="donut"
-                        height={200}
-                        labels={chartData.labels}
-                        series={chartData.series}
-                        additionalOptions={{
-                            legend: { position: "bottom" },
-                            stroke: {
-                                curve: "smooth",
-                                lineCap: "round",
-                                colors: ["#fff"],
-                                width: 2,
-                            },
-                        }}
-                    />
-                )}
-            </div>
-
-
-            <div className="grid grid-cols-5 gap-2 mt-4 text-center">
-                {chartData.labels.map((label, index) => (
-                    <div key={index} className="p-2">
-                        <span className="text-gray-500 text-xs">{label}</span>
-                        <span className="block text-lg font-semibold">{chartData.series[index]}</span>
+        <div className="grid grid-cols-12 gap-x-6 mt-4">
+            <div className="xl:col-span-6 col-span-12">
+                <div className="box">
+                    <div className="box-header justify-between">
+                        <div className="box-title">
+                            Orders by Source Group
+                        </div>
                     </div>
-                ))}
+                    <div className="box-body !p-0">
+                        {loading ? (
+                            <LoadingSpinner/>
+                        ) : (
+                            <div className="p-6 pb-2">
+                                <ApexChart
+                                    chartType="donut"
+                                    chartWidth={200}
+                                    height={200}
+                                    labels={chartData.labels}
+                                    series={chartData.series}
+                                    additionalOptions={{
+                                        legend: {position: "left"},
+                                        stroke: {
+                                            curve: "smooth",
+                                            lineCap: "round",
+                                            colors: ["#fff"],
+                                            width: 2,
+                                        },
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <div className="box-footer !p-0">
+                        <div className="grid grid-cols-12 justify-center">
+                            {chartData.labels.map((label, index) => {
+                                return (
+                                    <div className="col-span-2 pe-0 text-center" key={index}>
+                                        <div className="sm:p-4 p-2">
+                                        <span
+                                            className="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">{label}</span>
+                                            <span
+                                                className="block text-[1rem] font-semibold">{chartData.series[index]}</span>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     );
