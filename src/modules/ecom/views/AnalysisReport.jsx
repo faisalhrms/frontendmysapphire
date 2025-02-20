@@ -6,8 +6,11 @@ import FormInput from "@components/form/FormInput.jsx";
 import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
 import { fetchAnalysis } from "../services/ecom_services.js";
+import OrdersBySourceChart from "../components/OrdersBySourceChart.jsx";
+
 
 const AnalysisReport = () => {
+
     const [activeTab, setActiveTab] = useState("orderSource");
     const [load, setLoad] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
@@ -18,6 +21,9 @@ const AnalysisReport = () => {
         yesterday.setDate(yesterday.getDate() - 1);
         return yesterday.toISOString().slice(0, 10);
     };
+
+
+
 
     const { control, handleSubmit, errors, getFilters } = useFilters(
         useMemo(
@@ -36,7 +42,7 @@ const AnalysisReport = () => {
     const fetchData = async () => {
         setLoad(true);
         try {
-            const response = await fetchAnalysis(filters.date_from, filters.date_to);
+            const response = await fetchAnalysis({from:filters.date_from, to:filters.date_to});
             setAnalysisData(
                 response?.source_code?.map(item => ({
                     source_group: item.source_group,
@@ -60,12 +66,13 @@ const AnalysisReport = () => {
         setFilters(formData);
     };
 
+    console.log(`this is data`,analysisData)
     return (
         <>
             <PageHeader currentpage="E-Commerce" />
 
             <div className="grid grid-cols-12 gap-6">
-                <div className="xl:col-span-12 col-span-12">
+                <div className=" xl:col-span-12 col-span-12">
                     <div className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md">
                         <nav className="flex space-x-4">
                             <Link
@@ -113,7 +120,9 @@ const AnalysisReport = () => {
                             </div>
                         </form>
                     )}
-
+                    <div className="w-50">
+                    <OrdersBySourceChart data={analysisData} loading={false} />
+                    </div>
                     <div className="tab-content">
                         <div className="bg-white mt-4 rounded-lg">
                             {activeTab === "orderSource" && (
