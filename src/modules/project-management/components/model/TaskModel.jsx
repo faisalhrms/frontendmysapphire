@@ -63,16 +63,8 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     placeholder="Task Name"
                                                 />
                                             </div>
-                                            <div className='xl:col-span-6 col-span-12'>
-                                                <ProjectCategoryDropdown
-                                                    data={data}
-                                                    control={control}
-                                                    errors={errors}
-                                                    saveNewOption={true}
-                                                    haveLabel={true}
-                                                />
-                                            </div>
-                                            <div className="col-span-6">
+
+                                            <div className="col-span-12">
                                                 <FormAsyncSelect
                                                     isMulti={true}
                                                     name="team_ids"
@@ -165,12 +157,22 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                 data={taskData}
                                                 dataKey='external_users'
                                             />
-                                            <div className="col-span-12">
+                                            <div className="col-span-6">
                                                 <FormToggle
                                                     label={true}
                                                     placeholder='Requires Approval'
                                                     toggleClasses=''
                                                     name="requires_approval"
+                                                    control={control}
+                                                    errors={errors}
+                                                />
+                                            </div>
+                                            <div className="col-span-6">
+                                                <FormToggle
+                                                    label={true}
+                                                    placeholder='Is Ecomm Deliverable'
+                                                    toggleClasses=''
+                                                    name="is_ecom"
                                                     control={control}
                                                     errors={errors}
                                                 />

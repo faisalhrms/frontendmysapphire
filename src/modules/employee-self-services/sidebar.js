@@ -45,6 +45,13 @@ export const sidebarMenu=[
                 'Task Manager',
                 5,
                 ''
+            ),
+            generateSidebarItem(
+                SELF_SERVICES_ROUTES.TASK_LIST.path,
+                'link',
+                'Task List',
+                6,
+                ''
             )
             ]
     )

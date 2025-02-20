@@ -16,6 +16,7 @@ const taskSchema = z.object({
   
   parent: z.union([z.number().int().positive("Parent must be a positive integer"), z.null()]).optional(),
   requires_approval: z.boolean().default(false),
+  is_ecom: z.boolean().default(false),
   description: z.string()
     .min(1, "Description is required")
     .max(1000, "Description must be at most 1000 characters long"),
@@ -33,7 +34,7 @@ const taskSchema = z.object({
     .min(1, "At least one user ID is required"),
   external_user_ids: z.array(z.number().int().positive("External User ID must be a positive integer")).optional(),
   tag_ids: z.array(z.number().int().positive("Tag ID must be a positive integer")).min(1, "At least one tag ID is required"),
-  category_id: z.union([z.number(), z.null()]).default(null),
+
 }).refine(data => {
   if (data.ended_at) {
     return new Date(data.ended_at) >= new Date(data.started_at);

@@ -5,7 +5,7 @@ import ServiceRequestDetail from '@modules/employee-self-services/service-reques
 import WorkDesk from '@modules/employee-self-services/work-desk/views/WorkDesk.jsx';
 import DiscountCard from '@modules/employee-self-services/discount-card/views/DiscountCard.jsx';
 import DigitalProfile from '@modules/employee-self-services/my-digital-profile/views/DigitalProfile.jsx';
-
+import TaskList from "@modules/employee-self-services/task-list/views/TaskList.jsx";
 export const SELF_SERVICES_ROUTES = {
     SERVICES: {
         READ: {
@@ -29,7 +29,11 @@ export const SELF_SERVICES_ROUTES = {
         DIGITAL_PROFILE: {
             path: '/module/ess/my/digital/profile',
         },
+
     },
+    TASK_LIST:{
+        path:`/module/ess/my/tasks/`,
+    }
 };
 
 export const MODULE_ROUTES = [
@@ -61,4 +65,8 @@ export const MODULE_ROUTES = [
         path: SELF_SERVICES_ROUTES.SERVICES.DIGITAL_PROFILE.path,
         component: DigitalProfile,
     },
+    {
+        path:SELF_SERVICES_ROUTES.TASK_LIST.path,
+        component:TaskList
+    }
 ];

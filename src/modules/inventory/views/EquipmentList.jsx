@@ -5,7 +5,7 @@ import DataTable from "@components/DataTable.jsx";
 import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import EquipmentListFilter from "../components/EquipmentListFilter.jsx";
+import EquipmentListFilter from "@modules/inventory/components/EquipmentListFilter.jsx";
 import useFilters from "@hooks/useFilters.js";
 
 const EquipmentList = () => {
