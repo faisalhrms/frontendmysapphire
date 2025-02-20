@@ -101,15 +101,18 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                             }
                                         </HasProjectPermission>
                                         <HasProjectPermission globalPermission='delete_project' users={projectUsers}>
-                                            <Tooltip
-                                                id={`delete-task-tooltip-${task.id}`}
-                                                tooltipContent={`Delete Task (${task.name})`}>
-                                                <button
-                                                    onClick={() => handleDeleteClick(`/pms/tasks/${task.id}/delete/`, task.name, refetch)}
-                                                    className='ti-btn ti-btn-danger ti-btn-sm'>
-                                                    <i className="ri-delete-bin-2-line align-middle"></i>
-                                                </button>
-                                            </Tooltip>
+                                            {
+                                                task.status !== 'under_approval' &&
+                                                <Tooltip
+                                                    id={`delete-task-tooltip-${task.id}`}
+                                                    tooltipContent={`Delete Task (${task.name})`}>
+                                                    <button
+                                                        onClick={() => handleDeleteClick(`/pms/tasks/${task.id}/delete/`, task.name, refetch)}
+                                                        className='ti-btn ti-btn-danger ti-btn-sm'>
+                                                        <i className="ri-delete-bin-2-line align-middle"></i>
+                                                    </button>
+                                                </Tooltip>
+                                            }
                                         </HasProjectPermission>
                                     </span>
                                 </td>

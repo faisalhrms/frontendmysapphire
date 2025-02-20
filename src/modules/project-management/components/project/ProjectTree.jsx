@@ -5,13 +5,14 @@ import MilestoneAccordion from "@modules/project-management/components/project/M
 import MilestoneModel from "@modules/project-management/components/model/MilestoneModel.jsx";
 import {useMilestoneModal} from "@modules/project-management/hooks/milestoneHooks.js";
 import TaskModel from "@modules/project-management/components/model/TaskModel.jsx";
-import {useTaskModal} from "@modules/project-management/hooks/taskHooks.js";
+import {useTaskModal, useTaskOverdueModal} from "@modules/project-management/hooks/taskHooks.js";
 import sampleFile from "@assets/files/sample_upload_tasks_against_milestone.xlsx";
 import {useMilestoneSearch} from "@modules/project-management/hooks/projectHooks.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import SimpleBar from "simplebar-react";
 import useFullScreen from "@hooks/useFullScreen.js";
 import {Link} from "react-router-dom";
+import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
 
 const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, projectUsers, milestones = [], isLoading, refetch, handleUploadModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,6 +53,18 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
 
   const { isFullscreen, handleFullscreenClick } = useFullScreen();
   const containerHeight = isFullscreen ? "calc(100vh - 100px)" : '500px';
+
+  const {
+    taskName,
+    openTaskOverdueModal,
+    closeTaskOverdueModal,
+    control:overDueControl,
+    errors: overDueErrors,
+    isSubmitting: overDueSubmitting,
+    handleSubmit: overDueSubmit,
+    onOverdueTaskSubmit,
+    isOverdueTaskModalOpen
+  } = useTaskOverdueModal(refetch)
 
   return (
       <>
@@ -110,6 +123,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                       openMilestoneModal={openMilestoneModal}
                       handleUploadModal={handleUploadModal}
                       refetch={refetch}
+                      openTaskOverdueModal={openTaskOverdueModal}
                   />
               )}
             </div>
@@ -143,6 +157,19 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                 endedAt={milestoneDates.endedAt}
             />
         )}
+
+        {
+            isOverdueTaskModalOpen &&
+            <TaskOverdueModal
+                taskName={taskName}
+                control={overDueControl}
+                errors={overDueErrors}
+                isSubmitting={overDueSubmitting}
+                handleSubmit={overDueSubmit}
+                onSubmit={onOverdueTaskSubmit}
+                closeModal={closeTaskOverdueModal}
+            />
+        }
       </>
   );
 };
