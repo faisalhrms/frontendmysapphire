@@ -1,18 +1,18 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, {useMemo, useEffect, useState} from "react";
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
-import { useForm } from "react-hook-form";
+import {useForm} from "react-hook-form";
 import api from "@config/axiosConfig.js";
 import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
 
-const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
+const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
     const [includePreviousThread, setIncludePreviousThread] = useState(false);
 
     const {
         control,
         handleSubmit,
         reset,
-        formState: { errors, isSubmitting },
+        formState: {errors, isSubmitting},
     } = useForm({
         defaultValues: {
             to_email: [],
@@ -22,19 +22,21 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
     });
 
     const preselectedToEmails = useMemo(() => {
-        // Combine serviceRequest.to_email with serviceRequest.to_emails and remove duplicates
-        const emails = [...new Set([...(serviceRequest?.to_email || []), ...(serviceRequest?.to_emails || [])])];
-        return emails.map((email) => ({
+        // Combine serviceRequest.to_email and reporter_email, then remove duplicates
+        const emails = new Set([...(serviceRequest?.to_email || [])]);
+        if (serviceRequest?.reporter_email) {
+            emails.add(serviceRequest.reporter_email);
+        }
+        return [...emails].map((email) => ({
             label: email,
             value: email,
         }));
-    }, [serviceRequest?.to_email, serviceRequest?.to_emails]);
+    }, [serviceRequest?.to_email, serviceRequest?.reporter_email]);
 
     const preselectedCcEmails = useMemo(() => {
         const reporterEmail = user?.email;
         const ccEmails = serviceRequest?.cc_email || [];
         const allCcEmails = [...new Set(reporterEmail ? [reporterEmail, ...ccEmails] : ccEmails)];
-
         return allCcEmails.map((email) => ({
             label: email,
             value: email,
@@ -82,10 +84,13 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
     return (
         <div
             id="email-compose"
-            className={`hs-overlay fixed inset-0 z-50 bg-black/40 transition-all duration-300 ${isOpen ? "block" : "hidden"}`}
+            className={`hs-overlay fixed inset-0 z-50 bg-black/40 transition-all duration-300 ${
+                isOpen ? "block" : "hidden"
+            }`}
             tabIndex={-1}
         >
-            <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex min-h-[calc(100%-3.5rem)] items-center justify-center max-w-2xl mx-auto my-auto">
+            <div
+                className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex min-h-[calc(100%-3.5rem)] items-center justify-center max-w-2xl mx-auto my-auto">
                 <div className="ti-modal-content bg-white rounded-lg shadow-xl w-full">
                     <div className="ti-modal-header flex justify-between items-center p-4 border-b">
                         <h6 className="modal-title text-[1rem] font-semibold">Compose Email</h6>
@@ -133,9 +138,7 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
                                     placeholder="Write your email message here"
                                     editorOptions={{
                                         height: 150,
-                                        buttonList: [
-                                            ["bold", "italic", "underline", "strike"],
-                                        ],
+                                        buttonList: [["bold", "italic", "underline", "strike", "image"]],
                                     }}
                                 />
                             </div>
@@ -160,7 +163,7 @@ const EmailComposeModal = ({ isOpen, onClose, serviceRequest, user }) => {
                             >
                                 Cancel
                             </button>
-                            <FormButton isLoading={isSubmitting} text="Send" />
+                            <FormButton isLoading={isSubmitting} text="Send"/>
                         </div>
                     </form>
                 </div>

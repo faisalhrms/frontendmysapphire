@@ -116,24 +116,28 @@ const AnalysisReport = () => {
                                     defaultValue={filters.date_to}
                                     label={true}
                                 />
-                                <FilterButton />
+                                <FilterButton/>
                             </div>
                         </form>
                     )}
-                    <div className="w-50">
+
                     <OrdersBySourceChart data={analysisData} loading={false} />
-                    </div>
+
                     <div className="tab-content">
                         <div className="bg-white mt-4 rounded-lg">
                             {activeTab === "orderSource" && (
                                 <AnalysisTable
                                     title="Order Source"
                                     headers={[
-                                        { label: "Group", accessor: "source_group", align: "left" },
-                                        { label: "Orders", accessor: "orders", align: "right" },
-                                        { label: "Merchandise Total", accessor: "merchandise_total", align: "right" },
-                                        { label: "Avg Merchandise Total Per Order", accessor: "avg_merchandise_total", align: "right" },
-                                        { label: "Items Per Order", accessor: "avg_items_per_order", align: "right" },
+                                        {label: "Group", accessor: "source_group", align: "left"},
+                                        {label: "Orders", accessor: "orders", align: "right"},
+                                        {label: "Merchandise Total", accessor: "merchandise_total", align: "right"},
+                                        {
+                                            label: "Avg Merchandise Total Per Order",
+                                            accessor: "avg_merchandise_total",
+                                            align: "right"
+                                        },
+                                        {label: "Items Per Order", accessor: "avg_items_per_order", align: "right"},
                                     ]}
                                     data={analysisData}
                                     loading={load}
