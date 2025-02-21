@@ -36,30 +36,51 @@ export const FetchPendingOrderLib = async () => {
     }
 }
 
-export const fetchDataFromAPI = async () => {
+export const fetchDataFromAPI = async (dateFrom, dateTo, filters) => {
     try {
-        const response = await api.get("salesforce/fetch_drill_down_sfd_es/?date_from=2025-01-21&date_to=2025-02-18&p_type=missing_in_oms", {
-
+        const response = await api.get("salesforce/fetch_drill_down_sfd_es/", {
+            params: {
+                date_from: dateFrom,
+                date_to: dateTo,
+                p_type: "missing_in_oms",
+                ...filters
+            }
         });
-        // Notify.success("Successfully Fetched Pending Orders!");
         return response.data?.data;
     } catch (error) {
-        // Notify.error(error.response?.data?.message || "Failed to fetch Pending Orders");
         throw error;
     }
-}
+};
 
-export const fetchDataAPI = async () => {
+export const fetchDataAPI = async (dateFrom, dateTo, filters) => {
     try {
-        const response = await api.get("salesforce/fetch_drill_down_sfd_es/?date_from=2025-01-21&date_to=2025-02-18&p_type=orders_with_exceptions", {
-
+        const response = await api.get(`salesforce/fetch_drill_down_sfd_es/`, {
+            params: {
+                date_from: dateFrom,
+                date_to: dateTo,
+                p_type: "orders_with_exceptions",
+                ...filters
+            }
         });
-        // Notify.success("Successfully Fetched Pending Orders!");
         return response.data?.data;
     } catch (error) {
-        // Notify.error(error.response?.data?.message || "Failed to fetch Pending Orders");
         throw error;
     }
-}
+};
 
+export const fetchDataAPIProcess = async (dateFrom, dateTo, filters) => {
+    try {
+        const response = await api.get(`salesforce/fetch_drill_down_sfd_es/`, {
+            params: {
+                date_from: dateFrom,
+                date_to: dateTo,
+                p_type: "in_process_with_cc",
+                ...filters
+            }
+        });
+        return response.data?.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
