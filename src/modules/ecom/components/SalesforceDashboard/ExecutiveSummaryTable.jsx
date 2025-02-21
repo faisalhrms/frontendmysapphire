@@ -1,15 +1,23 @@
+
 import React from "react";
 import PropTypes from "prop-types";
-import {formatNumberWithCommas} from "@helpers/formatters.js";
+import { formatNumberWithCommas } from "@helpers/formatters.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const ExecutiveSummaryTable = ({ title, data, totals }) => {
+const ExecutiveSummaryTable = ({ title, data, totals, isLoading }) => {
     return (
         <div className="w-3/5 bg-white p-4 shadow-md rounded-lg mb-6">
             <h2 className="text-sm font-bold text-black px-4 py-2 bg-gray-200">{title}</h2>
 
             <table className="min-w-full border border-gray-200">
                 <tbody className="text-black text-sm">
-                {data.length > 0 ? (
+                {isLoading ? (
+                    <tr>
+                        <td colSpan={2} className="py-4 px-4 text-center">
+                            <LoadingSpinner />
+                        </td>
+                    </tr>
+                ) : data.length > 0 ? (
                     data.map((row, rowIndex) => (
                         <tr key={rowIndex} className="border-b border-gray-200">
                             {Object.entries(row).map(([key, cell], cellIndex) => (
@@ -53,6 +61,7 @@ ExecutiveSummaryTable.propTypes = {
     title: PropTypes.string.isRequired,
     data: PropTypes.array.isRequired,
     totals: PropTypes.array.isRequired,
+    isLoading: PropTypes.bool
 };
 
 export default ExecutiveSummaryTable;
