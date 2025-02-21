@@ -43,7 +43,7 @@ const ExecutiveTabs = () => {
         <>
             <PageHeader currentpage="Salesforce Dashboard" />
 
-            <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4">
+            <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex space-x-4">
                     <Link
                         to="#"
@@ -85,8 +85,8 @@ const ExecutiveTabs = () => {
 
             {showFilters && activeTab === "executiveSummary" && (
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="bg-white p-2 mt-2 rounded-lg shadow-md">
-                        <div className="mt-2 mr-2 flex items-center">
+                    <div className="bg-white p-2 mt-2 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+                        <div className="mt-2 mr-2 flex items-center dark:text-gray-200 dark:bg-bodybg">
                             <div className="mr-2">
                                 <FormInput
                                     type="date"
@@ -107,7 +107,7 @@ const ExecutiveTabs = () => {
                                     label={true}
                                 />
                             </div>
-                            <div className=" mr-2 flex items-right">
+                            <div className=" mr-2 flex items-right dark:text-gray-200 dark:bg-bodybg">
                                 <FilterButton/>
                             </div>
                         </div>
@@ -117,18 +117,18 @@ const ExecutiveTabs = () => {
                 </form>
             )}
 
-            <div className="grid grid-cols-12 gap-6">
-                <div className="xl:col-span-12 col-span-12">
-                    <div className="tab-content bg-white rounded-lg shadow-md mt-4">
+            <div className="grid grid-cols-12 gap-6 dark:text-gray-200 dark:bg-bodybg">
+                <div className="xl:col-span-12 col-span-12 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="tab-content bg-white rounded-lg shadow-md mt-4 dark:text-gray-200 dark:bg-bodybg">
                         {activeTab === "executiveSummary" && (
-                            <div className="tab-pane show active p-6" id="generate-report"
+                            <div className="tab-pane show active p-6 dark:text-gray-200 dark:bg-bodybg" id="generate-report"
                                  aria-labelledby="generate-report" role="tabpanel">
                                 <ExecutiveForm filters={filters}/>
                             </div>
                         )}
 
                         {activeTab === "agingLiabilities" && (
-                            <div className="tab-pane show active p-6 mt-6" id="replenishment-history"
+                            <div className="tab-pane show active p-6 mt-6 dark:text-gray-200 dark:bg-bodybg" id="replenishment-history"
                                  aria-labelledby="replenishment-history" role="tabpanel">
                                         <AgingForm/>
                                     </div>

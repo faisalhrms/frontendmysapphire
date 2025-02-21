@@ -7,6 +7,7 @@ import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
 import { fetchAnalysis } from "../services/ecom_services.js";
 import OrdersBySourceChart from "../components/OrdersBySourceChart.jsx";
+import AnalysisConversionTable from "../components/AnalysisConversionTable.jsx";
 
 
 const AnalysisReport = () => {
@@ -142,9 +143,14 @@ const AnalysisReport = () => {
                                     data={analysisData}
                                     loading={load}
                                 />
+
                             )}
+
                         </div>
+
+                        <AnalysisConversionTable/>
                     </div>
+
                 </div>
             </div>
         </>
