@@ -83,4 +83,41 @@ export const fetchDataAPIProcess = async (dateFrom, dateTo, filters) => {
         throw error;
     }
 };
+export const fetchDataAPICC = async (dateFrom, dateTo, filters) => {
+    try {
+        const response = await api.get(`salesforce/fetch_drill_down_sfd_es/`, {
+            params: {
+                date_from: dateFrom,
+                date_to: dateTo,
+                p_type: "commerce_cloud",
+                ...filters
+            }
+        });
+        return response.data?.data;
+    } catch (error) {
+        throw error;
+    }
+};
+export const fetchDataAPIOMS = async (dateFrom, dateTo, filters) => {
+    try {
+        const response = await api.get(`salesforce/fetch_drill_down_sfd_es/`, {
+            params: {
+                date_from: dateFrom,
+                date_to: dateTo,
+                p_type: "total_orders_oms",
+                ...filters
+            }
+        });
+        return response.data?.data;
+    } catch (error) {
+        throw error;
+    }
+};
+const formatDate = (date) => {
+    if (!date) return null;
+    return new Date(date).toISOString().split('T')[0];
+};
+
+
+
 
