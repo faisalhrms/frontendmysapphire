@@ -1,4 +1,5 @@
 import ProjectList from '@modules/project-management/views/ProjectList.jsx';
+import ProjectEcom from '@modules/project-management/views/ProjectsMilestonesTasksList.jsx';
 import ProjectCreate from '@modules/project-management/views/ProjectCreate.jsx';
 import ProjectEdit from '@modules/project-management/views/ProjectEdit.jsx';
 import ProjectDetail from '@modules/project-management/views/ProjectDetail.jsx';
@@ -10,6 +11,9 @@ export const PMS_ROUTES = {
   PROJECT: {
     READ: {
       path: "/module/projects",
+    },
+    ECOM: {
+      path: "/module/projects/e-com",
     },
     CREATE: {
       path: "/module/projects/create",
@@ -40,6 +44,10 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.PROJECT.READ.path,
     component: ProjectList,
+  },
+  {
+    path: PMS_ROUTES.PROJECT.ECOM.path,
+    component: ProjectEcom,
   },
   {
     path: PMS_ROUTES.PROJECT.CREATE.path,

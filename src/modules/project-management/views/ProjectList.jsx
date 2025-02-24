@@ -19,7 +19,6 @@ import {setViewType} from "@modules/project-management/redux/pmsSlice.js";
 import ProjectGridItems from "@modules/project-management/components/ProjectGridItems.jsx";
 import ProjectListItems from "@modules/project-management/components/ProjectListItems.jsx";
 import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
-import DeleteModal from "@components/modals/DeleteModal.jsx";
 import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
 import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
 import PeopleFilter from "@modules/PeopleFilter/views/PeopleFilter.jsx";
