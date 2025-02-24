@@ -8,7 +8,7 @@ import {
     fetchDataFromAPI,
     fetchDataAPI,
     fetchDataAPIProcess,
-    fetchDataAPICC, fetchDataAPIOMS
+    fetchDataAPICC, fetchDataAPIOMS, fetchDataAPIOMSSS, fetchDataAPIOO
 } from "../../services/salesforcedashboard_services.js";
 import Model from "./Model.jsx";
 import Table from "../SalesforceDashboard/Table.jsx";
@@ -36,8 +36,8 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
 
     const fetchModalData = async (type) => {
         try {
-            const validDateFrom = dateFrom || new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0];
-            const validDateTo = dateTo || new Date().toISOString().split("T")[0];
+            const validDateFrom = filters?.date_from || new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0];
+            const validDateTo = filters?.date_to || new Date().toISOString().split("T")[0];
 
             let fetchedData;
             setModalType(type);
@@ -52,7 +52,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 fetchedData = await fetchDataAPI(validDateFrom, validDateTo, filters);
                 setApiDatas(fetchedData);
             }
-        else if (type === "commerce_cloud") {
+           else if (type === "commerce_cloud") {
             fetchedData = await fetchDataAPICC(validDateFrom, validDateTo, filters);
             setApiDatas(fetchedData);
         }
@@ -60,19 +60,19 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 fetchedData = fetchDataAPIOMS(validDateFrom, validDateTo, filters);
                 setApiDatas(fetchedData);
             }
-            // else if (type === "single_fo") {
-            //     fetchedData = await fetchDataAPICC(validDateFrom, validDateTo, filters);
-            //     setApiDatas(fetchedData);
-            // }
-            // else if (type === "multiple_fo") {
-            //     fetchedData = await fetchDataAPICC(validDateFrom, validDateTo, filters);
-            //     setApiDatas(fetchedData);
-            // }
-            //
-            // else if (type === "cancelled") {
-            //     fetchedData = await fetchDataAPICC(validDateFrom, validDateTo, filters);
-            //     setApiDatas(fetchedData);
-            // }
+            else if (type === "single_fo") {
+                fetchedData = await fetchDataAPIOO(validDateFrom, validDateTo, filters);
+                setApiDatas(fetchedData);
+            }
+            else if (type === "multiple_fo") {
+                fetchedData = await fetchDataAPIOMSAA(validDateFrom, validDateTo, filters);
+                setApiDatas(fetchedData);
+            }
+
+            else if (type === "cancelled") {
+                fetchedData = await fetchDataAPIOMSSS(validDateFrom, validDateTo, filters);
+                setApiDatas(fetchedData);
+            }
             setShowModal(true);
         } catch (error) {
             console.error("Error fetching modal data:", error);
@@ -86,7 +86,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg">Commerce Cloud</span>,
                 accessor: (
                     <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
-                         onClick={() => fetchDataAPICC("commerce_cloud")}>
+                         onClick={() => fetchModalData("commerce_cloud")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_cc)}
                     </span>
@@ -97,7 +97,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg">Total - Orders in OMS</span>,
                 accessor: (
                     <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
-                         onClick={() => fetchDataAPIOMS("total_orders_oms")}>
+                         onClick={() => fetchModalData("total_orders_oms")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_summary)}
                     </span>
