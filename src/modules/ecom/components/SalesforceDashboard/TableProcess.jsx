@@ -21,6 +21,7 @@ const TableProcess = ({ apiDataprocess, title }) => {
             },
             { Header: "Payment Status", accessor: "paymentstatus" },
             { Header: "Payment Method", accessor: "c_paymentmethod" },
+            { Header: "Reason", accessor: "reason" },
         ],
         []
     );
