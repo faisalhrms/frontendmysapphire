@@ -17,9 +17,9 @@ const AnalysisConversionTable = () => {
                         site: item.site,
                         activations: item.activations,
                         orders: item.orders,
-                        merchandiseTotal: `PKR${item.merchandise_total.toLocaleString()}`,
-                        avgPerUsage: `PKR${item.avg_mer_total_per_usage}`,
-                        avgPerOrder: `PKR${item.avg_merchandise_total_per_order}`,
+                        merchandiseTotal: `${item.merchandise_total.toLocaleString()}`,
+                        avgPerUsage: `${item.avg_mer_total_per_usage}`,
+                        avgPerOrder: `${item.avg_merchandise_total_per_order}`,
                         itemsPerOrder: item.avg_items_per_order,
                         conversion: `${item.order_conversion}%`,
                     }));
@@ -58,7 +58,7 @@ const AnalysisConversionTable = () => {
                                 className="border p-2 text-center cursor-pointer"
                                 onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
                             >
-                                Orders {sortOrder === "asc" ? "▲" : "▼"}
+                                Orders {sortOrder === "asc" ? "" : ""}
                             </th>
                             <th className="border p-2 text-center">Merchandise Total</th>
                             <th className="border p-2 text-center">Avg Merchandise Total Per Using</th>
