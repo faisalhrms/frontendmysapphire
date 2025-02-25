@@ -32,6 +32,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
     const [apiDataOrder, setApiDataOrder] = useState(null);
     const [apiDataoms, setApiDataoms] = useState(null);
     const [apiDataFo, setApiDataFo] = useState(null);
+    const [modalTitle, setModalTitle] = useState("Dynamic Modal Title");
 
     const { summary = {}, fulfilment_data = [] } = data || {};
 
@@ -224,7 +225,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                     ) : modalType === "owe" ? (
                         <Table apiDatas={apiDatas} />
                     ) : modalType === "ipc" ? (
-                        <TableProcess apiDataprocess={apiDataprocess} />
+                        <TableProcess  apiDataprocess={apiDataprocess} />
                     ) : modalType === "commerce_cloud" ? (
                         <CommerceCloudTable apiDatass={apiDatass} />
                     ) : modalType === "total_orders_oms" ? (
