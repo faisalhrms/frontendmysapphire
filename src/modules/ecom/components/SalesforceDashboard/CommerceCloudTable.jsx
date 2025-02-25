@@ -48,6 +48,12 @@ const CommerceCloudTable = ({ apiDatass = [], title }) => {
         usePagination
     );
 
+
+    const totalPages = Math.ceil(apiDatass.length / 10);
+    const pageRange = 5;
+    const startPage = Math.max(1, pageIndex - Math.floor(pageRange / 2));
+    const endPage = Math.min(totalPages, startPage + pageRange - 1);
+
     if (!apiDatass || apiDatass.length === 0) {
         return (
             <div className="text-center p-4 text-gray-500">
@@ -60,7 +66,7 @@ const CommerceCloudTable = ({ apiDatass = [], title }) => {
         <div className="overflow-x-auto w-full">
             <div className="mb-3">
                 <h2 className="text-lg font-semibold flex items-center">
-                    <span className="border-l-4 border-blue-500 pl-2">{title || "Commerce Cloud Orders"}</span>
+                    <span className="border-l-4 border-blue-500 pl-2">{title || "Total Orders in OMS"}</span>
                 </h2>
             </div>
 
@@ -76,8 +82,8 @@ const CommerceCloudTable = ({ apiDatass = [], title }) => {
                             >
                                 {column.render("Header")}
                                 <span>
-                                    {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
-                                </span>
+                                        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
+                                    </span>
                             </th>
                         ))}
                     </tr>
@@ -103,12 +109,12 @@ const CommerceCloudTable = ({ apiDatass = [], title }) => {
                 </tbody>
             </table>
 
-            <div className="d-block d-sm-flex mt-4 ">
-                <span className="ms-sm-auto text-gray-600">
+            <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
+                <span className="text-sm text-gray-600">
                     Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDatass.length)} of {apiDatass.length} results
                 </span>
 
-                <div className=" flex items-center space-x-2">
+                <div className="flex items-center space-x-2">
                     <button
                         onClick={() => gotoPage(0)}
                         disabled={!canPreviousPage}
@@ -124,17 +130,47 @@ const CommerceCloudTable = ({ apiDatass = [], title }) => {
                         Prev
                     </button>
 
-                    {Array.from({ length: pageCount }, (_, i) => (
+                    {startPage > 1 && (
+                        <>
+                            <button
+                                onClick={() => gotoPage(0)}
+                                className="px-3 py-1 border rounded"
+                            >
+                                1
+                            </button>
+                            {startPage > 2 && (
+                                <button className="px-3 py-1 border rounded" disabled>
+                                    ...
+                                </button>
+                            )}
+                        </>
+                    )}
+
+                    {Array.from({ length: endPage - startPage + 1 }, (_, i) => (
                         <button
-                            key={i}
-                            onClick={() => gotoPage(i)}
-                            className={`px-3 py-1 border rounded transition-all ${
-                                pageIndex === i ? "bg-primary text-white font-semibold" : "bg-gray-200"
-                            }`}
+                            key={i + startPage}
+                            onClick={() => gotoPage(i + startPage - 1)}
+                            className={`px-3 py-1 border rounded transition-all ${pageIndex === i + startPage ? "bg-primary text-white font-semibold" : "bg-gray-200"}`}
                         >
-                            {i + 1}
+                            {i + startPage}
                         </button>
                     ))}
+
+                    {endPage < totalPages && (
+                        <>
+                            {endPage < totalPages - 1 && (
+                                <button className="px-3 py-1 border rounded" disabled>
+                                    ...
+                                </button>
+                            )}
+                            <button
+                                onClick={() => gotoPage(totalPages - 1)}
+                                className="px-3 py-1 border rounded"
+                            >
+                                {totalPages}
+                            </button>
+                        </>
+                    )}
 
                     <button
                         onClick={() => nextPage()}
