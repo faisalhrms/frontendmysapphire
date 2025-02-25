@@ -283,7 +283,7 @@ const AnalysisReport = () => {
                         <div className="bg-white mt-4 rounded-lg">
                             {activeTab === "orderSource" && (
                                 <AnalysisTable
-                                    title="Order Source"
+                                    title="Commerce Cloud Order"
                                     headers={[
                                         {label: "Group", accessor: "source_group", align: "left"},
                                         {label: "Orders", accessor: "orders", align: "right"},
