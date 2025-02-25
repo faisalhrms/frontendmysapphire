@@ -6,10 +6,11 @@ import HasPermission from "@components/HasPermission.jsx";
 import ProjectDashboardTaskStats from "@modules/dashboards/pms/components/ProjectDashboardTaskStats.jsx";
 import IconTabs from "@components/IconTabs.jsx";
 import ProjectDashboardStats from "@modules/dashboards/pms/components/ProjectDashboardStats.jsx";
+import {useSelector} from "react-redux";
 
 
 const ProjectDashboard = () => {
-
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const {
         control,
         handleSubmit,
@@ -19,7 +20,7 @@ const ProjectDashboard = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'company_id'},
+                    { name: 'company_id', defaultValue: companyId},
                     { name: 'department_id'},
                     { name: 'workspace_id'},
                 ],
