@@ -100,7 +100,7 @@ const TableProcess = ({ apiDataprocess, title }) => {
             {/* Pagination */}
             <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
     <span className="text-sm text-gray-600">
-        Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDatass.length)} of {apiDatass.length} results
+        Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDataprocess.length)} of {apiDataprocess.length} results
     </span>
 
                 <div className="flex items-center space-x-2">
