@@ -39,6 +39,13 @@ const CardForm = () => {
                     onClick={() => navigate('/module/ecom/anlysisReport')}
 
                 />
+                <Card
+                    name="E-com Deliverables"
+                    icon="https://res.cloudinary.com/dsarj6ihu/image/upload/v1740472073/shopping-cart_o1qkxe.png "
+                    color="bg-yellow-500"
+                    onClick={() => navigate('/module/tasks/ecom')}
+
+                />
             </div>
         </div>
     );
