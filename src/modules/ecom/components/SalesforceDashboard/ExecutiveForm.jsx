@@ -8,7 +8,7 @@ import {
     fetchDataFromAPI,
     fetchDataAPI,
     fetchDataAPIProcess,
-    fetchDataAPICC, fetchDataAPIOMS, fetchDataAPIOMSSS, fetchDataAPIOO
+    fetchDataAPICC, fetchDataAPIOMS, fetchDataAPIOMSSS, fetchDataAPIOO, fetchDataAPIOMSAA
 } from "../../services/salesforcedashboard_services.js";
 import Model from "./Model.jsx";
 import Table from "../SalesforceDashboard/Table.jsx";
@@ -43,7 +43,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             let fetchedData;
             setModalType(type);
             setShowModal(true);
-            setModelLoading(true)
+            setModelLoading(true);
             if (type === "oms") {
                 fetchedData = await fetchDataFromAPI(validDateFrom, validDateTo, filters);
                 setApiData(fetchedData);
@@ -77,6 +77,8 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             }
         } catch (error) {
             console.error("Error fetching modal data:", error);
+        } finally {
+            setModelLoading(false);
         }
     };
 
