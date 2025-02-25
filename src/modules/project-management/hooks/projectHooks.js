@@ -192,8 +192,10 @@ export const useProjectFilter = () => {
             status: filters.status,
             priority: filters.priority,
             workspaces: filters.workspaces
-                .map(workspace => workspace.id || null)
-                .filter(value => value !== null)
+                ? filters.workspaces
+                    .map(workspace => workspace.id || null)
+                    .filter(value => value !== null)
+                : []
         },
     });
 
