@@ -35,6 +35,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
 
     const { summary = {}, fulfilment_data = [] } = data || {};
 
+
     const fetchModalData = async (type) => {
         try {
             const validDateFrom = filters?.date_from || new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0];
@@ -56,24 +57,24 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             }
            else if (type === "commerce_cloud") {
             fetchedData = await fetchDataAPICC(validDateFrom, validDateTo, filters);
-            setApiDatas(fetchedData);
+            setApiDatass(fetchedData);
         }
             else if (type === "total_orders_oms") {
-                fetchedData = fetchDataAPIOMS(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                fetchedData = await fetchDataAPIOMS(validDateFrom, validDateTo, filters);
+                setApiDataoms(fetchedData);
             }
             else if (type === "single_fo") {
                 fetchedData = await fetchDataAPIOO(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                setApiDataFo(fetchedData);
             }
             else if (type === "multiple_fo") {
                 fetchedData = await fetchDataAPIOMSAA(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                setApiDataOrder(fetchedData);
             }
 
             else if (type === "cancelled") {
                 fetchedData = await fetchDataAPIOMSSS(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                setApiDataa(fetchedData);
             }
         } catch (error) {
             console.error("Error fetching modal data:", error);
