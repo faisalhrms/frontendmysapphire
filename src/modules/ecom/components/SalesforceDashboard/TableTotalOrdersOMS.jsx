@@ -3,7 +3,7 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { toTitleCase } from "../../../../helpers/formatters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const TableProcess = ({ apiDataprocess, title }) => {
+const TableTotaOrdersOMS = ({ apiDataoms = [], title }) => {
     const columns = useMemo(
         () => [
             { Header: "Order #", accessor: "orderno" },
@@ -21,7 +21,6 @@ const TableProcess = ({ apiDataprocess, title }) => {
             },
             { Header: "Payment Status", accessor: "paymentstatus" },
             { Header: "Payment Method", accessor: "c_paymentmethod" },
-            { Header: "Reason", accessor: "reason" },
         ],
         []
     );
@@ -42,23 +41,29 @@ const TableProcess = ({ apiDataprocess, title }) => {
     } = useTable(
         {
             columns,
-            data: apiDataprocess,
+            data: apiDataoms || [], // Ensure data is always an array
             initialState: { pageIndex: 0, pageSize: 10 },
         },
         useSortBy,
         usePagination
     );
 
+    if (!apiDataoms || apiDataoms.length === 0) {
+        return (
+            <div className="text-center p-4 text-gray-500">
+                No data available.
+            </div>
+        );
+    }
+
     return (
         <div className="overflow-x-auto w-full">
-            {/* Title with Blue Left Border */}
             <div className="mb-3">
                 <h2 className="text-lg font-semibold flex items-center">
-                    <span className="border-l-4 border-blue-500 pl-2">{title || "In-Process with Customer Care"}</span>
+                    <span className="border-l-4 border-blue-500 pl-2">{title || "Total Orders in OMS"}</span>
                 </h2>
             </div>
 
-            {/* Table */}
             <table {...getTableProps()} className="w-full table-auto border-collapse border border-gray-300">
                 <thead className="text-center bg-gray-100 border-b border-gray-300">
                 {headerGroups.map(headerGroup => (
@@ -71,8 +76,8 @@ const TableProcess = ({ apiDataprocess, title }) => {
                             >
                                 {column.render("Header")}
                                 <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
-                                    </span>
+                                    {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
+                                </span>
                             </th>
                         ))}
                     </tr>
@@ -98,10 +103,9 @@ const TableProcess = ({ apiDataprocess, title }) => {
                 </tbody>
             </table>
 
-            {/* Pagination */}
             <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
                 <span className="text-sm text-gray-600">
-                    Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDataprocess.length)} of {apiDataprocess.length} results
+                    Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDataoms.length)} of {apiDataoms.length} results
                 </span>
 
                 <div className="flex items-center space-x-2">
@@ -152,4 +156,4 @@ const TableProcess = ({ apiDataprocess, title }) => {
     );
 };
 
-export default TableProcess;
+export default TableTotaOrdersOMS;
