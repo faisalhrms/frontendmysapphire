@@ -41,7 +41,7 @@ const CommerceCloudTable = ({ apiDatass = [], title }) => {
     } = useTable(
         {
             columns,
-            data: apiDatass || [], // Ensure data is always an array
+            data: apiDatass || [],
             initialState: { pageIndex: 0, pageSize: 10 },
         },
         useSortBy,
@@ -103,12 +103,12 @@ const CommerceCloudTable = ({ apiDatass = [], title }) => {
                 </tbody>
             </table>
 
-            <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
-                <span className="text-sm text-gray-600">
+            <div className="d-block d-sm-flex mt-4 ">
+                <span className="ms-sm-auto text-gray-600">
                     Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDatass.length)} of {apiDatass.length} results
                 </span>
 
-                <div className="flex items-center space-x-2">
+                <div className=" flex items-center space-x-2">
                     <button
                         onClick={() => gotoPage(0)}
                         disabled={!canPreviousPage}
