@@ -56,24 +56,24 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             }
            else if (type === "commerce_cloud") {
             fetchedData = await fetchDataAPICC(validDateFrom, validDateTo, filters);
-            setApiDatas(fetchedData);
+            setApiDatass(fetchedData);
         }
             else if (type === "total_orders_oms") {
-                fetchedData = fetchDataAPIOMS(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                fetchedData = await fetchDataAPIOMS(validDateFrom, validDateTo, filters);
+                setApiDataoms(fetchedData);
             }
             else if (type === "single_fo") {
                 fetchedData = await fetchDataAPIOO(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                setApiDataFo(fetchedData);
             }
             else if (type === "multiple_fo") {
                 fetchedData = await fetchDataAPIOMSAA(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                setApiDataOrder(fetchedData);
             }
 
             else if (type === "cancelled") {
                 fetchedData = await fetchDataAPIOMSSS(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
+                setApiDataa(fetchedData);
             }
         } catch (error) {
             console.error("Error fetching modal data:", error);
