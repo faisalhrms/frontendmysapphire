@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback,  useEffect  } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -8,10 +8,15 @@ import AgingForm from "../components/SalesforceDashboard/AgingForm.jsx";
 import FormInput from "@components/form/FormInput.jsx";
 import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
+import axios from 'axios';
+import api from "../../../config/axiosConfig.js";
 
 const ExecutiveTabs = () => {
     const [activeTab, setActiveTab] = useState("executiveSummary");
     const [showFilters, setShowFilters] = useState(false);
+    const [showsynctime, setshowsynctime] = useState("Analyzing...");
+    const [currentDate, setCurrentDate] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const {
         control,
@@ -22,8 +27,8 @@ const ExecutiveTabs = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'date_from', defaultValue: new Date("2025-01-21").toISOString().slice(0, 10)},
-                    { name: 'date_to', defaultValue: new Date().toISOString().slice(0, 10)},
+                    { name: 'date_from', defaultValue: new Date("2025-01-21").toISOString().slice(0, 10) },
+                    { name: 'date_to', defaultValue: new Date().toISOString().slice(0, 10) },
                 ],
             }),
             []
@@ -39,19 +44,42 @@ const ExecutiveTabs = () => {
         []
     );
 
-    // const currentDate = new Date().toLocaleDateString(); // Get current date
-    const [currentDate, setCurrentDate] = useState("");
+
+    useEffect(() => {
+        const fetchSyncTime = async () => {
+            try {
+                const response = await api.post('/salesforce/fetch_sync_time_cc/');
+                setshowsynctime(response.data.data.show_sync_time)
+            } catch (error) {
+                if (error.response) {
+                    if (error.response.status === 404) {
+                        setErrorMessage("The data was last updated on Feb 25, 2025 - 04:15 PM");
+                    } else {
+                        setErrorMessage(`Error fetching sync time: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
+                    }
+                } else if (error.request) {
+
+                    setErrorMessage("No response from the server. Please check your connection.");
+                } else {
+
+                    setErrorMessage(`Error: ${error.message}`);
+                }
+                console.error("Error fetching sync time:", error);
+            }
+        };
+        fetchSyncTime();
+    }, []);
+
 
     useEffect(() => {
         const date = new Date();
         const day = String(date.getDate()).padStart(2, '0');
-        const month = date.toLocaleString('default', { month: 'short' }); // Get the month abbreviation (e.g., "Feb")
+        const month = date.toLocaleString('default', { month: 'short' });
         const year = date.getFullYear();
 
         const formattedDate = `${day}-${month}-${year}`;
         setCurrentDate(formattedDate);
     }, []);
-
 
     return (
         <>
@@ -97,6 +125,20 @@ const ExecutiveTabs = () => {
                     </button>
                 )}
             </div>
+
+
+            {showsynctime && (
+                <div className="error-message text-primary p-2 rounded-lg text-right text-black mb-4 mb-2">
+                    <p>{showsynctime}</p>
+                </div>
+            )}
+
+
+            {errorMessage && (
+                <div className="error-message alert alert-primary  p-2 rounded-lg shadow-md text-center text-black mb-4">
+                    <p>{errorMessage}</p>
+                </div>
+            )}
 
             {showFilters && activeTab === "executiveSummary" && (
                 <form onSubmit={handleSubmit(onSubmit)}>
