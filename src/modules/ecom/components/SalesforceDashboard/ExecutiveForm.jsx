@@ -22,6 +22,7 @@ import TableSingleFo from "../../components/SalesforceDashboard/TableSingleFo.js
 const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
     const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters, dateFrom, dateTo);
     const [showModal, setShowModal] = useState(false);
+    const [isModelLoading, setModelLoading] = useState(false);
     const [modalType, setModalType] = useState(null);
     const [apiData, setApiData] = useState(null);
     const [apiDatas, setApiDatas] = useState(null);
@@ -41,7 +42,8 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
 
             let fetchedData;
             setModalType(type);
-
+            setShowModal(true);
+            setModelLoading(true)
             if (type === "oms") {
                 fetchedData = await fetchDataFromAPI(validDateFrom, validDateTo, filters);
                 setApiData(fetchedData);
@@ -73,7 +75,6 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 fetchedData = await fetchDataAPIOMSSS(validDateFrom, validDateTo, filters);
                 setApiDatas(fetchedData);
             }
-            setShowModal(true);
         } catch (error) {
             console.error("Error fetching modal data:", error);
         }
@@ -214,7 +215,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 isLoading={isLoading}
             />
             {showModal && (
-                <Model onClose={() => setShowModal(false)}>
+                <Model loading={isModelLoading} onClose={() => setShowModal(false)}>
                     {modalType === "oms"  ? (
                         <TableOms apiData={apiData} />
                     ) : modalType === "owe" ? (
