@@ -51,7 +51,6 @@ const TableProcess = ({ apiDataprocess, title }) => {
 
     return (
         <div className="overflow-x-auto w-full">
-            {/* Title with Blue Left Border */}
             <div className="mb-3">
                 <h2 className="text-lg font-semibold flex items-center">
                     <span className="border-l-4 border-blue-500 pl-2">{title || "In-Process with Customer Care"}</span>
@@ -100,9 +99,9 @@ const TableProcess = ({ apiDataprocess, title }) => {
 
             {/* Pagination */}
             <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
-                <span className="text-sm text-gray-600">
-                    Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDataprocess.length)} of {apiDataprocess.length} results
-                </span>
+    <span className="text-sm text-gray-600">
+        Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDataprocess.length)} of {apiDataprocess.length} results
+    </span>
 
                 <div className="flex items-center space-x-2">
                     <button
@@ -120,7 +119,8 @@ const TableProcess = ({ apiDataprocess, title }) => {
                         Prev
                     </button>
 
-                    {Array.from({ length: pageCount }, (_, i) => (
+                    {/* Limit displayed page numbers to 10 */}
+                    {Array.from({length: Math.min(pageCount, 10)}, (_, i) => (
                         <button
                             key={i}
                             onClick={() => gotoPage(i)}
@@ -148,6 +148,7 @@ const TableProcess = ({ apiDataprocess, title }) => {
                     </button>
                 </div>
             </div>
+
         </div>
     );
 };
