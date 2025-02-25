@@ -7,7 +7,7 @@ const pmsSlice = createSlice({
     name: 'pms',
     initialState: {
         viewType: loadFromLocalStorage(ROOT_KEY, 'viewType', 'grid'),
-        filters: loadFromLocalStorage(ROOT_KEY, 'filters', { workspace: null, status: null, priority: null }),
+        filters: loadFromLocalStorage(ROOT_KEY, 'filters', { workspaces: [], status: null, priority: null }),
     },
     reducers: {
         setViewType: (state, action) => {
@@ -19,7 +19,7 @@ const pmsSlice = createSlice({
             saveToLocalStorage(ROOT_KEY, 'filters', state.filters);
         },
         resetFilters: (state) => {
-            state.filters = { workspace: null, status: null, priority: null };
+            state.filters = { workspaces: [], status: null, priority: null };
             saveToLocalStorage(ROOT_KEY, 'filters', state.filters);
         },
     },
