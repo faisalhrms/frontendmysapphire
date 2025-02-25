@@ -4,7 +4,6 @@ import FilterButton from "@components/form/FilterButton.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {taskStatuses} from "@modules/project-management/services/taskService.js";
 import FormSelect from "@components/form/FormSelect.jsx";
-import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
 import FilterClearButton from "@components/form/FilterClearButton.jsx";
 import {useWatch} from "react-hook-form";
 
@@ -56,11 +55,6 @@ const TaskListFilter = ({ control, errors, clearFilter }) => {
                                     errors={errors}
                                     options={taskStatuses}
                                     placeholder="Status"
-                                />
-                                <TagDropdown
-                                    control={control}
-                                    errors={errors}
-                                    name='tags'
                                 />
                             </div>
                             <FilterButton />

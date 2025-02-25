@@ -12,9 +12,6 @@ export const PMS_ROUTES = {
     READ: {
       path: "/module/projects",
     },
-    ECOM: {
-      path: "/module/projects/e-com",
-    },
     CREATE: {
       path: "/module/projects/create",
       permission: "add_project",
@@ -36,7 +33,10 @@ export const PMS_ROUTES = {
     },
     LIST:{
       path: "/module/tasks",
-    }
+    },
+    ECOM: {
+      path: "/module/tasks/ecom",
+    },
   },
 };
 
@@ -44,10 +44,6 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.PROJECT.READ.path,
     component: ProjectList,
-  },
-  {
-    path: PMS_ROUTES.PROJECT.ECOM.path,
-    component: ProjectEcom,
   },
   {
     path: PMS_ROUTES.PROJECT.CREATE.path,
@@ -74,5 +70,9 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.TASK.LIST.path,
     component: TaskList,
+  },
+  {
+    path: PMS_ROUTES.TASK.ECOM.path,
+    component: ProjectEcom,
   },
 ];

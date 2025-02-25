@@ -22,7 +22,6 @@ const ProjectsMilestonesTasksList = () => {
                     { name: "projects" },
                     { name: "teams" },
                     { name: "status" },
-                    { name: "tags" },
                 ],
             }),
             []
@@ -50,15 +49,14 @@ const ProjectsMilestonesTasksList = () => {
             </form>
             {isLoading ? (
                 <LoadingSpinner/>
-            ) : (
+            ) : data?.length > 0 ? (
                 <div className="grid grid-cols-12">
                     <div className="xl:col-span-12 col-span-12">
                         <div className="box custom-box">
                             <div className="box-body">
-                                {data?.map((project) => (
-                                    <>
-                                    <span key={project.id}
-                                          className="flex flex-nowrap items-center space-x-1 mb-4 ml-4">
+                                {data.map((project) => (
+                                    <React.Fragment key={project.id}>
+                                    <span className="flex flex-nowrap items-center space-x-1 mb-4 ml-4">
                                         <h4 className="text-[1.4rem] text-defaulttextcolor">
                                           {project.name}
                                         </h4>
@@ -73,12 +71,16 @@ const ProjectsMilestonesTasksList = () => {
                                             projectStatus={project.status}
                                             viewOnly={true}
                                         />
-                                    </>
+                                    </React.Fragment>
                                 ))}
 
                             </div>
                         </div>
                     </div>
+                </div>
+            ) : (
+                <div className="col-span-12 flex items-center justify-center h-64">
+                    <p className="text-lg text-gray-500">There are no tasks related to you.</p>
                 </div>
             )}
         </>
