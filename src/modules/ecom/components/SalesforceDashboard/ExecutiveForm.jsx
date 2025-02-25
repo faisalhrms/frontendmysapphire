@@ -35,6 +35,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
 
     const { summary = {}, fulfilment_data = [] } = data || {};
 
+
     const fetchModalData = async (type) => {
         try {
             const validDateFrom = filters?.date_from || new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0];
