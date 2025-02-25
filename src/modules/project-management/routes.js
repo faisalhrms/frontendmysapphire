@@ -36,6 +36,7 @@ export const PMS_ROUTES = {
     },
     ECOM: {
       path: "/module/tasks/ecom",
+      permission: 'view_ecom_tasks',
     },
   },
 };
@@ -74,5 +75,6 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.TASK.ECOM.path,
     component: ProjectEcom,
+    permission: PMS_ROUTES.TASK.ECOM.permission,
   },
 ];

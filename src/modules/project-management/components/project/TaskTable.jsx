@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import {toTitleCase} from "@helpers/formatters.js";
+import {getExcerptFromText, toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
@@ -150,15 +150,18 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </svg>
                                             )}
                                         </span>
-                                        <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
-                                            {task.name}
-                                            {task.children && task.children.length > 0 && (
-                                                <span className="badge bg-primary/10 text-primary ms-2">
-                                                    {task.children.length}
-                                                </span>
-                                            )
-                                            }
-                                        </Link>
+                                        <Tooltip
+                                            id={`task-tooltip-${task.id}`}
+                                            tooltipContent={`${task.name}`}>
+                                            <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
+                                              {getExcerptFromText(task.name, 80)}
+                                                    {task.children && task.children.length > 0 && (
+                                                        <span className="badge bg-primary/10 text-primary ms-2">
+                                                            {task.children.length}
+                                                        </span>)
+                                                    }
+                                            </Link>
+                                        </Tooltip>
                                     </span>
                                 </td>
                                 <td className='text-center'><AvatarList users={task.users} max={4}/></td>

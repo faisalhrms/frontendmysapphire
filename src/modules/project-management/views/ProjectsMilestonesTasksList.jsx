@@ -5,6 +5,8 @@ import MilestoneAccordion from "@modules/project-management/components/project/M
 import ProjectsMilestonesTasksFilter from "@modules/project-management/components/project/ProjectsMilestonesTasksFilter.jsx";
 import useFilters from "@hooks/useFilters.js";
 import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import {Link} from "react-router-dom";
+import {PMS_ROUTES} from "@modules/project-management/routes.js";
 
 const ProjectsMilestonesTasksList = () => {
 
@@ -58,7 +60,9 @@ const ProjectsMilestonesTasksList = () => {
                                     <React.Fragment key={project.id}>
                                     <span className="flex flex-nowrap items-center space-x-1 mb-4 ml-4">
                                         <h4 className="text-[1.4rem] text-defaulttextcolor">
-                                          {project.name}
+                                            <Link to={PMS_ROUTES.PROJECT.DETAIL.path.replace(':id', project.id)}>
+                                                {project.name}
+                                            </Link>
                                         </h4>
                                         <i className="ri-arrow-right-s-line"></i>
                                         <p className="text-[.9375rem] text-[#8c9097] dark:text-white/50 opacity-[7]">
