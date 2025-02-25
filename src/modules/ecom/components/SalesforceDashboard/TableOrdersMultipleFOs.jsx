@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import { toTitleCase } from "../../../../helpers/formatters.js";
-
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const Table = ({ apiDatas, title }) => {
+const TableOrdersMultipleFOs = ({ apiDataOrder = [], title }) => {
     const columns = useMemo(
         () => [
             { Header: "Order #", accessor: "orderno" },
@@ -13,16 +12,12 @@ const Table = ({ apiDatas, title }) => {
             {
                 Header: "Order Value",
                 accessor: "ordertotal",
-                Cell: ({ value }) => (
-                    <div className="text-right">{formatNumberWithCommas(value)}</div>
-                ),
+                Cell: ({ value }) => <div className="text-right">{formatNumberWithCommas(value)}</div>,
             },
             {
                 Header: "Customer Name",
                 accessor: "customername",
-                Cell: ({ value }) => (
-                    <div className="whitespace-normal break-words text-wrap max-w-[250px]">{value}</div>
-                ),
+                Cell: ({ value }) => <div className="whitespace-normal break-words text-wrap max-w-[250px]">{value}</div>,
             },
             { Header: "Payment Status", accessor: "paymentstatus" },
             { Header: "Payment Method", accessor: "c_paymentmethod" },
@@ -46,19 +41,26 @@ const Table = ({ apiDatas, title }) => {
     } = useTable(
         {
             columns,
-            data: apiDatas,
+            data: apiDataOrder || [], // Ensure data is always an array
             initialState: { pageIndex: 0, pageSize: 10 },
         },
         useSortBy,
         usePagination
     );
 
+    if (!apiDataOrder || apiDataOrder.length === 0) {
+        return (
+            <div className="text-center p-4 text-gray-500">
+                No data available.
+            </div>
+        );
+    }
+
     return (
         <div className="overflow-x-auto w-full">
-
             <div className="mb-3">
                 <h2 className="text-lg font-semibold flex items-center">
-                    <span className="border-l-4 border-blue-500 pl-2">Orders with Exceptions</span>
+                    <span className="border-l-4 border-blue-500 pl-2">{title || "Orders with Multiple FOs"}</span>
                 </h2>
             </div>
 
@@ -74,8 +76,8 @@ const Table = ({ apiDatas, title }) => {
                             >
                                 {column.render("Header")}
                                 <span>
-                                        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
-                                    </span>
+                                    {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
+                                </span>
                             </th>
                         ))}
                     </tr>
@@ -101,10 +103,9 @@ const Table = ({ apiDatas, title }) => {
                 </tbody>
             </table>
 
-
             <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
                 <span className="text-sm text-gray-600">
-                    Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDatas.length)} of {apiDatas.length} results
+                    Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDataOrder.length)} of {apiDataOrder.length} results
                 </span>
 
                 <div className="flex items-center space-x-2">
@@ -155,4 +156,4 @@ const Table = ({ apiDatas, title }) => {
     );
 };
 
-export default Table;
+export default TableOrdersMultipleFOs;

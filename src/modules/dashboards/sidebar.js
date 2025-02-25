@@ -65,6 +65,14 @@ export const sidebarMenu = [
                 7,
                 '',
                 DASHBOARD_ROUTES.Equipment.permission,
+            ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.CEO.path,
+                'link',
+                'CEO Dashboard',
+                8,
+                '',
+               DASHBOARD_ROUTES.CEO.permission,
             )
         ]
     ),

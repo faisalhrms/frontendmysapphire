@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useCallback} from "react";
+import React, { useState, useMemo, useCallback,  useEffect  } from "react";
 import { Link } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -39,19 +39,30 @@ const ExecutiveTabs = () => {
         []
     );
 
+    // const currentDate = new Date().toLocaleDateString(); // Get current date
+    const [currentDate, setCurrentDate] = useState("");
+
+    useEffect(() => {
+        const date = new Date();
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = date.toLocaleString('default', { month: 'short' }); // Get the month abbreviation (e.g., "Feb")
+        const year = date.getFullYear();
+
+        const formattedDate = `${day}-${month}-${year}`;
+        setCurrentDate(formattedDate);
+    }, []);
+
+
     return (
         <>
             <PageHeader currentpage="Salesforce Dashboard" />
 
-            <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4">
+            <div
+                className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex space-x-4">
                     <Link
                         to="#"
-                        className={`px-4 py-2 rounded-md font-medium transition-all ${
-                            activeTab === "executiveSummary"
-                                ? "bg-primary text-white shadow-md"
-                                : "bg-gray-200 text-black"
-                        }`}
+                        className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "executiveSummary" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
                         onClick={() => setActiveTab("executiveSummary")}
                     >
                         Executive Summary
@@ -59,17 +70,21 @@ const ExecutiveTabs = () => {
 
                     <Link
                         to="#"
-                        className={`px-4 py-2 rounded-md font-medium transition-all ${
-                            activeTab === "agingLiabilities"
-                                ? "bg-primary text-white shadow-md"
-                                : "bg-gray-200 text-black"
-                        }`}
+                        className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "agingLiabilities" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
                         onClick={() => setActiveTab("agingLiabilities")}
                     >
                         Aging’s for Pending Liabilities
                     </Link>
                 </div>
-
+                {activeTab === "agingLiabilities" && (
+                    <div className="flex justify-between items-center">
+                        <span></span>
+                        <div className="text-right">
+                            <span className="text-gray-800 font-semibold">As On: </span>
+                            <span className="text-primary font-bold">{currentDate}</span>
+                        </div>
+                    </div>
+                )}
                 {activeTab === "executiveSummary" && (
                     <button
                         type="button"
@@ -85,8 +100,8 @@ const ExecutiveTabs = () => {
 
             {showFilters && activeTab === "executiveSummary" && (
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="bg-white p-2 mt-2 rounded-lg shadow-md">
-                        <div className="mt-2 mr-2 flex items-center">
+                    <div className="bg-white p-2 mt-2 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+                        <div className="mt-2 mr-2 flex items-center dark:text-gray-200 dark:bg-bodybg">
                             <div className="mr-2">
                                 <FormInput
                                     type="date"
@@ -107,37 +122,36 @@ const ExecutiveTabs = () => {
                                     label={true}
                                 />
                             </div>
-                            <div className=" mr-2 flex items-right">
-                                <FilterButton/>
+                            <div className="mr-2 flex items-right dark:text-gray-200 dark:bg-bodybg">
+                                <FilterButton />
                             </div>
                         </div>
                     </div>
-
-
                 </form>
             )}
 
-            <div className="grid grid-cols-12 gap-6">
-                <div className="xl:col-span-12 col-span-12">
-                    <div className="tab-content bg-white rounded-lg shadow-md mt-4">
+            <div className="grid grid-cols-12 gap-6 dark:text-gray-200 dark:bg-bodybg">
+                <div className="xl:col-span-12 col-span-12 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="tab-content bg-white rounded-lg shadow-md mt-4 dark:text-gray-200 dark:bg-bodybg">
                         {activeTab === "executiveSummary" && (
-                            <div className="tab-pane show active p-6" id="generate-report"
+                            <div className="tab-pane show active p-6 dark:text-gray-200 dark:bg-bodybg" id="generate-report"
                                  aria-labelledby="generate-report" role="tabpanel">
-                                <ExecutiveForm filters={filters}/>
+                                <ExecutiveForm filters={filters} />
                             </div>
                         )}
 
                         {activeTab === "agingLiabilities" && (
-                            <div className="tab-pane show active p-6 mt-6" id="replenishment-history"
+                            <div className="tab-pane show active p-6 mt-6 dark:text-gray-200 dark:bg-bodybg" id="replenishment-history"
                                  aria-labelledby="replenishment-history" role="tabpanel">
-                                        <AgingForm/>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </>
-            );
-            };
 
-            export default ExecutiveTabs;
+                                <AgingForm />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+};
+
+export default ExecutiveTabs;

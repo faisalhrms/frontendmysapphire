@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import { toTitleCase } from "../../../../helpers/formatters.js";
-
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const Table = ({ apiDatas, title }) => {
+const TableProcess = ({ apiDataprocess, title }) => {
     const columns = useMemo(
         () => [
             { Header: "Order #", accessor: "orderno" },
@@ -13,19 +12,16 @@ const Table = ({ apiDatas, title }) => {
             {
                 Header: "Order Value",
                 accessor: "ordertotal",
-                Cell: ({ value }) => (
-                    <div className="text-right">{formatNumberWithCommas(value)}</div>
-                ),
+                Cell: ({ value }) => <div className="text-right">{formatNumberWithCommas(value)}</div>,
             },
             {
                 Header: "Customer Name",
                 accessor: "customername",
-                Cell: ({ value }) => (
-                    <div className="whitespace-normal break-words text-wrap max-w-[250px]">{value}</div>
-                ),
+                Cell: ({ value }) => <div className="whitespace-normal break-words text-wrap max-w-[250px]">{value}</div>,
             },
             { Header: "Payment Status", accessor: "paymentstatus" },
             { Header: "Payment Method", accessor: "c_paymentmethod" },
+            { Header: "Reason", accessor: "reason" },
         ],
         []
     );
@@ -46,7 +42,7 @@ const Table = ({ apiDatas, title }) => {
     } = useTable(
         {
             columns,
-            data: apiDatas,
+            data: apiDataprocess,
             initialState: { pageIndex: 0, pageSize: 10 },
         },
         useSortBy,
@@ -55,13 +51,14 @@ const Table = ({ apiDatas, title }) => {
 
     return (
         <div className="overflow-x-auto w-full">
-
+            {/* Title with Blue Left Border */}
             <div className="mb-3">
                 <h2 className="text-lg font-semibold flex items-center">
-                    <span className="border-l-4 border-blue-500 pl-2">Orders with Exceptions</span>
+                    <span className="border-l-4 border-blue-500 pl-2">{title || "In-Process with Customer Care"}</span>
                 </h2>
             </div>
 
+            {/* Table */}
             <table {...getTableProps()} className="w-full table-auto border-collapse border border-gray-300">
                 <thead className="text-center bg-gray-100 border-b border-gray-300">
                 {headerGroups.map(headerGroup => (
@@ -101,10 +98,10 @@ const Table = ({ apiDatas, title }) => {
                 </tbody>
             </table>
 
-
+            {/* Pagination */}
             <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
                 <span className="text-sm text-gray-600">
-                    Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDatas.length)} of {apiDatas.length} results
+                    Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDataprocess.length)} of {apiDataprocess.length} results
                 </span>
 
                 <div className="flex items-center space-x-2">
@@ -155,4 +152,4 @@ const Table = ({ apiDatas, title }) => {
     );
 };
 
-export default Table;
+export default TableProcess;
