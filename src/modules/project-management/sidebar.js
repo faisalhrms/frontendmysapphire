@@ -40,7 +40,7 @@ export const sidebarMenu = [
                 "E-com Deliverables",
                 4,
                 "bx bx-message-square-edit",
-                '',
+                PMS_ROUTES.TASK.ECOM.permission,
             ),
         ]
     )
