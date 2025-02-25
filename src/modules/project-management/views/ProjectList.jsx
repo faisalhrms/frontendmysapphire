@@ -21,7 +21,6 @@ import ProjectListItems from "@modules/project-management/components/ProjectList
 import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
 import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
 import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
-import PeopleFilter from "@modules/PeopleFilter/views/PeopleFilter.jsx";
 
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
@@ -37,10 +36,11 @@ const ProjectList = () => {
     const tags = useWatch({ control: filterControl, name: "tags" });
 
     const { data, isLoading, refetch } = useProjects(currentPage, 8, searchTerm, workspaces, status, priority, tags);
-
+    const filters = useSelector((state) => state.pms.filters);
     const [startedAt, setStartedAt] = useState(null);
     const [endedAt, setEndedAt] = useState(null);
     const [isPeopleFilterOpen, setIsPeopleFilterOpen] = useState(false);
+    const [selectedWorkspaces, setSelectedWorkspaces] = useState(filters.workspaces);
     const totalPages = Math.ceil(data?.total / 8) || 0;
     const {
         openMilestoneModal,
@@ -74,6 +74,7 @@ const ProjectList = () => {
     } = useUploadProjectModal(refetch, 'P')
 
     const viewType = useSelector((state) => state.pms.viewType);
+
     const dispatch = useDispatch();
 
     const handleViewChange = (viewType) => {
@@ -83,12 +84,12 @@ const ProjectList = () => {
     useEffect(() => {
         dispatch(setFilters(
             {
-                workspace: null,
+                workspaces: selectedWorkspaces,
                 status: status,
                 priority: priority
             }
             ));
-    }, [status, priority]);
+    }, [status, priority, workspaces]);
 
     return (
         <>
@@ -112,6 +113,9 @@ const ProjectList = () => {
                                         errors={filterErrors}
                                         multiple={true}
                                         saveNewOption={false}
+                                        data={filters}
+                                        dataKey='workspaces'
+                                        onSelectChange={setSelectedWorkspaces}
                                     />
                                     <ProjectStatusDropdown
                                         control={filterControl}

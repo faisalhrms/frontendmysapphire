@@ -28,6 +28,7 @@ const FormAsyncSelect = ({
                              saveOptionEndpoint = "",
                              allowSaveNewOption = false,
                              onSelectChange,
+                             needObject = false,
                              ...rest
                          }) => {
     const [search, setSearch] = useState('');
@@ -163,7 +164,15 @@ const FormAsyncSelect = ({
                             field.onChange(selectedValues);
 
                             if (onSelectChange) {
-                                onSelectChange(selectedValues);
+                                if (needObject) {
+                                    const updatedOption = selectedOption.map(opt => ({
+                                        id: opt.value,
+                                        name: opt.label,
+                                    }));
+                                    onSelectChange(updatedOption);
+                                } else {
+                                    onSelectChange(selectedValues);
+                                }
                             }
                         }
                     }, [handleCreateOption, isMulti, onSelectChange, optionsWithSelected, field]);

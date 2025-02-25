@@ -191,6 +191,9 @@ export const useProjectFilter = () => {
         defaultValues: {
             status: filters.status,
             priority: filters.priority,
+            workspaces: filters.workspaces
+                .map(workspace => workspace.id || null)
+                .filter(value => value !== null)
         },
     });
 
