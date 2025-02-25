@@ -144,7 +144,7 @@ const AgingFormComponent = () => {
         {
             title: "Pending Orders before assigning Fulfillment Order",
             headers: ["", "1-3 Days", "4-5 Days", "6-10 Days", "11-20 Days", "Plus 20 Days", "Total"],
-            data: pendingOrdersData?.warehouse_level?.map(item => ({
+            data: pendingOrdersData?.before_fulfilment?.map(item => ({
                 reason: item.reason,
                 days_1_3: formatNumberWithCommas(item.days_1_3),
                 days_4_5: formatNumberWithCommas(item.days_4_5),
@@ -156,10 +156,11 @@ const AgingFormComponent = () => {
             loading: loadingOrders,
             noteText: "*Above aging from Order landed date till today."
         },
+
         {
             title: "Pending @ Warehouse level",
             headers: ["", "1-3 Days", "4-5 Days", "6-10 Days", "11-20 Days", "Plus 20 Days", "Total"],
-            data: pendingOrdersData?.before_fulfilment?.map(item => ({
+            data: pendingOrdersData?.warehouse_level?.map(item => ({
                 reason: item.reason,
                 days_1_3: formatNumberWithCommas(item.days_1_3),
                 days_4_5: formatNumberWithCommas(item.days_4_5),

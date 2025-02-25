@@ -6,6 +6,7 @@ import SubscriptionDashboard from '@modules/dashboards/sms/views/SubscriptionDas
 import SrTabs from '@modules/dashboards/sr/views/SrTabs.jsx';
 import SrList from '@modules/dashboards/sr/views/SrList.jsx';
 import EquipmentDashboard from '@modules/dashboards/eq/views/EquipmentDashboard.jsx';
+import CardDasboard from "./ CEODashboard/views/CardDasboard.jsx";
 
 export const DASHBOARD_ROUTES = {
     PROJECT: {
@@ -39,6 +40,11 @@ export const DASHBOARD_ROUTES = {
     Equipment: {
         path: '/dashboards/equipment',
         permission: 'it_equipment_dashboard',
+    },
+    CEO: {
+        path: '/dashboards/eco',
+        permission: 'view_ceo_dashboard',
+
     },
 
 };
@@ -82,6 +88,11 @@ export const MODULE_ROUTES = [
         path: DASHBOARD_ROUTES.Equipment.path,
         component: EquipmentDashboard,
         permission: DASHBOARD_ROUTES.Equipment.permission,
+    },
+    {
+        path: DASHBOARD_ROUTES.CEO.path,
+        component: CardDasboard,
+        permission: DASHBOARD_ROUTES.CEO.permission,
     },
 
 ];

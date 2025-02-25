@@ -34,7 +34,7 @@ export const fetchAnalysis = async (data) => {
 };
 export const fetchAnalysisForm = async (data) => {
     try {
-        const response = await api.get("ecom/analytics/fetch_order_source_cc_cloud/?date_from=2025-02-23&date_to=2025-02-23");
+        const response = await api.get(`ecom/analytics/fetch_order_source_cc_cloud/?date_from=${data?.date_from||'2025-02-18'}&date_to=${data?.date_to||'2025-02-18'}`);
         // Notify.success("Successfully Fetched Pending Orders!");
         return response.data?.data;
     } catch (error) {
