@@ -73,7 +73,7 @@ const TableSingleFo = ({ apiDataFo = [], title }) => {
                         {headerGroup.headers.map(column => (
                             <th
                                 {...column.getHeaderProps(column.getSortByToggleProps())}
-                                className="px-4 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
+                                className="px-2 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
                                 key={column.id}
                             >
                                 {column.render("Header")}
@@ -93,7 +93,7 @@ const TableSingleFo = ({ apiDataFo = [], title }) => {
                             {row.cells.map(cell => (
                                 <td
                                     {...cell.getCellProps()}
-                                    className="px-4 py-2 text-sm text-gray-900 border-r border-gray-300"
+                                    className="px-2 py-2 text-sm text-gray-900 border-r border-gray-300"
                                     key={cell.column.id}
                                 >
                                     {cell.render("Cell")}
@@ -146,7 +146,7 @@ const TableSingleFo = ({ apiDataFo = [], title }) => {
                         <button
                             key={i + startPage}
                             onClick={() => gotoPage(i + startPage - 1)}
-                            className={`px-3 py-1 border rounded transition-all ${pageIndex === i + startPage ? "bg-primary text-white font-semibold" : "bg-gray-200"}`}
+                            className={`px-3 py-1 border rounded transition-all ${pageIndex === i + startPage ? " text-white font-semibold" : "bg-gray-200"}`}
                         >
                             {i + startPage}
                         </button>

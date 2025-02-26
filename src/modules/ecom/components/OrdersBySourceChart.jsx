@@ -62,7 +62,7 @@ const OrdersBySourceChart = ({ data, loading }) => {
                                 <div className="col-span-2 pe-0 text-center" key={index}>
                                     <div className="sm:p-4 p-2">
                                         <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">{label}</span>
-                                        <span className="block text-[1rem] font-semibold">{chartDataOrders.series[index]}</span>
+                                        <span className="block text-[1rem] font-semibold">{formatAmountWithCommas(chartDataOrders.series[index])}</span>
                                     </div>
                                 </div>
                             ))}
