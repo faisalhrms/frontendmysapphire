@@ -68,11 +68,7 @@ const Table = ({ apiDatas, title }) => {
 
     return (
         <div className="overflow-x-auto w-full">
-            <div className="mb-3">
-                <h2 className="text-lg font-semibold flex items-center">
-                    <span className="border-l-4 border-blue-500 pl-2">{title || "Orders with Exceptions"}</span>
-                </h2>
-            </div>
+
 
             {/* Table */}
             <table {...getTableProps()} className="w-full table-auto border-collapse border border-gray-300">
