@@ -47,6 +47,7 @@ const EquipmentList = () => {
         {
             Header: "Actions",
             accessor: "id",
+            disableSortBy: true,
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
                     <Link to={`/module/equipment/edit/${row.original.id}`}>
