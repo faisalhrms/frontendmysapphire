@@ -31,7 +31,7 @@ const projectSchema = z
             .string()
             .min(1, "Project name is required")
             .max(255, "Project name must be at most 255 characters long"),
-        description: z.string().min(20, "Description is required and must have a minimum of 50 characters"),
+        description: z.string().min(10, "Description is required and must have a minimum of 50 characters"),
         status: statusEnum.default("not_started"),
         priority: prioritiesEnum.default("medium"),
         started_at: dateSchema("Started"),

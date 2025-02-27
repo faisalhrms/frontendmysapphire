@@ -1,5 +1,3 @@
-
-
 import React from "react";
 
 const CancellationTable = ({ title, headers, data }) => {
@@ -11,7 +9,7 @@ const CancellationTable = ({ title, headers, data }) => {
 
             <table className="min-w-full border-gray-400  dark:border-gray-400">
 
-                <thead className=" text-black text-sm bg-gray-200 bg-gray-200 dark:bg-bodybg dark:border-gray-400">
+                <thead className=" text-black text-sm bg-gray-200  dark:bg-bodybg dark:border-gray-400">
                 <tr>
                     <th rowSpan="2" className="py-2 px-4 border border-gray-400">Name</th>
                     <th colSpan="2" className="py-2 px-4 border border-gray-400">CY</th>

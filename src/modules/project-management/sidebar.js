@@ -30,9 +30,17 @@ export const sidebarMenu = [
                 PMS_ROUTES.TASK.KANBAN.path,
                 "link",
                 "Task kanban Board",
-                1,
+                3,
                 "bx bx-message-square-edit",
                 '',
+            ),
+            generateSidebarItem(
+                PMS_ROUTES.TASK.ECOM.path,
+                "link",
+                "E-com Deliverables",
+                4,
+                "bx bx-message-square-edit",
+                PMS_ROUTES.TASK.ECOM.permission,
             ),
         ]
     )

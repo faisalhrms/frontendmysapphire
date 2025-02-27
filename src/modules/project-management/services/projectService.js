@@ -52,6 +52,7 @@ export const getProjects = async (page, size, s, workspaces = null, status = nul
 };
 
 
+
 export const getProjectById = async (id) => {
     try {
         const response = await api.get(`/pms/projects/${id}/`);

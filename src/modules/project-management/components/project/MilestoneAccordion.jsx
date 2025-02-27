@@ -8,7 +8,7 @@ import Avatar from "@components/Avatar.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, viewOnly = false }) => {
 
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 
@@ -38,7 +38,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
             <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
                 <div className="hs-accordion-group">
                 {Array.isArray(milestones) && milestones.map((milestone) => (<div
-                    className={`hs-accordion accordion-item ${milestone.priority === 'low' ? 'custom-accordion-primary' : (milestone.priority === 'medium' ? 'custom-accordion-secondary' : 'custom-accordion-danger')}`}
+                    className={`hs-accordion accordion-item mb-4 ${milestone.priority === 'low' ? 'custom-accordion-primary' : (milestone.priority === 'medium' ? 'custom-accordion-secondary' : 'custom-accordion-danger')}`}
                     key={milestone.id}>
                     <button
                         className="accordion-button group py-0 inline-flex items-center justify-between gap-x-3 w-full font-semibold text-start transition"
@@ -46,7 +46,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                         type="button"
                         onClick={() => toggleMilestone(milestone.id)}>
                         <div className="grid grid-cols-12 gap-3 w-full">
-                            <div className="xl:col-span-3 col-span-12 border-r border-defaultborder">
+                            <div className={`${(viewOnly ? activeMilestoneId !== milestone.id : true ) ? 'xl:col-span-3' : 'xl:col-span-12'} col-span-12 border-r border-defaultborder`}>
                                     <span className="flex items-center">
                                         {milestone.children.length > 0 && <span className="text-primary">
                                                 <svg
@@ -70,7 +70,9 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                 tooltipContent={`${milestone.name}`}
                                             >
                                                 <span className="hs-tooltip-toggle">
-                                                    <p className="font-semibold mb-[1.4px] text-[0.813rem]">{getExcerptFromText(milestone.name, 30)}</p>
+                                                    <p className="font-semibold mb-[1.4px] text-[0.813rem]">
+                                                        {(viewOnly ? activeMilestoneId !== milestone.id : true ) ? getExcerptFromText(milestone.name, 30) : milestone.name}
+                                                    </p>
                                                     <span
                                                         className="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700"
                                                         role="tooltip">
@@ -79,14 +81,18 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                 </span>
                                             </Tooltip>
                                              <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                                        {milestone.children.length} Tasks / {countSubtasks(milestone.children)} Sub Tasks
-                                    </p>
+                                                {
+                                                    milestone.children.length} Tasks
+                                                 {!viewOnly && (
+                                                     <span> / {countSubtasks(milestone.children)} Sub Tasks</span>
+                                                 )}
+                                            </p>
                                         </div>
                                     </span>
-
                             </div>
-                            <div className="xl:col-span-9 col-span-12">
-                                <div className="grid grid-cols-1 md:grid-cols-6 gap-2 w-full">
+                            {( viewOnly ? activeMilestoneId !== milestone.id : true ) && (
+                                <div className="xl:col-span-9 col-span-12">
+                                <div className={`grid grid-cols-1 ${viewOnly ? 'md:grid-cols-5' : 'md:grid-cols-6'} gap-2 w-full`}>
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Status</p>
                                         <p className={getStatusClasses(milestone.status)}>{toTitleCase(milestone.status)}</p>
@@ -113,10 +119,12 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                             </div>
                                         </div>
                                     </div>
-                                    <HasProjectPermission globalPermission='change_project' users={projectUsers}>
-                                        <div className="flex flex-col items-center">
-                                            <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
-                                            <div className="flex space-x-2">
+                                    {
+                                        !viewOnly &&
+                                        <HasProjectPermission globalPermission='change_project' users={projectUsers}>
+                                            <div className="flex flex-col items-center">
+                                                <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
+                                                <div className="flex space-x-2">
                                                     <Tooltip
                                                         id={`edit-milestone-tooltip-${milestone.id}`}
                                                         tooltipContent={`Edit Milestone (${milestone.name})`}>
@@ -125,14 +133,17 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                             <i className="ri-edit-line align-middle"></i>
                                                         </span>
                                                     </Tooltip>
-                                                    <Tooltip
-                                                        id={`upload-tasks-tooltip-${milestone.id}`}
-                                                        tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}>
+                                                    {
+                                                        handleUploadModal &&
+                                                        <Tooltip
+                                                            id={`upload-tasks-tooltip-${milestone.id}`}
+                                                            tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}>
                                                         <span className="text-info !py-1 !text-[0.75rem]"
                                                               onClick={() => handleUploadModal(milestone.id, 'T')}>
                                                             <i className="ri-file-upload-line align-middle"></i>
                                                         </span>
-                                                    </Tooltip>
+                                                        </Tooltip>
+                                                    }
                                                     <Tooltip
                                                         id={`add-milestone-tooltip-${milestone.id}`}
                                                         tooltipContent={`Add New Task In (${milestone.name})`}>
@@ -152,11 +163,13 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                         </span>
                                                         </Tooltip>
                                                     </HasProjectPermission>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </HasProjectPermission>
+                                        </HasProjectPermission>
+                                    }
                                 </div>
                             </div>
+                            )}
                         </div>
                     </button>
                     {milestone.children.length > 0 && activeMilestoneId === milestone.id && (
@@ -175,6 +188,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                 openTaskModal={openTaskModal}
                                 refetch={refetch}
                                 openTaskOverdueModal={openTaskOverdueModal}
+                                viewOnly={viewOnly}
                             />
                         </div>
                     </div>

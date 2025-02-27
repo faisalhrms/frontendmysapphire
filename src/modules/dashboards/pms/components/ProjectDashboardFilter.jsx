@@ -3,9 +3,11 @@ import DepartmentDropdown from "@components/dropdowns/DepartmentDropdown.jsx";
 import WorkspaceDropdown from "@components/dropdowns/WorkspaceDropdown.jsx";
 import React, {useCallback, useState} from "react";
 import FilterButton from "@components/form/FilterButton.jsx";
+import {useSelector} from "react-redux";
 
 const ProjectDashboardFilter = ({ control, errors }) => {
-    const [company, setCompany] = useState(null);
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
+    const [company, setCompany] = useState(companyId);
     const [department, setDepartment] = useState(null);
 
     const handleCompanySelect = useCallback((id) => {
@@ -16,7 +18,7 @@ const ProjectDashboardFilter = ({ control, errors }) => {
     const handleDepartmentSelect = useCallback((id) => {
         setDepartment(id)
     }, []);
-
+    console.log(company)
     return (
         <div className="grid grid-cols-12 gap-6">
             <div className="col-span-12">

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
+import {formatNumberWithCommas} from "@helpers/formatters.js";
 
 /**
  * ApexChart Component
@@ -107,6 +108,10 @@ const ApexChart = ({
                             fontSize: '22px',
                             fontWeight: 600,
                             color: '#495057',
+                            formatter: function (w) {
+                                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                return formatNumberWithCommas(total)
+                            },
                         }
 
                     }
