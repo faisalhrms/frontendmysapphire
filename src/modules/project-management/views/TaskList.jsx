@@ -35,6 +35,7 @@ const TaskList = () => {
     );
 
     const [filters, setFilters] = useState(getFilters());
+    console.log(`this is filter`, filters);
 
     const onSubmit = useCallback((formData) => {
         setFilters(formData);

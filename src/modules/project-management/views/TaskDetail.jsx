@@ -49,6 +49,7 @@ const TaskDetail = () => {
               title="Task Discussions"
               storeEndPoint={`/pms/tasks/${id}/discussion/`}
               getEndPoint={`/pms/tasks/${id}/discussions/`}
+              users={task.users}
             />
           </div>
           <div className="xl:col-span-3 sm:col-span-3 col-span-12 sticky top-0 self-start ">

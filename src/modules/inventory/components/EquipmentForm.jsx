@@ -16,9 +16,10 @@ import { useEquipmentForm } from "@modules/inventory/hooks/inventoryHooks.js";
 import SubEquipmentTable from "./SubEquipmentTable.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
+import {useSelector} from "react-redux";
 
 const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
-
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const {
         control,
         handleSubmit,
@@ -28,6 +29,8 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
         resolver: zodResolver(equipmentSchema),
         defaultValues: {
             ...equipmentData,
+            company_id: equipmentData?.company_id || companyId,
+
             sub_equipments: equipmentData?.sub_equipments || [],
         },
     });

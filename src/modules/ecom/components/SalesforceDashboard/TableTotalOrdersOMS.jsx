@@ -41,12 +41,18 @@ const TableTotaOrdersOMS = ({ apiDataoms = [], title }) => {
     } = useTable(
         {
             columns,
-            data: apiDataoms || [], // Ensure data is always an array
+            data: apiDataoms || [],
             initialState: { pageIndex: 0, pageSize: 10 },
         },
         useSortBy,
         usePagination
     );
+
+
+    const totalPages = Math.ceil(apiDataoms.length / 10);
+    const pageRange = 5;
+    const startPage = Math.max(1, pageIndex - Math.floor(pageRange / 2));
+    const endPage = Math.min(totalPages, startPage + pageRange - 1);
 
     if (!apiDataoms || apiDataoms.length === 0) {
         return (
@@ -58,12 +64,6 @@ const TableTotaOrdersOMS = ({ apiDataoms = [], title }) => {
 
     return (
         <div className="overflow-x-auto w-full">
-            <div className="mb-3">
-                <h2 className="text-lg font-semibold flex items-center">
-                    <span className="border-l-4 border-blue-500 pl-2">{title || "Total Orders in OMS"}</span>
-                </h2>
-            </div>
-
             <table {...getTableProps()} className="w-full table-auto border-collapse border border-gray-300">
                 <thead className="text-center bg-gray-100 border-b border-gray-300">
                 {headerGroups.map(headerGroup => (
@@ -76,8 +76,8 @@ const TableTotaOrdersOMS = ({ apiDataoms = [], title }) => {
                             >
                                 {column.render("Header")}
                                 <span>
-                                    {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
-                                </span>
+                                        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
+                                    </span>
                             </th>
                         ))}
                     </tr>
@@ -124,17 +124,47 @@ const TableTotaOrdersOMS = ({ apiDataoms = [], title }) => {
                         Prev
                     </button>
 
-                    {Array.from({ length: pageCount }, (_, i) => (
+                    {startPage > 1 && (
+                        <>
+                            <button
+                                onClick={() => gotoPage(0)}
+                                className="px-3 py-1 border rounded"
+                            >
+                                1
+                            </button>
+                            {startPage > 2 && (
+                                <button className="px-3 py-1 border rounded" disabled>
+                                    ...
+                                </button>
+                            )}
+                        </>
+                    )}
+
+                    {Array.from({ length: endPage - startPage + 1 }, (_, i) => (
                         <button
-                            key={i}
-                            onClick={() => gotoPage(i)}
-                            className={`px-3 py-1 border rounded transition-all ${
-                                pageIndex === i ? "bg-primary text-white font-semibold" : "bg-gray-200"
-                            }`}
+                            key={i + startPage}
+                            onClick={() => gotoPage(i + startPage - 1)}
+                            className={`px-3 py-1 border rounded transition-all ${pageIndex === i + startPage ? "bg-primary text-white font-semibold" : "bg-gray-200"}`}
                         >
-                            {i + 1}
+                            {i + startPage}
                         </button>
                     ))}
+
+                    {endPage < totalPages && (
+                        <>
+                            {endPage < totalPages - 1 && (
+                                <button className="px-3 py-1 border rounded" disabled>
+                                    ...
+                                </button>
+                            )}
+                            <button
+                                onClick={() => gotoPage(totalPages - 1)}
+                                className="px-3 py-1 border rounded"
+                            >
+                                {totalPages}
+                            </button>
+                        </>
+                    )}
 
                     <button
                         onClick={() => nextPage()}

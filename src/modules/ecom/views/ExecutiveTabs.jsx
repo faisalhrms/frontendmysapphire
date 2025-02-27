@@ -128,14 +128,14 @@ const ExecutiveTabs = () => {
 
 
             {showsynctime && (
-                <div className="error-message text-primary p-2 rounded-lg text-right text-black mb-4 mb-2">
+                <div className="error-message text-primary p-2 rounded-lg text-right text-black mb-2">
                     <p>{showsynctime}</p>
                 </div>
             )}
 
 
             {errorMessage && (
-                <div className="error-message alert alert-primary  p-2 rounded-lg shadow-md text-center text-black mb-4">
+                <div className="error-message alert alert-primary  p-2 rounded-lg shadow-md text-center text-black mb-2">
                     <p>{errorMessage}</p>
                 </div>
             )}

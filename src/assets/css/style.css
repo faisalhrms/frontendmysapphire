@@ -10195,7 +10195,7 @@ body {
 }
 
 .box.box-fullscreen {
-  @apply fixed inset-0 z-[9999] m-0 rounded-none;
+  @apply fixed inset-0 z-[50] m-0 rounded-none;
 }
 
 .box-img-overlay {
