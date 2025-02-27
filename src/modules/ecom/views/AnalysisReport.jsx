@@ -409,14 +409,14 @@ const AnalysisReport = () => {
         <>
             <PageHeader currentpage="E-Commerce" />
 
-            <div className="grid grid-cols-12 gap-6">
-                <div className="xl:col-span-12 col-span-12">
-                    <div className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md">
+            <div className="grid grid-cols-12 gap-6 dark:text-gray-200 dark:bg-bodybg">
+                <div className="xl:col-span-12 col-span-12 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
                         <nav className="flex space-x-4">
                             <Link
                                 to="#"
-                                className={`m-1 block w-full cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                                    activeTab === "orderSource" ? "bg-primary text-white" : "bg-gray-200"
+                                className={`m-1 block w-full cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${
+                                    activeTab === "orderSource" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"
                                 }`}
                                 onClick={() => setActiveTab("orderSource")}
                             >
@@ -426,7 +426,7 @@ const AnalysisReport = () => {
 
                         <button
                             type="button"
-                            className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                            className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none dark:text-gray-200 dark:bg-bodybg"
                             onClick={() => setShowFilters(!showFilters)}
                         >
                             <i className="ri-filter-3-fill inline-block"></i> Filters
@@ -435,20 +435,20 @@ const AnalysisReport = () => {
 
 
                     {showsynctime && (
-                        <div className=" text-primary p-2 rounded-lg text-right text-black mb-4 mb-2">
+                        <div className=" text-primary p-2 rounded-lg text-right text-black dark:text-gray-200 dark:bg-bodybg mb-2">
                             <p>{showsynctime}</p>
                         </div>
                     )}
 
                     {errorMessage && (
-                        <div className="error-message alert alert-primary  p-2 rounded-lg shadow-md text-center text-black mb-4 mt-4">
+                        <div className="error-message alert alert-primary  p-2 rounded-lg shadow-md text-center text-black mb-4 mt-4 dark:text-gray-200 dark:bg-bodybg">
                             <p>{errorMessage}</p>
                         </div>
                     )}
 
                     {showFilters && (
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4">
+                            <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
                                 <FormInput
                                     type="date"
                                     placeholder="From"
@@ -474,8 +474,8 @@ const AnalysisReport = () => {
 
                     <OrdersBySourceChart data={analysisData} loading={false} />
 
-                    <div className="tab-content">
-                        <div className="bg-white mt-4 rounded-lg">
+                    <div className="tab-content dark:text-gray-200 dark:bg-bodybg">
+                        <div className="bg-white mt-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                             {activeTab === "orderSource" && (
                                 <AnalysisTable
                                     title="Commerce Cloud Order"

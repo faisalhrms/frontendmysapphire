@@ -65,7 +65,8 @@ const SubEquipmentTable = ({ fields, append, remove, control, errors }) => {
                                     queryKeyBase={`sub-equipment-type-${index}`}
                                     clientSideSearch={true}
                                     preselectedOptions={formatOptions(
-
+                                        field,
+                                        'type'
                                     )}
                                     label={false} // <--- Hide label
                                 />

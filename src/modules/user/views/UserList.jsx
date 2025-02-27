@@ -1,6 +1,6 @@
 // apps/subscription/views/UserList.jsx
 
-import React from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import PageHeader from '@modules/layouts/includes/PageHeader';
 import DataTable from "@components/DataTable.jsx";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +12,44 @@ import FemaleIcon from "@mui/icons-material/Female";
 import TransgenderIcon from "@mui/icons-material/Transgender";
 import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
-import { USER_ROUTES } from '@modules/user/routes'; // Ensure the correct path is used
+import { USER_ROUTES } from '@modules/user/routes';
+import useFilters from "@hooks/useFilters.js";
+import UserListFilter from "@modules/user/components/UserListFilter.jsx"; // Ensure the correct path is used
 
 const UserList = () => {
+
     const navigate = useNavigate();
+    const {
+        control,
+        handleSubmit,
+        errors,
+        getFilters,
+        resetFilters,
+    } = useFilters(
+        useMemo(
+            () => ({
+                initialFilters: [
+                    { name: "department_id" },
+                    { name: "group_id" },
+                    { name: "company_id" },
+                    { name: "designation" },
+
+                ],
+            }),
+            []
+        )
+    );
+
+    const [filters, setFilters] = useState(getFilters());
+    console.log(`this is filter`, filters);
+    const onSubmit = useCallback((formData) => {
+        setFilters(formData);
+    }, []);
+
+    const onClear = useCallback(() => {
+        resetFilters();
+        setFilters(getFilters());
+    }, [resetFilters, getFilters]);
 
     const handleEdit = (id) => {
         navigate(`/module/users/edit/${id}`);
@@ -244,11 +278,15 @@ const UserList = () => {
     return (
         <>
             <PageHeader currentpage="Users" mainpage="Users" />
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <UserListFilter control={control} errors={errors} clearFilter={onClear}/>
+            </form>
             <DataTable
                 columns={columns}
                 title="Users"
                 buttons={buttons}
                 apiUrl="/users/datatable/"
+                filter={filters}
                 // Assuming DataTable can handle 'data.rows' and 'data.total'
                 // If not, adjust DataTable's implementation accordingly
             />
