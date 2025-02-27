@@ -18,7 +18,6 @@ const taskSchema = z.object({
   requires_approval: z.boolean().default(false),
   is_ecom: z.boolean().default(false),
   description: z.string()
-    .min(1, "Description is required")
     .max(1000, "Description must be at most 1000 characters long").optional(),
 
   priority: prioritiesEnum.default("medium"),
