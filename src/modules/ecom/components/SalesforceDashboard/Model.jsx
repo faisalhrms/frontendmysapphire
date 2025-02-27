@@ -1,8 +1,30 @@
 import React from "react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const Modal = ({ onClose, title, children, loading = false, isVisible = true }) => {
+
+const Modal = ({ onClose, modalType, children, loading = false, isVisible = true }) => {
     if (!isVisible) return null;
+
+    let title;
+    {modalType === "oms"  ? (
+       title = 'Missing in OMS'
+    ) : modalType === "owe" ? (
+        title = 'Orders in OMS'
+    ) : modalType === "ipc" ? (
+        title = 'In-Process with Customer Care'
+    ) : modalType === "commerce_cloud" ? (
+        title = 'Commerce Cloud'
+    ) : modalType === "total_orders_oms" ? (
+        title = 'Orders in OMS'
+    ) : modalType === "single_fo" ? (
+        title = 'Orders with Single FOs'
+    ) : modalType === "multiple_fo" ? (
+        title = 'Orders with Multiple FOs'
+    ) : modalType === "cancelled" ? (
+        title = 'Cancelled in OMS'
+    ) : title = ''}
+
+
 
     return (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
@@ -17,15 +39,17 @@ const Modal = ({ onClose, title, children, loading = false, isVisible = true }) 
                     </button>
                 </div>
 
-                <div className="mt-4 pr-2">
+                <div className="mt-4 pr-2 overflow-y-auto max-h-[80vh]">
                     {loading ? (
                         <div className="flex justify-center items-center min-h-[200px]">
-                            <LoadingSpinner />
+                            <LoadingSpinner/>
                         </div>
                     ) : (
                         children
                     )}
                 </div>
+
+
             </div>
         </div>
     );

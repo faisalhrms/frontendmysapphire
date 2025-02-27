@@ -3,12 +3,14 @@ import { dateSchema } from "@helpers/schema.js";
 
 // Define Equipment Status as an enum based on Django's EquipmentStatus
 const equipmentStatus = z.enum([
+    'no_status',
     'brand_new',
     'faulty',
     'functional',
     'lost',
     'sold_to_employee',
     'write_off',
+    'temporary_allocation'
 ]);
 const subEquipmentSchema = z.object({
     type_id: z.number().min(1, "Type is required"),
@@ -18,6 +20,7 @@ const subEquipmentSchema = z.object({
 });
 
 const equipmentSchema = z.object({
+    company_id: z.number().min(1, "Company ID is required"),
     equipment_site_id: z.number().min(1, "Site is required"),
     department_id: z.number().min(1, "Department is required"),
     location_id: z.number().min(1, "Location is required"),
@@ -36,8 +39,8 @@ const equipmentSchema = z.object({
     maturity_date: dateSchema('Maturity Date',true).optional(),
     antivirus: z.boolean().optional(),
     store_comm_ready: z.boolean().optional(),
-    description: z.string().max(1000, "Description can be at most 1000 characters").optional(),
-    specs: z.string().max(500, "Specs can be at most 500 characters").optional(),
+    description: z.string().max(1000, "Description can be at most 1000 characters"),
+    specs: z.string().max(500, "Specs can be at most 500 characters"),
     attachment_ids: z.array(z.number()).nullable().optional(),
     sub_equipments: z.array(subEquipmentSchema).optional(),
 });

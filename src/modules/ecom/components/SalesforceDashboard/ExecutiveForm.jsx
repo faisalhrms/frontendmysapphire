@@ -219,7 +219,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 isLoading={isLoading}
             />
             {showModal && (
-                <Model loading={isModelLoading} onClose={() => setShowModal(false)}>
+                <Model modalType={modalType} loading={isModelLoading} onClose={() => setShowModal(false) }>
                     {modalType === "oms"  ? (
                         <TableOms apiData={apiData} />
                     ) : modalType === "owe" ? (
