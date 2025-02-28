@@ -99,8 +99,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                     </div>
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Priority</p>
-                                        <span
-                                            className={getBadgeClasses(milestone.priority)}>{toTitleCase(milestone.priority)}</span>
+                                        <span className={getBadgeClasses(milestone.priority)}>{toTitleCase(milestone.priority)}</span>
                                         
                                     </div>
                                     <div className="flex flex-col items-start">
@@ -183,6 +182,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                 projectUsers={projectUsers}
                                 tasks={milestone.children}
                                 milestoneStatus={milestone.status}
+                                milestoneLaunch={milestone.ended_at}
                                 startedAt={milestone.started_at}
                                 endedAt={milestone.ended_at}
                                 openTaskModal={openTaskModal}

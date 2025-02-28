@@ -12,10 +12,11 @@ import useDiscussion from "@hooks/useDiscussionHook.js";
 const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users = [] }) => {
     const { user } = useSelector((state) => state.auth);
     const { isModalOpen, openModal, closeModal, selectedIds, attachments, handleSelectedFiles, handleDeleteAttachment, mediaType, clearAttachments } = useFileModal('discussionAttachments');
-    const { discussions, isLoading, message, setMessage, isSubmitting, refetch, handleSubmit } = useDiscussion(selectedIds, clearAttachments, getEndPoint, storeEndPoint);
+    const { discussions, isLoading, message, setMessage, selectedUsers, setSelectedUsers, isSubmitting, refetch, handleSubmit } = useDiscussion(selectedIds, clearAttachments, getEndPoint, storeEndPoint);
 
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(null);
     const dropdownRef = useRef();
 
     const handleInputChange = (e) => {
@@ -23,13 +24,11 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users =
         setMessage(input);
 
         if (input.includes("@")) {
-            const query = input?.split("@")?.pop()?.toLowerCase();
-
-            const filteredUsers = users?.filter(
-                (u) =>
-                    u?.email?.toLowerCase()?.includes(query) || u?.name?.toLowerCase()?.includes(query)
+            const query = input.split("@").pop().toLowerCase();
+            const filteredUsers = users.filter((u) =>
+                (u.email?.toLowerCase().includes(query) || u.full_name?.toLowerCase().includes(query)) &&
+                !selectedUsers.some(selected => selected.id === u.id)
             );
-            console.log(filteredUsers);
             setSuggestions(filteredUsers);
             setShowSuggestions(filteredUsers.length > 0);
         } else {
@@ -37,11 +36,28 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users =
         }
     };
 
-    const handleSuggestionClick = (email) => {
-        const parts = message.split("@");
-        const beforeAt = parts.slice(0, -1).join("@");
-        setMessage(`${beforeAt}${email} `);
+    const handleSuggestionClick = (user) => {
+        if (user && !selectedUsers.some((selected) => selected.id === user.id)) {
+            setSelectedUsers([...selectedUsers, user]);
+            const messageWithoutMention = message.split('@')[0];
+            setMessage(`${messageWithoutMention}`);
+        }
         setShowSuggestions(false);
+    };
+
+    const handleRemoveUser = (userId) => {
+        setSelectedUsers(selectedUsers.filter(user => user.id !== userId));
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === "ArrowDown" && highlightedIndex < suggestions.length - 1) {
+            setHighlightedIndex(highlightedIndex + 1);
+        } else if (e.key === "ArrowUp" && highlightedIndex > 0) {
+            setHighlightedIndex(highlightedIndex - 1);
+        } else if (e.key === "Enter" && highlightedIndex !== null) {
+            const selectedUser = suggestions[highlightedIndex];
+            handleSuggestionClick(selectedUser);
+        }
     };
 
     return (
@@ -79,6 +95,27 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users =
                             <div className="grid grid-cols-12 gap-4">
                                 <AttachmentsList attachments={attachments} onDelete={handleDeleteAttachment} />
                             </div>
+                            {/* Display selected users above the input */}
+                            {selectedUsers.length > 0 && (
+                                <div className="mb-2 flex flex-wrap gap-2">
+                                    {selectedUsers.map((user) => (
+                                        <div
+                                            key={user.id}
+                                            className="inline-flex items-center px-2 py-1 bg-gray-200 rounded-full"
+                                        >
+                                            <Avatar avatar={user.avatar} size="sm" />
+                                            <span className="ml-2">{user.email}</span>
+                                            <button
+                                                type="button"
+                                                className="ml-2 text-red-500"
+                                                onClick={() => handleRemoveUser(user.id)}
+                                            >
+                                                x
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                             <div className="sm:flex items-center leading-none mt-1">
                                 <div className="me-4">
                                     <Avatar avatar={user.avatar} size="md" />
@@ -92,28 +129,24 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users =
                                             aria-label="Discussion message input"
                                             value={message}
                                             onChange={handleInputChange}
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    e.preventDefault();
-                                                    handleSubmit();
-                                                }
-                                            }}
+                                            onKeyDown={handleKeyDown}
                                             ref={dropdownRef}
                                         />
                                         {showSuggestions && (
                                             <div
-                                                className={`absolute bg-white shadow-lg rounded-md z-10 max-h-32 w-72 overflow-y-auto top-full mt-2`}
+                                                className={`absolute bg-white shadow-lg rounded-md z-10 max-h-32 w-72 overflow-y-auto top-[-200%] mt-2`}
                                             >
                                                 {suggestions.length > 0 ? (
-                                                    suggestions.map((user) => (
+                                                    suggestions.map((user, index) => (
                                                         <div
                                                             key={user.id}
-                                                            className="flex items-center p-2 cursor-pointer hover:bg-gray-100 text-sm"
-                                                            onClick={() => handleSuggestionClick(user.email)}
+                                                            className={`flex items-center p-2 cursor-pointer hover:bg-gray-100 text-sm ${
+                                                                highlightedIndex === index ? "bg-gray-200" : ""
+                                                            }`}
+                                                            onClick={() => handleSuggestionClick(user)}
                                                         >
                                                             <Avatar avatar={user.avatar} size="sm" />
                                                             <div className="ml-2">
-                                                                <div className="font-semibold">{user.name}</div>
                                                                 <div className="text-gray-500">{user.email}</div>
                                                             </div>
                                                         </div>
@@ -169,4 +202,4 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users =
     );
 };
 
-export default Discussion;
+export default React.memo(Discussion);

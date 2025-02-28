@@ -11,7 +11,6 @@ export const taskStatuses = [
     { value: 'reopened', label: 'Reopened' },
     { value: 'on_hold', label: 'On Hold' },
     { value: 'cancelled', label: 'Cancelled' },
-    { key: "under_approval", label: "Under Approval" },
 ];
 export const priorities = [
     { value: 'low', label: 'Low' },

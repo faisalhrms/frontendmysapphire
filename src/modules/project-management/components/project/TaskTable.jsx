@@ -10,11 +10,10 @@ import Avatar from "@components/Avatar.jsx";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useSelector} from "react-redux";
-import SimpleBar from "simplebar-react";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
 
     const toggleSubTasks = (taskId) => {
@@ -49,6 +48,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                         <th scope="col">Completion Date</th>
                         <th scope="col">Completion Timeline</th>
                         <th scope="col">Timeline Groups</th>
+                        <th scope="col">Launch</th>
                         <th scope="col">Progress</th>
                         <th scope="col">Priority</th>
                         <th scope="col">Started At</th>
@@ -232,6 +232,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td>{formatDate(task.completed_at)}</td>
                                 <td className='text-center'>{task.completion_timeline}</td>
                                 <td className='text-center'>{task.time_line_group}</td>
+                                <td className='text-center'>{milestoneLaunch ? formatDate(milestoneLaunch) : ''}</td>
                                 <td className="min-w-[200px]">
                                     <div className='flex items-center'>
                                         <ProgressBar value={task.progress} barColor='!bg-success' withStatus={false} />
@@ -253,7 +254,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 {activeTaskId === task.id && task.children && task.children.length > 0 && (
                                     <tr>
                                     <td colSpan="8">
-                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} startedAt={task.started_at} endedAt={task.ended_at} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal} viewOnly={viewOnly} />
+                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} milestoneLaunch={milestoneLaunch} startedAt={task.started_at} endedAt={task.ended_at} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal} viewOnly={viewOnly} />
                                     </td>
                                     </tr>
                                 )}

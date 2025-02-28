@@ -1,5 +1,5 @@
 import WorkspaceDropdown from "@components/dropdowns/WorkspaceDropdown.jsx";
-import React, {useCallback} from "react";
+import React from "react";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {taskStatuses} from "@modules/project-management/services/taskService.js";
@@ -8,6 +8,8 @@ import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterClearButton from "@components/form/FilterClearButton.jsx";
 import ProjectDropDown from "@modules/project-management/components/dropdowns/ProjectDropDown.jsx";
+import {launches} from "@modules/project-management/services/milestoneService.js";
+
 const TaskListFilter = ({ control, errors, clearFilter }) => {
     const [workspaces,setWorkspaces] = React.useState([]);
     const handleWorkspaceSelect = useCallback((id) => {
@@ -62,6 +64,25 @@ const TaskListFilter = ({ control, errors, clearFilter }) => {
                                     errors={errors}
                                     options={taskStatuses}
                                     placeholder="Status"
+                                />
+                                <FormSelect
+                                    label={false}
+                                    name="launch"
+                                    control={control}
+                                    errors={errors}
+                                    options={launches}
+                                    placeholder="Launch"
+                                />
+                                <FormSelect
+                                    label={false}
+                                    name="is_ecom"
+                                    control={control}
+                                    errors={errors}
+                                    options={[
+                                        { value: 1, label: 'Yes' },
+                                        { value: 0, label: 'No' },
+                                    ]}
+                                    placeholder="Ecom"
                                 />
                                 <TagDropdown
                                     control={control}
