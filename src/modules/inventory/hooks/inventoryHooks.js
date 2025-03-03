@@ -10,6 +10,7 @@ import {
     reAssignEquipment
 } from "@modules/inventory/services/inventoryService.js"; // Assuming services exist here
 import { useNavigate } from "react-router-dom";
+import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
 
 // Hook to fetch equipment list with pagination and search
 export const useEquipments = (page = 1, size = 8, search) => {
@@ -37,7 +38,7 @@ export const useEquipmentForm = (equipmentData, isEditMode) => {
             } else {
                 await createEquipment(data);
             }
-            // navigate('/module/equipments');
+             navigate(INVENTORY_ROUTES.READ.path);
         } catch (error) {
             console.error('Error:', error.message);
         }
@@ -96,7 +97,7 @@ export const useToggleFavouriteEquipment = () => {
     return { handleToggleFavourite, isLoading };
 };
 
-export const useReAssignEquipment = () => {
+export const useReAssignEquipment = (id) => {
     const navigate = useNavigate();
 
     const handleReAssign = async (formData) => {
@@ -104,7 +105,7 @@ export const useReAssignEquipment = () => {
             const data = await reAssignEquipment(formData);
             // On success, you might want to navigate somewhere or refetch data
             // For example:
-            // navigate('/module/equipments');
+            navigate(`/module/equipment/detail/${id}`);
         } catch (err) {
             console.error("Reassign error:", err);
         }

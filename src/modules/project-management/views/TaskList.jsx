@@ -28,6 +28,8 @@ const TaskList = () => {
                     { name: "tags" },
                     { name: "deadline_from" },
                     { name: "deadline_to" },
+                    { name: "launch" },
+                    { name: "is_ecom" }
                 ],
             }),
             []
@@ -144,6 +146,11 @@ const TaskList = () => {
         },
         { Header: "Completion Timeline", accessor: "status_completion_timeline", disableSortBy: true, },
         { Header: "Timeline Group", accessor: "timeline_groups", disableSortBy: true, },
+        { Header: "Launch", accessor: "milestone.ended_at", disableSortBy: true,
+            Cell: ({value}) => (
+                formatDate(value, "MMM dd, yyyy")
+            )
+        },
         { Header: "E-com Deliverable", accessor: "is_ecom",
             Cell: ({value}) => (value ? 'Yes': 'No')
         },
