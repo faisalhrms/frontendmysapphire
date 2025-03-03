@@ -54,13 +54,13 @@ const Table = ({ apiDatas, title }) => {
 
     // Pagination Calculation Logic
     const totalPages = Math.ceil(apiDatas.length / 10);
-    const pageRange = 5;  // Number of pages to display at once
+    const pageRange = 5;
     const startPage = Math.max(1, pageIndex - Math.floor(pageRange / 2));
     const endPage = Math.min(totalPages, startPage + pageRange - 1);
 
     if (!apiDatas || apiDatas.length === 0) {
         return (
-            <div className="text-center p-4 text-gray-500">
+            <div className="text-center p-2 text-gray-500">
                 No data available.
             </div>
         );
@@ -78,7 +78,7 @@ const Table = ({ apiDatas, title }) => {
                         {headerGroup.headers.map(column => (
                             <th
                                 {...column.getHeaderProps(column.getSortByToggleProps())}
-                                className="px-2 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
+                                className="px-1 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
                                 key={column.id}
                             >
                                 {column.render("Header")}

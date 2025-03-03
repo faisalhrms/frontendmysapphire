@@ -33,6 +33,14 @@ export const sidebarMenu = [
                 3,
                 '',
                 ECOM_ROUTES.SFD.permission,
+            ),
+            generateSidebarItem(
+                ECOM_ROUTES.OS.path,
+                'link',
+                'Digital Spent',
+                4,
+                '',
+                // ECOM_ROUTES.SFD.permission,
             )
         ]
     )

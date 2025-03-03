@@ -9,7 +9,7 @@ const Modal = ({ onClose, modalType, children, loading = false, isVisible = true
     {modalType === "oms"  ? (
        title = 'Missing in OMS'
     ) : modalType === "owe" ? (
-        title = 'Orders in OMS'
+        title = 'Orders with Exceptions'
     ) : modalType === "ipc" ? (
         title = 'In-Process with Customer Care'
     ) : modalType === "commerce_cloud" ? (
@@ -47,6 +47,8 @@ const Modal = ({ onClose, modalType, children, loading = false, isVisible = true
                     ) : (
                         children
                     )}
+
+
                 </div>
 
 

@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import { toTitleCase } from "../../../../helpers/formatters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
+import Pagination from "../../../../components/Pagination.jsx";
 
 const TableOms = ({ apiData, title }) => {
     const columns = useMemo(
@@ -75,7 +76,7 @@ const TableOms = ({ apiData, title }) => {
                         {headerGroup.headers.map(column => (
                             <th
                                 {...column.getHeaderProps(column.getSortByToggleProps())}
-                                className="px-4 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
+                                className="px-1 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
                                 key={column.id}
                             >
                                 {column.render("Header")}
@@ -95,7 +96,7 @@ const TableOms = ({ apiData, title }) => {
                             {row.cells.map(cell => (
                                 <td
                                     {...cell.getCellProps()}
-                                    className="px-4 py-2 text-sm text-gray-900 border-r border-gray-300"
+                                    className="px-1 py-2 text-sm text-gray-900 border-r border-gray-300"
                                     key={cell.column.id}
                                 >
                                     {cell.render("Cell")}
@@ -187,6 +188,18 @@ const TableOms = ({ apiData, title }) => {
                     </button>
                 </div>
             </div>
+
+            {/*<Pagination*/}
+            {/*    pageIndex={pageIndex}*/}
+            {/*    totalPages={totalPages}*/}
+            {/*    canPreviousPage={canPreviousPage}*/}
+            {/*    canNextPage={canNextPage}*/}
+            {/*    gotoPage={gotoPage}*/}
+            {/*    previousPage={previousPage}*/}
+            {/*    nextPage={nextPage}*/}
+            {/*    pageCount={pageCount}*/}
+            {/*/>*/}
+
         </div>
     );
 };
