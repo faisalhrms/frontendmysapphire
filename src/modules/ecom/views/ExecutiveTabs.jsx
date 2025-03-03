@@ -142,10 +142,8 @@ const ExecutiveTabs = () => {
 
             {showFilters && activeTab === "executiveSummary" && (
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="bg-white p-2 mt-2 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-                        <div className="mt-2 mr-2 flex items-center dark:text-gray-200 dark:bg-bodybg">
-                            <div className="mr-2">
-                                <FormInput
+                    <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
+                        <FormInput
                                     type="date"
                                     name="date_from"
                                     control={control}
@@ -153,8 +151,7 @@ const ExecutiveTabs = () => {
                                     placeholder="From"
                                     label={true}
                                 />
-                            </div>
-                            <div className="mr-2">
+
                                 <FormInput
                                     type="date"
                                     name="date_to"
@@ -163,11 +160,8 @@ const ExecutiveTabs = () => {
                                     placeholder="To"
                                     label={true}
                                 />
-                            </div>
-                            <div className="mr-2 flex items-right dark:text-gray-200 dark:bg-bodybg">
-                                <FilterButton />
-                            </div>
-                        </div>
+                        <FilterButton />
+
                     </div>
                 </form>
             )}
