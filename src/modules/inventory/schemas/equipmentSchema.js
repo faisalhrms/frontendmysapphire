@@ -25,7 +25,7 @@ const equipmentSchema = z.object({
     department_id: z.number().min(1, "Department is required"),
     location_id: z.number().min(1, "Location is required"),
 
-    code: z.number().min(1, "Code is required"),
+    // code: z.number().min(1, "Code is required"),
     equipment_type_id: z.number().min(1, "Type is required"),
     asset_code: z.string().min(1, "Asset Code is required"),
     serial_no: z.string()
