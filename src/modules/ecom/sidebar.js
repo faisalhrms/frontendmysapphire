@@ -40,7 +40,7 @@ export const sidebarMenu = [
                 'Digital Spent',
                 4,
                 '',
-                // ECOM_ROUTES.SFD.permission,
+                ECOM_ROUTES.OS.permission,
             )
         ]
     )

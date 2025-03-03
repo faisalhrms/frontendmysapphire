@@ -18,7 +18,7 @@ export const ECOM_ROUTES = {
     },
     OS:{
         path: '/module/ecom/digitalspent',
-        // permission: 'ecom_salesforce_dashboard',
+        permission: 'ecom_digitalspent',
     }
 
 };
@@ -42,7 +42,7 @@ export const MODULE_ROUTES = [
     {
         path: ECOM_ROUTES.OS.path,
         component: ObjectiveSpend,
-        // permission: ECOM_ROUTES.OS.permission,
+        permission: ECOM_ROUTES.OS.permission,
     },
 
 ];
