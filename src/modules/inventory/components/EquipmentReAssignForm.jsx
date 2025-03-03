@@ -39,7 +39,7 @@ const EquipmentReAssignForm = ({ equipmentData }) => {
         },
     });
 
-    const { handleReAssign } = useReAssignEquipment();
+    const { handleReAssign } = useReAssignEquipment(equipmentData.id);
 
     useEffect(() => {
         if (equipmentData) {

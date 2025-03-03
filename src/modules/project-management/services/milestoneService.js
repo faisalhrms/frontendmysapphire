@@ -1,6 +1,20 @@
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
+export const launches = [
+    { value: 'previous_two_months', label: 'Previous two months' },
+    { value: 'previous_month', label: 'Previous month' },
+    { value: 'previous_two_weeks', label: 'Previous two weeks' },
+    { value: 'previous_week', label: 'Previous week' },
+    { value: 'this_week', label: 'This week' },
+    { value: 'this_month', label: 'This month' },
+    { value: 'next_week', label: 'Next week' },
+    { value: 'next_month', label: 'Next month' },
+    { value: 'next_two_weeks', label: 'Next two weeks' },
+    { value: 'next_two_months', label: 'Next two months' },
+];
+
+
 
 export const createMilestone = async (project_id, data) => {
     try {

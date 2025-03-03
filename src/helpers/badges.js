@@ -33,6 +33,14 @@ const badgeStyles = {
     write_off: danger,
     completion: success,
     overdue: danger,
+    in_progress: secondary,
+    reopened: danger,
+    near_completion: warning,
+    under_approval: secondary,
+    half_completed: success,
+    open: info,
+    not_started: info,
+    on_hold: warning,
 };
 
 const statusStyles = {
@@ -62,11 +70,11 @@ const statusStyles = {
 
 };
 
-export const getBadgeClasses = (text, classes) => {
+export const getBadgeClasses = (text, classes, badge = true) => {
     if (!text) return '';
     const normalizedText = text.toLowerCase();
     const style = badgeStyles[normalizedText] || notFound;
-    return `badge ${classes} ${style}`.trim();
+    return `${badge ? 'badge' : ''} ${classes} ${style}`.trim();
 };
 
 export const getStatusClasses = (text) => {

@@ -1,4 +1,5 @@
 import ProjectList from '@modules/project-management/views/ProjectList.jsx';
+import ProjectEcom from '@modules/project-management/views/ProjectsMilestonesTasksList.jsx';
 import ProjectCreate from '@modules/project-management/views/ProjectCreate.jsx';
 import ProjectEdit from '@modules/project-management/views/ProjectEdit.jsx';
 import ProjectDetail from '@modules/project-management/views/ProjectDetail.jsx';
@@ -32,7 +33,11 @@ export const PMS_ROUTES = {
     },
     LIST:{
       path: "/module/tasks",
-    }
+    },
+    ECOM: {
+      path: "/module/tasks/ecom",
+      permission: 'view_ecom_tasks',
+    },
   },
 };
 
@@ -66,5 +71,10 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.TASK.LIST.path,
     component: TaskList,
+  },
+  {
+    path: PMS_ROUTES.TASK.ECOM.path,
+    component: ProjectEcom,
+    permission: PMS_ROUTES.TASK.ECOM.permission,
   },
 ];
