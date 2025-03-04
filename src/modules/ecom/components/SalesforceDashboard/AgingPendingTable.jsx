@@ -95,10 +95,12 @@
 // };
 //
 // export default AgingPendingTable;
+
 import React from "react";
 import PropTypes from "prop-types";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", loading }) => {
+
+const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", loading, onCellClick }) => {
     const renderNoteText = (note) => {
         if (!note) return null;
 
@@ -120,7 +122,7 @@ const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", l
             <h2 className="text-sm font-bold text-black px-4 py-2 rounded-t bg-yellow-300">{title}</h2>
 
             {loading ? (
-                <LoadingSpinner /> // Use the LoadingSpinner component during loading
+                <LoadingSpinner />
             ) : (
                 <div className="overflow-x-auto">
                     <table className="min-w-full border-collapse border border-gray-400">
@@ -145,6 +147,7 @@ const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", l
                                     {Object.entries(row).map(([key, cell], cellIndex) => (
                                         <td
                                             key={cellIndex}
+                                            onClick={() => onCellClick(row)} // Pass the row to the parent on click
                                             className={`py-2 px-4 border border-gray-400 ${cellIndex !== 0 ? "text-right" : "text-left"}`}
                                         >
                                             {cell}
@@ -184,7 +187,8 @@ AgingPendingTable.propTypes = {
     data: PropTypes.array.isRequired,
     totals: PropTypes.array,
     noteText: PropTypes.string,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    onCellClick: PropTypes.func.isRequired,
 };
 
 export default AgingPendingTable;

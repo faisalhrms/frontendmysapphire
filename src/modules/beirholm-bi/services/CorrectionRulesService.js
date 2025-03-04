@@ -1,0 +1,64 @@
+// services/CorrectionRulesService.js
+import api from "@config/axiosConfig.js";
+import Notify from "@helpers/toastNotifications.js";
+
+export const createErrorCorrection = async (payload) => {
+  try {
+    const response = await api.post("error/correction/rule/", payload);
+    Notify.success("Successfully Created!");
+    return response.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to create Error Correction");
+    throw error;
+  }
+};
+
+export const getErrorCorrection = async () => {
+  try {
+    return await api.get("error/correction/rule/datatable/");
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to fetch Error Correction");
+    throw error;
+  }
+};
+
+export const getErrorCorrectionById = async (id) => {
+  try {
+    const response = await api.get(`error/correction/rule/${id}/`);
+    return response?.data?.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to fetch Error Correction details");
+    throw error;
+  }
+};
+
+export const updateErrorCorrection = async (id, payload) => {
+  try {
+    const response = await api.put(`error/correction/rule/${id}/`, payload);
+    Notify.success("Updated Successfully!");
+    return response.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to update Error Correction");
+    throw error;
+  }
+};
+
+export const deleteErrorCorrectionById = async (id) => {
+  try {
+    const response = await api.delete(`error/correction/rule/${id}/`);
+    Notify.success("Deleted Successfully!");
+    return response.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to delete Error Correction");
+    throw error;
+  }
+};
+
+export const getParentErrors = async (fieldDefinitionId) => {
+  try {
+    return await api.get(`error/correction/rule/parent-errors/?field_definition_id=${fieldDefinitionId}`);
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to fetch parent errors");
+    throw error;
+  }
+};
