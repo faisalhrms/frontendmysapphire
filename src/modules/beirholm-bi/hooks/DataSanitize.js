@@ -63,6 +63,6 @@ export const useDataSanitize = () => {
     control,
     job,
     jobStatus,
-    reset, // <-- Return reset so it can be used in the modal
+    reset,
   };
 };
