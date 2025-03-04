@@ -63,7 +63,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
     isSubmitting: overDueSubmitting,
     handleSubmit: overDueSubmit,
     onOverdueTaskSubmit,
-    isOverdueTaskModalOpen
+    isOverdueTaskModalOpen,
+    dates
   } = useTaskOverdueModal(refetch)
 
   return (
@@ -168,6 +169,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                 handleSubmit={overDueSubmit}
                 onSubmit={onOverdueTaskSubmit}
                 closeModal={closeTaskOverdueModal}
+                startedAt={dates.startedAt}
+                endedAt={dates.endedAt}
             />
         }
       </>

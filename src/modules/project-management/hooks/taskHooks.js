@@ -196,15 +196,17 @@ export const useUpdateTaskStatus = () => {
 export const useTaskOverdueModal = (refetch) => {
   const [id, setId] = useState(null);
   const [taskName, setTaskName] = useState(null);
+  const [dates, setDates] = useState({ startedAt: null, endedAt: null });
   const [isOverdueTaskModalOpen, setIsModalOpen] = useState(false);
 
   const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(taskOverdueSchema),
   });
 
-  const openTaskOverdueModal = (id, oldDueDate, taskName) => {
+  const openTaskOverdueModal = (id, oldDueDate, taskName, startedAt, endedAt) => {
     setId(id);
     setTaskName(taskName);
+    setDates({ startedAt, endedAt });
       reset({
         challenges: "",
         requested_due_date: oldDueDate,
@@ -251,7 +253,8 @@ export const useTaskOverdueModal = (refetch) => {
     isSubmitting,
     handleSubmit,
     onOverdueTaskSubmit,
-    isOverdueTaskModalOpen
+    isOverdueTaskModalOpen,
+    dates
   };
 };
 
