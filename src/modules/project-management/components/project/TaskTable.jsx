@@ -74,7 +74,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                      tooltipContent={`Request For Change (${task.name}) Due Date`}
                                                  >
                                                      <button
-                                                         onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name)}
+                                                         onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name, startedAt, endedAt)}
                                                          className='ti-btn ti-btn-danger ti-btn-sm'>
                                                          <i className="ri-calendar-2-line align-middle"></i>
                                                      </button>
