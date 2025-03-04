@@ -1,12 +1,40 @@
-import React, { useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import { toTitleCase } from "../../../../helpers/formatters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
+import OrderModal from "../../components/OrderModel.jsx";
+import OrderDetailsTable from "../../components/OrderDetailsTable.jsx";
 
 const Table = ({ apiDatas, title }) => {
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+    const openModal = (order) => {
+        setSelectedOrder(order);
+        setIsModalOpen(true);
+    };
+
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedOrder(null);
+    };
+
     const columns = useMemo(
         () => [
-            { Header: "Order #", accessor: "orderno" },
+            {
+                Header: "Order #",
+                accessor: "orderno",
+                Cell: ({ value, row }) => (
+                    <button
+                        onClick={() => openModal(row.original)}
+                        className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    >
+                        {value}
+                    </button>
+                ),
+            },
             { Header: "Date", accessor: "placedate", Cell: ({ value }) => toTitleCase(value) },
             { Header: "Status", accessor: "confirmationstatus" },
             {
@@ -110,7 +138,7 @@ const Table = ({ apiDatas, title }) => {
                 </tbody>
             </table>
 
-            {/* Pagination */}
+
             <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
                 <span className="text-sm text-gray-600">
                     Showing {pageIndex * 10 + 1} to {Math.min((pageIndex + 1) * 10, apiDatas.length)} of {apiDatas.length} results
@@ -190,8 +218,14 @@ const Table = ({ apiDatas, title }) => {
                     </button>
                 </div>
             </div>
+            {isModalOpen && selectedOrder && (
+                <OrderModal onClose={closeModal} title={`Order Details - ${selectedOrder.orderno}`}>
+                    <OrderDetailsTable order={selectedOrder}/>
+                </OrderModal>
+            )}
         </div>
     );
 };
 
 export default Table;
+
