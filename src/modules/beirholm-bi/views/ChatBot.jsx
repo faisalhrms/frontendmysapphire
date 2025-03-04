@@ -7,13 +7,15 @@ const ChatBot = () => {
   const [input, setInput] = useState("");
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef(null);
+  const chatContainerRef = useRef(null);
+
   const suggestions = [
-    "Give me top importers of 2024",
-    "What's total export of sapphire textiles",
-    "Top exporters from Asia continent of Pakistan 2023",
-    "Show me bed sheet importers in 2024",
-    "Give me top importers of 2024 in USD",
-    "Which company imports more: CompanyA vs CompanyB"
+    "Give me top exporters of Pakistan",
+    "What's total export of sapphire textiles mills",
+    "Which product does Faisal Spinning Mills export most?",
+    "Exports of Faisal Spinning Mills",
+    "Exports of Faisal Spinning Mills to Europe",
+    "Show me the imports of diamond brand"
   ];
 
   useEffect(() => {
@@ -37,6 +39,12 @@ const ChatBot = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const extractVowels = (text) => {
     return text.replace(/[^aeiouAEIOU]/g, "");
   };
@@ -54,18 +62,18 @@ const ChatBot = () => {
       const response = await api.post("chat/query/", { query: message, vowels });
       if (response.status === 200) {
         const respData = response.data.response;
+        let botMessage;
         if (Array.isArray(respData)) {
-          setMessages((prev) => [...prev, { type: "bot", data: respData }]);
-          speakAnswer("Here are the top importers of Pakistan 2024");
+          botMessage = { type: "bot", data: respData };
+          speakAnswer("Here are the results.");
         } else if (typeof respData === "object" && respData !== null) {
-          const answerText = JSON.stringify(respData);
-          setMessages((prev) => [...prev, { type: "bot", text: answerText }]);
-          speakAnswer(answerText);
+          botMessage = { type: "bot", text: JSON.stringify(respData) };
+          speakAnswer(JSON.stringify(respData));
         } else {
-          const answerText = respData;
-          setMessages((prev) => [...prev, { type: "bot", text: answerText }]);
-          speakAnswer(answerText);
+          botMessage = { type: "bot", text: respData };
+          speakAnswer(respData);
         }
+        setMessages((prev) => [...prev, botMessage]);
       } else {
         setMessages((prev) => [...prev, { type: "bot", text: "Error processing query" }]);
         speakAnswer("Error processing query");
@@ -99,47 +107,44 @@ const ChatBot = () => {
 
   return (
     <>
-      <PageHeader currentpage="Chat Bot" mainpage="Chat Bot" />
       <div className="flex justify-center items-start p-8 bg-gradient-to-br from-[#f5f7fa] to-[#c3cfe2] min-h-[calc(100vh-60px)]">
         <div className="flex-1 max-w-[800px] bg-white rounded-xl shadow-lg p-5 mr-5">
-          <div className="h-[400px] overflow-y-auto rounded-md p-4 mb-4 bg-gray-100 space-y-2">
+          <div
+            ref={chatContainerRef}
+            className="h-[400px] overflow-y-auto rounded-md p-4 mb-4 bg-gray-100 space-y-4"
+          >
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`p-2 rounded my-2 inline-block max-w-full whitespace-pre-line ${
-                  msg.type === "user" ? "bg-green-100 text-right ml-auto" : "bg-gray-200 text-left mr-auto"
-                }`}
-              >
-                {msg.data ? (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full border-collapse">
-                      <thead>
-                        <tr>
-                          <th className="border px-2 py-1">#</th>
-                          <th className="border px-2 py-1">Company</th>
-                          <th className="border px-2 py-1">Value (PKR)</th>
-                          <th className="border px-2 py-1">Country</th>
-                          <th className="border px-2 py-1">Product</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {msg.data.map((item, idx) => (
-                          <tr key={idx}>
-                            <td className="border px-2 py-1">{idx + 1}</td>
-                            <td className="border px-2 py-1">{item.Company}</td>
-                            <td className="border px-2 py-1">{item.VALUE_PKR}</td>
-                            <td className="border px-2 py-1">{item.Country}</td>
-                            <td className="border px-2 py-1">{item.Product}</td>
+              <div key={index} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
+                <div className={`max-w-[70%] p-3 rounded-lg ${msg.type === "user" ? "bg-green-100 text-right" : "bg-gray-200 text-left"}`}>
+                  {msg.type === "bot" && msg.data ? (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full border-collapse">
+                        <thead>
+                          <tr>
+                            <th className="border px-2 py-1">#</th>
+                            <th className="border px-2 py-1">Company</th>
+                            <th className="border px-2 py-1">Value</th>
+                            <th className="border px-2 py-1">Country</th>
+                            <th className="border px-2 py-1">Product</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  Array.isArray(msg.text)
-                    ? msg.text.map((line, i) => <div key={i}>{line}</div>)
-                    : msg.text
-                )}
+                        </thead>
+                        <tbody>
+                          {msg.data.map((item, idx) => (
+                            <tr key={idx}>
+                              <td className="border px-2 py-1">{idx + 1}</td>
+                              <td className="border px-2 py-1">{item.Company}</td>
+                              <td className="border px-2 py-1">{item.VALUE_PKR || item.USD}</td>
+                              <td className="border px-2 py-1">{item.Country}</td>
+                              <td className="border px-2 py-1">{item.Product}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    msg.text
+                  )}
+                </div>
               </div>
             ))}
           </div>
