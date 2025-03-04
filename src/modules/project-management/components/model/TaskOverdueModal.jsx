@@ -2,8 +2,12 @@ import React from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
+import {convertToDateTime, convertToDateTimeEnd} from "@helpers/dateTime.js";
 
-const TaskOverdueModal = ({ taskName, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal }) => {
+const TaskOverdueModal = ({ taskName, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, startedAt, endedAt }) => {
+
+    const maxDateTime = convertToDateTimeEnd(endedAt);
+    const minDateTime = convertToDateTime(startedAt);
 
     return (
         <>
@@ -40,6 +44,8 @@ const TaskOverdueModal = ({ taskName, control, errors, isSubmitting, handleSubmi
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="Due Date"
+                                                    min={minDateTime}
+                                                    max={maxDateTime}
                                                 />
                                             </div>
                                             <div className="col-span-6">
