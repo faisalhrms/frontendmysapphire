@@ -55,7 +55,7 @@ export const competitorData = {
         },
         sustainability: {
             title: "Sustainability - Faisal Spinning Mills",
-            headers: ["Certifications", "Others", "Initiatives"],
+            headers: ["Environmental", "Others", "Initiatives"],
             data: [
                 ["GOTS (Global Organic Textile Standard)", "Supima (Supima Association of America)", "Renewable Energy: Investments in 2.5 MW solar energy set-up and a proposed 4.8 MW Wind Mill Project."],
                 ["Oeko-tex Standard 1000", "Cotton USA (Cotton Council International)", "Waste Water Treatment: The company has built a water treatment plant to prevent contamination of water bodies and to maintain the balance of aquatic ecosystems."],
@@ -116,7 +116,7 @@ export const competitorData = {
         },
         sustainability: {
             title: "Sustainability - Gul Ahmed Textile Mills",
-            headers: ["Certifications", "Others"],
+            headers: ["Environmental", "Others"],
             data: [
                 ["EU Ecolabel", "SA8000 (Social Accountability International)"],
                 ["Oeko-Tex Step", "Fair Trade"],
@@ -201,7 +201,7 @@ export const competitorData = {
         },
         sustainability: {
             title: "Sustainability - J.K. Spinning Mills",
-            headers: ["Certifications", "Others", "Initiatives"],
+            headers: ["Environmental", "Others", "Initiatives"],
             data: [
                 ["GOTS (Global Organic Textile Standard)", "SA 8000:2014", "Renewable Energy: J.K. Spinning Mills has a solar energy system in place that generates electricity to reduce its reliance on fossil fuels and reduce greenhouse gas emissions."],
                 ["Oeko-tex Standard 1000", "WRAP (World Responsible Accredited Production)", "Worker Welfare: Ensuring compliance with international labor standards, providing safe working conditions, and promoting diversity in the workforce."],
@@ -290,7 +290,7 @@ export const competitorData = {
         },
         sustainability: {
             title: "Sustainability - Kohinoor Mills Limited",
-            headers: ["Certifications", "Others", "Initiatives"],
+            headers: ["Environmental", "Others", "Initiatives"],
             data: [
                 ["GOTS (Global Organic Textile Standard)", "", "Energy Efficiency: Implementing energy-efficient machinery to reduce energy consumption."],
                 ["OCS (Organic Content Standard)", "", "Renewable Energy: Installation of solar energy systems to reduce reliance on fossil fuels and greenhouse gas emissions."],
@@ -375,7 +375,7 @@ export const competitorData = {
         },
         sustainability: {
             title: "Sustainability - Sapphire Textile Mills",
-            headers: ["Certifications", "Others", "Initiatives"],
+            headers: ["Environmental", "Others", "Initiatives"],
             data: [
                 ["EU Ecolabel", "Fair Trade", "Renewable Energy: Shifted to a renewable energy mix with 5MW solar power installed, another 5MW under installation (Q2 2023)."],
                 ["Oeko-tex STEP", "BSCI (Business Social Compliance Initiative)", "Wind Farms: Pakistan’s first wind farms (200MW) supplying renewable energy to 7,000 households in Sindh."],

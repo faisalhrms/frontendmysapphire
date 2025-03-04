@@ -2,6 +2,7 @@ import OrderShopify from "@modules/ecom/views/OrderShopify.jsx";
 import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
 import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
 import ObjectiveSpend from "../../modules/ecom/views/ObjectiveSpend.jsx"
+import OrderDetail from "./views/OrderDetail.jsx";
 
 export const ECOM_ROUTES = {
     READ: {
@@ -18,6 +19,10 @@ export const ECOM_ROUTES = {
     },
     OS:{
         path: '/module/ecom/digitalspent',
+        // permission: 'ecom_digitalspent',
+    },
+    ODT:{
+        path: '/module/ecom/orderdetail',
         permission: 'ecom_digitalspent',
     }
 
@@ -42,6 +47,11 @@ export const MODULE_ROUTES = [
     {
         path: ECOM_ROUTES.OS.path,
         component: ObjectiveSpend,
+        permission: ECOM_ROUTES.OS.permission,
+    },
+    {
+        path: ECOM_ROUTES.ODT.path,
+        component: OrderDetail,
         permission: ECOM_ROUTES.OS.permission,
     },
 

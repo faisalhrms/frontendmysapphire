@@ -28,12 +28,14 @@ const ObjectiveSpend = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
+
     const onSubmit = async (formData) => {
         setLoading(true);
         setTimeout(() => {
             setFilters(formData);
             setLoading(false);
         }, 1000);
+
     };
 
     return (
@@ -78,15 +80,7 @@ const ObjectiveSpend = () => {
                                     label={true}
                                 />
                                 </div>
-                                {/*<FormInput*/}
-                                {/*    type="date"*/}
-                                {/*    name="date_to"*/}
-                                {/*    placeholder="To"*/}
-                                {/*    control={control}*/}
-                                {/*    errors={errors}*/}
-                                {/*    defaultValue={filters.date_to}*/}
-                                {/*    label={true}*/}
-                                {/*/>*/}
+
                                 <FilterButton />
                             </div>
                         </form>
