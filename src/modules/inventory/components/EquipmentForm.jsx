@@ -117,19 +117,19 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                     />
                                 </div>
 
-                                {/* ---------- Code ---------- */}
-                                <div className="xl:col-span-4 col-span-12">
-                                    <FormInput
-                                        type="number"
-                                        name="code"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Code"
-                                    />
-                                </div>
+                                {/*/!* ---------- Code ---------- *!/*/}
+                                {/*<div className="xl:col-span-4 col-span-12">*/}
+                                {/*    <FormInput*/}
+                                {/*        type="number"*/}
+                                {/*        name="code"*/}
+                                {/*        control={control}*/}
+                                {/*        errors={errors}*/}
+                                {/*        placeholder="Code"*/}
+                                {/*    />*/}
+                                {/*</div>*/}
 
                                 {/* ---------- Type ---------- */}
-                                <div className="xl:col-span-4 col-span-12">
+                                <div className="xl:col-span-6 col-span-12">
                                     <FormAsyncSelect
                                         name="equipment_type_id"
                                         control={control}
@@ -149,7 +149,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 </div>
 
                                 {/* ---------- Asset Code ---------- */}
-                                <div className="xl:col-span-4 col-span-12">
+                                <div className="xl:col-span-6 col-span-12">
                                     <FormInput
                                         name="asset_code"
                                         control={control}

@@ -8,7 +8,7 @@ export const createSLA = async (digitalProfilesData) => {
 
     return response.data;
   } catch (error) {
-    Notify.error(error.response?.data?.message || "Failed to create Digital Profiles");
+    Notify.error(error.response?.data?.message || "Failed to create SLA");
     throw error;
   }
 };
@@ -18,7 +18,7 @@ export const getSLA = async () => {
     const response = await api.get("sr_sla/datatable/");
     return response.data;
   } catch (error) {
-    Notify.error(error.response?.data?.message || "Failed to fetch DigitalProfiles");
+    Notify.error(error.response?.data?.message || "Failed to fetch SLA");
     throw error;
   }
 };
@@ -30,7 +30,7 @@ export const getSLAById = async (id) => {
     return response?.data?.data;
   } catch (error) {
     Notify.error(
-      error.response?.data?.message || "Failed to fetch DigitalProfiles details"
+      error.response?.data?.message || "Failed to fetch SLA details"
     );
     throw error;
   }
@@ -42,7 +42,7 @@ export const updateSLA = async (id, digitalProfilesData) => {
     Notify.success("Updated Successfully!");
     return response.data;
   } catch (error) {
-    Notify.error(error.response?.data?.message || "Failed to update DigitalProfiles");
+    Notify.error(error.response?.data?.message || "Failed to update SLA");
     throw error;
   }
 };
@@ -54,7 +54,7 @@ export const deleteSLAById = async (id) => {
     return response.data;
   } catch (error) {
     Notify.error(
-      error.response?.data?.message || "Failed to delete DigitalProfiles details"
+      error.response?.data?.message || "Failed to delete SLA details"
     );
     throw error;
   }
