@@ -11,7 +11,6 @@ const formatPercentage = (value) => {
 };
 
 const Table = ({ title, headers = [], data = [], loading }) => {
-  console.log(loading);
   return (
       <div className="w-full bg-white rounded-lg shadow-lg overflow-hidden mt-4 mb-4">
         <div className="p-3 text-lg font-semibold text-gray-900 dark:text-gray-200 border-b bg-gray-100 dark:border-gray-700">

@@ -6,7 +6,7 @@ import { getExcerptFromText, toTitleCase } from "@helpers/formatters.js";
 import { formatDate } from "@helpers/dateTime.js";
 import Avatar from "@components/Avatar.jsx";
 
-const TaskApprovalCard = ({ approval, onApprove, onReject, onSuggestion }) => {
+const TaskApprovalCard = ({ approval, onApprove, onReject, onSuggestion, startedAt, endedAt }) => {
     return (
         <div className="box custom-box">
             <div className="box-header items-center !justify-center flex-wrap !flex">
@@ -65,14 +65,30 @@ const TaskApprovalCard = ({ approval, onApprove, onReject, onSuggestion }) => {
                         <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Assigned Date :</span>
                         <span className="font-semibold block">{formatDate(approval.task.started_at)}</span>
                     </div>
-                    <div>
-                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date :</span>
-                        <span className="font-semibold block">{formatDate(approval.task.ended_at)}</span>
-                    </div>
-                    <div className="text-end">
-                        <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Submission Date :</span>
-                        <span className="font-semibold block">{formatDate(approval.created_at, 'MMM dd, yyyy - HH:mm')}</span>
-                    </div>
+                    {
+                        approval.approval_type === 'overdue' ?
+                            <>
+                                <div>
+                                    <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Old Due Date :</span>
+                                    <span className="font-semibold block">{formatDate(approval.task.ended_at)}</span>
+                                </div>
+                                <div className="text-end">
+                                    <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">New Due Date :</span>
+                                    <span className="font-semibold block">{formatDate(approval.requested_due_date)}</span>
+                                </div>
+                            </>
+                            :
+                            <>
+                                <div>
+                                    <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Due Date :</span>
+                                    <span className="font-semibold block">{formatDate(approval.task.ended_at)}</span>
+                                </div>
+                                <div className="text-end">
+                                    <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem] block">Submission Date :</span>
+                                    <span className="font-semibold block">{formatDate(approval.created_at, 'MMM dd, yyyy - HH:mm')}</span>
+                                </div>
+                            </>
+                    }
                 </div>
             </div>
 
