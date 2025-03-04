@@ -18,6 +18,8 @@ import CommerceCloudTable from "../../components/SalesforceDashboard/CommerceClo
 import TableOrdersMultipleFOs from "../../components/SalesforceDashboard/TableOrdersMultipleFOs.jsx"
 import TableTotalOrdersOMS from "../../components/SalesforceDashboard/TableTotalOrdersOMS.jsx"
 import TableSingleFo from "../../components/SalesforceDashboard/TableSingleFo.jsx"
+import BreakupOrdersFO from "../../components/SalesforceDashboard/BreakupOrdersFO.jsx"
+import OrdersFulfillmentSummary from "../../components/SalesforceDashboard/OrdersFulfillmentSummary.jsx"
 
 const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
     const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters, dateFrom, dateTo);
@@ -177,26 +179,26 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             },
         ];
 
-    const foBreakupData = isLoading
-        ? [{ label: <LoadingSpinner />, accessor: "" }]
-        : [
-            { label: "Single FO", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
-            { label: "Split-Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.multi_fo_c) },
-        ];
+    // const foBreakupData = isLoading
+    //     ? [{ label: <LoadingSpinner />, accessor: "" }]
+    //     : [
+    //         { label: "Single FO", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
+    //         { label: "Split-Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.multi_fo_c) },
+    //     ];
 
-    const fulfillmentData = isLoading
-        ? [{ label: <LoadingSpinner />, accessor: "" }]
-        : [
-            {
-                label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
-                accessor: <span style={{ fontWeight: "bold" }}>{formatNumberWithCommas(summary.total_fo_to_fulfil)}</span>
-            },
-            ...fulfilment_data.map(row => ({
-                label: row.status.trim(),
-                accessor: formatNumberWithCommas(row.value)
-            })),
-            { label: <span style={{ fontWeight: "bold" }}>Reconciliation</span>, accessor: formatNumberWithCommas(summary.reconciliation) },
-        ];
+    // const fulfillmentData = isLoading
+    //     ? [{ label: <LoadingSpinner />, accessor: "" }]
+    //     : [
+    //         {
+    //             label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
+    //             accessor: <span style={{ fontWeight: "bold" }}>{formatNumberWithCommas(summary.total_fo_to_fulfil)}</span>
+    //         },
+    //         ...fulfilment_data.map(row => ({
+    //             label: row.status.trim(),
+    //             accessor: formatNumberWithCommas(row.value)
+    //         })),
+    //         { label: <span style={{ fontWeight: "bold" }}>Reconciliation</span>, accessor: formatNumberWithCommas(summary.reconciliation) },
+    //     ];
 
     return (
         <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-200 dark:bg-bodybg">
@@ -206,7 +208,9 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 totals={["Total - Orders in OMS", formatNumberWithCommas(summary.total_order_oms)]}
                 isLoading={isLoading}
             />
-            <ExecutiveSummaryTable
+            <BreakupOrdersFO filters={filters} dateFrom={dateFrom} dateTo={dateTo} />
+            <OrdersFulfillmentSummary filters={filters} dateFrom={dateFrom} dateTo={dateTo} />
+            {/* <ExecutiveSummaryTable
                 title="Breakup of Orders into FO (Single/Multiple)"
                 data={foBreakupData}
                 totals={["Total FO's to Fulfill", formatNumberWithCommas(summary.total_fo_to_fulfil)]}
@@ -217,7 +221,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 data={fulfillmentData}
                 totals={[]}
                 isLoading={isLoading}
-            />
+            /> */}
             {showModal && (
                 <Model modalType={modalType} loading={isModelLoading} onClose={() => setShowModal(false) }>
                     {modalType === "oms"  ? (

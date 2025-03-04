@@ -67,7 +67,7 @@ const TableProcess = ({ apiDataprocess, title }) => {
         <div className="overflow-x-auto w-full">
 
 
-            {/* Table */}
+
             <table {...getTableProps()} className="w-full table-auto border-collapse border border-gray-300">
                 <thead className="text-center bg-gray-100 border-b border-gray-300">
                 {headerGroups.map(headerGroup => (
@@ -75,7 +75,7 @@ const TableProcess = ({ apiDataprocess, title }) => {
                         {headerGroup.headers.map(column => (
                             <th
                                 {...column.getHeaderProps(column.getSortByToggleProps())}
-                                className="px-4 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
+                                className="px-1 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
                                 key={column.id}
                             >
                                 {column.render("Header")}
@@ -95,7 +95,7 @@ const TableProcess = ({ apiDataprocess, title }) => {
                             {row.cells.map(cell => (
                                 <td
                                     {...cell.getCellProps()}
-                                    className="px-4 py-2 text-sm text-gray-900 border-r border-gray-300"
+                                    className="px-1 py-2 text-sm text-gray-900 border-r border-gray-300"
                                     key={cell.column.id}
                                 >
                                     {cell.render("Cell")}
