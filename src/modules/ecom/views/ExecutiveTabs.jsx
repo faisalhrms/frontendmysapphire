@@ -166,9 +166,9 @@ const ExecutiveTabs = () => {
                 </form>
             )}
 
-            <div className="grid grid-cols-12 gap-6 dark:text-gray-200 dark:bg-bodybg">
-                <div className="xl:col-span-12 col-span-12 dark:text-gray-200 dark:bg-bodybg">
-                    <div className="tab-content bg-white rounded-lg shadow-md mt-4 dark:text-gray-200 dark:bg-bodybg">
+            <div className="grid grid-cols-12 gap-6 ">
+                <div className="xl:col-span-12 col-span-12 ">
+                    <div className="tab-content mt-4 ">
                         {activeTab === "executiveSummary" && (
                             <div className="tab-pane show active p-6 dark:text-gray-200 dark:bg-bodybg" id="generate-report"
                                  aria-labelledby="generate-report" role="tabpanel">

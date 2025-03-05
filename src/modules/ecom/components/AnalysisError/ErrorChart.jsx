@@ -64,6 +64,7 @@ const EquipmentDepartmentStats = ({ dateFrom, dateTo }) => {
                             type="bar"
                             height={355}
                             onPointClick={handlePointClick}
+                            baseWidthPerCategory={20}
                         />
                     ) : (
                         <div className="text-center text-gray-500">No data available</div>

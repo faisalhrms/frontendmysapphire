@@ -90,9 +90,9 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
         ? [{ label: <LoadingSpinner />, accessor: "" }]
         : [
             {
-                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg">Commerce Cloud</span>,
+                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg">Commerce Cloud</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("commerce_cloud")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_cc)}
@@ -101,9 +101,9 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 ),
             },
             {
-                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg">Total - Orders in OMS</span>,
+                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg">Total - Orders in OMS</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("total_orders_oms")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_summary)}
@@ -114,7 +114,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             {
                 label: <span className="text-danger font-bold dark:text-gray-200 dark:bg-bodybg">Missing in OMS</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("oms")}>
                         <span className="text-danger hover:underline hover:font-bold">
                             {formatNumberWithCommas(summary.missing_oms)}
@@ -125,7 +125,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             {
                 label: <span className=" dark:text-gray-200 dark:bg-bodybg">Orders with Single FOs</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("single_fo")}>
                         <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                             {formatNumberWithCommas(summary.orders_with_single_fo)}
@@ -136,7 +136,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             {
                 label: <span className="dark:text-gray-200 dark:bg-bodybg">Orders with Multiple FOs</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("multiple_fo")}>
                         <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                             {formatNumberWithCommas(summary.orders_with_multiple_fo)}
@@ -147,7 +147,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             {
                 label: <span className="dark:text-gray-200 dark:bg-bodybg">Cancelled in OMS</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("cancelled")}>
                         <span className=" text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                             {formatNumberWithCommas(summary.cancelled)}
@@ -158,7 +158,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             {
                 label: <span className="dark:text-gray-200 dark:bg-bodybg">In-Process with Customer Care</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("ipc")}>
                         <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                             {formatNumberWithCommas(summary.in_process_with_customercare)}
@@ -169,7 +169,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             {
                 label: <span className="dark:text-gray-200 dark:bg-bodybg">Orders with Exceptions</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
                          onClick={() => fetchModalData("owe")}>
                         <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                             {formatNumberWithCommas(summary.order_with_exception)}
@@ -201,7 +201,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
     //     ];
 
     return (
-        <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-200 dark:bg-bodybg">
+        <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-900 dark:bg-bodybg">
             <ExecutiveSummaryTable
                 title="Reconciliation CC vs OMS"
                 data={reconciliationData}
