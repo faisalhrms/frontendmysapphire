@@ -11,11 +11,6 @@ import ProjectDropDown from "@modules/project-management/components/dropdowns/Pr
 import {launches} from "@modules/project-management/services/milestoneService.js";
 
 const TaskListFilter = ({ control, errors, clearFilter }) => {
-    const [workspaces,setWorkspaces] = React.useState([]);
-    const handleWorkspaceSelect = useCallback((id) => {
-        console.log(`id from TaskListFilter`,id);
-        setWorkspaces(id)
-    }, []);
     return (
         <div className="grid grid-cols-12 gap-6">
             <div className="col-span-12">
@@ -30,18 +25,6 @@ const TaskListFilter = ({ control, errors, clearFilter }) => {
                                     saveNewOption={false}
                                     multiple={true}
                                     placeholder='Workspaces'
-                                    onSelectChange={handleWorkspaceSelect}
-                                />
-                                <ProjectDropDown
-                                    name='projects'
-                                    workspaces_id={workspaces}
-                                    control={control}
-                                    errors={errors}
-                                    saveNewOption={false}
-                                    multiple={true}
-
-                                    placeholder='Projects'
-
                                 />
 
                                 <FormAsyncSelect
