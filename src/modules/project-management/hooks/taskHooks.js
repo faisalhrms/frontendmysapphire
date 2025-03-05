@@ -2,7 +2,7 @@ import {
   createTask,
   updateTask,
   getTaskById,
-  getTaskWithChild, updateTaskStatus, updateOverdueTask, fetchKanbanTasksAll,
+  getTaskWithChild, updateTaskStatus, updateOverdueTask, fetchKanbanTasksAll, getTaskDetail,
 
 } from "@modules/project-management/services/taskService.js";
 import React from 'react';
@@ -10,10 +10,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
 import { useForm } from "react-hook-form";
 import {useState, useEffect, useCallback} from "react";
-import {useQuery,useInfiniteQuery} from "@tanstack/react-query";
-import {toggleFavouriteProject} from "@modules/project-management/services/projectService.js";
+import {useQuery} from "@tanstack/react-query";
 import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
-import taskFilterSchema from "@modules/project-management/schemas/TaskFilterSchema.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -67,7 +65,6 @@ export const useTaskModal = (refetch) => {
   }, [id, isEditMode, reset]);
 
   const openTaskModal = (id = null, startedAt, endedAt, approval = false, parent = null, isEditMode = false) => {
-
     setId(id);
     setMilestoneDates({ startedAt, endedAt });
     setIsEditMode(isEditMode);
@@ -168,7 +165,7 @@ export const useTask = (id) => {
 
 export const useTaskWithChild = (taskId) => {
   const { data: task = {}, isLoading, refetch } = useQuery({
-    queryKey: ['taskDetail', taskId],
+    queryKey: ['taskWithChild', taskId],
     queryFn: () => getTaskWithChild(taskId),
     enabled: !!taskId,
   });
@@ -341,3 +338,45 @@ export function useKanbanBoard({ filterPriority, searchQuery }) {
     error,
   };
 }
+
+
+export const useTaskDetailModal = () => {
+  const [id, setId] = useState(null);
+  const [isTaskDetailModalOpen, setIsTaskDetailModalOpen] = useState(false);
+
+  const openTaskDetailModal = (id) => {
+    setId(id); // Set the task ID to trigger the query
+    setIsTaskDetailModalOpen(true);
+    setTimeout(() => {
+      const modal = document.getElementById("taskDetailModal");
+      if (modal) {
+        window.HSOverlay.open(modal);
+        modal.classList.add('open');
+      }
+    }, 200);
+  };
+
+  const closeTaskDetailModal = () => {
+    const modal = document.getElementById("taskDetailModal");
+    if (modal) {
+      window.HSOverlay.close(modal);
+    }
+    setId(null);
+    setTimeout(() => setIsTaskDetailModalOpen(false), 300);
+  };
+
+  const { data: task = {}, isLoading: isTaskDetailLoading, refetch } = useQuery({
+    queryKey: ['taskDetail', id],
+    queryFn: () => getTaskDetail(id),
+    enabled: !!id,
+  });
+
+  return {
+    openTaskDetailModal,
+    closeTaskDetailModal,
+    isTaskDetailModalOpen,
+    isTaskDetailLoading,
+    task,
+  };
+};
+
