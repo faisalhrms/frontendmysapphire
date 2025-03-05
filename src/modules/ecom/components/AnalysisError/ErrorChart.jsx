@@ -50,7 +50,7 @@ const EquipmentDepartmentStats = ({ dateFrom, dateTo }) => {
         <>
             <div className="box">
                 <div className="box-header justify-between">
-                    <div className="box-title">404 Error Summary</div>
+                    <div className="box-title">404 Errors By Date</div>
                 </div>
                 <div className="box-body">
                     {loading ? (
@@ -72,6 +72,8 @@ const EquipmentDepartmentStats = ({ dateFrom, dateTo }) => {
             </div>
             {isErrorModalOpen && selectedDate && (
                 <AnalysisErrorModal
+                    // title={`Error Report - ${new Date().toLocaleDateString()}`}
+                    title="404 Error Report"
                     onClose={closeErrorModal}
                     date={selectedDate}
                 />

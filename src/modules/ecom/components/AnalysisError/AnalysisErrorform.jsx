@@ -5,7 +5,9 @@ import InventorySvgIcon from "@components/InventorySvgIcon.jsx";
 const AnalysisErrorForm = ({ errorData = { filters} }) => {
     if (!errorData || typeof errorData !== "object") {
         return <div className="box">No data available</div>;
+
     }
+
     const totalErrors = errorData?.error_404_count?.total_error || 0;
     const errorBreakdown = errorData?.error_404_date || [];
 
@@ -20,7 +22,7 @@ const AnalysisErrorForm = ({ errorData = { filters} }) => {
                         </p>
                     </div>
                     <div>
-                        <InventorySvgIcon styles={{ color: "success" }} />
+                        <InventorySvgIcon styles={{ color: "green" }} />
                     </div>
                 </div>
 
