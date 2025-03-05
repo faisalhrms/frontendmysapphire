@@ -20,8 +20,7 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
     const formattedTeams = useMemo(() => formatOptions(data, "teams", "id", "name"), [data]);
     const handleClose        = useCallback(() => closeModal(), [closeModal]);
     const maxDateTime = isParent ? convertToDateTimeEnd(endedAt) : endedAt;
-    const minDateTime = isParent ? convertToDateTime(startedAt): endedAt;
-    console.log(startedAt, minDateTime)
+    const minDateTime = isParent ? convertToDateTime(startedAt): startedAt;
     useEffect(() => {
         setData(taskData);
     }, [taskData]);

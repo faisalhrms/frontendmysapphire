@@ -13,8 +13,9 @@ import {useSelector} from "react-redux";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
     const toggleSubTasks = (taskId) => {
         setActiveTaskId(prevId => (prevId === taskId ? null : taskId));
@@ -28,36 +29,169 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
     }, [projectUsers, userId, viewOnly]);
 
 
-
     const { handleDeleteClick } = useDelete();
+
+    const sortedTasks = useMemo(() => {
+        let sortableTasks = [...tasks];
+        if (sortConfig.key !== null) {
+            sortableTasks.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'asc' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableTasks;
+    }, [tasks, sortConfig]);
+
+    const requestSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIconAndClass = (key) => {
+        if (sortConfig.key === key) {
+            return {
+                icon: sortConfig.direction === 'asc' ? '↑' : '↓',
+                className: 'text-dark',
+            };
+        }
+        return {
+            icon: '⇅',
+            className: 'text-gray-500',
+        };
+    };
+
     return (
         <>
             <div className={`table-responsive task-table`}>
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
-                        {
-                            !viewOnly &&
-                            <th scope="col">Actions</th>
-                        }
-                        <th scope="col">{isChild ? "Sub Task Name" : "Task Name"}</th>
+                        {!viewOnly && <th scope="col">Actions</th>}
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('priority')}
+                            className="cursor-pointer"
+                        >
+                            Priority
+                            <span className={`ml-1 ${getSortIconAndClass('priority').className}`}>
+                                {getSortIconAndClass('priority').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('name')}
+                            className="cursor-pointer"
+                        >
+                            {isChild ? "Sub Task Name" : "Task Name"}
+                            <span className={`ml-1 ${getSortIconAndClass('name').className}`}>
+                                {getSortIconAndClass('name').icon}
+                            </span>
+                        </th>
                         <th scope="col">Person</th>
                         <th scope="col">Teams</th>
-                        <th scope="col">Deadline</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Completion Date</th>
-                        <th scope="col">Completion Timeline</th>
-                        <th scope="col">Timeline Groups</th>
-                        <th scope="col">Launch</th>
-                        <th scope="col">Progress</th>
-                        <th scope="col">Priority</th>
-                        <th scope="col">Started At</th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('started_at')}
+                            className="cursor-pointer"
+                        >
+                            Started Date
+                            <span className={`ml-1 ${getSortIconAndClass('started_at').className}`}>
+                                {getSortIconAndClass('started_at').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('ended_at')}
+                            className="cursor-pointer"
+                        >
+                            Deadline
+                            <span className={`ml-1 ${getSortIconAndClass('ended_at').className}`}>
+                                {getSortIconAndClass('ended_at').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('completed_at')}
+                            className="cursor-pointer"
+                        >
+                            Completion Date
+                            <span className={`ml-1 ${getSortIconAndClass('completed_at').className}`}>
+                                {getSortIconAndClass('completed_at').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('status')}
+                            className="cursor-pointer"
+                        >
+                            Status
+                            <span className={`ml-1 ${getSortIconAndClass('status').className}`}>
+                                {getSortIconAndClass('status').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('completion_timeline')}
+                            className="cursor-pointer"
+                        >
+                            Completion Timeline
+                            <span className={`ml-1 ${getSortIconAndClass('completion_timeline').className}`}>
+                                {getSortIconAndClass('completion_timeline').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('time_line_group')}
+                            className="cursor-pointer"
+                        >
+                            Timeline Groups
+                            <span className={`ml-1 ${getSortIconAndClass('time_line_group').className}`}>
+                                {getSortIconAndClass('time_line_group').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('launch')}
+                            className="cursor-pointer"
+                        >
+                            Launch
+                            <span className={`ml-1 ${getSortIconAndClass('launch').className}`}>
+                                {getSortIconAndClass('launch').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('progress')}
+                            className="cursor-pointer"
+                        >
+                            Progress
+                            <span className={`ml-1 ${getSortIconAndClass('progress').className}`}>
+                                {getSortIconAndClass('progress').icon}
+                            </span>
+                        </th>
                         <th scope="col">External Users</th>
-                        <th scope="col">Created By</th>
+                        <th
+                            scope="col"
+                            onClick={() => requestSort('created_by')}
+                            className="cursor-pointer"
+                        >
+                            Created By
+                            <span className={`ml-1 ${getSortIconAndClass('created_by').className}`}>
+                                {getSortIconAndClass('created_by').icon}
+                            </span>
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
-                    {tasks.map((task) => (
+                    {sortedTasks.map((task) => (
                         <React.Fragment key={task.id}>
                             <tr className={`border-b border-defaultborder}`}>
                                 {
@@ -74,7 +208,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                      tooltipContent={`Request For Change (${task.name}) Due Date`}
                                                  >
                                                      <button
-                                                         onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name)}
+                                                         onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name, startedAt, endedAt)}
                                                          className='ti-btn ti-btn-danger ti-btn-sm'>
                                                          <i className="ri-calendar-2-line align-middle"></i>
                                                      </button>
@@ -82,7 +216,8 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                              )
                                          }
                                      })()}
-                                            <HasProjectPermission globalPermission='add_task' users={projectUsers} needIcon={true}>
+                                            <HasProjectPermission globalPermission='add_task' users={projectUsers}
+                                                                  needIcon={true}>
                                             {milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
@@ -131,6 +266,8 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         </td>
                                     )
                                 }
+                                <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
+                                </td>
                                 <td>
                                     <span className="flex items-center text-[0.80rem] text-[#323338]">
                                         <span onClick={() => toggleSubTasks(task.id)}>
@@ -155,11 +292,11 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                             tooltipContent={`${task.name}`}>
                                             <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
                                               {getExcerptFromText(task.name, 80)}
-                                                    {task.children && task.children.length > 0 && (
-                                                        <span className="badge bg-primary/10 text-primary ms-2">
+                                                {task.children && task.children.length > 0 && (
+                                                    <span className="badge bg-primary/10 text-primary ms-2">
                                                             {task.children.length}
                                                         </span>)
-                                                    }
+                                                }
                                             </Link>
                                         </Tooltip>
                                     </span>
@@ -172,6 +309,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         ))
                                     )}
                                 </td>
+                                <td>{formatDate(task.started_at)}</td>
                                 <td>
                                     <div className="flex items-center">
                                         {
@@ -212,35 +350,34 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                         </span>
                                                 )
                                         }
-                                        <span className={task.completed_at ? 'line-through' : (task.is_overdue ? 'line-through text-danger' : '')}>
+                                        <span
+                                            className={task.completed_at ? 'line-through' : (task.is_overdue ? 'line-through text-danger' : '')}>
                                             {formatDate(task.ended_at)}
                                         </span>
                                     </div>
                                 </td>
+                                <td>{formatDate(task.completed_at)}</td>
                                 <td className={`min-w-[200px] ${(projectUser?.can_view_only || viewOnly) ? `!p-0 ${getBadgeClasses(task.status, '', false)}` : ''}`}>
                                     {(() => {
                                         if (projectUser?.can_view_only || viewOnly) {
                                             return toTitleCase(task.status);
                                         }
                                         return task.status !== 'under_approval' ? (
-                                            <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
+                                            <TaskStatusDropdown status={task.status} taskId={task.id}
+                                                                refetch={refetch}/>
                                         ) : (
                                             <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
                                         );
                                     })()}
                                 </td>
-                                <td>{formatDate(task.completed_at)}</td>
                                 <td className='text-center'>{task.completion_timeline}</td>
                                 <td className='text-center'>{task.time_line_group}</td>
                                 <td className='text-center'>{milestoneLaunch ? formatDate(milestoneLaunch) : ''}</td>
                                 <td className="min-w-[200px]">
                                     <div className='flex items-center'>
-                                        <ProgressBar value={task.progress} barColor='!bg-success' withStatus={false} />
+                                        <ProgressBar value={task.progress} barColor='!bg-success' withStatus={false}/>
                                     </div>
                                 </td>
-                                <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
-                                </td>
-                                <td>{formatDate(task.started_at)}</td>
                                 <td><AvatarList users={task.external_users} max={4}/></td>
                                 <td className="min-w-[180px]">
                                     <div className="flex items-center flex-wrap">
@@ -251,14 +388,19 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                     </div>
                                 </td>
                             </tr>
-                                {activeTaskId === task.id && task.children && task.children.length > 0 && (
-                                    <tr>
+                            {activeTaskId === task.id && task.children && task.children.length > 0 && (
+                                <tr>
                                     <td colSpan="8">
-                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers} milestoneStatus={milestoneStatus} milestoneLaunch={milestoneLaunch} startedAt={task.started_at} endedAt={task.ended_at} tasks={task.children} openTaskModal={openTaskModal} isChild={true} refetch={refetch} openTaskOverdueModal={openTaskOverdueModal} viewOnly={viewOnly} />
+                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers}
+                                                   milestoneStatus={milestoneStatus} milestoneLaunch={milestoneLaunch}
+                                                   startedAt={task.started_at} endedAt={task.ended_at}
+                                                   tasks={task.children} openTaskModal={openTaskModal} isChild={true}
+                                                   refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}
+                                                   openTaskDetailModal={openTaskDetailModal} viewOnly={viewOnly}/>
                                     </td>
-                                    </tr>
-                                )}
-                    </React.Fragment>))}
+                                </tr>
+                            )}
+                        </React.Fragment>))}
                     </tbody>
                 </table>
             </div>

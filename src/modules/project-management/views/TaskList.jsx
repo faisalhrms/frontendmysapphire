@@ -142,11 +142,11 @@ const TaskList = () => {
         {
             Header: "Completion Date",
             accessor: "completed_at",
-            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
+            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : "")
         },
-        { Header: "Completion Timeline", accessor: "status_completion_timeline", disableSortBy: true, },
-        { Header: "Timeline Group", accessor: "timeline_groups", disableSortBy: true, },
-        { Header: "Launch", accessor: "milestone.ended_at", disableSortBy: true,
+        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, },
+        { Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, },
+        { Header: "Launch/Milestone Deadline", accessor: "milestone.ended_at", disableSortBy: true,
             Cell: ({value}) => (
                 formatDate(value, "MMM dd, yyyy")
             )
@@ -183,9 +183,6 @@ const TaskList = () => {
             ),
         },
     ];
-
-
-
 
     return (
         <>

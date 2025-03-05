@@ -69,6 +69,16 @@ export const getTaskWithChild = async (id) => {
     }
 };
 
+export const getTaskDetail = async (id) => {
+    try {
+        const response = await api.get(`/pms/tasks/${id}/detail/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+
 export const updateTaskStatus = async (id, status) => {
     try {
         const response = await api.post(`/pms/tasks/${id}/update-status/`, {status: status});
