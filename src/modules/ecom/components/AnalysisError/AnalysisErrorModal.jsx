@@ -1,12 +1,11 @@
 import React from 'react';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {useEcom404Error} from "../../hooks/ecomHooks.js";
+import { useEcom404Error } from "../../hooks/ecomHooks.js";
 import AgingDatatable from "../SalesforceDashboard/AgingDatatable.jsx";
-import {formatNumberWithCommas, toTitleCase} from "../../../../helpers/formatters.js";
-import {Link} from "react-router-dom";
+import { formatNumberWithCommas } from "../../../../helpers/formatters.js";
+import { Link } from "react-router-dom";
 
-const AnalysisErrorModal = React.memo(({ date, onClose, filters }) => {
-
+const AnalysisErrorModal = React.memo(({ title, date, onClose, filters }) => {
     const { data, isLoading } = useEcom404Error(date);
     const columns = [
         {
@@ -14,8 +13,10 @@ const AnalysisErrorModal = React.memo(({ date, onClose, filters }) => {
             accessor: "error_url",
             Cell: ({ value }) => <Link to={value} target='_blank' className="text-left">{value}</Link>,
         },
-        { Header: "Total Errors", accessor: "total_errors",
-         Cell: ({ value }) => <div className="text-right">{formatNumberWithCommas(value)}</div>
+        {
+            Header: "Total Errors",
+            accessor: "total_errors",
+            Cell: ({ value }) => <div className="text-right">{formatNumberWithCommas(value)}</div>
         },
     ];
 
@@ -26,8 +27,11 @@ const AnalysisErrorModal = React.memo(({ date, onClose, filters }) => {
                  aria-modal="true"
                  role="dialog"
                  aria-labelledby="milestoneModalTitle">
-                <div className="relative bg-white dark:bg-gray-800 w-full h-full mx-auto">
-                    <div className="flex justify-end p-4">
+                <div className="relative w-[1200px] bg-white rounded-lg shadow-lg max-h-[90vh] flex flex-col">
+
+
+                    <div className="sticky top-0 bg-white z-10 p-4 flex justify-between items-center border-b rounded-lg ">
+                        <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
                         <button
                             onClick={onClose}
                             type="button"
@@ -44,19 +48,21 @@ const AnalysisErrorModal = React.memo(({ date, onClose, filters }) => {
                             </svg>
                         </button>
                     </div>
-                    <div className="flex flex-col h-full p-4">
+
+
+                    <div className="p-4 overflow-y-auto flex-grow">
                         {isLoading ? (
                             <div className="flex justify-center items-center flex-grow">
-                                <LoadingSpinner/>
+                                <LoadingSpinner />
                             </div>
-                        ) : data &&  (
-                            <AgingDatatable data={data} columns={columns}  pageSize={15} />
-                    )}
+                        ) : data && (
+                            <AgingDatatable data={data} columns={columns} pageSize={10} />
+                        )}
                     </div>
                 </div>
             </div>
-
         </>
     );
 });
+
 export default React.memo(AnalysisErrorModal);
