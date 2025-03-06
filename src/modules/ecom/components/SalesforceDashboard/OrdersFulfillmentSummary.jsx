@@ -20,36 +20,36 @@ const OrdersFulfillmentSummary = ({ filters, dateFrom, dateTo }) => {
         ? [{ label: <LoadingSpinner />, accessor: "" }]
         : [
             {
-                label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
-                accessor: <span style={{ fontWeight: "bold" }}>{formatNumberWithCommas(summary.total_fo_to_fulfil)}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg">Total Parcels to Fulfill</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(summary.total_fo_to_fulfil)}</span>
             },
             {
-                label: <span style={{ fontWeight: "bold" }}>Un-Approved FOs</span>,
-                accessor: <span>{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Un-Approved FOs")?.value )}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg">Un-Approved FOs</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Un-Approved FOs")?.value )}</span>
             },
             {
-                label: <span style={{ fontWeight: "bold" }}>Approved FOs</span>,
-                accessor: <span>{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Approved FOs")?.value )}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg" >Approved FOs</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Approved FOs")?.value )}</span>
             },
             {
-                label: <span style={{ fontWeight: "bold" }}>Dispatched but Not Picked</span>,
-                accessor: <span>{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Dispatched but Not Picked")?.value )}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg">Dispatched but Not Picked</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Dispatched but Not Picked")?.value )}</span>
             },
             {
-                label: <span style={{ fontWeight: "bold" }}>In Transit</span>,
-                accessor: <span>{formatNumberWithCommas(fulfilment_data.find(row => row.status === "In transit")?.value )}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg">In Transit</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "In transit")?.value )}</span>
             },
             {
-                label: <span style={{ fontWeight: "bold" }}>Delivered</span>,
-                accessor: <span>{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Delivered")?.value )}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg">Delivered</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Delivered")?.value )}</span>
             },
             {
-                label: <span style={{ fontWeight: "bold" }}>Returned</span>,
-                accessor: <span>{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Returned")?.value )}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg">Returned</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Returned")?.value )}</span>
             },
             {
-                label: <span style={{ fontWeight: "bold" }}>Reconciliation</span>,
-                accessor: <span>{formatNumberWithCommas(summary.reconciliation)}</span>
+                label: <span className="dark:text-gray-200 dark:bg-bodybg font-bold" >Reconciliation</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(summary.reconciliation)}</span>
             }
         ];
 

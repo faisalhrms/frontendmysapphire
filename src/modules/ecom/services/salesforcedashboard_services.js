@@ -4,10 +4,10 @@ import Notify from "@helpers/toastNotifications.js";
 export const fetchExecutiveSummary = async () => {
     try {
         const response = await api.get("/salesforce/fetch_executive_summary/");
-        // Notify.success("Successfully Fetched Executive Summary!");
+
         return response.data?.data;
     } catch (error) {
-        // Notify.error(error.response?.data?.message || "Failed to fetch Executive Summary");
+
         throw error;
     }
 };
@@ -16,10 +16,10 @@ export const fetchPendingOrders = async () => {
         const response = await api.post("/salesforce/fetch_pending_orders/", {
 
         });
-        // Notify.success("Successfully Fetched Pending Orders!");
+
         return response.data?.data;
     } catch (error) {
-        // Notify.error(error.response?.data?.message || "Failed to fetch Pending Orders");
+
         throw error;
     }
 }
@@ -28,10 +28,10 @@ export const FetchPendingOrderLib = async () => {
         const response = await api.post("/salesforce/fetch_pending_orders_lib/", {
 
         });
-        // Notify.success("Successfully Fetched Pending Orders!");
+
         return response.data?.data;
     } catch (error) {
-        // Notify.error(error.response?.data?.message || "Failed to fetch Pending Orders");
+
         throw error;
     }
 }

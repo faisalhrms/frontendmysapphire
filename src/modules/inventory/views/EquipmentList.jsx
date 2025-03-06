@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
@@ -9,6 +9,10 @@ import EquipmentListFilter from "@modules/inventory/components/EquipmentListFilt
 import useFilters from "@hooks/useFilters.js";
 
 const EquipmentList = () => {
+    const { search } = useLocation();
+    const params = new URLSearchParams(search);
+    const statusFilter = params.get('status') || '';
+
     const {
         control,
         handleSubmit,
@@ -32,7 +36,17 @@ const EquipmentList = () => {
         )
     );
 
-    const [filters, setFilters] = useState(getFilters());
+    const [filters, setFilters] = useState(getFilters);
+
+    // Apply status filter from the URL
+    useEffect(() => {
+        if (statusFilter) {
+            setFilters((prevFilters) => ({
+                ...prevFilters,
+                status: statusFilter,
+            }));
+        }
+    }, [statusFilter]);
 
     const onSubmit = useCallback((formData) => {
         setFilters(formData);
@@ -65,13 +79,15 @@ const EquipmentList = () => {
         },
         { Header: "Code", accessor: "code" },
         { Header: "Serial No", accessor: "serial_no" },
+        { Header: "Description", accessor: "description" },
+        { Header: "Specification", accessor: "specs" },
         {
             Header: "Status",
             accessor: "status",
             Cell: ({ row }) => (
                 <span className={getBadgeClasses(row.original.status)}>
-          {toTitleCase(row.original.status)}
-        </span>
+                    {toTitleCase(row.original.status)}
+                </span>
             ),
         },
         { Header: "Custodian", accessor: "custodian" },
@@ -101,7 +117,7 @@ const EquipmentList = () => {
             <DataTable
                 columns={columns}
                 title="Equipments"
-                apiUrl="/equipments/datatable/"
+                apiUrl={`/equipments/datatable/?status=${statusFilter}`}
                 buttons={buttons}
                 filter={filters}
             />
