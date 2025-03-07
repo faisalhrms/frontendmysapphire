@@ -149,7 +149,7 @@ export const ipc = async (filters) => {
             params: {
                 date_from: filters?.dateFrom,
                 date_to: filters?.dateTo,
-                p_type: "in_process_with_customercare",
+                p_type: "in_process_with_cc",
             }
         });
         return response.data?.data;
