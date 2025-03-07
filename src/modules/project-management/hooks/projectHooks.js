@@ -232,19 +232,27 @@ export const useProjectMilestoneTaskDashboardStatistics = (milestoneId) => {
 }
 
 export const useMilestoneSearch = (items, searchTerm) => {
-    return items
-        .map(item => {
-            const matches = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-            if (matches) {
-                return { ...item, children: item.children || [] };
-            } else if (item.children && item.children.length > 0) {
-                const filteredChildren = useMilestoneSearch(item.children, searchTerm);
-                if (filteredChildren.length > 0) {
-                    return { ...item, children: filteredChildren };
-                }
+    return items.reduce((acc, item) => {
+        const matchesName = item.name && item.name.toLowerCase().includes(lowerCaseSearchTerm);
+        const matchesPriority = item.priority && item.priority.toLowerCase().includes(lowerCaseSearchTerm);
+        const matchesStatus = item.status && item.status.toLowerCase().includes(lowerCaseSearchTerm);
+        const matchesTeams = item.teams && item.teams.some(team => team.name.toLowerCase().includes(lowerCaseSearchTerm));
+        const matchesUsers = item.users && item.users.some(user => user.full_name.toLowerCase().includes(lowerCaseSearchTerm));
+        if (matchesName || matchesPriority || matchesStatus || matchesTeams || matchesUsers) {
+            const filteredChildren = item.children
+                ? useMilestoneSearch(item.children, searchTerm)
+                : [];
+
+            acc.push({ ...item, children: filteredChildren.length > 0 ? filteredChildren : item.children });
+        } else if (item.children && item.children.length > 0) {
+            const filteredChildren = useMilestoneSearch(item.children, searchTerm);
+            if (filteredChildren.length > 0) {
+                acc.push({ ...item, children: filteredChildren });
             }
-            return null;
-        })
-        .filter(item => item !== null);
+        }
+
+        return acc;
+    }, []);
 };
