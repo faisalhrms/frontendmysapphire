@@ -30,7 +30,7 @@ export const useFieldDefinition = (id) => {
   useEffect(() => {
     if (fieldDefinition) {
       setValue("id", fieldDefinition.id);
-      setValue("header", fieldDefinition.header);
+      setValue("header", fieldDefinition.header?.id);
       setValue("correct_value", fieldDefinition.correct_value);
     }
   }, [fieldDefinition, setValue]);
