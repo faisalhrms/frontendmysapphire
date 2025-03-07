@@ -4,7 +4,7 @@ import { fetchAnalysisForm } from "../services/ecom_services.js";
 const AnalysisConversionTable = ({ filters }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-
+console.log(`this is data`,data)
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);

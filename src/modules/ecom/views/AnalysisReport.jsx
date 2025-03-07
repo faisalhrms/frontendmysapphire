@@ -121,7 +121,7 @@ const AnalysisReport = () => {
                                 </form>
                             )}
                             <OrdersBySourceChart data={analysisData} loading={false} />
-                            <AnalysisTable title="Commerce Cloud Order" headers={[
+                            <AnalysisTable title="" headers={[
                                 {label: "Group", accessor: "source_group", align: "left"},
                                 {label: "Orders", accessor: "orders", align: "right"},
                                 {label: "Merchandise Total", accessor: "merchandise_total", align: "right"},
