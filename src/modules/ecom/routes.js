@@ -3,6 +3,7 @@ import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
 import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
 import ObjectiveSpend from "../../modules/ecom/views/ObjectiveSpend.jsx"
 import OrderDetail from "./views/OrderDetail.jsx";
+import EcomSalesforce from "../ecom/views/EcomSalesforce.jsx";
 
 export const ECOM_ROUTES = {
     READ: {
@@ -24,7 +25,11 @@ export const ECOM_ROUTES = {
     ODT:{
         path: '/module/ecom/orderdetail',
         permission: 'ecom_digitalspent',
-    }
+    },
+    // ESF:{
+    //     path: '/module/ecom/ecomsalesforce',
+    //
+    // }
 
 };
 
@@ -54,5 +59,10 @@ export const MODULE_ROUTES = [
         component: OrderDetail,
         permission: ECOM_ROUTES.OS.permission,
     },
+    // {
+    //     path: ECOM_ROUTES.ESF.path,
+    //     component: EcomSalesforce,
+    //
+    // },
 
 ];

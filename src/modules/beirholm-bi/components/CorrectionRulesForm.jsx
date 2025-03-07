@@ -6,6 +6,7 @@ import FormInput from "@components/form/FormInput.jsx";
 import {BEIRHOLM_BI_ROUTES} from "@modules/beirholm-bi/routes.js";
 import {useErrorCorrectionForm} from "@modules/beirholm-bi/hooks/CorrectionRules.js";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import {formatOptions} from "@helpers/formatters.js";
 
 const CorrectionRulesForm = () => {
     const navigate = useNavigate();
@@ -20,6 +21,7 @@ const CorrectionRulesForm = () => {
         fields,
         append,
         remove,
+        initialData,
         watch
     } = useErrorCorrectionForm(id);
 
@@ -29,7 +31,7 @@ const CorrectionRulesForm = () => {
         await onSubmit();
         navigate(BEIRHOLM_BI_ROUTES.CORRECTION_RULE_READ.path);
     };
-
+console.log(initialData)
     return (
         <div>
             <PageHeader
@@ -56,7 +58,7 @@ const CorrectionRulesForm = () => {
                                         placeholder="Header Name"
                                         apiUrl="/select/beirholm/excel/headers/"
                                         queryKeyBase="header"
-                                        preselectedOptions={[]}
+                                        preselectedOptions={formatOptions(initialData?.field_definition, "header")}
                                     />
                                 </div>
                                 <div className="xl:col-span-3 col-span-12">
@@ -68,7 +70,7 @@ const CorrectionRulesForm = () => {
                                         placeholder="Correct Values"
                                         apiUrl={`/select/sanitized/data${selectedHeader ? `?selected_header_id=${selectedHeader}` : ""}`}
                                         queryKeyBase={["correct_value", selectedHeader]}
-                                        preselectedOptions={[]}
+                                        preselectedOptions={formatOptions(initialData, "sanitized_data")}
                                     />
 
                                 </div>
