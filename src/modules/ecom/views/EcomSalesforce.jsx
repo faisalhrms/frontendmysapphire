@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,8 +11,9 @@ import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
 import axios from 'axios';
 import api from "../../../config/axiosConfig.js";
+import EcomReconciliation from "../components/EcomSalesForce/EcomReconciliation.jsx";
 
-const ExecutiveTabs = () => {
+const EcomSaleforce = () => {
     const [activeTab, setActiveTab] = useState("executiveSummary");
     const [showFilters, setShowFilters] = useState(false);
     const [showsynctime, setshowsynctime] = useState("");
@@ -45,30 +47,7 @@ const ExecutiveTabs = () => {
     );
 
 
-    useEffect(() => {
-        const fetchSyncTime = async () => {
-            try {
-                const response = await api.post('/salesforce/fetch_sync_time_cc/');
-                setshowsynctime(response.data.data.show_sync_time)
-            } catch (error) {
-                if (error.response) {
-                    if (error.response.status === 404) {
-                        setErrorMessage("The data was last updated on Feb 25, 2025 - 04:15 PM");
-                    } else {
-                        setErrorMessage(`Error fetching sync time: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
-                    }
-                } else if (error.request) {
 
-                    setErrorMessage("No response from the server. Please check your connection.");
-                } else {
-
-                    setErrorMessage(`Error: ${error.message}`);
-                }
-                console.error("Error fetching sync time:", error);
-            }
-        };
-        fetchSyncTime();
-    }, []);
 
 
     useEffect(() => {
@@ -128,7 +107,7 @@ const ExecutiveTabs = () => {
 
 
             {showsynctime && (
-                <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
+                <div className="error-message text-primary p-2 rounded-lg text-right text-black mb-2">
                     <p>{showsynctime}</p>
                 </div>
             )}
@@ -144,22 +123,22 @@ const ExecutiveTabs = () => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
                         <FormInput
-                                    type="date"
-                                    name="date_from"
-                                    control={control}
-                                    errors={errors}
-                                    placeholder="From"
-                                    label={true}
-                                />
+                            type="date"
+                            name="date_from"
+                            control={control}
+                            errors={errors}
+                            placeholder="From"
+                            label={true}
+                        />
 
-                                <FormInput
-                                    type="date"
-                                    name="date_to"
-                                    control={control}
-                                    errors={errors}
-                                    placeholder="To"
-                                    label={true}
-                                />
+                        <FormInput
+                            type="date"
+                            name="date_to"
+                            control={control}
+                            errors={errors}
+                            placeholder="To"
+                            label={true}
+                        />
                         <FilterButton />
 
                     </div>
@@ -168,16 +147,16 @@ const ExecutiveTabs = () => {
 
             <div className="grid grid-cols-12 gap-6 ">
                 <div className="xl:col-span-12 col-span-12 ">
-                    <div className="tab-content  ">
+                    <div className="tab-content mt-4 ">
                         {activeTab === "executiveSummary" && (
                             <div className="tab-pane show active p-6 dark:text-gray-200 dark:bg-bodybg" id="generate-report"
                                  aria-labelledby="generate-report" role="tabpanel">
-                                <ExecutiveForm filters={filters} />
+                                <EcomReconciliation filters={filters} />
                             </div>
                         )}
 
                         {activeTab === "agingLiabilities" && (
-                            <div className="tab-pane show active p-6  dark:text-gray-200 dark:bg-bodybg" id="replenishment-history"
+                            <div className="tab-pane show active p-6 mt-6 dark:text-gray-200 dark:bg-bodybg" id="replenishment-history"
                                  aria-labelledby="replenishment-history" role="tabpanel">
 
                                 <AgingForm />
@@ -190,4 +169,4 @@ const ExecutiveTabs = () => {
     );
 };
 
-export default ExecutiveTabs;
+export default EcomSaleforce;

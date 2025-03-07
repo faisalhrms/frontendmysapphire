@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {string} from "zod";
 import {getBadgeClasses} from "@helpers/badges.js";
 import {toTitleCase} from "@helpers/formatters.js";
+import Tooltip from "@components/Tooltip.jsx";
 
 const TaskGeneratedTable = () => {
 
@@ -35,11 +36,21 @@ const TaskGeneratedTable = () => {
         {
             Header: "Request Title",
             accessor: "request_title",
-            Cell: ({value}) =>
-                value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"
+            Cell: ({value, row}) =>
+                value ? (
+                    <div>
+                        <Tooltip
+                            id={`request-tooltip-${row.index}`}
+                            text={value}
+                            tooltipContent={value}
+                        >
+                            <span>{value.length > 25 ? `${value.slice(0, 25)}...` : value}</span>
+                        </Tooltip>
+                    </div>
+                ) : "-"
         },
 
-           {
+        {
             Header: "SR Time",
             accessor: "created_at",
             Cell: ({value}) => (
@@ -52,8 +63,9 @@ const TaskGeneratedTable = () => {
                 )
             ),
         },
-        {Header: "Requester", accessor: "reporter"
-        ,
+        {
+            Header: "Requester", accessor: "reporter"
+            ,
             Cell: ({value}) =>
                 value ? (value.length > 25 ? `${value.slice(0, 25)}...` : value) : "-"
         },
