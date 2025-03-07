@@ -56,11 +56,19 @@ const AnalysisReport = () => {
         return yesterday.toISOString().slice(0, 10);
     };
 
+    const getFirstDateOfCurrentMonth1 = () => {
+        let today = new Date();
+        // Set the date to 1, which will always give the first date of the current month
+        today.setDate(1);
+        // Return the date in YYYY-MM-DD format
+        return today.toISOString().slice(0, 10);
+    };
+
 
     const { control: errorControl, handleSubmit: handleErrorSubmit, getFilters: getErrorFilters } = useFilters(
         useMemo(() => ({
             initialFilters: [
-                { name: "date_from", defaultValue: "2025-03-01" },
+                { name: "date_from", defaultValue: getFirstDateOfCurrentMonth1() },
                 { name: "date_to", defaultValue: getPreviousDate() },
             ],
         }), [])
