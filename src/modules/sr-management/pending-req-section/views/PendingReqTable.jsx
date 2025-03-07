@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
 import {closeServiceRequest} from "@modules/sr-management/services/Pending.js";
 import ConfirmationModal from "@modules/sr-management/component/ConfirmationModal.jsx";
+import Tooltip from '@components/Tooltip.jsx';
 
 const PendingRequestsTable = () => {
     const navigate = useNavigate();
@@ -57,9 +58,21 @@ const PendingRequestsTable = () => {
         {Header: "SR #", accessor: "sr_number"},
         {Header: "Task Type", accessor: "sr_type.name"},
         {Header: "Requester Location", accessor: "location.name"},
-        {Header: "Request Title", accessor: "request_title",
-            Cell: ({value}) =>
-                value ? (value.length > 25 ? `${value.slice(0, 25)}...` : value) : "-"
+        {
+            Header: "Request Title",
+            accessor: "request_title",
+            Cell: ({value, row}) =>
+                value ? (
+                    <div>
+                        <Tooltip
+                            id={`request-tooltip-${row.index}`}
+                            text={value}
+                            tooltipContent={value}
+                        >
+                            <span>{value.length > 25 ? `${value.slice(0, 25)}...` : value}</span>
+                        </Tooltip>
+                    </div>
+                ) : "-"
         },
         {
             Header: "SR Time",
