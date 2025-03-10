@@ -64,7 +64,7 @@ console.log(`this is data`,data)
                         {data.length > 0 ? (
                             data.map((row, index) => (
                                 <tr key={index} className="border hover:bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
-                                    <td className="border p-2 text-start dark:text-gray-200 dark:bg-bodybg">{row.group}</td>
+                                    <td className="border p-2 text-start dark:text-gray-200 dark:bg-bodybg ">{row.group}</td>
                                     <td className="border p-2 text-left dark:text-gray-200 dark:bg-bodybg">{row.site}</td>
                                     <td className="border p-2 text-right dark:text-gray-200 dark:bg-bodybg">{row.activations.toLocaleString()}</td>
                                     <td className="border p-2 text-right dark:text-gray-200 dark:bg-bodybg">{row.orders.toLocaleString()}</td>

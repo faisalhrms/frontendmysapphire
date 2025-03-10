@@ -22,14 +22,11 @@ export const ECOM_ROUTES = {
         path: '/module/ecom/digitalspent',
         permission: 'ecom_digitalspent',
     },
-    ODT:{
-        path: '/module/ecom/orderdetail',
-        permission: 'ecom_digitalspent',
-    },
-    // ESF:{
-    //     path: '/module/ecom/ecomsalesforce',
-    //
-    // }
+    // ODT:{
+    //     path: '/module/ecom/orderdetail',
+    //     permission: 'ecom_digitalspent',
+    // },
+
 
 };
 
@@ -54,11 +51,11 @@ export const MODULE_ROUTES = [
         component: ObjectiveSpend,
         permission: ECOM_ROUTES.OS.permission,
     },
-    {
-        path: ECOM_ROUTES.ODT.path,
-        component: OrderDetail,
-        permission: ECOM_ROUTES.OS.permission,
-    },
+    // {
+    //     path: ECOM_ROUTES.ODT.path,
+    //     component: OrderDetail,
+    //     permission: ECOM_ROUTES.ODT.permission,
+    // },
     // {
     //     path: ECOM_ROUTES.ESF.path,
     //     component: EcomSalesforce,

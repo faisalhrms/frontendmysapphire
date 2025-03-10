@@ -58,9 +58,9 @@ const AnalysisReport = () => {
 
     const getFirstDateOfCurrentMonth1 = () => {
         let today = new Date();
-        // Set the date to 1, which will always give the first date of the current month
+
         today.setDate(1);
-        // Return the date in YYYY-MM-DD format
+
         return today.toISOString().slice(0, 10);
     };
 
