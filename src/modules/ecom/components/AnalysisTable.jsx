@@ -26,8 +26,8 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                     <LoadingSpinner />
                 ) : (
                     <table className="w-full table-fixed border-collapse">
-                        {/* Table Head */}
-                        <thead className="bg-gray-100 dark:bg-gray-800">
+                        
+                        <thead className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
                         <tr>
                             {headers.map((header, index) => (
                                 <th

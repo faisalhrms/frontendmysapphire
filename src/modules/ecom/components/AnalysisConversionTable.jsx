@@ -99,7 +99,7 @@ const AnalysisConversionTable = ({ filters }) => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            setData([]); // 🛠️ Clear old data before fetching new data
+            setData([]);
 
             try {
                 const response = await fetchAnalysisForm(filters);

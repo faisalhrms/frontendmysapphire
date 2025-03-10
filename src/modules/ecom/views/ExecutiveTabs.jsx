@@ -90,7 +90,7 @@ const ExecutiveTabs = () => {
                 <div className="flex space-x-4">
                     <Link
                         to="#"
-                        className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "executiveSummary" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
+                        className={`px-4 py-2 border  rounded-md font-medium transition-all dark:text-gray-200 dark:bg-bodybg ${activeTab === "executiveSummary" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
                         onClick={() => setActiveTab("executiveSummary")}
                     >
                         Executive Summary
@@ -98,7 +98,7 @@ const ExecutiveTabs = () => {
 
                     <Link
                         to="#"
-                        className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "agingLiabilities" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
+                        className={`px-4 py-2 border  rounded-md font-medium transition-all dark:text-gray-200 dark:bg-bodybg ${activeTab === "agingLiabilities" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
                         onClick={() => setActiveTab("agingLiabilities")}
                     >
                         Aging’s for Pending Liabilities
@@ -116,7 +116,7 @@ const ExecutiveTabs = () => {
                 {activeTab === "executiveSummary" && (
                     <button
                         type="button"
-                        className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                        className="ti-btn bg-primary border  text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                         onClick={() => {
                             setShowFilters(!showFilters);
                         }}
@@ -177,7 +177,7 @@ const ExecutiveTabs = () => {
                         )}
 
                         {activeTab === "agingLiabilities" && (
-                            <div className="tab-pane show active p-6  dark:text-gray-200 dark:bg-bodybg" id="replenishment-history"
+                            <div className="tab-pane show active p-6 dark:text-gray-200 dark:bg-bodybg dark:text-gray-200 dark:bg-bodybg" id="replenishment-history"
                                  aria-labelledby="replenishment-history" role="tabpanel">
 
                                 <AgingForm />

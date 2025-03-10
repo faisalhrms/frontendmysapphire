@@ -48,7 +48,7 @@ const EquipmentDepartmentStats = ({ dateFrom, dateTo }) => {
 
     return (
         <>
-            <div className="box">
+            <div className="box dark:text-gray-200 dark:bg-bodybg">
                 <div className="box-header justify-between">
                     <div className="box-title">404 Errors By Date</div>
                 </div>

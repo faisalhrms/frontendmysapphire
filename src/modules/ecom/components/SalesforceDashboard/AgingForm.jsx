@@ -241,7 +241,7 @@ const AgingFormComponent = () => {
     ];
 
     return (
-        <div className="grid grid-cols-2 gap-4 ">
+        <div className="grid grid-cols-2 gap-4 dark:text-gray-200 dark:bg-bodybg ">
             {tables.map((table, index) => (
                 <AgingPendingTable
                     key={index}

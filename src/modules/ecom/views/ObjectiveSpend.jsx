@@ -48,7 +48,7 @@ const ObjectiveSpend = () => {
                         <nav className="flex space-x-4">
                             <Link
                                 to="#"
-                                className={`m-1 block w-full cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${
+                                className={`m-1 block w-full border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${
                                     activeTab === "ObjectiveWiseSpentSummary" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"
                                 }`}
                                 onClick={() => setActiveTab("ObjectiveWiseSpentSummary")}
@@ -59,7 +59,7 @@ const ObjectiveSpend = () => {
 
                         <button
                             type="button"
-                            className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none dark:text-gray-200 dark:bg-bodybg"
+                            className="ti-btn bg-primary border  text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                             onClick={() => setShowFilters(!showFilters)}
                         >
                             <i className="ri-filter-3-fill inline-block"></i> Filters
