@@ -42,8 +42,8 @@ const ObjectiveSpend = () => {
         <>
             <PageHeader currentpage="Digital Spent" />
 
-            <div className="grid grid-cols-12 gap-6 dark:text-gray-200 dark:bg-bodybg">
-                <div className="xl:col-span-12 col-span-12 dark:text-gray-200 dark:bg-bodybg">
+            <div className="grid grid-cols-12 gap-6 ">
+                <div className="xl:col-span-12 col-span-12 ">
                     <div className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
                         <nav className="flex space-x-4">
                             <Link
@@ -70,7 +70,7 @@ const ObjectiveSpend = () => {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="mt-0">
-                                <FormInput
+                                    <FormInput
                                     type="date"
                                     placeholder="Till Date "
                                     name="date_from"
@@ -80,8 +80,10 @@ const ObjectiveSpend = () => {
                                     label={true}
                                 />
                                 </div>
+                        <div className="mt-6">
+                              <FilterButton />
+                                 </div>
 
-                                <FilterButton />
                             </div>
                         </form>
                     )}

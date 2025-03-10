@@ -68,9 +68,9 @@ const ObjectiveWiseSpentSummary = ({ filters }) => {
                 </div>
             ) : (
                 <table className="min-w-full border border-gray-300 shadow-md text-sm">
-                    <thead>
+                    <thead >
                     <tr className="bg-gray-200 text-gray-900 text-sm">
-                        <th rowSpan="2" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Name Origin</th>
+                        <th rowSpan="2" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Origin</th>
                         <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Last Day</th>
                         <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">MTD</th>
                     </tr>
