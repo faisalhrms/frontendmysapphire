@@ -5,100 +5,110 @@ import { useForm } from "react-hook-form";
 import Discussion from "@components/Discussion.jsx";
 import SRDiscussion from "@modules/sr-management/component/SRDiscussion.jsx";
 import ModelRight from "@components/ModalRight.jsx";
-import { getBadgeClasses } from "@helpers/badges.js";
-import { toTitleCase } from "@helpers/formatters.js";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {toTitleCase} from "@helpers/formatters.js";
+import Tooltip from "@components/Tooltip.jsx";
 
-function ContentLeft({ generatedReqData, serviceRequest, selectedStatus }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const processEmailContent = (html, attachments) => {
-    if (!html || !attachments) return html;
-    let updatedHtml = html;
-    attachments.forEach((att) => {
-      if (att.cid && att.file) {
-        const regex = new RegExp(`cid:${att.cid}`, "g");
-        updatedHtml = updatedHtml.replace(regex, att.file);
-      }
+function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const processEmailContent = (html, attachments) => {
+        if (!html || !attachments) return html;
+        let updatedHtml = html;
+        attachments.forEach((att) => {
+            if (att.cid && att.file) {
+                const regex = new RegExp(`cid:${att.cid}`, "g");
+                updatedHtml = updatedHtml.replace(regex, att.file);
+            }
+        });
+        return updatedHtml;
+    };
+    const processedDescription = useMemo(() => {
+        return processEmailContent(serviceRequest.description, serviceRequest.attachments);
+    }, [serviceRequest.description, serviceRequest.attachments]);
+    const {
+        control,
+        handleSubmit,
+        formState: {errors, isSubmitting},
+    } = useForm({
+        defaultValues: {
+            description: processedDescription || "",
+        },
     });
-    return updatedHtml;
-  };
-  const processedDescription = useMemo(() => {
-    return processEmailContent(serviceRequest.description, serviceRequest.attachments);
-  }, [serviceRequest.description, serviceRequest.attachments]);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      description: processedDescription || "",
-    },
-  });
-  const getSlaBadgeClasses = (slaHours) => {
-    if (slaHours >= 48) {
-      return "bg-green-500/10 text-green-500 px-2 py-1 rounded-md";
-    } else if (slaHours >= 24) {
-      return "bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-md";
-    } else if (slaHours > 0) {
-      return "bg-red-500/10 text-red-500 px-2 py-1 rounded-md";
-    }
-    return "bg-gray-500/10 text-gray-500 px-2 py-1 rounded-md";
-  };
-  const chunkArray = (arr, size) => {
-    const chunks = [];
-    for (let i = 0; i < arr.length; i += size) {
-      chunks.push(arr.slice(i, i + size));
-    }
-    return chunks;
-  };
-  return (
-    <div className="w-full lg:w-4/5 rounded-lg dark:bg-bodybg">
-      <ModelRight isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-      <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
-        <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
-          <h2 className="box-title text-lg font-semibold text-gray-700">
-            Service Request Info
-          </h2>
-        </div>
-        <div className="p-4">
-          <table className="w-full text-sm text-gray-600">
-            <tbody>
-              <tr className="border-b border-gray-200">
-                <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
-                  Sr #
-                </td>
-                <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
-                  {serviceRequest.sr_number}
-                </td>
-                <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
-                  Created At:
-                </td>
-                <td className="py-3 text-gray-700 text-normal dark:text-gray-400 text-xs">
-                  {serviceRequest.created_at
-                    ? new Date(serviceRequest.created_at).toLocaleString()
-                    : "No Date"}
-                </td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
-                  Need By Date:
-                </td>
-                <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
-                  {serviceRequest.need_by_date
-                    ? new Date(serviceRequest.need_by_date).toLocaleDateString()
-                    : "No Need By Date"}
-                </td>
-                <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
-                  Created By:
-                </td>
-                <td className="py-3 text-gray-700 ext-normal dark:text-gray-400 text-xs">
-                  {serviceRequest.reporter}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
-                  Status:
-                </td>
-                <td className="py-3 text-gray-700 ext-normal dark:text-gray-200 text-xs">
+    const getSlaBadgeClasses = (slaHours) => {
+        if (slaHours >= 48) {
+            return "bg-green-500/10 text-green-500 px-2 py-1 rounded-md";
+        } else if (slaHours >= 24) {
+            return "bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-md";
+        } else if (slaHours > 0) {
+            return "bg-red-500/10 text-red-500 px-2 py-1 rounded-md";
+        }
+        return "bg-gray-500/10 text-gray-500 px-2 py-1 rounded-md";
+    };
+    const chunkArray = (arr, size) => {
+        const chunks = [];
+        for (let i = 0; i < arr.length; i += size) {
+            chunks.push(arr.slice(i, i + size));
+        }
+        return chunks;
+    };
+    return (
+        <div className="w-full lg:w-4/5 rounded-lg dark:bg-bodybg overflow-hidden">
+            <ModelRight isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+            <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
+                <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
+                    <h2 className="box-title text-lg font-semibold text-gray-700">
+                        Service Request Info
+                    </h2>
+                </div>
+                <div className="p-4">
+                    <h6 className="font-semibold mb-4 task-title text-[0.8rem]">
+                        <Tooltip
+                            id={`request-tooltip-${serviceRequest.id}`}
+                            text={serviceRequest.request_title}
+                            tooltipContent={serviceRequest.request_title}
+                        >
+                            <span>{serviceRequest.request_title.length > 100 ? `${serviceRequest.request_title.slice(0, 100)}...` : serviceRequest.request_title}</span>
+                        </Tooltip>
+                    </h6>
+                    <table className="w-full text-sm text-gray-600">
+                        <tbody>
+                        <tr className="border-b border-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
+                                Sr #
+                            </td>
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
+                                {serviceRequest.sr_number}
+                            </td>
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
+                                Created At:
+                            </td>
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-400 text-xs">
+                                {serviceRequest.created_at
+                                    ? new Date(serviceRequest.created_at).toLocaleString()
+                                    : "No Date"}
+                            </td>
+                        </tr>
+                        <tr className="border-b border-gray-200">
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
+                                Need By Date:
+                            </td>
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
+                                {serviceRequest.need_by_date
+                                    ? new Date(serviceRequest.need_by_date).toLocaleDateString()
+                                    : "No Need By Date"}
+                            </td>
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
+                                Created By:
+                            </td>
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-400 text-xs">
+                                {serviceRequest.reporter}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
+                                Status:
+                            </td>
+                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200 text-xs">
                   <span className="badge bg-primary/10 text-primary">
                     {selectedStatus?.label
                       ? selectedStatus?.label

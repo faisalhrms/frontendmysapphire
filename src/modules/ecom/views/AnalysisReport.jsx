@@ -56,11 +56,19 @@ const AnalysisReport = () => {
         return yesterday.toISOString().slice(0, 10);
     };
 
+    const getFirstDateOfCurrentMonth1 = () => {
+        let today = new Date();
+
+        today.setDate(1);
+
+        return today.toISOString().slice(0, 10);
+    };
+
 
     const { control: errorControl, handleSubmit: handleErrorSubmit, getFilters: getErrorFilters } = useFilters(
         useMemo(() => ({
             initialFilters: [
-                { name: "date_from", defaultValue: "2025-03-01" },
+                { name: "date_from", defaultValue: getFirstDateOfCurrentMonth1() },
                 { name: "date_to", defaultValue: getPreviousDate() },
             ],
         }), [])
@@ -91,12 +99,12 @@ const AnalysisReport = () => {
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
-                    <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4">
+                    <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4 dark:text-gray-200 dark:bg-bodybg">
                         <nav className="flex space-x-4">
-                            <Link to="#" className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "orderSource" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("orderSource")}>Order Source</Link>
-                            <Link to="#" className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "404error" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("404error")}>404 Error</Link>
+                            <Link to="#" className={`px-4 py-2 border rounded-md font-medium transition-all dark:text-gray-200 dark:bg-bodybg ${activeTab === "orderSource" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("orderSource")}>Order Source</Link>
+                            <Link to="#" className={`px-4 py-2  border  rounded-md font-medium transition-all dark:text-gray-200 dark:bg-bodybg ${activeTab === "404error" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("404error")}>404 Error</Link>
                         </nav>
-                        <button type="button" className="ti-btn bg-primary text-white btn-wave" onClick={() => setShowFilters(!showFilters)}>
+                        <button type="button" className="ti-btn border bg-primary text-white btn-wave" onClick={() => setShowFilters(!showFilters)}>
                             <i className="ri-filter-3-fill inline-block"></i> Filters
                         </button>
                     </div>
@@ -113,7 +121,7 @@ const AnalysisReport = () => {
                                 </form>
                             )}
                             <OrdersBySourceChart data={analysisData} loading={false} />
-                            <AnalysisTable title="Commerce Cloud Order" headers={[
+                            <AnalysisTable title="" headers={[
                                 {label: "Group", accessor: "source_group", align: "left"},
                                 {label: "Orders", accessor: "orders", align: "right"},
                                 {label: "Merchandise Total", accessor: "merchandise_total", align: "right"},

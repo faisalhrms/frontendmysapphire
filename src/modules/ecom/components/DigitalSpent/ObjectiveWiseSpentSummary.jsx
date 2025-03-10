@@ -61,7 +61,7 @@ const ObjectiveWiseSpentSummary = ({ filters }) => {
     }, [filters]);
 
     return (
-        <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md">
+        <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
             {loading ? (
                 <div className="flex justify-center items-center h-64">
                     <LoadingSpinner />
@@ -108,7 +108,7 @@ const ObjectiveWiseSpentSummary = ({ filters }) => {
                             ))}
                         </React.Fragment>
                     ))}
-                    <tr className="bg-gray-200 text-gray-900 font-bold">
+                    <tr className="bg-gray-200 text-gray-900 font-bold dark:text-gray-200 dark:bg-bodybg">
                         <td className="py-2 px-4 border border-gray-400">Total</td>
                         <td className="py-2 px-4 border border-gray-400 text-right">
                             {data.reduce((acc, cur) => acc + cur.totalRow.lastDay.googleAds, 0).toLocaleString()}

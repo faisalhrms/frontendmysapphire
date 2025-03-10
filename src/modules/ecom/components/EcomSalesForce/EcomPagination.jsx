@@ -3,7 +3,7 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { toTitleCase } from "../../../../helpers/formatters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
+const EcomPagination = ({ data = [], columns, pageSize = 10 }) => {
     const memoizedColumns = useMemo(() => columns, [columns]);
     const memoizedData = useMemo(() => Array.isArray(data) ? data : [], [data]);
 
@@ -40,13 +40,13 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
     }
 
     return (
-        <div className="overflow-x-auto w-full dark:text-gray-200 dark:bg-bodybg">
+        <div className="overflow-x-auto w-full">
 
             <table
                 {...getTableProps()}
-                className="w-full table-auto border-collapse border border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                className="w-full table-auto border-collapse border border-gray-300"
             >
-                <thead className="text-center bg-gray-100 border-b border-gray-300 dark:text-gray-200 dark:bg-bodybg">
+                <thead className="text-center bg-gray-100 border-b border-gray-300">
                 {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
                         {headerGroup.headers.map((column) => (
@@ -74,7 +74,7 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
                             {row.cells.map((cell) => (
                                 <td
                                     {...cell.getCellProps()}
-                                    className="px-1 py-2 text-sm text-gray-900 border-r border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                    className="px-1 py-2 text-sm text-gray-900 border-r border-gray-300"
                                     key={cell.column.id}
                                 >
                                     {cell.render("Cell")}
@@ -87,7 +87,7 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
             </table>
 
 
-            <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300 dark:text-gray-200 dark:bg-bodybg">
+            <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300">
         <span className="text-sm text-gray-600">
           Showing {pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, memoizedData.length)} of{" "}
             {memoizedData.length} results
@@ -157,4 +157,4 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
     );
 };
 
-export default AgingDatatable;
+export default EcomPagination;

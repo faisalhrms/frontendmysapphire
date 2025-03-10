@@ -3,23 +3,35 @@ import ExecutiveSummaryTable from "./ExecutiveSummaryTable.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
-import TableOms from "../../components/SalesforceDashboard/TableOms.jsx";
-import {
-    fetchDataFromAPI,
-    fetchDataAPI,
-    fetchDataAPIProcess,
-    fetchDataAPICC, fetchDataAPIOMS, fetchDataAPIOMSSS, fetchDataAPIOO, fetchDataAPIOMSAA
-} from "../../services/salesforcedashboard_services.js";
 import Model from "./Model.jsx";
-import Table from "../SalesforceDashboard/Table.jsx";
-import TableProcess from "../../components/SalesforceDashboard/TableProcess.jsx";
-import TableCancelledOMS from "../../components/SalesforceDashboard/TableCancelledOMS.jsx";
-import CommerceCloudTable from "../../components/SalesforceDashboard/CommerceCloudTable.jsx";
-import TableOrdersMultipleFOs from "../../components/SalesforceDashboard/TableOrdersMultipleFOs.jsx"
-import TableTotalOrdersOMS from "../../components/SalesforceDashboard/TableTotalOrdersOMS.jsx"
-import TableSingleFo from "../../components/SalesforceDashboard/TableSingleFo.jsx"
 import BreakupOrdersFO from "../../components/SalesforceDashboard/BreakupOrdersFO.jsx"
 import OrdersFulfillmentSummary from "../../components/SalesforceDashboard/OrdersFulfillmentSummary.jsx"
+import EcomDatatable from "../../components/EcomSalesForce/EcomDatatable.jsx"
+
+import {
+    commerce_cloud,
+
+    total_orders_oms,
+    multiple_fo,
+    single_fo,
+    cancelled,
+    fetchExecutiveSummary,
+    ipc,
+    owe,
+    oms,
+} from "../../services/saleapi_service.js";
+
+const functionMap = {
+
+    commerce_cloud,
+    total_orders_oms,
+    multiple_fo,
+    single_fo,
+    cancelled,
+    ipc,
+    owe,
+    oms,
+};
 
 const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
     const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters, dateFrom, dateTo);
@@ -27,15 +39,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
     const [isModelLoading, setModelLoading] = useState(false);
     const [modalType, setModalType] = useState(null);
     const [apiData, setApiData] = useState(null);
-    const [apiDatas, setApiDatas] = useState(null);
-    const [apiDataprocess, setApiDataprocess] = useState(null);
-    const [apiDataa, setApiDataa] = useState(null);
-    const [apiDatass, setApiDatass] = useState(null);
-    const [apiDataOrder, setApiDataOrder] = useState(null);
-    const [apiDataoms, setApiDataoms] = useState(null);
-    const [apiDataFo, setApiDataFo] = useState(null);
     const [modalTitle, setModalTitle] = useState("Dynamic Modal Title");
-
     const { summary = {}, fulfilment_data = [] } = data || {};
 
 
@@ -43,42 +47,23 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
         try {
             const validDateFrom = filters?.date_from || new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0];
             const validDateTo = filters?.date_to || new Date().toISOString().split("T")[0];
-
             let fetchedData;
+            setApiData([]);
             setModalType(type);
             setShowModal(true);
             setModelLoading(true);
-            if (type === "oms") {
-                fetchedData = await fetchDataFromAPI(validDateFrom, validDateTo, filters);
-                setApiData(fetchedData);
-            } else if (type === "ipc") {
-                fetchedData = await fetchDataAPIProcess(validDateFrom, validDateTo, filters);
-                setApiDataprocess(fetchedData);
-            } else if (type === "owe") {
-                fetchedData = await fetchDataAPI(validDateFrom, validDateTo, filters);
-                setApiDatas(fetchedData);
-            }
-           else if (type === "commerce_cloud") {
-            fetchedData = await fetchDataAPICC(validDateFrom, validDateTo, filters);
-            setApiDatass(fetchedData);
-        }
-            else if (type === "total_orders_oms") {
-                fetchedData = await fetchDataAPIOMS(validDateFrom, validDateTo, filters);
-                setApiDataoms(fetchedData);
-            }
-            else if (type === "single_fo") {
-                fetchedData = await fetchDataAPIOO(validDateFrom, validDateTo, filters);
-                setApiDataFo(fetchedData);
-            }
-            else if (type === "multiple_fo") {
-                fetchedData = await fetchDataAPIOMSAA(validDateFrom, validDateTo, filters);
-                setApiDataOrder(fetchedData);
+
+            const selectedFunction = functionMap[type];
+
+            if (typeof selectedFunction === "function") {
+                const res = await selectedFunction({ dateFrom: filters?.date_from, dateTo: filters?.date_to });
+                setModalTitle(type.replace(/_/g, " ").toUpperCase());
+                setApiData(res||[]);
+            } else {
+                console.log("Error: Invalid type function passed to fetchModalData");
             }
 
-            else if (type === "cancelled") {
-                fetchedData = await fetchDataAPIOMSSS(validDateFrom, validDateTo, filters);
-                setApiDataa(fetchedData);
-            }
+
         } catch (error) {
             console.error("Error fetching modal data:", error);
         } finally {
@@ -90,9 +75,9 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
         ? [{ label: <LoadingSpinner />, accessor: "" }]
         : [
             {
-                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg">Commerce Cloud</span>,
+                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold ">Commerce Cloud</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold "
                          onClick={() => fetchModalData("commerce_cloud")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_cc)}
@@ -101,9 +86,9 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 ),
             },
             {
-                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg">Total - Orders in OMS</span>,
+                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold ">Total - Orders in OMS</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold dark:text-gray-900 dark:bg-bodybg"
+                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold "
                          onClick={() => fetchModalData("total_orders_oms")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_summary)}
@@ -179,26 +164,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             },
         ];
 
-    // const foBreakupData = isLoading
-    //     ? [{ label: <LoadingSpinner />, accessor: "" }]
-    //     : [
-    //         { label: "Single FO", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
-    //         { label: "Split-Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.multi_fo_c) },
-    //     ];
 
-    // const fulfillmentData = isLoading
-    //     ? [{ label: <LoadingSpinner />, accessor: "" }]
-    //     : [
-    //         {
-    //             label: <span style={{ fontWeight: "bold" }}>Total Parcels to Fulfill</span>,
-    //             accessor: <span style={{ fontWeight: "bold" }}>{formatNumberWithCommas(summary.total_fo_to_fulfil)}</span>
-    //         },
-    //         ...fulfilment_data.map(row => ({
-    //             label: row.status.trim(),
-    //             accessor: formatNumberWithCommas(row.value)
-    //         })),
-    //         { label: <span style={{ fontWeight: "bold" }}>Reconciliation</span>, accessor: formatNumberWithCommas(summary.reconciliation) },
-    //     ];
 
     return (
         <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-900 dark:bg-bodybg">
@@ -210,37 +176,10 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
             />
             <BreakupOrdersFO filters={filters} dateFrom={dateFrom} dateTo={dateTo} />
             <OrdersFulfillmentSummary filters={filters} dateFrom={dateFrom} dateTo={dateTo} />
-            {/* <ExecutiveSummaryTable
-                title="Breakup of Orders into FO (Single/Multiple)"
-                data={foBreakupData}
-                totals={["Total FO's to Fulfill", formatNumberWithCommas(summary.total_fo_to_fulfil)]}
-                isLoading={isLoading}
-            />
-            <ExecutiveSummaryTable
-                title="Orders Fulfillment Summary"
-                data={fulfillmentData}
-                totals={[]}
-                isLoading={isLoading}
-            /> */}
+
             {showModal && (
                 <Model modalType={modalType} loading={isModelLoading} onClose={() => setShowModal(false) }>
-                    {modalType === "oms"  ? (
-                        <TableOms apiData={apiData} />
-                    ) : modalType === "owe" ? (
-                        <Table apiDatas={apiDatas} />
-                    ) : modalType === "ipc" ? (
-                        <TableProcess  apiDataprocess={apiDataprocess} />
-                    ) : modalType === "commerce_cloud" ? (
-                        <CommerceCloudTable apiDatass={apiDatass} />
-                    ) : modalType === "total_orders_oms" ? (
-                        <TableTotalOrdersOMS apiDataoms={apiDataoms} />
-                    ) : modalType === "single_fo" ? (
-                        <TableSingleFo apiDataFo={apiDataFo} />
-                    ) : modalType === "multiple_fo" ? (
-                        <TableOrdersMultipleFOs apiDataOrder={apiDataOrder} />
-                    ) : modalType === "cancelled" ? (
-                        <TableCancelledOMS apiDataa={apiDataa} />
-                    ) : null}
+                    <EcomDatatable data={apiData} type={modalType}/>
                 </Model>
             )}
         </div>

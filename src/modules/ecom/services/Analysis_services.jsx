@@ -10,7 +10,9 @@ export const fetch404ErrorSummary = async (data) => {
         );
         console.log(response);
         return response.data?.data;
-    } catch (error) {
+    }
+    catch (error)
+    {
         throw error;
     }
 };
