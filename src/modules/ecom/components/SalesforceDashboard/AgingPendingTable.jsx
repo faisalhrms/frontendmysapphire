@@ -23,7 +23,7 @@ const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", l
 
     return (
         <div className="w-full bg-white p-4 shadow-md rounded-lg dark:text-gray-200 dark:bg-bodybg">
-            <h2 className="text-sm font-bold text-black px-4 py-2 rounded-t bg-yellow-300 dark:text-gray-200 dark:bg-bodybg">{title}</h2>
+            <h2 style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="text-sm font-bold text-black px-4 py-2 rounded-t bg-yellow-300 dark:text-gray-200 dark:bg-bodybg">{title}</h2>
 
             {loading ? (
                 <LoadingSpinner />
