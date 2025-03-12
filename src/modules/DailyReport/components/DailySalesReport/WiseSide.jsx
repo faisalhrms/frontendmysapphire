@@ -1,403 +1,191 @@
-// import React, { useMemo } from "react";
-// import { useTable } from "react-table";
-// import LoadingSpinner from "@components.jsx/LoadingSpinner.jsx";
-// import PropTypes from "prop-types";
-// import { useDataTable } from "@hooks/dataTableHooks.js";
-//
-// const StoreWise = ({ apiUrl, title = "Store Wise Report" }) => {
-//     const { data, isLoading } = useDataTable(apiUrl, 10);
-//
-//     // Extract unique dates dynamically from data
-//     const dateHeaders = useMemo(() => {
-//         if (!data?.data?.rows?.length) return [];
-//         return Object.keys(data.data.rows[0]?.store_data || {}).sort();
-//     }, [data]);
-//
-//     // Process data into hierarchical format
-//     const processedData = useMemo(() => {
-//         if (!data?.data?.rows) return [];
-//
-//         let structuredData = [];
-//
-//         data.data.rows.forEach(row => {
-//             if (row.category === "Offline") {
-//                 structuredData.push({ store: "Offline", isCategory: true });
-//             }
-//             if (row.category === "A-Class") {
-//                 structuredData.push({ store: "A-Class", isSubCategory: true });
-//             }
-//             if (row.category === "Central") {
-//                 structuredData.push({ store: "Central", isSubCategory: true });
-//             }
-//
-//             structuredData.push({
-//                 store: row.store_name || "Unknown Store",
-//                 ...dateHeaders.reduce((acc, date) => {
-//                     acc[date] = row.store_data[date] || 0;
-//                     return acc;
-//                 }, {})
-//             });
-//         });
-//
-//         return structuredData;
-//     }, [data, dateHeaders]);
-//
-//     // Calculate column totals
-//     const columnTotals = useMemo(() => {
-//         const totals = { store: "Total" };
-//         dateHeaders.forEach(date => {
-//             totals[date] = processedData.reduce((sum, row) => sum + (row[date] || 0), 0);
-//         });
-//         return totals;
-//     }, [processedData, dateHeaders]);
-//
-//     // Create react-table columns
-//     const columns = useMemo(() => [
-//         {
-//             Header: "Store Type",
-//             accessor: "store",
-//             Cell: ({ row }) => {
-//                 if (row.original.isCategory) {
-//                     return <span className="font-bold bg-black text-white px-2">{row.original.store}</span>;
-//                 }
-//                 if (row.original.isSubCategory) {
-//                     return <span className="font-semibold bg-yellow-300 px-2">{row.original.store}</span>;
-//                 }
-//                 return <span className="pl-4">{row.original.store}</span>;
-//             },
-//             sticky: "left"
-//         },
-//         {
-//             Header: '1-Feb-2025 ',
-//             accessor: '1-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: '2-Feb-2025 ',
-//             accessor: '2-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: '3-Feb-2025 ',
-//             accessor: '3-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: '4-Feb-2025 ',
-//             accessor: '4-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: '5-Feb-2025 ',
-//             accessor: '5-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: '6-Feb-2025 ',
-//             accessor: '6-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: '7-Feb-2025 ',
-//             accessor: '7-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: '8-Feb-2025 ',
-//             accessor: '8-Feb-2025 ',
-//             Cell: ({ value }) => value || 0
-//         },
-//         {
-//             Header: 'Total',
-//             accessor: 'total',
-//             Cell: ({ value }) => value || 0
-//         },
-//         ...dateHeaders.map(date => ({
-//             Header: date,
-//             accessor: date,
-//             Cell: ({ value }) => (value ? value.toLocaleString() : 0)
-//         }))
-//     ], [dateHeaders]);
-//
-//     // React-table configuration
-//     const {
-//         getTableProps,
-//         getTableBodyProps,
-//         headerGroups,
-//         rows: tableRows,
-//         prepareRow
-//     } = useTable({
-//         columns,
-//         data: [...processedData, columnTotals]
-//     });
-//
-//     return (
-//         <div className="box custom-box mt-4">
-//             <div className="box-header justify-between">
-//                 <div className="box-title">{title}</div>
-//             </div>
-//
-//             <div className="box-body">
-//                 {isLoading ? (
-//                     <LoadingSpinner />
-//                 ) : (
-//                     <div className="overflow-x-auto">
-//                         <table
-//                             {...getTableProps()}
-//                             className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover"
-//                         >
-//                             <thead className="bg-gray-100 sticky top-0 z-10">
-//                             {headerGroups.map(headerGroup => (
-//                                 <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-//                                     {headerGroup.headers.map((column, columnIndex) => (
-//                                         <th
-//                                             {...column.getHeaderProps()}
-//                                             key={column.id}
-//                                             className={`px-4 py-2 border-b text-center ${
-//                                                 columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
-//                                             }`}
-//                                         >
-//                                             {column.render("Header")}
-//                                         </th>
-//                                     ))}
-//                                 </tr>
-//                             ))}
-//                             </thead>
-//                             <tbody {...getTableBodyProps()}>
-//                             {tableRows.map(row => {
-//                                 prepareRow(row);
-//                                 return (
-//                                     <tr {...row.getRowProps()} key={row.id}>
-//                                         {row.cells.map((cell, columnIndex) => (
-//                                             <td
-//                                                 {...cell.getCellProps()}
-//                                                 key={cell.id}
-//                                                 className={`px-4 py-2 border-b text-right ${
-//                                                     columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
-//                                                 }`}
-//                                             >
-//                                                 {cell.render("Cell")}
-//                                             </td>
-//                                         ))}
-//                                     </tr>
-//                                 );
-//                             })}
-//                             </tbody>
-//                         </table>
-//                     </div>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// };
-//
-// StoreWise.propTypes = {
-//     apiUrl: PropTypes.string.isRequired,
-//     title: PropTypes.string
-// };
-//
-// export default StoreWise;
-import React, { useMemo } from "react";
-import { useTable } from "react-table";
+import React, { useState } from 'react';
 
-import PropTypes from "prop-types";
-import { useDataTable } from "@hooks/dataTableHooks.js";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
+const StoreWise = () => {
 
-const StoreWise = ({ filters, title = "Store Wise Report" }) => {
-    const { data, isLoading } = useDataTable(
-        "/your-api-endpoint", // Replace with the actual API URL
-        10,
-        filters // Pass filters to the data fetching hook
-    );
+    const dates = [
+        "01-Feb-2025", "02-Feb-2025", "03-Feb-2025", "04-Feb-2025", "05-Feb-2025", "06-Feb-2025", "07-Feb-2025",
+        "08-Feb-2025", "09-Feb-2025", "10-Feb-2025", "11-Feb-2025", "12-Feb-2025", "13-Feb-2025", "14-Feb-2025",
+        "15-Feb-2025", "16-Feb-2025", "17-Feb-2025", "18-Feb-2025", "19-Feb-2025", "20-Feb-2025", "21-Feb-2025",
+        "22-Feb-2025", "23-Feb-2025", "24-Feb-2025", "25-Feb-2025", "26-Feb-2025", "27-Feb-2025", "28-Feb-2025"
+    ];
 
-    // Extract unique dates dynamically from data
-    const dateHeaders = useMemo(() => {
-        if (!data?.data?.rows?.length) return [];
-        return Object.keys(data.data.rows[0]?.store_data || {}).sort();
-    }, [data]);
+    const [scrollLeft, setScrollLeft] = useState(0);
 
-    // Process data into hierarchical format
-    const processedData = useMemo(() => {
-        if (!data?.data?.rows) return [];
-
-        let structuredData = [];
-
-        data.data.rows.forEach(row => {
-            if (row.category === "Offline") {
-                structuredData.push({ store: "Offline", isCategory: true });
-            }
-            if (row.category === "A-Class") {
-                structuredData.push({ store: "A-Class", isSubCategory: true });
-            }
-            if (row.category === "Central") {
-                structuredData.push({ store: "Central", isSubCategory: true });
-            }
-
-            structuredData.push({
-                store: row.store_name || "Unknown Store",
-                ...dateHeaders.reduce((acc, date) => {
-                    acc[date] = row.store_data[date] || 0;
-                    return acc;
-                }, {})
-            });
-        });
-
-        return structuredData;
-    }, [data, dateHeaders]);
-
-    // Calculate column totals
-    const columnTotals = useMemo(() => {
-        const totals = { store: "Total" };
-        dateHeaders.forEach(date => {
-            totals[date] = processedData.reduce((sum, row) => sum + (row[date] || 0), 0);
-        });
-        return totals;
-    }, [processedData, dateHeaders]);
-
-    // Create react-table columns
-    const columns = useMemo(() => [
+    // Generate sample data structure to match image
+    const tableData = [
         {
-            Header: "Store Type",
-            accessor: "store",
-            Cell: ({ row }) => {
-                if (row.original.isCategory) {
-                    return <span className="font-bold bg-black text-white px-2  ">{row.original.store}</span>;
-                }
-                if (row.original.isSubCategory) {
-                    return <span className="font-semibold bg-yellow-300 px-2">{row.original.store}</span>;
-                }
-                return <span className="pl-4">{row.original.store}</span>;
-            },
-            sticky: "left"
+            type: "Offline",
+            isHeader: true,
+
+            values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070,71378070]
         },
         {
-            Header: '1-Feb-2025 ',
-            accessor: '1-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "A-Class",
+            indent: 1,
+            isSubHeader: true,
+            values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349, 63926349]
         },
         {
-            Header: '2-Feb-2025 ',
-            accessor: '2-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "Central",
+            indent: 2,
+            isSubHeader: true,
+            values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
         },
         {
-            Header: '3-Feb-2025 ',
-            accessor: '3-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "Emporium Mall, Lahore",
+            indent: 3,
+            values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
         },
         {
-            Header: '4-Feb-2025 ',
-            accessor: '4-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "Gulberg II, Lahore",
+            indent: 3,
+            values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
         },
         {
-            Header: '5-Feb-2025 ',
-            accessor: '5-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "North",
+            indent: 2,
+            isSubHeader: true,
+            values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
         },
         {
-            Header: '6-Feb-2025 ',
-            accessor: '6-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "Emporium Mall, Lahore",
+            indent: 3,
+            values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
         },
         {
-            Header: '7-Feb-2025 ',
-            accessor: '7-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "Gulberg II, Lahore",
+            indent: 3,
+            values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
         },
         {
-            Header: '8-Feb-2025 ',
-            accessor: '8-Feb-2025 ',
-            Cell: ({ value }) => value || 0
+            type: "South",
+            indent: 2,
+            isSubHeader: true,
+            values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
         },
         {
-            Header: 'Total',
-            accessor: 'total',
-            Cell: ({ value }) => value || 0
+            type: "Emporium Mall, Lahore",
+            indent: 3,
+            values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
         },
-        ...dateHeaders.map(date => ({
-            Header: date,
-            accessor: date,
-            Cell: ({ value }) => (value ? value.toLocaleString() : 0)
-        }))
-    ], [dateHeaders]);
+        {
+            type: "Gulberg II, Lahore",
+            indent: 3,
+            values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
+        },
+        {
+            type: "FOL",
+            indent: 1,
+            isSubHeader: true,
+            values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349]
+        },
+        {
+            type: "FOL",
+            indent: 2,
+            isSubHeader: true,
+            values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
+        },
+        {
+            type: "Emporium Mall, Lahore",
+            indent: 3,
+            values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
+        },
+        {
+            type: "Gulberg II, Lahore",
+            indent: 3,
+            values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
+        },
+        {
+            type: "Other",
+            isHeader: true,
+            values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070]
+        },
+        {
+            type: "online",
+            indent: 1,
+            isSubHeader: true,
+            values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349]
+        },
+        {
+            type: "Offline",
+            isHeader: true,
+            values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070]
+        },
+        {
+            type: "Total",
+            isHeader: true,
+            values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070, 71378070]
+        },
+        {
+            type: "Total",
+            isHeader: true,
+            values: [64895498, 64895498, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 71378070]
+        }
+    ];
 
-    // React-table configuration
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows: tableRows,
-        prepareRow
-    } = useTable({
-        columns,
-        data: [...processedData, columnTotals]
-    });
+    // Helper function to format numbers
+    const formatNumber = (num) => {
+        return num.toLocaleString();
+    };
+
+    // Calculate totals for the rightmost column based on row values
+    const getRowTotal = (values) => {
+        return values.reduce((sum, current) => sum + current, 0);
+    };
+
+    // Determine styling based on row type
+    const getRowStyle = (row) => {
+        if (row.isHeader) {
+            return "bg-yellow-100 font-bold";
+        } else if (row.isSubHeader) {
+            return "bg-yellow-50 font-semibold";
+        }
+        return "";
+    };
 
     return (
-        <div className="box custom-box mt-4">
-            <div className="box-header justify-between">
-                <div  className="box-title">{title}</div>
-            </div>
-
-            <div className="box-body">
-                {isLoading ? (
-                    <LoadingSpinner />
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table
-                            {...getTableProps()}
-                            className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover"
-                        >
-                            <thead className="bg-gray-100 sticky top-0 z-10 ">
-                            {headerGroups.map(headerGroup => (
-                                <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                                    {headerGroup.headers.map((column, columnIndex) => (
-                                        <th
-                                            {...column.getHeaderProps()}
-                                            key={column.id}
-                                            className={`px-4 py-2 border-b text-center ${
-                                                columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
-                                            }`}
-                                        >
-                                            {column.render("Header")}
-                                        </th>
-                                    ))}
-                                </tr>
+        <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+            <div className="overflow-x-auto max-w-full">
+                <table className="w-full border-collapse text-sm">
+                    <thead className="sticky top-0 z-10">
+                    <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+                        <th style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">
+                            Store Type
+                        </th>
+                        {dates.slice(20).map((date, index) => (
+                            <th key={index} className="border border-gray-700 p-2 font-bold text-center min-w-28 ">
+                                {date}
+                            </th>
+                        ))}
+                        <th className="border border-gray-700 p-2 font-bold text-center min-w-28">
+                            Total
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {tableData.map((row, rowIndex) => (
+                        <tr key={rowIndex} className={getRowStyle(row)}>
+                            <td
+                                className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${row.isHeader ? 'bg-yellow-100' : row.isSubHeader ? 'bg-yellow-50' : 'bg-white'}`}
+                                style={{ paddingLeft: row.indent ? `${row.indent * 1}rem` : '0.5rem' }}
+                            >
+                                {row.type}
+                            </td>
+                            {row.values.slice(20).map((value, valueIndex) => (
+                                <td key={valueIndex} className="border border-gray-300 p-2 text-right">
+                                    {formatNumber(value)}
+                                </td>
                             ))}
-                            </thead>
-                            <tbody {...getTableBodyProps()}>
-                            {tableRows.map(row => {
-                                prepareRow(row);
-                                return (
-                                    <tr {...row.getRowProps()} key={row.id}>
-                                        {row.cells.map((cell, columnIndex) => (
-                                            <td
-                                                {...cell.getCellProps()}
-                                                key={cell.id}
-                                                className={`px-4 py-2 border-b text-right ${
-                                                    columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
-                                                }`}
-                                            >
-                                                {cell.render("Cell")}
-                                            </td>
-                                        ))}
-                                    </tr>
-                                );
-                            })}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                            <td className="border border-gray-300 p-2 text-right font-bold">
+                                {formatNumber(getRowTotal(row.values))}
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
-};
-
-StoreWise.propTypes = {
-    filters: PropTypes.object.isRequired,
-    title: PropTypes.string
 };
 
 export default StoreWise;

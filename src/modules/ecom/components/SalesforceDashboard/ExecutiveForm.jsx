@@ -167,7 +167,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
 
 
     return (
-        <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-900 dark:bg-bodybg">
+        <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-900 dark:bg-bodybg ">
             <ExecutiveSummaryTable
                 title="Reconciliation CC vs OMS"
                 data={reconciliationData}
