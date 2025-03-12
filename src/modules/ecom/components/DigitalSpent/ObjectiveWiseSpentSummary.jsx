@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchdigitalspent } from "../../services/digitalspent_services.js";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";  // ✅ Importing LoadingSpinner
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
+
 
 const ObjectiveWiseSpentSummary = ({ filters }) => {
     const [data, setData] = useState([]);
@@ -61,7 +62,7 @@ const ObjectiveWiseSpentSummary = ({ filters }) => {
     }, [filters]);
 
     return (
-        <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md">
+        <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
             {loading ? (
                 <div className="flex justify-center items-center h-64">
                     <LoadingSpinner />
@@ -69,12 +70,12 @@ const ObjectiveWiseSpentSummary = ({ filters }) => {
             ) : (
                 <table className="min-w-full border border-gray-300 shadow-md text-sm">
                     <thead>
-                    <tr className="bg-gray-200 text-gray-900 text-sm">
-                        <th rowSpan="2" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Name Origin</th>
+                    <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }} className="bg-gray-200 text-gray-900 text-sm">
+                        <th rowSpan="2" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Origin</th>
                         <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Last Day</th>
                         <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">MTD</th>
                     </tr>
-                    <tr className="bg-gray-200 text-gray-900 text-sm">
+                    <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }} className="bg-gray-200 text-gray-900 text-sm">
                         <th className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">GoogleAds</th>
                         <th className="ppy-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">MetaAds</th>
                         <th className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Total</th>
@@ -108,7 +109,7 @@ const ObjectiveWiseSpentSummary = ({ filters }) => {
                             ))}
                         </React.Fragment>
                     ))}
-                    <tr className="bg-gray-200 text-gray-900 font-bold">
+                    <tr className="bg-gray-200 text-gray-900 font-bold dark:text-gray-200 dark:bg-bodybg">
                         <td className="py-2 px-4 border border-gray-400">Total</td>
                         <td className="py-2 px-4 border border-gray-400 text-right">
                             {data.reduce((acc, cur) => acc + cur.totalRow.lastDay.googleAds, 0).toLocaleString()}

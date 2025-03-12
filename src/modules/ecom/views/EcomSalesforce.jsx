@@ -69,7 +69,7 @@ const EcomSaleforce = () => {
                 <div className="flex space-x-4">
                     <Link
                         to="#"
-                        className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "executiveSummary" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
+                        className={`px-4 py-2 border  rounded-md font-medium transition-all ${activeTab === "executiveSummary" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
                         onClick={() => setActiveTab("executiveSummary")}
                     >
                         Executive Summary
@@ -77,7 +77,7 @@ const EcomSaleforce = () => {
 
                     <Link
                         to="#"
-                        className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "agingLiabilities" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
+                        className={`px-4 py-2 border rounded-md font-medium transition-all ${activeTab === "agingLiabilities" ? "bg-primary text-white shadow-md" : "bg-gray-200 text-black"}`}
                         onClick={() => setActiveTab("agingLiabilities")}
                     >
                         Aging’s for Pending Liabilities
@@ -95,7 +95,7 @@ const EcomSaleforce = () => {
                 {activeTab === "executiveSummary" && (
                     <button
                         type="button"
-                        className="ti-btn bg-primary text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                        className="ti-btn bg-primary border  text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                         onClick={() => {
                             setShowFilters(!showFilters);
                         }}
