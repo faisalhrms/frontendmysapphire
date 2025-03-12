@@ -170,29 +170,29 @@ const OrderDetails = ({ order }) => {
     if (!order) return null;
 
     return (
-        <div className="max-w-6xl mx-auto p-2 bg-gray-50 mt-4 mb-4">
-            <h1 className="text-xl font-semibold mb-4">Details for Order '{order.orderno}'</h1>
-            <div className="border border-gray-300 mb-4">
-                <div className="grid grid-cols-2 border-b border-gray-300">
-                    <div className="bg-gray-100 p-2 font-medium">Information:</div>
+        <div className="max-w-6xl mx-auto p-2 bg-gray-50 mt-4 mb-4 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
+            <h1 className="text-xl font-semibold mb-4 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">Details for Order '{order.orderno}'</h1>
+            <div className="border border-gray-300 mb-4bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
+                <div className="grid grid-cols-2 border-b border-gray-300 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="bg-gray-100 p-2 font-medium bg-gray-100 dark:text-gray-200 dark:bg-bodybg">Information:</div>
                     <div className="p-2">
                         Contains {order.items?.length || 0} line item(s) to 1 shipping location.
                         The total price is {order.ordertotal}.
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 border-b border-gray-300">
-                    <div className="bg-gray-100 p-2 font-medium">Date Received:</div>
-                    <div className="p-2">{order.placedate}</div>
+                <div className="grid grid-cols-2 border-b border-gray-300 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="bg-gray-100 p-2 font-medium bg-gray-100 dark:text-gray-200 dark:bg-bodybg">Date Received:</div>
+                    <div className="p-2 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{order.placedate}</div>
                 </div>
 
-                <div className="grid grid-cols-2 border-b border-gray-300">
-                    <div className="bg-gray-100 p-2 font-medium">Site:</div>
-                    <div className="p-2">{order.site || "N/A"}</div>
+                <div className="grid grid-cols-2 border-b border-gray-300 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="bg-gray-100 p-2 font-medium bg-gray-100 dark:text-gray-200 dark:bg-bodybg">Site:</div>
+                    <div className="p-2 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{order.site || "N/A"}</div>
                 </div>
 
-                <div className="grid grid-cols-2 border-b border-gray-300">
-                    <div className="bg-gray-100 p-2 font-medium">Created By:</div>
+                <div className="grid grid-cols-2 border-b border-gray-300 bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="bg-gray-100 p-2 font-medium bg-gray-100 dark:text-gray-200 dark:bg-bodybg">Created By:</div>
                     <div className="p-2">{order.createdBy || "Customer"}</div>
                 </div>
 

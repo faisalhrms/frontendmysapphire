@@ -15,25 +15,25 @@ const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", l
             .replace(/In-Transit:/g, '<p><strong style="color: black;">In-Transit:</strong>');
 
         return (
-            <div className="mt-4 text-xs text-right p-2 border text-gray-800 border-gray-300 rounded bg-white">
+            <div className="mt-4 text-xs text-right p-2 border text-gray-800 border-gray-300 rounded bg-white dark:text-gray-200 dark:bg-bodybg">
                 <div dangerouslySetInnerHTML={{ __html: formattedText }} />
             </div>
         );
     };
 
     return (
-        <div className="w-full bg-white p-4 shadow-md rounded-lg">
-            <h2 className="text-sm font-bold text-black px-4 py-2 rounded-t bg-yellow-300">{title}</h2>
+        <div className="w-full bg-white p-4 shadow-md rounded-lg dark:text-gray-200 dark:bg-bodybg">
+            <h2 style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="text-sm font-bold text-black px-4 py-2 rounded-t bg-yellow-300 dark:text-gray-200 dark:bg-bodybg">{title}</h2>
 
             {loading ? (
                 <LoadingSpinner />
             ) : (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto dark:text-gray-200 dark:bg-bodybg">
                     <table className="min-w-full border-collapse border border-gray-400">
                         <thead className="bg-gray-200 text-black text-sm">
                         <tr>
                             {headers.map((header, index) => (
-                                <th key={index} className="text-xs font-bold py-2 border border-gray-400">{header}</th>
+                                <th key={index} className="text-xs font-bold py-2 border border-gray-400 dark:text-gray-200 dark:bg-bodybg">{header}</th>
                             ))}
                         </tr>
                         </thead>
@@ -52,7 +52,7 @@ const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", l
                                         <td
                                             key={cellIndex}
                                             onClick={() => onCellClick(row)} // Pass the row to the parent on click
-                                            className={`py-2 px-4 border border-gray-400 ${cellIndex !== 0 ? "text-right" : "text-left"}`}
+                                            className={`py-2 px-4 border border-gray-400 dark:text-gray-200 dark:bg-bodybg ${cellIndex !== 0 ? "text-right" : "text-left"}`}
                                         >
                                             {cell}
                                         </td>
@@ -64,7 +64,7 @@ const AgingPendingTable = ({ title, headers, data, totals = [], noteText = "", l
 
                         {totals.length > 0 && (
                             <tfoot>
-                            <tr className="font-bold text-black bg-gray-200">
+                            <tr className="font-bold text-black bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 {totals.map((total, index) => (
                                     <td
                                         key={index}

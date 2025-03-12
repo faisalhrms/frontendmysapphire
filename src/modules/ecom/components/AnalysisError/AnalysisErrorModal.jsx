@@ -23,15 +23,15 @@ const AnalysisErrorModal = React.memo(({ title, date, onClose, filters }) => {
     return (
         <>
             <div id='TaskStatsModal'
-                 className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                 className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:text-gray-200 dark:bg-bodybg"
                  aria-modal="true"
                  role="dialog"
                  aria-labelledby="milestoneModalTitle">
                 <div className="relative w-[1200px] bg-white rounded-lg shadow-lg max-h-[90vh] flex flex-col">
 
 
-                    <div className="sticky top-0 bg-white z-10 p-4 flex justify-between items-center border-b rounded-lg ">
-                        <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+                    <div className="sticky top-0 bg-white z-10 p-4 flex justify-between items-center border-b rounded-lg dark:text-gray-200 dark:bg-bodybg">
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 dark:bg-bodybg">{title}</h2>
                         <button
                             onClick={onClose}
                             type="button"
@@ -50,9 +50,9 @@ const AnalysisErrorModal = React.memo(({ title, date, onClose, filters }) => {
                     </div>
 
 
-                    <div className="p-4 overflow-y-auto flex-grow">
+                    <div className="p-4 overflow-y-auto flex-grow dark:text-gray-200 dark:bg-bodybg">
                         {isLoading ? (
-                            <div className="flex justify-center items-center flex-grow">
+                            <div className="flex justify-center items-center flex-grow ">
                                 <LoadingSpinner />
                             </div>
                         ) : data && (

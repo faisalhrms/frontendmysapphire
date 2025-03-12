@@ -58,9 +58,9 @@ const AnalysisReport = () => {
 
     const getFirstDateOfCurrentMonth1 = () => {
         let today = new Date();
-        // Set the date to 1, which will always give the first date of the current month
+
         today.setDate(1);
-        // Return the date in YYYY-MM-DD format
+
         return today.toISOString().slice(0, 10);
     };
 
@@ -99,12 +99,12 @@ const AnalysisReport = () => {
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
-                    <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4">
+                    <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mb-4 dark:text-gray-200 dark:bg-bodybg">
                         <nav className="flex space-x-4">
-                            <Link to="#" className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "orderSource" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("orderSource")}>Order Source</Link>
-                            <Link to="#" className={`px-4 py-2 rounded-md font-medium transition-all ${activeTab === "404error" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("404error")}>404 Error</Link>
+                            <Link to="#" className={`px-4 py-2 border rounded-md font-medium transition-all dark:text-gray-200 dark:bg-bodybg ${activeTab === "orderSource" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("orderSource")}>Order Source</Link>
+                            <Link to="#" className={`px-4 py-2  border  rounded-md font-medium transition-all dark:text-gray-200 dark:bg-bodybg ${activeTab === "404error" ? "bg-primary text-white" : "bg-gray-200"}`} onClick={() => setActiveTab("404error")}>404 Error</Link>
                         </nav>
-                        <button type="button" className="ti-btn bg-primary text-white btn-wave" onClick={() => setShowFilters(!showFilters)}>
+                        <button type="button" className="ti-btn bg-primary border  text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none" onClick={() => setShowFilters(!showFilters)}>
                             <i className="ri-filter-3-fill inline-block"></i> Filters
                         </button>
                     </div>
@@ -113,7 +113,7 @@ const AnalysisReport = () => {
                         <>
                             {showFilters && (
                                 <form onSubmit={handleOrderSubmit(setOrderFilters)}>
-                                    <div className="bg-white p-3 rounded-lg shadow-md flex items-center space-x-4">
+                                    <div className="bg-white p-3 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
                                         <FormInput type="date" name="date_from" control={orderControl} defaultValue={orderFilters.date_from} label={true} />
                                         <FormInput type="date" name="date_to" control={orderControl} defaultValue={orderFilters.date_to} label={true} />
                                         <FilterButton />

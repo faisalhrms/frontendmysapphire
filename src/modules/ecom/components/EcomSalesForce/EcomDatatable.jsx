@@ -26,14 +26,14 @@ const EcomDatatable = ({ data = [], type }) => {
         {
             Header: "Order #",
             accessor: "orderno",
-            Cell: ({ value, row }) => (
-                <button
-                    onClick={() => openModal(row.original)}
-                    className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg"
-                >
-                    {value}
-                </button>
-            ),
+            // Cell: ({ value, row }) => (
+            //     <button
+            //         onClick={() => openModal(row.original)}
+            //         className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg"
+            //     >
+            //         {value}
+            //     </button>
+            // ),
         },
         { Header: "Date", accessor: "placedate" },
         { Header: "Status", accessor: "confirmationstatus" },
@@ -47,12 +47,12 @@ const EcomDatatable = ({ data = [], type }) => {
     return (
         <>
             <EcomPagination data={data} columns={columns} pageSize={10} />
-            {isModalOpen && selectedOrder && (
-                <OrderModal onClose={closeModal}>
-                    <OrderDetailsTable order={selectedOrder} />
+            {/*{isModalOpen && selectedOrder && (*/}
+            {/*    <OrderModal onClose={closeModal}>*/}
+            {/*        <OrderDetailsTable order={selectedOrder} />*/}
 
-                </OrderModal>
-            )}
+            {/*    </OrderModal>*/}
+            {/*)}*/}
         </>
     );
 };
