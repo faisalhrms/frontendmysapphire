@@ -45,7 +45,7 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
             <table
                 {...getTableProps()}
                 className="table-auto w-full border-collapse border border-gray-300 dark:text-gray-200 dark:bg-bodybg"
-                style={{ tableLayout: "fixed" }}  // Ensure the table fits within its container without scrollbars
+                style={{ tableLayout: "fixed" }}
             >
                 <thead style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="text-center text-white bg-gray-100 border-b border-gray-300 dark:text-gray-200 dark:bg-bodybg">
                 {headerGroups.map((headerGroup) => (
