@@ -18,9 +18,9 @@ function OnlineGrossSaleBeforeReturn() {
             <table className="min-w-full table-auto border-collapse border border-gray-400">
                 <thead style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
                 <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                    <th rowSpan="" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>
-                    <th rowSpan="" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>
-                    <th rowSpan="" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>
+                    <th rowSpan="" className="py-2 px-2  p-2 text-center"></th>
+                    <th rowSpan="" className="py-2 px-2  p-2 text-center"></th>
+                    <th rowSpan="" className="py-2 px-2 p-2 text-center"></th>
                     <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
                     <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted</th>
                     <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
@@ -48,14 +48,14 @@ function OnlineGrossSaleBeforeReturn() {
                 </tbody>
                 <tfoot>
                 <tr style={{  color: "black" }}>
-                    <td colSpan="2" className="px-4 py-2 text-right border border-gray-400 font-bold">Total</td>
+                    <td colSpan="3" className="px-4 py-2 text-right border border-gray-400 font-bold">Total</td>
                     <td className="px-4 py-2 border border-gray-400">{'489,439,253'}</td>
                     <td className="px-4 py-2 border border-gray-400">{'49,468,707'}</td>
                     <td className="px-4 py-2 border border-gray-400">{'538,907,960'}</td>
                 </tr>
                 <tr style={{ color: "black"}}>
-                    <td colSpan="1" className="px-4 py-2 text-right border border-gray-400 font-bold">Total</td>
-                    <th rowSpan="" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>
+                    <td colSpan="3" className="px-4 py-2 text-right border border-gray-400 font-bold">Total</td>
+                    {/*<th rowSpan="" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>*/}
                     <td className="px-4 py-2 border border-gray-400">{'489,439,253'}</td>
                     <td className="px-4 py-2 border border-gray-400">{'49,468,707'}</td>
                     <td className="px-4 py-2 border border-gray-400">{'538,907,960'}</td>
