@@ -5,7 +5,7 @@ export const sidebarMenu = [
     generateSidebarItem(
         "",
         "sub",
-        "DailyReport",
+        "Reports",
         9,
         "bx bx-box",
         "",
