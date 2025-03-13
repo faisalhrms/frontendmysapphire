@@ -18,14 +18,20 @@ const DailySaleReportList = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    // Get today's date and subtract one day to set default filters
     const getTodayDate = () => new Date().toISOString().slice(0, 10);
+    const getYesterdayDate = () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        return yesterday.toISOString().slice(0, 10);
+    };
 
     const { control, handleSubmit, errors, getFilters } = useFilters(
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: "date_from", defaultValue: getTodayDate() },
-                    { name: "date_to", defaultValue: getTodayDate() },
+                    { name: "date_from", defaultValue: getYesterdayDate() }, // Set to yesterday's date
+                    { name: "date_to", defaultValue: getTodayDate() }, // Set to today's date
                 ],
             }),
             []
@@ -90,7 +96,7 @@ const DailySaleReportList = () => {
 
                         <button
                             type="button"
-                            className="ti-btn bg-primary border text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                            className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                             onClick={() => setShowFilters(!showFilters)}
                         >
                             <i className="ri-filter-3-fill inline-block"></i> Filters

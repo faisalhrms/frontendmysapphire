@@ -1,7 +1,197 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
+//
+// const StoreWise = () => {
+//
+//     const dates = [
+//         "01-Feb-2025", "02-Feb-2025", "03-Feb-2025", "04-Feb-2025", "05-Feb-2025", "06-Feb-2025", "07-Feb-2025",
+//         "08-Feb-2025", "09-Feb-2025", "10-Feb-2025", "11-Feb-2025", "12-Feb-2025", "13-Feb-2025", "14-Feb-2025",
+//         "15-Feb-2025", "16-Feb-2025", "17-Feb-2025", "18-Feb-2025", "19-Feb-2025", "20-Feb-2025", "21-Feb-2025",
+//         "22-Feb-2025", "23-Feb-2025", "24-Feb-2025", "25-Feb-2025", "26-Feb-2025", "27-Feb-2025", "28-Feb-2025"
+//     ];
+//
+//     const [scrollLeft, setScrollLeft] = useState(0);
+//
+//     // Generate sample data structure to match image
+//     const tableData = [
+//         {
+//             type: "Offline",
+//             isHeader: true,
+//
+//             values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070,71378070]
+//         },
+//         {
+//             type: "A-Class",
+//             indent: 1,
+//             isSubHeader: true,
+//             values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349, 63926349]
+//         },
+//         {
+//             type: "Central",
+//             indent: 2,
+//             isSubHeader: true,
+//             values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
+//         },
+//         {
+//             type: "Emporium Mall, Lahore",
+//             indent: 3,
+//             values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
+//         },
+//         {
+//             type: "Gulberg II, Lahore",
+//             indent: 3,
+//             values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
+//         },
+//         {
+//             type: "North",
+//             indent: 2,
+//             isSubHeader: true,
+//             values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
+//         },
+//         {
+//             type: "Emporium Mall, Lahore",
+//             indent: 3,
+//             values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
+//         },
+//         {
+//             type: "Gulberg II, Lahore",
+//             indent: 3,
+//             values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
+//         },
+//         {
+//             type: "South",
+//             indent: 2,
+//             isSubHeader: true,
+//             values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
+//         },
+//         {
+//             type: "Emporium Mall, Lahore",
+//             indent: 3,
+//             values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
+//         },
+//         {
+//             type: "Gulberg II, Lahore",
+//             indent: 3,
+//             values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
+//         },
+//         {
+//             type: "FOL",
+//             indent: 1,
+//             isSubHeader: true,
+//             values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349]
+//         },
+//         {
+//             type: "FOL",
+//             indent: 2,
+//             isSubHeader: true,
+//             values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
+//         },
+//         {
+//             type: "Emporium Mall, Lahore",
+//             indent: 3,
+//             values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
+//         },
+//         {
+//             type: "Gulberg II, Lahore",
+//             indent: 3,
+//             values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
+//         },
+//         {
+//             type: "Other",
+//             isHeader: true,
+//             values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070]
+//         },
+//         {
+//             type: "online",
+//             indent: 1,
+//             isSubHeader: true,
+//             values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349]
+//         },
+//         {
+//             type: "Offline",
+//             isHeader: true,
+//             values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070]
+//         },
+//         {
+//             type: "Other",
+//             isHeader: true,
+//             values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070, 71378070]
+//         },
+//         {
+//             type: "Total",
+//             isHeader: true,
+//             values: [64895498, 64895498, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 71378070]
+//         }
+//     ];
+//
+//     // Helper function to format numbers
+//     const formatNumber = (num) => {
+//         return num.toLocaleString();
+//     };
+//
+//     // Calculate totals for the rightmost column based on row values
+//     const getRowTotal = (values) => {
+//         return values.reduce((sum, current) => sum + current, 0);
+//     };
+//
+//     // Determine styling based on row type
+//     const getRowStyle = (row) => {
+//         if (row.isHeader) {
+//             return "bg-yellow-100 font-bold";
+//         } else if (row.isSubHeader) {
+//             return "bg-yellow-50 font-semibold";
+//         }
+//         return "";
+//     };
+//
+//     return (
+//         <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+//             <div className="overflow-x-auto max-w-full">
+//                 <table className="w-full border-collapse text-sm">
+//                     <thead className="sticky top-0 z-10">
+//                     <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+//                         <th style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">
+//                             Store Type
+//                         </th>
+//                         {dates.slice(20).map((date, index) => (
+//                             <th key={index} className="border border-gray-700 p-2 font-bold text-center min-w-28 ">
+//                                 {date}
+//                             </th>
+//                         ))}
+//                         <th className="border border-gray-700 p-2 font-bold text-center min-w-28">
+//                             Total
+//                         </th>
+//                     </tr>
+//                     </thead>
+//                     <tbody>
+//                     {tableData.map((row, rowIndex) => (
+//                         <tr key={rowIndex} className={getRowStyle(row)}>
+//                             <td
+//                                 className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${row.isHeader ? 'bg-yellow-100' : row.isSubHeader ? 'bg-yellow-50' : 'bg-white'}`}
+//                                 style={{ paddingLeft: row.indent ? `${row.indent * 1}rem` : '0.5rem' }}
+//                             >
+//                                 {row.type}
+//                             </td>
+//                             {row.values.slice(20).map((value, valueIndex) => (
+//                                 <td key={valueIndex} className="border border-gray-300 p-2 text-right">
+//                                     {formatNumber(value)}
+//                                 </td>
+//                             ))}
+//                             <td className="border border-gray-300 p-2 text-right font-bold">
+//                                 {formatNumber(getRowTotal(row.values))}
+//                             </td>
+//                         </tr>
+//                     ))}
+//                     </tbody>
+//                 </table>
+//             </div>
+//         </div>
+//     );
+// };
+//
+// export default StoreWise;
+import React, { useState, useEffect } from 'react';
 
-const StoreWise = () => {
-
+const StoreWise = ({ filters }) => {
     const dates = [
         "01-Feb-2025", "02-Feb-2025", "03-Feb-2025", "04-Feb-2025", "05-Feb-2025", "06-Feb-2025", "07-Feb-2025",
         "08-Feb-2025", "09-Feb-2025", "10-Feb-2025", "11-Feb-2025", "12-Feb-2025", "13-Feb-2025", "14-Feb-2025",
@@ -9,9 +199,10 @@ const StoreWise = () => {
         "22-Feb-2025", "23-Feb-2025", "24-Feb-2025", "25-Feb-2025", "26-Feb-2025", "27-Feb-2025", "28-Feb-2025"
     ];
 
-    const [scrollLeft, setScrollLeft] = useState(0);
+    const [filteredDates, setFilteredDates] = useState(dates);
+    const [loading, setLoading] = useState(false);
 
-    // Generate sample data structure to match image
+    // Sample data structure
     const tableData = [
         {
             type: "Offline",
@@ -112,7 +303,7 @@ const StoreWise = () => {
             values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070]
         },
         {
-            type: "Total",
+            type: "Other",
             isHeader: true,
             values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070, 71378070]
         },
@@ -123,17 +314,17 @@ const StoreWise = () => {
         }
     ];
 
-    // Helper function to format numbers
+
     const formatNumber = (num) => {
         return num.toLocaleString();
     };
 
-    // Calculate totals for the rightmost column based on row values
+
     const getRowTotal = (values) => {
         return values.reduce((sum, current) => sum + current, 0);
     };
 
-    // Determine styling based on row type
+
     const getRowStyle = (row) => {
         if (row.isHeader) {
             return "bg-yellow-100 font-bold";
@@ -143,46 +334,66 @@ const StoreWise = () => {
         return "";
     };
 
+
+    useEffect(() => {
+        if (filters.date_from && filters.date_to) {
+            setLoading(true);
+            const startDate = new Date(filters.date_from);
+            const endDate = new Date(filters.date_to);
+            console.log("startDate", startDate);
+            const filtered = dates.filter(date => {
+                const dateObj = new Date(date);
+                return dateObj >= startDate && dateObj <= endDate;
+            });
+            setFilteredDates(filtered);
+            setLoading(false);
+        }
+    }, [filters]);
+
     return (
         <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
             <div className="overflow-x-auto max-w-full">
-                <table className="w-full border-collapse text-sm">
-                    <thead className="sticky top-0 z-10">
-                    <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
-                        <th style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">
-                            Store Type
-                        </th>
-                        {dates.slice(20).map((date, index) => (
-                            <th key={index} className="border border-gray-700 p-2 font-bold text-center min-w-28 ">
-                                {date}
+                {loading ? (
+                    <div className="text-center py-4">Loading...</div>
+                ) : (
+                    <table className="w-full border-collapse text-sm">
+                        <thead className="sticky top-0 z-10">
+                        <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+                            <th style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">
+                                Store Type
                             </th>
-                        ))}
-                        <th className="border border-gray-700 p-2 font-bold text-center min-w-28">
-                            Total
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {tableData.map((row, rowIndex) => (
-                        <tr key={rowIndex} className={getRowStyle(row)}>
-                            <td
-                                className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${row.isHeader ? 'bg-yellow-100' : row.isSubHeader ? 'bg-yellow-50' : 'bg-white'}`}
-                                style={{ paddingLeft: row.indent ? `${row.indent * 1}rem` : '0.5rem' }}
-                            >
-                                {row.type}
-                            </td>
-                            {row.values.slice(20).map((value, valueIndex) => (
-                                <td key={valueIndex} className="border border-gray-300 p-2 text-right">
-                                    {formatNumber(value)}
-                                </td>
+                            {filteredDates.map((date, index) => (
+                                <th key={index} className="border border-gray-700 p-2 font-bold text-center min-w-28 ">
+                                    {date}
+                                </th>
                             ))}
-                            <td className="border border-gray-300 p-2 text-right font-bold">
-                                {formatNumber(getRowTotal(row.values))}
-                            </td>
+                            <th className="border border-gray-700 p-2 font-bold text-center min-w-28">
+                                Total
+                            </th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {tableData.map((row, rowIndex) => (
+                            <tr key={rowIndex} className={getRowStyle(row)}>
+                                <td
+                                    className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${row.isHeader ? 'bg-yellow-100' : row.isSubHeader ? 'bg-yellow-50' : 'bg-white'}`}
+                                    style={{ paddingLeft: row.indent ? `${row.indent * 1}rem` : '0.5rem' }}
+                                >
+                                    {row.type}
+                                </td>
+                                {row.values.slice(0, filteredDates.length).map((value, valueIndex) => (
+                                    <td key={valueIndex} className="border border-gray-300 p-2 text-right">
+                                        {formatNumber(value)}
+                                    </td>
+                                ))}
+                                <td className="border border-gray-300 p-2 text-right font-bold">
+                                    {formatNumber(getRowTotal(row.values.slice(0, filteredDates.length)))}
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </div>
     );
