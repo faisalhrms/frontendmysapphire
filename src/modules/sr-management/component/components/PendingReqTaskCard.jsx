@@ -80,7 +80,7 @@ const PendingReqTaskCard = ({pendingReqData = {}}) => {
                                         ? pendingReqData.to_email
                                         : pendingReqData.to_email?.split(",") || ["No Email"]
                                 ).map((email, index) => (
-                                    <li key={index} className="bg-gray-100 text-gray-800 p-2 rounded-md shadow-sm">
+                                    <li key={index} className="dark:bg-bodybg bg-gray-100 text-gray-800 dark:text-white/20 p-2 rounded-md shadow-sm">
                                         {email.trim()}
                                     </li>
                                 ))}
@@ -93,7 +93,7 @@ const PendingReqTaskCard = ({pendingReqData = {}}) => {
                                         ? pendingReqData.cc_email
                                         : pendingReqData.cc_email?.split(",") || ["No CC Email"]
                                 ).map((email, index) => (
-                                    <li key={index} className="bg-gray-100 text-gray-800 p-2 rounded-md shadow-sm">
+                                    <li key={index} className="dark:bg-bodybg bg-gray-100 text-gray-800 dark:text-white/20 p-2 rounded-md shadow-sm">
                                         {email.trim()}
                                     </li>
                                 ))}
