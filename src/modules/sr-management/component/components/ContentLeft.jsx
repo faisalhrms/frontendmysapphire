@@ -100,15 +100,15 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Created By:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-400 text-xs">
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-400 text-xs">
                                 {serviceRequest.reporter}
                             </td>
                         </tr>
-                        <tr>
+                        <tr  className="border-b border-gray-200">
                             <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                                 Status:
                             </td>
-                            <td className="py-3 text-gray-700 ext-normal dark:text-gray-200 text-xs">
+                            <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
                   <span className="badge bg-primary/10 text-primary">
                     {selectedStatus?.label
                       ? selectedStatus?.label
@@ -127,7 +127,7 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                   </div>
                 </td>
               </tr>
-              <tr>
+              <tr className="border-b border-gray-200">
                 <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                   Priority:
                 </td>
@@ -153,7 +153,7 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                   )}
                 </td>
               </tr>
-              <tr>
+              <tr className="border-b border-gray-200">
                 <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                   CC Employee:
                 </td>
@@ -181,11 +181,11 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                   )}
                 </td>
               </tr>
-              <tr>
+              <tr className="border-b border-gray-200">
                 <td className="py-3 font-semibold text-gray-800 dark:text-gray-200 text-xs">
                   On Behalf Of:
                 </td>
-                <td className="py-3 text-gray-700 ext-normal dark:text-gray-200 text-xs">
+                <td className="py-3 text-gray-700 text-normal dark:text-gray-200 text-xs">
                   {serviceRequest.on_behalf_of
                     ? serviceRequest.on_behalf_employee
                     : "-"}
