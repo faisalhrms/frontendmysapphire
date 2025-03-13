@@ -1,6 +1,6 @@
+
 import React, { useMemo } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
-import { toTitleCase } from "../../../../helpers/formatters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
 const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
@@ -40,19 +40,20 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
     }
 
     return (
-        <div className="overflow-x-auto w-full dark:text-gray-200 dark:bg-bodybg">
+        <div className="overflow-hidden w-full dark:text-gray-200 dark:bg-bodybg">
 
             <table
                 {...getTableProps()}
-                className="w-full table-auto border-collapse border border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                className="table-auto w-full border-collapse border border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                style={{ tableLayout: "fixed" }}
             >
-                <thead className="text-center bg-gray-100 border-b border-gray-300 dark:text-gray-200 dark:bg-bodybg">
+                <thead style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="text-center text-white bg-gray-100 border-b border-gray-300 dark:text-gray-200 dark:bg-bodybg">
                 {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
                         {headerGroup.headers.map((column) => (
                             <th
                                 {...column.getHeaderProps(column.getSortByToggleProps())}
-                                className="px-1 py-2 text-sm font-medium text-gray-800 text-left border-r border-gray-300 cursor-pointer"
+                                className="px-2 py-2 text-sm text-white text-center font-medium text-gray-800  border-r border-gray-300 cursor-pointer"
                                 key={column.id}
                             >
                                 {column.render("Header")}
@@ -74,7 +75,7 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
                             {row.cells.map((cell) => (
                                 <td
                                     {...cell.getCellProps()}
-                                    className="px-1 py-2 text-sm text-gray-900 border-r border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                    className="px-2 py-2 text-sm text-gray-900 border-r border-gray-300 dark:text-gray-200 dark:bg-bodybg"
                                     key={cell.column.id}
                                 >
                                     {cell.render("Cell")}
@@ -86,12 +87,11 @@ const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
                 </tbody>
             </table>
 
-
             <div className="flex justify-between items-center mt-4 p-2 border-t border-gray-300 dark:text-gray-200 dark:bg-bodybg">
-        <span className="text-sm text-gray-600">
-          Showing {pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, memoizedData.length)} of{" "}
-            {memoizedData.length} results
-        </span>
+                <span className="text-sm text-gray-600">
+                    Showing {pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, memoizedData.length)} of{" "}
+                    {memoizedData.length} results
+                </span>
 
                 <div className="flex items-center space-x-2">
                     <button

@@ -120,7 +120,7 @@ const SrDashboard = () => {
   const selectedRegion = watch("store_region_id");
   const selectedCity = watch("city_id");
   return (
-    <div className="p-4 bg-gray-50 min-h-screen">
+    <div className="p-4 dark:bg-bodybg bg-gray-50 min-h-screen">
       <div className="grid grid-cols-12 gap-x-6 mb-1">
         <div className="xl:col-span-12 lg:col-span-6 md:col-span-6 sm:col-span-6 col-span-12">
           <div className="btn-list md:mt-0 mt-0 float-end flex space-x-2">
@@ -242,10 +242,10 @@ const SrDashboard = () => {
           {status: "Not-Started", label: "Not Started", icon: "ri-timer-line text-danger"},
           {status: "In-Progress", label: "In Process", icon: "ri-run-line text-warning"},
           {status: "Waiting for Quotation", label: "Waiting for Quotation", icon: "ri-file-search-line text-secondary"},
-          {status: "Waiting for PR", label: "Waiting for PR", icon: "ri-file-list-3-line text-secondary"}
+          { status: "Waiting for Approval", label: "Waiting for Approval", icon: "ri-loader-2-line text-secondary" },
         ].map((item, index) => (
           <div key={index} onClick={() => handleCardClick(item.status)} className="cursor-pointer">
-            <div className="bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
+            <div className="dark:bg-bodybg bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
               <div className={`flex items-center justify-center w-12 h-12 rounded-full ${getBgColor(item.icon)}`}>
                 <i className={`${item.icon} text-4xl`}></i>
               </div>
@@ -262,20 +262,20 @@ const SrDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         {[
           ...[
-            { status: "Waiting for Approval", label: "Waiting for Approval", icon: "ri-loader-2-line text-secondary" },
-            { status: "Waiting for Purchase", label: "Waiting for Purchase", icon: "ri-shopping-cart-2-line text-secondary" },
+            { status: "Waiting for Budget", label: "Waiting for Budget", icon: "ri-money-dollar-box-line text-secondary" },
+            {status: "Waiting for PR", label: "Waiting for PR", icon: "ri-file-list-3-line text-secondary"},
             { status: "PO Created", label: "PO Created", icon: "ri-file-list-2-line text-secondary" },
-            { status: "Delivered", label: "Delivered", icon: "ri-truck-line text-danger" }
+            { status: "Waiting for Purchase", label: "Waiting for Purchase", icon: "ri-shopping-cart-2-line text-secondary" },
           ],
           ...[
+            { status: "Delivered", label: "Delivered", icon: "ri-truck-line text-danger" },
             { status: "Waiting for GRN", label: "Waiting for GRN", icon: "ri-file-copy-line text-primary" },
             { status: "Invoice Submitted", label: "Invoice Submitted", icon: "ri-file-text-line text-secondary" },
             { status: "Payment Proceed", label: "Payment Proceed", icon: "ri-money-dollar-circle-line text-secondary" },
-            {status: "Closed", label: "Closed", icon: "ri-lock-line text-secondary"}
           ]
         ].map((item, index) => (
           <div key={index} onClick={() => handleCardClick(item.status)} className="cursor-pointer">
-            <div className="bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
+            <div className=" dark:bg-bodybg bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
               <div className={`flex items-center justify-center w-12 h-12 rounded-full ${getBgColor(item.icon)}`}>
                 <i className={`${item.icon} text-4xl`}></i>
               </div>
@@ -292,13 +292,13 @@ const SrDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         {[
           ...[
-            { status: "Waiting for Budget", label: "Waiting for Budget", icon: "ri-money-dollar-box-line text-secondary" },
             { status: "Waiting for Acknowledgement", label: "Waiting for Acknowledgement", icon: "ri-user-voice-line text-secondary" },
-            {status: "Completed", label: "Completed", icon: "ri-checkbox-circle-line text-success"}
+            {status: "Completed", label: "Completed", icon: "ri-checkbox-circle-line text-success"},
+            {status: "Closed", label: "Closed", icon: "ri-lock-line text-secondary"}
           ]
         ].map((item, index) => (
           <div key={index} onClick={() => handleCardClick(item.status)} className="cursor-pointer">
-            <div className="bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
+            <div className="dark:bg-bodybg bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
               <div className={`flex items-center justify-center w-12 h-12 rounded-full ${getBgColor(item.icon)}`}>
                 <i className={`${item.icon} text-4xl`}></i>
               </div>
@@ -319,7 +319,7 @@ const SrDashboard = () => {
           {status: "Cancelled", label: "Cancelled", icon: "ri-close-circle-line text-danger"}
         ].map((item, index) => (
           <div key={index} onClick={() => handleCardClick(item.status)} className="cursor-pointer">
-            <div className="bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
+            <div className="dark:bg-bodybg bg-white shadow-xl hover:shadow-2xl rounded-lg p-4 flex items-center space-x-4 transition-transform hover:scale-105 h-[100px]">
               <div className={`flex items-center justify-center w-12 h-12 rounded-full ${getBgColor(item.icon)}`}>
                 <i className={`${item.icon} text-4xl`}></i>
               </div>
@@ -342,7 +342,7 @@ const SrDashboard = () => {
           {rating: 1, status: "rating-1", icon: "ri-star-fill text-yellow-600"}
         ].map((item, index) => (
           <div key={index} onClick={() => handleCardClick(item.status)} className="cursor-pointer">
-            <div className="bg-white shadow-xl hover:shadow-2xl rounded-lg flex flex-col items-center space-y-3 transition-transform hover:scale-105 p-4 h-[100px]">
+            <div className="dark:bg-bodybg bg-white shadow-xl hover:shadow-2xl rounded-lg flex flex-col items-center space-y-3 transition-transform hover:scale-105 p-4 h-[100px]">
               <div className="text-center">
                 <p className="text-2xl font-bold">{serviceRequest?.[item.status] ?? 0}</p>
               </div>
