@@ -1,353 +1,853 @@
-import React, {useEffect, useState} from 'react';
-import {fetchStoreWiseSaleData} from "@modules/DailyReport/services/wiseside_services.js";
+// // import React, { useEffect, useState } from 'react';
+// // import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
+// //
+// // const StoreWise = ({ filters }) => {
+// //     const [newData, setNewData] = useState({});
+// //     const [loading, setLoading] = useState(true);
+// //     const [error, setError] = useState(null);
+// //
+// //     const fetchData = async () => {
+// //         try {
+// //             setLoading(true);
+// //             const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
+// //             setNewData(data || {});
+// //         } catch (error) {
+// //             console.error("Error fetching data:", error);
+// //             setError("Failed to fetch data. Please try again.");
+// //         } finally {
+// //             setLoading(false);
+// //         }
+// //     };
+// //
+// //     useEffect(() => {
+// //         fetchData();
+// //     }, [filters]);
+// //
+// //     const getMonthName = (monthNumber) => {
+// //         const months = [
+// //             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+// //         ];
+// //         return months[parseInt(monthNumber, 10) - 1];
+// //     };
+// //
+// //     const generateDatesArray = (rawData) => {
+// //         return Object.keys(rawData)
+// //             .filter(dateKey => dateKey !== 'Total')
+// //             .map(dateKey => {
+// //                 const [year, month, day] = dateKey.split('-');
+// //                 return `${day.padStart(2, '0')}-${getMonthName(month)}-${year}`;
+// //             });
+// //     };
+// //
+// //     const prepareDataForTable = (newData) => {
+// //         const tableData = [];
+// //         const processedTypes = {}; // Track processed classification, region, and store
+// //         const dates = Object.keys(newData); // Get the dates as columns
+// //
+// //         // Function to get value for a specific date
+// //         const getValueForDate = (store, dateKey) => {
+// //             const dateData = newData[dateKey];
+// //             if (!dateData) return 0;
+// //             const offlineData = dateData.find((data) => data.c_type === "Offline");
+// //             if (offlineData) {
+// //                 // Search for the store in the appropriate region and classification
+// //                 for (let category of offlineData.classification || []) {
+// //                     for (let region of category.regions || []) {
+// //                         const storeData = region.stores.find((s) => s.store_name === store);
+// //                         if (storeData) return storeData.net_value;
+// //                     }
+// //                 }
+// //             }
+// //             const onlineData = dateData.find((data) => data.c_type === "Online");
+// //             if (onlineData) return onlineData.net_value; // For "Online"
+// //             return 0;
+// //         };
+// //
+// //         // Function to add rows and prevent duplication
+// //         const addRow = (type, indent, isSubHeader = false) => {
+// //             if (!processedTypes[type]) {
+// //                 tableData.push({
+// //                     type,
+// //                     indent,
+// //                     isSubHeader,
+// //                     values: Array(dates.length).fill(0),
+// //                 });
+// //                 processedTypes[type] = true;
+// //             }
+// //         };
+// //
+// //         // Process data for Central, North, South first
+// //         const categories = ['Central', 'North', 'South'];
+// //
+// //         categories.forEach((regionType) => {
+// //             dates.forEach((dateKey) => {
+// //                 const dateData = newData[dateKey];
+// //                 const offlineData = dateData.find((data) => data.c_type === "Offline") || {};
+// //                 const regionData = offlineData.classification?.find((category) => category.regions.some((region) => region.region === regionType));
+// //
+// //                 // Process each region under offline data
+// //                 if (regionData) {
+// //                     regionData.regions.forEach((region) => {
+// //                         if (region.region === regionType) {
+// //                             addRow(region.region, 1, true);
+// //                             // Process stores under region
+// //                             region.stores.forEach((store) => {
+// //                                 let storeRow = tableData.find((item) => item.type === store.store_name);
+// //
+// //                                 // If store row doesn't exist, create a new row
+// //                                 if (!storeRow) {
+// //                                     storeRow = {
+// //                                         type: store.store_name,
+// //                                         indent: 2,
+// //                                         values: Array(dates.length).fill(0),
+// //                                     };
+// //                                     tableData.push(storeRow);
+// //                                 }
+// //
+// //                                 // Update the store row for the current date
+// //                                 const storeValueForDate = getValueForDate(store.store_name, dateKey);
+// //                                 storeRow.values[dates.indexOf(dateKey)] = storeValueForDate;
+// //                             });
+// //                         }
+// //                     });
+// //                 }
+// //             });
+// //         });
+// //
+// //         // Add FOL data at the end (after Central, North, South)
+// //         dates.forEach((dateKey) => {
+// //             const dateData = newData[dateKey];
+// //             const offlineData = dateData.find((data) => data.c_type === "Offline") || {};
+// //             const folData = offlineData.classification?.find((category) => category.classification_name === "FOL");
+// //
+// //             // Process FOL region
+// //             if (folData) {
+// //                 folData.regions.forEach((region) => {
+// //                     addRow(region.region, 1, true);
+// //                     region.stores.forEach((store) => {
+// //                         let storeRow = tableData.find((item) => item.type === store.store_name);
+// //
+// //                         if (!storeRow) {
+// //                             storeRow = {
+// //                                 type: store.store_name,
+// //                                 indent: 2,
+// //                                 values: Array(dates.length).fill(0),
+// //                             };
+// //                             tableData.push(storeRow);
+// //                         }
+// //
+// //                         const storeValueForDate = getValueForDate(store.store_name, dateKey);
+// //                         storeRow.values[dates.indexOf(dateKey)] = storeValueForDate;
+// //                     });
+// //                 });
+// //             }
+// //         });
+// //
+// //         // Add Online Data if it exists
+// //         dates.forEach((dateKey) => {
+// //             const dateData = newData[dateKey];
+// //             const onlineData = dateData.find((data) => data.c_type === "Online");
+// //
+// //             if (onlineData) {
+// //                 let onlineRow = tableData.find((item) => item.type === "Online");
+// //
+// //                 if (!onlineRow) {
+// //                     onlineRow = {
+// //                         type: "Online",
+// //                         indent: 1,
+// //                         isSubHeader: true,
+// //                         values: Array(dates.length).fill(0),
+// //                     };
+// //                     tableData.push(onlineRow);
+// //                 }
+// //
+// //                 // Update the Online row for the current date
+// //                 onlineRow.values[dates.indexOf(dateKey)] = onlineData.net_value;
+// //             }
+// //         });
+// //
+// //         // Add Total Row at the end to sum up all values
+// //         const totalRow = {
+// //             type: "Total",
+// //             isHeader: true,
+// //             values: Array(dates.length).fill(0),
+// //         };
+// //         tableData.push(totalRow);
+// //
+// //         // Loop through each row and sum up totals for each date column
+// //         tableData.forEach((row) => {
+// //             if (row.isHeader || row.isSubHeader) return; // Skip headers/subheaders
+// //             row.values.forEach((_, dateIndex) => {
+// //                 const storeValueForDate = getValueForDate(row.type, dates[dateIndex]);
+// //                 row.values[dateIndex] = storeValueForDate;
+// //                 totalRow.values[dateIndex] += storeValueForDate; // Update total row values
+// //             });
+// //         });
+// //
+// //         return tableData;
+// //     };
+// //
+// //     const tableData = prepareDataForTable(newData);
+// //
+// //
+// //     const formatNumber = (num) => {
+// //         return num?.toLocaleString();
+// //     };
+// //
+// //     const getRowStyle = (row) => {
+// //         if (row.isHeader) return "bg-yellow-100 font-bold";
+// //         if (row.isSubHeader) return "bg-yellow-50 font-semibold";
+// //         return "";
+// //     };
+// //
+// //     if (loading) return <div>Loading...</div>;
+// //     if (error) return <div>{error}</div>;
+// //
+// //     return (
+// //         <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+// //             <div className="overflow-x-auto max-w-full">
+// //                 <table className="w-full border-collapse text-sm">
+// //                     <thead className="sticky top-0 z-10">
+// //                     <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+// //                         <th className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">Store Type</th>
+// //                         {generateDatesArray(newData).map((date, index) => (
+// //                             <th key={index} className="border border-gray-700 p-2 font-bold text-center min-w-28">{date}</th>
+// //                         ))}
+// //                         <th className="border border-gray-700 p-2 font-bold text-center min-w-28">Total</th>
+// //                     </tr>
+// //                     </thead>
+// //                     <tbody>
+// //                     {tableData.map((row, rowIndex) => (
+// //                         <tr key={rowIndex} className={getRowStyle(row)}>
+// //                             <td
+// //                                 className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${row.isHeader ? 'bg-yellow-100' : row.isSubHeader ? 'bg-yellow-50' : 'bg-white'}`}
+// //                                 style={{ paddingLeft: row.indent ? `${row.indent * 1}rem` : '0.5rem' }}
+// //                             >
+// //                                 {row.type}
+// //                             </td>
+// //                             {row.values.map((value, valueIndex) => (
+// //                                 <td key={valueIndex} className="border border-gray-300 p-2 text-right">
+// //                                     {formatNumber(value)}
+// //                                 </td>
+// //                             ))}
+// //                         </tr>
+// //                     ))}
+// //                     </tbody>
+// //                 </table>
+// //             </div>
+// //         </div>
+// //     );
+// // };
+// //
+// // export default StoreWise;
+// import React, { useEffect, useState } from 'react';
+// import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
+//
+// const StoreWise = ({ filters }) => {
+//     const [newData, setNewData] = useState({});
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState(null);
+//
+//     const fetchData = async () => {
+//         try {
+//             setLoading(true);
+//             const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
+//             setNewData(data || {});
+//         } catch (error) {
+//             console.error("Error fetching data:", error);
+//             setError("Failed to fetch data. Please try again.");
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+//
+//     useEffect(() => {
+//         fetchData();
+//     }, [filters]);
+//
+//     const getMonthName = (monthNumber) => {
+//         const months = [
+//             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+//         ];
+//         return months[parseInt(monthNumber, 10) - 1];
+//     };
+//
+//     const generateDatesArray = (rawData) => {
+//         return Object.keys(rawData)
+//             .filter(dateKey => dateKey !== 'Total')
+//             .map(dateKey => {
+//                 const [year, month, day] = dateKey.split('-');
+//                 return `${day.padStart(2, '0')}-${getMonthName(month)}-${year}`;
+//             });
+//     };
+//     const prepareDataForTable = (newData) => {
+//         const tableData = [];
+//         const processedTypes = {}; // Track processed classification, region, and store
+//         const dates = Object.keys(newData); // Get the dates as columns
+//
+//         // Function to get value for a specific date
+//         const getValueForDate = (store, dateKey) => {
+//             const dateData = newData[dateKey];
+//             if (!dateData) return 0; // If no data for this date, return 0
+//             const offlineData = dateData.find((data) => data.c_type === "Offline");
+//             if (offlineData) {
+//                 // Search for the store in the appropriate region and classification
+//                 for (let category of offlineData.classification || []) {
+//                     for (let region of category.regions || []) {
+//                         const storeData = region.stores?.find((s) => s.store_name === store);
+//                         if (storeData) return storeData.net_value;
+//                     }
+//                 }
+//             }
+//             const onlineData = dateData.find((data) => data.c_type === "Online");
+//             if (onlineData) return onlineData.net_value; // For "Online"
+//             return 0;
+//         };
+//
+//         // Function to add rows and prevent duplication
+//         const addRow = (type, indent, isSubHeader = false) => {
+//             if (!processedTypes[type]) {
+//                 tableData.push({
+//                     type,
+//                     indent,
+//                     isSubHeader,
+//                     values: Array(dates.length).fill(0),
+//                 });
+//                 processedTypes[type] = true;
+//             }
+//         };
+//
+//         // Process "Offline" data first
+//         const offlineDataForDates = dates.map((dateKey) => {
+//             const dateData = newData[dateKey];
+//             if (!dateData) return {}; // Ensure that we don't return null or undefined
+//             return dateData.find((data) => data.c_type === "Offline") || {};
+//         });
+//
+//         offlineDataForDates.forEach((offlineData, index) => {
+//             if (offlineData && offlineData.classification) {
+//                 // Show "Offline" first
+//                 addRow("Offline", 0, true);
+//
+//                 // Process "A-Class" under Offline
+//                 offlineData.classification?.forEach((category) => {
+//                     addRow(category.classification_name, 1, true);
+//                     // Ensure category.regions exists before iterating
+//                     if (category.regions && Array.isArray(category.regions)) {
+//                         category.regions.forEach((region) => {
+//                             addRow(region.region, 2, true);
+//                             // Ensure region.stores exists before iterating
+//                             if (region.stores && Array.isArray(region.stores)) {
+//                                 region.stores.forEach((store) => {
+//                                     // Skip "Lucky One Mall, Karachi" to avoid placing it under any region
+//                                     if (store.store_name === "Lucky One Mall, Karachi") {
+//                                         return; // Skip this store, so it doesn't get processed
+//                                     }
+//
+//                                     let storeRow = tableData.find((item) => item.type === store.store_name);
+//                                     if (!storeRow) {
+//                                         storeRow = {
+//                                             type: store.store_name,
+//                                             indent: 3,
+//                                             values: Array(dates.length).fill(0),
+//                                         };
+//                                         tableData.push(storeRow);
+//                                     }
+//
+//                                     const storeValueForDate = getValueForDate(store.store_name, dates[index]);
+//                                     storeRow.values[index] = storeValueForDate;
+//                                 });
+//                             }
+//                         });
+//                     }
+//                 });
+//             }
+//         });
+//
+//         // Add "Online" data if it exists
+//         dates.forEach((dateKey) => {
+//             const dateData = newData[dateKey];
+//             if (!dateData) return; // Skip if there's no data for this date
+//             const onlineData = dateData.find((data) => data.c_type === "Online");
+//
+//             if (onlineData) {
+//                 let onlineRow = tableData.find((item) => item.type === "Online");
+//
+//                 if (!onlineRow) {
+//                     onlineRow = {
+//                         type: "Online",
+//                         indent: 1,
+//                         isSubHeader: true,
+//                         values: Array(dates.length).fill(0),
+//                     };
+//                     tableData.push(onlineRow);
+//                 }
+//
+//                 // Update the Online row for the current date
+//                 onlineRow.values[dates.indexOf(dateKey)] = onlineData.net_value;
+//             }
+//         });
+//
+//         // Add "Total" Row
+//         const totalRow = {
+//             type: "Total",
+//             isHeader: true,
+//             values: Array(dates.length).fill(0),
+//         };
+//         tableData.push(totalRow);
+//
+//         tableData.forEach((row) => {
+//             if (row.isHeader || row.isSubHeader) return; // Skip headers/subheaders
+//             row.values.forEach((_, dateIndex) => {
+//                 const storeValueForDate = getValueForDate(row.type, dates[dateIndex]);
+//                 row.values[dateIndex] = storeValueForDate;
+//                 totalRow.values[dateIndex] += storeValueForDate; // Update total row values
+//             });
+//         });
+//
+//         return tableData;
+//     };
+//
+//
+//     // const prepareDataForTable = (newData) => {
+//     //     const tableData = [];
+//     //     const processedTypes = {}; // Track processed classification, region, and store
+//     //     const dates = Object.keys(newData); // Get the dates as columns
+//     //
+//     //     // Function to get value for a specific date
+//     //     const getValueForDate = (store, dateKey) => {
+//     //         const dateData = newData[dateKey];
+//     //         if (!dateData) return 0;
+//     //         const offlineData = dateData.find((data) => data.c_type === "Offline");
+//     //         if (offlineData) {
+//     //             // Search for the store in the appropriate region and classification
+//     //             for (let category of offlineData.classification || []) {
+//     //                 for (let region of category.regions || []) {
+//     //                     const storeData = region.stores.find((s) => s.store_name === store);
+//     //                     if (storeData) return storeData.net_value;
+//     //                 }
+//     //             }
+//     //         }
+//     //         const onlineData = dateData.find((data) => data.c_type === "Online");
+//     //         if (onlineData) return onlineData.net_value; // For "Online"
+//     //         return 0;
+//     //     };
+//     //
+//     //     // Function to add rows and prevent duplication
+//     //     const addRow = (type, indent, isSubHeader = false) => {
+//     //         if (!processedTypes[type]) {
+//     //             tableData.push({
+//     //                 type,
+//     //                 indent,
+//     //                 isSubHeader,
+//     //                 values: Array(dates.length).fill(0),
+//     //             });
+//     //             processedTypes[type] = true;
+//     //         }
+//     //     };
+//     //
+//     //     // Process data for Central, North, South first
+//     //     const categories = ['Central', 'North', 'South'];
+//     //
+//     //     categories.forEach((regionType) => {
+//     //         dates.forEach((dateKey) => {
+//     //             const dateData = newData[dateKey];
+//     //             const offlineData = dateData.find((data) => data.c_type === "Offline") || {};
+//     //             const regionData = offlineData.classification?.find((category) => category.regions.some((region) => region.region === regionType));
+//     //
+//     //             // Process each region under offline data
+//     //             if (regionData) {
+//     //                 regionData.regions.forEach((region) => {
+//     //                     if (region.region === regionType) {
+//     //                         addRow(region.region, 1, true);
+//     //                         // Process stores under region
+//     //                         region.stores.forEach((store) => {
+//     //                             let storeRow = tableData.find((item) => item.type === store.store_name);
+//     //
+//     //                             // If store row doesn't exist, create a new row
+//     //                             if (!storeRow) {
+//     //                                 storeRow = {
+//     //                                     type: store.store_name,
+//     //                                     indent: 2,
+//     //                                     values: Array(dates.length).fill(0),
+//     //                                 };
+//     //                                 tableData.push(storeRow);
+//     //                             }
+//     //
+//     //                             // Update the store row for the current date
+//     //                             const storeValueForDate = getValueForDate(store.store_name, dateKey);
+//     //                             storeRow.values[dates.indexOf(dateKey)] = storeValueForDate;
+//     //                         });
+//     //                     }
+//     //                 });
+//     //             }
+//     //         });
+//     //     });
+//     //
+//     //     // Add FOL data at the end (after Central, North, South)
+//     //     dates.forEach((dateKey) => {
+//     //         const dateData = newData[dateKey];
+//     //         const offlineData = dateData.find((data) => data.c_type === "Offline") || {};
+//     //         const folData = offlineData.classification?.find((category) => category.classification_name === "FOL");
+//     //
+//     //         // Process FOL region
+//     //         if (folData) {
+//     //             folData.regions.forEach((region) => {
+//     //                 addRow(region.region, 1, true);
+//     //                 region.stores.forEach((store) => {
+//     //                     let storeRow = tableData.find((item) => item.type === store.store_name);
+//     //
+//     //                     if (!storeRow) {
+//     //                         storeRow = {
+//     //                             type: store.store_name,
+//     //                             indent: 2,
+//     //                             values: Array(dates.length).fill(0),
+//     //                         };
+//     //                         tableData.push(storeRow);
+//     //                     }
+//     //
+//     //                     const storeValueForDate = getValueForDate(store.store_name, dateKey);
+//     //                     storeRow.values[dates.indexOf(dateKey)] = storeValueForDate;
+//     //                 });
+//     //             });
+//     //         }
+//     //     });
+//     //
+//     //     // Add Online Data if it exists
+//     //     dates.forEach((dateKey) => {
+//     //         const dateData = newData[dateKey];
+//     //         const onlineData = dateData.find((data) => data.c_type === "Online");
+//     //
+//     //         if (onlineData) {
+//     //             let onlineRow = tableData.find((item) => item.type === "Online");
+//     //
+//     //             if (!onlineRow) {
+//     //                 onlineRow = {
+//     //                     type: "Online",
+//     //                     indent: 1,
+//     //                     isSubHeader: true,
+//     //                     values: Array(dates.length).fill(0),
+//     //                 };
+//     //                 tableData.push(onlineRow);
+//     //             }
+//     //
+//     //             // Update the Online row for the current date
+//     //             onlineRow.values[dates.indexOf(dateKey)] = onlineData.net_value;
+//     //         }
+//     //     });
+//     //
+//     //     // Add Total Row at the end to sum up all values
+//     //     const totalRow = {
+//     //         type: "Total",
+//     //         isHeader: true,
+//     //         values: Array(dates.length).fill(0),
+//     //     };
+//     //     tableData.push(totalRow);
+//     //
+//     //     // Loop through each row and sum up totals for each date column
+//     //     tableData.forEach((row) => {
+//     //         if (row.isHeader || row.isSubHeader) return; // Skip headers/subheaders
+//     //         row.values.forEach((_, dateIndex) => {
+//     //             const storeValueForDate = getValueForDate(row.type, dates[dateIndex]);
+//     //             row.values[dateIndex] = storeValueForDate;
+//     //             totalRow.values[dateIndex] += storeValueForDate; // Update total row values
+//     //         });
+//     //     });
+//     //
+//     //     return tableData;
+//     // };
+//
+//     const tableData = prepareDataForTable(newData);
+//
+//
+//     const formatNumber = (num) => {
+//         return num?.toLocaleString();
+//     };
+//
+//     const getRowStyle = (row) => {
+//         if (row.isHeader) return "bg-yellow-100 font-bold";
+//         if (row.isSubHeader) return "bg-yellow-50 font-semibold";
+//         return "";
+//     };
+//
+//     if (loading) return <div>Loading...</div>;
+//     if (error) return <div>{error}</div>;
+//
+//     return (
+//         <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+//             <div className="overflow-x-auto max-w-full">
+//                 <table className="w-full border-collapse text-sm">
+//                     <thead className="sticky top-0 z-10">
+//                     <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+//                         <th className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">Store Type</th>
+//                         {generateDatesArray(newData).map((date, index) => (
+//                             <th key={index} className="border border-gray-700 p-2 font-bold text-center min-w-28">{date}</th>
+//                         ))}
+//                         <th className="border border-gray-700 p-2 font-bold text-center min-w-28">Total</th>
+//                     </tr>
+//                     </thead>
+//                     <tbody>
+//                     {tableData.map((row, rowIndex) => (
+//                         <tr key={rowIndex} className={getRowStyle(row)}>
+//                             <td
+//                                 className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${row.isHeader ? 'bg-yellow-100' : row.isSubHeader ? 'bg-yellow-50' : 'bg-white'}`}
+//                                 style={{ paddingLeft: row.indent ? `${row.indent * 1}rem` : '0.5rem' }}
+//                             >
+//                                 {row.type}
+//                             </td>
+//                             {row.values.map((value, valueIndex) => (
+//                                 <td key={valueIndex} className="border border-gray-300 p-2 text-right">
+//                                     {formatNumber(value)}
+//                                 </td>
+//                             ))}
+//                         </tr>
+//                     ))}
+//                     </tbody>
+//                 </table>
+//             </div>
+//         </div>
+//     );
+// };
+//
+// export default StoreWise;
+import React, { useEffect, useState } from "react";
+import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
 
-const StoreWise = ({filters}) => {
-console.log(filters);
-    // const dates = [
-    //     "01-Feb-2025", "02-Feb-2025", "03-Feb-2025", "04-Feb-2025", "05-Feb-2025", "06-Feb-2025", "07-Feb-2025",
-    //     "08-Feb-2025", "09-Feb-2025", "10-Feb-2025", "11-Feb-2025", "12-Feb-2025", "13-Feb-2025", "14-Feb-2025",
-    //     "15-Feb-2025", "16-Feb-2025", "17-Feb-2025", "18-Feb-2025", "19-Feb-2025", "20-Feb-2025", "21-Feb-2025",
-    //     "22-Feb-2025", "23-Feb-2025", "24-Feb-2025", "25-Feb-2025", "26-Feb-2025", "27-Feb-2025", "28-Feb-2025"
-    // ];
-
-    const [scrollLeft, setScrollLeft] = useState(0);
-
-    // Generate sample data structure to match image
-    // const tableData = [
-    //     {
-    //         type: "Offline",
-    //         isHeader: true,
-    //
-    //         values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070,71378070]
-    //     },
-    //     {
-    //         type: "A-Class",
-    //         indent: 1,
-    //         isSubHeader: true,
-    //         values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349, 63926349]
-    //     },
-    //     {
-    //         type: "Central",
-    //         indent: 2,
-    //         isSubHeader: true,
-    //         values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
-    //     },
-    //     {
-    //         type: "Emporium Mall, Lahore",
-    //         indent: 3,
-    //         values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
-    //     },
-    //     {
-    //         type: "Gulberg II, Lahore",
-    //         indent: 3,
-    //         values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
-    //     },
-    //     {
-    //         type: "North",
-    //         indent: 2,
-    //         isSubHeader: true,
-    //         values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
-    //     },
-    //     {
-    //         type: "Emporium Mall, Lahore",
-    //         indent: 3,
-    //         values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
-    //     },
-    //     {
-    //         type: "Gulberg II, Lahore",
-    //         indent: 3,
-    //         values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
-    //     },
-    //     {
-    //         type: "South",
-    //         indent: 2,
-    //         isSubHeader: true,
-    //         values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
-    //     },
-    //     {
-    //         type: "Emporium Mall, Lahore",
-    //         indent: 3,
-    //         values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
-    //     },
-    //     {
-    //         type: "Gulberg II, Lahore",
-    //         indent: 3,
-    //         values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
-    //     },
-    //     {
-    //         type: "FOL",
-    //         indent: 1,
-    //         isSubHeader: true,
-    //         values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349]
-    //     },
-    //     {
-    //         type: "FOL",
-    //         indent: 2,
-    //         isSubHeader: true,
-    //         values: [26846180, 24519999, 21371917, 24229575, 28851574, 25831545, 24903445, 34146557, 21650996, 33748106, 34653504, 34149672, 30429251, 42119299, 43339451, 50000824, 34373233, 42462457, 43471944, 34577116, 28026371, 30365515, 36470445, 33840461, 29713662, 32125870, 28863703]
-    //     },
-    //     {
-    //         type: "Emporium Mall, Lahore",
-    //         indent: 3,
-    //         values: [4091171, 3164734, 2537744, 3262467, 3638762, 3158536, 3728358, 5346557, 3265996, 3748106, 3665504, 4149672, 3542251, 4319299, 4339451, 4000824, 3437233, 4246245, 4347194, 3457716, 2802637, 3036551, 3647044, 3384046, 2971366, 3212587, 2886370]
-    //     },
-    //     {
-    //         type: "Gulberg II, Lahore",
-    //         indent: 3,
-    //         values: [2484735, 1535469, 1678467, 2552085, 2134074, 3040445, 2678473, 3768793, 2313006, 3245042, 3248573, 3476103, 2429714, 4054950, 4550298, 3374775, 3097440, 4255134, 4211181, 4117968, 3212193, 3151976, 3488058, 4300547, 3019264, 3410975, 3133276]
-    //     },
-    //     {
-    //         type: "Other",
-    //         isHeader: true,
-    //         values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070]
-    //     },
-    //     {
-    //         type: "online",
-    //         indent: 1,
-    //         isSubHeader: true,
-    //         values: [57106319, 50825600, 40371373, 47603211, 60379829, 49229456, 48105861, 62121526, 47139238, 67476426, 68489344, 63861391, 61212104, 78547174, 70269195, 82105897, 61752626, 66266373, 73147173, 67480846, 63880298, 70521493, 74674248, 71744364, 56824351, 70530924, 63926349]
-    //     },
-    //     {
-    //         type: "Offline",
-    //         isHeader: true,
-    //         values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070]
-    //     },
-    //     {
-    //         type: "Other",
-    //         isHeader: true,
-    //         values: [64895498, 55737644, 46737738, 53672711, 67429054, 55318328, 53775819, 66234516, 52903591, 73331174, 76555266, 70770947, 67323049, 87387882, 78253009, 95540021, 69065340, 75947400, 78796160, 75499372, 71322770, 73708531, 84473379, 79332462, 65926190, 76658226, 71378070, 71378070]
-    //     },
-    //     {
-    //         type: "Total",
-    //         isHeader: true,
-    //         values: [64895498, 64895498, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 71378070]
-    //     }
-    // ];
-
+const StoreWise = ({ filters }) => {
     const [newData, setNewData] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     const fetchData = async () => {
         try {
-            const data = await fetchStoreWiseSaleData(filters?.date_from);
-            console.log(data);
-            setNewData(data||[]);
-        }catch (error) {
-            console.error(error);
+            setLoading(true);
+            const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
+            setNewData(data || {});
+        } catch (err) {
+            console.error("Error fetching data:", err);
+            setError("Failed to fetch data. Please try again.");
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
     useEffect(() => {
         fetchData();
-    },[filters])
+    }, [filters]);
 
     const getMonthName = (monthNumber) => {
         const months = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
         return months[parseInt(monthNumber, 10) - 1];
     };
 
     const generateDatesArray = (rawData) => {
-        const dateKeys = Object.keys(rawData);
-
-
-        const dates = dateKeys
-            .filter(dateKey => dateKey !== 'Total')
-            .map(dateKey => {
-                const [year, month, day] = dateKey.split('-');
-                const formattedDate = `${day.padStart(2, '0')}-${getMonthName(month)}-${year}`;
-                return formattedDate;
+        return Object.keys(rawData)
+            .filter((dateKey) => dateKey !== "Total")
+            .map((dateKey) => {
+                const [year, month, day] = dateKey.split("-");
+                return `${day.padStart(2, "0")}-${getMonthName(month)}-${year}`;
             });
-
-        return dates;
     };
 
-    const dates = generateDatesArray(newData);
-
-
-
-    const generateTableData = (rawData) => {
+    const prepareDataForTable = (allData) => {
         const tableData = [];
-        const totalValues = {};  // To store total values for categories, regions, and stores
-        const processedTypes = {};  // To track processed types for each date
+        const dates = Object.keys(allData);
 
-        const dateKeys = Object.keys(rawData); // Extract all date keys (e.g., "2025-03-01")
+        if (!dates.length) {
+            return tableData;
+        }
 
-        // Generate dates array (you can use your existing generateDatesArray function)
-        const dates = generateDatesArray(rawData);
-        console.log("🚀 ~ generateTableData ~ dates:", dates);
+        const offlineStructure = {};
+        const onlineValuesByDate = Array(dates.length).fill(0);
 
-        // Iterate through each date in the rawData
-        dateKeys.forEach((date, index) => {
-            const offlineData = rawData[date].Offline;
-            const onlineData = rawData[date].Online;
-
-            // Push the 'Offline' header for this date
-            tableData.push({
-                type: "Offline",
-                isHeader: true,
-                date: dates[index],
-                values: []  // Will calculate this dynamically for this date
-            });
-
-            // Iterate through the categories in 'Offline' (A-Class, FOL, etc.)
-            Object.keys(offlineData).forEach(category => {
-                const categoryData = offlineData[category];
-
-                // Push the subcategory header (A-Class, FOL, etc.) only if it has not been processed for this date
-                if (!processedTypes[category]) {
-                    tableData.push({
-                        type: category,
-                        indent: 1,
-                        isSubHeader: true,
-                        date: dates[index],
-                        values: Array(dates.length).fill(0) // Initialize values with 0 for all dates
-                    });
-                    processedTypes[category] = {}; // Initialize processedTypes for this category
-                }
-
-                // Iterate through the regions and stores in each category (Central, North, South, etc.)
-                Object.keys(categoryData).forEach(region => {
-                    const regionData = categoryData[region];
-
-                    // Push the region header (Central, North, South, etc.) only if it has not been processed for this date
-                    if (!processedTypes[category][region]) {
-                        tableData.push({
-                            type: region,
-                            indent: 2,
-                            isSubHeader: true,
-                            date: dates[index],
-                            values: Array(dates.length).fill(0) // Initialize values with 0 for all dates
-                        });
-                        processedTypes[category][region] = {}; // Initialize processedTypes for this region
+        dates.forEach((dateKey, dateIndex) => {
+            const dateArray = allData[dateKey] || [];
+            const offlineObj = dateArray.find((x) => x.c_type === "Offline");
+            if (offlineObj && offlineObj.classification) {
+                offlineObj.classification.forEach((classificationItem) => {
+                    const cName = classificationItem.classification_name;
+                    if (!offlineStructure[cName]) {
+                        offlineStructure[cName] = {};
                     }
-
-                    // Iterate through the stores in each region and add their values
-                    Object.keys(regionData).forEach(store => {
-                        const storeValue = regionData[store];
-
-                        // Check if this store already exists for this date
-                        const existingStore = tableData.find(item => item.type === store);
-
-                        if (!existingStore) {
-                            // Push store data if it doesn't already exist for this date
-                            const storeData = {
-                                type: store,
-                                indent: 3,
-                                date: dates[index],
-                                values: Array(dates.length).fill(0)  // Initialize the values array to store data for all dates
-                            };
-
-                            // Add store value for this date
-                            storeData.values[index] = storeValue;
-
-                            tableData.push(storeData);  // Add the store data to the table
-                        } else {
-                            // If the store was already processed, just update its value
-                            existingStore.values[index] = storeValue;  // Update store value for the specific date
+                    classificationItem.regions?.forEach((regionItem) => {
+                        const rName = regionItem.region;
+                        if (!offlineStructure[cName][rName]) {
+                            offlineStructure[cName][rName] = {};
                         }
-
-                        // Update total values for each store and category
-                        if (!totalValues[category]) totalValues[category] = 0;
-                        totalValues[category] += storeValue;
-
-                        if (!totalValues["Total"]) totalValues["Total"] = 0;
-                        totalValues["Total"] += storeValue;
+                        regionItem.stores?.forEach((storeItem) => {
+                            const sName = storeItem.store_name;
+                            if (!offlineStructure[cName][rName][sName]) {
+                                offlineStructure[cName][rName][sName] = Array(dates.length).fill(0);
+                            }
+                            offlineStructure[cName][rName][sName][dateIndex] = storeItem.net_value;
+                        });
                     });
                 });
-            });
-
-            // Add Online data for this date
-            if (!processedTypes["Online"]) {
-                tableData.push({
-                    type: "Online",
-                    indent: 1,
-                    isSubHeader: true,
-                    date: dates[index],
-                    values: Array(dates.length).fill(0)  // Initialize the values for Online data
-                });
-                processedTypes["Online"] = true; // Mark Online as processed
             }
 
-            // Update the Online values
-            tableData.forEach(item => {
-                if (item.type === "Online") {
-                    item.values[index] = onlineData; // Store the value for the specific date
-                }
-            });
-
-            // Update the total values for Online
-            totalValues["Total"] += onlineData;
-            totalValues["Online"] = onlineData;
+            const onlineObj = dateArray.find((x) => x.c_type === "Online");
+            if (onlineObj) {
+                onlineValuesByDate[dateIndex] = onlineObj.net_value;
+            }
         });
 
-        // Push the Total row after processing all dates
+
+        tableData.push({
+            type: "Offline",
+            indent: 0,
+            isSubHeader: true,
+            values: Array(dates.length).fill(0),
+        });
+
+        Object.keys(offlineStructure).forEach((classificationName) => {
+            tableData.push({
+                type: classificationName,
+                indent: 1,
+                isSubHeader: true,
+                values: Array(dates.length).fill(0),
+            });
+
+            const classificationRowIndex = tableData.length - 1;
+
+            Object.keys(offlineStructure[classificationName]).forEach((regionName) => {
+                tableData.push({
+                    type: regionName,
+                    indent: 2,
+                    isSubHeader: true,
+                    values: Array(dates.length).fill(0),
+                });
+                const regionRowIndex = tableData.length - 1;
+
+                Object.keys(offlineStructure[classificationName][regionName]).forEach((storeName) => {
+                    const storeValues = offlineStructure[classificationName][regionName][storeName];
+                    tableData.push({
+                        type: storeName,
+                        indent: 3,
+                        values: storeValues,
+                    });
+
+                    storeValues.forEach((val, idx) => {
+                        tableData[regionRowIndex].values[idx] += val;
+                        tableData[classificationRowIndex].values[idx] += val;
+                        tableData[0].values[idx] += val;
+                    });
+                });
+
+
+            });
+
+        });
+
+        tableData.push({
+            type: "Online",
+            indent: 0,
+            isSubHeader: true,
+            values: onlineValuesByDate,
+        });
+
+
+        const grandTotals = Array(dates.length).fill(0);
+        tableData.forEach((row) => {
+
+            row.values.forEach((val, idx) => {
+                grandTotals[idx] += val;
+            });
+        });
+
         tableData.push({
             type: "Total",
             isHeader: true,
-            date: "Total",
-            values: Array(dates.length).fill(totalValues["Total"])  // Store total values for each date
+            values: grandTotals,
         });
 
         return tableData;
     };
 
-    const tableData = generateTableData(newData);
-
+    const tableData = prepareDataForTable(newData);
 
     const formatNumber = (num) => {
-        return num?.toLocaleString();
-    };
-
-    const getRowTotal = (values) => {
-        return values.reduce((sum, current) => sum + current, 0);
+        if (typeof num !== "number") return num;
+        return num.toLocaleString();
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) {
-            return "bg-yellow-100 font-bold";
-        } else if (row.isSubHeader) {
-            return "bg-yellow-50 font-semibold";
-        }
+        if (row.isHeader) return "bg-yellow-100 font-bold";
+        if (row.isSubHeader) return "bg-yellow-50 font-semibold";
         return "";
     };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+
+    // Now render the table
+    const dateHeaders = generateDatesArray(newData);
 
     return (
         <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
             <div className="overflow-x-auto max-w-full">
                 <table className="w-full border-collapse text-sm">
                     <thead className="sticky top-0 z-10">
-                    <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
-                        <th style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">
+                    <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                        <th className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">
                             Store Type
                         </th>
-                        {dates.map((date, index) => (
-                            <th key={index} className="border border-gray-700 p-2 font-bold text-center min-w-28 ">
+                        {dateHeaders.map((date, index) => (
+                            <th
+                                key={index}
+                                className="border border-gray-700 p-2 font-bold text-center min-w-28"
+                            >
                                 {date}
                             </th>
                         ))}
+                        {/* We often show a final "Total" column on the far right: */}
                         <th className="border border-gray-700 p-2 font-bold text-center min-w-28">
                             Total
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    {tableData.map((row, rowIndex) => (
-                        <tr key={rowIndex} className={getRowStyle(row)}>
-                            <td
-                                className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${row.isHeader ? 'bg-yellow-100' : row.isSubHeader ? 'bg-yellow-50' : 'bg-white'}`}
-                                style={{ paddingLeft: row.indent ? `${row.indent * 1}rem` : '0.5rem' }}
-                            >
-                                {row.type}
-                            </td>
-                            {row.values.map((value, valueIndex) => (
-                                <td key={valueIndex} className="border border-gray-300 p-2 text-right">
-                                    {formatNumber(value)}
+                    {tableData.map((row, rowIndex) => {
+                        // We'll compute the row's "Total" by summing row.values
+                        const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
+
+                        return (
+                            <tr key={rowIndex} className={getRowStyle(row)}>
+                                {/* Left-most cell (store/region/classification name) */}
+                                <td
+                                    className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${
+                                        row.isHeader
+                                            ? "bg-yellow-100"
+                                            : row.isSubHeader
+                                                ? "bg-yellow-50"
+                                                : "bg-white"
+                                    }`}
+                                    style={{
+                                        paddingLeft: row.indent ? `${row.indent}rem` : "0.5rem",
+                                    }}
+                                >
+                                    {row.type}
                                 </td>
-                            ))}
-                            {/*<td className="border border-gray-300 p-2 text-right font-bold">*/}
-                            {/*    {formatNumber(getRowTotal(row.values))}*/}
-                            {/*</td>*/}
-                        </tr>
-                    ))}
+
+                                {/* One cell per date value */}
+                                {row.values.map((value, valueIndex) => (
+                                    <td
+                                        key={valueIndex}
+                                        className="border border-gray-300 p-2 text-right"
+                                    >
+                                        {formatNumber(value)}
+                                    </td>
+                                ))}
+
+                                {/* Final total cell for this row */}
+                                <td className="border border-gray-300 p-2 text-right">
+                                    {formatNumber(rowTotal)}
+                                </td>
+                            </tr>
+                        );
+                    })}
                     </tbody>
                 </table>
             </div>
