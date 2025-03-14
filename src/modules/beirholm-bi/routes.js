@@ -20,11 +20,11 @@ export const BEIRHOLM_BI_ROUTES = {
 
     CORRECTION_RULE_READ: {
         path: '/module/correction/rules',
-        permission: 'view_beirholm_field_definitions',
+        permission: 'view_beirholm_error_correction_rule',
     },
     CORRECTION_RULE_CREATE: {
         path: '/module/correction/rules/add/',
-        permission: 'add_beirholm_field_definitions',
+        permission: 'add_beirholm_error_correction_rule',
     },
 
     CORRECTION_PATTERN_READ: {
@@ -38,16 +38,16 @@ export const BEIRHOLM_BI_ROUTES = {
 
     DATA_SANITIZATION_READ: {
         path: '/module/data/sanitization',
-        permission: 'view_beirholm_field_definitions',
+        permission: 'view_data_sanitization',
     },
 
     CHAT_BOT_READ: {
         path: '/module/chat/bot',
-        permission: 'view_beirholm_field_definitions',
+        permission: 'view_chat_bot',
     },
     COMPETITOR_ANALYSIS: {
         path: '/module/competitor/analysis',
-        permission: 'view_beirholm_field_definitions',
+        permission: 'view_competitor_analysis',
     },
 };
 
@@ -93,11 +93,11 @@ export const MODULE_ROUTES = [
     {
         path: BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.path,
         component: ChatBot,
-        permission: BEIRHOLM_BI_ROUTES.DATA_SANITIZATION_READ.permission,
+        permission: BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.permission,
     },
     {
         path: BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
         component: CompetitorAnalysis,
-        permission: BEIRHOLM_BI_ROUTES.DATA_SANITIZATION_READ.permission,
+        permission: BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission,
     },
 ];
