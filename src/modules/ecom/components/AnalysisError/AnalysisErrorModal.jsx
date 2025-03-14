@@ -8,10 +8,10 @@ import { Link } from "react-router-dom";
 const AnalysisErrorModal = React.memo(({ title, date, onClose, filters }) => {
     const { data, isLoading } = useEcom404Error(date);
 
-    // State for search term
+
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Filter data based on search term
+
     const filteredData = useMemo(() => {
         if (!searchTerm) return data;
         return data.filter(item => item.error_url.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -27,7 +27,7 @@ const AnalysisErrorModal = React.memo(({ title, date, onClose, filters }) => {
                     target='_blank'
                     className="text-left break-words hover:text-blue-500"
                     style={{ display: 'block', whiteSpace: 'normal', wordWrap: 'break-word' }}
-                    title={value} // Tooltip to show full URL on hover
+                    title={value}
                 >
                     {value}
                 </Link>
@@ -52,17 +52,12 @@ const AnalysisErrorModal = React.memo(({ title, date, onClose, filters }) => {
             Header: "First Click",
             accessor: "first_click",
             Cell: ({ value }) => (
-                <Link
-                    to={value}
-                    target='_blank'
-                    className="text-left break-words hover:text-blue-500"
-                    style={{ display: 'block', whiteSpace: 'normal', wordWrap: 'break-word' }}
-                    title={value}
-                >
+                <div className="text-left break-words" style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
                     {value}
-                </Link>
+                </div>
             ),
         },
+
         {
             Header: "Total Errors",
             accessor: "total_errors",
