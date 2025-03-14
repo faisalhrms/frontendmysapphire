@@ -49,7 +49,7 @@ export const sidebarMenu = [
                 'Competitor Analysis',
                 4,
                 '',
-                BEIRHOLM_BI_ROUTES.CORRECTION_RULE_READ.permission
+                BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission
             ),
             generateSidebarItem(
                 BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.path,
@@ -57,7 +57,7 @@ export const sidebarMenu = [
                 'ChatBot',
                 5,
                 '',
-                BEIRHOLM_BI_ROUTES.CORRECTION_RULE_READ.permission
+                BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.permission
             ),
         ]
     )
