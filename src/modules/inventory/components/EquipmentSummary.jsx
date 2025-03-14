@@ -8,36 +8,36 @@ const EquipmentSummary = ({id,equipmentData}) => {
         <>
             <div className="box custom-box">
                 <div className="box-header justify-between flex">
-                    <div className="box-title">Equipment Details</div>
+                    <div className="box-title">Asset Details</div>
                     <div>
                         <Link
-                            to={`/module/equipment/equipment-history/${id}`}
+                            to={`/module/asset/equipment-history/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-warning  btn-wave"
                         >
-                            <i className="ri-folder-5-line align-middle me-1 font-semibold"></i>Equipment History
+                            <i className="ri-folder-5-line align-middle me-1 font-semibold"></i>Asset History
                         </Link>
 
 
                     </div>
                     <div>
                         <Link
-                            to={`/module/equipment/edit/${id}`}
+                            to={`/module/asset/edit/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-secondary  btn-wave"
                         >
-                            <i className="ri-edit-line align-middle me-1 font-semibold"></i>Edit Equipment
+                            <i className="ri-edit-line align-middle me-1 font-semibold"></i>Edit Asset
                         </Link>
 
 
                     </div>
                     <div>
                         <Link
-                            to={`/module/equipment/equipment-reassign/${id}`}
+                            to={`/module/asset/asset-reassign/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-primary  btn-wave"
                         >
-                            <i className="ri-refresh-line align-middle me-1 font-semibold"></i>Re Assign Equipment
+                            <i className="ri-refresh-line align-middle me-1 font-semibold"></i>Re Assign Asset
                         </Link>
 
 

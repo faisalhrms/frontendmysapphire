@@ -30,29 +30,44 @@ const LaptopList = () => {
                 </div>
             ),
         },
-        { Header: "Code", accessor: "code" },
-        { Header: "Description", accessor: "description" },
-        { Header: "Specification", accessor: "specs" },
-        { Header: "Serial No", accessor: "serial_no" },
-        { Header: "Custodian", accessor: "custodian" },
-        { Header: "Email", accessor: "email" },
-        { Header: "Designation", accessor: "designation" },
-        { Header: "Purchase Date", accessor: "purchase_date" },
-        { Header: "Handover Date", accessor: "handover_date" },
-        { Header: "Maturity Date", accessor: "maturity_date" },
-        { Header: "Asset Code", accessor: "asset_code" },
-        { Header: "Site", accessor: "site" },
-        { Header: "Department", accessor: "department" },
+        { Header: "Code", accessor: "code", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Description", accessor: "description", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Specification", accessor: "specs", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Serial No", accessor: "serial_no", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Custodian", accessor: "custodian", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Email", accessor: "email", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Employee Status", accessor: "emp_status", Cell: ({ value }) => value ?? "N/A" },
+        {
+            Header: "Laptop issued as per policy",
+            accessor: "laptop_issued_as_per_policy",
+            Cell: ({ value }) => value ? "Yes" : "No"
+        },
+        { Header: "Exception Approval granted by", accessor: "exception_approval_granted_by.full_name", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Laptop Model", accessor: "laptop_model", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Processor", accessor: "processor", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "RAM", accessor: "ram", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Hard Disk", accessor: "hard_disk", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Screen Size", accessor: "screen_size", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Mouse", accessor: "mouse", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Designation", accessor: "designation", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Purchase Date", accessor: "purchase_date", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Handover Date", accessor: "handover_date", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Maturity Date", accessor: "maturity_date", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Asset Code", accessor: "asset_code", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Site", accessor: "site", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Department", accessor: "department", Cell: ({ value }) => value ?? "N/A" },
         {
             Header: "Status",
             accessor: "status",
             Cell: ({ row }) => (
                 <span className={getBadgeClasses(row.original.status)}>
-          {toTitleCase(row.original.status)}
-        </span>
+                    {toTitleCase(row.original.status) ?? "N/A"}
+                </span>
             ),
         },
-        { Header: "Location", accessor: "location" },
+        { Header: "Location", accessor: "location", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Accessories", accessor: "accessories", Cell: ({ value }) => value ?? "N/A" },
+
     ];
 
     // Action buttons (e.g., "Add Laptop")

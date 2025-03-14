@@ -9,7 +9,7 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
             <div className="box">
                 <div className="box-header justify-between">
                     <div className="box-title">
-                        Equipment Additional Details
+                        Asset Additional Details
                     </div>
                     <Link aria-label="anchor" className="hs-collapse-toggle inline-flex items-center gap-x-2 "
                           to="#" id="additional-equipment-detail-collapse"
@@ -30,7 +30,7 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                             <table className="table whitespace-nowrap min-w-full">
                                 <tbody>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold"> Equipment Code :</span></td>
+                                    <td><span className="font-semibold"> Asset Code :</span></td>
                                     <td>{equipmentData.code}</td>
                                 </tr>
 
@@ -42,7 +42,7 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                 </span></td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
-                                    <td><span className="font-semibold">Equipment Type :</span></td>
+                                    <td><span className="font-semibold">Asset Type :</span></td>
                                     <td>
                                         <span
                                             >{equipmentData.equipment_type?.name}</span>

@@ -12,7 +12,6 @@ import { equipmentStatuses } from "@modules/inventory/services/inventoryService.
 import equipmentSchema from "@modules/inventory/schemas/equipmentSchema.js";
 import { useEquipmentForm } from "@modules/inventory/hooks/inventoryHooks.js";
 
-
 import SubEquipmentTable from "./SubEquipmentTable.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
@@ -30,7 +29,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
         defaultValues: {
             ...equipmentData,
             company_id: equipmentData?.company_id || companyId,
-
+            laptop_issued_as_per_policy: equipmentData?.laptop_issued_as_per_policy ?? true,
             sub_equipments: equipmentData?.sub_equipments || [],
         },
     });
@@ -56,7 +55,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                 <div className="xxl:col-span-9 col-span-12">
                       <div className="box">
                         <div className="box-header">
-                            <div className="box-title">Equipment Info</div>
+                            <div className="box-title">Asset Info</div>
                         </div>
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
@@ -203,6 +202,91 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
                                 </div>
 
+
+                                {/* ---------- Exception Approval Granted By (Grade G-15 Employee) ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormAsyncSelect
+                                        name="exception_approval_granted_by_id"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Approval Granted By (Grade G-15)"
+                                        apiUrl="/select/employees/g15/"  // API URL for G-15 employees
+                                        queryKeyBase="g15_employees"
+                                        clientSideSearch={true}
+                                        preselectedOptions={formatOptions(equipmentData, "exception_approval_granted_by", "id", "full_name")}
+                                    />
+                                </div>
+
+                                {/* ---------- Laptop Model ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="laptop_model"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Laptop Model"
+                                    />
+                                </div>
+
+                                {/* ---------- Processor ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="processor"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Processor"
+                                    />
+                                </div>
+
+                                {/* ---------- RAM ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="ram"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="RAM"
+                                    />
+                                </div>
+
+                                {/* ---------- Hard Disk ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="hard_disk"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Hard Disk"
+                                    />
+                                </div>
+
+                                {/* ---------- Screen Size ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="screen_size"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Screen Size"
+                                    />
+                                </div>
+
+                                {/* ---------- Mouse ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="mouse"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Mouse"
+                                    />
+                                </div>
+
+                                {/* ---------- Accessories ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="accessories"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Accessories"
+                                    />
+                                </div>
+
                                 {/* ---------- Description ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormTextarea
@@ -238,13 +322,13 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
-                            <FormButton isLoading={isSubmitting} />
-                        </div>
-                    </div>
+                          <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
+                              <FormButton isLoading={isSubmitting}/>
+                          </div>
+                      </div>
 
                     {
-                        isEditMode===true&&(
+                        isEditMode === true && (
                             <SubEquipmentTable
                                 fields={fields}
                                 append={append}
@@ -334,6 +418,20 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                             <FormCheckbox
                                 name="antivirus"
                                 label="Antivirus"
+                                control={control}
+                                errors={errors}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="box">
+                        <div className="box-header">
+                            <div className="box-title">Laptop Issued as Per Policy</div>
+                        </div>
+                        <div className="box-body">
+                            <FormCheckbox
+                                name="laptop_issued_as_per_policy"
+                                label="Laptop Issued as Per Policy"
                                 control={control}
                                 errors={errors}
                             />

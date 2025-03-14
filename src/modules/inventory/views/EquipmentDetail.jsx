@@ -29,9 +29,9 @@ const EquipmentDetail = () => {
     return (
         <Fragment>
             <PageHeader
-                currentpage="Equipment Details"
-                title="Equipment Details"
-                activepage="Equipment"
+                currentpage="Assets Details"
+                title="Asset Details"
+                activepage="Asset"
                 mainpage="Details"
             />
             <div className="grid grid-cols-12 gap-6">

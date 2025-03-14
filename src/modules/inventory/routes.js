@@ -10,42 +10,42 @@ import EquipmentHistory from '@modules/inventory/views/EquipmentHistory.jsx';
 
 export const INVENTORY_ROUTES = {
     READ: {
-        path: '/module/equipment',
+        path: '/module/asset',
         permission: 'view_equipment',
     },
     ADD: {
-        path: '/module/equipment/add',
+        path: '/module/asset/add',
         permission: 'add_equipment',
     },
     DETAIL: {
-        path: '/module/equipment/detail/:id',
+        path: '/module/asset/detail/:id',
         permission: 'view_equipment',
     },
     EDIT: {
-        path: '/module/equipment/edit/:id',
+        path: '/module/asset/edit/:id',
         permission: 'change_equipment',
     },
     SUMMARY: {
-        path: '/module/equipment/transaction',
+        path: '/module/asset/transaction',
     },
     LAPTOP_LIST: {
-        path: '/module/equipment/laptop-list',
+        path: '/module/asset/laptop-list',
         permission: 'view_equipment',
     },
     EQUIPMENT_REPORT: {
-        path: '/module/equipment/equipment-report',
+        path: '/module/asset/equipment-report',
         permission: 'view_equipment',
     },
     EQUIPMENT_REASSIGN: {
-        path: '/module/equipment/equipment-reassign/:id',
+        path: '/module/asset/asset-reassign/:id',
         permission: 'add_equipment',
     },
     EQUIPMENT_SITE_WISE: {
-        path: '/module/equipment/equipment-site-wise',
+        path: '/module/asset/equipment-site-wise',
         permission: 'view_equipment',
     },
     EQUIPMENT_HISTORY: {
-        path: '/module/equipment/equipment-history/:id',
+        path: '/module/asset/equipment-history/:id',
         permission: 'view_equipment',
     },
 };
