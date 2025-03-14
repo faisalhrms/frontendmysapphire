@@ -25,14 +25,14 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                 {loading ? (
                     <LoadingSpinner />
                 ) : (
-                    <table className="w-full table-fixed border-collapse">
+                    <table className="w-full table-fixed border-collapse dark:text-gray-200 dark:bg-bodybg ">
                         
                         <thead className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
-                        <tr>
+                        <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
                             {headers.map((header, index) => (
                                 <th
                                     key={index}
-                                    className="border p-3 text-center font-semibold dark:text-gray-300"
+                                    className="border p-3 text-center font-semibold dark:text-gray-200 dark:bg-bodybg"
                                 >
                                     {header.label}
                                 </th>

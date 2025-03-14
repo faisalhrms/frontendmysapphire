@@ -36,12 +36,20 @@ export const sidebarMenu = [
                 BEIRHOLM_BI_ROUTES.CORRECTION_RULE_READ.permission
             ),
             generateSidebarItem(
+                BEIRHOLM_BI_ROUTES.CORRECTION_PATTERN_READ.path,
+                'link',
+                'Data Correction Patterns',
+                4,
+                '',
+                BEIRHOLM_BI_ROUTES.CORRECTION_PATTERN_READ.permission
+            ),
+            generateSidebarItem(
                 BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
                 'link',
                 'Competitor Analysis',
                 4,
                 '',
-                BEIRHOLM_BI_ROUTES.CORRECTION_RULE_READ.permission
+                BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission
             ),
             generateSidebarItem(
                 BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.path,
@@ -49,7 +57,7 @@ export const sidebarMenu = [
                 'ChatBot',
                 5,
                 '',
-                BEIRHOLM_BI_ROUTES.CORRECTION_RULE_READ.permission
+                BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.permission
             ),
         ]
     )

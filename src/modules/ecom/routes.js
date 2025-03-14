@@ -20,7 +20,7 @@ export const ECOM_ROUTES = {
     },
     OS:{
         path: '/module/ecom/digitalspent',
-        // permission: 'ecom_digitalspent',
+        permission: 'ecom_digitalspent',
     },
     // ODT:{
     //     path: '/module/ecom/orderdetail',

@@ -142,7 +142,7 @@ const ExecutiveTabs = () => {
 
             {showFilters && activeTab === "executiveSummary" && (
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg mb-4">
                         <FormInput
                                     type="date"
                                     name="date_from"
@@ -166,18 +166,18 @@ const ExecutiveTabs = () => {
                 </form>
             )}
 
-            <div className="grid grid-cols-12 gap-6 ">
+            <div className="grid grid-cols-12 gap-6  ">
                 <div className="xl:col-span-12 col-span-12 ">
-                    <div className="tab-content  ">
+                    <div className="tab-content  dark:text-gray-200 dark:bg-bodybg ">
                         {activeTab === "executiveSummary" && (
-                            <div className="tab-pane show active p-6 dark:text-gray-200 dark:bg-bodybg" id="generate-report"
+                            <div className="tab-pane show active p-6 dark:text-gray-900 dark:bg-bodybg " id="generate-report"
                                  aria-labelledby="generate-report" role="tabpanel">
                                 <ExecutiveForm filters={filters} />
                             </div>
                         )}
 
                         {activeTab === "agingLiabilities" && (
-                            <div className="tab-pane show active p-6 dark:text-gray-200 dark:bg-bodybg dark:text-gray-200 dark:bg-bodybg" id="replenishment-history"
+                            <div className="tab-pane show active p-6 dark:text-gray-900 dark:bg-bodybg mb-4 " id="replenishment-history"
                                  aria-labelledby="replenishment-history" role="tabpanel">
 
                                 <AgingForm />

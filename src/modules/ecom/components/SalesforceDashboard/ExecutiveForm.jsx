@@ -75,9 +75,9 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
         ? [{ label: <LoadingSpinner />, accessor: "" }]
         : [
             {
-                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold ">Commerce Cloud</span>,
+                label: <span className="p-1 rounded text-right  ">Commerce Cloud</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold "
+                    <div className="p-1 rounded text-right  "
                          onClick={() => fetchModalData("commerce_cloud")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_cc)}
@@ -86,9 +86,9 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
                 ),
             },
             {
-                label: <span className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold ">Total - Orders in OMS</span>,
+                label: <span className="p-1 rounded text-right  ">Total - Orders in OMS</span>,
                 accessor: (
-                    <div className="p-1 rounded text-right cursor-pointer transition-all hover:font-bold "
+                    <div className="p-1 rounded text-right  "
                          onClick={() => fetchModalData("total_orders_oms")}>
                     <span className="text-gray-800 hover:underline hover:font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumberWithCommas(summary.total_orders_summary)}
@@ -167,7 +167,7 @@ const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
 
 
     return (
-        <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-900 dark:bg-bodybg">
+        <div className="flex flex-wrap md:flex-nowrap gap-6 p-2 dark:text-gray-900 dark:bg-bodybg ">
             <ExecutiveSummaryTable
                 title="Reconciliation CC vs OMS"
                 data={reconciliationData}
