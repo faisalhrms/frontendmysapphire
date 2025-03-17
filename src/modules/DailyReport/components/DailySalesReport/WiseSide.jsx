@@ -187,22 +187,22 @@ const StoreWise = ({ filters }) => {
 
     return (
         <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-            <div className="overflow-x-auto max-w-full">
-                <table className="w-full border-collapse text-sm">
+            <div className="overflow-x-auto max-w-full dark:text-gray-200 dark:bg-bodybg">
+                <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg">
                     <thead className="sticky top-0 z-10">
                     <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                        <th className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40">
+                        <th className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40 dark:text-gray-200 dark:bg-bodybg">
                             Store Type
                         </th>
                         {dateHeaders.map((date, index) => (
                             <th
                                 key={index}
-                                className="border border-gray-700 p-2 font-bold text-center min-w-28"
+                                className="border border-gray-700 p-2 font-bold text-center min-w-28 dark:text-gray-200 dark:bg-bodybg "
                             >
                                 {date}
                             </th>
                         ))}
-                        <th className="border border-gray-700 p-2 font-bold text-center min-w-28">
+                        <th className="border border-gray-700 p-2 font-bold text-center min-w-28 dark:text-gray-200 dark:bg-bodybg">
                             Total
                         </th>
                     </tr>
@@ -214,7 +214,7 @@ const StoreWise = ({ filters }) => {
                         return (
                             <tr key={rowIndex} className={getRowStyle(row)}>
                                 <td
-                                    className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 ${
+                                    className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 dark:text-gray-200 dark:bg-bodybg${
                                         row.isHeader
                                             ? "bg-yellow-100"
                                             : row.isSubHeader
@@ -231,13 +231,13 @@ const StoreWise = ({ filters }) => {
                                 {row.values.map((value, valueIndex) => (
                                     <td
                                         key={valueIndex}
-                                        className="border border-gray-300 p-2 text-right"
+                                        className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"
                                     >
                                         {formatNumber(value)}
                                     </td>
                                 ))}
 
-                                <td className="border border-gray-300 p-2 text-right">
+                                <td className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg">
                                     {formatNumber(rowTotal)}
                                 </td>
                             </tr>
