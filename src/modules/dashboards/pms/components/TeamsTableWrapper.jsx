@@ -43,7 +43,7 @@ const TeamsTableWrapper = ({ data, statuses }) => {
     const rowsWithFooter = useMemo(() => {
         return [...rows, {
             team: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals,
-            total: <span className="font-semibold text-[#232323]">Total</span>
+            total: grandTotal
         }];
     }, [rows, columnTotals, grandTotal]);
 
