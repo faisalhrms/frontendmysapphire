@@ -1,6 +1,6 @@
-import React, {useMemo} from "react";
+import React, { useMemo } from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
-import {toTitleCase} from "@helpers/formatters.js";
+import { toTitleCase } from "@helpers/formatters.js";
 
 function transformPrioritiesData(data, statuses) {
     return Object.entries(data).map(([priority, statusData]) => {
@@ -28,12 +28,19 @@ function createPrioritiesHeaders(statuses) {
 const PrioritiesTable = ({ data, statuses }) => {
     const rows = useMemo(() => transformPrioritiesData(data, statuses), [data, statuses]);
 
+    // Filter statuses where count is greater than 0
+    const filteredStatuses = useMemo(() => {
+        return statuses.filter(status => {
+            return rows.some(row => row[status] > 0);
+        });
+    }, [rows, statuses]);
+
     const columnTotals = useMemo(() => {
-        return statuses.reduce((totals, status) => {
+        return filteredStatuses.reduce((totals, status) => {
             totals[status] = rows.reduce((sum, row) => sum + (row[status] || 0), 0);
             return totals;
         }, {});
-    }, [rows, statuses]);
+    }, [rows, filteredStatuses]);
 
     const grandTotal = useMemo(
         () => Object.values(columnTotals).reduce((sum, value) => sum + value, 0),
@@ -43,15 +50,15 @@ const PrioritiesTable = ({ data, statuses }) => {
     const rowsWithFooter = useMemo(() => {
         return [
             ...rows,
-            {priority: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals, total: grandTotal}
+            { priority: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals, total: grandTotal }
         ];
     }, [rows, columnTotals, grandTotal]);
 
-    const headers = useMemo(() => createPrioritiesHeaders(statuses), [statuses]);
+    const headers = useMemo(() => createPrioritiesHeaders(filteredStatuses), [filteredStatuses]);
 
     return (
         <div>
-            <ClientSideTable config={{ headers }} data={rowsWithFooter} title="Priority Wise Status" height="400px" />
+            <ClientSideTable config={{ headers }} data={rowsWithFooter} title="Priority Wise Status" height="400px" tHeadClasses='table-bg-dark' />
         </div>
     );
 };
