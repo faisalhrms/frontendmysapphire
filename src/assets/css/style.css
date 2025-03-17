@@ -13856,3 +13856,10 @@ input[type=color i]::-webkit-color-swatch {
 .select-sm .Select2__control {
   min-height: 20px !important;
 }
+
+.table-bg-dark {
+  border-color: #ffffff1a;
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 28 67 / var(--tw-bg-opacity, 1));
+  color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}

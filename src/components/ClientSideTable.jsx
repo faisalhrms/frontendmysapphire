@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import useFullScreen from "@hooks/useFullScreen.js";
 import SimpleBar from "simplebar-react";
 
-const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table', height = '250px' }) => {
+const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table', height = '250px', tHeadClasses='' }) => {
     const { headers } = config;
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
@@ -43,12 +43,12 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
                 <div className="box-body">
                 <div className="overflow-x-auto">
                     <table className="table min-w-full whitespace-nowrap table-hover border table-bordered">
-                        <thead>
-                        <tr className="border border-inherit border-solid dark:border-defaultborder/10">
-                            {headers.map((header, index) => (
-                                <th key={index} className="!text-center !text-[0.85rem]">{header.label}</th>
-                            ))}
-                        </tr>
+                        <thead className={tHeadClasses}>
+                            <tr className="border border-inherit border-solid dark:border-defaultborder/10">
+                                {headers.map((header, index) => (
+                                    <th key={index} className="!text-center !text-[0.85rem]">{header.label}</th>
+                                ))}
+                            </tr>
                         </thead>
                         <tbody>
                         {filteredData.length > 0 && headers.length > 0 ? (
