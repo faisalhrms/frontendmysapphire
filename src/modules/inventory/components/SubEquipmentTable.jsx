@@ -8,7 +8,7 @@ const SubEquipmentTable = ({ fields, append, remove, control, errors }) => {
     return (
         <div className="box mt-4">
             <div className="box-header">
-                <div className="box-title">Sub Equipment</div>
+                <div className="box-title">Sub Information</div>
             </div>
 
             <div className="box-body">
@@ -26,7 +26,7 @@ const SubEquipmentTable = ({ fields, append, remove, control, errors }) => {
                             })
                         }
                     >
-                        + Add Sub Equipment
+                        + Add Sub Info
                     </button>
                 </div>
 
@@ -35,7 +35,7 @@ const SubEquipmentTable = ({ fields, append, remove, control, errors }) => {
                     <thead>
                     <tr className="bg-gray-100">
                         <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                            Sub Equipment Type
+                            Sub Type
                         </th>
                         <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                             Description

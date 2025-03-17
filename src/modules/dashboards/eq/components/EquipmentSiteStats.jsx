@@ -20,7 +20,7 @@ const EquipmentSiteStats = ({ equipmentsBySite, statsFetching }) => {
     const series = useMemo(
         () => [
             {
-                name: 'Equipments',
+                name: 'Assets',
                 data: validData.map(item => item.count)
             }
         ],
@@ -91,7 +91,7 @@ const EquipmentSiteStats = ({ equipmentsBySite, statsFetching }) => {
     return (
         <div className="box">
             <div className="box-header justify-between">
-                <div className="box-title">Equipments by Site</div>
+                <div className="box-title">Assets by Site</div>
             </div>
             <div className="box-body">
                 {statsFetching ? (

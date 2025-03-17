@@ -64,12 +64,12 @@ const EquipmentList = () => {
             disableSortBy: true,
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
-                    <Link to={`/module/equipment/edit/${row.original.id}`}>
+                    <Link to={`/module/asset/edit/${row.original.id}`}>
                         <button className="ti-btn ti-btn-primary ti-btn-sm">
                             <i className="ri-edit-line"></i>
                         </button>
                     </Link>
-                    <Link to={`/module/equipment/detail/${row.original.id}`}>
+                    <Link to={`/module/asset/detail/${row.original.id}`}>
                         <button className="ti-btn ti-btn-info ti-btn-sm">
                             <i className="ri-eye-line"></i>
                         </button>
@@ -79,8 +79,28 @@ const EquipmentList = () => {
         },
         { Header: "Code", accessor: "code" },
         { Header: "Serial No", accessor: "serial_no" },
-        { Header: "Description", accessor: "description" },
-        { Header: "Specification", accessor: "specs" },
+        {
+            Header: "Description",
+            accessor: "description",
+            Cell: ({ row }) => (
+                <span>
+                {row.original.description?.length > 50
+                    ? row.original.description.slice(0, 50) + "..."
+                    : row.original.description}
+            </span>
+            ),
+        },
+        {
+            Header: "Specification",
+            accessor: "specs",
+            Cell: ({ row }) => (
+                <span>
+                {row.original.specs?.length > 40
+                    ? row.original.specs.slice(0, 40) + "..."
+                    : row.original.specs}
+            </span>
+            ),
+        },
         {
             Header: "Status",
             accessor: "status",
@@ -92,8 +112,8 @@ const EquipmentList = () => {
         },
         { Header: "Custodian", accessor: "custodian" },
         { Header: "Department", accessor: "department" },
-        { Header: "Equipment Site", accessor: "equipment_site" },
-        { Header: "Equipment Type", accessor: "equipment_type" },
+        { Header: "Asset Site", accessor: "equipment_site" },
+        { Header: "Asset Type", accessor: "equipment_type" },
         { Header: "Location", accessor: "location" },
     ];
 
@@ -103,20 +123,20 @@ const EquipmentList = () => {
                 to={INVENTORY_ROUTES.ADD.path}
                 className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
             >
-                <i className="ri-add-line font-semibold align-middle"></i> Add Equipment
+                <i className="ri-add-line font-semibold align-middle"></i> Add Asset
             </Link>
         </div>
     );
 
     return (
         <>
-            <PageHeader currentpage="Equipments" mainpage="Equipments" />
+            <PageHeader currentpage="Assets" mainpage="Assets" />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <EquipmentListFilter control={control} errors={errors} onClear={onClear} />
             </form>
             <DataTable
                 columns={columns}
-                title="Equipments"
+                title="Assets"
                 apiUrl={`/equipments/datatable/?status=${statusFilter}`}
                 buttons={buttons}
                 filter={filters}
