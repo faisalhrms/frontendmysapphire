@@ -38,28 +38,28 @@ export const useErrorCorrectionForm = (id) => {
 
   useEffect(() => {
     if (initialData) {
-      setValue("field_definition", initialData.field_definition.id);
-      setSelectedFieldDefinition(initialData.field_definition.id);
-      setValue("correct_value", initialData.field_definition.correct_value);
+      if (initialData.field_definition) {
+        setValue("header", initialData.field_definition.header ? initialData.field_definition.header.id : "");
+        setValue("field_definition", initialData.field_definition.id);
+        setSelectedFieldDefinition(initialData.field_definition.id);
+        setValue("correct_value", initialData.sanitized_data ? initialData.sanitized_data.id : "");
+      }
       setValue("error_value", initialData.error_value);
-      setValue("header", initialData.header || "");
       if (initialData.child_errors) {
         setValue("child_errors", initialData.child_errors.map(c => ({ error_value: c.error_value })));
       }
     }
   }, [initialData, setValue]);
 
-  const onFieldDefinitionChange = (option) => {
-    setValue("correct_value", option.value);
-    setSelectedFieldDefinition(option.value);
-  };
+  // Always update field_definition when correct_value changes
   useEffect(() => {
-    const currentFieldDefinition = getValues("field_definition");
-    const correctValue = getValues("correct_value");
-    if (correctValue && !currentFieldDefinition) {
-      setValue("field_definition", correctValue);
-    }
-  }, [watch("correct_value")]);
+    const subscription = watch((value, { name }) => {
+      if (name === "correct_value" && value.correct_value) {
+        setValue("field_definition", value.correct_value);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setValue]);
 
   const onSubmit = async () => {
     const newData = getValues();
@@ -80,8 +80,8 @@ export const useErrorCorrectionForm = (id) => {
     fields,
     append,
     remove,
-    onFieldDefinitionChange,
     selectedFieldDefinition,
-    watch,
+    initialData,
+    watch
   };
 };

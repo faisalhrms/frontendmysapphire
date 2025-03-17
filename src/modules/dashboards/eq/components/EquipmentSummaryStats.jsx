@@ -6,12 +6,12 @@ import { mapSeriesToColors, statusColorMapping } from "@helpers/statusStyles.js"
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import CountUp from "react-countup";
 
-const EquipmentSummaryStats = ({ summary, statsFetching, heading = 'Equipment Summary' }) => {
+const EquipmentSummaryStats = ({ summary, statsFetching, heading = 'Asset Summary' }) => {
     // Transform the summary data into labels and series for the chart
     const chartData = useMemo(() => {
         const { total_equipments, ...statusCounts } = summary;
         const labels = Object.keys(statusCounts).map(key => {
-            // Convert snake_case to Title Case with spaces and replace "No Status" with "N/A"
+            // Convert snake_case to Titlm,.e Case with spaces and replace "No Status" with "N/A"
             const formattedLabel = key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
             return formattedLabel === "No Status" ? "N/A" : formattedLabel;
         });

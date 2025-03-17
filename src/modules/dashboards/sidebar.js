@@ -61,7 +61,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.Equipment.path,
                 'link',
-                'Equipment Dashboard',
+                'Assets Dashboard',
                 7,
                 '',
                 DASHBOARD_ROUTES.Equipment.permission,

@@ -33,7 +33,7 @@ const BreakupOrdersFO = ({ filters, dateFrom, dateTo }) => {
         : [
             { label: "Single FO", accessor: formatNumberWithCommas(summary.orders_with_single_fo) },
             { label: "Split-Orders with Multiple FOs", accessor: formatNumberWithCommas(summary.multi_fo_c) },
-            { label: "Total FO's to Fulfill", accessor: formatNumberWithCommas(summary.total_fo_to_fulfil) },
+            // { label: "Total FO's to Fulfill", accessor: formatNumberWithCommas(summary.total_fo_to_fulfil) },
         ];
 
     return (

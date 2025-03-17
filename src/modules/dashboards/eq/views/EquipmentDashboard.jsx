@@ -38,9 +38,9 @@ const EquipmentDashboard = () => {
     return (
         <>
             <PageHeader
-                currentpage="Equipment Dashboard"
+                currentpage="Asset Dashboard"
                 activepage="Dashboards"
-                mainpage="Inventory Management System"
+                mainpage="Asset Management System"
             />
             <HasPermission permission='equipment_dashboard_filters'>
                 <form onSubmit={handleSubmit(onSubmit)}>
