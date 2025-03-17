@@ -268,7 +268,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 </div>
 
                                 {/* ---------- Mouse ---------- */}
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormInput
                                         name="mouse"
                                         control={control}
@@ -276,9 +276,18 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         placeholder="Mouse"
                                     />
                                 </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        type="number"
+                                        name="purchase_price"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Parchase Price"
+                                    />
+                                </div>
 
                                 {/* ---------- Accessories ---------- */}
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormInput
                                         name="accessories"
                                         control={control}

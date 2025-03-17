@@ -133,7 +133,7 @@ export const useReAssignEquipment = (id) => {
             const data = await reAssignEquipment(formData);
             // On success, you might want to navigate somewhere or refetch data
             // For example:
-            navigate(`/module/equipment/detail/${id}`);
+            navigate(`/module/asset/detail/${id}`);
         } catch (err) {
             console.error("Reassign error:", err);
         }

@@ -15,7 +15,7 @@ const EquipmentStatusCard = ({ item }) => {
 
     const handleCardClick = () => {
         // Navigate to the EquipmentList page with the selected status as a query parameter
-        navigate(`/module/equipment?status=${status}`);
+        navigate(`/module/asset?status=${status}`);
     };
 
     return (
