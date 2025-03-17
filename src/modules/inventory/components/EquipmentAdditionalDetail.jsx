@@ -37,15 +37,16 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Status :</span></td>
 
-                                <td > <span className={getBadgeClasses(equipmentData.status)}> { toTitleCase(equipmentStatuses.find(status => status.value === equipmentData.status)?.label ||
-                                    "-")}
+                                    <td> <span
+                                        className={getBadgeClasses(equipmentData.status)}> {toTitleCase(equipmentStatuses.find(status => status.value === equipmentData.status)?.label ||
+                                        "-")}
                                 </span></td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
                                     <td><span className="font-semibold">Asset Type :</span></td>
                                     <td>
                                         <span
-                                            >{equipmentData.equipment_type?.name}</span>
+                                        >{equipmentData.equipment_type?.name}</span>
                                     </td>
                                 </tr>
                                 <tr className="border-b border-defaultborder">
@@ -74,6 +75,13 @@ const EquipmentAdditionalDetail = ({equipmentData}) => {
                                     <td>
                                         <span
                                         >{toTitleCase(equipmentData?.asset_code) || "----"}</span>
+                                    </td>
+                                </tr>
+                                <tr className="border-b border-defaultborder">
+                                    <td><span className="font-semibold">Purchase Price :</span></td>
+                                    <td>
+                                        <span
+                                        >{equipmentData?.purchase_price || "----"}</span>
                                     </td>
                                 </tr>
 

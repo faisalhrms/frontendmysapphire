@@ -47,6 +47,7 @@ const equipmentSchema = z.object({
     laptop_model: z.string().max(250).nullable().optional(),
     processor: z.string().max(250).nullable().optional(),
     ram: z.string().max(250).nullable().optional(),
+    purchase_price:z.number().nullable().optional(),
     hard_disk: z.string().max(250).nullable().optional(),
     screen_size: z.string().max(250).nullable().optional(),
     mouse: z.string().max(250).nullable().optional(),

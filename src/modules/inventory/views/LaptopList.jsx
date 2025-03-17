@@ -16,13 +16,13 @@ const LaptopList = () => {
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
                     {/* Update the route if you have a dedicated laptop edit path, e.g. /module/laptop/edit/:id */}
-                    <Link to={`/module/equipment/edit/${row.original.id}`}>
+                    <Link to={`/module/asset/edit/${row.original.id}`}>
                         <button className="ti-btn ti-btn-primary ti-btn-sm">
                             <i className="ri-edit-line"></i>
                         </button>
                     </Link>
                     {/* Update the route if you have a dedicated laptop detail path, e.g. /module/laptop/detail/:id */}
-                    <Link to={`/module/equipment/detail/${row.original.id}`}>
+                    <Link to={`/module/asset/detail/${row.original.id}`}>
                         <button className="ti-btn ti-btn-info ti-btn-sm">
                             <i className="ri-eye-line"></i>
                         </button>
@@ -66,6 +66,7 @@ const LaptopList = () => {
             ),
         },
         { Header: "Location", accessor: "location", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Purchase Price", accessor: "purchase_price", Cell: ({ value }) => value ?? "N/A" },
         { Header: "Accessories", accessor: "accessories", Cell: ({ value }) => value ?? "N/A" },
 
     ];
