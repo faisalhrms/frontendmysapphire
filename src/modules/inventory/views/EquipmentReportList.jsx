@@ -8,7 +8,7 @@ const EquipmentReportList = () => {
     const columns = [
         { Header: "Site", accessor: "site" },
         { Header: "Type", accessor: "type" },
-        { Header: "No", accessor: "no" },
+        { Header: "No", accessor: "total_equipment" },
     ];
 
     // Optional "Add" button or other actions
@@ -17,10 +17,10 @@ const EquipmentReportList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Equipment Report" mainpage="Equipment" />
+            <PageHeader currentpage="Asset Report" mainpage="Asset" />
             <DataTable
                 columns={columns}
-                title="Equipment Report"
+                title="Asset Report"
                 apiUrl="/equipments/report-data/"
             />
         </>
