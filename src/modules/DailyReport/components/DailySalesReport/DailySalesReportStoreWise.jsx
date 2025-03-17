@@ -534,7 +534,7 @@ const DailySalesReportStoreWise = ({filters}) => {
     const lastDayData = [];
 
     const mtdData = [
-        // Data for 'MTD'...
+
     ];
 
     return (
