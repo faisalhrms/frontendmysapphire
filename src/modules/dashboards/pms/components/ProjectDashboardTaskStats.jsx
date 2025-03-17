@@ -13,7 +13,7 @@ const ProjectDashboardTaskStats = ({filters}) => {
     }
     return (
             <>
-                <div className="grid grid-cols-12 gap-x-6 mt-6">
+                <div className="grid grid-cols-12 gap-x-6">
                     <div className="xl:col-span-6 col-span-12">
                         <TaskOverviewCard data={data.overview}/>
                     </div>

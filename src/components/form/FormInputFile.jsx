@@ -2,11 +2,16 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import ErrorMessage from '@components/form/ErrorMessage';
 
-const FormFileInput = ({ name, control, errors, placeholder, classNames = "", fileTypes = ['.csv', '.xls', '.xlsx'], label = true, ...rest }) => {
+const FormFileInput = ({ name, control, errors, placeholder, classNames = "", fileTypes = ['.csv', '.xls', '.xlsx'], label = true, is_required = false, ...rest }) => {
     const acceptFileTypes = fileTypes.join(',');
     return (
         <>
-            {label && <label htmlFor={name} className="form-label">{placeholder}</label>}
+            {label && (
+                <label htmlFor={name} className="form-label">
+                    {placeholder}
+                    {is_required && <span className="text-rose-500 pl-1"> *</span>}
+                </label>
+            )}
             <Controller
                 name={name}
                 control={control}
