@@ -13,7 +13,7 @@ const data = [
         fullPriceOfflineAch: 90,
         discountedOfflineTarget: 300,
         discountedOfflineSale: 250,
-        discountedOfflineAch: 83.33,
+        discountedOfflineAch: -83.33,
         totalOfflineTarget: 800,
         totalOfflineSale: 700,
         totalOfflineAch: 87.5,

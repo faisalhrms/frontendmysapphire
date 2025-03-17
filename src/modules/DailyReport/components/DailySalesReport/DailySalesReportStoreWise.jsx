@@ -444,7 +444,6 @@ import React, {useState, useEffect} from 'react';
 const SalesReportTable = ({title, data, filters}) => {
     const [filteredData, setFilteredData] = useState(data);
 
-    // Function to format date (Assuming date is in YYYY-MM-DD format)
     const formatDate = (date) => {
         const [year, month, day] = date.split('-');
         return new Date(year, month - 1, day);
@@ -529,7 +528,6 @@ const SalesReportTable = ({title, data, filters}) => {
     );
 };
 
-// Main Component
 const DailySalesReportStoreWise = ({filters}) => {
     const lastDayData = [];
 
@@ -548,8 +546,7 @@ const DailySalesReportStoreWise = ({filters}) => {
                     <h3 className="text-start font-bold text-xl mb-2">MTD</h3>
                     <SalesReportTable title="MTD" data={mtdData} filters={filters}/>
                 </div>
-                {/*<SalesReportTable title="Last Day" data={lastDayData} filters={filters}/>*/}
-                {/*<SalesReportTable title="MTD" data={mtdData} filters={filters}/>*/}
+
             </div>
         </div>
     );
