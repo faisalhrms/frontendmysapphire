@@ -2,7 +2,7 @@ import React from "react";
 import LoadingSpinner from "@components/LoadingSpinner";
 
 const formatNumber = (num) =>
-    num ? num.toLocaleString(undefined, { minimumFractionDigits: 2 }) : "N/A";
+    num ? num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "N/A";
 
 const formatPercentage = (value) => {
     const num = parseFloat(value);
@@ -15,18 +15,15 @@ const formatPercentage = (value) => {
 const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
     return (
         <div className="p-4 bg-white shadow-lg rounded-lg mb-6 dark:text-gray-200 dark:bg-bodybg">
-
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">{title || "Commerce Cloud Order"}</h2>
             </div>
-
 
             <div className="w-full flex justify-center items-center">
                 {loading ? (
                     <LoadingSpinner />
                 ) : (
                     <table className="w-full table-fixed border-collapse dark:text-gray-200 dark:bg-bodybg ">
-                        
                         <thead className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
                         <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
                             {headers.map((header, index) => (
@@ -39,7 +36,6 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                             ))}
                         </tr>
                         </thead>
-
 
                         <tbody>
                         {data.length > 0 ? (

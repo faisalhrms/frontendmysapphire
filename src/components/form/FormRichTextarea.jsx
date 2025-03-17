@@ -3,10 +3,12 @@ import { Controller } from "react-hook-form";
 import SunEditor from "suneditor-react";
 import ErrorMessage from "@components/form/ErrorMessage.jsx";
 const FormRichTextarea = forwardRef(
-  ({ name, control, errors, placeholder, editorOptions = {}, readOnly, ...rest }, ref) => {
+  ({ name, control, errors, placeholder, editorOptions = {}, readOnly,is_required = false, ...rest }, ref) => {
     return (
       <>
-        {placeholder && <label htmlFor={name} className="form-label">{placeholder}</label>}
+        {placeholder && <label htmlFor={name} className="form-label">{placeholder}
+            {is_required && <span className="text-rose-500 pl-1"> *</span>}
+        </label>}
         <Controller
           name={name}
           control={control}

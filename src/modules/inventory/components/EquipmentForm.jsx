@@ -63,6 +63,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         name="equipment_site_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Site"
@@ -80,6 +81,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         name="department_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Department"
@@ -99,6 +101,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         name="location_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Physical Location"
@@ -131,6 +134,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormAsyncSelect
                                         name="equipment_type_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Type"
@@ -150,6 +154,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 {/* ---------- Asset Code ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormInput
+                                        is_required={true}
                                         name="asset_code"
                                         control={control}
                                         errors={errors}
@@ -161,6 +166,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormInput
                                         name="serial_no"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Serial No"
@@ -299,6 +305,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 {/* ---------- Description ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormTextarea
+                                        is_required={true}
                                         name="description"
                                         control={control}
                                         errors={errors}
@@ -310,6 +317,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 {/* ---------- Specs ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormTextarea
+                                        is_required={true}
                                         name="specs"
                                         control={control}
                                         errors={errors}
@@ -410,6 +418,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                         </div>
                         <div className="box-body">
                             <FormCheckbox
+                                
                                 name="store_comm_ready"
                                 label="Store Communication Ready"
                                 control={control}

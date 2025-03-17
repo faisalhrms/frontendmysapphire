@@ -50,7 +50,7 @@ const DailySaleReportList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Daily Sale Report" />
+            <PageHeader currentpage="Daily Sales Report" />
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">

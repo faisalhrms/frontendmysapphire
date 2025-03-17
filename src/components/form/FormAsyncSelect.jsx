@@ -14,6 +14,7 @@ const MemoizedCreatableSelect = React.memo(CreatableSelect);
 
 const FormAsyncSelect = ({
                              name,
+                             is_required = false,
                              label = true,
                              control,
                              errors,
@@ -139,7 +140,12 @@ const FormAsyncSelect = ({
 
     return (
         <>
-            {label && <label htmlFor={name} className="form-label">{placeholder}</label>}
+            {label && (
+                <label htmlFor={name} className="form-label">
+                    {placeholder}
+                    {is_required && <span className="text-rose-500 pl-1"> *</span>}
+                </label>
+            )}
             <Controller
                 name={name}
                 control={control}

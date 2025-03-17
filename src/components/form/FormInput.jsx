@@ -11,6 +11,7 @@ const FormInput = ({
                        type = "text",
                        className = "",
                        label = true,
+                       is_required = false,
                        ...rest
                    }) => {
     const fieldError = name
@@ -23,6 +24,7 @@ const FormInput = ({
             {label && (
                 <label htmlFor={name} className="form-label">
                     {placeholder}
+                    {is_required && <span className="text-rose-500 pl-1"> *</span>}
                 </label>
             )}
 
