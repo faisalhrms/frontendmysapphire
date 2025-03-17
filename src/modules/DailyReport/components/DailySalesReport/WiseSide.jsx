@@ -175,7 +175,7 @@ const StoreWise = ({ filters }) => {
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) return "bg-yellow-100 font-bold";
+        if (row.isHeader) return "bg-success-100 font-bold";
         if (row.isSubHeader) return "bg-yellow-50 font-semibold";
         return "";
     };
