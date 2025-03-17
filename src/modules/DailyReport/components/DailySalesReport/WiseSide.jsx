@@ -175,7 +175,7 @@ const StoreWise = ({ filters }) => {
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) return "bg-success-100 font-bold";
+        if (row.isHeader) return "bg-redd font-bold";
         if (row.isSubHeader) return "bg-yellow-50 font-semibold";
         return "";
     };
@@ -216,7 +216,7 @@ const StoreWise = ({ filters }) => {
                                 <td
                                     className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 dark:text-gray-200 dark:bg-bodybg${
                                         row.isHeader
-                                            ? "bg-yellow-100"
+                                            ? "bg-success"
                                             : row.isSubHeader
                                                 ? "bg-yellow-50"
                                                 : "bg-white"
@@ -251,3 +251,5 @@ const StoreWise = ({ filters }) => {
 };
 
 export default StoreWise;
+
+
