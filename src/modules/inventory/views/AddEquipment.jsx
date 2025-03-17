@@ -5,7 +5,7 @@ import InventoryForm from "@modules/inventory/components/EquipmentForm.jsx";
 const SubscriptionCreate = () => {
     return (
         <>
-            <PageHeader currentpage="Add New Equipment" activepage="Equipment" mainpage="Add" />
+            <PageHeader currentpage="Add New Asset" activepage="Asset" mainpage="Add" />
             <InventoryForm />
         </>
     );

@@ -11,7 +11,7 @@ const EquipmentDepartmentStats = ({ equipmentsByDepartment }) => {
     );
 
     const series = [{
-        name: 'Equipments',
+        name: 'Assets',
         data: validData.map(item => item.count)
     }];
 
@@ -53,7 +53,7 @@ const EquipmentDepartmentStats = ({ equipmentsByDepartment }) => {
     return (
         <div className="box">
             <div className="box-header justify-between">
-                <div className="box-title">Equipments by Department</div>
+                <div className="box-title">Assets by Department</div>
             </div>
             <div className="box-body">
                 <ApexChart
