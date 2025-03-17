@@ -1,7 +1,6 @@
-import React, {useMemo} from "react";
+import React, { useMemo } from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
-import {toTitleCase} from "@helpers/formatters.js";
-
+import { toTitleCase } from "@helpers/formatters.js";
 
 function transformTeamsData(data, statuses) {
     return Object.entries(data).map(([team, statusData]) => {
@@ -28,12 +27,19 @@ function createTeamsHeaders(statuses) {
 const TeamsTableWrapper = ({ data, statuses }) => {
     const rows = useMemo(() => transformTeamsData(data, statuses), [data, statuses]);
 
+    // Filter statuses where count is greater than 0
+    const filteredStatuses = useMemo(() => {
+        return statuses.filter(status => {
+            return rows.some(row => row[status] > 0);
+        });
+    }, [rows, statuses]);
+
     const columnTotals = useMemo(() => {
-        return statuses.reduce((totals, status) => {
+        return filteredStatuses.reduce((totals, status) => {
             totals[status] = rows.reduce((sum, row) => sum + (row[status] || 0), 0);
             return totals;
         }, {});
-    }, [rows, statuses]);
+    }, [rows, filteredStatuses]);
 
     const grandTotal = useMemo(
         () => Object.values(columnTotals).reduce((sum, value) => sum + value, 0),
@@ -41,13 +47,13 @@ const TeamsTableWrapper = ({ data, statuses }) => {
     );
 
     const rowsWithFooter = useMemo(() => {
-        return [...rows, {
-            team: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals,
-            total: grandTotal
-        }];
+        return [
+            ...rows,
+            { team: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals, total: grandTotal }
+        ];
     }, [rows, columnTotals, grandTotal]);
 
-    const headers = useMemo(() => createTeamsHeaders(statuses), [statuses]);
+    const headers = useMemo(() => createTeamsHeaders(filteredStatuses), [filteredStatuses]);
 
     return (
         <div>
@@ -56,7 +62,7 @@ const TeamsTableWrapper = ({ data, statuses }) => {
                 data={rowsWithFooter}
                 title="Team Wise Status"
                 height="400px"
-            />
+                tHeadClasses='table-bg-dark' />
         </div>
     );
 };

@@ -79,7 +79,7 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
     // Create react-table columns
     const columns = useMemo(() => [
         {
-            Header: 'Equipment Type',
+            Header: 'Asset Type',
             accessor: 'type',
             Cell: ({ value }) => value || 'Unknown Type'
         },

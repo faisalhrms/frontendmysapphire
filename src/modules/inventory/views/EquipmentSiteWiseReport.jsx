@@ -5,9 +5,9 @@ import EquipmentSiteWiseReportTable from "@modules/inventory/components/Equipmen
 const EquipmentSiteWiseReport = () => {
     return (
         <>
-            <PageHeader currentpage="Equipment Site Wise Report" mainpage="Reports" />
+            <PageHeader currentpage="Asset Site Wise Report" mainpage="Reports" />
             <EquipmentSiteWiseReportTable
-                title="Equipment Site Wise Report"
+                title="Asset Site Wise Report"
                 apiUrl="/equipments/report-site-wise-data/"
             />
         </>
