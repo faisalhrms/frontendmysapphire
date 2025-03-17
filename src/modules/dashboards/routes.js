@@ -38,7 +38,7 @@ export const DASHBOARD_ROUTES = {
         permission: 'sr_dashboard',
     },
     Equipment: {
-        path: '/dashboards/equipment',
+        path: '/dashboards/asset',
         permission: 'it_equipment_dashboard',
     },
     CEO: {
