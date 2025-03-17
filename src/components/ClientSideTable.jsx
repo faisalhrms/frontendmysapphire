@@ -56,8 +56,8 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
                                 <tr key={rowIndex}
                                     className="border border-inherit border-solid !text-center hover:bg-gray-100">
                                     {headers.map((header, colIndex) => (
-                                        <td key={colIndex} className={`p-3 text-sm text-gray-700 ${header.align || '!text-center'}`}>
-                                            {rowData[header.accessor] || "N/A"}
+                                        <td key={colIndex} className={`p-3 text-sm text-gray-700 ${header.align || '!text-center'} ${header.classes || '!text-center'}`}>
+                                            {rowData[header.accessor] !== undefined && rowData[header.accessor] !== null ? rowData[header.accessor] : 'N/A'}
                                         </td>
                                     ))}
                                 </tr>
