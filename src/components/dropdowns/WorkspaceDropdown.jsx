@@ -2,7 +2,7 @@ import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {formatOptions} from "@helpers/formatters.js";
 import React from "react";
 
-const WorkspaceDropdown = ({ control, errors, data, company_id = null, department_id = null, multiple = false, dataKey = 'workspace', classes = '', haveLabel = false, name = 'workspace_id', saveNewOption = true, placeholder='Workspace', onSelectChange }) => {
+const WorkspaceDropdown = ({ control, errors, data, company_id = null, department_id = null, multiple = false, needObject = true, dataKey = 'workspace', classes = '', haveLabel = false, name = 'workspace_id', saveNewOption = true, placeholder='Workspace', onSelectChange }) => {
     const queryParams = [];
 
     if (company_id) {
@@ -27,7 +27,7 @@ const WorkspaceDropdown = ({ control, errors, data, company_id = null, departmen
             className={classes}
             apiUrl={`/select/pms/workspaces/${queryString}`}
             queryKeyBase={`pms_workspaces${queryParams.join('_')}`}
-            needObject={true}
+            needObject={needObject}
             onSelectChange={onSelectChange}
         />
     )

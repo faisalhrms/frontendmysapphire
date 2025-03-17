@@ -7,6 +7,8 @@ import ProjectDashboardTaskStats from "@modules/dashboards/pms/components/Projec
 import IconTabs from "@components/IconTabs.jsx";
 import ProjectDashboardStats from "@modules/dashboards/pms/components/ProjectDashboardStats.jsx";
 import {useSelector} from "react-redux";
+import ProjectDashboardProjectTasksStatuses
+    from "@modules/dashboards/pms/components/ProjectDashboardProjectTasksStatuses.jsx";
 
 
 const ProjectDashboard = () => {
@@ -23,6 +25,7 @@ const ProjectDashboard = () => {
                     { name: 'company_id', defaultValue: companyId},
                     { name: 'department_id'},
                     { name: 'workspace_id'},
+                    { name: 'projects'},
                 ],
             }),
             []
@@ -63,6 +66,16 @@ const ProjectDashboard = () => {
                         content: (
                             <>
                                 <ProjectDashboardTaskStats filters={filters}/>
+                            </>
+                        ),
+                    },
+                    {
+                        id: "project_status_overview",
+                        label: "Status Overview",
+                        icon: <i className="bx bx-stats"></i>,
+                        content: (
+                            <>
+                                <ProjectDashboardProjectTasksStatuses filters={filters}/>
                             </>
                         ),
                     },
