@@ -30,10 +30,11 @@ function transformTagsData(byTags, statuses) {
         });
         const tagTotal = sumCounts(aggregatedRow);
         rows.push({
-            tag: <span className="font-semibold text-[#232323]">{tag}</span>,
+            tag: <span className="font-semibold text-[#232323] text-left">{tag.toUpperCase()}</span>,
             rowType: "tag",
             ...aggregatedRow,
             total: tagTotal,
+            align: 'text-left'
         });
         ["high", "medium", "low"].forEach((priority) => {
             if (priorityData[priority]) {
@@ -69,23 +70,30 @@ function createHeaders(statuses) {
 const TagsTableWrapper = ({ byTags, statuses }) => {
     const transformedRows = useMemo(() => transformTagsData(byTags, statuses), [byTags, statuses]);
 
+    // Filter statuses with counts greater than 0
+    const filteredStatuses = useMemo(() => {
+        return statuses.filter(status => {
+            return transformedRows.some(row => row[status] > 0);
+        });
+    }, [transformedRows, statuses]);
+
     const footerRow = useMemo(() => {
         const aggregatedRows = transformedRows.filter((row) => row.rowType === "tag");
-        const footerTotals = statuses.reduce((totals, status) => {
+        const footerTotals = filteredStatuses.reduce((totals, status) => {
             totals[status] = aggregatedRows.reduce((sum, row) => sum + (row[status] || 0), 0);
             return totals;
         }, {});
         const grandTotal = Object.values(footerTotals).reduce((sum, value) => sum + value, 0);
-        return {tag: <span className="font-semibold text-[#232323]">Total</span>, ...footerTotals, total: grandTotal};
-    }, [transformedRows, statuses]);
+        return { tag: <span className="font-semibold text-[#232323]">Total</span>, ...footerTotals, total: grandTotal };
+    }, [transformedRows, filteredStatuses]);
 
     const rows = useMemo(() => [...transformedRows, footerRow], [transformedRows, footerRow]);
 
-    const headers = useMemo(() => createHeaders(statuses), [statuses]);
+    const headers = useMemo(() => createHeaders(filteredStatuses), [filteredStatuses]);
 
     return (
         <div>
-            <ClientSideTable config={{ headers }} data={rows} title="Tag Wise Status" height="800px" />
+            <ClientSideTable config={{ headers }} data={rows} title="Tag Wise Status" height="800px" tHeadClasses='table-bg-dark' />
         </div>
     );
 };
