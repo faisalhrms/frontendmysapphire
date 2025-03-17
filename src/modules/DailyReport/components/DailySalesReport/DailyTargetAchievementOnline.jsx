@@ -63,30 +63,30 @@ const data = [
     {
         date: "2025-03-15",
         day: "Monday",
-        storeType: "Offline", // Store type (Offline or Online)
+        storeType: "Offline",
         fullPriceOfflineTarget: 500,
         fullPriceOfflineSale: 450,
-        fullPriceOfflineAch: 90, // Achievement in percentage for Offline Full Price
+        fullPriceOfflineAch: 90,
         discountedOfflineTarget: 300,
         discountedOfflineSale: 250,
-        discountedOfflineAch: 83.33, // Achievement in percentage for Offline Discounted
+        discountedOfflineAch: 83.33,
         totalOfflineTarget: 800,
         totalOfflineSale: 700,
-        totalOfflineAch: 87.5, // Achievement in percentage for Offline Total
+        totalOfflineAch: 87.5,
 
         fullPriceOnlineTarget: 600,
         fullPriceOnlineSale: 550,
-        fullPriceOnlineAch: 91.67, // Achievement in percentage for Online Full Price
+        fullPriceOnlineAch: 91.67,
         discountedOnlineTarget: 400,
         discountedOnlineSale: 350,
-        discountedOnlineAch: 87.5, // Achievement in percentage for Online Discounted
+        discountedOnlineAch: 87.5,
         totalOnlineTarget: 1000,
         totalOnlineSale: 900,
-        totalOnlineAch: 90, // Achievement in percentage for Online Total
+        totalOnlineAch: 90,
 
         totalTarget: 1800,
         totalSale: 1600,
-        totalAch: 88.89 // Total achievement percentage
+        totalAch: 88.89
     },
     {
         date: "2025-03-16",

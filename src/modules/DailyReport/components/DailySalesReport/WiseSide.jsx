@@ -39,122 +39,6 @@ const StoreWise = ({ filters }) => {
                 return `${day.padStart(2, "0")}-${getMonthName(month)}-${year}`;
             });
     };
-
-    // const prepareDataForTable = (allData) => {
-    //     const tableData = [];
-    //     const dates = Object.keys(allData);
-    //
-    //     if (!dates.length) {
-    //         return tableData;
-    //     }
-    //
-    //     const offlineStructure = {};
-    //     const onlineValuesByDate = Array(dates.length).fill(0);
-    //
-    //     dates.forEach((dateKey, dateIndex) => {
-    //         const dateArray = allData[dateKey] || [];
-    //         const offlineObj = dateArray.find((x) => x.classification?.length >0);
-    //         if (offlineObj && offlineObj.classification) {
-    //             offlineObj.classification.forEach((classificationItem) => {
-    //                 const cName = classificationItem.classification_name;
-    //                 if (!offlineStructure[cName]) {
-    //                     offlineStructure[cName] = {};
-    //                 }
-    //                 classificationItem.regions?.forEach((regionItem) => {
-    //                     const rName = regionItem.region;
-    //                     if (!offlineStructure[cName][rName]) {
-    //                         offlineStructure[cName][rName] = {};
-    //                     }
-    //                     regionItem.stores?.forEach((storeItem) => {
-    //                         const sName = storeItem.store_name;
-    //                         if (!offlineStructure[cName][rName][sName]) {
-    //                             offlineStructure[cName][rName][sName] = Array(dates.length).fill(0);
-    //                         }
-    //                         offlineStructure[cName][rName][sName][dateIndex] = storeItem.net_value;
-    //                     });
-    //                 });
-    //             });
-    //         }
-    //
-    //         const onlineObj = dateArray.find((x) => !x.classification?.length);
-    //         if (onlineObj) {
-    //             onlineValuesByDate[dateIndex] = onlineObj.net_value;
-    //         }
-    //     });
-    //
-    //
-    //     tableData.push({
-    //         type: "Offline",
-    //         indent: 0,
-    //         isSubHeader: true,
-    //         values: Array(dates.length).fill(0),
-    //     });
-    //
-    //     Object.keys(offlineStructure).forEach((classificationName) => {
-    //         tableData.push({
-    //             type: classificationName,
-    //             indent: 1,
-    //             isSubHeader: true,
-    //             values: Array(dates.length).fill(0),
-    //         });
-    //
-    //         const classificationRowIndex = tableData.length - 1;
-    //
-    //         Object.keys(offlineStructure[classificationName]).forEach((regionName) => {
-    //             tableData.push({
-    //                 type: regionName,
-    //                 indent: 2,
-    //                 isSubHeader: true,
-    //                 values: Array(dates.length).fill(0),
-    //             });
-    //             const regionRowIndex = tableData.length - 1;
-    //
-    //             Object.keys(offlineStructure[classificationName][regionName]).forEach((storeName) => {
-    //                 const storeValues = offlineStructure[classificationName][regionName][storeName];
-    //                 tableData.push({
-    //                     type: storeName,
-    //                     indent: 3,
-    //                     values: storeValues,
-    //                 });
-    //
-    //                 storeValues.forEach((val, idx) => {
-    //                     tableData[regionRowIndex].values[idx] += val;
-    //                     tableData[classificationRowIndex].values[idx] += val;
-    //                     tableData[0].values[idx] += val;
-    //                 });
-    //             });
-    //
-    //
-    //         });
-    //
-    //     });
-    //
-    //     tableData.push({
-    //         type: "Online",
-    //         indent: 0,
-    //         isSubHeader: true,
-    //         values: onlineValuesByDate,
-    //     });
-    //
-    //
-    //     const grandTotals = Array(dates.length).fill(0);
-    //     tableData.forEach((row) => {
-    //
-    //         row.values.forEach((val, idx) => {
-    //             grandTotals[idx] += val;
-    //         });
-    //     });
-    //
-    //     tableData.push({
-    //         type: "Total",
-    //         isHeader: true,
-    //         values: grandTotals,
-    //     });
-    //
-    //     return tableData;
-    // };
-
-
     const prepareDataForTable = (allData) => {
         const tableData = [];
         const dates = Object.keys(allData);
@@ -191,7 +75,6 @@ const StoreWise = ({ filters }) => {
                             });
                         });
                     } else {
-                        // If no regions, treat it as a flat structure
                         offlineStructure[cName]["flat"] = offlineStructure[cName]["flat"] || [];
                         offlineStructure[cName]["flat"][dateIndex] = classificationItem.net_value;
                     }
