@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT } from "../../services/wiseside_services.js";
 
@@ -48,11 +47,11 @@ const SalesDataTable = () => {
     const mtdData = data.mtd?.[0]?.regions?.[0]?.stores || [];
 
     return (
-        <div className="w-full mt-4 bg-white p-4">
+        <div className="w-full mt-4  p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Last Day Sales Table */}
-                <div className="mt-4 p-4 shadow-lg">
-                    <h2 className="text-center text-xl font-bold">Last Day Sales</h2>
+
+                <div className="mt-4  bg-white p-4 shadow-lg">
+                    <h2 className="text-left text-xl font-bold">Last Day Sales</h2>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white border-collapse">
                             <thead>
@@ -95,9 +94,8 @@ const SalesDataTable = () => {
                     </div>
                 </div>
 
-                {/* MTD Sales Table */}
-                <div className="bg-white p-4 shadow-lg">
-                    <h2 className="text-center text-xl font-bold">MTD Sales</h2>
+                <div className="mt-4  bg-white p-4 shadow-lg">
+                    <h2 className="text-left text-xl font-bold">MTD Sales</h2>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white border-collapse">
                             <thead>
