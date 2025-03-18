@@ -49,10 +49,13 @@ const StoreWise = ({ filters }) => {
 
         const offlineStructure = {};
         const onlineValuesByDate = Array(dates.length).fill(0);
+        const offlineValuesByDate = Array(dates.length).fill(0);
+        const totalValuesByDate = Array(dates.length).fill(0);
 
         dates.forEach((dateKey, dateIndex) => {
             const dateArray = allData[dateKey] || [];
             const offlineObj = dateArray.find((x) => x.classification?.length > 0);
+
 
             if (offlineObj && offlineObj.classification) {
                 offlineObj.classification.forEach((classificationItem) => {
@@ -72,11 +75,13 @@ const StoreWise = ({ filters }) => {
                                     offlineStructure[cName][rName][sName] = Array(dates.length).fill(0);
                                 }
                                 offlineStructure[cName][rName][sName][dateIndex] = storeItem.net_value;
+                                offlineValuesByDate[dateIndex] += storeItem.net_value;
                             });
                         });
                     } else {
                         offlineStructure[cName]["flat"] = offlineStructure[cName]["flat"] || [];
                         offlineStructure[cName]["flat"][dateIndex] = classificationItem.net_value;
+                        offlineValuesByDate[dateIndex] += classificationItem.net_value;
                     }
                 });
             }
@@ -85,13 +90,15 @@ const StoreWise = ({ filters }) => {
             if (onlineObj) {
                 onlineValuesByDate[dateIndex] = onlineObj.net_value;
             }
+
+            totalValuesByDate[dateIndex] = offlineValuesByDate[dateIndex] + onlineValuesByDate[dateIndex];
         });
 
         tableData.push({
             type: "Offline",
             indent: 0,
             isSubHeader: true,
-            values: Array(dates.length).fill(0),
+            values: offlineValuesByDate,
         });
 
         Object.keys(offlineStructure).forEach((classificationName) => {
@@ -105,7 +112,6 @@ const StoreWise = ({ filters }) => {
             const classificationRowIndex = tableData.length - 1;
 
             if (offlineStructure[classificationName]["flat"]) {
-
                 const flatValues = offlineStructure[classificationName]["flat"];
                 flatValues.forEach((val, idx) => {
                     tableData[classificationRowIndex].values[idx] += val;
@@ -148,12 +154,8 @@ const StoreWise = ({ filters }) => {
             values: onlineValuesByDate,
         });
 
-        const grandTotals = Array(dates.length).fill(0);
-        tableData.forEach((row) => {
-            row.values.forEach((val, idx) => {
-                grandTotals[idx] += val;
-            });
-        });
+
+        const grandTotals = totalValuesByDate;
 
         tableData.push({
             type: "Total",
@@ -163,6 +165,130 @@ const StoreWise = ({ filters }) => {
 
         return tableData;
     };
+    // const prepareDataForTable = (allData) => {
+    //     const tableData = [];
+    //     const dates = Object.keys(allData);
+    //
+    //     if (!dates.length) {
+    //         return tableData;
+    //     }
+    //
+    //     const offlineStructure = {};
+    //     const onlineValuesByDate = Array(dates.length).fill(0);
+    //
+    //     dates.forEach((dateKey, dateIndex) => {
+    //         const dateArray = allData[dateKey] || [];
+    //         const offlineObj = dateArray.find((x) => x.classification?.length > 0);
+    //
+    //         if (offlineObj && offlineObj.classification) {
+    //             offlineObj.classification.forEach((classificationItem) => {
+    //                 const cName = classificationItem.classification_name;
+    //                 if (!offlineStructure[cName]) {
+    //                     offlineStructure[cName] = {};
+    //                 }
+    //                 if (classificationItem.regions && classificationItem.regions.length > 0) {
+    //                     classificationItem.regions.forEach((regionItem) => {
+    //                         const rName = regionItem.region;
+    //                         if (!offlineStructure[cName][rName]) {
+    //                             offlineStructure[cName][rName] = {};
+    //                         }
+    //                         regionItem.stores?.forEach((storeItem) => {
+    //                             const sName = storeItem.store_name;
+    //                             if (!offlineStructure[cName][rName][sName]) {
+    //                                 offlineStructure[cName][rName][sName] = Array(dates.length).fill(0);
+    //                             }
+    //                             offlineStructure[cName][rName][sName][dateIndex] = storeItem.net_value;
+    //                         });
+    //                     });
+    //                 } else {
+    //                     offlineStructure[cName]["flat"] = offlineStructure[cName]["flat"] || [];
+    //                     offlineStructure[cName]["flat"][dateIndex] = classificationItem.net_value;
+    //                 }
+    //             });
+    //         }
+    //
+    //         const onlineObj = dateArray.find((x) => !x.classification?.length);
+    //         if (onlineObj) {
+    //             onlineValuesByDate[dateIndex] = onlineObj.net_value;
+    //         }
+    //     });
+    //
+    //     tableData.push({
+    //         type: "Offline",
+    //         indent: 0,
+    //         isSubHeader: true,
+    //         values: Array(dates.length).fill(0),
+    //     });
+    //
+    //     Object.keys(offlineStructure).forEach((classificationName) => {
+    //         tableData.push({
+    //             type: classificationName,
+    //             indent: 1,
+    //             isSubHeader: true,
+    //             values: Array(dates.length).fill(0),
+    //         });
+    //
+    //         const classificationRowIndex = tableData.length - 1;
+    //
+    //         if (offlineStructure[classificationName]["flat"]) {
+    //
+    //             const flatValues = offlineStructure[classificationName]["flat"];
+    //             flatValues.forEach((val, idx) => {
+    //                 tableData[classificationRowIndex].values[idx] += val;
+    //                 tableData[0].values[idx] += val;
+    //             });
+    //         } else {
+    //             Object.keys(offlineStructure[classificationName]).forEach((regionName) => {
+    //                 if (regionName !== "flat") {
+    //                     tableData.push({
+    //                         type: regionName,
+    //                         indent: 2,
+    //                         isSubHeader: true,
+    //                         values: Array(dates.length).fill(0),
+    //                     });
+    //                     const regionRowIndex = tableData.length - 1;
+    //
+    //                     Object.keys(offlineStructure[classificationName][regionName]).forEach((storeName) => {
+    //                         const storeValues = offlineStructure[classificationName][regionName][storeName];
+    //                         tableData.push({
+    //                             type: storeName,
+    //                             indent: 3,
+    //                             values: storeValues,
+    //                         });
+    //
+    //                         storeValues.forEach((val, idx) => {
+    //                             tableData[regionRowIndex].values[idx] += val;
+    //                             tableData[classificationRowIndex].values[idx] += val;
+    //                             tableData[0].values[idx] += val;
+    //                         });
+    //                     });
+    //                 }
+    //             });
+    //         }
+    //     });
+    //
+    //     tableData.push({
+    //         type: "Online",
+    //         indent: 0,
+    //         isSubHeader: true,
+    //         values: onlineValuesByDate,
+    //     });
+    //
+    //     const grandTotals = Array(dates.length).fill(0);
+    //     tableData.forEach((row) => {
+    //         row.values.forEach((val, idx) => {
+    //             grandTotals[idx] += val;
+    //         });
+    //     });
+    //
+    //     tableData.push({
+    //         type: "Total",
+    //         isHeader: true,
+    //         values: grandTotals,
+    //     });
+    //
+    //     return tableData;
+    // };
 
 
     const tableData = prepareDataForTable(newData);
@@ -175,8 +301,8 @@ const StoreWise = ({ filters }) => {
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) return "bg-redd font-bold";
-        if (row.isSubHeader) return "bg-yellow-50 font-semibold";
+        if (row.isHeader) return "bg-gray-200 font-bold";
+        if (row.isSubHeader) return "bg-yellow-50 font-medium";
         return "";
     };
 
@@ -191,18 +317,18 @@ const StoreWise = ({ filters }) => {
                 <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg">
                     <thead className="sticky top-0 z-10">
                     <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                        <th className="border border-gray-700 p-2 font-bold sticky left-0 z-20 min-w-40 dark:text-gray-200 dark:bg-bodybg">
+                        <th className="border border-gray-700 p-2 font-bold  min-w-40 dark:text-gray-200 dark:bg-bodybg">
                             Store Type
                         </th>
                         {dateHeaders.map((date, index) => (
                             <th
                                 key={index}
-                                className="border border-gray-700 p-2 font-bold text-center min-w-28 dark:text-gray-200 dark:bg-bodybg "
+                                className="border border-gray-700 p-2 font-normal text-center min-w-28 dark:text-gray-200 dark:bg-bodybg "
                             >
                                 {date}
                             </th>
                         ))}
-                        <th className="border border-gray-700 p-2 font-bold text-center min-w-28 dark:text-gray-200 dark:bg-bodybg">
+                        <th className="border border-gray-900 p-2 font-bold text-center min-w-28 dark:text-gray-200 dark:bg-bodybg">
                             Total
                         </th>
                     </tr>
@@ -214,11 +340,11 @@ const StoreWise = ({ filters }) => {
                         return (
                             <tr key={rowIndex} className={getRowStyle(row)}>
                                 <td
-                                    className={`border border-gray-300 p-2 font-medium sticky left-0 z-10 dark:text-gray-200 dark:bg-bodybg${
+                                    className={`border border-gray-300 p-2  dark:text-gray-200 dark:bg-bodybg${
                                         row.isHeader
-                                            ? "bg-success"
+                                            ? "bg-success font-bold "
                                             : row.isSubHeader
-                                                ? "bg-yellow-50"
+                                                ? "bg-yellow-50 font-bold"
                                                 : "bg-white"
                                     }`}
                                     style={{
