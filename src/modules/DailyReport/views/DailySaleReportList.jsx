@@ -70,14 +70,6 @@ const DailySaleReportList = () => {
                             >
                                 Daily Target Achievement
                             </Link>
-
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "GrossReturn" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("GrossReturn")}
-                            >
-                                Online (Gross Sale before Return)
-                            </Link>
                             <Link
                                 to="#"
                                 className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Return" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
@@ -85,6 +77,14 @@ const DailySaleReportList = () => {
                             >
                                 CY Vs LY Growth
                             </Link>
+                            <Link
+                                to="#"
+                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "GrossReturn" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
+                                onClick={() => setActiveTab("GrossReturn")}
+                            >
+                                Online (Gross Sale before Return)
+                            </Link>
+
                             <Link
                                 to="#"
                                 className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "DailySales" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
@@ -130,13 +130,13 @@ const DailySaleReportList = () => {
                     {activeTab === "OnlineAndBM" && (
                         <DailyTargetAchievementOnline filters={filters} loading={loading} />
                     )}
-
-                    {activeTab === "GrossReturn" && (
-                        <OnlineGrossSaleBeforeReturn filters={filters} loading={loading} />
-                    )}
                     {activeTab === "Return" && (
                         <CYVsLYGrowth filters={filters} loading={loading} />
                     )}
+                    {activeTab === "GrossReturn" && (
+                        <OnlineGrossSaleBeforeReturn filters={filters} loading={loading} />
+                    )}
+
                     {activeTab === "DailySales" && (
                         <DailySalesReportStoreWise filters={filters} loading={loading} />
                     )}
