@@ -31,11 +31,13 @@ const LaptopList = () => {
             ),
         },
         { Header: "Code", accessor: "code", Cell: ({ value }) => value ?? "N/A" },
+
         { Header: "Description", accessor: "description", Cell: ({ value }) => value ?? "N/A" },
         { Header: "Specification", accessor: "specs", Cell: ({ value }) => value ?? "N/A" },
         { Header: "Serial No", accessor: "serial_no", Cell: ({ value }) => value ?? "N/A" },
-        { Header: "Custodian", accessor: "custodian", Cell: ({ value }) => value ?? "N/A" },
+
         { Header: "Email", accessor: "email", Cell: ({ value }) => value ?? "N/A" },
+        { Header: "Custodian", accessor: "custodian", Cell: ({ value }) => value ?? "N/A" },
         { Header: "Employee Status", accessor: "emp_status", Cell: ({ value }) => value ?? "N/A" },
         {
             Header: "Laptop issued as per policy",
