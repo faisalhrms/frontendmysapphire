@@ -43,6 +43,7 @@ export const useImporterClassification = (id) => {
       setValue("importer", importerClassification.importer);
       setValue("classification", importerClassification.classification);
       setValue("focus_buyers", importerClassification.focus_buyers);
+      setValue("data_category", importerClassification.data_category?.id);
       setValue("product_country", importerClassification.product_country);
     }
   }, [importerClassification, setValue]);

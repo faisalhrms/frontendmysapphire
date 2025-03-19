@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import { BEIRHOLM_BI_ROUTES } from "@modules/beirholm-bi/routes.js";
 import { toTitleCase } from "@helpers/formatters.js";
+import ClassificationModel from "@modules/beirholm-bi/components/ClassificationModel.jsx";
+import { downloadImporterClassificationSample } from "@modules/beirholm-bi/services/importerClassificationService.js";
 
 const ImporterClassificationList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tableKey, setTableKey] = useState(Date.now());
+  const openClassificationModel = () => setIsModalOpen(true);
+  const closeClassificationModel = () => setIsModalOpen(false);
+  const refreshTable = () => {
+    setTableKey(Date.now());
+  };
+  const downloadSample = () => {
+    downloadImporterClassificationSample();
+  };
+
   const columns = [
     {
       Header: "Actions",
@@ -22,7 +35,7 @@ const ImporterClassificationList = () => {
         </div>
       )
     },
-     {
+    {
       Header: "Country",
       accessor: (row) => toTitleCase(row.product_country)
     },
@@ -50,28 +63,55 @@ const ImporterClassificationList = () => {
   ];
 
   const buttons = (
-    <div className="grid grid-cols-1 sm:grid-cols-1">
-      <Link
-        to={BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_CREATE.path}
-        className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-      >
-        <i className="ri-add-line font-semibold align-middle"></i> Add
-      </Link>
-    </div>
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-1">
+        <button
+          className="hs-dropdown-toggle ti-btn ti-btn-info-full !py-1 !px-2 !text-[0.75rem]"
+          onClick={downloadSample}
+          title="Download Sample File"
+        >
+          <i className="ri-download-line"></i>
+        </button>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-1">
+        <button
+          className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]"
+          onClick={openClassificationModel}
+          title="Upload Focus Buyers & Classifications"
+        >
+          <i className="ri-upload-line"></i>
+        </button>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-1">
+        <Link
+          to={BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_CREATE.path}
+          className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+        >
+          <i className="ri-add-line font-semibold align-middle"></i> Add
+        </Link>
+      </div>
+    </>
   );
 
   return (
     <>
       <PageHeader
-        currentpage="Importer Classification"
-        mainpage="Importer Classification"
+        currentpage="Classification & Focus Buyer"
+        mainpage="Classification & Focus Buyer"
       />
       <DataTable
+        key={tableKey}
         columns={columns}
-        title="Importer Classifications"
+        title="Classification & Focus Buyer"
         apiUrl="classification/datatable/"
         buttons={buttons}
       />
+      {isModalOpen && (
+        <ClassificationModel
+          closeModal={closeClassificationModel}
+          refreshTable={refreshTable}
+        />
+      )}
     </>
   );
 };

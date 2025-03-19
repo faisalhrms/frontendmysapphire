@@ -4,6 +4,8 @@ import Notify from "@helpers/toastNotifications.js";
 export const productCountry = [
     { value: 'pakistan', label: 'Pakistan' },
     { value: 'india', label: 'India' },
+    { value: 'vietnam', label: 'Vietnam' },
+    { value: 'turkey', label: 'Turkey' },
 ];
 
 const downloadFile = async (url, defaultFilename) => {
