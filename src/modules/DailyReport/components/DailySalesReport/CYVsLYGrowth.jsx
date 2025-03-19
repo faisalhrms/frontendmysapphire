@@ -206,7 +206,7 @@ const CYVsLYGrowth = ({ filters }) => {
                                 <td className="py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg">
                                 </td>
                                 <td className="py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg">
-                                    TOTAL
+                                    Total
                                 </td>
 
                                 <td className="py-2 px-2 border border-gray-400 text-right font-bold dark:text-gray-200 dark:bg-bodybg">

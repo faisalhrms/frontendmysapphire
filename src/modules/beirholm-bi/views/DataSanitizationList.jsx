@@ -5,16 +5,15 @@ import DataSanitizeModel from "@modules/beirholm-bi/components/DataSanitizeModel
 import DataSanitizeService from "@modules/beirholm-bi/services/DataSanitizeService.js";
 import UploadErrorModal from "@modules/beirholm-bi/components/UploadErrorModal.jsx";
 import DownloadSampleFileButton from "@modules/beirholm-bi/components/DownloadSampleFileButton.jsx";
+import ProgressBar from "@components/ProgressBar.jsx";
 
 const DataSanitizationList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUploadErrorModalOpen, setIsUploadErrorModalOpen] = useState(false);
     const [currentJobId, setCurrentJobId] = useState(null);
-
-    // Use a key to force re-mount of DataTable on refresh.
     const [tableKey, setTableKey] = useState(Date.now());
+    const [loadingActions, setLoadingActions] = useState({});
 
-    // Function to refresh the DataTable by updating the key.
     const refreshTable = () => {
         setTableKey(Date.now());
     };
@@ -34,65 +33,118 @@ const DataSanitizationList = () => {
     const columns = [
         {
             Header: "Actions",
-            Cell: ({row}) => (
-                <div className="flex space-x-2">
-                    <button
-                        onClick={() =>
-                            DataSanitizeService.downloadErrorFile(row.original.job_id)
-                        }
-                        title="Download Error File"
-                        className="ti-btn ti-btn-warning ti-btn-sm"
-                    >
-                        <i className="ri-error-warning-line"></i>
-                    </button>
-                    <button
-                        onClick={() => {
-                            DataSanitizeService.reprocessJob(row.original.job_id)
-                                .then(() => {
-                                    // After reprocessing, refresh the table.
-                                    refreshTable();
-                                })
-                                .catch((err) => console.error(err));
-                        }}
-                        title="Reprocess"
-                        className="ti-btn ti-btn-danger ti-btn-sm"
-                    >
-                        <i className="ri-refresh-line"></i>
-                    </button>
-                    <button
-                        onClick={() => DataSanitizeService.downloadRawFile(row.original.id)}
-                        title="Download Raw"
-                        className="ti-btn ti-btn-info ti-btn-sm"
-                    >
-                        <i className="ri-download-2-line"></i>
-                    </button>
-                    <button
-                        onClick={() =>
-                            DataSanitizeService.downloadCleanFile(row.original.id)
-                        }
-                        title="Download Clean"
-                        className="ti-btn ti-btn-secondary ti-btn-sm"
-                    >
-                        <i className="ri-download-cloud-line"></i>
-                    </button>
-                    <button
-                        onClick={() => openUploadErrorModal(row.original.job_id)}
-                        title="Upload Missing Rules"
-                        className="ti-btn ti-btn-dark ti-btn-sm"
-                    >
-                        <i className="ri-upload-cloud-line"></i>
-                    </button>
-                </div>
-            ),
+            Cell: ({row}) => {
+                const jobId = row.original.job_id;
+                const fileId = row.original.id;
+                return (
+                    <div className="flex space-x-2">
+                        <button
+                            onClick={() => {
+                                const key = `downloadError_${jobId}`;
+                                setLoadingActions((prev) => ({...prev, [key]: true}));
+                                DataSanitizeService.downloadErrorFile(jobId)
+                                    .finally(() =>
+                                        setLoadingActions((prev) => ({...prev, [key]: false}))
+                                    );
+                            }}
+                            title="Download Error File"
+                            className="ti-btn ti-btn-warning ti-btn-sm"
+                            disabled={loadingActions[`downloadError_${jobId}`]}
+                        >
+                            {loadingActions[`downloadError_${jobId}`] ? (
+                                <i className="ri-loader-2-line animate-spin"></i>
+                            ) : (
+                                <i className="ri-error-warning-line"></i>
+                            )}
+                        </button>
+                        <button
+                            onClick={() => {
+                                const key = `reprocess_${jobId}`;
+                                setLoadingActions((prev) => ({...prev, [key]: true}));
+                                DataSanitizeService.reprocessJob(jobId)
+                                    .then(() => refreshTable())
+                                    .catch((err) => console.error(err))
+                                    .finally(() =>
+                                        setLoadingActions((prev) => ({...prev, [key]: false}))
+                                    );
+                            }}
+                            title="Reprocess"
+                            className="ti-btn ti-btn-danger ti-btn-sm"
+                            disabled={loadingActions[`reprocess_${jobId}`]}
+                        >
+                            {loadingActions[`reprocess_${jobId}`] ? (
+                                <i className="ri-loader-2-line animate-spin"></i>
+                            ) : (
+                                <i className="ri-refresh-line"></i>
+                            )}
+                        </button>
+                        <button
+                            onClick={() => {
+                                const key = `downloadRaw_${fileId}`;
+                                setLoadingActions((prev) => ({...prev, [key]: true}));
+                                DataSanitizeService.downloadRawFile(fileId)
+                                    .finally(() =>
+                                        setLoadingActions((prev) => ({...prev, [key]: false}))
+                                    );
+                            }}
+                            title="Download Raw"
+                            className="ti-btn ti-btn-info ti-btn-sm"
+                            disabled={loadingActions[`downloadRaw_${fileId}`]}
+                        >
+                            {loadingActions[`downloadRaw_${fileId}`] ? (
+                                <i className="ri-loader-2-line animate-spin"></i>
+                            ) : (
+                                <i className="ri-download-2-line"></i>
+                            )}
+                        </button>
+                        <button
+                            onClick={() => {
+                                const key = `downloadClean_${fileId}`;
+                                setLoadingActions((prev) => ({...prev, [key]: true}));
+                                DataSanitizeService.downloadCleanFile(fileId)
+                                    .finally(() =>
+                                        setLoadingActions((prev) => ({...prev, [key]: false}))
+                                    );
+                            }}
+                            title="Download Clean"
+                            className="ti-btn ti-btn-secondary ti-btn-sm"
+                            disabled={loadingActions[`downloadClean_${fileId}`]}
+                        >
+                            {loadingActions[`downloadClean_${fileId}`] ? (
+                                <i className="ri-loader-2-line animate-spin"></i>
+                            ) : (
+                                <i className="ri-download-cloud-line"></i>
+                            )}
+                        </button>
+                        <button
+                            onClick={() => openUploadErrorModal(jobId)}
+                            title="Upload Missing Rules"
+                            className="ti-btn ti-btn-dark ti-btn-sm"
+                        >
+                            <i className="ri-upload-cloud-line"></i>
+                        </button>
+                    </div>
+                );
+            },
         },
         {Header: "File Name", accessor: "file_name"},
+        {Header: "Product Country", accessor: "product_country"},
         {
             Header: "Uploaded At",
             accessor: "uploaded_at",
             Cell: ({value}) => new Date(value).toLocaleString(),
         },
         {Header: "Status", accessor: "status"},
-        {Header: "Progress", accessor: "progress"},
+        {
+            Header: "Progress",
+            accessor: "progress",
+            Cell: ({value}) => (
+                <div className="flex items-center">
+                    <ProgressBar value={value} barColor="!bg-success" withStatus={false}/>
+                </div>
+            )
+        },
+
         {Header: "Data Category", accessor: "data_category_name"},
     ];
 
@@ -116,7 +168,6 @@ const DataSanitizationList = () => {
     return (
         <>
             <PageHeader currentpage="Raw Data Uploads" mainpage="Data Uploads"/>
-            {/* Pass the tableKey as the key prop to force re-mount */}
             <DataTable
                 key={tableKey}
                 columns={columns}
@@ -127,14 +178,11 @@ const DataSanitizationList = () => {
             {isModalOpen && (
                 <DataSanitizeModel
                     closeModal={closeDataSanitizeModal}
-                    refreshTable={refreshTable} // Pass refresh callback to modal
+                    refreshTable={refreshTable}
                 />
             )}
             {isUploadErrorModalOpen && currentJobId && (
-                <UploadErrorModal
-                    jobId={currentJobId}
-                    closeModal={closeUploadErrorModal}
-                />
+                <UploadErrorModal jobId={currentJobId} closeModal={closeUploadErrorModal}/>
             )}
         </>
     );
