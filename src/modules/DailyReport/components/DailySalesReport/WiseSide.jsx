@@ -351,7 +351,8 @@ const StoreWise = ({ filters }) => {
                             });
                         } else {
                             structure[cType][cName]["flat"] = structure[cType][cName]["flat"] || [];
-                            structure[cType][cName]["flat"][dateIndex] = (structure[cType][cName]["flat"][dateIndex] || 0);
+
+                            structure[cType][cName]["flat"][dateIndex] = (structure[cType][cName]["flat"][dateIndex] || 0) + classificationItem.net_value;
                             // valuesByDate[cType][dateIndex] += classificationItem.net_value;
                         }
                     });
@@ -429,6 +430,7 @@ const StoreWise = ({ filters }) => {
 
         return tableData;
     };
+
 
 
 
