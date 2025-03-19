@@ -459,7 +459,7 @@ const StoreWise = ({ filters }) => {
                 <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg">
                     <thead className="sticky left-0 z-20 ">
                     <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                        <th className="border bg-white border-gray-700 p-2 font-bold  min-w-50 dark:text-gray-200 dark:bg-bodybg sticky left-0 z-50" style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                        <th className="border bg-white border-gray-700 p-2 font-bold  min-w-80 dark:text-gray-200 dark:bg-bodybg sticky left-0 z-50" style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
                             Store Type
                         </th>
                         {dateHeaders.map((date, index) => (

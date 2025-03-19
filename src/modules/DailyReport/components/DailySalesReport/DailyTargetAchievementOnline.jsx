@@ -149,14 +149,23 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                     <table className="min-w-full table-auto border-collapse border border-gray-400">
                         <thead style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
                         <tr>
-                            <th rowSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>
-                            <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center">Store Type</th>
+                            {/*<th rowSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>*/}
+                            <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+
+                            </th>
+                            <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}
+                            >Store Type</th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline</th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
                         </tr>
                         <tr>
-                            <th className="py-2 px-4 border border-gray-400 p-2 text-center"></th>
+                            <th colSpan="1"
+                                className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}
+                            ></th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
@@ -166,8 +175,12 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                             <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 text-center"></th>
                         </tr>
                         <tr>
-                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Date</th>
-                            <th className="py-2 px-4 border border-gray-400 p-2 text-center font-bold">Day</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>Date</th>
+                            <th colSpan="1"
+                                className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>Day
+                            </th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
@@ -194,10 +207,12 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                         <tbody>
                         {data.map((row, index) => (
                             <tr key={index}>
-                                <td className="py-2 px-2 border border-gray-400 font-bold text-left">
+                                <td className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"
+                                    style={{backgroundColor: "white", color: "black" }}>
                                     {formatApiDate(row.date)}
                                 </td>
-                                <td className="py-2 px-2 border border-gray-400 font-bold text-left">
+                                <td className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-16 z-50"
+                                    style={{backgroundColor: "white", color: "black"}}>
                                     {row.day}
                                 </td>
                                 <td className="py-2 px-2 border border-gray-400 text-right">
