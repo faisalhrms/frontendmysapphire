@@ -7,6 +7,10 @@ import ChatBot from "@modules/beirholm-bi/views/ChatBot.jsx";
 import CompetitorAnalysis from "@modules/beirholm-bi/views/CompetitorAnalysis.jsx";
 import CorrectionPatternsList from "@modules/beirholm-bi/views/CorrectionPatternsList.jsx";
 import CorrectionPatternsForm from "@modules/beirholm-bi/components/CorrectionPatternsForm.jsx";
+import ExchangeRateList from "@modules/beirholm-bi/views/ExchangeRateList.jsx";
+import ExchangeRateForm from "@modules/beirholm-bi/components/ExchangeRateForm.jsx";
+import importerClassificationList from "@modules/beirholm-bi/views/ImporterClassificationList.jsx";
+import importerClassificationForm from "@modules/beirholm-bi/components/ImporterClassificationForm.jsx";
 
 export const BEIRHOLM_BI_ROUTES = {
     FIELD_DEFINITION_READ: {
@@ -48,6 +52,24 @@ export const BEIRHOLM_BI_ROUTES = {
     COMPETITOR_ANALYSIS: {
         path: '/module/competitor/analysis',
         permission: 'view_competitor_analysis',
+    },
+
+    EXCHANGE_RATE_READ: {
+        path: '/module/exchange/rate',
+        permission: 'view_exchange_rate',
+    },
+   EXCHANGE_RATE_CREATE: {
+        path: '/module/exchange/rate/add/',
+        permission: 'add_exchange_rate',
+    },
+
+    IMPORTER_CLASSIFICATION_READ: {
+        path: '/module/classification',
+        permission: 'view_importer_classification',
+    },
+   IMPORTER_CLASSIFICATION_CREATE: {
+        path: '/module/classification/add/',
+        permission: 'add_importer_classification',
     },
 };
 
@@ -99,5 +121,25 @@ export const MODULE_ROUTES = [
         path: BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
         component: CompetitorAnalysis,
         permission: BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission,
+    },
+    {
+        path: BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_READ.path,
+        component: ExchangeRateList,
+        permission: BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_READ.permission,
+    },
+    {
+        path: BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_CREATE.path,
+        component: ExchangeRateForm,
+        permission: BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_CREATE.permission,
+    },
+    {
+        path: BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_READ.path,
+        component: importerClassificationList,
+        permission: BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_READ.permission,
+    },
+    {
+        path: BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_CREATE.path,
+        component: importerClassificationForm,
+        permission: BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_CREATE.permission,
     },
 ];
