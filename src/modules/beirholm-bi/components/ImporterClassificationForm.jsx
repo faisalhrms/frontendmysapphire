@@ -8,6 +8,7 @@ import { BEIRHOLM_BI_ROUTES } from "@modules/beirholm-bi/routes.js";
 import { useImporterClassification } from "@modules/beirholm-bi/hooks/useImporterClassification.js";
 import FormSelect from "@components/form/FormSelect.jsx";
 import {productCountry} from "@modules/beirholm-bi/services/DataSanitizeService.js";
+import {formatOptions} from "@helpers/formatters.js";
 
 const ImporterClassificationForm = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const ImporterClassificationForm = () => {
   const { handleSubmit, control, errors, isSubmitting, onSubmit, importerClassification } =
     useImporterClassification(id);
 
+  const classification = importerClassification || {};
   const submitHandler = async (data) => {
     await onSubmit(data);
     navigate(BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_READ.path);
@@ -56,7 +58,7 @@ const ImporterClassificationForm = () => {
                     placeholder="Select Data Category"
                     apiUrl="/select/data/categories/"
                     queryKeyBase="data_category"
-                    preselectedOptions={[]}
+                    preselectedOptions={formatOptions(classification, 'data_category')}
                     saveOptionEndpoint="/select/data/category/"
                     allowSaveNewOption={true}
                   />
