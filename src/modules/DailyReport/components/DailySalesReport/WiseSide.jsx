@@ -324,7 +324,6 @@ const StoreWise = ({ filters }) => {
                     valuesByDate[cType] = Array(dates.length).fill(0);
                 }
 
-                // Process classification and regions for each c_type
                 if (cTypeObj.classification?.length) {
                     cTypeObj.classification.forEach((classificationItem) => {
                         const cName = classificationItem.classification_name;
@@ -445,7 +444,7 @@ const StoreWise = ({ filters }) => {
 
     const getRowStyle = (row) => {
         if (row.isHeader) return "bg-gray-200 font-bold  sticky left-0 z-20";
-        if (row.isSubHeader) return "bg-yellow-50 font-medium  sticky left-0 z-20";
+        if (row.isSubHeader) return "bg-gray-200 font-medium  sticky left-0 z-20";
         return "";
     };
 
@@ -460,7 +459,7 @@ const StoreWise = ({ filters }) => {
                 <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg">
                     <thead className="sticky left-0 z-20 ">
                     <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                        <th className="border bg-white border-gray-700 p-2 font-bold  min-w-50 dark:text-gray-200 dark:bg-bodybg sticky left-0 z-20" style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                        <th className="border bg-white border-gray-700 p-2 font-bold  min-w-50 dark:text-gray-200 dark:bg-bodybg sticky left-0 z-50" style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
                             Store Type
                         </th>
                         {dateHeaders.map((date, index) => (
@@ -483,11 +482,11 @@ const StoreWise = ({ filters }) => {
                         return (
                             <tr key={rowIndex} className={getRowStyle(row)}>
                                 <td
-                                    className={`border border-gray-300 p-2 bg-white dark:text-gray-200 dark:bg-bodybg  sticky left-0 z-20 ${
+                                    className={`border border-gray-300 p-2 bg-gray-200 dark:text-gray-200 dark:bg-bodybg  sticky left-0 z-20 ${
                                         row.isHeader
-                                            ? "bg-yy font-bold   sticky left-0 z-20"
+                                            ? "bg-yy font-bold    left-0 z-50"
                                             : row.isSubHeader
-                                                ? "bg-yellow-50 font-bold  sticky left-0 z-20"
+                                                ? "bg-yellow-50 font-bold   left-0 z-20"
                                                 : "bg-white"
                                     }`}
                                     style={{
