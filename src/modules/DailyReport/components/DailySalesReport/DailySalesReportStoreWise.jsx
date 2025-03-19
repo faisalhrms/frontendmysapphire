@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT } from "../../services/wiseside_services.js";
-
+import { formatNumberWithCommas } from "@helpers/formatters.js";
 const SalesDataTable  = () => {
     const [lastDayData, setLastDayData] = useState([]);
     const [mtdData, setMtdData] = useState([]);
@@ -80,26 +80,26 @@ const SalesDataTable  = () => {
                                 <>
                                     <tr key={classification.classification_name}>
                                         <td className={`px-4 py-1 border border-gray-300  bg-gray-200 ${getTextStyle(true)}`}>
-                                            {classification.classification_name}
+                                            {(classification.classification_name)}
                                         </td>
 
-                                        <td className={`px-4 py-1 border border-gray-300  font-bold bg-gray-200 ` }>
-                                            {classification.fullprice_sale_qty}
+                                        <td className={`px-4 py-1 border border-gray-300  font-bold bg-gray-200 text-right ` }>
+                                            {formatNumberWithCommas(classification.fullprice_sale_qty)}
                                         </td>
-                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                            {classification.fullprice_sale_value}
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.fullprice_sale_value)}
                                         </td>
-                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                            {classification.discounted_sale_qty}
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.discounted_sale_qty)}
                                         </td>
-                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                            {classification.discounted_sale_value}
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                            {formatNumberWithCommas(classification.discounted_sale_value)}
                                         </td>
-                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200`}>
-                                            {classification.total_sale_qty}
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.total_sale_qty)}
                                         </td>
-                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200`}>
-                                            {classification.total_sale_value}
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.total_sale_value)}
                                         </td>
 
 
@@ -111,37 +111,37 @@ const SalesDataTable  = () => {
                                                     {region.region}
                                                 </td>
 
-                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                                    {region.fullprice_sale_qty}
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.fullprice_sale_qty)}
                                                 </td>
-                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                                    {region.fullprice_sale_value}
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right  `}>
+                                                    {formatNumberWithCommas(region.fullprice_sale_value)}
                                                 </td>
-                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                                    {region.discounted_sale_qty}
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.discounted_sale_qty)}
                                                 </td>
-                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                                    {region.discounted_sale_value}
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right  `}>
+                                                    {formatNumberWithCommas(region.discounted_sale_value)}
                                                 </td>
-                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                                    {region.total_sale_qty}
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.total_sale_qty)}
                                                 </td>
-                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 `}>
-                                                    {region.total_sale_value}
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.total_sale_value)}
                                                 </td>
                                             </tr>
                                             {region.stores?.map((store) => {
                                                 return (
                                                     <tr key={store.store_name}>
                                                         <td className={`px-4 py-1 border border-gray-300  ${getTextStyle(false)}`}>
-                                                            {handleData(store.store_name)}
+                                                            {(handleData(store.store_name))}
                                                         </td>
-                                                        <td className="px-4 py-1 text-right border border-gray-300">{handleData(store.fullprice_sale_qty)}</td>
-                                                        <td className="px-4 py-1 text-right border border-gray-300">{handleData(store.fullprice_sale_value)}</td>
-                                                        <td className="px-4 py-1 text-right border border-gray-300">{handleData(store.discounted_sale_qty)}</td>
-                                                        <td className="px-4 py-1 text-right border border-gray-300">{handleData(store.discounted_sale_value)}</td>
-                                                        <td className="px-4 py-1 text-right border border-gray-300">{handleData(store.total_sale_qty)}</td>
-                                                        <td className="px-4 py-1 text-right border border-gray-300">{handleData(store.total_sale_value)}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.fullprice_sale_qty))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.fullprice_sale_value))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.discounted_sale_qty))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.discounted_sale_value))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.total_sale_qty))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.total_sale_value))}</td>
                                                     </tr>
                                                 )
                                             })}
@@ -158,23 +158,23 @@ const SalesDataTable  = () => {
                                 Total
                             </td>
 
-                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200  font-bold`}>
-                                {data?.overall_fullprice_sale_qty}
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right font-bold`}>
+                                {(data?.overall_fullprice_sale_qty)}
                             </td>
-                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200  font-bold`}>
-                                {data?.overall_fullprice_sale_value}
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_fullprice_sale_value)}
                             </td>
-                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200  font-bold`}>
-                                {data?.overall_discounted_sale_qty}
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_discounted_sale_qty)}
                             </td>
-                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200  font-bold`}>
-                                {data?.overall_discounted_sale_value}
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_discounted_sale_value)}
                             </td>
-                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200  font-bold`}>
-                                {data?.overall_total_sale_qty}
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right   font-bold`}>
+                                {formatNumberWithCommas(data?.overall_total_sale_qty)}
                             </td>
-                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200  font-bold`}>
-                                {data?.overall_total_sale_value}
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_total_sale_value)}
                             </td>
 
 
