@@ -60,4 +60,32 @@ export const fetchSaleCvVsLyData = async (p_date, filters) => {
         throw error;
     }
 };
+export const fetchSaleMtdLdDataLD = async (p_date, p_type = 'last_day') => {
+    try {
+        const response = await api.get("/reporting/fetch_sale_mtd_ld_data/", {
+            params: {
+                p_date: p_date,
+                p_type: "last_day",
+            }
+        });
+        return response.data?.data;
+    } catch (error) {
+        console.error("Error fetching sale MTD LD data:", error);
+        throw error;
+    }
+};
+export const fetchSaleMtdLdDataMT = async (p_date, p_type = 'MTD') => {
+    try {
+        const response = await api.get("/reporting/fetch_sale_mtd_ld_data/", {
+            params: {
+                p_date: p_date,
+                p_type: "MTD",
+            }
+        });
+        return response.data?.data;
+    } catch (error) {
+        console.error("Error fetching sale MTD LD data:", error);
+        throw error;
+    }
+};
 

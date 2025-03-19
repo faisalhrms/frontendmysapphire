@@ -9,6 +9,8 @@ import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FilterClearButton from "@components/form/FilterClearButton.jsx";
 import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
+import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
+import UserCompanyDropdown from "@components/dropdowns/UserCompanyDropdown.jsx";
 
 const EquipmentListFilter = ({ control, errors,onClear }) => {
     const { user } = useSelector((state) => state.auth);
@@ -19,7 +21,8 @@ const EquipmentListFilter = ({ control, errors,onClear }) => {
     const [equipmentType, setEquipmentType] = useState(null);
     const [status, setStatus] = useState(null);
     const [custodian, setCustodian] = useState(null);
-
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
+    const [company, setCompany] = useState(companyId);
 
     const handleDepartmentSelect = useCallback((id) => {
         setDepartment(id);
@@ -44,6 +47,10 @@ const EquipmentListFilter = ({ control, errors,onClear }) => {
     const handleCustodianSelect = useCallback((selected) => {
         setCustodian(selected);
     }, []);
+    const handleCompanySelect = useCallback((id) => {
+        setCompany(id)
+        setDepartment(null)
+    }, []);
 
     return (
         <div className="grid grid-cols-12 gap-6">
@@ -52,6 +59,11 @@ const EquipmentListFilter = ({ control, errors,onClear }) => {
                     <div className="box-body p-4">
                         <div className="flex items-center justify-between gap-4">
 
+                            <UserCompanyDropdown
+                                control={control}
+                                errors={errors}
+                                onCompanySelect={handleCompanySelect}
+                            />
 
                             <DepartmentDropdown
                                 company_id={company_id}
