@@ -28,7 +28,7 @@ function OnlineGrossSaleBeforeReturn({ filters }) {
     return (
         <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
             <table className="min-w-full table-auto border-collapse border border-gray-400">
-                <thead style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                <thead style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" , position: "sticky", top: 0, zIndex: 10 }}>
                 <tr>
                     <th className="px-4 py-2 border border-gray-400">Date</th>
                     <th className="px-4 py-2 border border-gray-400">Day</th>
@@ -55,7 +55,7 @@ function OnlineGrossSaleBeforeReturn({ filters }) {
                 )}
                 </tbody>
                 <tfoot>
-                <tr style={{ color: "black" }}>
+                <tr className="bg-gray-200 font-bold">
                     <td colSpan="2" className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg">Total</td>
                     <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg">
                         {formatNumber(data.reduce((acc, row) => acc + row.full_price, 0))}
