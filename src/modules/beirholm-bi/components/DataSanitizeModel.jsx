@@ -1,63 +1,66 @@
-import React, { useEffect, useCallback } from "react";
+import React, {useEffect, useCallback} from "react";
 import FormButton from "@components/form/FormButton.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import { useDataSanitize } from "@modules/beirholm-bi/hooks/DataSanitize.js";
+import {useDataSanitize} from "@modules/beirholm-bi/hooks/DataSanitize.js";
+import FormSelect from "@components/form/FormSelect.jsx";
+import {productCountry} from "@modules/beirholm-bi/services/DataSanitizeService.js";
 
-const DataSanitizeModel = ({ closeModal, refreshTable }) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    isSubmitting,
-    onSubmit,
-    control,
-    reset,
-  } = useDataSanitize();
+const DataSanitizeModel = ({closeModal, refreshTable}) => {
+    const {
+        register,
+        handleSubmit,
+        errors,
+        isSubmitting,
+        onSubmit,
+        control,
+        reset,
+    } = useDataSanitize();
 
-  const handleClose = useCallback(() => {
-    const modal = document.getElementById("rawDataModel");
-    if (
-      modal &&
-      window.HSOverlay &&
-      typeof window.HSOverlay.close === "function"
-    ) {
-      window.HSOverlay.close(modal);
-    }
-    setTimeout(() => {
-      reset();
-      closeModal();
-    }, 300);
-  }, [closeModal, reset]);
+    const handleClose = useCallback(() => {
+        const modal = document.getElementById("rawDataModel");
+        if (
+            modal &&
+            window.HSOverlay &&
+            typeof window.HSOverlay.close === "function"
+        ) {
+            window.HSOverlay.close(modal);
+        }
+        setTimeout(() => {
+            reset();
+            closeModal();
+        }, 300);
+    }, [closeModal, reset]);
 
-  useEffect(() => {
-    const modal = document.getElementById("rawDataModel");
-    if (
-      modal &&
-      window.HSOverlay &&
-      typeof window.HSOverlay.open === "function"
-    ) {
-      window.HSOverlay.open(modal);
-    }
-  }, []);
+    useEffect(() => {
+        const modal = document.getElementById("rawDataModel");
+        if (
+            modal &&
+            window.HSOverlay &&
+            typeof window.HSOverlay.open === "function"
+        ) {
+            window.HSOverlay.open(modal);
+        }
+    }, []);
 
-  return (
-    <div
-      id="rawDataModel"
-      data-hs-overlay-keyboard="false"
-      className="hs-overlay ti-modal [--overlay-backdrop:static] backdrop-blur-[0.08rem]"
-    >
-      <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] flex items-center">
-        <div className="max-h-full mx-auto overflow-hidden ti-modal-content">
-          <form
-            onSubmit={handleSubmit(async (data) => {
-              await onSubmit(data); // Submit file
-              refreshTable();       // Trigger refresh of the DataTable
-              handleClose();        // Close the modal
-            })}
-          >
-            <div className="ti-modal-header">
-              <h6 className="modal-title">Upload Raw File</h6>
-            <button
+    return (
+        <div
+            id="rawDataModel"
+            data-hs-overlay-keyboard="false"
+            className="hs-overlay ti-modal [--overlay-backdrop:static] backdrop-blur-[0.08rem]"
+        >
+            <div
+                className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] flex items-center">
+                <div className="max-h-full mx-auto overflow-hidden ti-modal-content">
+                    <form
+                        onSubmit={handleSubmit(async (data) => {
+                            await onSubmit(data);
+                            refreshTable();
+                            handleClose();
+                        })}
+                    >
+                        <div className="ti-modal-header">
+                            <h6 className="modal-title">Upload Raw File</h6>
+                            <button
                                 type="button"
                                 className="hs-dropdown-toggle ti-modal-close-btn"
                                 onClick={handleClose}
@@ -76,48 +79,58 @@ const DataSanitizeModel = ({ closeModal, refreshTable }) => {
                                     />
                                 </svg>
                             </button>
-            </div>
-            <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)]">
-              <div className="grid grid-cols-12 gap-4">
-                <div className="xl:col-span-12 col-span-12">
-                  <FormAsyncSelect
-                    label={true}
-                    name="data_category"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select Data Category"
-                    apiUrl="/select/data/categories/"
-                    queryKeyBase="data_category"
-                    preselectedOptions={[]}
-                    saveOptionEndpoint="/select/data/category/"
-                    allowSaveNewOption={true}
-                  />
+                        </div>
+                        <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)]">
+                            <div className="grid grid-cols-12 gap-4">
+                                <div className="xl:col-span-12 col-span-12">
+                                    <FormSelect
+                                        name="product_country"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Select Country"
+                                        options={productCountry}
+                                        label="Select Country"
+                                    />
+                                </div>
+                                <div className="xl:col-span-12 col-span-12">
+                                    <FormAsyncSelect
+                                        label={true}
+                                        name="data_category"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Select Data Category"
+                                        apiUrl="/select/data/categories/"
+                                        queryKeyBase="data_category"
+                                        preselectedOptions={[]}
+                                        saveOptionEndpoint="/select/data/category/"
+                                        allowSaveNewOption={true}
+                                    />
+                                </div>
+                                <div className="col-span-12">
+                                    <label className="block mb-1 text-sm font-medium">
+                                        File <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="file"
+                                        {...register("file", {required: "File is required"})}
+                                        className="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50 file:me-4 file:py-2 file:px-4 file:rounded-s-sm file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary focus-visible:outline-none"
+                                    />
+                                    {errors.file && (
+                                        <p className="text-red-600 text-xs mt-1">
+                                            {errors.file.message}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="ti-modal-footer">
+                            <FormButton isLoading={isSubmitting}/>
+                        </div>
+                    </form>
                 </div>
-                <div className="col-span-12">
-                  <label className="block mb-1 text-sm font-medium">
-                    File <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="file"
-                    {...register("file", { required: "File is required" })}
-                    className="block w-full border border-gray-200 focus:shadow-sm dark:focus:shadow-white/10 rounded-sm text-sm focus:z-10 focus:outline-0 focus:border-gray-200 dark:focus:border-white/10 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50 file:me-4 file:py-2 file:px-4 file:rounded-s-sm file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary focus-visible:outline-none"
-                  />
-                  {errors.file && (
-                    <p className="text-red-600 text-xs mt-1">
-                      {errors.file.message}
-                    </p>
-                  )}
-                </div>
-              </div>
             </div>
-            <div className="ti-modal-footer">
-              <FormButton isLoading={isSubmitting} />
-            </div>
-          </form>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default DataSanitizeModel;
