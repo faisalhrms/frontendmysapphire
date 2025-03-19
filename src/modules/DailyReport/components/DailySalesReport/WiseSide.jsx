@@ -47,251 +47,131 @@ const StoreWise = ({ filters }) => {
             return tableData;
         }
 
-        const offlineStructure = {};
-        const onlineValuesByDate = Array(dates.length).fill(0);
-        const offlineValuesByDate = Array(dates.length).fill(0);
-        const totalValuesByDate = Array(dates.length).fill(0);
+        const structure = {}; 
+        const valuesByDate = {};
 
         dates.forEach((dateKey, dateIndex) => {
-            const dateArray = allData[dateKey] || [];
-            const offlineObj = dateArray.find((x) => x.classification?.length > 0);
+            const dateArray = allData[dateKey]?.c_types || [];
 
 
-            if (offlineObj && offlineObj.classification) {
-                offlineObj.classification.forEach((classificationItem) => {
-                    const cName = classificationItem.classification_name;
-                    if (!offlineStructure[cName]) {
-                        offlineStructure[cName] = {};
-                    }
-                    if (classificationItem.regions && classificationItem.regions.length > 0) {
-                        classificationItem.regions.forEach((regionItem) => {
-                            const rName = regionItem.region;
-                            if (!offlineStructure[cName][rName]) {
-                                offlineStructure[cName][rName] = {};
-                            }
-                            regionItem.stores?.forEach((storeItem) => {
-                                const sName = storeItem.store_name;
-                                if (!offlineStructure[cName][rName][sName]) {
-                                    offlineStructure[cName][rName][sName] = Array(dates.length).fill(0);
+
+            dateArray.forEach((cTypeObj) => {
+
+                const cType = cTypeObj.c_type;
+                if (!structure[cType]) {
+                    structure[cType] = {};
+                    valuesByDate[cType] = Array(dates.length).fill(0);
+                }
+
+                // Process classification and regions for each c_type
+                if (cTypeObj.classification?.length) {
+                    cTypeObj.classification.forEach((classificationItem) => {
+                        const cName = classificationItem.classification_name;
+                        if (!structure[cType][cName]) {
+                            structure[cType][cName] = {};
+                        }
+
+                        if (classificationItem.regions?.length) {
+                            classificationItem.regions.forEach((regionItem) => {
+                                const rName = regionItem.region;
+                                if (!structure[cType][cName][rName]) {
+                                    structure[cType][cName][rName] = {};
                                 }
-                                offlineStructure[cName][rName][sName][dateIndex] = storeItem.net_value;
-                                offlineValuesByDate[dateIndex] += storeItem.net_value;
+
+                                regionItem.stores?.forEach((storeItem) => {
+                                    const sName = storeItem.store_name;
+                                    if (!structure[cType][cName][rName][sName]) {
+                                        structure[cType][cName][rName][sName] = Array(dates.length).fill(0);
+                                    }
+
+                                    structure[cType][cName][rName][sName][dateIndex] = storeItem.net_value;
+                                    // valuesByDate[cType][dateIndex] += storeItem.net_value;
+                                });
                             });
-                        });
-                    } else {
-                        offlineStructure[cName]["flat"] = offlineStructure[cName]["flat"] || [];
-                        offlineStructure[cName]["flat"][dateIndex] = classificationItem.net_value;
-                        offlineValuesByDate[dateIndex] += classificationItem.net_value;
-                    }
-                });
-            }
-
-            const onlineObj = dateArray.find((x) => !x.classification?.length);
-            if (onlineObj) {
-                onlineValuesByDate[dateIndex] = onlineObj.net_value;
-            }
-
-            totalValuesByDate[dateIndex] = offlineValuesByDate[dateIndex] + onlineValuesByDate[dateIndex];
+                        } else {
+                            structure[cType][cName]["flat"] = structure[cType][cName]["flat"] || [];
+                            structure[cType][cName]["flat"][dateIndex] = (structure[cType][cName]["flat"][dateIndex] || 0);
+                            // valuesByDate[cType][dateIndex] += classificationItem.net_value;
+                        }
+                    });
+                } else {
+                    // If there is no classification, just use the net_value directly
+                    // console.log(valuesByDate)
+                    valuesByDate[cType][dateIndex] = cTypeObj.net_value;
+                }
+            });
         });
 
-        tableData.push({
-            type: "Offline",
-            indent: 0,
-            isSubHeader: true,
-            values: offlineValuesByDate,
-        });
 
-        Object.keys(offlineStructure).forEach((classificationName) => {
+        Object.keys(structure).forEach((cType) => {
+
             tableData.push({
-                type: classificationName,
-                indent: 1,
+                type: cType,
+                indent: 0,
                 isSubHeader: true,
-                values: Array(dates.length).fill(0),
+                values: valuesByDate[cType],
             });
 
-            const classificationRowIndex = tableData.length - 1;
-
-            if (offlineStructure[classificationName]["flat"]) {
-                const flatValues = offlineStructure[classificationName]["flat"];
-                flatValues.forEach((val, idx) => {
-                    tableData[classificationRowIndex].values[idx] += val;
-                    tableData[0].values[idx] += val;
+            Object.keys(structure[cType]).forEach((classificationName) => {
+                tableData.push({
+                    type: classificationName,
+                    indent: 1,
+                    isSubHeader: true,
+                    values: Array(dates.length).fill(0),
                 });
-            } else {
-                Object.keys(offlineStructure[classificationName]).forEach((regionName) => {
-                    if (regionName !== "flat") {
-                        tableData.push({
-                            type: regionName,
-                            indent: 2,
-                            isSubHeader: true,
-                            values: Array(dates.length).fill(0),
-                        });
-                        const regionRowIndex = tableData.length - 1;
 
-                        Object.keys(offlineStructure[classificationName][regionName]).forEach((storeName) => {
-                            const storeValues = offlineStructure[classificationName][regionName][storeName];
+                const classificationRowIndex = tableData.length - 1;
+
+                if (structure[cType][classificationName].flat) {
+                    structure[cType][classificationName].flat.forEach((val, idx) => {
+                        tableData[classificationRowIndex].values[idx] += val;
+                        tableData[0].values[idx] += val;
+                    });
+                } else {
+                    Object.keys(structure[cType][classificationName]).forEach((regionName) => {
+                        if (regionName !== "flat") {
                             tableData.push({
-                                type: storeName,
-                                indent: 3,
-                                values: storeValues,
+                                type: regionName,
+                                indent: 2,
+                                isSubHeader: true,
+                                values: Array(dates.length).fill(0),
                             });
 
-                            storeValues.forEach((val, idx) => {
-                                tableData[regionRowIndex].values[idx] += val;
-                                tableData[classificationRowIndex].values[idx] += val;
-                                tableData[0].values[idx] += val;
+                            const regionRowIndex = tableData.length - 1;
+
+                            Object.keys(structure[cType][classificationName][regionName]).forEach((storeName) => {
+                                const storeValues = structure[cType][classificationName][regionName][storeName];
+                                tableData.push({
+                                    type: storeName,
+                                    indent: 3,
+                                    values: storeValues,
+                                });
+
+                                storeValues.forEach((val, idx) => {
+                                    tableData[regionRowIndex].values[idx] += val;
+                                    tableData[classificationRowIndex].values[idx] += val;
+                                    tableData[0].values[idx] += val;
+                                });
                             });
-                        });
-                    }
-                });
-            }
+                        }
+                    });
+                }
+            });
         });
 
-        tableData.push({
-            type: "Online",
-            indent: 0,
-            isSubHeader: true,
-            values: onlineValuesByDate,
-        });
-
-
-        const grandTotals = totalValuesByDate;
-
+        const totalValuesByDate = dates.map((dateKey) => allData[dateKey]?.total || 0);
         tableData.push({
             type: "Total",
             isHeader: true,
-            values: grandTotals,
+            values: totalValuesByDate,
         });
 
         return tableData;
     };
-    // const prepareDataForTable = (allData) => {
-    //     const tableData = [];
-    //     const dates = Object.keys(allData);
-    //
-    //     if (!dates.length) {
-    //         return tableData;
-    //     }
-    //
-    //     const offlineStructure = {};
-    //     const onlineValuesByDate = Array(dates.length).fill(0);
-    //
-    //     dates.forEach((dateKey, dateIndex) => {
-    //         const dateArray = allData[dateKey] || [];
-    //         const offlineObj = dateArray.find((x) => x.classification?.length > 0);
-    //
-    //         if (offlineObj && offlineObj.classification) {
-    //             offlineObj.classification.forEach((classificationItem) => {
-    //                 const cName = classificationItem.classification_name;
-    //                 if (!offlineStructure[cName]) {
-    //                     offlineStructure[cName] = {};
-    //                 }
-    //                 if (classificationItem.regions && classificationItem.regions.length > 0) {
-    //                     classificationItem.regions.forEach((regionItem) => {
-    //                         const rName = regionItem.region;
-    //                         if (!offlineStructure[cName][rName]) {
-    //                             offlineStructure[cName][rName] = {};
-    //                         }
-    //                         regionItem.stores?.forEach((storeItem) => {
-    //                             const sName = storeItem.store_name;
-    //                             if (!offlineStructure[cName][rName][sName]) {
-    //                                 offlineStructure[cName][rName][sName] = Array(dates.length).fill(0);
-    //                             }
-    //                             offlineStructure[cName][rName][sName][dateIndex] = storeItem.net_value;
-    //                         });
-    //                     });
-    //                 } else {
-    //                     offlineStructure[cName]["flat"] = offlineStructure[cName]["flat"] || [];
-    //                     offlineStructure[cName]["flat"][dateIndex] = classificationItem.net_value;
-    //                 }
-    //             });
-    //         }
-    //
-    //         const onlineObj = dateArray.find((x) => !x.classification?.length);
-    //         if (onlineObj) {
-    //             onlineValuesByDate[dateIndex] = onlineObj.net_value;
-    //         }
-    //     });
-    //
-    //     tableData.push({
-    //         type: "Offline",
-    //         indent: 0,
-    //         isSubHeader: true,
-    //         values: Array(dates.length).fill(0),
-    //     });
-    //
-    //     Object.keys(offlineStructure).forEach((classificationName) => {
-    //         tableData.push({
-    //             type: classificationName,
-    //             indent: 1,
-    //             isSubHeader: true,
-    //             values: Array(dates.length).fill(0),
-    //         });
-    //
-    //         const classificationRowIndex = tableData.length - 1;
-    //
-    //         if (offlineStructure[classificationName]["flat"]) {
-    //
-    //             const flatValues = offlineStructure[classificationName]["flat"];
-    //             flatValues.forEach((val, idx) => {
-    //                 tableData[classificationRowIndex].values[idx] += val;
-    //                 tableData[0].values[idx] += val;
-    //             });
-    //         } else {
-    //             Object.keys(offlineStructure[classificationName]).forEach((regionName) => {
-    //                 if (regionName !== "flat") {
-    //                     tableData.push({
-    //                         type: regionName,
-    //                         indent: 2,
-    //                         isSubHeader: true,
-    //                         values: Array(dates.length).fill(0),
-    //                     });
-    //                     const regionRowIndex = tableData.length - 1;
-    //
-    //                     Object.keys(offlineStructure[classificationName][regionName]).forEach((storeName) => {
-    //                         const storeValues = offlineStructure[classificationName][regionName][storeName];
-    //                         tableData.push({
-    //                             type: storeName,
-    //                             indent: 3,
-    //                             values: storeValues,
-    //                         });
-    //
-    //                         storeValues.forEach((val, idx) => {
-    //                             tableData[regionRowIndex].values[idx] += val;
-    //                             tableData[classificationRowIndex].values[idx] += val;
-    //                             tableData[0].values[idx] += val;
-    //                         });
-    //                     });
-    //                 }
-    //             });
-    //         }
-    //     });
-    //
-    //     tableData.push({
-    //         type: "Online",
-    //         indent: 0,
-    //         isSubHeader: true,
-    //         values: onlineValuesByDate,
-    //     });
-    //
-    //     const grandTotals = Array(dates.length).fill(0);
-    //     tableData.forEach((row) => {
-    //         row.values.forEach((val, idx) => {
-    //             grandTotals[idx] += val;
-    //         });
-    //     });
-    //
-    //     tableData.push({
-    //         type: "Total",
-    //         isHeader: true,
-    //         values: grandTotals,
-    //     });
-    //
-    //     return tableData;
-    // };
 
 
-    const tableData = prepareDataForTable(newData);
+
+    const tableData =prepareDataForTable(newData);
 
     console.log(tableData);
 
