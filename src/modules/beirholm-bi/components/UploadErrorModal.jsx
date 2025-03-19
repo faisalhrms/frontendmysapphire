@@ -42,7 +42,6 @@ const UploadErrorModal = ({ jobId, closeModal }) => {
     setIsSubmitting(true);
     try {
       await DataSanitizeService.uploadMissingRules(jobId, formData);
-      Notify.success("Missing rules uploaded successfully");
       handleClose();
     } catch (error) {
       console.error(error);
