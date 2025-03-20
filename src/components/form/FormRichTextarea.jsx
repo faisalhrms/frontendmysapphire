@@ -17,7 +17,10 @@ const FormRichTextarea = forwardRef(
               {...field}
               ref={ref}
               readOnly={readOnly}
-              setOptions={editorOptions}
+              setOptions={{
+                ...editorOptions,
+                 defaultStyle: "font-family: Calibri, sans-serif; font-size: 11pt;"
+              }}
               onChange={(content) => field.onChange(content)}
               setContents={field.value || ""}
               {...rest}
