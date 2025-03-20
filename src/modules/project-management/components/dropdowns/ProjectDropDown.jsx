@@ -1,5 +1,4 @@
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import { formatOptions } from "@helpers/formatters.js";
 import React from "react";
 
 const ProjectDropDown = ({ control, errors, workspace_id, multiple = true, name = "projects", placeholder = "Projects" }) => {

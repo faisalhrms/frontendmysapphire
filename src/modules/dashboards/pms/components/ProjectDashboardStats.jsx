@@ -5,12 +5,13 @@ import RecentProjectCard from "@modules/dashboards/pms/components/RecentProjectC
 import ProjectSummaryStats from "@modules/project-management/components/project/ProjectSummaryStats.jsx";
 import ProjectUserSummaryStats from "@modules/project-management/components/project/ProjectUserSummaryStats.jsx";
 import ProjectTableCard from "@modules/dashboards/pms/components/ProjectTableCard.jsx";
-import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
 import React from "react";
 import RiskAnalysisChart from "@modules/dashboards/pms/components/RiskManagementChart.jsx";
 
-const ProjectDashboardStats = ({filters}) => {
-    const {data, isLoading} = useFetchWithFilters('/dashboard/pms/statistics/', filters);
+const ProjectDashboardStats = ({data, isLoading, isActive, filters}) => {
+    if (!isActive){
+        return null
+    }
     if (isLoading) {
         return <LoadingSpinner/>;
     }
