@@ -79,7 +79,7 @@ const SalesDataTable  = () => {
                             return (
                                 <>
                                     <tr key={classification.classification_name}>
-                                        <td className={`px-4 py-1 border border-gray-300  bg-gray-200 ${getTextStyle(true)}`}>
+                                        <td className={`px-2 py-1 border border-gray-300  bg-gray-200 ${getTextStyle(true)}`}>
                                             {(classification.classification_name)}
                                         </td>
 
@@ -107,7 +107,7 @@ const SalesDataTable  = () => {
                                     {classification.regions?.map((region) => (
                                         <>
                                             <tr key={region.region}>
-                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 ${getTextStyle(true)}`}>
+                                                <td className={`px-6 py-1  border border-gray-300 font-bold bg-gray-200 ${getTextStyle(true)}`}>
                                                     {region.region}
                                                 </td>
 
@@ -133,7 +133,7 @@ const SalesDataTable  = () => {
                                             {region.stores?.map((store) => {
                                                 return (
                                                     <tr key={store.store_name}>
-                                                        <td className={`px-4 py-1 border border-gray-300  ${getTextStyle(false)}`}>
+                                                        <td className={`px-8 py-1 border border-gray-300  ${getTextStyle(false)}`}>
                                                             {(handleData(store.store_name))}
                                                         </td>
                                                         <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.fullprice_sale_qty))}</td>
