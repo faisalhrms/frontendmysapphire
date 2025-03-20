@@ -149,7 +149,6 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                     <table className="min-w-full table-auto border-collapse border border-gray-400">
                         <thead style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
                         <tr>
-                            {/*<th rowSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>*/}
                             <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-50"
                                 style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
 
@@ -312,7 +311,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                                 <td
                                     className={`py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg ${getAchColor(totalsAch.fullPriceOfflineAch)}`}
                                 >
-                                    {getAchIcon(totalsAch.fullPriceOfflineAch)} {totalsAch.fullPriceOfflineAch}%
+                                    {getAchIcon(totalsAch.fullPriceOfflineAch)} {totalsAch.fullPriceOfflineAch}
                                 </td>
 
                                 <td className="py-2 px-2 border border-gray-400 text-right font-bold dark:text-gray-200 dark:bg-bodybg">
