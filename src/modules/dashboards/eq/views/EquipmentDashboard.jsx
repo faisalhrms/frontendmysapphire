@@ -6,8 +6,10 @@ import EquipmentDashboardFilter from "@modules/dashboards/eq/components/Equipmen
 import useFilters from "@hooks/useFilters.js";
 import EquipmentDashboardStats from "@modules/dashboards/eq/components/EquipmentDashboardStats.jsx";
 import HasPermission from "@components/HasPermission.jsx";
+import {useSelector} from "react-redux";
 
 const EquipmentDashboard = () => {
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const {
         control,
         handleSubmit,
@@ -17,7 +19,7 @@ const EquipmentDashboard = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'company_id' },
+                    { name: 'company_id', defaultValue: companyId},
                     { name: 'department_id' },
                     { name: 'location_id' },
                 ],

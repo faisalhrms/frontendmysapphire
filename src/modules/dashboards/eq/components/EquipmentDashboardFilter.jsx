@@ -1,67 +1,117 @@
-// src/modules/dashboards/equipment/components/EquipmentDashboardFilter.jsx
+import React, { useCallback, useState } from "react";
+import { useSelector } from "react-redux";
+import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
+import DepartmentDropdown from "@components/dropdowns/DepartmentDropdown.jsx";
+import SiteDropdown from "@modules/inventory/dropdowns/SiteDropdown.jsx";
+import PhysicalLocationDropdown from "@modules/inventory/dropdowns/PhysicalLocationDropdown.jsx";
+import EquipmentTypeDropdown from "@modules/inventory/dropdowns/EquipmentTypeDropdown.jsx";
+import StatusDropdown from "@modules/inventory/dropdowns/StatusDropdown.jsx";
+import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
+import FilterButton from "@components/form/FilterButton.jsx";
+import FilterClearButton from "@components/form/FilterClearButton.jsx";
+import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
+import UserCompanyDropdown from "@components/dropdowns/UserCompanyDropdown.jsx";
 
-import React from "react";
-import { Controller } from "react-hook-form";
-import Select from 'react-select';
+const EquipmentDashboardFilter = ({ control, errors, onClear }) => {
+    const { user } = useSelector((state) => state.auth);
+    const company_id = user?.employee?.company?.id;
+    const [company, setCompany] = useState(company_id);
+    const [department, setDepartment] = useState(null);
+    const [site, setSite] = useState(null);
+    const [location, setLocation] = useState(null);
+    const [equipmentType, setEquipmentType] = useState(null);
+    const [status, setStatus] = useState(null);
+    const [custodian, setCustodian] = useState(null);
 
-const EquipmentDashboardFilter = ({ control, errors }) => {
+    const handleCompanySelect = useCallback((id) => {
+        setCompany(id);
+        setDepartment(null); // Reset department when company changes
+    }, []);
+
+    const handleDepartmentSelect = useCallback((id) => {
+        setDepartment(id);
+    }, []);
+
+    const handleSiteSelect = useCallback((selected) => {
+        setSite(selected);
+    }, []);
+
+    const handleLocationSelect = useCallback((selected) => {
+        setLocation(selected);
+    }, []);
+
+    const handleTypeSelect = useCallback((selected) => {
+        setEquipmentType(selected);
+    }, []);
+
+    const handleStatusSelect = useCallback((selected) => {
+        setStatus(selected);
+    }, []);
+
+    const handleCustodianSelect = useCallback((selected) => {
+        setCustodian(selected);
+    }, []);
+
     return (
-        <div className="flex space-x-4">
-            <Controller
-                name="company_id"
-                control={control}
-                render={({ field }) => (
-                    <Select
-                        {...field}
-                        label="Company"
-                        options={[
-                            { value: 1, label: "Company A" },
-                            { value: 2, label: "Company B" },
-                            // Add more companies as needed
-                        ]}
-                        error={errors.company_id}
-                    />
-                )}
-            />
-            <Controller
-                name="department_id"
-                control={control}
-                render={({ field }) => (
-                    <Select
-                        {...field}
-                        label="Department"
-                        options={[
-                            { value: 1, label: "IT" },
-                            { value: 2, label: "HR" },
-                            { value: 3, label: "Finance" },
-                            // Add more departments as needed
-                        ]}
-                        error={errors.department_id}
-                    />
-                )}
-            />
-            <Controller
-                name="location_id"
-                control={control}
-                render={({ field }) => (
-                    <Select
-                        {...field}
-                        label="Location"
-                        options={[
-                            { value: 1, label: "Warehouse" },
-                            { value: 2, label: "Office A" },
-                            { value: 3, label: "Office B" },
-                            // Add more locations as needed
-                        ]}
-                        error={errors.location_id}
-                    />
-                )}
-            />
-            <button type="submit" className="btn btn-primary">
-                Apply Filters
-            </button>
+        <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-12">
+                <div className="box custom-box">
+                    <div className="box-body p-4">
+                        <div className="flex items-center justify-between gap-4">
+
+                            <div className="flex items-center gap-4 flex-1">
+                                <UserCompanyDropdown
+                                    control={control}
+                                    errors={errors}
+                                    onCompanySelect={handleCompanySelect}
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-4 flex-1">
+                                <DepartmentDropdown
+                                    company_id={company}
+                                    control={control}
+                                    errors={errors}
+                                    onDepartmentSelect={handleDepartmentSelect}
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-4 flex-1">
+                                <SiteDropdown
+                                    control={control}
+                                    errors={errors}
+                                    onSiteSelect={handleSiteSelect}
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-4 flex-1">
+                                <PhysicalLocationDropdown
+                                    control={control}
+                                    errors={errors}
+                                    onLocationSelect={handleLocationSelect}
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-4 flex-1">
+                                <EquipmentTypeDropdown
+                                    control={control}
+                                    errors={errors}
+                                    onTypeSelect={handleTypeSelect}
+                                />
+                            </div>
+
+
+
+
+
+                            <FilterButton />
+                            {/*<FilterClearButton onClick={onClear} />*/}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
-}
+};
 
-export default EquipmentDashboardFilter;
+export default React.memo(EquipmentDashboardFilter);

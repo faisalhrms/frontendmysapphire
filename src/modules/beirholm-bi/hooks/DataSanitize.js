@@ -22,6 +22,9 @@ export const useDataSanitize = () => {
       if (data.data_category) {
         formData.append("data_category", data.data_category);
       }
+      if (data.product_country) {
+        formData.append("product_country", data.product_country);
+      }
       const response = await DataSanitizeService.uploadRawFile(formData);
       setJob(response.job_id);
       reset();

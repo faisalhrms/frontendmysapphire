@@ -1,6 +1,13 @@
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
+export const productCountry = [
+    { value: 'pakistan', label: 'Pakistan' },
+    { value: 'india', label: 'India' },
+    { value: 'vietnam', label: 'Vietnam' },
+    { value: 'turkey', label: 'Turkey' },
+];
+
 const downloadFile = async (url, defaultFilename) => {
   try {
     const response = await api.get(url, { responseType: "blob" });
@@ -35,7 +42,6 @@ const downloadSampleFile = async () => {
   const url = `/correction/file/download-sample-file/`;
   await downloadFile(url, "sample_file.xlsx");
 };
-
 
 const downloadRawFile = async (fileId) => {
   const url = `/correction/file/${fileId}/raw/download/`;

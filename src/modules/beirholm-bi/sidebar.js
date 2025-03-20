@@ -44,10 +44,26 @@ export const sidebarMenu = [
                 BEIRHOLM_BI_ROUTES.CORRECTION_PATTERN_READ.permission
             ),
             generateSidebarItem(
+                BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_READ.path,
+                'link',
+                'Exchange Rates',
+                5,
+                '',
+                BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_READ.permission
+            ),
+            generateSidebarItem(
+                BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_READ.path,
+                'link',
+                'Classifications',
+                6,
+                '',
+                BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_READ.permission
+            ),
+            generateSidebarItem(
                 BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
                 'link',
                 'Competitor Analysis',
-                4,
+                7,
                 '',
                 BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission
             ),
@@ -55,7 +71,7 @@ export const sidebarMenu = [
                 BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.path,
                 'link',
                 'ChatBot',
-                5,
+                8,
                 '',
                 BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.permission
             ),
