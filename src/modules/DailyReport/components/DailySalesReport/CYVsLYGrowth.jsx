@@ -113,14 +113,24 @@ const CYVsLYGrowth = ({ filters }) => {
                     <table className="min-w-full table-auto border-collapse border border-gray-400">
                         <thead style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
                         <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
-                            <th rowSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center"></th>
-                            <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center">Store Type</th>
+                            <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+
+                            </th>
+                            <th colSpan="1"
+                                className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}
+                            >Store Type
+                            </th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline</th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
                         </tr>
                         <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
-                            <th className="py-2 px-4 border border-gray-400 p-2 text-center"></th>
+                            <th colSpan="1"
+                                className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}
+                            ></th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
@@ -131,8 +141,13 @@ const CYVsLYGrowth = ({ filters }) => {
                             <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 text-center"></th>
                         </tr>
                         <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
-                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Date</th>
-                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Day</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>Date
+                            </th>
+                            <th colSpan="1"
+                                className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50"
+                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>Day
+                            </th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">CY</th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">LY</th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">Growth%</th>
@@ -161,9 +176,11 @@ const CYVsLYGrowth = ({ filters }) => {
                         <tbody>
                         {data?.map((row, index) => (
                             <tr key={index}>
-                                <td className="py-2 px-2 border border-gray-400 p-2 text-center">{row.Date}</td>
-                                <td className="py-2 px-2 border border-gray-400 p-2 text-center">{row.Day}</td>
-                                <td className="py-2 px-2 border border-gray-400 p-2 text-center">{ formatNumberWithCommas(row.FullPriceOfflineCY)}</td>
+                                <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-50"
+                                    style={{backgroundColor: "white", color: "black" }}>{row.Date}</td>
+                                <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
+                                    style={{backgroundColor: "white", color: "black"}}>{row.Day}</td>
+                                <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineCY)}</td>
                                 <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineLY)}</td>
                                 <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.FullPriceOfflineGrowth)}`}>
                                     {getAchIcon(row.FullPriceOfflineGrowth)} {row.FullPriceOfflineGrowth}%
@@ -206,7 +223,7 @@ const CYVsLYGrowth = ({ filters }) => {
                                 <td className="py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg">
                                 </td>
                                 <td className="py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg">
-                                    TOTAL
+                                    Total
                                 </td>
 
                                 <td className="py-2 px-2 border border-gray-400 text-right font-bold dark:text-gray-200 dark:bg-bodybg">

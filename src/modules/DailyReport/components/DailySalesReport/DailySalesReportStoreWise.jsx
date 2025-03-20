@@ -1,145 +1,204 @@
 import React, { useState, useEffect } from 'react';
 import { fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT } from "../../services/wiseside_services.js";
-
-const SalesDataTable = () => {
-    const [data, setData] = useState({
-        lastDay: [],
-        mtd: []
-    });
+import { formatNumberWithCommas } from "@helpers/formatters.js";
+const SalesDataTable  = () => {
+    const [lastDayData, setLastDayData] = useState([]);
+    const [mtdData, setMtdData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]); // Today's date in YYYY-MM-DD format
 
-    // Fetch both last day and MTD data
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setLoading(true);
-                setError(null);
+                const lastDayResult = await fetchSaleMtdLdDataLD('2025-03-19');
+                const mtdResult = await fetchSaleMtdLdDataMT('2025-03-19');
 
-                const lastDayResult = await fetchSaleMtdLdDataLD(currentDate);
-                const mtdResult = await fetchSaleMtdLdDataMT(currentDate);
-
-                setData({
-                    lastDay: lastDayResult || [],
-                    mtd: mtdResult || []
-                });
-
+                setLastDayData(lastDayResult);
+                setMtdData(mtdResult);
                 setLoading(false);
-            } catch (err) {
-                setError('Failed to fetch data. Please try again later.');
+            } catch (error) {
+                setError("Error fetching sales data");
                 setLoading(false);
+                console.error("Error fetching sales data:", error);
             }
         };
-
         fetchData();
-    }, [currentDate]);
+    }, []);
 
-    const formatNumber = (num) => {
-        if (num === undefined || num === null) return '';
-        return num.toLocaleString();
+    const getRowBgColor = (type, isHeader) => {
+        if (isHeader) {
+            switch (type) {
+                case "A-Class":
+                case "North":
+                case "South":
+                case "Online":
+                    return "bg-blue-100";
+                case "Total":
+                    return "bg-blue-200";
+                default:
+                    return "bg-white";
+            }
+        }
+        return "bg-white";
     };
 
-    if (loading) return <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div></div>;
-    if (error) return <div className="text-red-500 p-4 text-center">{error}</div>;
+    const getTextStyle = (isHeader) => {
+        return isHeader ? "font-bold text-blue-800" : "";
+    };
 
-    const lastDayData = data.lastDay?.[0]?.regions?.[0]?.stores || [];
-    const mtdData = data.mtd?.[0]?.regions?.[0]?.stores || [];
+    const handleData = (value) => {
+        return value ? value : "0";
+    };
+
+    const renderTable = (data,title) => {
+        return (
+            <div className="mt-4 bg-white p-4 shadow-lg">
+                <h2 className="text-left text-xl font-bold">{title}</h2>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white border-collapse">
+                        <thead className="bg-gray-800 text-white">
+                        <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">SaleType (Map)</th>
+                            <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
+                            <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted</th>
+                            <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
+                        </tr>
+                        <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Store Name</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center font-bold">Sale Qty</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Qty</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Qty</th>
+                            <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {data?.classifications?.map((classification) => {
+
+                            return (
+                                <>
+                                    <tr key={classification.classification_name}>
+                                        <td className={`px-2 py-1 border border-gray-300  bg-gray-200 ${getTextStyle(true)}`}>
+                                            {(classification.classification_name)}
+                                        </td>
+
+                                        <td className={`px-4 py-1 border border-gray-300  font-bold bg-gray-200 text-right ` }>
+                                            {formatNumberWithCommas(classification.fullprice_sale_qty)}
+                                        </td>
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.fullprice_sale_value)}
+                                        </td>
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.discounted_sale_qty)}
+                                        </td>
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                            {formatNumberWithCommas(classification.discounted_sale_value)}
+                                        </td>
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.total_sale_qty)}
+                                        </td>
+                                        <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right`}>
+                                            {formatNumberWithCommas(classification.total_sale_value)}
+                                        </td>
+
+
+                                    </tr>
+                                    {classification.regions?.map((region) => (
+                                        <>
+                                            <tr key={region.region}>
+                                                <td className={`px-6 py-1  border border-gray-300 font-bold bg-gray-200 ${getTextStyle(true)}`}>
+                                                    {region.region}
+                                                </td>
+
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.fullprice_sale_qty)}
+                                                </td>
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right  `}>
+                                                    {formatNumberWithCommas(region.fullprice_sale_value)}
+                                                </td>
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.discounted_sale_qty)}
+                                                </td>
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right  `}>
+                                                    {formatNumberWithCommas(region.discounted_sale_value)}
+                                                </td>
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.total_sale_qty)}
+                                                </td>
+                                                <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right `}>
+                                                    {formatNumberWithCommas(region.total_sale_value)}
+                                                </td>
+                                            </tr>
+                                            {region.stores?.map((store) => {
+                                                return (
+                                                    <tr key={store.store_name}>
+                                                        <td className={`px-8 py-1 border border-gray-300  ${getTextStyle(false)}`}>
+                                                            {(handleData(store.store_name))}
+                                                        </td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.fullprice_sale_qty))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.fullprice_sale_value))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.discounted_sale_qty))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.discounted_sale_value))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.total_sale_qty))}</td>
+                                                        <td className="px-4 py-1 text-right border border-gray-300">{formatNumberWithCommas(handleData(store.total_sale_value))}</td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </>
+                                    ))}
+
+                                </>
+                            )
+                        })
+                        }
+
+                        <tr>
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200  font-bold ${getTextStyle(true)}`}>
+                                Total
+                            </td>
+
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right font-bold`}>
+                                {(data?.overall_fullprice_sale_qty)}
+                            </td>
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_fullprice_sale_value)}
+                            </td>
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_discounted_sale_qty)}
+                            </td>
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_discounted_sale_value)}
+                            </td>
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right   font-bold`}>
+                                {formatNumberWithCommas(data?.overall_total_sale_qty)}
+                            </td>
+                            <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right  font-bold`}>
+                                {formatNumberWithCommas(data?.overall_total_sale_value)}
+                            </td>
+
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
-        <div className="w-full mt-4  p-4">
+        <div className="w-full mt-4 p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <div className="mt-4  bg-white p-4 shadow-lg">
-                    <h2 className="text-left text-xl font-bold">Last Day Sales</h2>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border-collapse">
-                            <thead>
-                            <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">SaleType (Map)</th>
-                                <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
-                                <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted</th>
-                                <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
-                            </tr>
-                            <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Store Name</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center font-bold">Sale Qty</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Qty</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Qty</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
-                            </tr>
-                            </thead>
-                            <tbody className="text-sm">
-                            {lastDayData.length > 0 ? (
-                                lastDayData.map((row, index) => (
-                                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                                        <td className="border border-gray-300 px-2 py-1 font-semibold">{row.store_name}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.fullprice_sale_qty)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.fullprice_sale_value)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.discounted_sale_qty)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.discounted_sale_value)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.total_sale_qty)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.total_sale_value)}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="7" className="border border-gray-300 px-2 py-4 text-center">No data available</td>
-                                </tr>
-                            )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                {renderTable(lastDayData, "Last Day")}
+                {renderTable(mtdData, "MTD")}
 
-                <div className="mt-4  bg-white p-4 shadow-lg">
-                    <h2 className="text-left text-xl font-bold">MTD Sales</h2>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border-collapse">
-                            <thead>
-                            <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">SaleType (Map)</th>
-                                <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
-                                <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted</th>
-                                <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
-                            </tr>
-                            <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Store Name</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center font-bold">Sale Qty</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Qty</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Qty</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Sale Value</th>
-                            </tr>
-                            </thead>
-                            <tbody className="text-sm">
-                            {mtdData.length > 0 ? (
-                                mtdData.map((row, index) => (
-                                    <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                                        <td className="border border-gray-300 px-2 py-1 font-semibold">{row.store_name}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.fullprice_sale_qty)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.fullprice_sale_value)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.discounted_sale_qty)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.discounted_sale_value)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.total_sale_qty)}</td>
-                                        <td className="border border-gray-300 px-2 py-1 text-right">{formatNumber(row.total_sale_value)}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="7" className="border border-gray-300 px-2 py-4 text-center">No data available</td>
-                                </tr>
-                            )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
     );
 };
 
-export default SalesDataTable;
+export default SalesDataTable ;
