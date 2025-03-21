@@ -153,9 +153,11 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                                 style={{backgroundColor: "#0b3588", color: "white"}}>
 
                             </th>
-                            <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
+                            <th colSpan="1"
+                                className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
                                 style={{backgroundColor: "#0b3588", color: "white"}}
-                            >Store Type</th>
+                            >Store Type
+                            </th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline</th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
@@ -175,7 +177,8 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                         </tr>
                         <tr>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"
-                                style={{backgroundColor: "#0b3588", color: "white"}}>Date</th>
+                                style={{backgroundColor: "#0b3588", color: "white"}}>Date
+                            </th>
                             <th colSpan="1"
                                 className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50"
                                 style={{backgroundColor: "#0b3588", color: "white"}}>Day
@@ -207,7 +210,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                         {data.map((row, index) => (
                             <tr key={index}>
                                 <td className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"
-                                    style={{backgroundColor: "white", color: "black" }}>
+                                    style={{backgroundColor: "white", color: "black"}}>
                                     {formatApiDate(row.date)}
                                 </td>
                                 <td className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-16 z-50"
@@ -392,6 +395,10 @@ const DailyTargetAchievementOnline = ({ filters }) => {
 
                     </table>
                 )}
+            </div>
+            <div className="mt-4 text-xs text-danger text-left ml-4 font-bold">
+                <p>*Omni Added in E-Store and Excluded from B&M.
+                </p>
             </div>
         </div>
     );

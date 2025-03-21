@@ -304,6 +304,128 @@ const StoreWise = ({ filters }) => {
             });
     };
 
+    // const prepareDataForTable = (allData) => {
+    //     const tableData = [];
+    //     const dates = Object.keys(allData);
+    //
+    //     if (!dates.length) {
+    //         return tableData;
+    //     }
+    //
+    //     const structure = {};
+    //     const valuesByDate = {};
+    //
+    //     dates.forEach((dateKey, dateIndex) => {
+    //         const dateArray = allData[dateKey]?.c_types || [];
+    //
+    //         dateArray.forEach((cTypeObj) => {
+    //             const cType = cTypeObj.c_type;
+    //             if (!structure[cType]) {
+    //                 structure[cType] = {};
+    //                 valuesByDate[cType] = Array(dates.length).fill(0);
+    //             }
+    //
+    //             if (cTypeObj.classification?.length) {
+    //                 cTypeObj.classification.forEach((classificationItem) => {
+    //                     const cName = classificationItem.classification_name;
+    //                     if (!structure[cType][cName]) {
+    //                         structure[cType][cName] = {};
+    //                     }
+    //
+    //                     if (classificationItem.regions?.length) {
+    //                         classificationItem.regions.forEach((regionItem) => {
+    //                             const rName = regionItem.region;
+    //                             if (!structure[cType][cName][rName]) {
+    //                                 structure[cType][cName][rName] = {};
+    //                             }
+    //
+    //                             regionItem.stores?.forEach((storeItem) => {
+    //                                 const sName = storeItem.store_name;
+    //                                 if (!structure[cType][cName][rName][sName]) {
+    //                                     structure[cType][cName][rName][sName] = Array(dates.length).fill(0);
+    //                                 }
+    //
+    //                                 structure[cType][cName][rName][sName][dateIndex] = storeItem.net_value;
+    //                             });
+    //                         });
+    //                     } else {
+    //                         structure[cType][cName]["flat"] = structure[cType][cName]["flat"] || [];
+    //
+    //                         structure[cType][cName]["flat"][dateIndex] = (structure[cType][cName]["flat"][dateIndex] || 0) + classificationItem.net_value;
+    //                     }
+    //                 });
+    //             } else {
+    //                 valuesByDate[cType][dateIndex] = cTypeObj.net_value;
+    //             }
+    //         });
+    //     });
+    //
+    //     Object.keys(structure).forEach((cType) => {
+    //         tableData.push({
+    //             type: cType,
+    //             indent: 0,
+    //             isSubHeader: true,
+    //             values: valuesByDate[cType],
+    //         });
+    //
+    //         Object.keys(structure[cType]).forEach((classificationName) => {
+    //             tableData.push({
+    //                 type: classificationName,
+    //                 indent: 1,
+    //                 isSubHeader: true,
+    //                 values: Array(dates.length).fill(0),
+    //             });
+    //
+    //             const classificationRowIndex = tableData.length - 1;
+    //
+    //             if (structure[cType][classificationName].flat) {
+    //                 structure[cType][classificationName].flat.forEach((val, idx) => {
+    //                     tableData[classificationRowIndex].values[idx] += val;
+    //                     tableData[0].values[idx] += val;
+    //                 });
+    //             } else {
+    //                 Object.keys(structure[cType][classificationName]).forEach((regionName) => {
+    //                     if (regionName !== "flat") {
+    //                         tableData.push({
+    //                             type: regionName,
+    //                             indent: 2,
+    //                             isSubHeader: true,
+    //                             values: Array(dates.length).fill(0),
+    //                         });
+    //
+    //                         const regionRowIndex = tableData.length - 1;
+    //
+    //                         Object.keys(structure[cType][classificationName][regionName]).forEach((storeName) => {
+    //                             const storeValues = structure[cType][classificationName][regionName][storeName];
+    //
+    //                             tableData.push({
+    //                                 type: storeName,
+    //                                 indent: 3,
+    //                                 values: storeValues,
+    //                             });
+    //
+    //                             storeValues.forEach((val, idx) => {
+    //                                 tableData[regionRowIndex].values[idx] += val;
+    //                                 tableData[classificationRowIndex].values[idx] += val;
+    //                                 tableData[0].values[idx] += val;
+    //                             });
+    //                         });
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     });
+    //
+    //     const totalValuesByDate = dates.map((dateKey) => allData[dateKey]?.total || 0);
+    //     tableData.push({
+    //         type: "Total",
+    //         isHeader: true,
+    //         values: totalValuesByDate,
+    //     });
+    //
+    //     return tableData;
+    // };
+
     const prepareDataForTable = (allData) => {
         const tableData = [];
         const dates = Object.keys(allData);
@@ -341,11 +463,16 @@ const StoreWise = ({ filters }) => {
 
                                 regionItem.stores?.forEach((storeItem) => {
                                     const sName = storeItem.store_name;
+                                    const fmStatus = storeItem.fm_status; // Capture fm_status
+
                                     if (!structure[cType][cName][rName][sName]) {
-                                        structure[cType][cName][rName][sName] = Array(dates.length).fill(0);
+                                        structure[cType][cName][rName][sName] = {
+                                            values: Array(dates.length).fill(0),
+                                            fmStatus: fmStatus, // Store fm_status at the store level
+                                        };
                                     }
 
-                                    structure[cType][cName][rName][sName][dateIndex] = storeItem.net_value;
+                                    structure[cType][cName][rName][sName].values[dateIndex] = storeItem.net_value;
                                 });
                             });
                         } else {
@@ -397,13 +524,15 @@ const StoreWise = ({ filters }) => {
 
                             Object.keys(structure[cType][classificationName][regionName]).forEach((storeName) => {
                                 const storeValues = structure[cType][classificationName][regionName][storeName];
+
                                 tableData.push({
                                     type: storeName,
                                     indent: 3,
-                                    values: storeValues,
+                                    values: storeValues.values, // Store values
+                                    fmStatus: storeValues.fmStatus, // Store fm_status for each store
                                 });
 
-                                storeValues.forEach((val, idx) => {
+                                storeValues.values.forEach((val, idx) => {
                                     tableData[regionRowIndex].values[idx] += val;
                                     tableData[classificationRowIndex].values[idx] += val;
                                     tableData[0].values[idx] += val;
@@ -427,14 +556,16 @@ const StoreWise = ({ filters }) => {
 
     const tableData = prepareDataForTable(newData);
 
+
     const formatNumber = (num) => {
         if (typeof num !== "number") return num;
         return num.toLocaleString();
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) return "bg-gray-200 font-bold";
+        if (row.isHeader) return "bg-gray-200 font-bold ";
         if (row.isSubHeader) return "bg-gray-200 font-medium";
+
         return "";
     };
 
@@ -475,6 +606,8 @@ const StoreWise = ({ filters }) => {
                                 const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
                                 let leftColBgColor = "bg-white";
 
+                                console.log(row)
+
                                 if (row.isHeader) {
                                     leftColBgColor = "bg-gray-200";
                                 } else if (row.isSubHeader) {
@@ -484,6 +617,8 @@ const StoreWise = ({ filters }) => {
                                 }
 
                                 return (
+
+
                                     <tr key={rowIndex} className={getRowStyle(row)}>
                                         <td
                                             className={`border border-gray-300 p-2 sticky left-0 z-20 ${leftColBgColor} ${
@@ -494,7 +629,19 @@ const StoreWise = ({ filters }) => {
                                                 paddingLeft: row.indent ? `${row.indent}rem` : "0.5rem",
                                             }}
                                         >
-                                            {row.type}
+                                            {row.type} {row.fmStatus ?
+                                            (row.fmStatus == 'Tier A' ?
+                                                    <i class="ri-drag-move-fill" style={{ color: "#F28B00" }}></i> : row.fmStatus == 'Tier B' ?
+                                                        <i class="ri-arrow-up-down-fill" style={{ color: "blue" }}></i> : row.fmStatus == 'Tier C' ?
+                                                            <i class="ri-arrow-up-down-fill"
+                                                               style={{ color: "red" }}></i> : row.fmStatus == 'Tier D' ?
+                                                                <i class="ri-arrow-up-down-fill"
+                                                                   style={{ color: "orange" }}></i> :
+                                                                <i class="ri-vip-crown-2-fill"
+                                                                   style={{ color: "green" }}></i>
+                                            )
+
+                                            : ''}
                                         </td>
 
                                         {row.values.map((value, valueIndex) => (
@@ -511,6 +658,7 @@ const StoreWise = ({ filters }) => {
                                             {formatNumber(rowTotal)}
                                         </td>
                                     </tr>
+
                                 );
                             })}
                             </tbody>
