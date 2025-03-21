@@ -445,77 +445,86 @@ const StoreWise = ({ filters }) => {
 
     return (
         <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-0">
-            <div className="relative" ref={tableContainerRef} style={{ height: "70vh" }}>
+            <div className="p-4 bg-white mt-4 mb-4 rounded-lg">
+                <div className="relative" ref={tableContainerRef} style={{height: "70vh"}}>
 
-                <div className="overflow-auto h-full" style={{ maxHeight: "calc(100% - 0px)" }}>
-                    <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg">
+                    <div className="overflow-auto h-full" style={{maxHeight: "calc(100% - 0px)"}}>
+                        <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg">
 
-                        <thead className="sticky top-0 z-30">
-                        <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                            <th className="border border-gray-700 p-2 font-bold min-w-80 sticky left-0 z-40" style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-                                Store Type
-                            </th>
-                            {dateHeaders.map((date, index) => (
-                                <th
-                                    key={index}
-                                    className="border border-gray-700 p-2 font-normal text-center min-w-28"
-                                >
-                                    {date}
+                            <thead className="sticky top-0 z-30">
+                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                                <th className="border border-gray-700 p-2 font-bold min-w-80 sticky left-0 z-40"
+                                    style={{backgroundColor: "#0b3588", color: "white"}}>
+                                    Store Type
                                 </th>
-                            ))}
-                            <th className="border border-gray-900 p-2 font-bold text-center min-w-28">
-                                Total
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {tableData.map((row, rowIndex) => {
-                            const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
-                            let leftColBgColor = "bg-white";
-
-                            if (row.isHeader) {
-                                leftColBgColor = "bg-gray-200";
-                            } else if (row.isSubHeader) {
-                                leftColBgColor = row.indent === 0 ? "bg-gray-200" :
-                                    row.indent === 1 ? "bg-gray-200" :
-                                        row.indent === 2 ? "bg-gray-200" : "bg-gray-200";
-                            }
-
-                            return (
-                                <tr key={rowIndex} className={getRowStyle(row)}>
-                                    <td
-                                        className={`border border-gray-300 p-2 sticky left-0 z-20 ${leftColBgColor} ${
-                                            row.isHeader ? "font-bold" :
-                                                row.isSubHeader ? "font-medium" : ""
-                                        }`}
-                                        style={{
-                                            paddingLeft: row.indent ? `${row.indent}rem` : "0.5rem",
-                                        }}
+                                {dateHeaders.map((date, index) => (
+                                    <th
+                                        key={index}
+                                        className="border border-gray-700 p-2 font-normal text-center min-w-28"
                                     >
-                                        {row.type}
-                                    </td>
+                                        {date}
+                                    </th>
+                                ))}
+                                <th className="border border-gray-900 p-2 font-bold text-center min-w-28">
+                                    Total
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {tableData.map((row, rowIndex) => {
+                                const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
+                                let leftColBgColor = "bg-white";
 
-                                    {row.values.map((value, valueIndex) => (
+                                if (row.isHeader) {
+                                    leftColBgColor = "bg-gray-200";
+                                } else if (row.isSubHeader) {
+                                    leftColBgColor = row.indent === 0 ? "bg-gray-200" :
+                                        row.indent === 1 ? "bg-gray-200" :
+                                            row.indent === 2 ? "bg-gray-200" : "bg-gray-200";
+                                }
+
+                                return (
+                                    <tr key={rowIndex} className={getRowStyle(row)}>
                                         <td
-                                            key={valueIndex}
-                                            className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"
+                                            className={`border border-gray-300 p-2 sticky left-0 z-20 ${leftColBgColor} ${
+                                                row.isHeader ? "font-bold" :
+                                                    row.isSubHeader ? "font-bold" : ""
+                                            }`}
+                                            style={{
+                                                paddingLeft: row.indent ? `${row.indent}rem` : "0.5rem",
+                                            }}
                                         >
-                                            {formatNumber(value)}
+                                            {row.type}
                                         </td>
-                                    ))}
 
-                                    <td className="border border-gray-300 p-2 text-right font-medium dark:text-gray-200 dark:bg-bodybg">
-                                        {formatNumber(rowTotal)}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                        </tbody>
-                    </table>
+                                        {row.values.map((value, valueIndex) => (
+                                            <td
+                                                key={valueIndex}
+                                                className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"
+                                            >
+                                                {formatNumber(value)}
+                                            </td>
+                                        ))}
+
+                                        <td className="border border-gray-300 p-2 text-right font-bold dark:text-gray-200 dark:bg-bodybg"
+                                            style={{backgroundColor: "rgb(37 73 177 / 85%)", color: "white"}}>
+                                            {formatNumber(rowTotal)}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div className="mt-4 text-xs text-danger text-left ml-4 font-bold">
+                    <p>*Omni Added in E-Store and Excluded from B&M.
+                    </p>
+                </div>
+
                 </div>
             </div>
-        </div>
-    );
-};
+            );
+            };
 
-export default StoreWise;
+            export default StoreWise;

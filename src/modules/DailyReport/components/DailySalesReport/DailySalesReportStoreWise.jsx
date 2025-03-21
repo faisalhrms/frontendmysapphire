@@ -261,19 +261,19 @@ const SalesDataTable = () => {
             <div className="mt-4 bg-white p-4 shadow-lg">
                 <h2 className="text-left text-xl font-bold">{title}</h2>
                 <div className="relative overflow-hidden">
-                    <div className="overflow-auto max-h-96" style={{ maxHeight: "500px" }}>
+                    <div className="overflow-auto max-h-96" style={{ maxHeight: "700px" }}>
                         <table className="min-w-full bg-white border-collapse">
                             <thead className="bg-gray-800 text-white sticky top-0  left-0 z-50">
-                            <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                            <tr style={{ backgroundColor: "#0b3588", color: "white" }}>
                                 <th className="py-2 px-4 border border-gray-400 text-center  bg-blue-900 sticky left-0 z-50 top-0"
-                                    style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white", minWidth: "250px" }}>SaleType (Map)</th>
+                                    style={{ backgroundColor: "#0b3588", color: "white", minWidth: "250px" }}>SaleType (Map)</th>
                                 <th colSpan="2" className="py-2 px-2 border border-gray-400 text-center">Full Price</th>
                                 <th colSpan="2" className="py-2 px-2 border border-gray-400 text-center">Discounted</th>
                                 <th colSpan="2" className="py-2 px-2 border border-gray-400 text-center">Total</th>
                             </tr>
-                            <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                            <tr style={{ backgroundColor: "#0b3588", color: "white" }}>
                                 <th className="py-2 px-4 border border-gray-400 text-center  bg-blue-900 sticky left-0 z-50 top-0"
-                                    style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white", minWidth: "250px" }} >Store Name</th>
+                                    style={{ backgroundColor: "#0b3588", color: "white", minWidth: "250px" }} >Store Name</th>
                                 <th className="py-2 px-4 border border-gray-400 text-center font-bold">Sale Qty</th>
                                 <th className="py-2 px-4 border border-gray-400 text-center">Sale Value</th>
                                 <th className="py-2 px-4 border border-gray-400 text-center">Sale Qty</th>

@@ -1,6 +1,5 @@
 import DailySaleReportList from "@modules/DailyReport/views/DailySaleReportList.jsx";
-import ClassOfflineOnlineFiscal
-    from "@modules/DailyReport/components/comparativeSalesReport/ClassOfflineOnlineFiscal.jsx";
+import ClassOfflineOnlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
 import ClassOfflineOnlineFiscalList from "@modules/DailyReport/views/ClassOfflineOnlineFiscalList.jsx";
 
 

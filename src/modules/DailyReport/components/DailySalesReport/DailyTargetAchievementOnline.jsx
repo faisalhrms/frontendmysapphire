@@ -147,14 +147,14 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                     <div className="text-center py-4">Loading...</div>
                 ) : (
                     <table className="min-w-full table-auto border-collapse border border-gray-400">
-                        <thead style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+                        <thead style={{backgroundColor: "#0b3588", color: "white"}}>
                         <tr>
                             <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-50"
-                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+                                style={{backgroundColor: "#0b3588", color: "white"}}>
 
                             </th>
                             <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
-                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}
+                                style={{backgroundColor: "#0b3588", color: "white"}}
                             >Store Type</th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline</th>
                             <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
@@ -163,7 +163,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                         <tr>
                             <th colSpan="1"
                                 className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50"
-                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}
+                                style={{backgroundColor: "#0b3588", color: "white"}}
                             ></th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
                             <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted</th>
@@ -175,10 +175,10 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                         </tr>
                         <tr>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"
-                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>Date</th>
+                                style={{backgroundColor: "#0b3588", color: "white"}}>Date</th>
                             <th colSpan="1"
                                 className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50"
-                                style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>Day
+                                style={{backgroundColor: "#0b3588", color: "white"}}>Day
                             </th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
                             <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
