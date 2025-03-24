@@ -627,10 +627,10 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                             {data.map((row, index) => (
                                 <tr key={index}>
 
-                                    <td className="sticky z-10  left-0  py-2 px-4 border font-bold border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky  left-0  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
                                     {formatApiDate(row.date)}
                                     </td>
-                                    <td className="sticky z-10  left-20  py-2 px-4 border font-bold  border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky  left-20  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
                                         {row.day}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
