@@ -17,6 +17,7 @@ const DailySaleReportList = () => {
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
     const [showFilters, setShowFilters] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [expand, setExpand] = useState(true);
 
     const storeWiseRef = useRef();
 
@@ -96,22 +97,24 @@ const DailySaleReportList = () => {
                             </Link>
                         </nav>
                         <div className="text-center mr-2 flex justify-center space-x-2">
-                            {/*{activeTab === "DailySaleReportList" && (*/}
-                            {/*    <button*/}
-                            {/*        type="button"*/}
-                            {/*        className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"*/}
-                            {/*    >*/}
-                            {/*        <i className="ri-filter-3-fill inline-block"></i> Expend All*/}
-                            {/*    </button>*/}
-                            {/*)}*/}
-                            {/*{activeTab === "DailySales" && (*/}
-                            {/*    <button*/}
-                            {/*        type="button"*/}
-                            {/*        className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"*/}
-                            {/*    >*/}
-                            {/*        <i className="ri-filter-3-fill inline-block"></i> Expend All*/}
-                            {/*    </button>*/}
-                            {/*)}*/}
+                            {activeTab === "DailySaleReportList" && (
+                                <button
+                                    onClick={()=>setExpand(!expand)}
+                                    type="button"
+                                    className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                >
+                                    <i className="ri-filter-3-fill inline-block"></i> Expend All
+                                </button>
+                            )}
+                            {activeTab === "DailySales" && (
+                                <button
+                                    onClick={()=>setExpand(!expand)}
+                                    type="button"
+                                    className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                >
+                                    <i className="ri-filter-3-fill inline-block"></i> Expend All
+                                </button>
+                            )}
 
                             <button
                                 type="button"
@@ -149,7 +152,7 @@ const DailySaleReportList = () => {
                     )}
 
                     {activeTab === "DailySaleReportList" && (
-                        <StoreWise filters={filters} loading={loading}/>
+                        <StoreWise filters={filters} loading={loading} expand={expand}/>
                     )}
 
                     {activeTab === "OnlineAndBM" && (
@@ -163,7 +166,7 @@ const DailySaleReportList = () => {
                     )}
 
                     {activeTab === "DailySales" && (
-                        <DailySalesReportStoreWise filters={filters} loading={loading}/>
+                        <DailySalesReportStoreWise filters={filters} loading={loading} expand={expand}/>
                     )}
                 </div>
             </div>

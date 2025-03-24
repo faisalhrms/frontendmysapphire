@@ -138,9 +138,9 @@ function OnlineGrossSaleBeforeReturn({ filters }) {
                         </tr>
                     ) : (
                         data.map((row, index) => (
-                            <tr key={index} className="hover:bg-gray-50">
-                                <td className="px-4 py-2 border text-center border-gray-400">{row.date}</td>
-                                <td className="px-4 py-2 border text-center border-gray-400">{row.day}</td>
+                            <tr key={index} >
+                                <td className="px-4 py-2 border text-center font-bold  border-gray-400">{row.date}</td>
+                                <td className="px-4 py-2 border text-center font-bold  border-gray-400">{row.day}</td>
                                 <td className="px-4 py-2 border border-gray-400 text-right">{formatNumber(row.full_price)}</td>
                                 <td className="px-4 py-2 border border-gray-400 text-right">{formatNumber(row.discounted)}</td>
                                 <td className="px-4 py-2 border border-gray-400 text-right">{formatNumber(row.total)}</td>

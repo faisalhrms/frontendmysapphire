@@ -449,7 +449,7 @@ const CYVsLYGrowth = ({ filters }) => {
                             </tr>
                             <tr style={{ backgroundColor: "#0b3588", color: "white" }}>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-1"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-1"
                                     style={{ backgroundColor: "#0b3588", color: "white" }}
                                 ></th>
                                 <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
@@ -494,9 +494,9 @@ const CYVsLYGrowth = ({ filters }) => {
                             <tbody>
                             {data?.map((row, index) => (
                                 <tr key={index}>
-                                    <td className="sticky  left-0  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg"
+                                    <td className="sticky  left-0  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg"
                                         >{row.Date}</td>
-                                    <td className="sticky  left-20  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg"
+                                    <td className="sticky  left-20  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg"
                                         >{row.Day}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineLY)}</td>

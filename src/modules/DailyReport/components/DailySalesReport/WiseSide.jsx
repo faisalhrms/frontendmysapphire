@@ -1422,7 +1422,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
 
-const StoreWise = ({ filters }) => {
+const StoreWise = ({ filters , expand }) => {
     const [newData, setNewData] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -1653,11 +1653,16 @@ const StoreWise = ({ filters }) => {
     };
 
     const toggleSection = (id) => {
+        console.log(id);
         setExpandedSections(prev => ({
             ...prev,
             [id]: !prev[id]
         }));
     };
+
+    useEffect(()=>{
+        toggleSection('ctype-Offline')
+    },[expand])
 
     const isVisible = (row) => {
         if (row.parentId === null) {

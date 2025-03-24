@@ -879,7 +879,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT } from "../../services/wiseside_services.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const SalesDataTable = ({ filters }) => {
+const SalesDataTable = ({ filters , expand }) => {
     const [lastDayData, setLastDayData] = useState([]);
     const [mtdData, setMtdData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -964,11 +964,46 @@ const SalesDataTable = ({ filters }) => {
         }
     };
 
+    useEffect(() => {
+        if(expand){
+            setOpenRowsLastDay({
+                "A-Class": true,
+                FOL:true,
+                North: true,
+                South: true,
+                Central: true,
+            });
+
+            setOpenRowsMTD({
+                "A-Class": true,
+                FOL:true,
+                North: true,
+                South: true,
+                Central: true,
+            })
+        }else{
+            setOpenRowsLastDay({
+                "A-Class": false,
+                FOL:false,
+                North: false,
+                South: false,
+                Central: false,
+            });
+
+            setOpenRowsMTD({
+                "A-Class": false,
+                FOL:false,
+                North: false,
+                South: false,
+                Central: false,
+            })
+        }
+    },[expand])
+
 
 
     const renderTable = (data, title, tableType) => {
         const openRows = tableType === "lastDay" ? openRowsLastDay : openRowsMTD;
-        console.log(openRows?.AClass)
         return (
             <div className="mt-4 bg-white p-4 shadow-lg dark:text-gray-200 dark:bg-bodybg">
                 <h2 className="text-left text-xl font-bold dark:text-gray-200 dark:bg-bodybg">{title}</h2>
