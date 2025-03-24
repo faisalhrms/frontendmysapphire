@@ -6,6 +6,15 @@ export const statuses = [
     { value: 'suspended', label: 'Suspended' },
     { value: 'deactivated', label: 'Deactivated' }
 ];
+export const emailHost=[
+    {value:'o365',label:'O365'},
+    {value:'mdaemon',label:'Mdaemon'},
+]
+export const yesNoDropDown=[
+    {value:'o365',label:'O365'},
+    {value:'mdaemon',label:'Mdaemon'},
+]
+
 
 export const createUser = async (userData) => {
     try {

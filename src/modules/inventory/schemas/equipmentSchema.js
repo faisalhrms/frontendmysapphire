@@ -53,6 +53,8 @@ const equipmentSchema = z.object({
     mouse: z.string().max(250).nullable().optional(),
     accessories: z.string().max(250).nullable().optional(),
     sub_equipments: z.array(subEquipmentSchema).optional(),
+    quantity: z.number().min(1, "Quantity must be at least 1").default(1), // Default to 1
+    price_paid_by_employee: z.number().nullable().optional(),
 });
 
 export default equipmentSchema;
