@@ -555,18 +555,8 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                             <tr style={{backgroundColor: "#0b3588", color: "white"}}>
                                 <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-10"
                                     style={{
-                                        position: 'fixed',
-                                        top: '0',
-                                        left: '0',
-                                        backgroundColor: '#0b3588',
-                                        color: 'white',
-                                        maxHeight: '80vh',
-                                        maxWidth: '80vw',
-                                        overflow: 'auto',
-                                        zIndex: '1000', // Ensures it's on top
-                                        padding: '10px',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                                        backgroundColor: "#0b3588", color: "white"
+
                                     }}
                                 >
                                 </th>
