@@ -494,9 +494,9 @@ const CYVsLYGrowth = ({ filters }) => {
                             <tbody>
                             {data?.map((row, index) => (
                                 <tr key={index}>
-                                    <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-10 bg-white dark:text-gray-200 dark:bg-bodybg"
+                                    <td className="sticky  left-0  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg"
                                         >{row.Date}</td>
-                                    <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20  bg-white z-10 dark:text-gray-200 dark:bg-bodybg"
+                                    <td className="sticky  left-20  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg"
                                         >{row.Day}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineLY)}</td>
