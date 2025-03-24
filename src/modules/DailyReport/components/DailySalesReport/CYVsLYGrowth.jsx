@@ -431,25 +431,25 @@ const CYVsLYGrowth = ({ filters }) => {
                 {loading ? (
                     <div className="text-center py-4">Loading...</div>
                 ) : (
-                    <div className="overflow-auto" style={{ maxHeight: '70vh', position: 'relative' }}>
+                    <div className="overflow-auto" style={{ maxHeight: '70vh'}}>
                         <table className="min-w-full table-auto border-collapse border border-gray-400">
                             <thead className="sticky top-0 z-10">
                             <tr style={{ backgroundColor: "#0b3588", color: "white" }}>
-                                <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-20"
+                                <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-10"
                                     style={{ backgroundColor: "#0b3588", color: "white", minWidth: '80px' }}>
                                 </th>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-20"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-10"
                                     style={{ backgroundColor: "#0b3588", color: "white", minWidth: '80px' }}
                                 >Store Type
                                 </th>
-                                <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline</th>
+                                <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline </th>
                                 <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
                                 <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
                             </tr>
                             <tr style={{ backgroundColor: "#0b3588", color: "white" }}>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-20"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-1"
                                     style={{ backgroundColor: "#0b3588", color: "white" }}
                                 ></th>
                                 <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full Price</th>
@@ -461,11 +461,11 @@ const CYVsLYGrowth = ({ filters }) => {
                                 <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 text-center"></th>
                             </tr>
                             <tr style={{ backgroundColor: "#0b3588", color: "white" }}>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-20"
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-10"
                                     style={{ backgroundColor: "#0b3588", color: "white", minWidth: '80px' }}>Date
                                 </th>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-20 z-20"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center font-bold  sticky left-0 z-10"
                                     style={{ backgroundColor: "#0b3588", color: "white", minWidth: '80px' }}>Day
                                 </th>
                                 <th className="py-2 px-4 border border-gray-400 p-2 text-center">CY</th>
@@ -494,10 +494,10 @@ const CYVsLYGrowth = ({ filters }) => {
                             <tbody>
                             {data?.map((row, index) => (
                                 <tr key={index}>
-                                    <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-10"
-                                        style={{ backgroundColor: "white", color: "black" }}>{row.Date}</td>
-                                    <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-10"
-                                        style={{ backgroundColor: "white", color: "black" }}>{row.Day}</td>
+                                    <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-10 dark:text-gray-200 dark:bg-bodybg"
+                                        >{row.Date}</td>
+                                    <td className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-10 dark:text-gray-200 dark:bg-bodybg"
+                                        >{row.Day}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineLY)}</td>
                                     <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.FullPriceOfflineGrowth)}`}>
@@ -538,10 +538,10 @@ const CYVsLYGrowth = ({ filters }) => {
 
                             {data?.length > 0 && (
                                 <tr style={{ backgroundColor: "#f9f9f9" }}>
-                                    <td className="py-2 px-2 border border-gray-400 text-center font-bold sticky left-0 z-10"
+                                    <td className="py-2 px-2 border border-gray-400 text-center font-bold sticky left-0 z-10 dark:text-gray-200 dark:bg-bodybg"
                                         style={{ backgroundColor: "#f9f9f9" }}>
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-center font-bold sticky left-20 z-10"
+                                    <td className="py-2 px-2 border border-gray-400 text-center font-bold sticky left-20 z-10 dark:text-gray-200 dark:bg-bodybg"
                                         style={{ backgroundColor: "#f9f9f9" }}>
                                         Total
                                     </td>
@@ -624,7 +624,7 @@ const CYVsLYGrowth = ({ filters }) => {
                                         {formatNumberWithCommas(totals.TotalLY)}
                                     </td>
                                     <td
-                                        className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.TotalAch)}`}
+                                        className={`py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.TotalAch)}`}
                                     >
                                         {getAchIcon(totalsAch.TotalAch)} {totalsAch.TotalAch}
                                     </td>

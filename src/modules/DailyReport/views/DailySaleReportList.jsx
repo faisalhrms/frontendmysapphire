@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo,useRef } from "react";
 import { Link } from "react-router-dom";
 
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
@@ -14,11 +14,12 @@ import CYVsLYGrowth from "@modules/DailyReport/components/DailySalesReport/CYVsL
 import DailySalesReportStoreWise from "@modules/DailyReport/components/DailySalesReport/DailySalesReportStoreWise.jsx";
 
 const DailySaleReportList = () => {
-    const [activeTab, setActiveTab] = useState("DailySaleReportList");  // Initial active tab
+    const [activeTab, setActiveTab] = useState("DailySaleReportList");
     const [showFilters, setShowFilters] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    // Get today's date and subtract one day to set default filters
+    const storeWiseRef = useRef();
+
     const getTodayDate = () => new Date().toISOString().slice(0, 10);
     const getYesterdayDate = () => {
         const yesterday = new Date();
@@ -54,7 +55,8 @@ const DailySaleReportList = () => {
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">
-                    <div className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+                    <div
+                        className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
                         <nav className="flex space-x-4">
                             <Link
                                 to="#"
@@ -93,19 +95,42 @@ const DailySaleReportList = () => {
                                 Daily Sales Report - Store Wis
                             </Link>
                         </nav>
+                        <div className="text-center mr-2 flex justify-center space-x-2">
+                            {/*{activeTab === "DailySaleReportList" && (*/}
+                            {/*    <button*/}
+                            {/*        type="button"*/}
+                            {/*        className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"*/}
+                            {/*    >*/}
+                            {/*        <i className="ri-filter-3-fill inline-block"></i> Expend All*/}
+                            {/*    </button>*/}
+                            {/*)}*/}
+                            {/*{activeTab === "DailySales" && (*/}
+                            {/*    <button*/}
+                            {/*        type="button"*/}
+                            {/*        className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"*/}
+                            {/*    >*/}
+                            {/*        <i className="ri-filter-3-fill inline-block"></i> Expend All*/}
+                            {/*    </button>*/}
+                            {/*)}*/}
 
-                        <button
-                            type="button"
-                            className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
-                            onClick={() => setShowFilters(!showFilters)}
-                        >
-                            <i className="ri-filter-3-fill inline-block"></i> Filters
-                        </button>
+                            <button
+                                type="button"
+                                className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                onClick={() => setShowFilters(!showFilters)}
+                            >
+                                <i className="ri-filter-3-fill inline-block"></i> Filters
+                            </button>
+                        </div>
+
+                    </div>
+                    <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
+                        <p>Amount in Rs  </p>
                     </div>
 
                     {showFilters && (
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
+                            <div
+                                className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="mt-0">
                                     <FormInput
                                         type="date"
@@ -117,28 +142,28 @@ const DailySaleReportList = () => {
                                     />
                                 </div>
                                 <div className="mt-6">
-                                    <FilterButton />
+                                    <FilterButton/>
                                 </div>
                             </div>
                         </form>
                     )}
 
                     {activeTab === "DailySaleReportList" && (
-                        <StoreWise filters={filters} loading={loading} />
+                        <StoreWise filters={filters} loading={loading}/>
                     )}
 
                     {activeTab === "OnlineAndBM" && (
-                        <DailyTargetAchievementOnline filters={filters} loading={loading} />
+                        <DailyTargetAchievementOnline filters={filters} loading={loading}/>
                     )}
                     {activeTab === "Return" && (
-                        <CYVsLYGrowth filters={filters} loading={loading} />
+                        <CYVsLYGrowth filters={filters} loading={loading}/>
                     )}
                     {activeTab === "GrossReturn" && (
-                        <OnlineGrossSaleBeforeReturn filters={filters} loading={loading} />
+                        <OnlineGrossSaleBeforeReturn filters={filters} loading={loading}/>
                     )}
 
                     {activeTab === "DailySales" && (
-                        <DailySalesReportStoreWise filters={filters} loading={loading} />
+                        <DailySalesReportStoreWise filters={filters} loading={loading}/>
                     )}
                 </div>
             </div>
