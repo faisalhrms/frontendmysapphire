@@ -261,7 +261,7 @@ const SalesDataTable = () => {
             <div className="mt-4 bg-white p-4 shadow-lg">
                 <h2 className="text-left text-xl font-bold">{title}</h2>
                 <div className="relative overflow-hidden">
-                    <div className="overflow-auto max-h-96" style={{maxHeight: "650px"}}>
+                    <div className="overflow-auto max-h-96" style={{maxHeight: "660px"}}>
                         <table className="min-w-full bg-white border-collapse">
                             <thead className="bg-gray-800 text-white sticky top-0  left-0 z-50">
                             <tr style={{backgroundColor: "#0b3588", color: "white"}}>
