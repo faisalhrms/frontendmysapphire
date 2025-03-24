@@ -2,7 +2,7 @@ import React from "react";
 
 function CreatedAssign({ generatedReqData, serviceRequest }) {
   return (
-    <div className="relative bg-white lg:max-w-[100%] lg:max-h-[100%] px-4 py-4 dark:bg-bodybg mt-6 rounded-md shadow-md">
+    <div className="relative box lg:max-w-[100%] lg:max-h-[100%] px-4 py-4 dark:bg-bodybg mt-6 rounded-md shadow-md">
       <div className="flex justify-start items-center w-full space-x-8">
         <div className="text-center">
           <p className="ri-checkbox-circle-fill text-primary mx-auto" />

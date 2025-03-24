@@ -17,6 +17,14 @@ export const sidebarMenu = [
                 1,
                 "bx bx-message-square-edit",
                 DAILYREPORT_ROUTES.READ.permission,
+            ),
+            generateSidebarItem(
+                DAILYREPORT_ROUTES.CREATE.path,
+                "link",
+                "Comparative Sales Report",
+                2,
+                "bx bx-message-square-edit",
+                DAILYREPORT_ROUTES.CREATE.permission,
             )
 
         ]

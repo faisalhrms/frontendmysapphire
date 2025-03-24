@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import useFullScreen from "@hooks/useFullScreen.js";
 import SimpleBar from "simplebar-react";
 
-const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table', height = '250px', tHeadClasses='' }) => {
+const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table', height = '250px', tHeadClasses='', onRowClick }) => {
     const { headers } = config;
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
@@ -54,17 +54,18 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
                         {filteredData.length > 0 && headers.length > 0 ? (
                             filteredData.map((rowData, rowIndex) => (
                                 <tr key={rowIndex}
+                                    onClick={(e) => onRowClick(rowData, e.target.cellIndex, headers)}
                                     className="border border-inherit border-solid !text-center hover:bg-gray-100">
                                     {headers.map((header, colIndex) => (
-                                        <td key={colIndex} className={`p-3 text-sm text-gray-700 ${header.align || '!text-center'} ${header.classes || '!text-center'}`}>
+                                        <td key={colIndex} className={`p-3 text-sm text-gray-700 ${header.align || '!text-center'} ${header?.classes}`}>
                                             {rowData[header.accessor] !== undefined && rowData[header.accessor] !== null ? rowData[header.accessor] : 'N/A'}
                                         </td>
                                     ))}
                                 </tr>
                             ))
                         ) : (
-                            <tr>
-                                <td colSpan={headers.length} className="text-center py-4">No data available</td>
+                            <tr className="text-center">
+                                <td colSpan={headers.length} className="py-4 !text-center">No Data Available</td>
                             </tr>
                         )}
                         </tbody>
@@ -82,6 +83,7 @@ ClientSideTable.propTypes = {
     }),
     data: PropTypes.array,
     title: PropTypes.string,
+    onRowClick: PropTypes.func,
 };
 
 export default React.memo(ClientSideTable);

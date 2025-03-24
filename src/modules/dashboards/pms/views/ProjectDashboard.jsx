@@ -7,8 +7,10 @@ import ProjectDashboardTaskStats from "@modules/dashboards/pms/components/Projec
 import IconTabs from "@components/IconTabs.jsx";
 import ProjectDashboardStats from "@modules/dashboards/pms/components/ProjectDashboardStats.jsx";
 import {useSelector} from "react-redux";
-import ProjectDashboardProjectTasksStatuses
-    from "@modules/dashboards/pms/components/ProjectDashboardProjectTasksStatuses.jsx";
+import ProjectDashboardProjectTasksStatuses from "@modules/dashboards/pms/components/ProjectDashboardProjectTasksStatuses.jsx";
+import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import ProjectDashboardProjectTasksPriorities
+    from "@modules/dashboards/pms/components/ProjectDashboardProjectTasksPriorities.jsx";
 
 
 const ProjectDashboard = () => {
@@ -33,13 +35,22 @@ const ProjectDashboard = () => {
     );
 
     const [filters, setFilters] = useState(getFilters());
-
+    const [activeTab, setActiveTab] = useState('project_overview');
     const onSubmit = useCallback(
         (formData) => {
             setFilters(formData);
         },
         []
     );
+
+    const handleTabChange = (tabId) => {
+        setActiveTab(tabId);
+    };
+
+    const { data, isLoading } = useFetchWithFilters(
+        activeTab === "task_overview" ? '/dashboard/pms/task/statistics/' : activeTab === "project_status_overview" ? '/dashboard/pms/project/tasks/statuses/' : activeTab === "task_priority_overview" ? '/dashboard/pms/project/tasks/priorities/' : '/dashboard/pms/statistics/', filters
+    );
+
 
     return(
         <>
@@ -56,7 +67,7 @@ const ProjectDashboard = () => {
                         label: "Project Overview",
                         icon: <i className="bx bx-task"></i>,
                         content: (
-                            <ProjectDashboardStats filters={filters}/>
+                            <ProjectDashboardStats data={data} isLoading={isLoading} isActive={'project_overview' === activeTab}  filters={filters}/>
                         ),
                     },
                     {
@@ -65,7 +76,7 @@ const ProjectDashboard = () => {
                         icon: <i className="bx bx-bar-chart"></i>,
                         content: (
                             <>
-                                <ProjectDashboardTaskStats filters={filters}/>
+                                <ProjectDashboardTaskStats data={data} isLoading={isLoading} isActive={'task_overview' === activeTab} />
                             </>
                         ),
                     },
@@ -75,11 +86,22 @@ const ProjectDashboard = () => {
                         icon: <i className="bx bx-stats"></i>,
                         content: (
                             <>
-                                <ProjectDashboardProjectTasksStatuses filters={filters}/>
+                                <ProjectDashboardProjectTasksStatuses data={data} isLoading={isLoading} isActive={'project_status_overview' === activeTab} />
+                            </>
+                        ),
+                    },
+                    {
+                        id: "task_priority_overview",
+                        label: "Priority Overview",
+                        icon: <i class='bx bx-line-chart'></i>,
+                        content: (
+                            <>
+                                <ProjectDashboardProjectTasksPriorities data={data} isLoading={isLoading} isActive={'task_priority_overview' === activeTab} />
                             </>
                         ),
                     },
                 ]}
+                onTabChange={handleTabChange}
             />
         </>
     );

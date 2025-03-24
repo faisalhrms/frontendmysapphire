@@ -109,6 +109,16 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                         </th>
                         <th
                             scope="col"
+                            onClick={() => requestSort('aging')}
+                            className="cursor-pointer"
+                        >
+                            Aging
+                            <span className={`ml-1 ${getSortIconAndClass('aging').className}`}>
+                                {getSortIconAndClass('aging').icon}
+                            </span>
+                        </th>
+                        <th
+                            scope="col"
                             onClick={() => requestSort('ended_at')}
                             className="cursor-pointer"
                         >
@@ -310,6 +320,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                     )}
                                 </td>
                                 <td>{formatDate(task.started_at)}</td>
+                                <td>{task?.aging} Days</td>
                                 <td>
                                     <div className="flex items-center">
                                         {

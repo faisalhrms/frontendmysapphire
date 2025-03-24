@@ -27,8 +27,6 @@ function createPrioritiesHeaders(statuses) {
 
 const PrioritiesTable = ({ data, statuses }) => {
     const rows = useMemo(() => transformPrioritiesData(data, statuses), [data, statuses]);
-
-    // Filter statuses where count is greater than 0
     const filteredStatuses = useMemo(() => {
         return statuses.filter(status => {
             return rows.some(row => row[status] > 0);
@@ -55,10 +53,26 @@ const PrioritiesTable = ({ data, statuses }) => {
     }, [rows, columnTotals, grandTotal]);
 
     const headers = useMemo(() => createPrioritiesHeaders(filteredStatuses), [filteredStatuses]);
+    const handleRowClick = (rowData, colIndex, headers) => {
+        // Exclude the 'priority' column by checking the accessor
+        const header = headers[colIndex];
+        if (header?.accessor){
+            if (header.accessor === 'priority') {
+                // Do nothing if the clicked column is 'priority'
+                return;
+            }
 
+            // Get the column label (header)
+            const columnHeader = header.label;
+
+            // Log the column header and priority value
+            console.log(`Column Header: ${columnHeader}`);
+            console.log(`Priority: ${rowData.priority}`);
+        }
+    };
     return (
         <div>
-            <ClientSideTable config={{ headers }} data={rowsWithFooter} title="Priority Wise Status" height="400px" tHeadClasses='table-bg-dark' />
+            <ClientSideTable config={{ headers }} data={rowsWithFooter} title="Priority Wise Status" height="400px" tHeadClasses='table-bg-dark' onRowClick={handleRowClick} />
         </div>
     );
 };
