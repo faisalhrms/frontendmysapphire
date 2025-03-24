@@ -1682,7 +1682,7 @@ const StoreWise = ({ filters }) => {
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) return "bg-gray-200 font-bold ";
+        if (row.isHeader) return "bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg ";
         if (row.isSubHeader) return "bg-gray-200 font-medium";
         return "";
     };

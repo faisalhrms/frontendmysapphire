@@ -699,10 +699,10 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                             ))}
 
                             {data.length > 0 && (
-                                <tr className="bg-gray-200 font-bold">
-                                    <td className="sticky left-0 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200">
+                                <tr className="bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky left-0 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                     </td>
-                                    <td className="sticky left-16 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200">
+                                    <td className="sticky left-16 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                         Total
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
