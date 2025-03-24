@@ -5,9 +5,12 @@ import useFilters from "@hooks/useFilters.js";
 
 import FilterButton from "@components/form/FilterButton.jsx";
 import FormInput from "@components/form/FormInput.jsx";
-import ClassonlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/ClassonlineFiscal.jsx";
+import ClassonlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassonlineFiscal.jsx";
 import ClassOfflineOnlineFiscal
-    from "@modules/DailyReport/components/comparativeSalesReport/ClassOfflineOnlineFiscal.jsx";
+    from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
+import OnlineSalesGlobal from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSalesGlobal.jsx";
+import AClassIslamic from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamic.jsx";
+
 
 const DailySaleReportList = () => {
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
@@ -83,6 +86,20 @@ const DailySaleReportList = () => {
                             >
                                 A Class (Offline) & Online - Fiscal
                             </Link>
+                            <Link
+                                to="#"
+                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Online" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
+                                onClick={() => setActiveTab("Online")}
+                            >
+                                Online Sales - Local & Global
+                            </Link>
+                            <Link
+                                to="#"
+                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Islamic" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
+                                onClick={() => setActiveTab("Islamic")}
+                            >
+                                A Class (Offline) & Online - Islamic
+                            </Link>
                         </nav>
 
                         <button
@@ -149,6 +166,12 @@ const DailySaleReportList = () => {
                     )}
                     {activeTab === "DailySaleReportList" && (
                       <ClassOfflineOnlineFiscal/>
+                    )}
+                    {activeTab === "Online" && (
+                        <OnlineSalesGlobal filters={filters} loading={loading} />
+                    )}
+                    {activeTab === "Islamic" && (
+                        <AClassIslamic filters={filters} loading={loading} />
                     )}
 
 

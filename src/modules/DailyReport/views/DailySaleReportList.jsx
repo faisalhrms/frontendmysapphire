@@ -30,8 +30,8 @@ const DailySaleReportList = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: "date_from", defaultValue: getYesterdayDate() }, // Set to yesterday's date
-                    { name: "date_to", defaultValue: getTodayDate() }, // Set to today's date
+                    { name: "date_from", defaultValue: getYesterdayDate() },
+                    { name: "date_to", defaultValue: getTodayDate() },
                 ],
             }),
             []

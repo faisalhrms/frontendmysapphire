@@ -85,3 +85,4 @@ const SalesDataTable = () => {
 };
 
 export default SalesDataTable;
+
