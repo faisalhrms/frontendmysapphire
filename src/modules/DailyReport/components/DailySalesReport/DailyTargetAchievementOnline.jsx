@@ -561,7 +561,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                                 >
                                 </th>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-0 z-10"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-10"
                                     style={{backgroundColor: "#0b3588", color: "white"}}
                                 >Store Type
                                 </th>
@@ -596,7 +596,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                                     style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}>Date
                                 </th>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center font-bold  sticky left-0 z-10"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center font-bold  sticky left-20 z-10"
                                     style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}>Day
                                 </th>
                                 <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
@@ -626,10 +626,10 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                             <tbody>
                             {data.map((row, index) => (
                                 <tr key={index}>
-                                    <td className="sticky left-0  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky  left-0  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
                                     {formatApiDate(row.date)}
                                     </td>
-                                    <td className="sticky left-0  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky  left-20  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
                                         {row.day}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">

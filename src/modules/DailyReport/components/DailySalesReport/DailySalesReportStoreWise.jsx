@@ -886,17 +886,19 @@ const SalesDataTable = ({ filters }) => {
     const [error, setError] = useState(null);
 
     const [openRowsLastDay, setOpenRowsLastDay] = useState({
-        AClass: true,
+        "A-Class": true,
+        FOL:true,
         North: true,
         South: true,
-        Center: true,
+        Central: true,
     });
 
     const [openRowsMTD, setOpenRowsMTD] = useState({
-        AClass: true,
+        "A-Class": true,
         North: true,
         South: true,
-        Center: true,
+        Central: true,
+        FOL:true,
     });
 
     useEffect(() => {
@@ -949,6 +951,7 @@ const SalesDataTable = ({ filters }) => {
 
     const handleRowToggle = (region, table) => {
         if (table === "lastDay") {
+            console.log(region);
             setOpenRowsLastDay((prev) => ({
                 ...prev,
                 [region]: !prev[region],
@@ -961,9 +964,11 @@ const SalesDataTable = ({ filters }) => {
         }
     };
 
+
+
     const renderTable = (data, title, tableType) => {
         const openRows = tableType === "lastDay" ? openRowsLastDay : openRowsMTD;
-
+        console.log(openRows?.AClass)
         return (
             <div className="mt-4 bg-white p-4 shadow-lg dark:text-gray-200 dark:bg-bodybg">
                 <h2 className="text-left text-xl font-bold dark:text-gray-200 dark:bg-bodybg">{title}</h2>
@@ -992,15 +997,16 @@ const SalesDataTable = ({ filters }) => {
                             </thead>
                             <tbody>
                             {data?.classifications?.map((classification) => {
+                                const rw = classification.classification_name;
                                 return (
                                     <React.Fragment key={classification.classification_name}>
                                         <tr>
                                             <td
                                                 className={`px-2 py-1 border border-gray-300 bg-gray-200 dark:text-gray-200 dark:bg-bodybg ${getTextStyle(true)} sticky top-0 left-0 z-10`}
-                                                onClick={() => handleRowToggle('AClass', tableType)} // Added onClick handler
+                                                onClick={() => handleRowToggle(classification.classification_name, tableType)} // Added onClick handler
                                                 style={{cursor: 'pointer'}} // Added cursor to indicate interactivity
                                             >
-                                                {openRows[tableType]?.AClass ? "▼" : "►"} {/* Change based on row state */}
+                                                {openRows[classification.classification_name] ? "▼" : "►"} {/* Change based on row state */}
                                                 {classification.classification_name}
                                             </td>
                                             <td className={`px-4 py-1 border border-gray-300 font-bold bg-gray-200 text-right dark:text-gray-200 dark:bg-bodybg`}>
@@ -1022,7 +1028,7 @@ const SalesDataTable = ({ filters }) => {
                                                 {formatNumberWithCommas(classification.total_sale_value)}
                                             </td>
                                         </tr>
-                                        {classification.regions?.map((region) => (
+                                        {openRows[classification.classification_name]&&classification.regions?.map((region) => (
                                             <React.Fragment key={region.region}>
                                                 <tr onClick={() => handleRowToggle(region.region, tableType)}
                                                     style={{cursor: 'pointer'}}>
