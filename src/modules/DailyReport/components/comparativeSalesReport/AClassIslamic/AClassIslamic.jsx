@@ -5,10 +5,10 @@ const AClassIslamic = () => {
         <div className="font-sans text-sm">
             {/* Header */}
             <div className="flex justify-between mb-4">
-                <div className="bg-blue-700 text-white p-2 font-bold">
+                <div className="mt-4 font-bold text-danger mb-4 ml-4">
                     Sales Report for A Class (Offline) & Online Channel- Full Price Sales
                 </div>
-                <div className="bg-blue-700 text-white p-2 font-bold">
+                <div className="mt-4 font-bold text-danger mb-4 ml-4">
                     Like for Like Islamic Days Growth
                 </div>
             </div>
@@ -17,7 +17,7 @@ const AClassIslamic = () => {
                 <div className="mb-6">
                     <table className="w-full border-collapse">
                         <thead>
-                        <tr>
+                        <tr  style={{backgroundColor: "#0b3588", color: "white"}}>
                             <th className="w-1/12"></th>
                             <th className="bg-blue-300 border border-gray-400 p-2 text-center">Current Period</th>
                             <th className="bg-blue-300 border border-gray-400 p-2 text-center">Comparative Period</th>
@@ -25,12 +25,12 @@ const AClassIslamic = () => {
                         </thead>
                         <tbody>
                         <tr>
-                            <td className="font-bold p-2">From</td>
+                            <td className="font-bold p-2 border border-gray-400">From</td>
                             <td className="border border-gray-400 p-2 text-center">01-Feb-25</td>
                             <td className="border border-gray-400 p-2 text-center">01-Feb-24</td>
                         </tr>
                         <tr>
-                            <td className="font-bold p-2">To</td>
+                            <td className="font-bold p-2 border border-gray-400">To</td>
                             <td className="border border-gray-400 p-2 text-center">26-Feb-25</td>
                             <td className="border border-gray-400 p-2 text-center">26-Feb-24</td>
                         </tr>
@@ -44,11 +44,13 @@ const AClassIslamic = () => {
                 <div className="mb-6">
                     <table className="w-full border-collapse">
                         <thead>
-                        <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
-                            <th colSpan="6" className="bg-blue-300 border border-gray-400 p-2 text-center">Full Price
+                        <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                            <th colSpan="7" className="bg-blue-300 border border-gray-400 p-2 text-center">Full Price
                             </th>
                         </tr>
-                        <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
+                        <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                            <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">
+                            </th>
                             <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">Current
                                 Year
                             </th>
@@ -58,7 +60,8 @@ const AClassIslamic = () => {
                         </tr>
                         <tr>
 
-
+                            <th className="bg-blue-200  p-2 text-center"></th>
+                            <th className="bg-blue-200  p-2 text-center"></th>
 
                             <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Wed)</th>
                             <th className="bg-blue-200 border border-gray-400 p-2 text-center">MTD</th>
@@ -69,6 +72,8 @@ const AClassIslamic = () => {
                         </thead>
                         <tbody>
                         <tr className="bg-gray-200">
+
+                            <td className="font-bold p-2"></td>
                             <td className="font-bold p-2">Total</td>
                             <td className="border border-gray-400 p-2 text-right">128,481,379</td>
                             <td className="border border-gray-400 p-2 text-right">2,397,893,575</td>
@@ -77,6 +82,7 @@ const AClassIslamic = () => {
                             <td className="border border-gray-400 p-2 text-right">1.7%</td>
                         </tr>
                         <tr>
+                            <td className="font-bold p-2"></td>
                             <td className="font-bold p-2">Offline</td>
                             <td className="border border-gray-400 p-2 text-right">103,004,525</td>
                             <td className="border border-gray-400 p-2 text-right">1,937,630,364</td>
@@ -85,6 +91,7 @@ const AClassIslamic = () => {
                             <td className="border border-gray-400 p-2 text-right">3%</td>
                         </tr>
                         <tr>
+                            <td className="font-bold p-2"></td>
                             <td className="font-bold p-2">Online</td>
                             <td className="border border-gray-400 p-2 text-right">25,476,854</td>
                             <td className="border border-gray-400 p-2 text-right">460,263,211</td>
@@ -101,18 +108,18 @@ const AClassIslamic = () => {
                 <div className="p-4 bg-white mt-4 mb-4 rounded-lg">
                     <table className="w-full border-collapse">
                         <thead>
-                        <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
+                        <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
                             <th rowSpan="2" className="bg-blue-300 border border-gray-400 p-2">A-Class</th>
                             <th colSpan="7" className="bg-blue-300 border border-gray-400 p-2 text-center">Full Price
                             </th>
                         </tr>
-                        <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
+                        <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
                             <th colSpan="3" className="bg-blue-300 border border-gray-400 p-2 text-center">Offline</th>
                             <th colSpan="3" className="bg-blue-300 border border-gray-400 p-2 text-center">Online (Excl.
                                 UK)
                             </th>
                         </tr>
-                        <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
+                        <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
                             <th className="bg-white border border-gray-400 p-2 " style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}></th>
                             <th className="bg-blue-200 border border-gray-400 p-2 text-center">Shaban - 25</th>
                             <th className="bg-blue-200 border border-gray-400 p-2 text-center">Shaban - 24</th>
@@ -272,7 +279,7 @@ const AClassIslamic = () => {
                 </div>
 
                 {/* Footer Notes */}
-                <div className="mt-4 text-xs">
+                <div className="mt-4 font-bold text-danger mb-4 ml-4">
                     <p>*Excluding FOL Stores</p>
                     <p>**Unstitched-To-Stitched is part of Stitched Women in B&M</p>
                 </div>

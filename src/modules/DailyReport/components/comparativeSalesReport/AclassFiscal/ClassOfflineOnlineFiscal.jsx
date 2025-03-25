@@ -47,7 +47,7 @@ const SalesDataTable = () => {
     return (
         <div className="p-6 bg-white mt-4  rounded-lg">
             <table className="min-w-full table-auto border-collapse  border-gray-400 border">
-                <thead style={{ backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white' }}>
+                <thead style={{ backgroundColor: '#0b3588', color: 'white' }}>
                 <tr>
                     <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-50">A Class</th>
                     <th colSpan="6" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50">Full Price</th>

@@ -6,44 +6,18 @@ import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FormInput from "@components/form/FormInput.jsx";
 import ClassonlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassonlineFiscal.jsx";
-import ClassOfflineOnlineFiscal
-    from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
+import ClassOfflineOnlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
 import OnlineSalesGlobal from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSalesGlobal.jsx";
 import AClassIslamic from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamic.jsx";
-
 
 const DailySaleReportList = () => {
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
     const [showFilters, setShowFilters] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const getTodayDate = () => new Date().toISOString().slice(0, 10);
-
-    const getCurrentPeriodStartDate = () => {
+    const getCurrentDayMinusOne = () => {
         const date = new Date();
-        date.setDate(1);
-        return date.toISOString().slice(0, 10);
-    };
-
-    const getComparativePeriodStartDate = () => {
-        const date = new Date();
-        date.setFullYear(date.getFullYear() - 1);
-        date.setDate(1);
-        return date.toISOString().slice(0, 10);
-    };
-
-    const getCurrentPeriodEndDate = () => {
-        const date = new Date();
-        date.setMonth(date.getMonth() + 1);
-        date.setDate(0);
-        return date.toISOString().slice(0, 10);
-    };
-
-    const getComparativePeriodEndDate = () => {
-        const date = new Date();
-        date.setFullYear(date.getFullYear() - 1);
-        date.setMonth(date.getMonth() + 1);
-        date.setDate(0);
+        date.setDate(date.getDate() - 1);
         return date.toISOString().slice(0, 10);
     };
 
@@ -51,10 +25,7 @@ const DailySaleReportList = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: "current_date_from", defaultValue: getCurrentPeriodStartDate() },
-                    { name: "current_date_to", defaultValue: getCurrentPeriodEndDate() },
-                    { name: "comparative_date_from", defaultValue: getComparativePeriodStartDate() },
-                    { name: "comparative_date_to", defaultValue: getComparativePeriodEndDate() },
+                    { name: "current_day_minus_one", defaultValue: getCurrentDayMinusOne() },
                 ],
             }),
             []
@@ -107,7 +78,7 @@ const DailySaleReportList = () => {
                             className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                             onClick={() => setShowFilters(!showFilters)}
                         >
-                            <i className="ri-filter-3-fill inline-block"></i> Filters
+                            <i className="ri-search-eye-fill"></i> Filters
                         </button>
                     </div>
 
@@ -117,41 +88,11 @@ const DailySaleReportList = () => {
                                 <div className="mt-0">
                                     <FormInput
                                         type="date"
-                                        name="current_date_from"
+                                        name="current_day_minus_one"
                                         control={control}
                                         errors={errors}
-                                        defaultValue={filters.current_date_from}
-                                        label={"Current Period From"}
-                                    />
-                                </div>
-                                <div className="mt-0">
-                                    <FormInput
-                                        type="date"
-                                        name="current_date_to"
-                                        control={control}
-                                        errors={errors}
-                                        defaultValue={filters.current_date_to}
-                                        label={"Current Period To"}
-                                    />
-                                </div>
-                                <div className="mt-0">
-                                    <FormInput
-                                        type="date"
-                                        name="comparative_date_from"
-                                        control={control}
-                                        errors={errors}
-                                        defaultValue={filters.comparative_date_from}
-                                        label={"Comparative Period From"}
-                                    />
-                                </div>
-                                <div className="mt-0">
-                                    <FormInput
-                                        type="date"
-                                        name="comparative_date_to"
-                                        control={control}
-                                        errors={errors}
-                                        defaultValue={filters.comparative_date_to}
-                                        label={"Comparative Period To"}
+                                        defaultValue={filters.current_day_minus_one}
+                                        label={"Current Day - 1"}
                                     />
                                 </div>
                                 <div className="mt-6">
@@ -162,10 +103,10 @@ const DailySaleReportList = () => {
                     )}
 
                     {activeTab === "DailySaleReportList" && (
-                        <ClassonlineFiscal/>
+                        <ClassonlineFiscal />
                     )}
                     {activeTab === "DailySaleReportList" && (
-                      <ClassOfflineOnlineFiscal/>
+                        <ClassOfflineOnlineFiscal />
                     )}
                     {activeTab === "Online" && (
                         <OnlineSalesGlobal filters={filters} loading={loading} />
@@ -173,9 +114,6 @@ const DailySaleReportList = () => {
                     {activeTab === "Islamic" && (
                         <AClassIslamic filters={filters} loading={loading} />
                     )}
-
-
-
                 </div>
             </div>
         </>

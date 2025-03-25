@@ -11,12 +11,12 @@ const OnlineSalesGlobal = () => {
                 <table className="w-full border-collapse bg-white mb-4">
                     <thead>
                     <tr>
-                        <th className="w-1/4" style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}></th>
+                        <th className="w-1/4" style={{backgroundColor: '#0b3588', color: 'white'}}></th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center"
-                            style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>Current Period
+                            style={{backgroundColor: '#0b3588', color: 'white'}}>Current Period
                         </th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center"
-                            style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>Comparative Period
+                            style={{backgroundColor: '#0b3588', color: 'white'}}>Comparative Period
                         </th>
                     </tr>
                     </thead>
@@ -38,12 +38,12 @@ const OnlineSalesGlobal = () => {
             <div className="p-4 bg-white mt-4 mb-4 rounded-lg">
                 <table className="w-full border-collapse mb-6 bg-white">
                     <thead>
-                    <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
+                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" rowSpan="2">A-Class</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" colSpan="3">Local</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" colSpan="3">Global (Excl. UK)</th>
                     </tr>
-                    <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
+                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-25</th>
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-24</th>
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Growth</th>
@@ -96,7 +96,7 @@ const OnlineSalesGlobal = () => {
             <div className="p-4 bg-white mt-4 mb-4 rounded-lg">
                 <table className="w-full border-collapse mb-4 bg-white">
                     <thead>
-                    <tr style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}>
+                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center"></th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center">Feb-25</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center">Feb-24</th>
