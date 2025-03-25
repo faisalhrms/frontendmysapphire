@@ -12,9 +12,9 @@ const SalesDataTable = ({ filters , expand }) => {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, '0'); // Ensure day is always two digits
-        const month = date.toLocaleString('en-GB', { month: 'short' }); // Get month in short form
-        const year = date.getFullYear(); // Get the full year
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = date.toLocaleString('en-GB', { month: 'short' });
+        const year = date.getFullYear();
 
         return `${day}-${month}-${year}`;
     };

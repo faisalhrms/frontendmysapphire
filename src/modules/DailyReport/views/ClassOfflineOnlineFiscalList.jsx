@@ -9,6 +9,11 @@ import ClassonlineFiscal from "@modules/DailyReport/components/comparativeSalesR
 import ClassOfflineOnlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
 import OnlineSalesGlobal from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSalesGlobal.jsx";
 import AClassIslamic from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamic.jsx";
+import Current from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/Current.jsx";
+import SalesPerformanceTable
+    from "@modules/DailyReport/components/comparativeSalesReport/OnlineTargetsAchievement/SalesPerformanceTable.jsx";
+import OnlinesaleThree from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlinesaleThree.jsx";
+import OnlineSaleTwo from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSaleTwo.jsx";
 
 const DailySaleReportList = () => {
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
@@ -71,6 +76,14 @@ const DailySaleReportList = () => {
                             >
                                 A Class (Offline) & Online - Islamic
                             </Link>
+
+                            <Link
+                                to="#"
+                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Achievement" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
+                                onClick={() => setActiveTab("Achievement")}
+                            >
+                                Online Targets Achievement
+                            </Link>
                         </nav>
 
                         <button
@@ -95,13 +108,15 @@ const DailySaleReportList = () => {
                                         label={"Current Day - 1"}
                                     />
                                 </div>
-                                <div className="mt-6">
+                                <div className="mt-0">
                                     <FilterButton />
                                 </div>
                             </div>
                         </form>
                     )}
-
+                    {activeTab === "DailySaleReportList" && (
+                        <Current />
+                    )}
                     {activeTab === "DailySaleReportList" && (
                         <ClassonlineFiscal />
                     )}
@@ -111,8 +126,18 @@ const DailySaleReportList = () => {
                     {activeTab === "Online" && (
                         <OnlineSalesGlobal filters={filters} loading={loading} />
                     )}
+                    {activeTab === "Online" && (
+                        <OnlineSaleTwo filters={filters} loading={loading} />
+                    )}
+                    {activeTab === "Online" && (
+                        <OnlinesaleThree filters={filters} loading={loading} />
+                    )}
+
                     {activeTab === "Islamic" && (
                         <AClassIslamic filters={filters} loading={loading} />
+                    )}
+                    {activeTab === "Achievement" && (
+                        <SalesPerformanceTable filters={filters} loading={loading} />
                     )}
                 </div>
             </div>
