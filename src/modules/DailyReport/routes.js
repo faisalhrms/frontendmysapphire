@@ -10,7 +10,7 @@ export const DAILYREPORT_ROUTES = {
     },
     CREATE:{
         path: "/module/cf",
-        permission: "view_classfasical",
+        permission: "view_comparativesalesreport",
 
     },
 

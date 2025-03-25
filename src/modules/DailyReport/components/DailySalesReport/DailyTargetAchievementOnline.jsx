@@ -549,94 +549,88 @@ const DailyTargetAchievementOnline = ({ filters }) => {
             ) : (
                 <div className="relative">
 
-                    <div className="relative overflow-auto" style={{ maxHeight: '70vh', position: 'relative' }}>
+                    <div className="relative overflow-auto" style={{ maxHeight: '70vh'}}>
                         <table className="w-full border-collapse border border-gray-400">
-                            {/* Fixed Headers */}
                             <thead className="sticky top-0 z-10">
-                            <tr>
-                                <th className="sticky top-0 left-0 z-50 border border-gray-400 p-2 font-bold bg-blue-900 text-white"
-                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: "60px" }}>
+                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                                <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-10"
+                                    style={{
+                                        backgroundColor: "#0b3588", color: "white"
+
+                                    }}
+                                >
                                 </th>
-                                <th className="sticky top-0 left-16 z-50 border border-gray-400 p-2 text-center bg-blue-900 text-white"
-                                    style={{ backgroundColor: "#0b3588", color: "white", minWidth: "80px" }}>
-                                    Store Type
+                                <th colSpan="1"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-10"
+                                    style={{backgroundColor: "#0b3588", color: "white"}}
+                                >Store Type
                                 </th>
-                                <th colSpan="9" className="sticky top-0 border border-gray-400 p-2 text-center bg-blue-900 text-white"
-                                    style={{ backgroundColor: "#0b3588", color: "white",minWidth: "600px" }}>
-                                    Offline
+                                <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline
                                 </th>
-                                <th colSpan="9" className="sticky top-0 border border-gray-400 p-2 text-center bg-blue-900 text-white"
-                                    style={{backgroundColor: "#0b3588", color: "white" , minWidth: "600px" }}>
-                                    Online
-                                </th>
-                                <th colSpan="3" className="sticky top-0 border border-gray-400 p-2 text-center bg-blue-900 text-white"
-                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: "250px" }}>
-                                    Total
-                                </th>
+                                <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
+                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
                             </tr>
-                            <tr className="sticky top-8 z-10 bg-blue-900 text-white">
-                                <th className="sticky top-8 left-0 z-50 border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>
+                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                                <th colSpan="1"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-1"
+                                    style={{backgroundColor: "#0b3588", color: "white"}}
+                                ></th>
+                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full
+                                    Price
                                 </th>
-                                <th className="sticky top-8 left-16 z-50 border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>
+                                <th colSpan="3"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted
                                 </th>
-                                <th colSpan="3" className="border border-gray-400 p-2 text-center bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Full Price
+                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
+                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full
+                                    Price
                                 </th>
-                                <th colSpan="3" className="border border-gray-400 p-2 text-center bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Discounted
+                                <th colSpan="3"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted
                                 </th>
-                                <th colSpan="3" className="border border-gray-400 p-2 text-center bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Total
-                                </th>
-                                <th colSpan="3" className="border border-gray-400 p-2 text-center bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Full Price
-                                </th>
-                                <th colSpan="3" className="border border-gray-400 p-2 text-center bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Discounted
-                                </th>
-                                <th colSpan="3" className="border border-gray-400 p-2 text-center bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Total
-                                </th>
-                                <th colSpan="3" className="border border-gray-400 p-2 text-center bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                </th>
+                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
+                                <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 text-center"></th>
                             </tr>
-                            <tr className="sticky top-16 z-10 bg-blue-900 text-white"   style={{backgroundColor: "#0b3588", color: "white"}}>
-                                <th className="sticky top-16 left-0 z-50 border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Date
+                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-10"
+                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}>Date
                                 </th>
-                                <th className="sticky top-16 left-16 z-50 border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>
-                                    Day
+                                <th colSpan="1"
+                                    className="py-2 px-2 border border-gray-400 p-2 text-center font-bold  sticky left-20 z-10"
+                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}>Day
                                 </th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Target</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Actual Sale</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Ach%</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Target</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Actual Sale</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Ach%</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Target</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Actual Sale</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Ach%</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Target</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Actual Sale</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Ach%</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Target</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Actual Sale</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Ach%</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Target</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Actual Sale</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Ach%</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Target</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Actual Sale</th>
-                                <th className="border border-gray-400 p-2 text-center bg-blue-900 text-white" style={{backgroundColor: "#0b3588", color: "white"}}>Ach%</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
+                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
                             </tr>
                             </thead>
+
                             <tbody>
                             {data.map((row, index) => (
                                 <tr key={index}>
-                                    <td className="sticky left-0 z-20 py-2 px-4 border border-gray-400 text-center bg-white">
-                                        {formatApiDate(row.date)}
+
+                                    <td className="sticky  left-0  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
+                                    {formatApiDate(row.date)}
                                     </td>
-                                    <td className="sticky left-16 z-20 py-2 px-4 border border-gray-400 text-center bg-white">
+                                    <td className="sticky  left-20  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
                                         {row.day}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
@@ -706,10 +700,10 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                             ))}
 
                             {data.length > 0 && (
-                                <tr className="bg-gray-200 font-bold">
-                                    <td className="sticky left-0 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200">
+                                <tr className="bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky left-0 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                     </td>
-                                    <td className="sticky left-16 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200">
+                                    <td className="sticky left-16 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                         Total
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
@@ -772,7 +766,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.totalSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.totalAch)}`}>
+                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg ${getAchColor(totalsAch.totalAch)}`}>
                                         {getAchIcon(totalsAch.totalAch)} {totalsAch.totalAch}
                                     </td>
                                 </tr>
@@ -790,6 +784,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
 };
 
 export default DailyTargetAchievementOnline;
+
 
 
 
