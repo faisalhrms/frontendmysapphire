@@ -93,7 +93,7 @@ const DailySaleReportList = () => {
                                 className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "DailySales" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
                                 onClick={() => setActiveTab("DailySales")}
                             >
-                                Daily Sales Report - Store Wis
+                                Daily Sales Report - Store Wise
                             </Link>
                         </nav>
                         <div className="text-center mr-2 flex justify-center space-x-2">
