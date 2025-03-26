@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from "react-hook-form";
+import {useForm, useFieldArray, useWatch} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
 import FormInput from "@components/form/FormInput.jsx";
@@ -31,6 +31,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
             company_id: equipmentData?.company_id || companyId,
             laptop_issued_as_per_policy: equipmentData?.laptop_issued_as_per_policy ?? true,
             sub_equipments: equipmentData?.sub_equipments || [],
+            quantity: equipmentData?.quantity || 1,
         },
     });
 
@@ -40,7 +41,10 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
     });
 
     const { handleEquipmentSubmit } = useEquipmentForm(equipmentData, isEditMode);
-
+    const status = useWatch({
+        control,
+        name: "status",
+    });
     useEffect(() => {
         if (equipmentData) {
             Object.keys(equipmentData).forEach((key) => {
@@ -207,7 +211,29 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                     />
 
                                 </div>
-
+                                {/* ---------- Quantity ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="quantity"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Quantity"
+                                        type="number"
+                                        min="1"
+                                    />
+                                </div>
+                                {/* ---------- Price Paid by Employee ---------- */}
+                                {status === "sold_to_employee" && (
+                                    <div className="xl:col-span-6 col-span-12">
+                                        <FormInput
+                                            name="price_paid_by_employee"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Price Paid by Employee"
+                                            type="number"
+                                        />
+                                    </div>
+                                )}
 
                                 {/* ---------- Exception Approval Granted By (Grade G-15 Employee) ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
