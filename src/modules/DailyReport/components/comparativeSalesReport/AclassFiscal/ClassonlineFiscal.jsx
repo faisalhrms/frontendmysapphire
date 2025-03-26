@@ -22,10 +22,10 @@ const ClassonlineFiscal = () => {
     };
 
     return (
-        <div className="p-6 bg-white mt-4  rounded-lg">
-            <div className="overflow-x-auto overflow-x-auto border border-gray-400">
+        <div className="p-6 bg-white mt-4  rounded-lg dark:text-gray-200 dark:bg-bodybg">
+            <div className="overflow-x-auto border border-gray-400">
                 <table className="min-w-full table-auto border-collapse">
-                    <thead style={{ backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white' }}>
+                    <thead style={{ backgroundColor: '#0b3588', color: 'white' }}>
                     <tr>
                         <th colSpan="6" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50">Full Price</th>
                     </tr>
@@ -57,6 +57,7 @@ const ClassonlineFiscal = () => {
                         <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.lastYear.mtd)}</td>
                         <td className={`py-2 px-4 text-right border border-gray-400 ${getGrowthColor(data.growth.mtdGrowth)}`}>{data.growth.mtdGrowth}</td>
                     </tr>
+
                     </tbody>
                 </table>
             </div>

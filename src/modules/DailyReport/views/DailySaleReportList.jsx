@@ -99,20 +99,30 @@ const DailySaleReportList = () => {
                         <div className="text-center mr-2 flex justify-center space-x-2">
                             {activeTab === "DailySaleReportList" && (
                                 <button
-                                    onClick={()=>setExpand(!expand)}
+                                    onClick={() => setExpand(!expand)}
                                     type="button"
                                     className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                                 >
-                                    <i className="ri-filter-3-fill inline-block"></i> Expend All
+                                    {expand ? (
+                                        <i className="ri-arrow-up-s-line"></i>
+                                    ) : (
+                                        <i className="ri-arrow-down-s-line"></i>
+                                    )}
+                                    {expand ? 'Callable' : 'Expand All'}
                                 </button>
                             )}
                             {activeTab === "DailySales" && (
                                 <button
-                                    onClick={()=>setExpand(!expand)}
+                                    onClick={() => setExpand(!expand)}
                                     type="button"
                                     className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                                 >
-                                    <i className="ri-filter-3-fill inline-block"></i> Expend All
+                                    {expand ? (
+                                        <i className="ri-arrow-up-s-line"></i>
+                                    ) : (
+                                        <i className="ri-arrow-down-s-line"></i>
+                                    )}
+                                    {expand ? 'Callable' : 'Expand All'}
                                 </button>
                             )}
 
@@ -127,7 +137,7 @@ const DailySaleReportList = () => {
 
                     </div>
                     <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
-                        <p>Amount in Rs  </p>
+                        <p>Amount in Rs </p>
                     </div>
 
                     {showFilters && (
@@ -144,7 +154,7 @@ const DailySaleReportList = () => {
                                         label={true}
                                     />
                                 </div>
-                                <div className="mt-6">
+                                <div className="mt-0">
                                     <FilterButton/>
                                 </div>
                             </div>
