@@ -121,6 +121,21 @@ const uploadMissingRules = async (jobId, formData) => {
   }
 };
 
+const deleteFile = async (fileId) => {
+  try {
+    const response = await api.delete(`/correction/file/${fileId}/`);
+    Notify.success("File deleted successfully");
+    return response.data;
+  } catch (error) {
+    const serverMessage =
+      error.response?.data?.errors ||
+      error.response?.data?.message ||
+      "Delete failed";
+    Notify.error(serverMessage);
+    throw error;
+  }
+};
+
 export default {
   uploadRawFile,
   reprocessJob,
@@ -130,4 +145,5 @@ export default {
   downloadCleanFile,
   uploadMissingRules,
   downloadSampleFile,
+  deleteFile,
 };
