@@ -45,9 +45,9 @@ const SalesDataTable = () => {
     };
 
     return (
-        <div className="p-6 bg-white mt-4  rounded-lg">
+        <div className="p-6 bg-white mt-4  rounded-lg dark:text-gray-200 dark:bg-bodybg">
             <table className="min-w-full table-auto border-collapse  border-gray-400 border">
-                <thead style={{ backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white' }}>
+                <thead style={{ backgroundColor: '#0b3588', color: 'white' }}>
                 <tr>
                     <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-50">A Class</th>
                     <th colSpan="6" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50">Full Price</th>
@@ -69,7 +69,7 @@ const SalesDataTable = () => {
                 <tbody>
                 {offlineData.map((item, index) => (
                     <tr key={index}>
-                        <td className="p-2 text-left border-b sticky left-0 border border-gray-400">{item.category}</td>
+                        <td className="font-bold border border-gray-400 p-2">{item.category}</td>
                         <td className="p-2 text-center border-b border border-gray-400">{formatNumberWithCommas(item.feb25)}</td>
                         <td className="p-2 text-center border-b border border-gray-400">{formatNumberWithCommas(item.feb24)}</td>
                         <td className={`p-2 text-center border-b border border-gray-400 ${getGrowthColor(item.growth)}`}>{item.growth}</td>
@@ -77,6 +77,8 @@ const SalesDataTable = () => {
                         <td className="p-2 text-center border-b border border-gray-400">{formatNumberWithCommas(onlineData[index]?.feb24)}</td>
                         <td className={`p-2 text-center border-b border border-gray-400 ${getGrowthColor(onlineData[index]?.growth)}`}>{onlineData[index]?.growth}</td>
                     </tr>
+
+
                 ))}
                 </tbody>
             </table>
@@ -85,3 +87,4 @@ const SalesDataTable = () => {
 };
 
 export default SalesDataTable;
+
