@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import api from "@config/axiosConfig.js";
 
-const usePMSStatsDrillDown = (endpoint, filters) => {
+const usePMSStatsDrillDown = (endpoint, filters, type = null) => {
     const [tasks, setTasks] = useState(null);
     const [loadingTasks, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -31,6 +31,7 @@ const usePMSStatsDrillDown = (endpoint, filters) => {
                 priority: header.label.toLowerCase() === 'total' ? null : header.label.toLowerCase(),
                 tag: rowData?.tag,
                 team: rowData?.tagTeam?.props?.children ? null : rowData?.tagTeam,
+                type: type
             });
         }
     };
