@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
+import usePMSStatsDrillDown from "@modules/dashboards/pms/hooks/usePMSStatsDrillDown.js";
+import TaskListModal from "@modules/project-management/components/model/TaskListModal.jsx";
 
 function transformData(data) {
     const rows = [];
@@ -59,13 +61,19 @@ function createHeaders() {
     ];
 }
 
-const TaskPrioritiesTableWrapper = ({ data, title = 'Pending Tasks by Tag/Team', handleRowClick }) => {
+const TaskPrioritiesTableWrapper = ({ data, title = 'Pending Tasks by Tag/Team', filters, type }) => {
     const rows = useMemo(() => transformData(data), [data]);
 
     const headers = useMemo(() => createHeaders(), []);
 
+    const { isTaskModalOpen, tasks, loadingTasks, handleRowClick, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
+        'dashboard/pms/project/tasks/priority/detail/',
+        filters,
+        type
+    )
+
     return (
-        <div>
+        <>
             <ClientSideTable
                 config={{ headers }}
                 data={rows}
@@ -74,7 +82,15 @@ const TaskPrioritiesTableWrapper = ({ data, title = 'Pending Tasks by Tag/Team',
                 tHeadClasses="table-bg-dark"
                 onRowClick={handleRowClick}
             />
-        </div>
+            {
+                isTaskModalOpen &&
+                <TaskListModal
+                    tasks={tasks}
+                    isLoading={loadingTasks}
+                    closeModal={closeTaskModal}
+                />
+            }
+        </>
     );
 };
 
