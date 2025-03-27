@@ -13,7 +13,7 @@ import {useSelector} from "react-redux";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -300,7 +300,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         <Tooltip
                                             id={`task-tooltip-${task.id}`}
                                             tooltipContent={`${task.name}`}>
-                                            <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
+                                            <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)} {...(needTarget ? { target: "_blank" } : {})}>
                                               {getExcerptFromText(task.name, 80)}
                                                 {task.children && task.children.length > 0 && (
                                                     <span className="badge bg-primary/10 text-primary ms-2">
