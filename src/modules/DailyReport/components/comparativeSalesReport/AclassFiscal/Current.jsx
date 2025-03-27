@@ -9,7 +9,7 @@ const Current = () => {
             <div className="mb-6 dark:text-gray-200 dark:bg-bodybg">
                 <table className="w-full border-collapse dark:text-gray-200 dark:bg-bodybg">
                     <thead>
-                    <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                    <tr >
                         <th className="bg-blue-300 border border-gray-400 p-2"></th>
                         <th className="bg-blue-300 border border-gray-400 p-2 text-center">Current Period</th>
                         <th className="bg-blue-300 border border-gray-400 p-2 text-center">Comparative Period</th>

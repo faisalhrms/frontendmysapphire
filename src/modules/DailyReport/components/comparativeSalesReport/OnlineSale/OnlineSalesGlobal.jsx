@@ -11,12 +11,10 @@ const OnlineSalesGlobal = () => {
                 <table className="w-full border-collapse">
                     <thead>
                     <tr>
-                        <th className="bg-blue-300 border border-gray-400 p-2" style={{backgroundColor: '#0b3588', color: 'white'}}></th>
-                        <th className="bg-blue-300 border border-gray-300 p-2 text-center"
-                            style={{backgroundColor: '#0b3588', color: 'white'}}>Current Period
+                        <th className="bg-blue-300 border border-gray-400 p-2" ></th>
+                        <th className="bg-blue-300 border border-gray-300 p-2 text-center">Current Period
                         </th>
-                        <th className="bg-blue-300 border border-gray-300 p-2 text-center"
-                            style={{backgroundColor: '#0b3588', color: 'white'}}>Comparative Period
+                        <th className="bg-blue-300 border border-gray-300 p-2 text-center">Comparative Period
                         </th>
                     </tr>
                     </thead>

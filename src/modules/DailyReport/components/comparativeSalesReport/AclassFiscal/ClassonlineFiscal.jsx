@@ -18,46 +18,66 @@ const ClassonlineFiscal = () => {
     };
 
     const getGrowthColor = (growth) => {
-        return growth.startsWith('-') ? 'text-danger' : 'text-success';
+        return growth < 0 ? 'text-danger' : 'text-success';
     };
 
     return (
-        <div className="p-6 bg-white mt-4  rounded-lg dark:text-gray-200 dark:bg-bodybg">
-            <div className="overflow-x-auto border border-gray-400">
-                <table className="min-w-full table-auto border-collapse">
-                    <thead style={{ backgroundColor: '#0b3588', color: 'white' }}>
-                    <tr>
-                        <th colSpan="6" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50">Full Price</th>
+        <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
+            <div className="mb-6">
+                <table className="w-full border-collapse">
+                    <thead>
+                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                        <th colSpan="7" className="bg-blue-300 border border-gray-400 p-2 text-center">Full Price
+                        </th>
                     </tr>
-                    <tr>
-                        <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Current Year</th>
-                        <th colSpan="2" className="py-2 px-2 border border-gray-400 p-2 text-center">Last Year</th>
-                        <th colSpan="1" className="py-2 px-2 border border-gray-400 p-2 text-center">Growth</th>
+                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                        <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">
+                        </th>
+                        <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">Current
+                            Year
+                        </th>
+                        <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">Last Year
+                        </th>
+                        <th className="bg-blue-300 border border-gray-400 p-2 text-center">Growth</th>
                     </tr>
-                    <tr>
-                        <th className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50">Last Day (Wed)</th>
-                        <th className="py-2 px-4 border border-gray-400 p-2 text-center">MTD</th>
-                        <th className="py-2 px-4 border border-gray-400 p-2 text-center">Last Day (Mon)</th>
-                        <th className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50">MTD</th>
-                        <th className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50">MTD</th>
+                    <tr className="border border-gray-400" style={{backgroundColor: '#0b3588', color: 'white'}}>
+                        <th className="bg-blue-200 p-2 text-center"></th>
+                        <th className="bg-blue-200 p-2 text-center"></th>
+                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Wed)</th>
+                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">MTD</th>
+                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Sat)</th>
+                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">MTD</th>
+                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">MTD</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.currentYear.lastDay)}</td>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.currentYear.mtd)}</td>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.lastYear.lastDay)}</td>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.lastYear.mtd)}</td>
-                        <td className={`py-2 px-4 text-right border border-gray-400 ${getGrowthColor(data.growth.lastDayGrowth)}`}>{data.growth.lastDayGrowth}</td>
+                    <tr className="bg-gray-200 border border-gray-400 dark:text-gray-200 dark:bg-bodybg">
+                        <td className="font-bold p-2"></td>
+                        <td className="font-bold p-2">Total</td>
+                        <td className="border border-gray-400 p-2 text-right">128,481,379</td>
+                        <td className="border border-gray-400 p-2 text-right">2,397,893,575</td>
+                        <td className="border border-gray-400 p-2 text-right">184,014,141</td>
+                        <td className="border border-gray-400 p-2 text-right">2,358,550,418</td>
+                        <td className={`border border-gray-400 p-2 text-right ${getGrowthColor(1.7)}`}>1.7%</td>
                     </tr>
-                    <tr>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.currentYear.lastDay)}</td>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.currentYear.mtd)}</td>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.lastYear.lastDay)}</td>
-                        <td className="py-2 px-4 text-right border border-gray-400">{formatNumberWithCommas(data.lastYear.mtd)}</td>
-                        <td className={`py-2 px-4 text-right border border-gray-400 ${getGrowthColor(data.growth.mtdGrowth)}`}>{data.growth.mtdGrowth}</td>
+                    <tr className="border border-gray-400">
+                        <td className="font-bold p-2 "></td>
+                        <td className="font-bold p-2 ">Offline</td>
+                        <td className="border border-gray-400 p-2 text-right">103,004,525</td>
+                        <td className="border border-gray-400 p-2 text-right">1,937,630,364</td>
+                        <td className="border border-gray-400 p-2 text-right">154,291,541</td>
+                        <td className="border border-gray-400 p-2 text-right">1,878,879,210</td>
+                        <td className={`border border-gray-400 p-2 text-right ${getGrowthColor(3)}`}>3%</td>
                     </tr>
-
+                    <tr className="border border-gray-400">
+                        <td className="font-bold p-2"></td>
+                        <td className="font-bold p-2">Online</td>
+                        <td className="border border-gray-400 p-2 text-right">25,476,854</td>
+                        <td className="border border-gray-400 p-2 text-right">460,263,211</td>
+                        <td className="border border-gray-400 p-2 text-right">29,722,600</td>
+                        <td className="border border-gray-400 p-2 text-right">479,671,208</td>
+                        <td className={`border border-gray-400 p-2 text-right ${getGrowthColor(-4)}`}>-4%</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

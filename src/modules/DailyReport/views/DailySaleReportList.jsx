@@ -108,7 +108,7 @@ const DailySaleReportList = () => {
                                     ) : (
                                         <i className="ri-arrow-down-s-line"></i>
                                     )}
-                                    {expand ? 'Callable' : 'Expand All'}
+                                    {expand ? 'Collapse' : 'Expand All'}
                                 </button>
                             )}
                             {activeTab === "DailySales" && (
@@ -122,7 +122,7 @@ const DailySaleReportList = () => {
                                     ) : (
                                         <i className="ri-arrow-down-s-line"></i>
                                     )}
-                                    {expand ? 'Callable' : 'Expand All'}
+                                    {expand ? 'Collapse' : 'Expand All'}
                                 </button>
                             )}
 
