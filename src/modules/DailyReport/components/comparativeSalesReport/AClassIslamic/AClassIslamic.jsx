@@ -12,7 +12,7 @@ const AClassIslamic = () => {
                 <div className="mb-6">
                     <table className="w-full border-collapse">
                         <thead>
-                        <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                        <tr>
                             <th className="bg-blue-300 border border-gray-400 p-2"></th>
                             <th className="bg-blue-300 border border-gray-400 p-2 text-center">Current Period</th>
                             <th className="bg-blue-300 border border-gray-400 p-2 text-center">Comparative Period</th>
@@ -53,7 +53,7 @@ const AClassIslamic = () => {
                             </th>
                             <th className="bg-blue-300 border border-gray-400 p-2 text-center">Growth</th>
                         </tr>
-                        <tr>
+                        <tr className="border border-gray-400" style={{backgroundColor: '#0b3588', color: 'white'}}>
                             <th className="bg-blue-200 p-2 text-center"></th>
                             <th className="bg-blue-200 p-2 text-center"></th>
                             <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Wed)</th>
