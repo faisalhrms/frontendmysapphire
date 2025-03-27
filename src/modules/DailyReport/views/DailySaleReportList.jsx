@@ -108,7 +108,7 @@ const DailySaleReportList = () => {
                                     ) : (
                                         <i className="ri-arrow-down-s-line"></i>
                                     )}
-                                    {expand ? 'Callable' : 'Expand All'}
+                                    {expand ? 'Collapse' : 'Expand All'}
                                 </button>
                             )}
                             {activeTab === "DailySales" && (
@@ -122,7 +122,7 @@ const DailySaleReportList = () => {
                                     ) : (
                                         <i className="ri-arrow-down-s-line"></i>
                                     )}
-                                    {expand ? 'Callable' : 'Expand All'}
+                                    {expand ? 'Collapse' : 'Expand All'}
                                 </button>
                             )}
 
@@ -131,7 +131,7 @@ const DailySaleReportList = () => {
                                 className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
                                 onClick={() => setShowFilters(!showFilters)}
                             >
-                                <i className="ri-search-eye-fill"></i> Filters
+                                <i className="ri-filter-3-fill inline-block"></i> Filters
                             </button>
                         </div>
 
