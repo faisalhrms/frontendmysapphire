@@ -6,13 +6,21 @@ import DataSanitizeService from "@modules/beirholm-bi/services/DataSanitizeServi
 import UploadErrorModal from "@modules/beirholm-bi/components/UploadErrorModal.jsx";
 import DownloadSampleFileButton from "@modules/beirholm-bi/components/DownloadSampleFileButton.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
+import ConfirmDeleteModal from "@modules/beirholm-bi/components/ConfirmDeleteModal.jsx";
+import ConfirmReprocessModal from "@modules/beirholm-bi/components/ConfirmReprocessModal.jsx";
+import Notify from "@helpers/toastNotifications.js";
 
 const DataSanitizationList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUploadErrorModalOpen, setIsUploadErrorModalOpen] = useState(false);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isConfirmReprocessModalOpen, setIsConfirmReprocessModalOpen] = useState(false);
     const [currentJobId, setCurrentJobId] = useState(null);
+    const [fileToDelete, setFileToDelete] = useState(null);
     const [tableKey, setTableKey] = useState(Date.now());
     const [loadingActions, setLoadingActions] = useState({});
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [bulkProcessing, setBulkProcessing] = useState(false);
 
     const refreshTable = () => {
         setTableKey(Date.now());
@@ -30,9 +38,82 @@ const DataSanitizationList = () => {
         setIsUploadErrorModalOpen(false);
     };
 
+    const openConfirmModal = (fileId) => {
+        setFileToDelete(fileId);
+        setIsConfirmModalOpen(true);
+    };
+    const closeConfirmModal = () => {
+        setFileToDelete(null);
+        setIsConfirmModalOpen(false);
+    };
+
+    const openConfirmReprocessModal = () => {
+        if (selectedRows.length === 0) {
+            Notify.error("Please select at least one file.");
+            return;
+        }
+        setIsConfirmReprocessModalOpen(true);
+    };
+    const closeConfirmReprocessModal = () => {
+        setIsConfirmReprocessModalOpen(false);
+    };
+
+    const handleSelectRow = (row, isChecked) => {
+        if (isChecked) {
+            setSelectedRows((prev) => [...prev, row]);
+        } else {
+            setSelectedRows((prev) => prev.filter((item) => item.id !== row.id));
+        }
+    };
+
+    const handleSelectAll = (rows, isChecked) => {
+        if (isChecked) {
+            setSelectedRows(rows.map((r) => r.original));
+        } else {
+            setSelectedRows([]);
+        }
+    };
+
+    const handleBulkReprocessConfirm = async () => {
+        setBulkProcessing(true);
+        try {
+            await Promise.all(
+                selectedRows.map((row) => DataSanitizeService.reprocessJob(row.job_id))
+            );
+            refreshTable();
+            setSelectedRows([]);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setBulkProcessing(false);
+        }
+    };
+
     const columns = [
         {
+            id: "selection",
+            Header: ({rows}) => {
+                const allSelected =
+                    rows.length > 0 &&
+                    rows.every((r) =>
+                        selectedRows.some((item) => item.id === r.original.id)
+                    );
+                const toggleAll = () => {
+                    handleSelectAll(rows, !allSelected);
+                };
+                return <input type="checkbox" checked={allSelected} onChange={toggleAll}/>;
+            },
+            Cell: ({row}) => (
+                <input
+                    type="checkbox"
+                    checked={selectedRows.some((item) => item.id === row.original.id)}
+                    onChange={(e) => handleSelectRow(row.original, e.target.checked)}
+                />
+            )
+        },
+        {
             Header: "Actions",
+            accessor: "actions",
             Cell: ({row}) => {
                 const jobId = row.original.job_id;
                 const fileId = row.original.id;
@@ -123,16 +204,28 @@ const DataSanitizationList = () => {
                         >
                             <i className="ri-upload-cloud-line"></i>
                         </button>
+                        <button
+                            onClick={() => openConfirmModal(fileId)}
+                            title="Delete File"
+                            className="ti-btn ti-btn-danger ti-btn-sm"
+                            disabled={loadingActions[`delete_${fileId}`]}
+                        >
+                            {loadingActions[`delete_${fileId}`] ? (
+                                <i className="ri-loader-2-line animate-spin"></i>
+                            ) : (
+                                <i className="ri-delete-bin-line"></i>
+                            )}
+                        </button>
                     </div>
                 );
-            },
+            }
         },
         {Header: "File Name", accessor: "file_name"},
         {Header: "Product Country", accessor: "product_country"},
         {
             Header: "Uploaded At",
             accessor: "uploaded_at",
-            Cell: ({value}) => new Date(value).toLocaleString(),
+            Cell: ({value}) => new Date(value).toLocaleString()
         },
         {Header: "Status", accessor: "status"},
         {
@@ -144,8 +237,7 @@ const DataSanitizationList = () => {
                 </div>
             )
         },
-
-        {Header: "Data Category", accessor: "data_category_name"},
+        {Header: "Data Category", accessor: "data_category_name"}
     ];
 
     const buttons = (
@@ -162,6 +254,17 @@ const DataSanitizationList = () => {
             <div className="grid grid-cols-1 sm:grid-cols-1">
                 <DownloadSampleFileButton/>
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-1">
+                <button
+                    className="ti-btn ti-btn-info"
+                    onClick={openConfirmReprocessModal}
+                    disabled={bulkProcessing}
+                    title="Bulk Reprocess"
+                >
+                    <i className="ri-refresh-line"></i>
+                </button>
+            </div>
+
         </>
     );
 
@@ -183,6 +286,25 @@ const DataSanitizationList = () => {
             )}
             {isUploadErrorModalOpen && currentJobId && (
                 <UploadErrorModal jobId={currentJobId} closeModal={closeUploadErrorModal}/>
+            )}
+            {isConfirmModalOpen && fileToDelete && (
+                <ConfirmDeleteModal
+                    closeModal={closeConfirmModal}
+                    onConfirm={async () => {
+                        const key = `delete_${fileToDelete}`;
+                        setLoadingActions((prev) => ({...prev, [key]: true}));
+                        await DataSanitizeService.deleteFile(fileToDelete);
+                        refreshTable();
+                        setLoadingActions((prev) => ({...prev, [key]: false}));
+                    }}
+                />
+            )}
+            {isConfirmReprocessModalOpen && (
+                <ConfirmReprocessModal
+                    closeModal={closeConfirmReprocessModal}
+                    onConfirm={handleBulkReprocessConfirm}
+                    message="Are you sure you want to reprocess the selected files?"
+                />
             )}
         </>
     );

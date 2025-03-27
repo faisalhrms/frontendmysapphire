@@ -25,6 +25,10 @@ const CorrectionPatternsList = () => {
     {
       Header: "Pattern",
       accessor: "pattern"
+    },
+    {
+      Header: "Correct Pattern",
+      accessor: "correct_pattern"
     }
   ];
 
