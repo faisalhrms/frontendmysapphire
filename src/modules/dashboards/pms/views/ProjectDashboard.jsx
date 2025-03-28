@@ -96,7 +96,7 @@ const ProjectDashboard = () => {
                         icon: <i class='bx bx-line-chart'></i>,
                         content: (
                             <>
-                                <ProjectDashboardProjectTasksPriorities data={data} isLoading={isLoading} isActive={'task_priority_overview' === activeTab} />
+                                <ProjectDashboardProjectTasksPriorities data={data} isLoading={isLoading} filters={filters} isActive={'task_priority_overview' === activeTab} />
                             </>
                         ),
                     },

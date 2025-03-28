@@ -9,6 +9,7 @@ import ProgressBar from "@components/ProgressBar.jsx";
 import ConfirmDeleteModal from "@modules/beirholm-bi/components/ConfirmDeleteModal.jsx";
 import ConfirmReprocessModal from "@modules/beirholm-bi/components/ConfirmReprocessModal.jsx";
 import Notify from "@helpers/toastNotifications.js";
+import HasPermission from "@components/HasPermission.jsx";
 
 const DataSanitizationList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -204,6 +205,7 @@ const DataSanitizationList = () => {
                         >
                             <i className="ri-upload-cloud-line"></i>
                         </button>
+                        <HasPermission permission='delete_clean_data'>
                         <button
                             onClick={() => openConfirmModal(fileId)}
                             title="Delete File"
@@ -216,6 +218,7 @@ const DataSanitizationList = () => {
                                 <i className="ri-delete-bin-line"></i>
                             )}
                         </button>
+                        </HasPermission>
                     </div>
                 );
             }
