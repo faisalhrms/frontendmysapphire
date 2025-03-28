@@ -21,7 +21,7 @@ const FormRichTextarea = forwardRef(({ name, control, errors, placeholder, edito
         name={name}
         control={control}
         render={({ field }) => (
-          <div style={{ maxHeight: 250, overflowY: "auto" }}>
+          <div style={{overflowY: "auto" }}>
             <SunEditor
               {...field}
               ref={ref}
