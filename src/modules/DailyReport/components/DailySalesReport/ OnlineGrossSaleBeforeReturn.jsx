@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { fetchGrossSaleBeforeReturnData } from "../../services/wiseside_services.js";
 
-function OnlineGrossSaleBeforeReturn({ filters ,  setDonwloadData }) {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+function OnlineGrossSaleBeforeReturn({ data , loading ,  setDonwloadData }) {
+    // const [data, setData] = useState([]);
+    // const [loading, setLoading] = useState(false);
     const [downloadData, setDownloadData] = useState({});
 
-    useEffect(() => {
-        if (filters.date_from && filters.date_to) {
-            setLoading(true);
-            fetchGrossSaleBeforeReturnData(filters.date_from, filters)
-                .then((responseData) => {
-                    setData(responseData);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error('Error fetching data:', error);
-                    setLoading(false);
-                });
-        }
-    }, [filters]);
+    // useEffect(() => {
+    //     if (filters.date_from && filters.date_to) {
+    //         setLoading(true);
+    //         fetchGrossSaleBeforeReturnData(filters.date_from, filters)
+    //             .then((responseData) => {
+    //                 setData(responseData);
+    //                 setLoading(false);
+    //             })
+    //             .catch((error) => {
+    //                 console.error('Error fetching data:', error);
+    //                 setLoading(false);
+    //             });
+    //     }
+    // }, [filters]);
 
     const formatNumber = (num) => {
         return num.toLocaleString();
