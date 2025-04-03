@@ -8,52 +8,52 @@ const EquipmentSummary = ({id,equipmentData}) => {
         <>
             <div className="box custom-box">
                 <div className="box-header justify-between flex">
-                    <div className="box-title">Equipment Details</div>
+                    <div className="box-title">Asset Details</div>
                     <div>
                         <Link
-                            to={`/module/equipment/edit/${id}`}
+                            to={`/module/asset/equipment-history/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-warning  btn-wave"
                         >
-                            <i className="ri-folder-5-line align-middle me-1 font-semibold"></i>Equipment History
+                            <i className="ri-folder-5-line align-middle me-1 font-semibold"></i>Asset History
                         </Link>
 
 
                     </div>
                     <div>
                         <Link
-                            to={`/module/equipment/edit/${id}`}
+                            to={`/module/asset/edit/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-secondary  btn-wave"
                         >
-                            <i className="ri-edit-line align-middle me-1 font-semibold"></i>Edit Equipment
+                            <i className="ri-edit-line align-middle me-1 font-semibold"></i>Edit Asset
                         </Link>
 
 
                     </div>
                     <div>
                         <Link
-                            to={`/module/equipment/equipment-reassign/${id}`}
+                            to={`/module/asset/asset-reassign/${id}`}
 
                             className="ti-btn !py-1 !px-2 !text-[0.75rem] ti-btn-primary  btn-wave"
                         >
-                            <i className="ri-refresh-line align-middle me-1 font-semibold"></i>Re Assign Equipment
+                            <i className="ri-refresh-line align-middle me-1 font-semibold"></i>Re Assign Asset
                         </Link>
 
 
                     </div>
                 </div>
                 <div className="box-body">
-                    <h5 className="font-semibold mb-4 task-title">Custodian: {equipmentData.custodian.full_name}</h5>
+                    <h5 className="font-semibold mb-4 task-title">Custodian: {equipmentData?.custodian?.full_name}</h5>
                     <div className="grid grid-cols-12 gap-x-6">
                         <div className="xl:col-span-6 col-span-12">
                             <div className="text-[.9375rem] font-semibold mb-2">Description:</div>
-                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData.description}</p>
+                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData?.description}</p>
 
                         </div>
                         <div className="xl:col-span-6 col-span-12">
                             <div className="text-[.9375rem] font-semibold mb-2">Specification:</div>
-                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData.specs}</p>
+                            <p className="text-[#8c9097] dark:text-white/50 task-description">{equipmentData?.specs}</p>
 
                         </div>
 
@@ -64,30 +64,42 @@ const EquipmentSummary = ({id,equipmentData}) => {
                         <div>
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Department</span>
                             <span className="block text-[.875rem] font-semibold">
-                                {toTitleCase(equipmentData.department.name)}
+                                {toTitleCase(equipmentData?.department?.name)}
 
                             </span>
                         </div>
                         <div>
+                            <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Site</span>
+                            <span className="block text-[.875rem] font-semibold">
+                                {toTitleCase(equipmentData?.equipment_site?.name)}
+
+                            </span>
+                        </div>
+
+                        <div>
+
+
+
+
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment Purchase Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.purchase_date)|| "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData?.purchase_date) || "-"}</span>
                         </div>
                         <div>
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment HandOver Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.handover_date)|| "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData?.handover_date) || "-"}</span>
                         </div>
                         <div>
                                     <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                                         Equipment Maturity Date
                                     </span>
                             <span
-                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData.maturity_date)|| "-"}</span>
+                                className="block text-[.875rem] font-semibold">{formatDate(equipmentData?.maturity_date) || "-"}</span>
                         </div>
 
                     </div>

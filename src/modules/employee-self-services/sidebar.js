@@ -1,5 +1,6 @@
 import {generateSidebarItem} from "@helpers/formatters.js"
 import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
+import {PMS_ROUTES} from "@modules/project-management/routes.js";
 
 export const sidebarMenu=[
     generateSidebarItem(
@@ -29,6 +30,13 @@ export const sidebarMenu=[
                 'link',
                 'Discount Card',
                 3,
+                ''
+            ),
+            generateSidebarItem(
+                SELF_SERVICES_ROUTES.SERVICES.DIGITAL_PROFILE.path,
+                'link',
+                'Digital Profile',
+                4,
                 ''
             )
             ]

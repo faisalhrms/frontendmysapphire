@@ -3,10 +3,14 @@ import DepartmentDropdown from "@components/dropdowns/DepartmentDropdown.jsx";
 import WorkspaceDropdown from "@components/dropdowns/WorkspaceDropdown.jsx";
 import React, {useCallback, useState} from "react";
 import FilterButton from "@components/form/FilterButton.jsx";
+import {useSelector} from "react-redux";
+import ProjectDropDown from "@modules/project-management/components/dropdowns/ProjectDropDown.jsx";
 
 const ProjectDashboardFilter = ({ control, errors }) => {
-    const [company, setCompany] = useState(null);
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
+    const [company, setCompany] = useState(companyId);
     const [department, setDepartment] = useState(null);
+    const [workspace, setWorkspace] = useState(null);
 
     const handleCompanySelect = useCallback((id) => {
         setCompany(id)
@@ -15,6 +19,10 @@ const ProjectDashboardFilter = ({ control, errors }) => {
 
     const handleDepartmentSelect = useCallback((id) => {
         setDepartment(id)
+    }, []);
+
+    const handleWorkspaceSelect = useCallback((id) => {
+        setWorkspace(id)
     }, []);
 
     return (
@@ -46,9 +54,18 @@ const ProjectDashboardFilter = ({ control, errors }) => {
                                     control={control}
                                     errors={errors}
                                     saveNewOption={false}
+                                    onSelectChange={handleWorkspaceSelect}
+                                    needObject={false}
                                 />
                             </div>
-                            <FilterButton />
+                            <div className="flex items-center gap-4 flex-1">
+                                <ProjectDropDown
+                                    workspace_id={workspace}
+                                    control={control}
+                                    errors={errors}
+                                />
+                            </div>
+                            <FilterButton/>
                         </div>
                     </div>
                 </div>

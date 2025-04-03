@@ -2,7 +2,7 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SUBSCRIPTION_ROUTES } from "@modules/subscription/routes.js";
-import { getBadgeClasses } from "@helpers/badges.js";
+import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import { formatAmountWithCommas, toTitleCase } from "@helpers/formatters.js";
 import React from "react";
 import HasPermission from "@components/HasPermission.jsx";
@@ -46,7 +46,7 @@ const SubscriptionList = () => {
         {
             Header: "Status",
             Cell: ({ row }) => (
-                <span className={getBadgeClasses(row.original.status)}>
+                <span className={getStatusClasses(row.original.status)}>
           {toTitleCase(row.original.status)}
         </span>
             ),

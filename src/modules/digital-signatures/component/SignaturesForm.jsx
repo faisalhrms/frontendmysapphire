@@ -4,6 +4,7 @@ import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import TemplateSignature from "./TemplateSignature";
 import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
+import FileUpload from "@components/FileUpload.jsx";
 
 const SignatureForm = ({
   handleSubmitData,
@@ -12,14 +13,15 @@ const SignatureForm = ({
   hide,
   handleHide,
   tempStep,
+  handleChangeTemplate
 }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
     setValue,
     watch,
-    reset,
+    reset
   } = useForm({
     defaultValues: useMemo(() => ({
       company_id: editData?.company_id || "",
@@ -32,12 +34,12 @@ const SignatureForm = ({
       mobile: editData?.mobile || "",
       email: editData?.email || "",
       address: editData?.address || "",
-    }), [editData]),
+      banner_media_id: editData?.banner_media_id || null
+    }), [editData])
   });
 
   const [companyLogo, setCompanyLogo] = useState("");
   const [previewData, setPreviewData] = useState({});
-  const [templateName, setTemplateName] = useState("");
 
   const handleCompanyChange = (selectedCompany) => {
     setCompanyLogo(selectedCompany?.logo || "");
@@ -45,22 +47,20 @@ const SignatureForm = ({
     setValue("address", selectedCompany?.address || "");
   };
 
-  // Whenever editData changes, reset the form values AND sync preview with editData
   useEffect(() => {
     reset(editData);
     setPreviewData(editData);
   }, [editData, reset]);
 
-  // Watch the form values in real-time, so if the user changes any field, update the preview
   useEffect(() => {
     const subscription = watch((formData) => {
-      setPreviewData((prev) => ({ ...prev, ...formData }));
+      setPreviewData((prev) => ({...prev, ...formData}));
     });
     return () => subscription.unsubscribe();
   }, [watch]);
 
   const onSubmit = (formData) => {
-    handleSubmitData({ ...formData, companyLogo }, 2);
+    handleSubmitData({...formData, companyLogo}, 2);
   };
 
   const handleClear = () => {
@@ -75,9 +75,9 @@ const SignatureForm = ({
       mobile: "",
       email: "",
       address: "",
+      banner_media_id: null
     });
     setPreviewData({});
-    setTemplateName("");
     setCompanyLogo("");
     handleHide();
   };
@@ -192,6 +192,15 @@ const SignatureForm = ({
                     placeholder="Address"
                   />
                 </div>
+                <div className="col-span-12">
+                  <FileUpload
+                    currentValue={editData?.banner_media?.id || null}
+                    file={editData?.banner_media || null}
+                    inputName="banner_media_id"
+                    control={control}
+                    errors={errors}
+                  />
+                </div>
               </div>
               <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
                 <FormButton isLoading={isSubmitting} type="submit" />
@@ -206,7 +215,6 @@ const SignatureForm = ({
             <div className="box-title">Preview</div>
           </div>
           <div className="border border-dashed border-gray-300 rounded-md p-4 bg-white">
-            {templateName && <div><strong>Template:</strong> {templateName}</div>}
             <TemplateSignature
               title={false}
               editData={editData}

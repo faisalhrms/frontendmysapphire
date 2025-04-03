@@ -35,22 +35,21 @@ export const getDownloadByEmpCode = async (employeeCode) => {
     const response = await api.get(`/signatures/download/${employeeCode}`, {
       responseType: "blob",
     });
-
     if (!response || !response.data) {
       throw new Error("No file data received from the server.");
     }
-
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `${employeeCode}_OutlookSignature.ps1`);
+    link.setAttribute("download", `${employeeCode}_OutlookSignature.exe`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   } catch (error) {
-    console.error("Error downloading the script:", error.message);
+    console.error("Error downloading the executable:", error.message);
   }
 };
+
 
 
 export const getDownloadAllS = async () => {
@@ -79,6 +78,14 @@ export const updateSignature = async (employee_code, updateData) => {
     return response?.data;
   } catch (error) {
     console.error("Error updating signature:", error);
+    throw error;
+  }
+};
+export const getDynamicTemplates = async () => {
+  try {
+    const response = await api.get("/signatures/dynamic_templates");
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };

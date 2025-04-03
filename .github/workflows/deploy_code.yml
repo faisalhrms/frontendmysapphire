@@ -36,8 +36,11 @@ jobs:
 
           # Navigate to project directory and update
           cd /var/www/html/web_portal/frontend_react
-          git pull
+      
+        
+          git pull origin staging_server
 
+          npm install
           npm run build
         
           sudo systemctl reload  nginx
@@ -82,8 +85,10 @@ jobs:
 
           # Navigate to project directory and update
           cd /var/www/html/web_portal/frontend_react
-          git pull
+        
+          git pull origin main
 
+          npm install
           npm run build
           
           sudo systemctl reload  nginx

@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from "react-hook-form";
+import {useForm, useFieldArray, useWatch} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
 import FormInput from "@components/form/FormInput.jsx";
@@ -12,12 +12,13 @@ import { equipmentStatuses } from "@modules/inventory/services/inventoryService.
 import equipmentSchema from "@modules/inventory/schemas/equipmentSchema.js";
 import { useEquipmentForm } from "@modules/inventory/hooks/inventoryHooks.js";
 
-
 import SubEquipmentTable from "./SubEquipmentTable.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
+import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
+import {useSelector} from "react-redux";
 
 const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
-
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const {
         control,
         handleSubmit,
@@ -27,7 +28,10 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
         resolver: zodResolver(equipmentSchema),
         defaultValues: {
             ...equipmentData,
+            company_id: equipmentData?.company_id || companyId,
+            laptop_issued_as_per_policy: equipmentData?.laptop_issued_as_per_policy ?? true,
             sub_equipments: equipmentData?.sub_equipments || [],
+            quantity: equipmentData?.quantity || 1,
         },
     });
 
@@ -37,7 +41,10 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
     });
 
     const { handleEquipmentSubmit } = useEquipmentForm(equipmentData, isEditMode);
-
+    const status = useWatch({
+        control,
+        name: "status",
+    });
     useEffect(() => {
         if (equipmentData) {
             Object.keys(equipmentData).forEach((key) => {
@@ -52,7 +59,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                 <div className="xxl:col-span-9 col-span-12">
                       <div className="box">
                         <div className="box-header">
-                            <div className="box-title">Equipment Info</div>
+                            <div className="box-title">Asset Info</div>
                         </div>
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
@@ -60,12 +67,13 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         name="equipment_site_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Site"
                                         apiUrl="/select/locations/"
                                         queryKeyBase="locations"
-                                        clientSideSearch={true}
+                                        clientSideSearch={false}
                                         preselectedOptions={formatOptions(
                                             equipmentData,
                                             "equipment_site"
@@ -77,6 +85,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         name="department_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Department"
@@ -96,6 +105,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         name="location_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Physical Location"
@@ -113,21 +123,22 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                     />
                                 </div>
 
-                                {/* ---------- Code ---------- */}
-                                <div className="xl:col-span-4 col-span-12">
-                                    <FormInput
-                                        type="number"
-                                        name="code"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Code"
-                                    />
-                                </div>
+                                {/*/!* ---------- Code ---------- *!/*/}
+                                {/*<div className="xl:col-span-4 col-span-12">*/}
+                                {/*    <FormInput*/}
+                                {/*        type="number"*/}
+                                {/*        name="code"*/}
+                                {/*        control={control}*/}
+                                {/*        errors={errors}*/}
+                                {/*        placeholder="Code"*/}
+                                {/*    />*/}
+                                {/*</div>*/}
 
                                 {/* ---------- Type ---------- */}
-                                <div className="xl:col-span-4 col-span-12">
+                                <div className="xl:col-span-6 col-span-12">
                                     <FormAsyncSelect
                                         name="equipment_type_id"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Type"
@@ -145,8 +156,9 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 </div>
 
                                 {/* ---------- Asset Code ---------- */}
-                                <div className="xl:col-span-4 col-span-12">
+                                <div className="xl:col-span-6 col-span-12">
                                     <FormInput
+                                        is_required={true}
                                         name="asset_code"
                                         control={control}
                                         errors={errors}
@@ -158,6 +170,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormInput
                                         name="serial_no"
+                                        is_required={true}
                                         control={control}
                                         errors={errors}
                                         placeholder="Serial No"
@@ -188,26 +201,137 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
 
                                 {/* ---------- Custodian ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
-                                    <FormAsyncSelect
+                                    <CustodianDropdown
+                                        haveLabel={true}
                                         name="custodian_id"
                                         control={control}
                                         errors={errors}
-                                        placeholder="Custodian"
-                                        apiUrl="/select/users"
-                                        queryKeyBase="users"
+                                        data={equipmentData}
+                                        onCustodianSelect={(selected) => console.log("Custodian Selected:", selected)}
+                                    />
+
+                                </div>
+                                {/* ---------- Quantity ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="quantity"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Quantity"
+                                        type="number"
+                                        min="1"
+                                    />
+                                </div>
+                                {/* ---------- Price Paid by Employee ---------- */}
+                                {status === "sold_to_employee" && (
+                                    <div className="xl:col-span-6 col-span-12">
+                                        <FormInput
+                                            name="price_paid_by_employee"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Price Paid by Employee"
+                                            type="number"
+                                        />
+                                    </div>
+                                )}
+
+                                {/* ---------- Exception Approval Granted By (Grade G-15 Employee) ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormAsyncSelect
+                                        name="exception_approval_granted_by_id"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Approval Granted By (Grade G-15)"
+                                        apiUrl="/select/employees/g15/"  // API URL for G-15 employees
+                                        queryKeyBase="g15_employees"
                                         clientSideSearch={true}
-                                        preselectedOptions={formatOptions(
-                                            equipmentData,
-                                            "custodian",
-                                            "id",
-                                            "full_name"
-                                        )}
+                                        preselectedOptions={formatOptions(equipmentData, "exception_approval_granted_by", "id", "full_name")}
+                                    />
+                                </div>
+
+                                {/* ---------- Laptop Model ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="laptop_model"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Laptop Model"
+                                    />
+                                </div>
+
+                                {/* ---------- Processor ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="processor"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Processor"
+                                    />
+                                </div>
+
+                                {/* ---------- RAM ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="ram"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="RAM"
+                                    />
+                                </div>
+
+                                {/* ---------- Hard Disk ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="hard_disk"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Hard Disk"
+                                    />
+                                </div>
+
+                                {/* ---------- Screen Size ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="screen_size"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Screen Size"
+                                    />
+                                </div>
+
+                                {/* ---------- Mouse ---------- */}
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        name="mouse"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Mouse"
+                                    />
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        type="number"
+                                        name="purchase_price"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Parchase Price"
+                                    />
+                                </div>
+
+                                {/* ---------- Accessories ---------- */}
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        name="accessories"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Accessories"
                                     />
                                 </div>
 
                                 {/* ---------- Description ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormTextarea
+                                        is_required={true}
                                         name="description"
                                         control={control}
                                         errors={errors}
@@ -219,6 +343,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 {/* ---------- Specs ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormTextarea
+                                        is_required={true}
                                         name="specs"
                                         control={control}
                                         errors={errors}
@@ -240,13 +365,13 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
-                            <FormButton isLoading={isSubmitting} />
-                        </div>
-                    </div>
+                          <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
+                              <FormButton isLoading={isSubmitting}/>
+                          </div>
+                      </div>
 
                     {
-                        isEditMode===true&&(
+                        isEditMode === true && (
                             <SubEquipmentTable
                                 fields={fields}
                                 append={append}
@@ -319,6 +444,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                         </div>
                         <div className="box-body">
                             <FormCheckbox
+                                
                                 name="store_comm_ready"
                                 label="Store Communication Ready"
                                 control={control}
@@ -336,6 +462,20 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                             <FormCheckbox
                                 name="antivirus"
                                 label="Antivirus"
+                                control={control}
+                                errors={errors}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="box">
+                        <div className="box-header">
+                            <div className="box-title">Laptop Issued as Per Policy</div>
+                        </div>
+                        <div className="box-body">
+                            <FormCheckbox
+                                name="laptop_issued_as_per_policy"
+                                label="Laptop Issued as Per Policy"
                                 control={control}
                                 errors={errors}
                             />

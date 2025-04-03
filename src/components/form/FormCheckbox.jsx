@@ -2,12 +2,14 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import ErrorMessage from '@components/form/ErrorMessage.jsx';
 
-const FormCheckbox = ({ name, label, control, errors,placeholder, className = "", ...rest }) => {
+const FormCheckbox = ({ name, label, control, errors,placeholder, className = "", is_required = false, ...rest }) => {
     return (
         <>
             {
                 label && (
-                    <label  className="form-label">{placeholder}</label>
+                    <label  className="form-label">{placeholder}
+                        {is_required && <span className="text-rose-500 "> *</span>}
+                    </label>
                 )
             }
             <Controller
@@ -21,7 +23,7 @@ const FormCheckbox = ({ name, label, control, errors,placeholder, className = ""
                             type="checkbox"
                             {...field}
                             {...rest}
-                            checked={!!field.value} // Ensure this binds to form value correctly
+                            checked={!!field.value}
                             onChange={(e) => field.onChange(e.target.checked)}
                             className={`form-checkbox-input ${errors[name] ? 'border-red' : ''}`}
                         />

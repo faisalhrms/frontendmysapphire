@@ -1,7 +1,10 @@
 import React from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {toTitleCase} from "@helpers/formatters.js";
+import Tooltip from "@components/Tooltip.jsx";
 
 const TaskCompletedTable = () => {
 
@@ -19,9 +22,14 @@ const TaskCompletedTable = () => {
                 const {id} = row.original;
                 return (
                     <div className="flex space-x-2">
-                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm">
+                          <Link
+                            aria-label="anchor"
+                            to={`/module/srm/taskcompletedform/${id}`}
+                            rel="noopener noreferrer"
+                            className="ti-btn ti-btn-success ti-btn-sm"
+                        >
                             <i className="ri-eye-line"></i>
-                        </button>
+                        </Link>
                     </div>
                 );
             },
@@ -32,15 +40,57 @@ const TaskCompletedTable = () => {
         {
             Header: "Request Title",
             accessor: "request_title",
-            Cell: ({value}) =>
-                value ? (value.length > 20 ? `${value.slice(0, 20)}...` : value) : "-"
+            Cell: ({value, row}) =>
+                value ? (
+                    <div>
+                        <Tooltip
+                            id={`request-tooltip-${row.index}`}
+                            text={value}
+                            tooltipContent={value}
+                        >
+                            <span>{value.length > 25 ? `${value.slice(0, 25)}...` : value}</span>
+                        </Tooltip>
+                    </div>
+                ) : "-"
         },
 
         {
-            Header: "SR Time", accessor: "created_at",
-            Cell: ({value}) => value ? format(new Date(value), "yyyy-MM-dd hh:mm a") : "",
+            Header: "SR Time",
+            accessor: "created_at",
+            Cell: ({value}) => (
+                value ? (
+                    <span className="bg-info/10 text-info px-2 py-1 rounded-md">
+                {format(new Date(value), "MMM d, yyyy, h:mm a")}
+            </span>
+                ) : (
+                    <span className="text-gray-500">N/A</span>
+                )
+            ),
         },
-        {Header: "Requester", accessor: "reporter"},
+        {
+            Header: "Requester", accessor: "reporter",
+            Cell: ({value}) =>
+                value ? (value.length > 25 ? `${value.slice(0, 25)}...` : value) : "-"
+        },
+        {
+            Header: "Priority",
+            accessor: "priority",
+            Cell: ({row}) => {
+                const {sr_tasks} = row.original;
+                if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
+                    return (
+                        <div className="flex flex-wrap gap-1">
+                            {sr_tasks.map((task, index) => (
+                                <span key={index} className={getBadgeClasses(task.priority)}>
+                            {toTitleCase(task.priority)}
+                        </span>
+                            ))}
+                        </div>
+                    );
+                }
+                return <span className="text-gray-500">No Tasks</span>;
+            },
+        },
         {
             Header: "Assignee",
             accessor: "sr_tasks",
@@ -50,9 +100,18 @@ const TaskCompletedTable = () => {
                         task.assignees.map(a => a.name)
                     );
                     const uniqueAssignees = [...new Set(allAssignees)];
-                    return uniqueAssignees.join(", ");
+
+                    return (
+                        <div className="flex flex-wrap gap-1">
+                            {uniqueAssignees.map((assignee, index) => (
+                                <span key={index} className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                            {assignee}
+                        </span>
+                            ))}
+                        </div>
+                    );
                 }
-                return "No Assignees";
+                return <span className="text-gray-500">No Assignees</span>;
             },
         },
         {

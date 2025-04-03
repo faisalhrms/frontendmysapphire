@@ -893,6 +893,47 @@ Background Image
   @apply fill-danger;
 }
 
+.svg-info {
+  @apply fill-info;
+}
+
+.svg-blue {
+  @apply fill-blue;
+}
+
+.svg-purple {
+  @apply fill-purple;
+}
+
+.svg-orange {
+  @apply fill-orange;
+}
+
+.svg-red {
+  @apply fill-red;
+}
+
+.svg-yellow {
+  @apply fill-yellow;
+}
+
+.svg-teal {
+  @apply fill-teal;
+}
+
+.svg-green {
+  @apply fill-green;
+}
+
+.svg-cyan {
+  @apply fill-cyan;
+}
+
+.svg-indigo {
+  @apply fill-indigo;
+}
+
+
 .nft-auction-time {
   @apply absolute top-[3.5rem] end-4 py-1 px-2 bg-[#ffffff26] rounded-[0.3rem] backdrop-blur-[1.875rem];
 }
@@ -10154,7 +10195,7 @@ body {
 }
 
 .box.box-fullscreen {
-  @apply fixed inset-0 z-[9999] m-0 rounded-none;
+  @apply fixed inset-0 z-[50] m-0 rounded-none;
 }
 
 .box-img-overlay {
@@ -13777,5 +13818,48 @@ input[type=color i]::-webkit-color-swatch {
 
 
 .sun-editor .se-toolbar {
-  z-index: 1 !important;
+  z-index: 2 !important;
+}
+.task-table{
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.task-table table{
+  border-color: #d0d4e4;
+  padding: 0.37rem 0.75rem;
+  border-left-color: rgb(196, 196, 196);
+  border-top-color: rgb(196, 196, 196);
+  border-left-width: 9px;
+}
+
+.task-table table thead tr th {
+  font-size: unset;
+  font-weight: unset;
+  text-align: center;
+}
+
+.task-table table td {
+  text-align: center;
+  font-size: 12px;
+  font-weight: unset;
+  padding: 0.40rem 0.95rem;
+}
+
+.task-table table tr {
+  border-color: #d0d4e4;
+}
+
+.task-table table.table-bordered tr > :not([hidden]) ~ :not([hidden]) {
+  border-color: #d0d4e4;
+}
+
+.select-sm .Select2__control {
+  min-height: 20px !important;
+}
+
+.table-bg-dark {
+  border-color: #ffffff1a;
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 28 67 / var(--tw-bg-opacity, 1));
+  color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }

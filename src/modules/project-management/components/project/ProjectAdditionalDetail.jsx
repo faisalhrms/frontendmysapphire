@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 const ProjectAdditionalDetail = ({project}) => {
     return(
         <>
-            <div className="box">
+            <div className="box sticky top-0 self-start">
                 <div className="box-header justify-between">
                     
                     <div className="box-title">
@@ -24,7 +24,7 @@ const ProjectAdditionalDetail = ({project}) => {
                     </Link>
                 </div>
                 <div id="additional-detail-collapse-heading"
-                     className="hs-collapse w-full overflow-hidden transition-[height] duration-300 hidden"
+                     className="hs-collapse w-full overflow-hidden transition-[height] duration-300"
                      aria-labelledby="additional-detail-collapse">
                     <div className="box-body !p-0">
                         <div className="table-responsive">
@@ -39,8 +39,7 @@ const ProjectAdditionalDetail = ({project}) => {
                                     <td className='space-x-1 rtl:space-x-reverse'>
                                         {(
                                             project.tags.map(tag => (
-                                                <span key={tag.id}
-                                                      className="badge bg-primary/10 text-primary">{toTitleCase(tag.name)}</span>
+                                                <span key={tag.id} className="badge bg-primary/10 text-primary">{toTitleCase(tag.name)}</span>
                                             ))
                                         )}
                                     </td>
@@ -58,6 +57,14 @@ const ProjectAdditionalDetail = ({project}) => {
                                     <span
                                         className={getBadgeClasses(project.priority)}>{toTitleCase(project.priority)}</span>
                                     </td>
+                                </tr>
+                                <tr className="border-b border-defaultborder">
+                                    <td><span className="font-semibold">Company :</span></td>
+                                    <td>{project?.company?.full_name}</td>
+                                </tr>
+                                <tr className="border-b border-defaultborder">
+                                    <td><span className="font-semibold">Workspace :</span></td>
+                                    <td> {project?.workspace?.name ? project?.workspace.name : 'N/A'}</td>
                                 </tr>
                                 </tbody>
                             </table>

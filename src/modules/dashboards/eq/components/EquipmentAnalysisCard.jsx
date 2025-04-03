@@ -48,7 +48,7 @@ const EquipmentAnalysisCard = ({ data }) => {
         <div className="xl:col-span-8 col-span-12">
             <div className="box">
                 <div className="box-header justify-between">
-                    <div className="box-title">Monthly Equipment Acquisitions</div>
+                    <div className="box-title">Monthly Asset Acquisitions</div>
                 </div>
                 <div className="box-body">
                     <ApexChart
@@ -56,7 +56,7 @@ const EquipmentAnalysisCard = ({ data }) => {
                         categories={categories}
                         series={series}
                         type="bar"
-                        height={330}
+                        height={410}
                     />
                 </div>
             </div>

@@ -6,20 +6,25 @@ import { getFormattedColor } from "@helpers/styles.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const EquipmentSiteStats = ({ equipmentsBySite, statsFetching }) => {
+    const validData = useMemo(() =>
+            equipmentsBySite.filter(item => item.count > 0),
+        [equipmentsBySite]
+    );
+
     // Extract site names and equipment counts
     const categories = useMemo(
-        () => equipmentsBySite.map(item => item.equipment_site.name),
-        [equipmentsBySite]
+        () => validData.map(item => item.equipment_site?.name || 'No Site'),
+        [validData]
     );
 
     const series = useMemo(
         () => [
             {
-                name: 'Equipments',
-                data: equipmentsBySite.map(item => item.count)
+                name: 'Assets',
+                data: validData.map(item => item.count)
             }
         ],
-        [equipmentsBySite]
+        [validData]
     );
 
     // Define an array of existing colorPalette keys to cycle through
@@ -86,7 +91,7 @@ const EquipmentSiteStats = ({ equipmentsBySite, statsFetching }) => {
     return (
         <div className="box">
             <div className="box-header justify-between">
-                <div className="box-title">Equipments by Site</div>
+                <div className="box-title">Assets by Site</div>
             </div>
             <div className="box-body">
                 {statsFetching ? (
@@ -99,6 +104,7 @@ const EquipmentSiteStats = ({ equipmentsBySite, statsFetching }) => {
                             series={series}
                             type="bar"
                             height={355}
+                            baseWidthPerCategory={190}
                         />
                     </div>
                 )}

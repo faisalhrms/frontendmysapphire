@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ApexChart from "@components/charts/ApexChart.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import {useProjectMilestoneTaskDashboardStatistics} from "@modules/project-management/hooks/projectHooks.js";
+import TaskStatsTable from "@modules/dashboards/pms/components/TaskStatsTable.jsx";
 
 const TasksStatsModal = React.memo(({ milestoneId, onClose }) => {
 
@@ -59,14 +60,16 @@ const TasksStatsModal = React.memo(({ milestoneId, onClose }) => {
                                     categories={data.categories}
                                     height={500}
                                     series={data.series}
-                                    chartWidth={2000}
                                     xAxisTitle="Tasks"
                                     yAxisTitle="Progress"
+                                    baseWidthPerCategory={300}
                                 />
+                                <hr className="border-t border-gray-200 mt-2"/>
+                                <TaskStatsTable rows={data?.details}/>
                             </div>
                         ) : (
                             <div className="flex justify-center items-center flex-grow">
-                                <p>No milestone details available.</p>
+                            <p>No tasks details available.</p>
                             </div>
                         )}
                     </div>

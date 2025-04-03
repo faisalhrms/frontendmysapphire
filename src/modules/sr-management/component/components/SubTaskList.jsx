@@ -9,22 +9,22 @@ const SubTaskList = ({ serviceRequest }) => {
     };
 
     return (
-        <div className={`table-responsive`}>
+        <div className={`table-responsive task-table`}>
             <table className="table whitespace-nowrap table-bordered min-w-full">
                 <thead className="table-active">
-                    <tr className="border-b border-defaultborder">
-                        <th scope="col" className="text-center">SR #</th>
-                        <th scope="col" className="text-center">Status</th>
-                        <th scope="col" className="text-center">Created At</th>
-                        <th scope="col" className="text-center">Actions</th>
-                    </tr>
+                <tr className="border-b border-defaultborder">
+                    <th scope="col" className="text-center !text-xs">SR #</th>
+                    <th scope="col" className="text-center !text-xs">Status</th>
+                    <th scope="col" className="text-center !text-xs">Created At</th>
+                    <th scope="col" className="text-center !text-xs">Actions</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {serviceRequest.length > 0 ? (
-                        serviceRequest.map((childRequest) => (
-                            <React.Fragment key={childRequest.id}>
-                                <tr className="border-b border-defaultborder text-[#8c9097] dark:text-white/50">
-                                    <td className="text-center">{childRequest.sr_number}</td>
+                {serviceRequest.length > 0 ? (
+                    serviceRequest.map((childRequest) => (
+                        <React.Fragment key={childRequest.id}>
+                            <tr className="border-b border-defaultborder text-[#8c9097] dark:text-white/50">
+                                <td className="text-center">{childRequest.sr_number}</td>
                                     <td className="text-center">{childRequest.status}</td>
                                     <td className="text-center">
                                         {new Date(childRequest.created_at).toLocaleString()}

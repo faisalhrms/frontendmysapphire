@@ -1,6 +1,11 @@
 import {useNavigate} from "react-router-dom";
-import {createUser, getUserById, updateUser} from "@modules/user/services/userService.js";
+import {createOtherUser, createUser, getUserById, updateUser} from "@modules/user/services/userService.js";
 import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
+import {updateOverdueTask} from "@modules/project-management/services/taskService.js";
+import otherUserCreateSchema from "@modules/user/schemas/otherUserSchema.js";
 
 export const useUserForm = (userData) => {
 
@@ -41,3 +46,63 @@ export const useUser = (id) => {
 
     return { userData };
 }
+
+export const useOtherUserModal = () => {
+    const [isUserModalOpen, setIsModalOpen] = useState(false);
+
+    const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
+        resolver: zodResolver(otherUserCreateSchema),
+    });
+
+    const openUserModal = () => {
+        reset({
+            full_name: "",
+            email: "",
+            phone: "",
+            password: "",
+        });
+        setIsModalOpen(true)
+    };
+
+    const closeUserModal = () => {
+        const modalElement = document.getElementById('otherUserModal');
+        if (modalElement) {
+            setIsModalOpen(false);
+            window.HSOverlay.close(modalElement);
+            setTimeout(() => setIsModalOpen(false), 500);
+        }
+    };
+
+    useEffect(() => {
+        const parentModal = document.querySelector('.parent-modal.open');
+        const modalElement = document.getElementById('otherUserModal');
+        if (modalElement) {
+            isUserModalOpen ? window.HSOverlay.open(modalElement) : window.HSOverlay.close(modalElement);
+            if (parentModal) {
+                parentModal.classList.toggle('open', isUserModalOpen);
+                modalElement.classList.toggle('open', isUserModalOpen);
+                modalElement.classList.toggle('hidden', !isUserModalOpen);
+            }
+        }
+    }, [isUserModalOpen]);
+
+    const onUserSubmit = async (payload) => {
+        try {
+            await createOtherUser(payload);
+            closeUserModal();
+        } catch (error) {
+            console.error("Failed to submit task:", error.message);
+        }
+    };
+
+    return {
+        openUserModal,
+        closeUserModal,
+        userControl: control,
+        userErrors: errors,
+        isSubmitting,
+        handleSubmit,
+        onUserSubmit,
+        isUserModalOpen
+    };
+};

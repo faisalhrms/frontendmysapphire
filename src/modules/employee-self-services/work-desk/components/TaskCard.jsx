@@ -1,8 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {toTitleCase} from "@helpers/formatters.js";
 
-const TaskList = ({ tasks, statusLabel }) => {
-        const navigate = useNavigate();
+const TaskList = ({tasks, statusLabel}) => {
+    const navigate = useNavigate();
 
     if (!tasks || tasks.length === 0) {
         return <div className="text-center">No tasks available for {statusLabel}.</div>;
@@ -44,6 +46,19 @@ const TaskList = ({ tasks, statusLabel }) => {
                                                 className="text-[0.75rem] mb-1 text-[#8c9097] dark:text-white/50">
                                                     {assigneeNames}
                                                 </span></p>
+                                            <p className="mb-2">
+                                                {task.sr_tasks?.length > 0 && task.sr_tasks[0]?.priority && (
+                                                    <span
+                                                        className={`text-[0.75rem] mb-1 px-2 py-1 rounded mr-2
+                                                       ${task.sr_tasks[0].priority === 'high' ? 'bg-danger/10 text-danger' :
+                                                            task.sr_tasks[0].priority === 'medium' ? 'bg-secondary/10 text-secondary' :
+                                                                'bg-green/10 text-success'}`}>
+                                                           {toTitleCase(task.sr_tasks[0].priority)}
+                                                    </span>
+                                                )}
+                                            </p>
+
+
                                         </div>
                                         <div>
                                             <div className="btn-list">
@@ -56,6 +71,7 @@ const TaskList = ({ tasks, statusLabel }) => {
                                                     <i className="ri-eye-line"></i>
                                                 </button>
                                             </div>
+
                                             <span
                                                 className={`badge ${
                                                     task.sr_tasks && task.sr_tasks.length > 0 && task.sr_tasks[0].status === "Not-Started"
@@ -67,6 +83,7 @@ const TaskList = ({ tasks, statusLabel }) => {
                                                     ? task.sr_tasks[0].status
                                                     : statusLabel}
                                             </span>
+
                                         </div>
                                     </div>
                                 </div>

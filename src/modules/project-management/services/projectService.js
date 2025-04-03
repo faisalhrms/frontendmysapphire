@@ -2,6 +2,7 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const projectStatuses = [
+    { value: 'not_started', label: 'Not Started'},
     { value: 'active', label: 'Active' },
     { value: 'on_hold', label: 'On Hold' },
     { value: 'completed', label: 'Completed' },
@@ -39,10 +40,10 @@ export const updateProject = async (id, payload) => {
 };
 
 
-export const getProjects = async (page, size, s, workspaces = null, status = null, priority = null) => {
+export const getProjects = async (page, size, s, workspaces = null, status = null, priority = null, tags = null) => {
     try {
         const response = await api.get(`/pms/projects/datatable/`, {
-            params: { skip: (page - 1) * size, limit: size, s, workspaces: workspaces, status: status, priority: priority },
+            params: { skip: (page - 1) * size, limit: size, s, workspaces: workspaces, status: status, priority: priority, tags: tags },
         });
         return response.data.data;
     } catch (error) {
@@ -51,9 +52,19 @@ export const getProjects = async (page, size, s, workspaces = null, status = nul
 };
 
 
+
 export const getProjectById = async (id) => {
     try {
         const response = await api.get(`/pms/projects/${id}/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+export const editProjectById = async (id) => {
+    try {
+        const response = await api.get(`/pms/projects/${id}/edit/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);

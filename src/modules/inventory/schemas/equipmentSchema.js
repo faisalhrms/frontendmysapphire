@@ -3,12 +3,14 @@ import { dateSchema } from "@helpers/schema.js";
 
 // Define Equipment Status as an enum based on Django's EquipmentStatus
 const equipmentStatus = z.enum([
+    'no_status',
     'brand_new',
     'faulty',
     'functional',
     'lost',
     'sold_to_employee',
     'write_off',
+    'temporary_allocation'
 ]);
 const subEquipmentSchema = z.object({
     type_id: z.number().min(1, "Type is required"),
@@ -18,28 +20,41 @@ const subEquipmentSchema = z.object({
 });
 
 const equipmentSchema = z.object({
-    equipment_site_id: z.number().min(1, "Site is required").optional(),
-    department_id: z.number().min(1, "Department is required").optional(),
-    location_id: z.number().min(1, "Location is required").optional(),
+    company_id: z.number().min(1, "Company ID is required"),
+    equipment_site_id: z.number().min(1, "Site is required"),
+    department_id: z.number().min(1, "Department is required"),
+    location_id: z.number().min(1, "Location is required"),
 
-    code: z.number().min(1, "Code is required").optional(),
-    equipment_type_id: z.number().min(1, "Type is required").optional(),
-    asset_code: z.string().min(1, "Asset Code is required").optional(),
+    // code: z.number().min(1, "Code is required"),
+    equipment_type_id: z.number().min(1, "Type is required"),
+    asset_code: z.string().min(1, "Asset Code is required"),
     serial_no: z.string()
-        .min(1, "Serial Number is required").optional(),
+        .min(1, "Serial Number is required"),
         // .regex(/^[A-Za-z0-9\-]+$/, "Serial number must be alphanumeric."),
-    part_no: z.string().min(1, "Part No is required").optional(),
+    part_no: z.string().min(1, "Part No is required").nullable().optional(),
     status: equipmentStatus.nullable().optional(),
-    custodian_id: z.number().min(1, "Custodian Name is required").optional(),
-    purchase_date: dateSchema('Purchase Date').optional(),
-    handover_date: dateSchema('HandOver Date').optional(),
-    maturity_date: dateSchema('Maturity Date').optional(),
+    custodian_id: z.number().min(1, "Custodian Name is required").nullable().optional(),
+    purchase_date: dateSchema('Purchase Date',true).optional(),
+    handover_date: dateSchema('HandOver Date',true).optional(),
+    maturity_date: dateSchema('Maturity Date',true).optional(),
     antivirus: z.boolean().optional(),
     store_comm_ready: z.boolean().optional(),
-    description: z.string().max(1000, "Description can be at most 1000 characters").optional(),
-    specs: z.string().max(500, "Specs can be at most 500 characters").optional(),
+    description: z.string().max(1000, "Description can be at most 1000 characters"),
+    specs: z.string().max(500, "Specs can be at most 500 characters"),
     attachment_ids: z.array(z.number()).nullable().optional(),
+    laptop_issued_as_per_policy: z.boolean().default(true),
+    exception_approval_granted_by_id: z.number().min(1, "Exception approval granted by employee (Grade G-15) is required").nullable().optional(),
+    laptop_model: z.string().max(250).nullable().optional(),
+    processor: z.string().max(250).nullable().optional(),
+    ram: z.string().max(250).nullable().optional(),
+    purchase_price:z.number().nullable().optional(),
+    hard_disk: z.string().max(250).nullable().optional(),
+    screen_size: z.string().max(250).nullable().optional(),
+    mouse: z.string().max(250).nullable().optional(),
+    accessories: z.string().max(250).nullable().optional(),
     sub_equipments: z.array(subEquipmentSchema).optional(),
+    quantity: z.number().min(1, "Quantity must be at least 1").default(1), // Default to 1
+    price_paid_by_employee: z.number().nullable().optional(),
 });
 
 export default equipmentSchema;

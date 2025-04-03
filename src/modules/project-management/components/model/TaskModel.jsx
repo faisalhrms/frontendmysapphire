@@ -8,14 +8,19 @@ import { taskStatuses } from "@modules/project-management/services/taskService.j
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {priorities} from "@modules/project-management/services/projectService.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
+import FormToggle from "@components/form/FormToggle.jsx";
+import UserDropdown from "@components/dropdowns/UserDropdown.jsx";
+import {convertToDateTime, convertToDateTimeEnd} from "@helpers/dateTime.js";
 
-const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false}) => {
+const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, projectId, startedAt, endedAt, isEditMode = false, isParent = true}) => {
     const [data, setData]    = useState(taskData);
 
     const formattedUsers = useMemo(() => formatOptionsWithConcatenation(data, "users", "id", ['full_name', 'email']), [data]);
     const formattedTags  = useMemo(() => formatOptions(data, "tags", "id", "name"), [data]);
-    const formattedTeams  = useMemo(() => formatOptions(data, "teams", "id", "name"), [data]);
+    const formattedTeams = useMemo(() => formatOptions(data, "teams", "id", "name"), [data]);
     const handleClose        = useCallback(() => closeModal(), [closeModal]);
+    const maxDateTime = isParent ? convertToDateTimeEnd(endedAt) : endedAt;
+    const minDateTime = isParent ? convertToDateTime(startedAt): startedAt;
     useEffect(() => {
         setData(taskData);
     }, [taskData]);
@@ -57,6 +62,7 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     placeholder="Task Name"
                                                 />
                                             </div>
+
                                             <div className="col-span-12">
                                                 <FormAsyncSelect
                                                     isMulti={true}
@@ -78,8 +84,8 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="Start Date"
-                                                    min={startedAt}
-                                                    max={endedAt}
+                                                    min={minDateTime}
+                                                    max={maxDateTime}
                                                 />
                                             </div>
                                             <div className="col-span-6">
@@ -89,8 +95,8 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="End Date"
-                                                    min={startedAt}
-                                                    max={endedAt}
+                                                    min={minDateTime}
+                                                    max={maxDateTime}
                                                 />
                                             </div>
                                             <div className="col-span-6">
@@ -129,7 +135,6 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                 />
                                             </div>
                                             <div className="col-span-6">
-
                                                 <FormAsyncSelect
                                                     isMulti={true}
                                                     name="tag_ids"
@@ -141,6 +146,34 @@ const TaskModel = ({taskData, control, errors, isSubmitting, handleSubmit, onSub
                                                     preselectedOptions={formattedTags}
                                                     saveOptionEndpoint="/select/tag/"
                                                     allowSaveNewOption={true}
+                                                />
+                                            </div>
+                                            <UserDropdown
+                                                name='external_user_ids'
+                                                haveLabel={true}
+                                                control={control}
+                                                errors={errors}
+                                                data={taskData}
+                                                dataKey='external_users'
+                                            />
+                                            <div className="col-span-6">
+                                                <FormToggle
+                                                    label={true}
+                                                    placeholder='Requires Approval'
+                                                    toggleClasses=''
+                                                    name="requires_approval"
+                                                    control={control}
+                                                    errors={errors}
+                                                />
+                                            </div>
+                                            <div className="col-span-6">
+                                                <FormToggle
+                                                    label={true}
+                                                    placeholder='Is Ecomm Deliverable'
+                                                    toggleClasses=''
+                                                    name="is_ecom"
+                                                    control={control}
+                                                    errors={errors}
                                                 />
                                             </div>
                                             <div className="col-span-12">

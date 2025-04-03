@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
+import {formatNumberWithCommas} from "@helpers/formatters.js";
 
 /**
  * ApexChart Component
@@ -16,7 +17,7 @@ const ApexChart = ({
                        categories = [],
                        labels = [],
                        chartType = 'bar',
-                       colors = ["#845adf", "#28d193", "#ffbe14", "#23b7e5"],
+                       colors = ["#845adf", "#28d193", "#ffbe14", "#23b7e5","#d034eb","#eb3434","#ebb134","#34e2eb","#343deb"],
                        height = 400,
                        stacked = true,
                        columnWidth = "25%",
@@ -30,7 +31,15 @@ const ApexChart = ({
                        yAxisTitle = '',
                        onPointClick = () => {},
                        chartWidth = 800,
+                       baseWidthPerCategory = 400,
+                       children,
                    }) => {
+
+    const dynamicChartWidth = useMemo(() => {
+        const numCategories = categories?.length || 1;
+        const computedWidth = numCategories * baseWidthPerCategory;
+        return Math.max(computedWidth, chartWidth);
+    }, [categories]);
 
     const defaultOptions = useMemo(() => ({
         labels: labels,
@@ -99,6 +108,10 @@ const ApexChart = ({
                             fontSize: '22px',
                             fontWeight: 600,
                             color: '#495057',
+                            formatter: function (w) {
+                                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                return formatNumberWithCommas(total)
+                            },
                         }
 
                     }
@@ -262,17 +275,26 @@ const ApexChart = ({
         additionalOptions,
         xAxisTitle,
         yAxisTitle,
+        chartWidth,
+        baseWidthPerCategory,
+        children
     ]);
 
     return (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-            <div style={{ width: chartWidth, minWidth: '100%' }}>
+            <div style={{ width: dynamicChartWidth, minWidth: '100%' }}>
                 <ReactApexChart
                     options={defaultOptions}
                     series={series}
                     type={chartType}
                     height={height}
                 />
+                {
+                    children &&
+                     (
+                        children
+                    )
+                }
             </div>
         </div>
     );
@@ -306,6 +328,8 @@ ApexChart.propTypes = {
     yAxisTitle: PropTypes.string,
     onPointClick: PropTypes.func,
     chartWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    baseWidthPerCategory: PropTypes.number,
+    children: PropTypes.node,
 };
 
 export default ApexChart;

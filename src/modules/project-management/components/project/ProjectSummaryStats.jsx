@@ -4,7 +4,7 @@ import ApexChart from "@components/charts/ApexChart.jsx";
 import {mapSeriesToColors, statusColorMapping,} from "@helpers/statusStyles.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const ProjectSummaryStats = ({summary, statsFetching, heading = 'Task Summary'}) => {
+const ProjectSummaryStats = ({summary, statsFetching, heading = 'Task Summary', height = 250}) => {
     const colors = useMemo(() => {
         return mapSeriesToColors(summary?.labels, statusColorMapping);
     }, []);
@@ -21,7 +21,7 @@ const ProjectSummaryStats = ({summary, statsFetching, heading = 'Task Summary'})
                             chartWidth={200}
                             colors={colors}
                             chartType='donut'
-                            height={250}
+                            height={height}
                             labels={summary.labels}
                             additionalOptions={{
                                 legend: {position: 'left'}, stroke: {

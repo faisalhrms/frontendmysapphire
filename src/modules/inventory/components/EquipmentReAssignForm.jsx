@@ -14,6 +14,7 @@ import { equipmentStatuses } from "@modules/inventory/services/inventoryService.
 import { useReAssignEquipment } from "@modules/inventory/hooks/inventoryHooks.js";
 
 import reassignSchema from "@modules/inventory/schemas/reassignSchema.js";
+import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
 
 const EquipmentReAssignForm = ({ equipmentData }) => {
     const {
@@ -38,7 +39,7 @@ const EquipmentReAssignForm = ({ equipmentData }) => {
         },
     });
 
-    const { handleReAssign } = useReAssignEquipment();
+    const { handleReAssign } = useReAssignEquipment(equipmentData.id);
 
     useEffect(() => {
         if (equipmentData) {
@@ -71,22 +72,13 @@ const EquipmentReAssignForm = ({ equipmentData }) => {
                         <input type="hidden" {...register("equipment_id")} />
 
                             <div className="xl:col-span-3 col-span-12">
-                                <FormAsyncSelect
+                                <CustodianDropdown
+                                    haveLabel={true}
                                     name="new_custodian_id"
                                     control={control}
                                     errors={errors}
-                                    placeholder="Custodian"
-                                    apiUrl="/select/users"
-                                    queryKeyBase="users"
-                                    clientSideSearch={true}
-                                    preselectedOptions={
-                                        equipmentData?.custodian
-                                            ? [{
-                                                label: equipmentData.custodian.full_name,
-                                                value: equipmentData.custodian.id
-                                            }]
-                                            : []
-                                    }
+                                    data={equipmentData}
+                                    onCustodianSelect={(selected) => console.log("Custodian Selected:", selected)}
                                 />
                             </div>
 
@@ -118,7 +110,7 @@ const EquipmentReAssignForm = ({ equipmentData }) => {
                                 placeholder="Site"
                                 apiUrl="/select/locations/"
                                 queryKeyBase="locations"
-                                clientSideSearch={true}
+                                clientSideSearch={false}
                                 preselectedOptions={
                                     equipmentData?.equipment_site
                                         ? [{

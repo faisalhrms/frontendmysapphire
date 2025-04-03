@@ -8,6 +8,7 @@ import {useEquipment} from "@modules/inventory/hooks/inventoryHooks.js";
 import EquipmentSummary from "@modules/inventory/components/EquipmentSummary.jsx";
 import EquipmentAdditionalDetail from "@modules/inventory/components/EquipmentAdditionalDetail.jsx";
 import SubEquipmentDetail from "@modules/inventory/components/SubEquipmentDetail.jsx"
+import EquipmentAttachment from "@modules/inventory/views/EquipmentAttachment.jsx";
 const EquipmentDetail = () => {
     const { id } = useParams();
     const { equipmentData } = useEquipment(id);
@@ -28,9 +29,9 @@ const EquipmentDetail = () => {
     return (
         <Fragment>
             <PageHeader
-                currentpage="Equipment Details"
-                title="Equipment Details"
-                activepage="Equipment"
+                currentpage="Assets Details"
+                title="Asset Details"
+                activepage="Asset"
                 mainpage="Details"
             />
             <div className="grid grid-cols-12 gap-6">
@@ -45,7 +46,7 @@ const EquipmentDetail = () => {
                     <EquipmentAdditionalDetail
                         equipmentData={equipmentData}
                     />
-
+                    <EquipmentAttachment attachments={equipmentData.attachments} />
                     {/*<SubscriptionDepartments departments={departments} />*/}
                     {/*{equipmentData.attachments.length >0&&(<SubscriptionAttachment attachments={equipmentData.attachments} />)}*/}
                 </div>

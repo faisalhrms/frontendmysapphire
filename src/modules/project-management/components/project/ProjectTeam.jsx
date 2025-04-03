@@ -5,7 +5,7 @@ import Avatar from "@components/Avatar.jsx";
 import { Link } from "react-router-dom";
 
 const ProjectTeam = ({ users }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const toggleAccordion = (e) => {
     e.preventDefault();
@@ -14,7 +14,7 @@ const ProjectTeam = ({ users }) => {
 
   return (
     <>
-      <div className="box accordion ">
+      <div className="box accordion sticky top-0 self-start">
         <div className="box-header flex items-center justify-between">
           <div className="box-title mb-2">
             Team Members

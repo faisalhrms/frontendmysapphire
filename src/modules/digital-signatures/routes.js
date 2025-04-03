@@ -1,4 +1,4 @@
-import { Create } from "@mui/icons-material";
+import DigitalSignatures from '@modules/digital-signatures/views/DigitalSignatures.jsx';
 
 export const DIGITAL_SIGNATURES_ROUTES = {
   READ: {
@@ -10,8 +10,7 @@ export const DIGITAL_SIGNATURES_ROUTES = {
 export const MODULE_ROUTES = [
   {
     path: DIGITAL_SIGNATURES_ROUTES.READ.path,
-    component: () =>
-      import(`/src/modules/digital-signatures/views/DigitalSignatures.jsx`),
+    component: DigitalSignatures,
     permission: DIGITAL_SIGNATURES_ROUTES.READ.permission,
   },
 ];

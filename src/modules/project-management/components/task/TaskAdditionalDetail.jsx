@@ -4,8 +4,8 @@ import {toTitleCase} from "@helpers/formatters.js";
 const   TaskAdditionalDetail = ({task}) => {
   return (
     <>
-    <div className="box">
-        <div className="box-header">
+    <div className="box sticky top-0 self-start">
+        <div className="box-header ">
             <div className="box-title">
                 Additional Details
             </div>

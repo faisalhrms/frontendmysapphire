@@ -1,9 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import {createHtmlPlugin} from "vite-plugin-html";
 
 export default defineConfig(({ mode }) => ({
-  plugins: [react()],
+  plugins: [
+    react(),
+    createHtmlPlugin({
+      inject: {
+        data: {
+          version: Date.now(),
+        },
+      },
+    }),
+  ],
   base: '/',
   build: {
     outDir: 'dist',
@@ -35,7 +45,9 @@ export default defineConfig(({ mode }) => ({
       '@helpers': path.resolve(__dirname, 'src/helpers'),
       '@services': path.resolve(__dirname, 'src/services'),
       '@hooks': path.resolve(__dirname, 'src/hooks'),
+
     },
+
   },
   css: {
     preprocessorOptions: {
@@ -50,6 +62,6 @@ export default defineConfig(({ mode }) => ({
     port: 5173,        // Use the default port or change if necessary
     headers: {
       'Cache-Control': 'no-store',
-    },
+    }
   },
 }));

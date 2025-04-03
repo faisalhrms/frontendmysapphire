@@ -103,6 +103,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="xl:col-span-4 col-span-12">
                     <FormInput
+                        is_required={true}
                         name="name"
                         control={control}
                         errors={errors}
@@ -112,6 +113,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
 
                   <div className="xl:col-span-4 col-span-12">
                     <FormSelect
+                        is_required={true}
                         name="type"
                         control={control}
                         errors={errors}
@@ -186,6 +188,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
 
                         <div className={`xl:col-span-${currency === 'PKR' ? '4' : '3'} col-span-12`}>
                           <FormInput
+                              is_required={true}
                               type="number"
                               name="per_month_amount"
                               control={control}
@@ -232,6 +235,7 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
 
                   <div className="col-span-12">
                     <FormTextarea
+                        is_required={true}
                         name="description"
                         control={control}
                         errors={errors}
@@ -288,7 +292,9 @@ const SubscriptionForm = ({ subscriptionData = {}, isEditMode = false }) => {
               </div>
               <div className="box-body">
                 <FormAsyncSelect
+
                     name="department_ids"
+                    is_required={true}
                     control={control}
                     errors={errors}
                     label={false}

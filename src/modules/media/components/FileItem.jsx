@@ -1,6 +1,7 @@
-import {getExcerptFromText} from "@helpers/formatters.js";
+import {getExcerptFromText,toTitleCase} from "@helpers/formatters.js";
 import {generateFile} from "@helpers/media.js";
 import {formatDate} from "@helpers/dateTime.js";
+
 
 const FileItem = ({ file, meta = false }) => {
     return(
@@ -10,7 +11,7 @@ const FileItem = ({ file, meta = false }) => {
                     <span dangerouslySetInnerHTML={{__html: generateFile(file)}}/>
                 </div>
                 <div className="file-meta">
-                    <p className="mb-0 font-semibold text-[1rem]">{ meta ? file.file_name : getExcerptFromText(file.file_name, 10)}</p>
+                    <p className="mb-0 font-semibold text-xs">{ meta ? file.file_name : getExcerptFromText(file.file_name, 40)}</p>
                     <span className="file-checked-status">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                       <path d="M186.301 339.893L96 249.461l-32 30.507L186.301 402 448 140.506 416 110z"></path>

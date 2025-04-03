@@ -1,8 +1,8 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {
-    createProject,
-    getProjectById, getProjectDashboardStats, getProjectMilestoneDashboardStats,
+    createProject, editProjectById,
+    getProjectById, getProjectMilestoneDashboardStats,
     getProjectMilestonesWithTasks, getProjectMilestoneTaskDashboardStats,
     getProjects, getProjectStats,
     toggleFavouriteProject,
@@ -17,12 +17,12 @@ import {uploadTasks} from "@modules/project-management/services/taskService.js";
 import {uploadMilestones} from "@modules/project-management/services/milestoneService.js";
 import {useConflictHook} from "@modules/project-management/hooks/conflictHooks.js";
 import projectFilterSchema from "@modules/project-management/schemas/projectFilterSchema.js";
-import projectDashboardFilterSchema from "@modules/project-management/schemas/projectDashboardFilterSchema.js";
+import {useSelector} from "react-redux";
 
-export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null) => {
+export const useProjects = (page = 1, size = 8, search, workspaces = null, status = null, priority = null, tags = null) => {
     const query = useQuery({
-        queryKey: ['projects', page, size, search, workspaces, status, priority],
-        queryFn: () => getProjects(page, size, search, workspaces, status, priority),
+        queryKey: ['projects', page, size, search, workspaces, status, priority, tags],
+        queryFn: () => getProjects(page, size, search, workspaces, status, priority, tags),
         keepPreviousData: false,
         staleTime: 0,
     });
@@ -58,13 +58,13 @@ export const useProjectForm = (projectData, isEditMode) => {
     return { handleProjectSubmit, haveConflict, conflicts, closeConflictModal };
 };
 
-export const useProject = (id) => {
+export const useProject = (id, forEdit = false) => {
     const [projectData, setProjectData] = useState(null);
 
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const data = await getProjectById(id);
+                const data = forEdit ? await editProjectById(id) : await getProjectById(id);
                 setProjectData(data);
             } catch (error) {
                 console.log(error.message);
@@ -185,8 +185,18 @@ export const useUploadProjectModal = (refetch, type = 'P') => {
 };
 
 export const useProjectFilter = () => {
+    const filters = useSelector((state) => state.pms.filters);
     const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(projectFilterSchema),
+        defaultValues: {
+            status: filters.status,
+            priority: filters.priority,
+            workspaces: filters.workspaces
+                ? filters.workspaces
+                    .map(workspace => workspace.id || null)
+                    .filter(value => value !== null)
+                : []
+        },
     });
 
     return {
@@ -220,3 +230,29 @@ export const useProjectMilestoneTaskDashboardStatistics = (milestoneId) => {
 
     return { data, isLoading };
 }
+
+export const useMilestoneSearch = (items, searchTerm) => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    return items.reduce((acc, item) => {
+        const matchesName = item.name && item.name.toLowerCase().includes(lowerCaseSearchTerm);
+        const matchesPriority = item.priority && item.priority.toLowerCase().includes(lowerCaseSearchTerm);
+        const matchesStatus = item.status && item.status.toLowerCase().includes(lowerCaseSearchTerm);
+        const matchesTeams = item.teams && item.teams.some(team => team.name.toLowerCase().includes(lowerCaseSearchTerm));
+        const matchesUsers = item.users && item.users.some(user => user.full_name.toLowerCase().includes(lowerCaseSearchTerm));
+        if (matchesName || matchesPriority || matchesStatus || matchesTeams || matchesUsers) {
+            const filteredChildren = item.children
+                ? useMilestoneSearch(item.children, searchTerm)
+                : [];
+
+            acc.push({ ...item, children: filteredChildren.length > 0 ? filteredChildren : item.children });
+        } else if (item.children && item.children.length > 0) {
+            const filteredChildren = useMilestoneSearch(item.children, searchTerm);
+            if (filteredChildren.length > 0) {
+                acc.push({ ...item, children: filteredChildren });
+            }
+        }
+
+        return acc;
+    }, []);
+};

@@ -9,7 +9,7 @@ const ProjectStatusCard = ({ item }) => {
     const styles = getStatusStyles(status);
     const { changeClass, arrowIconClass, ariaLabel } = getChangeStyles(percentage_change);
     return (
-        <div className="box">
+        <div className="box !mb-0">
             <div className="box-body">
                 <div className="grid grid-cols-12">
                     <div className="col-span-8 pe-0">

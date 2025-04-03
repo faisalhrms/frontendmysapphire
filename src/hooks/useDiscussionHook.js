@@ -6,6 +6,7 @@ import api from "../config/axiosConfig.js";
 const useDiscussion = (attachment_ids = [], clearAttachments, getEndPoint, storeEndPoint) => {
     const queryClient = useQueryClient();
     const [message, setMessage] = useState("");
+    const [selectedUsers, setSelectedUsers] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { data: discussions = [], isLoading,refetch } = useQuery({
         queryKey: [getEndPoint],
@@ -22,11 +23,11 @@ const useDiscussion = (attachment_ids = [], clearAttachments, getEndPoint, store
                 return [...discussionsArray, newDiscussion];
             });
             Notify.success('Discussion posted successfully');
+            setSelectedUsers([]);
             setMessage("");
             clearAttachments();
         },
         onError: (error) => {
-            console.log(`this is error`,error)
             Notify.error(error.response?.data?.message || "Failed to post discussion");
         },
         onSettled: () => {
@@ -34,12 +35,13 @@ const useDiscussion = (attachment_ids = [], clearAttachments, getEndPoint, store
         },
     });
     const handleSubmit = () => {
-        if (!message.trim() && attachment_ids.length === 0) {
-            Notify.error("Message or attachment is required to post a discussion.");
+        if (!message.trim() && attachment_ids.length === 0 && selectedUsers.length === 0) {
+            Notify.error("Message, attachment, or selected users are required to post a discussion.");
             return;
         }
         setIsSubmitting(true);
-        mutation.mutate({ message, attachment_ids });
+        const mentionsUserIds = selectedUsers.map(user => user.id);
+        mutation.mutate({ message, attachment_ids, mentions: mentionsUserIds });
     };
 
     return {
@@ -47,6 +49,8 @@ const useDiscussion = (attachment_ids = [], clearAttachments, getEndPoint, store
         isLoading,
         message,
         setMessage,
+        selectedUsers,
+        setSelectedUsers,
         isSubmitting,
         handleSubmit,
         refetch,

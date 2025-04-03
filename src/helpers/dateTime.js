@@ -8,6 +8,9 @@ const WORKING_HOURS_PER_DAY = 8; // 8-hour workday
 const isWeekend = (date) => date.getDay() === 6 || date.getDay() === 0;
 
 export const formatDate = (dateString, format = 'MMM dd, yyyy') => {
+    if (!dateString){
+        return '';
+    }
     const date = new Date(dateString);
 
     if (isNaN(date.getTime())) return '';
@@ -103,4 +106,24 @@ export const formatDateTimeLocal = (dateTime) => {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
+export const convertToDateTime = (date, local = true) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    if (local){
+        const localISOString = new Date(d).toLocaleString('sv-SE');
+        return localISOString.slice(0, 16);
+    }
+    return d.toISOString().slice(0, 16);
+};
+
+export const convertToDateTimeEnd = (date, local = true) => {
+    const d = new Date(date);
+    d.setHours(23, 59, 59, 999);
+    if (local){
+        const localISOString = new Date(d).toLocaleString('sv-SE');
+        return localISOString.slice(0, 16);
+    }
+    return d.toISOString().slice(0, 16);
 };

@@ -10,6 +10,7 @@ import {
     reAssignEquipment
 } from "@modules/inventory/services/inventoryService.js"; // Assuming services exist here
 import { useNavigate } from "react-router-dom";
+import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
 
 // Hook to fetch equipment list with pagination and search
 export const useEquipments = (page = 1, size = 8, search) => {
@@ -27,18 +28,46 @@ export const useEquipments = (page = 1, size = 8, search) => {
 };
 
 // Custom hook to handle equipment form submission
+// export const useEquipmentForm = (equipmentData, isEditMode) => {
+//     const navigate = useNavigate();
+//
+//     const handleEquipmentSubmit = async (data) => {
+//         try {
+//             if (isEditMode) {
+//                 await updateEquipment(equipmentData.id, data);
+//             } else {
+//                 await createEquipment(data);
+//             }
+//              navigate(INVENTORY_ROUTES.READ.path);
+//         } catch (error) {
+//             console.error('Error:', error.message);
+//         }
+//     };
+//
+//     return { handleEquipmentSubmit };
+// };
 export const useEquipmentForm = (equipmentData, isEditMode) => {
     const navigate = useNavigate();
 
     const handleEquipmentSubmit = async (data) => {
         try {
+            let response;
             if (isEditMode) {
-                await updateEquipment(equipmentData.id, data);
+                response = await updateEquipment(equipmentData.id, data);
             } else {
-                await createEquipment(data);
+                response = await createEquipment(data);
             }
-            // navigate('/module/equipments');
+
+            // Check for successful response before redirecting
+            if (response?.status === 200 || response?.status === 201) {
+                // Only navigate if the request was successful
+                navigate(INVENTORY_ROUTES.READ.path);
+            } else {
+                // Optionally handle error case here (like showing a message)
+                console.error('Failed to save or update equipment:', response?.message);
+            }
         } catch (error) {
+            // Catch any errors thrown during the request
             console.error('Error:', error.message);
         }
     };
@@ -96,7 +125,7 @@ export const useToggleFavouriteEquipment = () => {
     return { handleToggleFavourite, isLoading };
 };
 
-export const useReAssignEquipment = () => {
+export const useReAssignEquipment = (id) => {
     const navigate = useNavigate();
 
     const handleReAssign = async (formData) => {
@@ -104,7 +133,7 @@ export const useReAssignEquipment = () => {
             const data = await reAssignEquipment(formData);
             // On success, you might want to navigate somewhere or refetch data
             // For example:
-            // navigate('/module/equipments');
+            navigate(`/module/asset/detail/${id}`);
         } catch (err) {
             console.error("Reassign error:", err);
         }

@@ -15,6 +15,15 @@ const ProjectDiscussionItem = ({discussion, userId}) => {
                         {
                             userId === discussion.user.id ? <b>You</b> : <b>{discussion.user.full_name}</b>
                         }
+                        {
+                            discussion.mentions.length > 0 &&
+                            <>
+                                <span className='text-[#8c9097] dark:text-white/50 mr-1'> mentioned:</span>
+                                {discussion.mentions.map(mention => (
+                                    <span className='text-primary mr-1' key={`mention-${discussion.id}-${mention.id}`}>@{mention.full_name}</span>
+                                ))}
+                            </>
+                        }
                         <span className="ltr:float-right rtl:float-left text-[.6875rem] text-[#8c9097] dark:text-white/50">{formatDate(discussion.created_at, 'MMM dd, yyyy - HH:mm')}</span>
                     </p>
                     <p className="text-[#8c9097] dark:text-white/50 mb-0">

@@ -22,7 +22,7 @@
         @apply text-textmuted text-[0.82rem];
     }
     .kanban-tasks-type {
-        &.new {
+        &.open {
             .kanban-tasks.box {
                 @apply border-t-[3px] border-solid border-primary/30;
             }

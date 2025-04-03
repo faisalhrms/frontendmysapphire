@@ -12,7 +12,7 @@ const EquipmentEdit = () => {
     const {equipmentData}=useEquipment(id)
     return (
         <div>
-            <PageHeader currentpage='Edit Equipment' activepage="Equipment" mainpage="Edit Equipment"/>
+            <PageHeader currentpage='Edit Asset' activepage="Asset" mainpage="Edit Asset"/>
             {equipmentData&&(
                 <InventoryForm equipmentData={equipmentData} isEditMode={true} />
             )

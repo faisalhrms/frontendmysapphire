@@ -4,7 +4,7 @@ const useLoadRoutes = () => {
     const [routes, setRoutes] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const routeFiles = import.meta.glob('/src/modules/**/routes.js');
+    const routeFiles = import.meta.glob('@modules/**/routes.js');
 
     useEffect(() => {
         const loadRoutes = async () => {
@@ -13,8 +13,6 @@ const useLoadRoutes = () => {
                 const routeModule = await routeFiles[path]();
                 if (routeModule.MODULE_ROUTES) {
                     loadedRoutes.push(...routeModule.MODULE_ROUTES);
-                } else {
-                    console.warn(`No MODULE_ROUTES found in ${path}`);
                 }
             }
             setRoutes(loadedRoutes);

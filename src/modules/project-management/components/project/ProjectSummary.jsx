@@ -2,10 +2,10 @@ import {Link} from "react-router-dom";
 import {toTitleCase} from "@helpers/formatters.js";
 import {calculateEffort, formatDate} from "@helpers/dateTime.js";
 import Avatar from "@components/Avatar.jsx";
-import HasPermission from "@components/HasPermission.jsx";
 import sampleFile from "@assets/files/sample_upload_milestones_with_tasks_in_project.xlsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import React from "react";
+import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 
 const ProjectSummary = ({project, handleUploadModal}) => {
     return (
@@ -14,7 +14,7 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                 <div className="box-header justify-between">
                     <div className="box-title">Project Summary</div>
                     <div className="flex items-center space-x-2">
-                        <HasPermission permission='change_project'>
+                        <HasProjectPermission globalPermission='change_project' users={project.users}>
                             <div className="flex space-x-2">
                                 <a
                                     href={sampleFile}
@@ -35,7 +35,7 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                                     <i className="ri-edit-line font-semibold align-middle"></i> Edit Project
                                 </Link>
                             </div>
-                        </HasPermission>
+                        </HasProjectPermission>
                     </div>
                 </div>
                 <div className="box-body">

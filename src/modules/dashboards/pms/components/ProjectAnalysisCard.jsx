@@ -1,13 +1,7 @@
-import React, {useMemo} from 'react';
-import ApexChart from "@components/charts/ApexChart.jsx";
-import {mapSeriesToColors, statusColorMapping} from "@helpers/statusStyles.js";
+import React from 'react';
+import ReactApexChart from "react-apexcharts";
 
 const ProjectAnalysisCard = ({ data }) => {
-
-    const colors = useMemo(() => {
-        return mapSeriesToColors(data?.series, statusColorMapping);
-    }, [data?.series]);
-
     return (
         <div className="xl:col-span-8 col-span-12">
             <div className="box">
@@ -16,17 +10,46 @@ const ProjectAnalysisCard = ({ data }) => {
                 </div>
                 <div className="box-body">
                     <div id="projectAnalysis">
-                        <ApexChart
-                            additionalOptions={{
-                                grid: { show: true },
-                                legend: { position: 'top' }
-                            }}
-                            colors={colors}
-                            columnWidth='90%'
-                            height={355}
-                            series={data.series}
-                            categories={data.categories}
-                        />
+                        <ReactApexChart options={ {
+                            chart: {
+                                height: 350,
+                                animations: {
+                                    speed: 500
+                                },
+                                dropShadow: {
+                                    enabled: true,
+                                    enabledOnSeries: undefined,
+                                    top: 8,
+                                    left: 0,
+                                    blur: 3,
+                                    color: 'rgb(132, 90, 223)',
+                                    opacity: 0.1
+                                },
+                            },
+                            colors: ["rgba(132, 90, 223, 0.2)", "rgba(35, 183, 229, 0.85)", "rgb(245, 184, 73)", "rgb(29, 216, 113)", "rgb(208, 61, 70)"],
+                            dataLabels: {
+                                enabled: false
+                            },
+                            grid: {
+                                borderColor: '#f1f1f1',
+                                strokeDashArray: 3
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                width: [2, 2, 2, 2, 2],
+                                dashArray: [0, 5, 0, 0, 0],
+                            },
+                            xaxis: {
+                                axisTicks: {
+                                    show: false,
+                                },
+                            },
+                            markers: {
+                                hover: {
+                                    sizeOffset: 5
+                                }
+                            },
+                        }} series={data.series} type="line" height={350} />
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@ const EquipmentDashboardStats = ({ filters }) => {
     return (
         <>
             {/* Status Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
                 {data?.statuses?.map((item, index) => (
                     <EquipmentStatusCard
                         key={index}
@@ -30,6 +30,7 @@ const EquipmentDashboardStats = ({ filters }) => {
                 ))}
             </div>
 
+
             {/* Analysis, Recent Equipments, and Summary */}
             <div className="grid grid-cols-12 gap-x-6 mt-4">
                 <EquipmentAnalysisCard
@@ -37,10 +38,10 @@ const EquipmentDashboardStats = ({ filters }) => {
                 />
 
                 <div className="xl:col-span-4 col-span-12">
-                    <EquipmentSummaryStats summary={data.summary} />
+                    <EquipmentSummaryStats summary={data.summary}/>
                 </div>
                 <div className="xl:col-span-12 col-span-12">
-                    <EquipmentDepartmentStats equipmentsByDepartment={data.equipments_by_department} />
+                    <EquipmentDepartmentStats equipmentsByDepartment={data.equipments_by_department}/>
                 </div>
                 {/* Add the new EquipmentSiteStats component */}
                 <div className="xl:col-span-12 col-span-12">

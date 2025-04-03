@@ -7,35 +7,45 @@ export const sidebarMenu = [
     generateSidebarItem(
         '',
         'sub',
-        'IT Equipments',
+        'IT Assets',
         6,
         'bx-box',
         '',
         [
-
             generateSidebarItem(
-                INVENTORY_ROUTES.LAPTOP_LIST.path,
+                INVENTORY_ROUTES.READ.path,
                 'link',
-                'Laptop List',
+                'Assets List',
                 1,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
             ),
             generateSidebarItem(
-                INVENTORY_ROUTES.READ.path,
+                INVENTORY_ROUTES.LAPTOP_LIST.path,
                 'link',
-                'Equipments List',
+                'Laptop List',
                 2,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
             ),
 
+            generateSidebarItem(
+                INVENTORY_ROUTES.EQUIPMENT_SITE_WISE.path,
+                'link',
+                'Site Wise List',
+                3,
+                'bx-laptop',
+                INVENTORY_ROUTES.READ.permission
+            ),
+
+
+
 
             generateSidebarItem(
                 INVENTORY_ROUTES.EQUIPMENT_REPORT.path,
                 'link',
-                'Equipments Report',
-                3,
+                'Assets Report',
+                4,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
             )

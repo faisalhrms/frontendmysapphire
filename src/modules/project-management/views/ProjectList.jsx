@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { Link } from "react-router-dom";
 import {useProjectFilter, useProjects, useUploadProjectModal} from "@modules/project-management/hooks/projectHooks.js";
@@ -18,6 +18,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setViewType} from "@modules/project-management/redux/pmsSlice.js";
 import ProjectGridItems from "@modules/project-management/components/ProjectGridItems.jsx";
 import ProjectListItems from "@modules/project-management/components/ProjectListItems.jsx";
+import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
+import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
+import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
 
 const ProjectList = () => {
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
@@ -30,11 +33,14 @@ const ProjectList = () => {
     const workspaces = useWatch({ control: filterControl, name: "workspaces" });
     const status = useWatch({ control: filterControl, name: "status" });
     const priority = useWatch({ control: filterControl, name: "priority" });
+    const tags = useWatch({ control: filterControl, name: "tags" });
 
-    const { data, isLoading, refetch } = useProjects(currentPage, 8, searchTerm, workspaces, status, priority);
-
+    const { data, isLoading, refetch } = useProjects(currentPage, 8, searchTerm, workspaces, status, priority, tags);
+    const filters = useSelector((state) => state.pms.filters);
     const [startedAt, setStartedAt] = useState(null);
     const [endedAt, setEndedAt] = useState(null);
+    const [isPeopleFilterOpen, setIsPeopleFilterOpen] = useState(false);
+    const [selectedWorkspaces, setSelectedWorkspaces] = useState(filters.workspaces);
     const totalPages = Math.ceil(data?.total / 8) || 0;
     const {
         openMilestoneModal,
@@ -53,7 +59,7 @@ const ProjectList = () => {
     const handleOpenMilestoneModal = (project) => {
         setStartedAt(project.started_at);
         setEndedAt(project.ended_at);
-        openMilestoneModal(project.id, false);
+        openMilestoneModal(project.id, false, project.requires_approval);
     };
 
     const {
@@ -68,25 +74,35 @@ const ProjectList = () => {
     } = useUploadProjectModal(refetch, 'P')
 
     const viewType = useSelector((state) => state.pms.viewType);
+
     const dispatch = useDispatch();
 
     const handleViewChange = (viewType) => {
         dispatch(setViewType(viewType));
     };
 
+    useEffect(() => {
+        dispatch(setFilters(
+            {
+                workspaces: selectedWorkspaces,
+                status: status,
+                priority: priority
+            }
+            ));
+    }, [status, priority, workspaces]);
+
     return (
         <>
             <PageHeader currentpage="Project Management System"/>
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-2">
                 <div className="col-span-12">
                     <div className="box custom-box">
                         <div className="box-body p-4">
-                            <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center justify-between gap-2">
                                 <HasPermission permission='add_project'>
                                     <div className="flex items-center gap-2">
                                         <Link to="/module/projects/create" className="ti-btn ti-btn-primary-full !mb-0">
-                                            <i className="ri-add-line me-1 font-semibold align-middle"></i>
-                                            New Project
+                                            <i className="ri-add-line font-semibold align-middle"></i>
                                         </Link>
                                     </div>
                                 </HasPermission>
@@ -97,14 +113,23 @@ const ProjectList = () => {
                                         errors={filterErrors}
                                         multiple={true}
                                         saveNewOption={false}
+                                        data={filters}
+                                        dataKey='workspaces'
+                                        onSelectChange={setSelectedWorkspaces}
                                     />
                                     <ProjectStatusDropdown
                                         control={filterControl}
                                         errors={filterErrors}
+
                                     />
                                     <ProjectPriorityDropdown
                                         control={filterControl}
                                         errors={filterErrors}
+                                    />
+                                    <TagDropdown
+                                        control={filterControl}
+                                        errors={filterErrors}
+                                        name='tags'
                                     />
                                 </div>
                                 <div className="flex items-center">
@@ -117,6 +142,13 @@ const ProjectList = () => {
                                     />
                                 </div>
                                 <div className="flex items-center gap-2">
+                                    <button
+                                        className={`ti-btn ti-btn-secondary`}
+                                        data-hs-overlay="#pms_demo_modal"
+                                        title="Watch Demo"
+                                    >
+                                        <i className='bx bx-video'></i>
+                                    </button>
                                     <button
                                         className={`ti-btn ti-btn-sm ${viewType === 'grid' ? 'ti-btn-outline-primary' : 'ti-btn-primary'}`}
                                         onClick={() => handleViewChange('grid')}
@@ -131,12 +163,30 @@ const ProjectList = () => {
                                     >
                                         <i className="ti ti-list"></i>
                                     </button>
+
+                                    {/*<div className="relative">*/}
+                                    {/*    /!* Button to toggle PeopleFilter *!/*/}
+                                    {/*    <button*/}
+                                    {/*        className="ti-btn ti-btn-sm ti-btn-primary"*/}
+                                    {/*        title="Filter by People"*/}
+                                    {/*        onClick={() => setIsPeopleFilterOpen(!isPeopleFilterOpen)}*/}
+                                    {/*    >*/}
+                                    {/*        <i className="ti ti-user"></i>*/}
+                                    {/*    </button>*/}
+
+                                    {/*    /!* PeopleFilter Dropdown (Properly Positioned Below) *!/*/}
+                                    {/*    {isPeopleFilterOpen && (*/}
+                                    {/*        <div className="absolute top-full mt-2 right-0 z-50">*/}
+                                    {/*            <PeopleFilter onClose={() => setIsPeopleFilterOpen(false)}/>*/}
+                                    {/*        </div>*/}
+                                    {/*    )}*/}
+                                    {/*</div>*/}
                                 </div>
                                 <HasPermission permission='add_project'>
                                     <div className="hs-dropdown ti-dropdown ms-2">
                                         <button type="button" aria-label="button"
                                                 className="ti-btn ti-btn-primary ti-btn-sm" aria-expanded="false">
-                                            <i className="ti ti-dots-vertical"></i>
+                                        <i className="ti ti-dots-vertical"></i>
                                         </button>
 
                                         <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
@@ -212,6 +262,8 @@ const ProjectList = () => {
                     heading='Upload Projects'
                 />
             }
+
+            <PmsDemoModal />
         </>
     );
 };
