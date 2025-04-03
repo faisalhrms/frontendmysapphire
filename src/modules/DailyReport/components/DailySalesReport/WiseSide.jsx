@@ -12,6 +12,7 @@ const StoreWise = ({ filters , expand }) => {
     const fetchData = async () => {
         try {
             setLoading(true);
+            setError(null);
             const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
             setNewData(data || {});
         } catch (err) {
@@ -230,6 +231,9 @@ const StoreWise = ({ filters , expand }) => {
 
         return tableData;
     };
+
+
+
 
     const toggleSection = (id) => {
         console.log(id);
