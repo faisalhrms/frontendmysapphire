@@ -12,6 +12,7 @@ import DailyTargetAchievementOnline from "@modules/DailyReport/components/DailyS
 import OnlineGrossSaleBeforeReturn from "@modules/DailyReport/components/DailySalesReport/ OnlineGrossSaleBeforeReturn.jsx";
 import CYVsLYGrowth from "@modules/DailyReport/components/DailySalesReport/CYVsLYGrowth.jsx";
 import DailySalesReportStoreWise from "@modules/DailyReport/components/DailySalesReport/DailySalesReportStoreWise.jsx";
+import downloadPDF from "@modules/DailyReport/components/DailySalesReport/PDF.js";
 
 const DailySaleReportList = () => {
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
@@ -49,6 +50,9 @@ const DailySaleReportList = () => {
             setLoading(false);
         }, 1000);
     };
+
+const [donwloadData, setDonwloadData] = useState({});
+
 
     return (
         <>
@@ -125,7 +129,13 @@ const DailySaleReportList = () => {
                                     {expand ? 'Collapse' : 'Expand All'}
                                 </button>
                             )}
-
+                            <button
+                                type="button"
+                                className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                onClick={()=>downloadPDF(donwloadData,filters)}
+                            >
+                                <i className="bi bi-file-earmark-pdf"></i> PDF
+                            </button>
                             <button
                                 type="button"
                                 className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
@@ -162,21 +172,21 @@ const DailySaleReportList = () => {
                     )}
 
                     {activeTab === "DailySaleReportList" && (
-                        <StoreWise filters={filters} loading={loading} expand={expand}/>
+                        <StoreWise filters={filters} loading={loading} expand={expand} setDonwloadData={setDonwloadData}/>
                     )}
 
                     {activeTab === "OnlineAndBM" && (
-                        <DailyTargetAchievementOnline filters={filters} loading={loading}/>
+                        <DailyTargetAchievementOnline filters={filters} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
                     {activeTab === "Return" && (
-                        <CYVsLYGrowth filters={filters} loading={loading}/>
+                        <CYVsLYGrowth filters={filters} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
                     {activeTab === "GrossReturn" && (
-                        <OnlineGrossSaleBeforeReturn filters={filters} loading={loading}/>
+                        <OnlineGrossSaleBeforeReturn filters={filters} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
 
                     {activeTab === "DailySales" && (
-                        <DailySalesReportStoreWise filters={filters} loading={loading} expand={expand}/>
+                        <DailySalesReportStoreWise filters={filters} loading={loading} expand={expand} setDonwloadData={setDonwloadData}/>
                     )}
                 </div>
             </div>
