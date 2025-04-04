@@ -77,7 +77,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
     // }, [filters]);
 
     const getAchColor = (achPercentage) => {
-        return achPercentage < 0 ? 'text-red-500' : 'text-green-500';
+        return achPercentage < 0 ? 'text-danger' : 'text-success';
     };
 
     const getAchIcon = (achPercentage) => {
