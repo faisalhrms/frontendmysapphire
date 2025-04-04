@@ -12,13 +12,12 @@ const subscriptionStatusEnum = z.enum(["active", "inactive"], {
 });
 
 const userManagementSchema = z.object({
-    employee_id: z.number().min(1, "Employee ID is required"), // Employee selection
     email_host: emailHostEnum, // Static email host
     erp_user: z.boolean().default(false), // ERP User boolean
     one_drive: z.boolean().default(false), // One Drive boolean
     ms_team: z.boolean().default(false), // MS Team boolean
     backup_storage: z.number().min(0, "Backup storage must be a positive number"), // Backup storage field (number)
-    subscriptions: z.array(z.number()).min(1, "At least one subscription is required"), // Multiple subscription LOV
+    subscription_ids: z.array(z.number()).min(1, "At least one subscription is required"), // Multiple subscription LOV
     start_date: dateSchema("Start Date").nullable().optional(), // Optional start date
     end_date: dateSchema("End Date").nullable().optional(), // Optional end date
 })

@@ -1,46 +1,52 @@
 // useUserManagement.js
 import { useState, useEffect } from 'react';
-import { getUsers } from "@modules/user/services/userManagementService.js";
+import {getUsers, createUser, updateUser, getUserManagementById} from "@modules/user/services/userManagementService.js";
+import {useNavigate} from "react-router-dom";
 
-export const useUserManagement = (pageSize = 10) => {
-    const [userData, setUserData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [page, setPage] = useState(1);
-    const [size, setSize] = useState(pageSize);
-    const [search, setSearch] = useState('');
-    const [totalCount, setTotalCount] = useState(0);
+export const useUserManagementForm = (userData, isEditMode) => {
+    const navigate = useNavigate();
 
-    // Fetch user data from the API
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const data = await getUsers(page, size, search);
-                setUserData(data.data);
-                setTotalCount(data.total_count);
-            } catch (error) {
-                console.error('Error fetching data', error);
+    const handleUserManagementSubmit = async (data) => {
+        try {
+            let response;
+            if (isEditMode) {
+                response = await updateUser(userData.id, data);
+                navigate("/module/user-management/list");
+            } else {
+                response = await createUser(data);
+                navigate("/module/user-management/list");
             }
-            setIsLoading(false);
+
+            // Navigate to the user list page after successful submission
+            if (response?.status === 200 || response?.status === 201) {
+                navigate("/module/user-management/list");
+            } else {
+                console.error('Failed to save or update user:', response?.message);
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    };
+
+    return { handleUserManagementSubmit };
+};
+
+
+export const useUserManagement = (id) => {
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const data = await getUserManagementById(id);
+                setUserData(data);
+            } catch (error) {
+                console.log(error.message);
+            }
         };
 
-        fetchData();
-    }, [page, size, search]);
+        fetchUserData();
+    }, [id]);
 
-    // Handle the search input
-    const handleSearch = (event) => {
-        setSearch(event.target.value);
-        setPage(1); // Reset to the first page
-    };
-
-    return {
-        userData,
-        isLoading,
-        page,
-        setPage,
-        size,
-        setSize,
-        handleSearch,
-        totalCount
-    };
+    return { userData };
 };
