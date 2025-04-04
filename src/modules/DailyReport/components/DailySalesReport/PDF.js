@@ -4,13 +4,25 @@ import { formatNumberWithCommas } from "@helpers/formatters.js";
 import {generateDatesArray, prepareDataForTable} from "@modules/DailyReport/views/utils.js";
 import React from "react";
 
-const downloadPDF = (items,filters , one , two , three , four , five , six) => {
+const loadImage = (url) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous'; // Prevent CORS issues
+        img.onload = () => resolve(img);
+        img.onerror = (err) => reject(err);
+        img.src = url;
+    });
+};
+
+const downloadPDF = async (items,filters , one , two , three , four , five , six) => {
     // const doc = new jsPDF("landscape");
     const doc = new jsPDF({
         orientation: "landscape",
         unit: "mm",
         format: [400, 210] // Width: 350 mm, Height: 210 mm
     });
+
+
     // Format numbers with commas for thousands
     const formatNumber = (num) => new Intl.NumberFormat().format(num);
 
@@ -21,20 +33,37 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
     const table2Header = generateDatesArray(one)
 
 
+    try {
+        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 30;
+        const imageHeight = 15;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
 
 /// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Store Wise", 8, 20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
-
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
 
     const buildRows = (data, indentLevel = 0) => {
         return data.map((row) => {
@@ -84,9 +113,25 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
         ? baseFontSize
         : 6;
 
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [200, 200, 200],
+            halign: "start",
+        },
+
+
+        head: [
+            ["A) Store Wise"], // Dynamically add the dates from table2Header
+        ],
+    });
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: 30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -94,14 +139,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineWidth: 0.1,
+            lineColor: [200, 200, 200],
         },
         bodyStyles: {
             fontSize: adjustedFontSize-1,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -116,7 +161,8 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
         },
 
         columnStyles: {
-            0: { cellWidth: table2Header?.length>10?25:"auto" }
+            0: { cellWidth: table2Header?.length>10?25:"auto" },
+            [table2Header.length+1]: { textColor: "white" },
         },
 
         head: [
@@ -128,18 +174,66 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
 
     ///////
+
     var finalY = doc.lastAutoTable.finalY;
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 30;
+        const imageHeight = 15;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Daily Target Achievement", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [200, 200, 200],
+            halign: "start",
+        },
+
+
+        head: [
+            ["B) Daily Target Achievement"], // Dynamically add the dates from table2Header
+        ],
+    });
 
     const getAchIcon = (achPercentage) => {
         return achPercentage < 0 ? '' : '';
@@ -259,7 +353,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -267,14 +361,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -366,17 +460,64 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     ///////
     var finalY = doc.lastAutoTable.finalY;
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 30;
+        const imageHeight = 15;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("CV vs LY Growth", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [200, 200, 200],
+            halign: "start",
+        },
+
+
+        head: [
+            ["C) CV vs LY Growth"], // Dynamically add the dates from table2Header
+        ],
+    });
 
     const calcAch = (LY, CY) => {
         if (!CY || LY === 0) return 0;
@@ -527,7 +668,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -535,14 +676,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -663,17 +804,64 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     ///////
     var finalY = doc.lastAutoTable.finalY;
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 30;
+        const imageHeight = 15;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Online (Gross Sale before Return)", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [200, 200, 200],
+            halign: "start",
+        },
+
+
+        head: [
+            ["D) Online (Gross Sale before Return)"], // Dynamically add the dates from table2Header
+        ],
+    });
 
 // Calculate totals
     const totalFullPrice = four.reduce((acc, item) => acc + (item?.full_price || 0), 0);
@@ -699,7 +887,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
     ];
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -707,14 +895,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -743,19 +931,64 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     ///////
     var finalY = doc.lastAutoTable.finalY;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Daily Sales Report - Store Wise", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
 
-    doc.text("Last Day", 8, finalY+25);
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 30;
+        const imageHeight = 15;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [200, 200, 200],
+            halign: "start",
+        },
+
+
+        head: [
+            ["E) Daily Sales Report - Store Wise (Last Day)"], // Dynamically add the dates from table2Header
+        ],
+    });
 
 
     const mapData = (data) => {
@@ -840,7 +1073,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
     const tableRows = mapData(five);
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 50,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -848,14 +1081,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -903,10 +1136,67 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
     });
 
     var finalY = doc.lastAutoTable.finalY;
-    doc.text("MTD", 8, finalY+20);
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 30;
+        const imageHeight = 15;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [200, 200, 200],
+            halign: "start",
+        },
+
+
+        head: [
+            ["F) Daily Sales Report - Store Wise (MTD)"], // Dynamically add the dates from table2Header
+        ],
+    });
     const tableRows2 = mapData(six);
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -914,14 +1204,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
