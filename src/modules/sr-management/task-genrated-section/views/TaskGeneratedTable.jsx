@@ -1,7 +1,7 @@
 import React from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {string} from "zod";
 import {toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses} from "@helpers/badges.js";
@@ -23,9 +23,14 @@ const TaskGeneratedTable = () => {
                 const {id} = row.original;
                 return (
                     <div className="flex space-x-2">
-                        <button onClick={() => onViewTask(id)} className="ti-btn ti-btn-success ti-btn-sm">
+                        <Link
+                            aria-label="anchor"
+                            to={`/module/srm/taskgeneratedform/${id}`}
+                            rel="noopener noreferrer"
+                            className="ti-btn ti-btn-success ti-btn-sm"
+                        >
                             <i className="ri-eye-line"></i>
-                        </button>
+                        </Link>
                     </div>
                 );
             },

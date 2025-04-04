@@ -6,8 +6,10 @@ export const usePatternForm = (id) => {
   const [initialData, setInitialData] = useState(null);
   const { handleSubmit, control, setValue, getValues, watch, formState: { errors, isSubmitting } } = useForm({
     defaultValues: {
+      data_category: "",
       header: "",
       pattern: "",
+      correct_pattern: "",
       is_active: true,
       child_patterns: []
     },
@@ -31,7 +33,11 @@ export const usePatternForm = (id) => {
       if (initialData.header) {
         setValue("header", initialData.header.id);
       }
+      if (initialData.data_category) {
+        setValue("data_category", initialData.data_category.id);
+      }
       setValue("pattern", initialData.pattern || "");
+      setValue("correct_pattern", initialData.correct_pattern || "");
       setValue("is_active", initialData.is_active);
       if (initialData.child_patterns) {
         setValue("child_patterns", initialData.child_patterns.map(c => ({
