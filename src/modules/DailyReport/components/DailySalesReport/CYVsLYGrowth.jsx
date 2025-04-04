@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { fetchSaleCvVsLyData } from "../../services/wiseside_services.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const CYVsLYGrowth = ({ filters , setDonwloadData }) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
+    // const [data, setData] = useState([]);
+    // const [loading, setLoading] = useState(false);
     const [downloadData, setDownloadData] = useState({});
 
 
@@ -13,21 +13,21 @@ const CYVsLYGrowth = ({ filters , setDonwloadData }) => {
         return new Date(year, month - 1, day);
     };
 
-    useEffect(() => {
-        if (filters.date_from && filters.date_to) {
-            setLoading(true);
-
-            fetchSaleCvVsLyData(filters.date_from, filters)
-                .then((responseData) => {
-                    setData(responseData);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error("Error fetching sales data:", error);
-                    setLoading(false);
-                });
-        }
-    }, [filters]);
+    // useEffect(() => {
+    //     if (filters.date_from && filters.date_to) {
+    //         setLoading(true);
+    //
+    //         fetchSaleCvVsLyData(filters.date_from, filters)
+    //             .then((responseData) => {
+    //                 setData(responseData);
+    //                 setLoading(false);
+    //             })
+    //             .catch((error) => {
+    //                 console.error("Error fetching sales data:", error);
+    //                 setLoading(false);
+    //             });
+    //     }
+    // }, [filters]);
 
     const totalCy = data.reduce((total, item) => total + item.FullPriceOfflineCY, 0);
     const totalLy = data.reduce((total, item) => total + item.FullPriceOfflineLY, 0);

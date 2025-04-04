@@ -1,31 +1,44 @@
 import React, { useEffect, useState, useRef } from "react";
 import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
 
-const StoreWise = ({ filters , expand }) => {
-    const [newData, setNewData] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const StoreWise = ({ filters , newData , error , loading , expand  }) => {
+    // const [newData, setNewData] = useState({});
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState(null);
     const tableContainerRef = useRef(null);
     const [tableData, setTableData] = useState([]);
     const [expandedSections, setExpandedSections] = useState({});
 
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
-            setNewData(data || {});
-        } catch (err) {
-            console.error("Error fetching data:", err);
-            setError("Failed to fetch data. Please try again.");
-        } finally {
-            setLoading(false);
-        }
+    // const fetchData = async () => {
+    //     try {
+    //         setLoading(true);
+    //         setError(null);
+    //         const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
+    //         setNewData(data || {});
+    //     } catch (err) {
+    //         console.error("Error fetching data:", err);
+    //         setError("Failed to fetch data. Please try again.");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    //
+    // useEffect(() => {
+    //     fetchData();
+    // }, [filters]);
+
+    const toggleSection = (id) => {
+        console.log(id);
+        setExpandedSections(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
     };
 
-    useEffect(() => {
-        fetchData();
-    }, [filters]);
+    useEffect(()=>{
+        toggleSection('ctype-Offline')
+    },[expand])
+
 
     useEffect(() => {
         if (Object.keys(newData).length > 0) {
@@ -67,7 +80,6 @@ const StoreWise = ({ filters , expand }) => {
                     if (southRow) initialExpanded[southRow.id] = true;
                 }
             }
-
             setExpandedSections(initialExpanded);
         }
     }, [newData]);
@@ -235,17 +247,6 @@ const StoreWise = ({ filters , expand }) => {
 
 
 
-    const toggleSection = (id) => {
-        console.log(id);
-        setExpandedSections(prev => ({
-            ...prev,
-            [id]: !prev[id]
-        }));
-    };
-
-    useEffect(()=>{
-        toggleSection('ctype-Offline')
-    },[expand])
 
     const isVisible = (row) => {
         if (row.parentId === null) {
