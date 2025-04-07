@@ -4,13 +4,25 @@ import { formatNumberWithCommas } from "@helpers/formatters.js";
 import {generateDatesArray, prepareDataForTable} from "@modules/DailyReport/views/utils.js";
 import React from "react";
 
-const downloadPDF = (items,filters , one , two , three , four , five , six) => {
+const loadImage = (url) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous'; // Prevent CORS issues
+        img.onload = () => resolve(img);
+        img.onerror = (err) => reject(err);
+        img.src = url;
+    });
+};
+
+const downloadPDF = async (items,filters , one , two , three , four , five , six) => {
     // const doc = new jsPDF("landscape");
     const doc = new jsPDF({
         orientation: "landscape",
         unit: "mm",
-        format: [400, 210] // Width: 350 mm, Height: 210 mm
+        format: [550, 210] // Width: 350 mm, Height: 210 mm
     });
+
+
     // Format numbers with commas for thousands
     const formatNumber = (num) => new Intl.NumberFormat().format(num);
 
@@ -21,27 +33,44 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
     const table2Header = generateDatesArray(one)
 
 
+    try {
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 35;
+        const imageHeight = 25;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 4;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
 
 /// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Store Wise", 8, 20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 6, 25);
     doc.setFont("helvetica", "normal");
-
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
 
     const buildRows = (data, indentLevel = 0) => {
         return data.map((row) => {
             const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
 
             // Set background color based on header or subheader
-            let leftColBgColor = row.isHeader || row.isSubHeader ? [200, 200, 200] : [255, 255, 255];
+            let leftColBgColor = row.isHeader || row.isSubHeader ? [227, 230, 232] : [249, 251 ,252 ];
 
             // Create the row for the current item
             const currentRow = [
@@ -56,7 +85,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
                 },
                 ...row.values.map((value) => ({
                     content: formatNumber(value),
-                    styles: { halign: "right" },
+                    styles: { halign: "right",fillColor: leftColBgColor, },
                 })),
                 {
                     content: formatNumber(rowTotal),
@@ -84,9 +113,25 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
         ? baseFontSize
         : 6;
 
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [11, 53, 136],
+            halign: "start",
+        },
+
+
+        head: [
+            [" Store Wise"], // Dynamically add the dates from table2Header
+        ],
+    });
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: 30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -94,14 +139,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineWidth: 0.1,
+            lineColor: [200, 200, 200],
         },
         bodyStyles: {
             fontSize: adjustedFontSize-1,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -116,7 +161,8 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
         },
 
         columnStyles: {
-            0: { cellWidth: table2Header?.length>10?25:"auto" }
+            0: { cellWidth: table2Header?.length>10?25:"auto" },
+            [table2Header.length+1]: { textColor: "white" },
         },
 
         head: [
@@ -128,20 +174,72 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
 
     ///////
+
     var finalY = doc.lastAutoTable.finalY;
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 35;
+        const imageHeight = 25;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Daily Target Achievement", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [11, 53, 136],
+            halign: "start",
+        },
+
+
+        head: [
+            [" Daily Target Achievement" ], // Dynamically add the dates from table2Header
+        ],
+    });
 
     const getAchIcon = (achPercentage) => {
+        return achPercentage < 0 ? '' : '';
+    };
+
+    const getAchColor = (achPercentage) => {
         return achPercentage < 0 ? '' : '';
     };
 
@@ -204,52 +302,54 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
         { content: "Total", styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
         { content: formatNumberWithCommas(totals1.fullPriceOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.fullPriceOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.fullPriceOfflineAch)} ${totalsAch1.fullPriceOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
-        { content: formatNumberWithCommas(totals1.discountedOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
+        { content: `${ getAchColor(getAchIcon(totalsAch1.fullPriceOfflineAch))} ${totalsAch1.fullPriceOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
+        { content: formatNumberWithCommas(totals1.discountedOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249],halign: "right"} },
         { content: formatNumberWithCommas(totals1.discountedOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.discountedOfflineAch)} ${totalsAch1.discountedOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.discountedOfflineAch)} ${totalsAch1.discountedOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.totalOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalOfflineAch)} ${totalsAch1.totalOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.totalOfflineAch)} ${totalsAch1.totalOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.fullPriceOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.fullPriceOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.fullPriceOnlineAch)} ${totalsAch1.fullPriceOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.fullPriceOnlineAch)} ${totalsAch1.fullPriceOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.discountedOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.discountedOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.discountedOnlineAch)} ${totalsAch1.discountedOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.discountedOnlineAch)} ${totalsAch1.discountedOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" ,textColor:'#26bf94'} },
         { content: formatNumberWithCommas(totals1.totalOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalOnlineAch)} ${totalsAch1.totalOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.totalOnlineAch)} ${totalsAch1.totalOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right", textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.totalTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalAch)} ${totalsAch1.totalAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.totalAch)} ${totalsAch1.totalAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right", textColor:'#26bf94' } },
     ];
 
 // Map your data rows for the table body (example using your "two" array)
+
+
     const bodyRows1 = two.map((item) => [
-        { content: item?.date },
-        { content: item?.day },
-        { content: formatNumberWithCommas(item?.fullPriceOfflineTarget) },
-        { content: formatNumberWithCommas(item?.fullPriceOfflineSale) },
-        { content: item?.fullPriceOfflineAch },
-        { content: formatNumberWithCommas(item?.discountedOfflineTarget) },
-        { content: formatNumberWithCommas(item?.discountedOfflineSale) },
-        { content: item?.discountedOfflineAch },
-        { content: formatNumberWithCommas(item?.totalOfflineTarget) },
-        { content: formatNumberWithCommas(item?.totalOfflineSale) },
-        { content: item?.totalOfflineAch },
-        { content: formatNumberWithCommas(item?.fullPriceOnlineTarget) },
-        { content: formatNumberWithCommas(item?.fullPriceOnlineSale) },
-        { content: item?.fullPriceOnlineAch },
-        { content: formatNumberWithCommas(item?.discountedOnlineTarget) },
-        { content: formatNumberWithCommas(item?.discountedOnlineSale) },
-        { content: item?.discountedOnlineAch },
-        { content: formatNumberWithCommas(item?.totalOnlineTarget) },
-        { content: formatNumberWithCommas(item?.totalOnlineSale) },
-        { content: item?.totalOnlineAch },
-        { content: formatNumberWithCommas(item?.totalTarget) },
-        { content: formatNumberWithCommas(item?.totalSale) },
-        { content: item?.totalAch },
+        { content: (item?.date) , styles: {fontStyle : "bold"}},
+        { content: (item?.day), styles: {fontStyle : "bold"} },
+        { content: formatNumberWithCommas(item?.fullPriceOfflineTarget), styles: {  halign: "right" } },
+        { content: formatNumberWithCommas(item?.fullPriceOfflineSale), styles: {  halign: "right" }  },
+        { content: item?.fullPriceOfflineAch , styles: { textColor:item?.fullPriceOfflineAch>=0?'#26bf94':'#a83248' ,halign: "right"  } },
+        { content: formatNumberWithCommas(item?.discountedOfflineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.discountedOfflineSale),styles: {  halign: "right" }  },
+        { content: item?.discountedOfflineAch, styles: { textColor:item?.discountedOfflineAch>=0?'#26bf94':'#a83248',halign: "right"   }},
+        { content: formatNumberWithCommas(item?.totalOfflineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.totalOfflineSale),styles: {  halign: "right" }  },
+        { content: item?.totalOfflineAch , styles: { textColor:item?.totalOfflineAch>=0?'#26bf94':'#a83248',halign: "right"   }},
+        { content: formatNumberWithCommas(item?.fullPriceOnlineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.fullPriceOnlineSale),styles: {  halign: "right" }  },
+        { content: item?.fullPriceOnlineAch , styles: { textColor:item?.fullPriceOnlineAch>=0?'#26bf94':'#a83248' ,halign: "right"  }},
+        { content: formatNumberWithCommas(item?.discountedOnlineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.discountedOnlineSale),styles: {  halign: "right" }  },
+        { content: item?.discountedOnlineAch , styles: { textColor:item?.discountedOnlineAch>=0?'#26bf94':'#a83248' ,halign: "right"  }},
+        { content: formatNumberWithCommas(item?.totalOnlineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.totalOnlineSale),styles: {  halign: "right" }  },
+        { content: item?.totalOnlineAch , styles: { textColor:item?.totalOnlineAch>=0?'#26bf94':'#a83248',halign: "right"   }},
+        { content: formatNumberWithCommas(item?.totalTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.totalSale) ,styles: {  halign: "right" } },
+        { content: item?.totalAch , styles: { textColor:item?.totalAch>=0?'#26bf94':'#a83248',halign: "right"  }},
     ]);
 
 // Combine your data rows and add the totals row at the end
@@ -259,7 +359,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -267,14 +367,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -317,47 +417,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
                 "Ach%",
             ],
         ],
-        // body: two.map((item, index) => {
-        //     return [
-        //         { content: item?.date },
-        //         { content: item?.day },
-        //
-        //         // Offline Full Price Columns
-        //         { content: formatNumberWithCommas(item?.fullPriceOfflineTarget) },
-        //         { content: formatNumberWithCommas(item?.fullPriceOfflineSale) },
-        //         { content: item?.fullPriceOfflineAch },
-        //
-        //         // Offline Discount Columns
-        //         { content: formatNumberWithCommas(item?.discountedOfflineTarget) },
-        //         { content: formatNumberWithCommas(item?.discountedOfflineSale) },
-        //         { content: item?.discountedOfflineAch },
-        //
-        //         // Offline Total Columns
-        //         { content: formatNumberWithCommas(item?.totalOfflineTarget) },
-        //         { content: formatNumberWithCommas(item?.totalOfflineSale) },
-        //         { content: item?.totalOfflineAch },
-        //
-        //         // Online Full Price Columns
-        //         { content: formatNumberWithCommas(item?.fullPriceOnlineTarget) },
-        //         { content: formatNumberWithCommas(item?.fullPriceOnlineSale) },
-        //         { content: item?.fullPriceOnlineAch },
-        //
-        //         // Online Discount Columns
-        //         { content: formatNumberWithCommas(item?.discountedOnlineTarget) },
-        //         { content: formatNumberWithCommas(item?.discountedOnlineSale) },
-        //         { content: item?.discountedOnlineAch },
-        //
-        //         // Online Total Columns
-        //         { content: formatNumberWithCommas(item?.totalOnlineTarget) },
-        //         { content: formatNumberWithCommas(item?.totalOnlineSale) },
-        //         { content: item?.totalOnlineAch },
-        //
-        //         // Total Target, Sale and Ach% Columns
-        //         { content: formatNumberWithCommas(item?.totalTarget) },
-        //         { content: formatNumberWithCommas(item?.totalSale) },
-        //         { content: item?.totalAch },
-        //     ];
-        // }),
+
 
         body:finalBody1
     });
@@ -366,17 +426,64 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     ///////
     var finalY = doc.lastAutoTable.finalY;
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 35;
+        const imageHeight = 25;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("CV vs LY Growth", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [11, 53, 136],
+            halign: "start",
+        },
+
+
+        head: [
+            ["CV vs LY Growth"], // Dynamically add the dates from table2Header
+        ],
+    });
 
     const calcAch = (LY, CY) => {
         if (!CY || LY === 0) return 0;
@@ -444,31 +551,32 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
     // Map your data rows for the table body
     const bodyRows = three?.map((item) => {
         return [
-            { content: item?.Date },
-            { content: item?.Day },
+            { content: (item?.Date) , styles: {fontStyle : "bold"} },
+            { content: (item?.Day) , styles: {fontStyle : "bold"}},
             { content: formatNumberWithCommas(item?.FullPriceOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.FullPriceOfflineLY), styles: { halign: "right" } },
-            { content: item?.FullPriceOfflineGrowth, styles: { halign: "center" } },
+            { content: item?.FullPriceOfflineGrowth, styles: {  halign: "right"  , textColor: item?.FullPriceOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.DiscountedOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.DiscountedOfflineLY), styles: { halign: "right" } },
-            { content: item?.DiscountedOfflineGrowth, styles: { halign: "center" } },
+            { content: item?.DiscountedOfflineGrowth, styles: {  halign: "right" , textColor: item?.DiscountedOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalOfflineLY), styles: { halign: "right" } },
-            { content: item?.TotalOfflineGrowth, styles: { halign: "center" } },
+            { content: item?.TotalOfflineGrowth, styles: {  halign: "right"  , textColor: item?.TotalOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.FullPriceOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.FullPriceOnlineLY), styles: { halign: "right" } },
-            { content: item?.FullPriceOnlineGrowth, styles: { halign: "center" } },
+            { content: item?.FullPriceOnlineGrowth, styles: {  halign: "right"  , textColor: item?.FullPriceOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.DiscountedOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.DiscountedOnlineLY), styles: { halign: "right" } },
-            { content: item?.DiscountedOnlineGrowth, styles: { halign: "center" } },
+            { content: item?.DiscountedOnlineGrowth, styles: { halign: "right"  , textColor: item?.DiscountedOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalOnlineLY), styles: { halign: "right" } },
-            { content: item?.TotalOnlineGrowth, styles: { halign: "center" } },
+            { content: item?.TotalOnlineGrowth, styles: {  halign: "right"  , textColor: item?.TotalOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalLY), styles: { halign: "right" } },
-            { content: item?.TotalGrowth, styles: { halign: "center" } },
+            { content: item?.TotalGrowth, styles: {  halign: "right" , textColor: item?.TotalGrowth >= 0 ? '#26bf94' : '#a83248' } },
         ];
     });
+
 
 // Create totals row with cell-specific styles (bold and gray background)
 // Here [249, 249, 249] corresponds to "#f9f9f9"
@@ -479,43 +587,43 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
         { content: formatNumberWithCommas(totals.FullPriceOfflineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.FullPriceOfflineAch)} ${totalsAch.FullPriceOfflineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.DiscountedOfflineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.DiscountedOfflineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.DiscountedOfflineAch)} ${totalsAch.DiscountedOfflineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right" },
         },
         { content: formatNumberWithCommas(totals.TotalOfflineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.TotalOfflineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.TotalOfflineAch)} ${totalsAch.TotalOfflineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.FullPriceOnlineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.FullPriceOnlineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.FullPriceOnlineAch)} ${totalsAch.FullPriceOnlineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.DiscountedOnlineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.DiscountedOnlineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.DiscountedOnlineAch)} ${totalsAch.DiscountedOnlineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right" },
         },
         { content: formatNumberWithCommas(totals.TotalOnlineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.TotalOnlineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.TotalOnlineAch)} ${totalsAch.TotalOnlineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.TotalCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.TotalLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.TotalAch)} ${totalsAch.TotalAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right"  },
         },
     ];
 
@@ -527,7 +635,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -535,14 +643,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -585,95 +693,71 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
                 "Growth%",
             ],
         ],
-        // body: three?.map((item, index) => {
-        //
-        //     return [
-        //         {
-        //             content: item?.Date,
-        //         },
-        //         {
-        //             content: item?.Day,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOfflineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOfflineLY),
-        //         },
-        //         {
-        //             content: item?.FullPriceOfflineGrowth,
-        //         },                {
-        //             content: formatNumberWithCommas(item?.DiscountedOfflineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.DiscountedOfflineLY),
-        //         },
-        //         {
-        //             content: item?.DiscountedOfflineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOfflineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOfflineLY),
-        //         },
-        //         {
-        //             content: item?.TotalOfflineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOnlineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOnlineLY),
-        //         },
-        //         {
-        //             content: item?.FullPriceOnlineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.DiscountedOnlineCY),
-        //         },                {
-        //             content: formatNumberWithCommas(item?.DiscountedOnlineLY),
-        //         },
-        //         {
-        //             content: item?.DiscountedOnlineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOnlineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOnlineLY),
-        //         },
-        //         {
-        //             content: item?.TotalOnlineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalCY),
-        //         },                {
-        //             content: formatNumberWithCommas(item?.TotalLY),
-        //         },
-        //         {
-        //             content: item?.TotalGrowth,
-        //         },
-        //
-        //     ];
-        // }),
+
         body:finalBody
     });
 
 
     ///////
     var finalY = doc.lastAutoTable.finalY;
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 35;
+        const imageHeight = 25;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Online (Gross Sale before Return)", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [11, 53, 136],
+            halign: "start",
+        },
+
+
+        head: [
+            [" Online (Gross Sale before Return)"], // Dynamically add the dates from table2Header
+        ],
+    });
 
 // Calculate totals
     const totalFullPrice = four.reduce((acc, item) => acc + (item?.full_price || 0), 0);
@@ -682,24 +766,24 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
 // Map your data rows
     const dataRows = four?.map((item) => [
-        { content: item?.date },
-        { content: item?.day },
-        { content: formatNumberWithCommas(item?.full_price) },
-        { content: formatNumberWithCommas(item?.discounted) },
-        { content: formatNumberWithCommas(item?.total) },
+        { content: (item?.date),styles:{fontStyle : "bold" ,halign: "center"} },
+        { content: (item?.day),styles:{ fontStyle : "bold" ,halign: "center"} },
+        { content: formatNumberWithCommas(item?.full_price), styles:{ halign: "right"} },
+        { content: formatNumberWithCommas(item?.discounted),styles:{ halign: "right"}  },
+        { content: formatNumberWithCommas(item?.total),styles:{ halign: "right"}  },
     ]);
 
 // Create totals row
     const totalsRow = [
-        { content: "", styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: "Totals", styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: formatNumberWithCommas(totalFullPrice), styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: formatNumberWithCommas(totalDiscounted), styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: formatNumberWithCommas(totalTotal), styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
+        { content: "", styles: { fontStyle: "bold", fillColor: [227, 230, 232] ,halign: "right"} },
+        { content: "Totals", styles: { fontStyle: "bold", fillColor: [227, 230, 232] ,halign: "right" } },
+        { content: formatNumberWithCommas(totalFullPrice), styles: { fontStyle: "bold", fillColor: [227, 230, 232],halign: "right" } },
+        { content: formatNumberWithCommas(totalDiscounted), styles: { fontStyle: "bold", fillColor: [227, 230, 232],halign: "right" } },
+        { content: formatNumberWithCommas(totalTotal), styles: { fontStyle: "bold", fillColor: [227, 230, 232] ,halign: "right"} },
     ];
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -707,14 +791,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -743,19 +827,64 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
 
     ///////
     var finalY = doc.lastAutoTable.finalY;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
-    doc.text("Daily Sales Report - Store Wise", 8, finalY+20);
-    doc.setFontSize(12);
-    doc.text(
-        `DATE: ${filters?.date_from}`,
-        pageWidth - 30,
-        finalY+20,
-        { align: "right" }
-    );
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
 
-    doc.text("Last Day", 8, finalY+25);
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 35;
+        const imageHeight = 25;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [11, 53, 136],
+            halign: "start",
+        },
+
+
+        head: [
+            [" Daily Sales Report - Store Wise (Last Day)"], // Dynamically add the dates from table2Header
+        ],
+    });
 
 
     const mapData = (data) => {
@@ -764,12 +893,12 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             // Build the classification row with a custom flag
             const classificationRow = [
                 { content: classification.classification_name },
-                { content: formatNumberWithCommas(classification.fullprice_sale_qty) },
-                { content: formatNumberWithCommas(classification.fullprice_sale_value) },
-                { content: formatNumberWithCommas(classification.discounted_sale_qty) },
-                { content: formatNumberWithCommas(classification.discounted_sale_value) },
-                { content: formatNumberWithCommas(classification.total_sale_qty) },
-                { content: formatNumberWithCommas(classification.total_sale_value) },
+                { content: formatNumberWithCommas(classification.fullprice_sale_qty) ,styles: { halign: "right" }  },
+                { content: formatNumberWithCommas(classification.fullprice_sale_value),styles: { halign: "right" }  },
+                { content: formatNumberWithCommas(classification.discounted_sale_qty) ,styles: { halign: "right" } },
+                { content: formatNumberWithCommas(classification.discounted_sale_value),styles: { halign: "right" }  },
+                { content: formatNumberWithCommas(classification.total_sale_qty) ,styles: { halign: "right" } },
+                { content: formatNumberWithCommas(classification.total_sale_value),styles: { halign: "right" }  },
             ];
             // Attach a custom flag to identify this as a classification row
             classificationRow.rowType = "classification";
@@ -782,12 +911,12 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
                     // Build the region row
                     const regionRow = [
                         { content: region.region },
-                        { content: formatNumberWithCommas(region.fullprice_sale_qty) },
-                        { content: formatNumberWithCommas(region.fullprice_sale_value) },
-                        { content: formatNumberWithCommas(region.discounted_sale_qty) },
-                        { content: formatNumberWithCommas(region.discounted_sale_value) },
-                        { content: formatNumberWithCommas(region.total_sale_qty) },
-                        { content: formatNumberWithCommas(region.total_sale_value) },
+                        { content: formatNumberWithCommas(region.fullprice_sale_qty) ,styles: { halign: "right" } },
+                        { content: formatNumberWithCommas(region.fullprice_sale_value) ,styles: { halign: "right" } },
+                        { content: formatNumberWithCommas(region.discounted_sale_qty) ,styles: { halign: "right" }  },
+                        { content: formatNumberWithCommas(region.discounted_sale_value) ,styles: { halign: "right" }  },
+                        { content: formatNumberWithCommas(region.total_sale_qty) ,styles: { halign: "right" } },
+                        { content: formatNumberWithCommas(region.total_sale_value) ,styles: { halign: "right" } },
                     ];
                     // (Optional) You can mark region rows too if needed:
                     regionRow.rowType = "region";
@@ -798,12 +927,12 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
                         region.stores.forEach((store) => {
                             const storeRow = [
                                 { content: store.store_name },
-                                { content: formatNumberWithCommas(store.fullprice_sale_qty) },
-                                { content: formatNumberWithCommas(store.fullprice_sale_value) },
-                                { content: formatNumberWithCommas(store.discounted_sale_qty) },
-                                { content: formatNumberWithCommas(store.discounted_sale_value) },
-                                { content: formatNumberWithCommas(store.total_sale_qty) },
-                                { content: formatNumberWithCommas(store.total_sale_value) },
+                                { content: formatNumberWithCommas(store.fullprice_sale_qty),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.fullprice_sale_value),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.discounted_sale_qty),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.discounted_sale_value),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.total_sale_qty) ,styles: { halign: "right" } },
+                                { content: formatNumberWithCommas(store.total_sale_value) ,styles: { halign: "right" } },
                             ];
                             // (Optional) Mark store rows if needed:
                             storeRow.rowType = "store";
@@ -823,12 +952,12 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
         // Add the "Total" row at the end (without a custom flag)
         const totalRow = [
             { content: "Total" },
-            { content: formatNumberWithCommas(data?.overall_fullprice_sale_qty) },
-            { content: formatNumberWithCommas(data?.overall_fullprice_sale_value) },
-            { content: formatNumberWithCommas(data?.overall_discounted_sale_qty) },
-            { content: formatNumberWithCommas(data?.overall_discounted_sale_value) },
-            { content: formatNumberWithCommas(data?.overall_total_sale_qty) },
-            { content: formatNumberWithCommas(data?.overall_total_sale_value) },
+            { content: formatNumberWithCommas(data?.overall_fullprice_sale_qty),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_fullprice_sale_value),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_discounted_sale_qty),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_discounted_sale_value),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_total_sale_qty),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_total_sale_value),styles: { halign: "right" }  },
         ];
 
         filteredRows.push(totalRow);
@@ -840,7 +969,7 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
     const tableRows = mapData(five);
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 50,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -848,14 +977,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -887,26 +1016,83 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             // Assuming the "Total" row is the last row
             if (data.row.index === tableRows.length - 1) {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "classification") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "region") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211];
+                data.cell.styles.fillColor = [227, 230, 232];
             }
         },
     });
 
     var finalY = doc.lastAutoTable.finalY;
-    doc.text("MTD", 8, finalY+20);
+    var pageHeight = doc.internal.pageSize.height; // Get the page height
+    var margin = 0; // Set a margin to leave space at the bottom of the page
+
+    console.log(pageHeight)
+// Check if the content exceeds the page height
+    if (finalY + 190 > pageHeight - margin) {
+        doc.addPage(); // Add a new page if the content goes beyond the page height
+        finalY = 20; // Reset finalY after adding the new page
+    }
+
+    try {
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
+
+        // Set your desired image width and height
+        const imageWidth = 35;
+        const imageHeight = 25;
+
+        // Set the image position on the left side (X=0)
+        const xPosition = 8;  // Position the image at the left edge of the page
+        const yPosition = 5;  // Position the image at the top of the page
+
+        // Add the image to the PDF (placed on the left side)
+        doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
+    } catch (error) {
+        console.error('Error loading image:', error);
+    }
+
+/// Store Wise
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Daily Sales Report", 8, 25);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(169, 169, 169);
+    doc.text(
+        `Date: ${filters?.date_from}`,
+        8,
+        30,
+    );
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+
+    autoTable(doc, {
+        startY: 40,
+        margin: { left: 2, right: 2 },
+        theme: "grid",
+        headStyles: {
+            fontSize: 14,
+            textColor: "white",
+            fillColor: [11, 53, 136],
+            halign: "start",
+        },
+
+
+        head: [
+            [" Daily Sales Report - Store Wise (MTD)"], // Dynamically add the dates from table2Header
+        ],
+    });
     const tableRows2 = mapData(six);
     autoTable(doc, {
-        startY: finalY+30,
+        startY: 55,
         margin: { left: 2, right: 2 },
         theme: "grid",
         headStyles: {
@@ -914,14 +1100,14 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             textColor: "white",
             fillColor: [11, 53, 136],
             halign: "center",
-            lineWidth: 0.5,
-            lineColor: "#000000",
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
         },
         bodyStyles: {
             fontSize: 6,
             textColor: "#000000",
-            lineColor: "#000",
-            lineWidth: 0.5,
+            lineColor: [200, 200, 200],
+            lineWidth: 0.1,
             valign: "middle",
         },
         alternateRowStyles: {
@@ -953,17 +1139,17 @@ const downloadPDF = (items,filters , one , two , three , four , five , six) => {
             // Assuming the "Total" row is the last row
             if (data.row.index === tableRows2.length - 1) {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "classification") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "region") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211];
+                data.cell.styles.fillColor = [227, 230, 232];
             }
         },
     });
