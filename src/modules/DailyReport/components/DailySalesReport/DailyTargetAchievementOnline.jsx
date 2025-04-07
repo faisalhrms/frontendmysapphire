@@ -77,8 +77,12 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
     // }, [filters]);
 
     const getAchColor = (achPercentage) => {
-        return achPercentage < 0 ? 'text-danger' : 'text-success';
+        if (achPercentage === null || achPercentage === 0) {
+            return 'text-black';  // Return black color for null or 0
+        }
+        return achPercentage < 0 ? 'text-danger' : 'text-success'; // Return danger for negative, success for positive
     };
+
 
     const getAchIcon = (achPercentage) => {
         return achPercentage < 0
@@ -229,7 +233,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right">
                                         {formatNumberWithCommas(row.fullPriceOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.fullPriceOfflineAch)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 text-center ${getAchColor(row.fullPriceOfflineAch)}`}>
                                         {getAchIcon(row.fullPriceOfflineAch)} {row.fullPriceOfflineAch}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
@@ -238,7 +242,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right">
                                         {formatNumberWithCommas(row.discountedOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.discountedOfflineAch)}`}>
+                                    <td className={`py-2 px-2 border  font-bold border-gray-400 text-center ${getAchColor(row.discountedOfflineAch)}`}>
                                         {getAchIcon(row.discountedOfflineAch)} {row.discountedOfflineAch}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
@@ -247,7 +251,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right">
                                         {formatNumberWithCommas(row.totalOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.totalOfflineAch)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 text-center ${getAchColor(row.totalOfflineAch)}`}>
                                         {getAchIcon(row.totalOfflineAch)} {row.totalOfflineAch}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
@@ -256,7 +260,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right">
                                         {formatNumberWithCommas(row.fullPriceOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.fullPriceOnlineAch)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 text-center ${getAchColor(row.fullPriceOnlineAch)}`}>
                                         {getAchIcon(row.fullPriceOnlineAch)} {row.fullPriceOnlineAch}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
@@ -265,7 +269,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right">
                                         {formatNumberWithCommas(row.discountedOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.discountedOnlineAch)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 text-center ${getAchColor(row.discountedOnlineAch)}`}>
                                         {getAchIcon(row.discountedOnlineAch)} {row.discountedOnlineAch}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
@@ -274,7 +278,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right">
                                         {formatNumberWithCommas(row.totalOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.totalOnlineAch)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 text-center ${getAchColor(row.totalOnlineAch)}`}>
                                         {getAchIcon(row.totalOnlineAch)} {row.totalOnlineAch}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right">
@@ -283,7 +287,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right">
                                         {formatNumberWithCommas(row.totalSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.totalAch)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 text-center ${getAchColor(row.totalAch)}`}>
                                         {getAchIcon(row.totalAch)} {row.totalAch}
                                     </td>
                                 </tr>
@@ -302,7 +306,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.fullPriceOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.fullPriceOfflineAch)}`}>
+                                    <td className={`py-2 px-2 border  border-gray-400 text-center font-bold ${getAchColor(totalsAch.fullPriceOfflineAch)}`}>
                                         {getAchIcon(totalsAch.fullPriceOfflineAch)} {totalsAch.fullPriceOfflineAch}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">

@@ -1,17 +1,22 @@
 import React, { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@components/form/FormInput.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
-import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import { useUserManagementForm } from "@modules/user/hooks/userManagementHooks.js";  // Assuming you have a hook for submission
-import { emailHost } from "@modules/user/services/userService.js"; // Assuming email host comes from this service
 import FormButton from "@components/form/FormButton.jsx";
+import { useParams } from "react-router-dom";  // To capture URL params
+import { useUserManagementForm } from "@modules/user/hooks/userManagementHooks.js";  // Assuming you have a hook for submission
+import { emailHost,booleanOptions } from "@modules/user/services/userService.js"; // Assuming email host comes from this service
 import { formatOptions } from "@helpers/formatters.js";
 import userManagementSchema from "@modules/user/schemas/userManagementSchema.js";
 
+// New constant for Yes/No options
+
+
 const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
+    const { id } = useParams();  // Capture the id from URL params
+
     const {
         control,
         handleSubmit,
@@ -21,13 +26,12 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
         resolver: zodResolver(userManagementSchema),  // Assuming you have a user schema
         defaultValues: {
             ...userData,
-            employee_id: userData?.employee_id || "", // Assuming userData has the employee_id
             email_host: userData?.email_host || "",
             erp_user: userData?.erp_user ?? false,
             one_drive: userData?.one_drive ?? false,
             ms_team: userData?.ms_team ?? false,
             backup_storage: userData?.backup_storage || 0,
-            subscriptions: userData?.subscriptions || [],
+            subscription_ids: userData?.subscription_ids  || [],
         },
     });
 
@@ -40,9 +44,16 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
             });
         }
     }, [userData, setValue]);
+    const onSubmit = (data) => {
+        if (!isEditMode && id) {
+            // When isEditMode is false, add the user id to the data before submission
+            data.user = parseInt(id);  // Add the employee ID (from the URL) to the data object
+        }
 
+        handleUserManagementSubmit(data);  // Submit data
+    };
     return (
-        <form onSubmit={handleSubmit(handleUserManagementSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="md:col-span-12 sm:col-span-12 col-span-12">
                     <div className="box">
@@ -51,20 +62,6 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
                         </div>
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
-                                {/* ---------- Employee ---------- */}
-                                <div className="xl:col-span-4 col-span-12">
-                                    <FormAsyncSelect
-                                        name="employee_id"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Employee"
-                                        apiUrl="/select/employees-by-full-reporting-hierarchy/"
-                                        queryKeyBase="employees"
-                                        clientSideSearch={false}
-                                        preselectedOptions={formatOptions(userData, "employee")}
-                                        isRequired={true}
-                                    />
-                                </div>
 
                                 {/* ---------- Email Host ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
@@ -80,31 +77,40 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
 
                                 {/* ---------- ERP User ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormCheckbox
+                                    <FormSelect
                                         name="erp_user"
                                         control={control}
                                         errors={errors}
                                         label="ERP User"
+                                        placeholder="ERP User"
+                                        options={booleanOptions}
+                                        isRequired={true}
                                     />
                                 </div>
 
                                 {/* ---------- One Drive ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormCheckbox
+                                    <FormSelect
                                         name="one_drive"
                                         control={control}
                                         errors={errors}
+                                        placeholder="One Drive"
                                         label="One Drive"
+                                        options={booleanOptions}
+                                        isRequired={true}
                                     />
                                 </div>
 
                                 {/* ---------- MS Team ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormCheckbox
+                                    <FormSelect
                                         name="ms_team"
                                         control={control}
                                         errors={errors}
+                                        placeholder="MS Team"
                                         label="MS Team"
+                                        options={booleanOptions}
+                                        isRequired={true}
                                     />
                                 </div>
 
@@ -122,7 +128,7 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
                                 {/* ---------- Subscriptions ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
-                                        name="subscriptions"
+                                        name="subscription_ids"
                                         control={control}
                                         errors={errors}
                                         placeholder="Subscriptions"

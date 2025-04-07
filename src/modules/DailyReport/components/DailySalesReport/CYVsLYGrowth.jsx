@@ -33,7 +33,10 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
     const totalLy = data.reduce((total, item) => total + item.FullPriceOfflineLY, 0);
 
     const getAchColor = (achPercentage) => {
-        return achPercentage < 0 ? 'text-danger' : 'text-success';
+        if (achPercentage === null || achPercentage === 0) {
+            return 'text-black';  // Return black color for null or 0
+        }
+        return achPercentage < 0 ? 'text-danger' : 'text-success'; // Return danger for negative, success for positive
     };
 
     const getAchIcon = (achPercentage) => {
@@ -185,37 +188,37 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                         >{row.Day}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOfflineLY)}</td>
-                                    <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.FullPriceOfflineGrowth)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 p-2 text-center ${getAchColor(row.FullPriceOfflineGrowth)}`}>
                                         {getAchIcon(row.FullPriceOfflineGrowth)} {row.FullPriceOfflineGrowth}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.DiscountedOfflineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.DiscountedOfflineLY)}</td>
-                                    <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.DiscountedOfflineGrowth)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 p-2 text-center ${getAchColor(row.DiscountedOfflineGrowth)}`}>
                                         {getAchIcon(row.DiscountedOfflineGrowth)} {row.DiscountedOfflineGrowth}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.TotalOfflineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.TotalOfflineLY)}</td>
-                                    <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.TotalOfflineGrowth)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 p-2 text-center ${getAchColor(row.TotalOfflineGrowth)}`}>
                                         {getAchIcon(row.TotalOfflineGrowth)} {row.TotalOfflineGrowth}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOnlineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.FullPriceOnlineLY)}</td>
-                                    <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.FullPriceOnlineGrowth)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 p-2 text-center ${getAchColor(row.FullPriceOnlineGrowth)}`}>
                                         {getAchIcon(row.FullPriceOnlineGrowth)} {row.FullPriceOnlineGrowth}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.DiscountedOnlineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.DiscountedOnlineLY)}</td>
-                                    <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.DiscountedOnlineGrowth)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 p-2 text-center ${getAchColor(row.DiscountedOnlineGrowth)}`}>
                                         {getAchIcon(row.DiscountedOnlineGrowth)} {row.DiscountedOnlineGrowth}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.TotalOnlineCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.TotalOnlineLY)}</td>
-                                    <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.TotalOnlineGrowth)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 p-2 text-center ${getAchColor(row.TotalOnlineGrowth)}`}>
                                         {getAchIcon(row.TotalOnlineGrowth)} {row.TotalOnlineGrowth}
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.TotalCY)}</td>
                                     <td className="py-2 px-2 border border-gray-400 p-2 text-center">{formatNumberWithCommas(row.TotalLY)}</td>
-                                    <td className={`py-2 px-2 border border-gray-400 p-2 text-center ${getAchColor(row.TotalGrowth)}`}>
+                                    <td className={`py-2 px-2 border font-bold border-gray-400 p-2 text-center ${getAchColor(row.TotalGrowth)}`}>
                                         {getAchIcon(row.TotalGrowth)} {row.TotalGrowth}
                                     </td>
                                 </tr>
