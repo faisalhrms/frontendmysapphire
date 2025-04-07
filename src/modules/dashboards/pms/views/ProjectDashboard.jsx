@@ -86,7 +86,7 @@ const ProjectDashboard = () => {
                         icon: <i className="bx bx-stats"></i>,
                         content: (
                             <>
-                                <ProjectDashboardProjectTasksStatuses data={data} isLoading={isLoading} isActive={'project_status_overview' === activeTab} />
+                                <ProjectDashboardProjectTasksStatuses data={data} isLoading={isLoading} filters={filters} isActive={'project_status_overview' === activeTab} />
                             </>
                         ),
                     },

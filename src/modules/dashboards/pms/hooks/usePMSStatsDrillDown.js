@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import api from "@config/axiosConfig.js";
 
-const usePMSStatsDrillDown = (endpoint, filters, type = null) => {
+const usePMSStatsDrillDown = (endpoint, filters) => {
     const [tasks, setTasks] = useState(null);
     const [loadingTasks, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -24,18 +24,6 @@ const usePMSStatsDrillDown = (endpoint, filters, type = null) => {
         }
     }, [endpoint, filters]);
 
-    const handleRowClick = async (rowData, colIndex, headers) => {
-        const header = headers[colIndex];
-        if (header?.accessor && header.accessor !== "tagTeam") {
-            await fetchData({
-                priority: header.label.toLowerCase() === 'total' ? null : header.label.toLowerCase(),
-                tag: rowData?.tag,
-                team: rowData?.tagTeam?.props?.children ? null : rowData?.tagTeam,
-                type: type
-            });
-        }
-    };
-
     const openTaskModal = () => {
         setIsModalOpen(true);
         setLoading(true);
@@ -56,7 +44,7 @@ const usePMSStatsDrillDown = (endpoint, filters, type = null) => {
         setTimeout(() => setIsModalOpen(false), 400);
     };
 
-    return { isTaskModalOpen, tasks, loadingTasks, handleRowClick, openTaskModal, closeTaskModal };
+    return { isTaskModalOpen, fetchData, tasks, loadingTasks, openTaskModal, closeTaskModal };
 };
 
 export default usePMSStatsDrillDown;
