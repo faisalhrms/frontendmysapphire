@@ -19,7 +19,7 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     const doc = new jsPDF({
         orientation: "landscape",
         unit: "mm",
-        format: [400, 210] // Width: 350 mm, Height: 210 mm
+        format: [550, 210] // Width: 350 mm, Height: 210 mm
     });
 
 
@@ -34,15 +34,15 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
 
 
     try {
-        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
 
         // Set your desired image width and height
-        const imageWidth = 30;
-        const imageHeight = 15;
+        const imageWidth = 35;
+        const imageHeight = 25;
 
         // Set the image position on the left side (X=0)
         const xPosition = 8;  // Position the image at the left edge of the page
-        const yPosition = 5;  // Position the image at the top of the page
+        const yPosition = 4;  // Position the image at the top of the page
 
         // Add the image to the PDF (placed on the left side)
         doc.addImage(logoImage, 'JPEG', xPosition, yPosition, imageWidth, imageHeight);
@@ -53,7 +53,7 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
 /// Store Wise
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
-    doc.text("Daily Sales Report", 8, 25);
+    doc.text("Daily Sales Report", 6, 25);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(169, 169, 169);
@@ -70,7 +70,7 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
             const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
 
             // Set background color based on header or subheader
-            let leftColBgColor = row.isHeader || row.isSubHeader ? [200, 200, 200] : [255, 255, 255];
+            let leftColBgColor = row.isHeader || row.isSubHeader ? [227, 230, 232] : [249, 251 ,252 ];
 
             // Create the row for the current item
             const currentRow = [
@@ -85,7 +85,7 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
                 },
                 ...row.values.map((value) => ({
                     content: formatNumber(value),
-                    styles: { halign: "right" },
+                    styles: { halign: "right",fillColor: leftColBgColor, },
                 })),
                 {
                     content: formatNumber(rowTotal),
@@ -120,13 +120,13 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         headStyles: {
             fontSize: 14,
             textColor: "white",
-            fillColor: [200, 200, 200],
+            fillColor: [11, 53, 136],
             halign: "start",
         },
 
 
         head: [
-            ["A) Store Wise"], // Dynamically add the dates from table2Header
+            [" Store Wise"], // Dynamically add the dates from table2Header
         ],
     });
     // Table create (CY Vs LY Growth)
@@ -187,11 +187,11 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     }
 
     try {
-        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
 
         // Set your desired image width and height
-        const imageWidth = 30;
-        const imageHeight = 15;
+        const imageWidth = 35;
+        const imageHeight = 25;
 
         // Set the image position on the left side (X=0)
         const xPosition = 8;  // Position the image at the left edge of the page
@@ -225,17 +225,21 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         headStyles: {
             fontSize: 14,
             textColor: "white",
-            fillColor: [200, 200, 200],
+            fillColor: [11, 53, 136],
             halign: "start",
         },
 
 
         head: [
-            ["B) Daily Target Achievement"], // Dynamically add the dates from table2Header
+            [" Daily Target Achievement" ], // Dynamically add the dates from table2Header
         ],
     });
 
     const getAchIcon = (achPercentage) => {
+        return achPercentage < 0 ? '' : '';
+    };
+
+    const getAchColor = (achPercentage) => {
         return achPercentage < 0 ? '' : '';
     };
 
@@ -298,52 +302,54 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         { content: "Total", styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
         { content: formatNumberWithCommas(totals1.fullPriceOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.fullPriceOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.fullPriceOfflineAch)} ${totalsAch1.fullPriceOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${ getAchColor(getAchIcon(totalsAch1.fullPriceOfflineAch))} ${totalsAch1.fullPriceOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.discountedOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.discountedOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.discountedOfflineAch)} ${totalsAch1.discountedOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.discountedOfflineAch)} ${totalsAch1.discountedOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.totalOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalOfflineAch)} ${totalsAch1.totalOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.totalOfflineAch)} ${totalsAch1.totalOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.fullPriceOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.fullPriceOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.fullPriceOnlineAch)} ${totalsAch1.fullPriceOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.fullPriceOnlineAch)} ${totalsAch1.fullPriceOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.discountedOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.discountedOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.discountedOnlineAch)} ${totalsAch1.discountedOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.discountedOnlineAch)} ${totalsAch1.discountedOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" ,textColor:'#26bf94'} },
         { content: formatNumberWithCommas(totals1.totalOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalOnlineAch)} ${totalsAch1.totalOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.totalOnlineAch)} ${totalsAch1.totalOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center", textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.totalTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalAch)} ${totalsAch1.totalAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
+        { content: `${getAchIcon(totalsAch1.totalAch)} ${totalsAch1.totalAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center", textColor:'#26bf94' } },
     ];
 
 // Map your data rows for the table body (example using your "two" array)
+
+
     const bodyRows1 = two.map((item) => [
-        { content: item?.date },
-        { content: item?.day },
+        { content: (item?.date) , styles: {fontStyle : "bold"}},
+        { content: (item?.day), styles: {fontStyle : "bold"} },
         { content: formatNumberWithCommas(item?.fullPriceOfflineTarget) },
         { content: formatNumberWithCommas(item?.fullPriceOfflineSale) },
-        { content: item?.fullPriceOfflineAch },
+        { content: item?.fullPriceOfflineAch , styles: { textColor:item?.fullPriceOfflineAch>=0?'#26bf94':'#a83248'  }},
         { content: formatNumberWithCommas(item?.discountedOfflineTarget) },
         { content: formatNumberWithCommas(item?.discountedOfflineSale) },
-        { content: item?.discountedOfflineAch },
+        { content: item?.discountedOfflineAch, styles: { textColor:item?.discountedOfflineAch>=0?'#26bf94':'#a83248'  }},
         { content: formatNumberWithCommas(item?.totalOfflineTarget) },
         { content: formatNumberWithCommas(item?.totalOfflineSale) },
-        { content: item?.totalOfflineAch },
+        { content: item?.totalOfflineAch , styles: { textColor:item?.totalOfflineAch>=0?'#26bf94':'#a83248'  }},
         { content: formatNumberWithCommas(item?.fullPriceOnlineTarget) },
         { content: formatNumberWithCommas(item?.fullPriceOnlineSale) },
-        { content: item?.fullPriceOnlineAch },
+        { content: item?.fullPriceOnlineAch , styles: { textColor:item?.fullPriceOnlineAch>=0?'#26bf94':'#a83248'  }},
         { content: formatNumberWithCommas(item?.discountedOnlineTarget) },
         { content: formatNumberWithCommas(item?.discountedOnlineSale) },
-        { content: item?.discountedOnlineAch },
+        { content: item?.discountedOnlineAch , styles: { textColor:item?.discountedOnlineAch>=0?'#26bf94':'#a83248'  }},
         { content: formatNumberWithCommas(item?.totalOnlineTarget) },
         { content: formatNumberWithCommas(item?.totalOnlineSale) },
-        { content: item?.totalOnlineAch },
+        { content: item?.totalOnlineAch , styles: { textColor:item?.totalOnlineAch>=0?'#26bf94':'#a83248'  }},
         { content: formatNumberWithCommas(item?.totalTarget) },
         { content: formatNumberWithCommas(item?.totalSale) },
-        { content: item?.totalAch },
+        { content: item?.totalAch , styles: { textColor:item?.totalAch>=0?'#26bf94':'#a83248' }},
     ]);
 
 // Combine your data rows and add the totals row at the end
@@ -411,47 +417,7 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
                 "Ach%",
             ],
         ],
-        // body: two.map((item, index) => {
-        //     return [
-        //         { content: item?.date },
-        //         { content: item?.day },
-        //
-        //         // Offline Full Price Columns
-        //         { content: formatNumberWithCommas(item?.fullPriceOfflineTarget) },
-        //         { content: formatNumberWithCommas(item?.fullPriceOfflineSale) },
-        //         { content: item?.fullPriceOfflineAch },
-        //
-        //         // Offline Discount Columns
-        //         { content: formatNumberWithCommas(item?.discountedOfflineTarget) },
-        //         { content: formatNumberWithCommas(item?.discountedOfflineSale) },
-        //         { content: item?.discountedOfflineAch },
-        //
-        //         // Offline Total Columns
-        //         { content: formatNumberWithCommas(item?.totalOfflineTarget) },
-        //         { content: formatNumberWithCommas(item?.totalOfflineSale) },
-        //         { content: item?.totalOfflineAch },
-        //
-        //         // Online Full Price Columns
-        //         { content: formatNumberWithCommas(item?.fullPriceOnlineTarget) },
-        //         { content: formatNumberWithCommas(item?.fullPriceOnlineSale) },
-        //         { content: item?.fullPriceOnlineAch },
-        //
-        //         // Online Discount Columns
-        //         { content: formatNumberWithCommas(item?.discountedOnlineTarget) },
-        //         { content: formatNumberWithCommas(item?.discountedOnlineSale) },
-        //         { content: item?.discountedOnlineAch },
-        //
-        //         // Online Total Columns
-        //         { content: formatNumberWithCommas(item?.totalOnlineTarget) },
-        //         { content: formatNumberWithCommas(item?.totalOnlineSale) },
-        //         { content: item?.totalOnlineAch },
-        //
-        //         // Total Target, Sale and Ach% Columns
-        //         { content: formatNumberWithCommas(item?.totalTarget) },
-        //         { content: formatNumberWithCommas(item?.totalSale) },
-        //         { content: item?.totalAch },
-        //     ];
-        // }),
+
 
         body:finalBody1
     });
@@ -471,11 +437,11 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     }
 
     try {
-        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
 
         // Set your desired image width and height
-        const imageWidth = 30;
-        const imageHeight = 15;
+        const imageWidth = 35;
+        const imageHeight = 25;
 
         // Set the image position on the left side (X=0)
         const xPosition = 8;  // Position the image at the left edge of the page
@@ -509,13 +475,13 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         headStyles: {
             fontSize: 14,
             textColor: "white",
-            fillColor: [200, 200, 200],
+            fillColor: [11, 53, 136],
             halign: "start",
         },
 
 
         head: [
-            ["C) CV vs LY Growth"], // Dynamically add the dates from table2Header
+            ["CV vs LY Growth"], // Dynamically add the dates from table2Header
         ],
     });
 
@@ -585,31 +551,32 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     // Map your data rows for the table body
     const bodyRows = three?.map((item) => {
         return [
-            { content: item?.Date },
-            { content: item?.Day },
+            { content: (item?.Date) , styles: {fontStyle : "bold"} },
+            { content: (item?.Day) , styles: {fontStyle : "bold"}},
             { content: formatNumberWithCommas(item?.FullPriceOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.FullPriceOfflineLY), styles: { halign: "right" } },
-            { content: item?.FullPriceOfflineGrowth, styles: { halign: "center" } },
+            { content: item?.FullPriceOfflineGrowth, styles: { halign: "center" , textColor: item?.FullPriceOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.DiscountedOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.DiscountedOfflineLY), styles: { halign: "right" } },
-            { content: item?.DiscountedOfflineGrowth, styles: { halign: "center" } },
+            { content: item?.DiscountedOfflineGrowth, styles: { halign: "center" , textColor: item?.DiscountedOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalOfflineLY), styles: { halign: "right" } },
-            { content: item?.TotalOfflineGrowth, styles: { halign: "center" } },
+            { content: item?.TotalOfflineGrowth, styles: { halign: "center" , textColor: item?.TotalOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.FullPriceOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.FullPriceOnlineLY), styles: { halign: "right" } },
-            { content: item?.FullPriceOnlineGrowth, styles: { halign: "center" } },
+            { content: item?.FullPriceOnlineGrowth, styles: { halign: "center" , textColor: item?.FullPriceOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.DiscountedOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.DiscountedOnlineLY), styles: { halign: "right" } },
-            { content: item?.DiscountedOnlineGrowth, styles: { halign: "center" } },
+            { content: item?.DiscountedOnlineGrowth, styles: { halign: "center" , textColor: item?.DiscountedOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalOnlineLY), styles: { halign: "right" } },
-            { content: item?.TotalOnlineGrowth, styles: { halign: "center" } },
+            { content: item?.TotalOnlineGrowth, styles: { halign: "center" , textColor: item?.TotalOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalLY), styles: { halign: "right" } },
-            { content: item?.TotalGrowth, styles: { halign: "center" } },
+            { content: item?.TotalGrowth, styles: { align: "center", textColor: item?.TotalGrowth >= 0 ? '#26bf94' : '#a83248' } },
         ];
     });
+
 
 // Create totals row with cell-specific styles (bold and gray background)
 // Here [249, 249, 249] corresponds to "#f9f9f9"
@@ -726,78 +693,7 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
                 "Growth%",
             ],
         ],
-        // body: three?.map((item, index) => {
-        //
-        //     return [
-        //         {
-        //             content: item?.Date,
-        //         },
-        //         {
-        //             content: item?.Day,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOfflineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOfflineLY),
-        //         },
-        //         {
-        //             content: item?.FullPriceOfflineGrowth,
-        //         },                {
-        //             content: formatNumberWithCommas(item?.DiscountedOfflineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.DiscountedOfflineLY),
-        //         },
-        //         {
-        //             content: item?.DiscountedOfflineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOfflineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOfflineLY),
-        //         },
-        //         {
-        //             content: item?.TotalOfflineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOnlineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.FullPriceOnlineLY),
-        //         },
-        //         {
-        //             content: item?.FullPriceOnlineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.DiscountedOnlineCY),
-        //         },                {
-        //             content: formatNumberWithCommas(item?.DiscountedOnlineLY),
-        //         },
-        //         {
-        //             content: item?.DiscountedOnlineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOnlineCY),
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalOnlineLY),
-        //         },
-        //         {
-        //             content: item?.TotalOnlineGrowth,
-        //         },
-        //         {
-        //             content: formatNumberWithCommas(item?.TotalCY),
-        //         },                {
-        //             content: formatNumberWithCommas(item?.TotalLY),
-        //         },
-        //         {
-        //             content: item?.TotalGrowth,
-        //         },
-        //
-        //     ];
-        // }),
+
         body:finalBody
     });
 
@@ -815,11 +711,11 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     }
 
     try {
-        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
 
         // Set your desired image width and height
-        const imageWidth = 30;
-        const imageHeight = 15;
+        const imageWidth = 35;
+        const imageHeight = 25;
 
         // Set the image position on the left side (X=0)
         const xPosition = 8;  // Position the image at the left edge of the page
@@ -853,13 +749,13 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         headStyles: {
             fontSize: 14,
             textColor: "white",
-            fillColor: [200, 200, 200],
+            fillColor: [11, 53, 136],
             halign: "start",
         },
 
 
         head: [
-            ["D) Online (Gross Sale before Return)"], // Dynamically add the dates from table2Header
+            [" Online (Gross Sale before Return)"], // Dynamically add the dates from table2Header
         ],
     });
 
@@ -870,8 +766,8 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
 
 // Map your data rows
     const dataRows = four?.map((item) => [
-        { content: item?.date },
-        { content: item?.day },
+        { content: (item?.date),styles:{fontStyle : "bold"} },
+        { content: (item?.day),styles:{fontStyle : "bold"} },
         { content: formatNumberWithCommas(item?.full_price) },
         { content: formatNumberWithCommas(item?.discounted) },
         { content: formatNumberWithCommas(item?.total) },
@@ -879,11 +775,11 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
 
 // Create totals row
     const totalsRow = [
-        { content: "", styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: "Totals", styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: formatNumberWithCommas(totalFullPrice), styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: formatNumberWithCommas(totalDiscounted), styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
-        { content: formatNumberWithCommas(totalTotal), styles: { fontStyle: "bold", fillColor: [220, 220, 220] } },
+        { content: "", styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
+        { content: "Totals", styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
+        { content: formatNumberWithCommas(totalFullPrice), styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
+        { content: formatNumberWithCommas(totalDiscounted), styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
+        { content: formatNumberWithCommas(totalTotal), styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
     ];
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
@@ -942,11 +838,11 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     }
 
     try {
-        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
 
         // Set your desired image width and height
-        const imageWidth = 30;
-        const imageHeight = 15;
+        const imageWidth = 35;
+        const imageHeight = 25;
 
         // Set the image position on the left side (X=0)
         const xPosition = 8;  // Position the image at the left edge of the page
@@ -980,13 +876,13 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         headStyles: {
             fontSize: 14,
             textColor: "white",
-            fillColor: [200, 200, 200],
+            fillColor: [11, 53, 136],
             halign: "start",
         },
 
 
         head: [
-            ["E) Daily Sales Report - Store Wise (Last Day)"], // Dynamically add the dates from table2Header
+            [" Daily Sales Report - Store Wise (Last Day)"], // Dynamically add the dates from table2Header
         ],
     });
 
@@ -1120,17 +1016,17 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
             // Assuming the "Total" row is the last row
             if (data.row.index === tableRows.length - 1) {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "classification") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "region") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211];
+                data.cell.styles.fillColor = [227, 230, 232];
             }
         },
     });
@@ -1147,11 +1043,11 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     }
 
     try {
-        const logoImage = await loadImage('https://res.cloudinary.com/dsarj6ihu/image/upload/v1743765967/new-removebg-preview_xgyr3m.png'); // Replace with your image URL
+        const logoImage = await loadImage('https://upload.wikimedia.org/wikipedia/commons/c/c5/Sapphire-logo.png'); // Replace with your image URL
 
         // Set your desired image width and height
-        const imageWidth = 30;
-        const imageHeight = 15;
+        const imageWidth = 35;
+        const imageHeight = 25;
 
         // Set the image position on the left side (X=0)
         const xPosition = 8;  // Position the image at the left edge of the page
@@ -1185,13 +1081,13 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         headStyles: {
             fontSize: 14,
             textColor: "white",
-            fillColor: [200, 200, 200],
+            fillColor: [11, 53, 136],
             halign: "start",
         },
 
 
         head: [
-            ["F) Daily Sales Report - Store Wise (MTD)"], // Dynamically add the dates from table2Header
+            [" Daily Sales Report - Store Wise (MTD)"], // Dynamically add the dates from table2Header
         ],
     });
     const tableRows2 = mapData(six);
@@ -1243,17 +1139,17 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
             // Assuming the "Total" row is the last row
             if (data.row.index === tableRows2.length - 1) {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "classification") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211]; // Gray background
+                data.cell.styles.fillColor = [227, 230, 232]; // Gray background
             }
 
             if (data.row.raw.rowType === "region") {
                 data.cell.styles.fontStyle = "bold";       // Bold text
-                data.cell.styles.fillColor = [211, 211, 211];
+                data.cell.styles.fillColor = [227, 230, 232];
             }
         },
     });
