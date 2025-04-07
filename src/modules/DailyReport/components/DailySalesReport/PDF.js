@@ -302,25 +302,25 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         { content: "Total", styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" } },
         { content: formatNumberWithCommas(totals1.fullPriceOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.fullPriceOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${ getAchColor(getAchIcon(totalsAch1.fullPriceOfflineAch))} ${totalsAch1.fullPriceOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
-        { content: formatNumberWithCommas(totals1.discountedOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
+        { content: `${ getAchColor(getAchIcon(totalsAch1.fullPriceOfflineAch))} ${totalsAch1.fullPriceOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
+        { content: formatNumberWithCommas(totals1.discountedOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249],halign: "right"} },
         { content: formatNumberWithCommas(totals1.discountedOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.discountedOfflineAch)} ${totalsAch1.discountedOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
+        { content: `${getAchIcon(totalsAch1.discountedOfflineAch)} ${totalsAch1.discountedOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.totalOfflineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalOfflineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalOfflineAch)} ${totalsAch1.totalOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
+        { content: `${getAchIcon(totalsAch1.totalOfflineAch)} ${totalsAch1.totalOfflineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.fullPriceOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.fullPriceOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.fullPriceOnlineAch)} ${totalsAch1.fullPriceOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" , textColor:'#26bf94' } },
+        { content: `${getAchIcon(totalsAch1.fullPriceOnlineAch)} ${totalsAch1.fullPriceOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" , textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.discountedOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.discountedOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.discountedOnlineAch)} ${totalsAch1.discountedOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" ,textColor:'#26bf94'} },
+        { content: `${getAchIcon(totalsAch1.discountedOnlineAch)} ${totalsAch1.discountedOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" ,textColor:'#26bf94'} },
         { content: formatNumberWithCommas(totals1.totalOnlineTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalOnlineSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalOnlineAch)} ${totalsAch1.totalOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center", textColor:'#26bf94' } },
+        { content: `${getAchIcon(totalsAch1.totalOnlineAch)} ${totalsAch1.totalOnlineAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right", textColor:'#26bf94' } },
         { content: formatNumberWithCommas(totals1.totalTarget), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals1.totalSale), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
-        { content: `${getAchIcon(totalsAch1.totalAch)} ${totalsAch1.totalAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center", textColor:'#26bf94' } },
+        { content: `${getAchIcon(totalsAch1.totalAch)} ${totalsAch1.totalAch}`, styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right", textColor:'#26bf94' } },
     ];
 
 // Map your data rows for the table body (example using your "two" array)
@@ -329,27 +329,27 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
     const bodyRows1 = two.map((item) => [
         { content: (item?.date) , styles: {fontStyle : "bold"}},
         { content: (item?.day), styles: {fontStyle : "bold"} },
-        { content: formatNumberWithCommas(item?.fullPriceOfflineTarget) },
-        { content: formatNumberWithCommas(item?.fullPriceOfflineSale) },
-        { content: item?.fullPriceOfflineAch , styles: { textColor:item?.fullPriceOfflineAch>=0?'#26bf94':'#a83248'  }},
-        { content: formatNumberWithCommas(item?.discountedOfflineTarget) },
-        { content: formatNumberWithCommas(item?.discountedOfflineSale) },
-        { content: item?.discountedOfflineAch, styles: { textColor:item?.discountedOfflineAch>=0?'#26bf94':'#a83248'  }},
-        { content: formatNumberWithCommas(item?.totalOfflineTarget) },
-        { content: formatNumberWithCommas(item?.totalOfflineSale) },
-        { content: item?.totalOfflineAch , styles: { textColor:item?.totalOfflineAch>=0?'#26bf94':'#a83248'  }},
-        { content: formatNumberWithCommas(item?.fullPriceOnlineTarget) },
-        { content: formatNumberWithCommas(item?.fullPriceOnlineSale) },
-        { content: item?.fullPriceOnlineAch , styles: { textColor:item?.fullPriceOnlineAch>=0?'#26bf94':'#a83248'  }},
-        { content: formatNumberWithCommas(item?.discountedOnlineTarget) },
-        { content: formatNumberWithCommas(item?.discountedOnlineSale) },
-        { content: item?.discountedOnlineAch , styles: { textColor:item?.discountedOnlineAch>=0?'#26bf94':'#a83248'  }},
-        { content: formatNumberWithCommas(item?.totalOnlineTarget) },
-        { content: formatNumberWithCommas(item?.totalOnlineSale) },
-        { content: item?.totalOnlineAch , styles: { textColor:item?.totalOnlineAch>=0?'#26bf94':'#a83248'  }},
-        { content: formatNumberWithCommas(item?.totalTarget) },
-        { content: formatNumberWithCommas(item?.totalSale) },
-        { content: item?.totalAch , styles: { textColor:item?.totalAch>=0?'#26bf94':'#a83248' }},
+        { content: formatNumberWithCommas(item?.fullPriceOfflineTarget), styles: {  halign: "right" } },
+        { content: formatNumberWithCommas(item?.fullPriceOfflineSale), styles: {  halign: "right" }  },
+        { content: item?.fullPriceOfflineAch , styles: { textColor:item?.fullPriceOfflineAch>=0?'#26bf94':'#a83248' ,halign: "right"  } },
+        { content: formatNumberWithCommas(item?.discountedOfflineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.discountedOfflineSale),styles: {  halign: "right" }  },
+        { content: item?.discountedOfflineAch, styles: { textColor:item?.discountedOfflineAch>=0?'#26bf94':'#a83248',halign: "right"   }},
+        { content: formatNumberWithCommas(item?.totalOfflineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.totalOfflineSale),styles: {  halign: "right" }  },
+        { content: item?.totalOfflineAch , styles: { textColor:item?.totalOfflineAch>=0?'#26bf94':'#a83248',halign: "right"   }},
+        { content: formatNumberWithCommas(item?.fullPriceOnlineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.fullPriceOnlineSale),styles: {  halign: "right" }  },
+        { content: item?.fullPriceOnlineAch , styles: { textColor:item?.fullPriceOnlineAch>=0?'#26bf94':'#a83248' ,halign: "right"  }},
+        { content: formatNumberWithCommas(item?.discountedOnlineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.discountedOnlineSale),styles: {  halign: "right" }  },
+        { content: item?.discountedOnlineAch , styles: { textColor:item?.discountedOnlineAch>=0?'#26bf94':'#a83248' ,halign: "right"  }},
+        { content: formatNumberWithCommas(item?.totalOnlineTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.totalOnlineSale),styles: {  halign: "right" }  },
+        { content: item?.totalOnlineAch , styles: { textColor:item?.totalOnlineAch>=0?'#26bf94':'#a83248',halign: "right"   }},
+        { content: formatNumberWithCommas(item?.totalTarget),styles: {  halign: "right" }  },
+        { content: formatNumberWithCommas(item?.totalSale) ,styles: {  halign: "right" } },
+        { content: item?.totalAch , styles: { textColor:item?.totalAch>=0?'#26bf94':'#a83248',halign: "right"  }},
     ]);
 
 // Combine your data rows and add the totals row at the end
@@ -555,25 +555,25 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
             { content: (item?.Day) , styles: {fontStyle : "bold"}},
             { content: formatNumberWithCommas(item?.FullPriceOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.FullPriceOfflineLY), styles: { halign: "right" } },
-            { content: item?.FullPriceOfflineGrowth, styles: { halign: "center" , textColor: item?.FullPriceOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
+            { content: item?.FullPriceOfflineGrowth, styles: {  halign: "right"  , textColor: item?.FullPriceOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.DiscountedOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.DiscountedOfflineLY), styles: { halign: "right" } },
-            { content: item?.DiscountedOfflineGrowth, styles: { halign: "center" , textColor: item?.DiscountedOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
+            { content: item?.DiscountedOfflineGrowth, styles: {  halign: "right" , textColor: item?.DiscountedOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalOfflineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalOfflineLY), styles: { halign: "right" } },
-            { content: item?.TotalOfflineGrowth, styles: { halign: "center" , textColor: item?.TotalOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
+            { content: item?.TotalOfflineGrowth, styles: {  halign: "right"  , textColor: item?.TotalOfflineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.FullPriceOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.FullPriceOnlineLY), styles: { halign: "right" } },
-            { content: item?.FullPriceOnlineGrowth, styles: { halign: "center" , textColor: item?.FullPriceOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
+            { content: item?.FullPriceOnlineGrowth, styles: {  halign: "right"  , textColor: item?.FullPriceOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.DiscountedOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.DiscountedOnlineLY), styles: { halign: "right" } },
-            { content: item?.DiscountedOnlineGrowth, styles: { halign: "center" , textColor: item?.DiscountedOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
+            { content: item?.DiscountedOnlineGrowth, styles: { halign: "right"  , textColor: item?.DiscountedOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalOnlineCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalOnlineLY), styles: { halign: "right" } },
-            { content: item?.TotalOnlineGrowth, styles: { halign: "center" , textColor: item?.TotalOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
+            { content: item?.TotalOnlineGrowth, styles: {  halign: "right"  , textColor: item?.TotalOnlineGrowth >= 0 ? '#26bf94' : '#a83248'} },
             { content: formatNumberWithCommas(item?.TotalCY), styles: { halign: "right" } },
             { content: formatNumberWithCommas(item?.TotalLY), styles: { halign: "right" } },
-            { content: item?.TotalGrowth, styles: { align: "center", textColor: item?.TotalGrowth >= 0 ? '#26bf94' : '#a83248' } },
+            { content: item?.TotalGrowth, styles: {  halign: "right" , textColor: item?.TotalGrowth >= 0 ? '#26bf94' : '#a83248' } },
         ];
     });
 
@@ -587,43 +587,43 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         { content: formatNumberWithCommas(totals.FullPriceOfflineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.FullPriceOfflineAch)} ${totalsAch.FullPriceOfflineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.DiscountedOfflineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.DiscountedOfflineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.DiscountedOfflineAch)} ${totalsAch.DiscountedOfflineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right" },
         },
         { content: formatNumberWithCommas(totals.TotalOfflineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.TotalOfflineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.TotalOfflineAch)} ${totalsAch.TotalOfflineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.FullPriceOnlineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.FullPriceOnlineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.FullPriceOnlineAch)} ${totalsAch.FullPriceOnlineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.DiscountedOnlineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.DiscountedOnlineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.DiscountedOnlineAch)} ${totalsAch.DiscountedOnlineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right" },
         },
         { content: formatNumberWithCommas(totals.TotalOnlineCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.TotalOnlineLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.TotalOnlineAch)} ${totalsAch.TotalOnlineAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249],  halign: "right"  },
         },
         { content: formatNumberWithCommas(totals.TotalCY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         { content: formatNumberWithCommas(totals.TotalLY), styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right" } },
         {
             content: `${getAchIcon(totalsAch.TotalAch)} ${totalsAch.TotalAch}`,
-            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "center" },
+            styles: { fontStyle: "bold", fillColor: [249, 249, 249], halign: "right"  },
         },
     ];
 
@@ -766,20 +766,20 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
 
 // Map your data rows
     const dataRows = four?.map((item) => [
-        { content: (item?.date),styles:{fontStyle : "bold"} },
-        { content: (item?.day),styles:{fontStyle : "bold"} },
-        { content: formatNumberWithCommas(item?.full_price) },
-        { content: formatNumberWithCommas(item?.discounted) },
-        { content: formatNumberWithCommas(item?.total) },
+        { content: (item?.date),styles:{fontStyle : "bold" ,halign: "center"} },
+        { content: (item?.day),styles:{ fontStyle : "bold" ,halign: "center"} },
+        { content: formatNumberWithCommas(item?.full_price), styles:{ halign: "right"} },
+        { content: formatNumberWithCommas(item?.discounted),styles:{ halign: "right"}  },
+        { content: formatNumberWithCommas(item?.total),styles:{ halign: "right"}  },
     ]);
 
 // Create totals row
     const totalsRow = [
-        { content: "", styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
-        { content: "Totals", styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
-        { content: formatNumberWithCommas(totalFullPrice), styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
-        { content: formatNumberWithCommas(totalDiscounted), styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
-        { content: formatNumberWithCommas(totalTotal), styles: { fontStyle: "bold", fillColor: [227, 230, 232] } },
+        { content: "", styles: { fontStyle: "bold", fillColor: [227, 230, 232] ,halign: "right"} },
+        { content: "Totals", styles: { fontStyle: "bold", fillColor: [227, 230, 232] ,halign: "right" } },
+        { content: formatNumberWithCommas(totalFullPrice), styles: { fontStyle: "bold", fillColor: [227, 230, 232],halign: "right" } },
+        { content: formatNumberWithCommas(totalDiscounted), styles: { fontStyle: "bold", fillColor: [227, 230, 232],halign: "right" } },
+        { content: formatNumberWithCommas(totalTotal), styles: { fontStyle: "bold", fillColor: [227, 230, 232] ,halign: "right"} },
     ];
     // Table create (CY Vs LY Growth)
     autoTable(doc, {
@@ -893,12 +893,12 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
             // Build the classification row with a custom flag
             const classificationRow = [
                 { content: classification.classification_name },
-                { content: formatNumberWithCommas(classification.fullprice_sale_qty) },
-                { content: formatNumberWithCommas(classification.fullprice_sale_value) },
-                { content: formatNumberWithCommas(classification.discounted_sale_qty) },
-                { content: formatNumberWithCommas(classification.discounted_sale_value) },
-                { content: formatNumberWithCommas(classification.total_sale_qty) },
-                { content: formatNumberWithCommas(classification.total_sale_value) },
+                { content: formatNumberWithCommas(classification.fullprice_sale_qty) ,styles: { halign: "right" }  },
+                { content: formatNumberWithCommas(classification.fullprice_sale_value),styles: { halign: "right" }  },
+                { content: formatNumberWithCommas(classification.discounted_sale_qty) ,styles: { halign: "right" } },
+                { content: formatNumberWithCommas(classification.discounted_sale_value),styles: { halign: "right" }  },
+                { content: formatNumberWithCommas(classification.total_sale_qty) ,styles: { halign: "right" } },
+                { content: formatNumberWithCommas(classification.total_sale_value),styles: { halign: "right" }  },
             ];
             // Attach a custom flag to identify this as a classification row
             classificationRow.rowType = "classification";
@@ -911,12 +911,12 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
                     // Build the region row
                     const regionRow = [
                         { content: region.region },
-                        { content: formatNumberWithCommas(region.fullprice_sale_qty) },
-                        { content: formatNumberWithCommas(region.fullprice_sale_value) },
-                        { content: formatNumberWithCommas(region.discounted_sale_qty) },
-                        { content: formatNumberWithCommas(region.discounted_sale_value) },
-                        { content: formatNumberWithCommas(region.total_sale_qty) },
-                        { content: formatNumberWithCommas(region.total_sale_value) },
+                        { content: formatNumberWithCommas(region.fullprice_sale_qty) ,styles: { halign: "right" } },
+                        { content: formatNumberWithCommas(region.fullprice_sale_value) ,styles: { halign: "right" } },
+                        { content: formatNumberWithCommas(region.discounted_sale_qty) ,styles: { halign: "right" }  },
+                        { content: formatNumberWithCommas(region.discounted_sale_value) ,styles: { halign: "right" }  },
+                        { content: formatNumberWithCommas(region.total_sale_qty) ,styles: { halign: "right" } },
+                        { content: formatNumberWithCommas(region.total_sale_value) ,styles: { halign: "right" } },
                     ];
                     // (Optional) You can mark region rows too if needed:
                     regionRow.rowType = "region";
@@ -927,12 +927,12 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
                         region.stores.forEach((store) => {
                             const storeRow = [
                                 { content: store.store_name },
-                                { content: formatNumberWithCommas(store.fullprice_sale_qty) },
-                                { content: formatNumberWithCommas(store.fullprice_sale_value) },
-                                { content: formatNumberWithCommas(store.discounted_sale_qty) },
-                                { content: formatNumberWithCommas(store.discounted_sale_value) },
-                                { content: formatNumberWithCommas(store.total_sale_qty) },
-                                { content: formatNumberWithCommas(store.total_sale_value) },
+                                { content: formatNumberWithCommas(store.fullprice_sale_qty),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.fullprice_sale_value),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.discounted_sale_qty),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.discounted_sale_value),styles: { halign: "right" }  },
+                                { content: formatNumberWithCommas(store.total_sale_qty) ,styles: { halign: "right" } },
+                                { content: formatNumberWithCommas(store.total_sale_value) ,styles: { halign: "right" } },
                             ];
                             // (Optional) Mark store rows if needed:
                             storeRow.rowType = "store";
@@ -952,12 +952,12 @@ const downloadPDF = async (items,filters , one , two , three , four , five , six
         // Add the "Total" row at the end (without a custom flag)
         const totalRow = [
             { content: "Total" },
-            { content: formatNumberWithCommas(data?.overall_fullprice_sale_qty) },
-            { content: formatNumberWithCommas(data?.overall_fullprice_sale_value) },
-            { content: formatNumberWithCommas(data?.overall_discounted_sale_qty) },
-            { content: formatNumberWithCommas(data?.overall_discounted_sale_value) },
-            { content: formatNumberWithCommas(data?.overall_total_sale_qty) },
-            { content: formatNumberWithCommas(data?.overall_total_sale_value) },
+            { content: formatNumberWithCommas(data?.overall_fullprice_sale_qty),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_fullprice_sale_value),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_discounted_sale_qty),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_discounted_sale_value),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_total_sale_qty),styles: { halign: "right" }  },
+            { content: formatNumberWithCommas(data?.overall_total_sale_value),styles: { halign: "right" }  },
         ];
 
         filteredRows.push(totalRow);
