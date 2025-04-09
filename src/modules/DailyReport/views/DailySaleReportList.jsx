@@ -1,4 +1,4 @@
-import React, { useState, useMemo,useRef } from "react";
+import React, {useState, useMemo, useRef, useEffect} from "react";
 import { Link } from "react-router-dom";
 
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
@@ -12,12 +12,28 @@ import DailyTargetAchievementOnline from "@modules/DailyReport/components/DailyS
 import OnlineGrossSaleBeforeReturn from "@modules/DailyReport/components/DailySalesReport/ OnlineGrossSaleBeforeReturn.jsx";
 import CYVsLYGrowth from "@modules/DailyReport/components/DailySalesReport/CYVsLYGrowth.jsx";
 import DailySalesReportStoreWise from "@modules/DailyReport/components/DailySalesReport/DailySalesReportStoreWise.jsx";
+import downloadPDF from "@modules/DailyReport/components/DailySalesReport/PDF.js";
+import {
+    fetchGrossSaleBeforeReturnData,
+    fetchSaleCvVsLyData, fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT,
+    fetchStoreWiseSaleData,
+    fetchTargetSaleData
+} from "@modules/DailyReport/services/wiseside_services.js";
 
 const DailySaleReportList = () => {
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
     const [showFilters, setShowFilters] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [expand, setExpand] = useState(true);
+
+    const [table1, setTable1] = useState({});
+    const [table2, setTable2] = useState([]);
+    const [table3, setTable3] = useState([]);
+    const [table4, setTable4] = useState([]);
+
+    const [table5, setTable5] = useState([]);
+    const [table6, setTable6] = useState([]);
 
     const storeWiseRef = useRef();
 
@@ -49,6 +65,115 @@ const DailySaleReportList = () => {
             setLoading(false);
         }, 1000);
     };
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
+            setTable1(data || {});
+
+            const lastDayResult = await fetchSaleMtdLdDataLD(filters.date_from);
+            const mtdResult = await fetchSaleMtdLdDataMT(filters.date_from);
+
+            setTable5(lastDayResult);
+            setTable6(mtdResult);
+        } catch (err) {
+            console.error("Error fetching data:", err);
+            setError("Failed to fetch data. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const parseDate = (dateStr) => {
+        const [year, month, day] = dateStr.split("-");
+        return new Date(year, month - 1, day);
+    };
+
+    const formatApiDate = (dayNumber) => {
+        const day = dayNumber.toString();
+        return `${day}`;
+    };
+
+    useEffect(() => {
+        fetchData();
+
+        if (filters.date_from && filters.date_to) {
+            setLoading(true);
+
+            fetchTargetSaleData(filters.date_from, filters)
+                .then((apiData) => {
+                    const startDate = parseDate(filters.date_from);
+                    const endDate = parseDate(filters.date_to);
+
+                    const filtered = apiData.filter((row) => {
+                        const rowDate = parseDate(formatApiDate(row.date));
+                        return rowDate >= startDate && rowDate <= endDate;
+                    });
+
+                    const computed = filtered.map((row) => {
+                        const fullPriceOfflineAch = calcAch(row.fullPriceOfflineSale, row.fullPriceOfflineTarget);
+                        const discountedOfflineAch = calcAch(row.discountedOfflineSale, row.discountedOfflineTarget);
+                        const totalOfflineAch = calcAch(row.totalOfflineSale, row.totalOfflineTarget);
+
+                        const fullPriceOnlineAch = calcAch(row.fullPriceOnlineSale, row.fullPriceOnlineTarget);
+                        const discountedOnlineAch = calcAch(row.discountedOnlineSale, row.discountedOnlineTarget);
+                        const totalOnlineAch = calcAch(row.totalOnlineSale, row.totalOnlineTarget);
+
+                        const totalAch = calcAch(row.totalSale, row.totalTarget);
+
+                        return {
+                            ...row,
+                            fullPriceOfflineAch,
+                            discountedOfflineAch,
+                            totalOfflineAch,
+                            fullPriceOnlineAch,
+                            discountedOnlineAch,
+                            totalOnlineAch,
+                            totalAch
+                        };
+                    });
+
+                    setTable2(computed.length > 0 ? computed : apiData);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                    setLoading(false);
+                });
+        }
+        if (filters.date_from && filters.date_to) {
+            setLoading(true);
+
+            fetchSaleCvVsLyData(filters.date_from, filters)
+                .then((responseData) => {
+                    setTable3(responseData);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error("Error fetching sales data:", error);
+                    setLoading(false);
+                });
+        }
+        if (filters.date_from && filters.date_to) {
+            setLoading(true);
+            fetchGrossSaleBeforeReturnData(filters.date_from, filters)
+                .then((responseData) => {
+                    setTable4(responseData);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error('Error fetching data:', error);
+                    setLoading(false);
+                });
+        }
+    }, [filters]);
+
+
+
+const [donwloadData, setDonwloadData] = useState({});
+
 
     return (
         <>
@@ -125,7 +250,13 @@ const DailySaleReportList = () => {
                                     {expand ? 'Collapse' : 'Expand All'}
                                 </button>
                             )}
-
+                            <button
+                                type="button"
+                                className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                onClick={()=>downloadPDF(donwloadData,filters , table1 , table2 , table3 , table4 , table5 , table6)}
+                            >
+                                <i className="bi bi-file-earmark-pdf"></i> PDF
+                            </button>
                             <button
                                 type="button"
                                 className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
@@ -162,21 +293,21 @@ const DailySaleReportList = () => {
                     )}
 
                     {activeTab === "DailySaleReportList" && (
-                        <StoreWise filters={filters} loading={loading} expand={expand}/>
+                        <StoreWise filters={filters} newData={table1} error={error} loading={loading} expand={expand} setDonwloadData={setDonwloadData}  />
                     )}
 
                     {activeTab === "OnlineAndBM" && (
-                        <DailyTargetAchievementOnline filters={filters} loading={loading}/>
+                        <DailyTargetAchievementOnline data={table2} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
                     {activeTab === "Return" && (
-                        <CYVsLYGrowth filters={filters} loading={loading}/>
+                        <CYVsLYGrowth data={table3} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
                     {activeTab === "GrossReturn" && (
-                        <OnlineGrossSaleBeforeReturn filters={filters} loading={loading}/>
+                        <OnlineGrossSaleBeforeReturn  data={table4} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
 
                     {activeTab === "DailySales" && (
-                        <DailySalesReportStoreWise filters={filters} loading={loading} expand={expand}/>
+                        <DailySalesReportStoreWise lastDayData={table5} mtdData={table6}  loading={loading} error={error} expand={expand} setDonwloadData={setDonwloadData} filters={filters}/>
                     )}
                 </div>
             </div>

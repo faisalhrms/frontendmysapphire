@@ -1,4 +1,3 @@
-
 import React from "react";
 import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
@@ -58,9 +57,9 @@ const DiscountForm = ({
                     {isLoading ? (
                         <LoadingSpinner />
                     ) : errorMessage ? (
-                        <div className="flex flex-coldark:text-gray-200 dark:bg-bodybg border items-center dark:text-gray-200 dark:bg-bodybg">
-                            <img src={Logo} alt="Sapphire Logo" className="h-7 w-40 mb-4 dark:text-gray-200 dark:bg-bodybg " />
-                            <p className="text-red-500 text-lg dark:text-gray-200 dark:bg-bodybg">{errorMessage}</p>
+                        <div className="flex flex-col items-center dark:text-gray-200 dark:bg-bodybg">
+                            <img src={Logo} alt="Sapphire Logo" className="h-7 w-40 mb-4" />
+                            <p className="text-red-500 text-lg">User data is not available.</p>
                         </div>
                     ) : (
                         <>

@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT } from "../../services/wiseside_services.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const SalesDataTable = ({ filters , expand }) => {
-    const [lastDayData, setLastDayData] = useState([]);
-    const [mtdData, setMtdData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , filters }) => {
+    // const [lastDayData, setLastDayData] = useState([]);
+    // const [mtdData, setMtdData] = useState([]);
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState(null);
 
-    console.log(filters?.date_from)
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -35,28 +34,28 @@ const SalesDataTable = ({ filters , expand }) => {
         FOL:true,
     });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                if (filters.date_from && filters.date_to) {
-                    setLoading(true);
-
-                    const lastDayResult = await fetchSaleMtdLdDataLD(filters.date_from);
-                    const mtdResult = await fetchSaleMtdLdDataMT(filters.date_from);
-
-                    setLastDayData(lastDayResult);
-                    setMtdData(mtdResult);
-                    setLoading(false);
-                }
-            } catch (error) {
-                setError("Error fetching sales data");
-                setLoading(false);
-                console.error("Error fetching sales data:", error);
-            }
-        };
-
-        fetchData();
-    }, [filters.date_from, filters.date_to]);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             if (filters.date_from && filters.date_to) {
+    //                 setLoading(true);
+    //
+    //                 const lastDayResult = await fetchSaleMtdLdDataLD(filters.date_from);
+    //                 const mtdResult = await fetchSaleMtdLdDataMT(filters.date_from);
+    //
+    //                 setLastDayData(lastDayResult);
+    //                 setMtdData(mtdResult);
+    //                 setLoading(false);
+    //             }
+    //         } catch (error) {
+    //             setError("Error fetching sales data");
+    //             setLoading(false);
+    //             console.error("Error fetching sales data:", error);
+    //         }
+    //     };
+    //
+    //     fetchData();
+    // }, [filters.date_from, filters.date_to]);
 
     const getRowBgColor = (type, isHeader) => {
         if (isHeader) {
