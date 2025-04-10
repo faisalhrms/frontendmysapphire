@@ -26,7 +26,15 @@ export const sidebarMenu = [
                 'bx-laptop',
                 SETUP_ROUTES.COMPANY.READ.permission
 
-            )
+            ),
+            // generateSidebarItem(
+            //     SETUP_ROUTES.EMAIL.READ.path,
+            //     'link',
+            //     'Email Setup',
+            //     6,
+            //     'bx-laptop',
+            //
+            // )
         ]
     )
 ];

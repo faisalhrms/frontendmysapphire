@@ -17,12 +17,14 @@ const yesNoNA = (value) => {
 };
 
 const UserManagementTable = ({ users }) => {
+
     const [activeUserId, setActiveUserId] = useState(null); // To track expanded users
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
     // Toggle the visibility of sub-users (direct reports)
     const toggleSubUsers = (userId) => {
         setActiveUserId((prevId) => (prevId === userId ? null : userId));
+
     };
 
     const sortedUsers = useMemo(() => {
@@ -67,13 +69,18 @@ const UserManagementTable = ({ users }) => {
         };
     };
 
+    // Function to handle user id being null and falling back to emp_code
+    const getUserId = (user) => {
+        return user.id || user.emp_code;
+    };
+
     // Recursive function to render users and their direct reports
     const renderRow = (data, indentLevel = 0) => {
-        const rowId = `row-${data.id}`;
+        const rowId = `row-${getUserId(data)}`;
         const hasChildren = data.children && data.children.length > 0;
 
         return (
-            <React.Fragment key={data.id}>
+            <React.Fragment key={getUserId(data)}>
                 <tr className="border-b border-defaultborder">
                     {/* Actions column */}
                     <td>
@@ -84,8 +91,10 @@ const UserManagementTable = ({ users }) => {
                                         <i className="ri-edit-line"></i>
                                     </button>
                                 </Link>
-                            ) : (
-                                <Link to={`/module/user-management/create/${data.user.id}`}>
+                            ) :  (
+                                <Link
+                                    to={`/module/user-management/create/${data.user.id}?full_name=${data.user.full_name}&email=${data.user.email}`}
+                                >
                                     <button className="ti-btn ti-btn-success ti-btn-sm">
                                         <i className="ri-add-line"></i>
                                     </button>
@@ -95,7 +104,25 @@ const UserManagementTable = ({ users }) => {
                     </td>
 
                     {/* User details columns */}
-                    <td>{data.user?.full_name}</td>
+                    <td className="flex items-center cursor-pointer" onClick={() => toggleSubUsers(getUserId(data))}>
+                        {/* Drop-down icon before the name */}
+                        {hasChildren && (
+                            <svg
+                                className={`w-4 h-4 mr-2 ${activeUserId === getUserId(data) ? 'transform rotate-90' : ''}`}
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M9 5l7 7-7 7"
+                                />
+                            </svg>
+                        )}
+                        <span>{data.user?.full_name}</span>
+                    </td>
                     <td>{data.user?.email}</td>
                     <td>{yesNoNA(data.email_host)}</td>
                     <td>{yesNoNA(data.erp_user)}</td>
@@ -114,29 +141,11 @@ const UserManagementTable = ({ users }) => {
                     </td>
                 </tr>
 
-                {/* Render children (recursive) */}
-                {hasChildren && (
+                {/* Render direct reports */}
+                {hasChildren && activeUserId === getUserId(data) && (
                     <tr>
                         <td colSpan="100%">
-                            <div className="flex items-center cursor-pointer" onClick={() => toggleSubUsers(data.id)}>
-                                <svg
-                                    className={`w-4 h-4 mr-2 cursor-pointer text-dark ${activeUserId === data.id ? 'transform rotate-90' : ''}`}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M9 5l7 7-7 7"
-                                    />
-                                </svg>
-                                <span>Direct Reports</span>
-                            </div>
-                            {activeUserId === data.id && (
-                                <UserManagementTable users={data.children} />
-                            )}
+                            <UserManagementTable users={data.children} />
                         </td>
                     </tr>
                 )}

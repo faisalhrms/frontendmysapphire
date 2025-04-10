@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import UserManagementTable from "@modules/user/components/UserManagementTable.jsx"; // Importing UserManagementTable
-import { useUserManagementList } from "@modules/user/hooks/userManagementHooks.js"; // Importing hook
+import { useUserManagementList } from "@modules/user/hooks/userManagementHooks.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx"; // Importing hook
 
 const UserManagementList = () => {
     const { search } = useLocation();
@@ -13,7 +14,7 @@ const UserManagementList = () => {
     const { users, loading, error } = useUserManagementList(1, 10, statusFilter); // Fetching users with status filter
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingSpinner/>;
     }
 
     if (error) {
@@ -22,10 +23,16 @@ const UserManagementList = () => {
 
     return (
         <>
-            <PageHeader currentpage="User Management" mainpage="User Management" />
-            <UserManagementTable users={users} /> {/* Passing the users to the UserManagementTable */}
-        </>
-    );
-};
+            <div className="p-3">
+                <div className="box">
+                    <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
+                        <div className="box-title ">User Management</div>
+                        <UserManagementTable users={users}/> {/* Passing the users to the UserManagementTable */}
+                    </div>
+                </div>
+            </div>
+                    </>
+                    );
+                    };
 
-export default UserManagementList;
+                    export default UserManagementList;
