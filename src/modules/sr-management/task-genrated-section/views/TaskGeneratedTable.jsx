@@ -2,13 +2,12 @@ import React from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
 import {Link, useNavigate} from "react-router-dom";
-import {string} from "zod";
 import {toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses} from "@helpers/badges.js";
 import Tooltip from "@components/Tooltip.jsx";
+import HighlightCell from "@modules/sr-management/component/HighlightCell.jsx";
 
 const TaskGeneratedTable = () => {
-
     const navigate = useNavigate();
 
     const onViewTask = (id) => {
@@ -35,9 +34,36 @@ const TaskGeneratedTable = () => {
                 );
             },
         },
-        {Header: "SR #", accessor: "sr_number"},
-        {Header: "Task Type", accessor: "sr_type.name"},
-        {Header: "Requester Location", accessor: "location.name"},
+        {
+            Header: "SR #",
+            accessor: "sr_number",
+            Cell: ({value, row}) => (
+                <HighlightCell highlight={!row.original.is_read}>
+                    {value}
+                </HighlightCell>
+            ),
+        },
+        {
+            Header: "Task Type",
+            accessor: "sr_type.name",
+            Cell: ({value, row}) => (
+                <HighlightCell highlight={!row.original.is_read}>
+                    {value || "N/A"}
+                </HighlightCell>
+            ),
+        },
+        {
+            Header: "Requester Location",
+            accessor: "location.name",
+            Cell: ({value, row}) =>
+                value ? (
+                    <HighlightCell highlight={!row.original.is_read}>
+                        {value}
+                    </HighlightCell>
+                ) : (
+                    "N/A"
+                ),
+        },
         {
             Header: "Request Title",
             accessor: "request_title",
@@ -49,28 +75,39 @@ const TaskGeneratedTable = () => {
                             text={value}
                             tooltipContent={value}
                         >
-                            <span>{value.length > 25 ? `${value.slice(0, 25)}...` : value}</span>
+                            <HighlightCell highlight={!row.original.is_read}>
+                                {value.length > 25 ? `${value.slice(0, 25)}...` : value}
+                            </HighlightCell>
                         </Tooltip>
                     </div>
-                ) : "-"
+                ) : (
+                    "-"
+                ),
         },
         {
             Header: "SR Time",
             accessor: "created_at",
-            Cell: ({value}) => (
+            Cell: ({value}) =>
                 value ? (
                     <span className="bg-info/10 text-info px-2 py-1 rounded-md">
-                {format(new Date(value), "MMM d, yyyy, h:mm a")}
+            {format(new Date(value), "MMM d, yyyy, h:mm a")}
+          </span>
+                ) : (
+                    <span className="text-gray-500">N/A</span>
+                ),
+        },
+        {
+            Header: "Requester",
+            accessor: "reporter",
+            Cell: ({value}) => (
+                value ? (
+                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                {value}
             </span>
                 ) : (
                     <span className="text-gray-500">N/A</span>
                 )
             ),
-        },
-        {
-            Header: "Requester", accessor: "reporter",
-            Cell: ({value}) =>
-                value ? (value.length > 25 ? `${value.slice(0, 25)}...` : value) : "-"
         },
         {
             Header: "Priority",
@@ -82,8 +119,8 @@ const TaskGeneratedTable = () => {
                         <div className="flex flex-wrap gap-1">
                             {sr_tasks.map((task, index) => (
                                 <span key={index} className={getBadgeClasses(task.priority)}>
-                            {toTitleCase(task.priority)}
-                        </span>
+                  {toTitleCase(task.priority)}
+                </span>
                             ))}
                         </div>
                     );
@@ -94,19 +131,18 @@ const TaskGeneratedTable = () => {
         {
             Header: "Assignee",
             accessor: "sr_tasks",
-            Cell: ({value}) => {
+            Cell: ({value, row}) => {
                 if (Array.isArray(value) && value.length > 0) {
-                    const allAssignees = value.flatMap(task =>
-                        task.assignees.map(a => a.name)
-                    );
+                    const allAssignees = value.flatMap(task => task.assignees.map(a => a.name));
                     const uniqueAssignees = [...new Set(allAssignees)];
-
                     return (
                         <div className="flex flex-wrap gap-1">
                             {uniqueAssignees.map((assignee, index) => (
-                                <span key={index} className="bg-primary/10 text-primary px-2 py-1 rounded-md">
-                            {assignee}
-                        </span>
+                                <HighlightCell key={index} highlight={!row.original.is_read}>
+                  <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                    {assignee}
+                  </span>
+                                </HighlightCell>
                             ))}
                         </div>
                     );
@@ -114,8 +150,6 @@ const TaskGeneratedTable = () => {
                 return <span className="text-gray-500">No Assignees</span>;
             },
         },
-
-
         {
             Header: "Status",
             accessor: "status",
@@ -127,12 +161,15 @@ const TaskGeneratedTable = () => {
                 return "No Tasks";
             },
         },
-
-
     ];
 
-
-    return <DataTable columns={columns} apiUrl="/service-request/generated/sr/" title="Task Generated"/>;
+    return (
+        <DataTable
+            columns={columns}
+            apiUrl="/service-request/generated/sr/"
+            title="Task Generated"
+        />
+    );
 };
 
 export default TaskGeneratedTable;
