@@ -139,10 +139,15 @@ const deleteFile = async (fileId) => {
 const downloadBulkCleanFile = async (fileIds) => {
   const url = `/correction/file/clean/download/bulk/`;
   try {
-    const response = await api.post(url, { file_ids: fileIds }, { responseType: "blob" });
+    const response = await api.post(
+      url,
+      { file_ids: fileIds },
+      { responseType: "blob" }
+    );
     const blob = response.data;
     const contentDisposition = response.headers["content-disposition"];
-    let filename = "bulk_clean_data.zip";
+    let filename =
+      fileIds.length === 0 ? "all_clean_data.xlsx" : "bulk_clean_data.zip";
     if (contentDisposition) {
       const match = contentDisposition.match(/filename="?([^"]+)"?/);
       if (match && match[1]) {

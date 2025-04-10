@@ -118,11 +118,7 @@ const DataSanitizationList = () => {
         }
     };
     const downloadBulkCleanData = async () => {
-        if (selectedRows.length === 0) {
-            Notify.error("Please select at least one file.");
-            return;
-        }
-        const fileIds = selectedRows.map((row) => row.id);
+        const fileIds = selectedRows.length > 0 ? selectedRows.map((row) => row.id) : [];
         const key = "downloadBulkClean";
         setLoadingActions((prev) => ({...prev, [key]: true}));
         try {
@@ -133,6 +129,7 @@ const DataSanitizationList = () => {
             setLoadingActions((prev) => ({...prev, [key]: false}));
         }
     };
+
 
     const columns = [
         {
