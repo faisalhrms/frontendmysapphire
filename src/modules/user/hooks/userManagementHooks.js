@@ -50,3 +50,27 @@ export const useUserManagement = (id) => {
 
     return { userData };
 };
+
+
+export const useUserManagementList = (page = 1, size = 10, search = "") => {
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const userList = await getUsers(page, size, search);
+                setUsers(userList);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, [page, size, search]);
+
+    return { users, loading, error };
+};

@@ -1,5 +1,4 @@
-import React, {useState} from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import React, {useCallback, useMemo, useState} from "react";
 import DataTable from "@components/DataTable.jsx";
 import DataSanitizeModel from "@modules/beirholm-bi/components/DataSanitizeModel.jsx";
 import DataSanitizeService from "@modules/beirholm-bi/services/DataSanitizeService.js";
@@ -10,6 +9,8 @@ import ConfirmDeleteModal from "@modules/beirholm-bi/components/ConfirmDeleteMod
 import ConfirmReprocessModal from "@modules/beirholm-bi/components/ConfirmReprocessModal.jsx";
 import Notify from "@helpers/toastNotifications.js";
 import HasPermission from "@components/HasPermission.jsx";
+import useFilters from "@hooks/useFilters.js";
+import DataSanitizeFilter from "@modules/beirholm-bi/components/DataSanitizeFilter.jsx";
 
 const DataSanitizationList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,6 +27,33 @@ const DataSanitizationList = () => {
     const refreshTable = () => {
         setTableKey(Date.now());
     };
+
+    const {
+        control,
+        handleSubmit,
+        errors,
+        getFilters,
+        resetFilters,
+    } = useFilters(
+        useMemo(
+            () => ({
+                initialFilters: [
+                    {name: "from_month"},
+                    {name: "to_month"},
+                ],
+            }),
+            []
+        )
+    );
+    const [filters, setFilters] = useState(getFilters());
+    const onSubmit = useCallback((formData) => {
+        setFilters(formData);
+    }, []);
+
+    const onClear = useCallback(() => {
+        resetFilters();
+        setFilters(getFilters());
+    }, [resetFilters, getFilters]);
 
     const openDataSanitizeModal = () => setIsModalOpen(true);
     const closeDataSanitizeModal = () => setIsModalOpen(false);
@@ -89,6 +117,19 @@ const DataSanitizationList = () => {
             setBulkProcessing(false);
         }
     };
+    const downloadBulkCleanData = async () => {
+        const fileIds = selectedRows.length > 0 ? selectedRows.map((row) => row.id) : [];
+        const key = "downloadBulkClean";
+        setLoadingActions((prev) => ({...prev, [key]: true}));
+        try {
+            await DataSanitizeService.downloadBulkCleanFile(fileIds);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoadingActions((prev) => ({...prev, [key]: false}));
+        }
+    };
+
 
     const columns = [
         {
@@ -206,18 +247,18 @@ const DataSanitizationList = () => {
                             <i className="ri-upload-cloud-line"></i>
                         </button>
                         <HasPermission permission='delete_clean_data'>
-                        <button
-                            onClick={() => openConfirmModal(fileId)}
-                            title="Delete File"
-                            className="ti-btn ti-btn-danger ti-btn-sm"
-                            disabled={loadingActions[`delete_${fileId}`]}
-                        >
-                            {loadingActions[`delete_${fileId}`] ? (
-                                <i className="ri-loader-2-line animate-spin"></i>
-                            ) : (
-                                <i className="ri-delete-bin-line"></i>
-                            )}
-                        </button>
+                            <button
+                                onClick={() => openConfirmModal(fileId)}
+                                title="Delete File"
+                                className="ti-btn ti-btn-danger ti-btn-sm"
+                                disabled={loadingActions[`delete_${fileId}`]}
+                            >
+                                {loadingActions[`delete_${fileId}`] ? (
+                                    <i className="ri-loader-2-line animate-spin"></i>
+                                ) : (
+                                    <i className="ri-delete-bin-line"></i>
+                                )}
+                            </button>
                         </HasPermission>
                     </div>
                 );
@@ -267,19 +308,35 @@ const DataSanitizationList = () => {
                     <i className="ri-refresh-line"></i>
                 </button>
             </div>
-
+            <div className="grid grid-cols-1 sm:grid-cols-1">
+                <button
+                    className="ti-btn ti-btn-dark"
+                    onClick={downloadBulkCleanData}
+                    disabled={loadingActions["downloadBulkClean"]}
+                    title="Download Bulk Clean Data"
+                >
+                    {loadingActions["downloadBulkClean"] ? (
+                        <i className="ri-loader-2-line animate-spin"></i>
+                    ) : (
+                        <i className="ri-download-cloud-line"></i>
+                    )}
+                </button>
+            </div>
         </>
     );
 
     return (
         <>
-            <PageHeader currentpage="Raw Data Uploads" mainpage="Data Uploads"/>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <DataSanitizeFilter control={control} errors={errors} clearFilter={onClear}/>
+            </form>
             <DataTable
                 key={tableKey}
                 columns={columns}
                 title="Uploaded Raw Data"
                 apiUrl="/correction/file/datatable/"
                 buttons={buttons}
+                filter={filters}
             />
             {isModalOpen && (
                 <DataSanitizeModel

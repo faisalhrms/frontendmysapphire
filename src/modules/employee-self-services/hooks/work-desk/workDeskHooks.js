@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPendingList, getInProgressList, getCompletedList } from "@modules/employee-self-services/services/work-desk/workDeskServices.js";
+import {
+    getPendingList,
+    getInProgressList,
+    getCompletedList,
+    getClosedList
+} from "@modules/employee-self-services/services/work-desk/workDeskServices.js";
 
 export const usePending = (page, size, search) => {
     const query = useQuery({
@@ -29,4 +34,14 @@ export const useCompleted = (page, size, search) => {
         staleTime: 0,
     });
     return { ...query, completedData: query.data };
+};
+
+export const useClosed = (page, size, search) => {
+  const query = useQuery({
+    queryKey: ["closedList", page, size, search],
+    queryFn: () => getClosedList(page, size, search),
+    keepPreviousData: true,
+    staleTime: 0,
+  });
+  return { ...query, closedData: query.data };
 };
