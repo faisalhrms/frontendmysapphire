@@ -253,7 +253,7 @@ const [donwloadData, setDonwloadData] = useState({});
                             <button
                                 type="button"
                                 className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
-                                onClick={()=>downloadPDF(donwloadData,filters , table1 , table2 , table3 , table4 , table5 , table6)}
+                                onClick={()=>downloadPDF(filters)}
                             >
                                 <i className="bi bi-file-earmark-pdf"></i> PDF
                             </button>
