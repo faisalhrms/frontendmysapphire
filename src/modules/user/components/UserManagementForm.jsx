@@ -9,15 +9,22 @@ import { useParams } from "react-router-dom";  // To capture URL params
 import { useUserManagementForm } from "@modules/user/hooks/userManagementHooks.js";  // Assuming you have a hook for submission
 import { emailHost,booleanOptions } from "@modules/user/services/userService.js"; // Assuming email host comes from this service
 import { formatOptions } from "@helpers/formatters.js";
+import { useLocation } from "react-router-dom";
 import userManagementSchema from "@modules/user/schemas/userManagementSchema.js";
 
 // New constant for Yes/No options
 
 
 const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
+    const location = useLocation();
     const { id } = useParams();  // Capture the id from URL params
 
+    // Access query parameters from the URL
+    const queryParams = new URLSearchParams(location.search);
+    const passedFullName = queryParams.get('full_name') || userData?.user?.full_name;
+    const passedEmail = queryParams.get('email') || userData?.user?.email;
     const {
+
         control,
         handleSubmit,
         formState: { errors, isSubmitting },
@@ -62,6 +69,19 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
                         </div>
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
+                                {/* Display User Full Name and Email */}
+                                <div className="xl:col-span-4 col-span-12">
+                                    <div className="form-group">
+                                        <label className="form-label">Full Name</label>
+                                        <p className="form-text">{passedFullName}</p></div>
+                                </div>
+
+                                <div className="xl:col-span-4 col-span-12">
+                                    <div className="form-group">
+                                        <label className="form-label">Email</label>
+                                        <p className="form-text">{passedEmail}</p>  {/* Showing the passed email */}
+                                    </div>
+                                </div>
 
                                 {/* ---------- Email Host ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
