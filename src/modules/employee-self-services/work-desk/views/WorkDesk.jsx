@@ -6,22 +6,23 @@ import {
   useCompleted,
   useInProgress,
   usePending,
+  useClosed,
 } from "@modules/employee-self-services/hooks/work-desk/workDeskHooks.js";
 import TaskList from "@modules/employee-self-services/work-desk/components/TaskCard.jsx";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+
 const WorkDesk = () => {
   const [activeTab, setActiveTab] = useState("pending");
-  const { searchTerm, currentPage, setCurrentPage, handleSearchChange } =
-    useSearchHook();
+  const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
 
   const { pendingData, isLoading: isPendingLoading } =
-    activeTab === "pending" ? usePending(currentPage, 8, searchTerm) : {};
+    activeTab === "pending" ? usePending(currentPage, 9, searchTerm) : {};
   const { inProgressData, isLoading: isInProgressLoading } =
-    activeTab === "in-progress"
-      ? useInProgress(currentPage, 8, searchTerm)
-      : {};
+    activeTab === "in-progress" ? useInProgress(currentPage, 9, searchTerm) : {};
   const { completedData, isLoading: isCompletedLoading } =
-    activeTab === "completed" ? useCompleted(currentPage, 8, searchTerm) : {};
+    activeTab === "completed" ? useCompleted(currentPage, 9, searchTerm) : {};
+  const { closedData, isLoading: isClosedLoading } =
+    activeTab === "closed" ? useClosed(currentPage, 9, searchTerm) : {};
 
   const totalPages =
     Math.ceil(
@@ -29,7 +30,11 @@ const WorkDesk = () => {
         ? pendingData?.total
         : activeTab === "in-progress"
         ? inProgressData?.total
-        : completedData?.total) / 8
+        : activeTab === "completed"
+        ? completedData?.total
+        : activeTab === "closed"
+        ? closedData?.total
+        : 0) / 9
     ) || 0;
 
   const handlePageChange = (newPage) => {
@@ -38,11 +43,7 @@ const WorkDesk = () => {
 
   return (
     <Fragment>
-      <PageHeader
-        currentpage={`Work Desk`}
-        activepage="work desk"
-        mainpage="work desk"
-      />
+      <PageHeader currentpage="Work Desk" activepage="work desk" mainpage="work desk" />
       <div className="grid grid-cols-12 gap-6 mt-1">
         <div className="xl:col-span-12 col-span-12">
           <div className="grid grid-cols-12 gap-x-6">
@@ -51,9 +52,7 @@ const WorkDesk = () => {
                 <div className="box-body !p-0">
                   <div className="md:flex px-4 py-6 items-center justify-between">
                     <div>
-                      <h6 className="font-semibold mb-0 text-[1rem]">
-                        My Work Desk
-                      </h6>
+                      <h6 className="font-semibold mb-0 text-[1rem]">My Work Desk</h6>
                     </div>
                     <div className="mt-2 md:mt-0">
                       <nav className="flex sm:space-x-6 flex-wrap">
@@ -87,42 +86,46 @@ const WorkDesk = () => {
                         >
                           Completed
                         </button>
+                        <button
+                          onClick={() => setActiveTab("closed")}
+                          className={`w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:text-primary hs-tab-active:bg-primary/10 rounded-md py-2 px-3 text-sm ${
+                            activeTab === "closed"
+                              ? "text-primary bg-primary/10"
+                              : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
+                          }`}
+                        >
+                          Closed
+                        </button>
                       </nav>
                     </div>
                     <div className="mt-2 md:mt-0">
-                      <div className="hs-dropdown ti-dropdown">
-                        <button
-                          type="button"
-                          aria-label="button"
-                          className="ti-btn ti-btn-sm ti-btn-light !mb-0"
-                          aria-expanded="false"
-                        >
-                          <i className="ti ti-dots-vertical"></i>
-                        </button>
-                        <ul className="hs-dropdown-menu ti-dropdown-menu hidden"></ul>
+                      <div className="flex" role="search">
+                        <input
+                          className="form-control w-full !rounded-sm me-2"
+                          type="search"
+                          placeholder="Search by SR Number"
+                          onChange={handleSearchChange}
+                          aria-label="Search"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="xl:col-span-12 col-span-12">
               <div className="tab-content task-tabs-container">
                 {activeTab === "pending" && (
                   <TaskList tasks={pendingData?.rows} statusLabel="Pending" />
                 )}
                 {activeTab === "in-progress" && (
-                  <TaskList
-                    tasks={inProgressData?.rows}
-                    statusLabel="In Progress"
-                  />
+                  <TaskList tasks={inProgressData?.rows} statusLabel="In Progress" />
                 )}
                 {activeTab === "completed" && (
-                  <TaskList
-                    tasks={completedData?.rows}
-                    statusLabel="Completed"
-                  />
+                  <TaskList tasks={completedData?.rows} statusLabel="Completed" />
+                )}
+                {activeTab === "closed" && (
+                  <TaskList tasks={closedData?.rows} statusLabel="Closed" />
                 )}
               </div>
               <Pagination
@@ -131,7 +134,8 @@ const WorkDesk = () => {
                 paginationDisabled={
                   (activeTab === "pending" && isPendingLoading) ||
                   (activeTab === "in-progress" && isInProgressLoading) ||
-                  (activeTab === "completed" && isCompletedLoading)
+                  (activeTab === "completed" && isCompletedLoading) ||
+                  (activeTab === "closed" && isClosedLoading)
                 }
                 onPageChange={handlePageChange}
               />

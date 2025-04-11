@@ -136,6 +136,42 @@ const deleteFile = async (fileId) => {
   }
 };
 
+const downloadBulkCleanFile = async (fileIds) => {
+  const url = `/correction/file/clean/download/bulk/`;
+  try {
+    const response = await api.post(
+      url,
+      { file_ids: fileIds },
+      { responseType: "blob" }
+    );
+    const blob = response.data;
+    const contentDisposition = response.headers["content-disposition"];
+    let filename =
+      fileIds.length === 0 ? "all_clean_data.xlsx" : "bulk_clean_data.zip";
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?([^"]+)"?/);
+      if (match && match[1]) {
+        filename = match[1];
+      }
+    }
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    const serverMessage =
+      error.response?.data?.errors ||
+      error.response?.data?.message ||
+      "Download failed";
+    Notify.error(serverMessage);
+    throw error;
+  }
+};
+
 export default {
   uploadRawFile,
   reprocessJob,
@@ -145,5 +181,6 @@ export default {
   downloadCleanFile,
   uploadMissingRules,
   downloadSampleFile,
+  downloadBulkCleanFile,
   deleteFile,
 };

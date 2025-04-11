@@ -4,6 +4,9 @@ import CompanyEdit from '@modules/setup/views/CompanyEdit.jsx';
 import SrTypeList from '@modules/setup/views/SrTypeList.jsx';
 import SrTypes from '@modules/setup/views/SrTypes.jsx';
 import SrTypesEdit from '@modules/setup/views/SrTypesEdit.jsx';
+import EmailSetupList from "@modules/setup/views/EmailSetupList.jsx";
+import EmailSetupCreate from "@modules/setup/views/EmailSetupCreate.jsx";
+import EmailSetupEdit from "@modules/setup/views/EmailSetupEdit.jsx";
 
 export const SETUP_ROUTES = {
     COMPANY: {
@@ -34,6 +37,18 @@ export const SETUP_ROUTES = {
             permission: 'change_srtype',
         },
     },
+    EMAIL:{
+        READ:{
+            path:'/module/email-setup/list'
+        },
+        ADD:{
+            path:'/module/email-setup/add',
+        },
+        EDIT:{
+            path:'/module/email-setup/edit/:id',
+        }
+
+    },
     READ: undefined,
 };
 
@@ -62,4 +77,16 @@ export const MODULE_ROUTES = [
         path: SETUP_ROUTES.SR_TYPE.EDIT.path,
         component: SrTypesEdit,
     },
+    {
+        path:SETUP_ROUTES.EMAIL.READ.path,
+        component:EmailSetupList
+    },
+    {
+        path:SETUP_ROUTES.EMAIL.ADD.path,
+        component:EmailSetupCreate
+    },
+    {
+        path:SETUP_ROUTES.EMAIL.EDIT.path,
+        component:EmailSetupEdit
+    }
 ];

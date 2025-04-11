@@ -39,13 +39,6 @@ export const sidebarMenu=[
                 'Digital Profile',
                 4,
                 ''
-            ),
-            generateSidebarItem(
-                USER_ROUTES.USER_MANAGEMENT.READ.path,
-                'link',
-                'User Management',
-                5,
-                ''
             )
             ]
     )

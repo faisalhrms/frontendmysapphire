@@ -11,10 +11,10 @@ export const useUserManagementForm = (userData, isEditMode) => {
             let response;
             if (isEditMode) {
                 response = await updateUser(userData.id, data);
-                navigate("/module/user-management/list");
+                navigate("/user-management/list");
             } else {
                 response = await createUser(data);
-                navigate("/module/user-management/list");
+                navigate("/user-management/list");
             }
 
             // Navigate to the user list page after successful submission
