@@ -4,7 +4,7 @@ import TagsTableWrapper from "@modules/dashboards/pms/components/TagsTableWrappe
 import PrioritiesTableWrapper from "@modules/dashboards/pms/components/PrioritiesTableWrapper.jsx";
 import TeamsTableWrapper from "@modules/dashboards/pms/components/TeamsTableWrapper.jsx";
 
-const ProjectDashboardProjectTasksStatuses = ({ data, isLoading, isActive }) => {
+const ProjectDashboardProjectTasksStatuses = ({ data, isLoading, isActive, filters }) => {
 
     if (isLoading) {
         return <LoadingSpinner />;
@@ -19,7 +19,7 @@ const ProjectDashboardProjectTasksStatuses = ({ data, isLoading, isActive }) => 
 
     return (
         <div>
-            <PrioritiesTableWrapper data={postGoLiveIssueStatus} statuses={statuses} />
+            <PrioritiesTableWrapper data={postGoLiveIssueStatus} statuses={statuses} filters={filters} />
             <TeamsTableWrapper data={postGoLiveIssueStatusByTeam} statuses={statuses} />
             <TagsTableWrapper byTags={postGoLiveIssueStatusByTags?.tags} statuses={statuses} />
         </div>

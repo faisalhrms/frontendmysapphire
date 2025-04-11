@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
+import usePMSStatsDrillDown from "@modules/dashboards/pms/hooks/usePMSStatsDrillDown.js";
 
 function transformPrioritiesData(data, statuses) {
     return Object.entries(data).map(([priority, statusData]) => {
@@ -25,7 +26,7 @@ function createPrioritiesHeaders(statuses) {
     ];
 }
 
-const PrioritiesTable = ({ data, statuses }) => {
+const PrioritiesTableWrapper = ({ data, statuses, filters }) => {
     const rows = useMemo(() => transformPrioritiesData(data, statuses), [data, statuses]);
     const filteredStatuses = useMemo(() => {
         return statuses.filter(status => {
@@ -53,21 +54,20 @@ const PrioritiesTable = ({ data, statuses }) => {
     }, [rows, columnTotals, grandTotal]);
 
     const headers = useMemo(() => createPrioritiesHeaders(filteredStatuses), [filteredStatuses]);
-    const handleRowClick = (rowData, colIndex, headers) => {
-        // Exclude the 'priority' column by checking the accessor
+
+    const { isTaskModalOpen, fetchData, tasks, loadingTasks, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
+        'dashboard/pms/project/tasks/priority/detail/',
+        filters
+    )
+
+    const handleRowClick = async (rowData, colIndex, headers) => {
         const header = headers[colIndex];
-        if (header?.accessor){
-            if (header.accessor === 'priority') {
-                // Do nothing if the clicked column is 'priority'
-                return;
-            }
-
-            // Get the column label (header)
-            const columnHeader = header.label;
-
-            // Log the column header and priority value
-            console.log(`Column Header: ${columnHeader}`);
-            console.log(`Priority: ${rowData.priority}`);
+        console.log(rowData?.priority?.children)
+        if (header?.accessor && header.accessor !== "priority") {
+            await fetchData({
+                status: header.label.toLowerCase() === 'total' ? null : header.label.toLowerCase(),
+                priority: rowData?.priority,
+            });
         }
     };
     return (
@@ -77,4 +77,4 @@ const PrioritiesTable = ({ data, statuses }) => {
     );
 };
 
-export default PrioritiesTable;
+export default PrioritiesTableWrapper;
