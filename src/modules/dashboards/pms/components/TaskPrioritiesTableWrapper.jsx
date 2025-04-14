@@ -66,11 +66,22 @@ const TaskPrioritiesTableWrapper = ({ data, title = 'Pending Tasks by Tag/Team',
 
     const headers = useMemo(() => createHeaders(), []);
 
-    const { isTaskModalOpen, tasks, loadingTasks, handleRowClick, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
+    const { isTaskModalOpen, fetchData, tasks, loadingTasks, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
         'dashboard/pms/project/tasks/priority/detail/',
-        filters,
-        type
+        filters
     )
+
+    const handleRowClick = async (rowData, colIndex, headers) => {
+        const header = headers[colIndex];
+        if (header?.accessor && header.accessor !== "tagTeam") {
+            await fetchData({
+                priority: header.label.toLowerCase() === 'total' ? null : header.label.toLowerCase(),
+                tag: rowData?.tag,
+                team: rowData?.tagTeam?.props?.children ? null : rowData?.tagTeam,
+                type: type
+            });
+        }
+    };
 
     return (
         <>

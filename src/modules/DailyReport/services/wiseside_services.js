@@ -89,3 +89,17 @@ export const fetchSaleMtdLdDataMT = async (p_date, p_type = 'MTD') => {
     }
 };
 
+export const downloadDailySaleReport = async (filters) => {
+    try {
+        const response = await api.get("/reporting/download/daily-sale-report/", {
+            params: {
+                p_date: filters.date_from,
+                ...filters
+            },
+            responseType: 'blob',
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

@@ -12,8 +12,8 @@ import DailyTargetAchievementOnline from "@modules/DailyReport/components/DailyS
 import OnlineGrossSaleBeforeReturn from "@modules/DailyReport/components/DailySalesReport/ OnlineGrossSaleBeforeReturn.jsx";
 import CYVsLYGrowth from "@modules/DailyReport/components/DailySalesReport/CYVsLYGrowth.jsx";
 import DailySalesReportStoreWise from "@modules/DailyReport/components/DailySalesReport/DailySalesReportStoreWise.jsx";
-import downloadPDF from "@modules/DailyReport/components/DailySalesReport/PDF.js";
 import {
+    downloadDailySaleReport,
     fetchGrossSaleBeforeReturnData,
     fetchSaleCvVsLyData, fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT,
     fetchStoreWiseSaleData,
@@ -94,6 +94,24 @@ const DailySaleReportList = () => {
     const formatApiDate = (dayNumber) => {
         const day = dayNumber.toString();
         return `${day}`;
+    };
+
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    const downloadPDF = async (filters) => {
+        try {
+            setIsDownloading(true)
+            const pdfData = await downloadDailySaleReport(filters);
+            const blob = new Blob([pdfData], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'daily_sale_report.pdf';
+            link.click();
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+        }finally {
+            setIsDownloading(false)
+        }
     };
 
     useEffect(() => {
@@ -253,10 +271,16 @@ const [donwloadData, setDonwloadData] = useState({});
                             <button
                                 type="button"
                                 className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
-                                onClick={()=>downloadPDF(donwloadData,filters , table1 , table2 , table3 , table4 , table5 , table6)}
+                                onClick={() => downloadPDF(filters)}
+                                disabled={isDownloading}
                             >
-                                <i className="bi bi-file-earmark-pdf"></i> PDF
+                                <i
+                                    className={`bi bi-file-earmark-pdf ${isDownloading ? 'spin' : ''} text-lg`}
+                                    style={isDownloading ? {animation: 'spin 1s infinite linear'} : {}}
+                                ></i>
+                                {isDownloading ? '' : 'PDF'}
                             </button>
+
                             <button
                                 type="button"
                                 className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
@@ -276,7 +300,7 @@ const [donwloadData, setDonwloadData] = useState({});
                             <div
                                 className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="mt-0">
-                                    <FormInput
+                                <FormInput
                                         type="date"
                                         name="date_from"
                                         control={control}

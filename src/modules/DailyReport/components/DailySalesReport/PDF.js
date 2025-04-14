@@ -3,6 +3,7 @@ import autoTable from "jspdf-autotable";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 import {generateDatesArray, prepareDataForTable} from "@modules/DailyReport/views/utils.js";
 import React from "react";
+import {downloadDailySaleReport} from "@modules/DailyReport/services/wiseside_services.js";
 
 const loadImage = (url) => {
     return new Promise((resolve, reject) => {
