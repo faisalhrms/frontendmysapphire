@@ -1,17 +1,23 @@
 import React from "react";
 import DataTable from "@components/DataTable.jsx";
+import ApprovalStatusDropdown from "@modules/email-management/components/ApprovalStatusDropdown.jsx";
 
-const PendingApprovalsTable = () => {
+const PendingApprovalsTable = ({ refetch }) => {
     const columns = [
         { Header: "User Name", accessor: "user.full_name" },  // Accessing user full name from the user object
-        { Header: "Email", accessor: "user.email" },  // Accessing user email from the user object
+        { Header: "Email", accessor: "user.email" },           // Accessing user email from the user object
         {
             Header: "Approval Status",
-            accessor: "is_approved",
-            Cell: ({ cell: { value } }) => (
-                value ? <span className="badge bg-success">Approved</span> :
-                    <span className="badge bg-warning text-dark">Pending</span>  // If not approved, show as Pending with a warning style
-            )
+            accessor: "approval_status",
+            Cell: ({ cell: { value }, row: { original } }) => {
+                return (
+                    <ApprovalStatusDropdown
+                        approval_status={value}
+                        approvalId={original.id} // check if this is the correct property name
+                        refetch={refetch}
+                    />
+                );
+            }
         },
         {
             Header: "Subscriptions",
@@ -20,11 +26,11 @@ const PendingApprovalsTable = () => {
                 value && value.length > 0 ? (
                     value.map((sub, idx) => (
                         <span key={idx} className="badge bg-primary/10 text-primary me-1">
-                            {sub.name.charAt(0).toUpperCase() + sub.name.slice(1)}  {/* Capitalizing first letter of the subscription name */}
+                            {sub.name.charAt(0).toUpperCase() + sub.name.slice(1)}
                         </span>
                     ))
                 ) : (
-                    <span>None</span>  // If there are no subscriptions, display "None"
+                    <span>None</span>
                 )
             )
         }

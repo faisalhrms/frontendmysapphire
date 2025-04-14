@@ -22,11 +22,6 @@ const EmailSetupList = () => {
                             <i className="ri-edit-line"></i>
                         </button>
                     </Link>
-                    <Link to={`/module/email-setup/detail/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-info ti-btn-sm">
-                            <i className="ri-eye-line"></i>
-                        </button>
-                    </Link>
                 </div>
             ),
         },

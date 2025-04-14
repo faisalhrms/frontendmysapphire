@@ -4,7 +4,7 @@ import EmailManagementList from "@modules/email-management/views/EmailManagement
 export const EMAIL_MANAGEMENT_ROUTE = {
     READ:{
         path:'/user-management/list',
-        permission:'can_view_user_management',
+        // permission:'can_view_user_management',
     }
 };
 
@@ -12,7 +12,7 @@ export const MODULE_ROUTES = [
     {
         path: EMAIL_MANAGEMENT_ROUTE.READ.path,
         component: EmailManagementList,
-        permission: EMAIL_MANAGEMENT_ROUTE.READ.permission
+        // permission: EMAIL_MANAGEMENT_ROUTE.READ.permission
 
     },
     ]
