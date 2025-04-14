@@ -36,7 +36,7 @@ const EmailSetupList = () => {
         },
         {
             Header: "To Emails",
-            accessor: "to_emails",
+            accessor: "to_users",
             Cell: ({ value }) => (
                 <>
                     {value.map((user, idx) => (
@@ -52,7 +52,7 @@ const EmailSetupList = () => {
         },
         {
             Header: "CC Emails",
-            accessor: "cc_emails",
+            accessor: "cc_users",
             Cell: ({ value }) => (
                 <>
                     {value.map((user, idx) => (
