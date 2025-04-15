@@ -39,7 +39,7 @@ export default function ProjectManagement({show,setShow , viewData}) {
 
 
 
-                        <div className="mt-8 space-y-3">
+                        <div className="mt-1 space-y-3">
 
                             {/* Name */}
                             <div className="flex items-center rounded-md">
