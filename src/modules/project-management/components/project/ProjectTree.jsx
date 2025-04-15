@@ -14,6 +14,7 @@ import useFullScreen from "@hooks/useFullScreen.js";
 import {Link} from "react-router-dom";
 import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
 import TaskDetailModal from "@modules/project-management/components/model/TaskDetailModal.jsx";
+import ProjectManagement from "@modules/project-management/components/project/TaskTableModel.jsx";
 
 const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, projectUsers, milestones = [], isLoading, refetch, handleUploadModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,6 +77,10 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
     task,
   } = useTaskDetailModal()
 
+  const [show,setShow] = React.useState(false);
+  const [viewData , setViewData] = useState(null);
+
+
   return (
       <>
         <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`}>
@@ -135,6 +140,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                       refetch={refetch}
                       openTaskOverdueModal={openTaskOverdueModal}
                       openTaskDetailModal={openTaskDetailModal}
+                      setShow={setShow}
+                      setViewData={setViewData}
                   />
               )}
             </div>
@@ -188,6 +195,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
             isTaskDetailModalOpen &&
             <TaskDetailModal task={task} isLoading={isTaskDetailLoading} closeModal={closeTaskDetailModal} />
         }
+
+        {show&&<ProjectManagement show={show} setShow={setShow} viewData={viewData}/>}
       </>
   );
 };
