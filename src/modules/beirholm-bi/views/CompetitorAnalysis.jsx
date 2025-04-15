@@ -24,7 +24,7 @@ const currencyOptions = [
 const CompetitorAnalysis = () => {
   const {control, watch, formState: {errors}} = useForm({
     defaultValues: {
-      competitor_company: "11",
+      competitor_company: "1",
       filter: [{label: "Financial Analysis", value: "financialAnalysis"}],
       currency: {label: "PKR", value: "PKR"}
     }
@@ -102,7 +102,7 @@ const CompetitorAnalysis = () => {
               placeholder="Select Company"
               apiUrl="/select/beirholm/competitors/company/"
               queryKeyBase="competitor_company"
-              preselectedOptions={[{label: "Faisal Spinning Mills", value: "11"}]}
+              preselectedOptions={competitorCompany ? [{label: "Faisal Spinning Mills", value: "1"}] : []}
             />
           </div>
           {showCurrencySelect && (
