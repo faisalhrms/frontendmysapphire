@@ -1,7 +1,12 @@
 import React, { useMemo } from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
-import { toTitleCase } from "@helpers/formatters.js";
+import {formatLabel, toTitleCase} from "@helpers/formatters.js";
 import usePMSStatsDrillDown from "@modules/dashboards/pms/hooks/usePMSStatsDrillDown.js";
+import TaskListModal from "@modules/project-management/components/model/TaskListModal.jsx";
+
+const statusCellClasses = {
+    completed: "bg-green/10 text-success cursor-pointer",
+};
 
 function transformPrioritiesData(data, statuses) {
     return Object.entries(data).map(([priority, statusData]) => {
@@ -21,8 +26,10 @@ function createPrioritiesHeaders(statuses) {
         ...statuses.map((status) => ({
             label: toTitleCase(status),
             accessor: status,
+            classes: "cursor-pointer",
+            ...(status === "completed" && { classes: statusCellClasses.completed }),
         })),
-        { label: "Total", accessor: "total" },
+        { label: "Total", accessor: "total", classes: "cursor-pointer" },
     ];
 }
 
@@ -56,23 +63,37 @@ const PrioritiesTableWrapper = ({ data, statuses, filters }) => {
     const headers = useMemo(() => createPrioritiesHeaders(filteredStatuses), [filteredStatuses]);
 
     const { isTaskModalOpen, fetchData, tasks, loadingTasks, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
-        'dashboard/pms/project/tasks/priority/detail/',
+        'dashboard/pms/project/tasks/status/detail/',
         filters
     )
 
     const handleRowClick = async (rowData, colIndex, headers) => {
         const header = headers[colIndex];
-        console.log(rowData?.priority?.children)
         if (header?.accessor && header.accessor !== "priority") {
             await fetchData({
-                status: header.label.toLowerCase() === 'total' ? null : header.label.toLowerCase(),
-                priority: rowData?.priority,
+                status: formatLabel(header.label),
+                priority: rowData?.priority?.props?.children ? null : rowData?.priority.toLowerCase(),
             });
         }
     };
     return (
         <div>
-            <ClientSideTable config={{ headers }} data={rowsWithFooter} title="Priority Wise Status" height="400px" tHeadClasses='table-bg-dark' onRowClick={handleRowClick} />
+            <ClientSideTable
+                config={{ headers }}
+                data={rowsWithFooter}
+                title="Priority Wise Status"
+                height="400px"
+                tHeadClasses='table-bg-dark'
+                onRowClick={handleRowClick}
+            />
+            {
+                isTaskModalOpen &&
+                <TaskListModal
+                    tasks={tasks}
+                    isLoading={loadingTasks}
+                    closeModal={closeTaskModal}
+                />
+            }
         </div>
     );
 };

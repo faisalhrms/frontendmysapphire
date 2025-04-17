@@ -1,67 +1,312 @@
-import React from "react";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {getExcerptFromText} from "@helpers/formatters.js";
+// import React from 'react';
+//
+// const MilestoneDetailModel = ({ isOpen, setIsOpen, title, children }) => {
+//     if (!isOpen) return null;
+//
+//     return (
+//         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+//             <div className="relative p-4 rounded-lg shadow-lg w-[1200px] bg-white max-h-[90vh] overflow-y-auto">
+//                 <div className="flex justify-between items-center border-b pb-3">
+//                     <h2 className="text-lg  text-sm font-semibold">{title}</h2>
+//                     <button
+//                         onClick={() => setIsOpen(false)}
+//                         className="text-xl font-bold text-gray-600 hover:text-gray-800"
+//                     >
+//                         X
+//                     </button>
+//                 </div>
+//                 <div>{children}</div>
+//             </div>
+//         </div>
+//     );
+// };
+//
+// const ModalWithTable = ({ isOpen, setIsOpen }) => {
+//     return (
+//         <MilestoneDetailModel
+//             isOpen={isOpen}
+//             setIsOpen={setIsOpen}
+//             title="View Task Details"
+//         >
+//             <div className="flex h-screen bg-gray-100">
+//                 <div className="bg-white w-full max-w-5xl mx-auto shadow-lg rounded-md overflow-hidden flex">
+//                     {/* Left Panel */}
+//                     <div className="w-7/12 p-6 border-r border-gray-200">
+//                         <div className="mb-4">
+//                             <h1 className="text-2xl font-semibold text-gray-800">E-Com ads - launch by visual</h1>
+//                             <div className="flex items-center text-sm text-gray-600 mt-1">
+//                                 <span>in</span>
+//                                 <span className="mx-1">→</span>
+//                                 <span className="text-blue-600">RTW</span>
+//                                 <span className="ml-1">Board</span>
+//                             </div>
+//                         </div>
+//
+//                         {/* Group */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="w-6 h-6 rounded-full bg-gray-800 mr-2"></div>
+//                                     <span>Group</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//                                 <div className="flex items-center">
+//                                     <div className="w-2 h-2 rounded-full bg-orange-500 mr-2"></div>
+//                                     <span>18th Apr</span>
+//                                 </div>
+//                             </div>
+//                         </div>
+//
+//                         {/* Name */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="text-xl">T</span>
+//                                     </div>
+//                                     <span>Name</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//                                 E-Com ads - launch by visual
+//                             </div>
+//                         </div>
+//
+//                         {/* Person */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span
+//                                             className="w-5 h-5 inline-block rounded-full border border-gray-400 text-center">👤</span>
+//                                     </div>
+//                                     <span>Person</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//                                 <div
+//                                     className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm">
+//                                     NJ
+//                                 </div>
+//                             </div>
+//                         </div>
+//
+//                         {/* Team */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="text-xl">T</span>
+//                                     </div>
+//                                     <span>Team</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//                                 Visual
+//                             </div>
+//                         </div>
+//
+//                         {/* Deadline */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="w-5 h-5 inline-block">📅</span>
+//                                     </div>
+//                                     <span>Deadline</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded flex items-center">
+//                                 <div className="w-5 h-5 mr-2">
+//                                     <div
+//                                         className="w-4 h-4 rounded-full border-2 border-gray-400 bg-white relative">
+//                                         <div className="absolute inset-0 bg-gray-400 rounded-l-full w-1/2"></div>
+//                                     </div>
+//                                 </div>
+//                                 <span>Apr 15</span>
+//                             </div>
+//                         </div>
+//
+//                         {/* Status */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="w-5 h-5 inline-block">≡</span>
+//                                     </div>
+//                                     <span>Status</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-300 p-3 rounded">
+//                                 Pending
+//                             </div>
+//                         </div>
+//
+//                         {/* Completion Date */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="w-5 h-5 inline-block">📅</span>
+//                                     </div>
+//                                     <span>Completion Da...</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//
+//                             </div>
+//                         </div>
+//
+//                         {/* Status Complet... */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="w-5 h-5 inline-block">⚡</span>
+//                                     </div>
+//                                     <span>Status Complet...</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//
+//                             </div>
+//                         </div>
+//
+//                         {/* Timeline Groups */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="w-5 h-5 inline-block">⚡</span>
+//                                     </div>
+//                                     <span>Timeline Groups</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//
+//                             </div>
+//                         </div>
+//
+//                         {/* Launch */}
+//                         <div className="flex items-center">
+//                             <div className="w-32 text-gray-700">
+//                                 <div className="flex items-center">
+//                                     <div className="mr-2">
+//                                         <span className="w-5 h-5 inline-block">📅</span>
+//                                     </div>
+//                                     <span>Launch</span>
+//                                 </div>
+//                             </div>
+//                             <div className="flex-1 bg-gray-50 p-3 rounded">
+//                                 Apr 18
+//                             </div>
+//                         </div>
+//                     </div>
+//
+//                     {/* Right Panel */}
+//                     <div className="w-5/12 flex flex-col">
+//                         {/* Tabs */}
+//                         <div className="border-b border-gray-200">
+//                             <div className="flex items-center px-4">
+//                                 <div className="px-4 py-3 border-b-2 border-blue-500 font-medium text-blue-600">
+//                                     <div className="flex items-center">
+//                                         <span className="mr-2">🏠</span>
+//                                         <span>Updates</span>
+//                                     </div>
+//                                 </div>
+//                                 <div className="px-4 py-3 text-gray-600">Files</div>
+//                                 <div className="px-4 py-3 text-gray-600">Activity Log</div>
+//                                 <div className="ml-auto">
+//                                     <button className="text-xl">+</button>
+//                                 </div>
+//                             </div>
+//                         </div>
+//
+//                         {/* Update Section */}
+//                         <div className="p-4 border-b border-gray-200 flex">
+//                             <button
+//                                 className="px-4 py-2 border border-gray-300 rounded flex items-center text-gray-600 mr-2">
+//                                 <span className="mr-2">✉️</span>
+//                                 <span>Update via email</span>
+//                             </button>
+//                             <button
+//                                 className="px-4 py-2 border border-gray-300 rounded flex items-center text-gray-600">
+//                                 <span className="mr-2">💬</span>
+//                                 <span>Give feedback</span>
+//                             </button>
+//                         </div>
+//
+//                         {/* Input Box */}
+//                         <div className="p-4 border-b border-gray-200">
+//                             <div className="border border-gray-300 rounded-lg p-3">
+//                                 <div className="text-gray-500 mb-2">Write an update and mention others with @</div>
+//                                 <div className="flex items-center mt-2">
+//                                     <button className="mr-3 text-gray-500">@</button>
+//                                     <button className="mr-3 text-gray-500">📎</button>
+//                                     <button className="mr-3 text-gray-500">😊</button>
+//                                     <button className="text-gray-500">🌈</button>
+//                                 </div>
+//                             </div>
+//                         </div>
+//
+//                         {/* No Updates Yet */}
+//                         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+//                             <div className="mb-6">
+//                                 <div className="flex items-center justify-center">
+//                                     <div
+//                                         className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
+//                                         <div
+//                                             className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
+//                                             <span>📷</span>
+//                                         </div>
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                             <h2 className="text-xl font-semibold text-gray-800 mb-2">No updates yet</h2>
+//                             <p className="text-gray-600">
+//                                 Share progress, mention a teammate, <br/>
+//                                 or upload a file to get things moving
+//                             </p>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </MilestoneDetailModel>
+//     );
+// };
+//
+// export default ModalWithTable;
+//
+//
+//
+//
+import React from 'react';
 
-const TaskDetailModal = ({task, isLoading, closeModal}) => {
+const MilestoneDetailModel = ({ isOpen, setIsOpen, title, children }) => {
+    if (!isOpen) return null;
+
     return (
-        <>
-            <div
-                id="taskDetailModal"
-                data-hs-overlay-keyboard="false"
-                className="hs-overlay ti-modal hidden [--overlay-backdrop:static] backdrop-blur-[0.08rem] parent-modal"
-            >
-                <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out lg:!max-w-4xl lg:w-full m-3 lg:!mx-auto">
-                    <div className="ti-modal-content">
-                        <div className="ti-modal-header">
-                            <button type="button" className="hs-dropdown-toggle ti-modal-close-btn"
-                                    onClick={closeModal}>
-                                <span className="sr-only">Close</span>
-                                <svg className="w-3.5 h-3.5" width="8" height="8" viewBox="0 0 8 8" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M0.258206 1.00652C0.351976 0.912791 0.479126 0.860131 0.611706 0.860131C0.744296 0.860131 0.871447 0.912791 0.965207 1.00652L3.61171 3.65302L6.25822 1.00652C6.30432 0.958771 6.35952 0.920671 6.42052 0.894471C6.48152 0.868271 6.54712 0.854471 6.61352 0.853901C6.67992 0.853321 6.74572 0.865971 6.80722 0.891111C6.86862 0.916251 6.92442 0.953381 6.97142 1.00032C7.01832 1.04727 7.05552 1.1031 7.08062 1.16454C7.10572 1.22599 7.11842 1.29183 7.11782 1.35822C7.11722 1.42461 7.10342 1.49022 7.07722 1.55122C7.05102 1.61222 7.01292 1.6674 6.96522 1.71352L4.31871 4.36002L6.96522 7.00648C7.05632 7.10078 7.10672 7.22708 7.10552 7.35818C7.10442 7.48928 7.05182 7.61468 6.95912 7.70738C6.86642 7.80018 6.74102 7.85268 6.60992 7.85388C6.47882 7.85498 6.35252 7.80458 6.25822 7.71348L3.61171 5.06702L0.965207 7.71348C0.870907 7.80458 0.744606 7.85498 0.613506 7.85388C0.482406 7.85268 0.357007 7.80018 0.264297 7.70738C0.171597 7.61468 0.119017 7.48928 0.117877 7.35818C0.116737 7.22708 0.167126 7.10078 0.258206 7.00648L2.90471 4.36002L0.258206 1.71352C0.164476 1.61976 0.111816 1.4926 0.111816 1.36002C0.111816 1.22744 0.164476 1.10028 0.258206 1.00652Z"
-                                        fill="currentColor"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                        <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)]">
-                            {
-                                isLoading ?
-                                    <LoadingSpinner />
-                                    :
-                                    <>
-                                        <div className="grid grid-cols-12 gap-x-6">
-                                            <div className="col-span-12">
-                                                <div className="grid grid-cols-6 gap-4">
-                                                    <div className="col-span-12 mb-6">
-                                                        <h2>{getExcerptFromText(task.name)}</h2>
-                                                        In <i className="ri-arrow-drop-right-line align-middle"></i>
-                                                        <span
-                                                            className='text-primary'>{task.milestone.name}</span> Milestone
-                                                    </div>
-                                                </div>
-                                                <div className="col-span-5">
-                                                    <i className='bx bxs-circle'></i> Milestone
-                                                </div>
-                                                <div className="col-span-7">
-
-                                                </div>
-                                                <div className="grid grid-cols-6 gap-4">
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </>
-                            }
-                        </div>
-                    </div>
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+            <div className="relative p-4 rounded-lg shadow-lg w-[1200px] bg-white max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center border-b pb-3">
+                    <h2 className=" text-sm font-semibold">{title}</h2>
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className="text-xl font-bold text-gray-600 hover:text-gray-800"
+                    >
+                        X
+                    </button>
+                </div>
+                <div className="flex flex-col h-screen bg-gray-100">
+                    <div className="bg-white shadow-sm w-full mx-auto flex flex-col">{children}</div>
                 </div>
             </div>
-            </>
-    );
-};
+            </div>
+            );
+            };
+
+            export default MilestoneDetailModel;
 
 
 
-export default React.memo(TaskDetailModal);

@@ -9,7 +9,7 @@ import ProjectDiscussionItem from "@modules/project-management/components/projec
 import { useSelector } from "react-redux";
 import useDiscussion from "@hooks/useDiscussionHook.js";
 
-const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users = [] }) => {
+const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint,isHeader=true, users = [] }) => {
     const { user } = useSelector((state) => state.auth);
     const { isModalOpen, openModal, closeModal, selectedIds, attachments, handleSelectedFiles, handleDeleteAttachment, mediaType, clearAttachments } = useFileModal('discussionAttachments');
     const { discussions, isLoading, message, setMessage, selectedUsers, setSelectedUsers, isSubmitting, refetch, handleSubmit } = useDiscussion(selectedIds, clearAttachments, getEndPoint, storeEndPoint);
@@ -62,36 +62,41 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, users =
 
     return (
         <div className="box">
-            <div className="box-header">
-                <div className="box-title">{title}</div>
-                <div className="flex items-center space-x-2">
-                    <div className="flex space-x-2">
-                        <button
-                            type="button"
-                            onClick={refetch}
-                            disabled={isLoading || isSubmitting}
-                            className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]"
-                        >
-                            <i className="ri-refresh-line font-semibold align-middle"></i> Refresh
-                        </button>
+            {isHeader&& (
+                <div className="box-header">
+                    <div className="box-title">{title}</div>
+                    <div className="flex items-center space-x-2">
+                        <div className="flex space-x-2">
+                            <button
+                                type="button"
+                                onClick={refetch}
+                                disabled={isLoading || isSubmitting}
+                                className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]"
+                            >
+                                <i className="ri-refresh-line font-semibold align-middle"></i> Refresh
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
+
 
             {isLoading ? (
-                <LoadingSpinner />
+                <LoadingSpinner/>
             ) : (
                 <div>
-                    <PerfectScrollbar className="box-body max-h-72 text-defaulttextcolor text-defaultsize !py--10 !px-4 ps--active-y">
+                    <PerfectScrollbar
+                        className="box-body max-h-72 text-defaulttextcolor text-defaultsize !py--10 !px-4 ps--active-y">
                         <ul className="list-none profile-timeline">
                             {discussions?.length > 0 &&
                                 discussions.map((discussion) => (
-                                    <ProjectDiscussionItem key={discussion.id} discussion={discussion} userId={user.id} />
+                                    <ProjectDiscussionItem key={discussion.id} discussion={discussion}
+                                                           userId={user.id}/>
                                 ))}
                         </ul>
                     </PerfectScrollbar>
                     <div className="box-footer">
-                        <div className="!p-0 !border-0">
+                    <div className="!p-0 !border-0">
                             <div className="grid grid-cols-12 gap-4">
                                 <AttachmentsList attachments={attachments} onDelete={handleDeleteAttachment} />
                             </div>
