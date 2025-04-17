@@ -134,3 +134,8 @@ export const formatMappedData = (
 export function formatNumberWithCommas(number) {
     return new Intl.NumberFormat().format(number);
 }
+
+export function formatLabel(label) {
+    if (!label || label.toLowerCase() === 'total') return null;
+    return label.toLowerCase().replace(/\s+/g, '_');
+}

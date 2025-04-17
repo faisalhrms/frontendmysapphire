@@ -67,7 +67,7 @@ const ProjectDashboard = () => {
                         label: "Project Overview",
                         icon: <i className="bx bx-task"></i>,
                         content: (
-                            <ProjectDashboardStats data={data} isLoading={isLoading} isActive={'project_overview' === activeTab}  filters={filters}/>
+                            <ProjectDashboardStats data={data} isLoading={isLoading} isActive={'project_overview' === activeTab} filters={filters} />
                         ),
                     },
                     {
@@ -76,7 +76,7 @@ const ProjectDashboard = () => {
                         icon: <i className="bx bx-bar-chart"></i>,
                         content: (
                             <>
-                                <ProjectDashboardTaskStats data={data} isLoading={isLoading} isActive={'task_overview' === activeTab} />
+                                <ProjectDashboardTaskStats data={data} isLoading={isLoading} isActive={'task_overview' === activeTab} filters={filters} />
                             </>
                         ),
                     },
