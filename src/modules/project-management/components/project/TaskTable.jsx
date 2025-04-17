@@ -286,13 +286,13 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-                                               <Tooltip>
-                                                    <button
-                                                        onClick={() => handleView(task)}
-                                                        className='ti-btn ti-btn-success ti-btn-sm'>
-                                                        <i className="ri-eye-line"></i>
-                                                    </button>
-                                                </Tooltip>
+                                               {/*<Tooltip>*/}
+                                               {/*     <button*/}
+                                               {/*         onClick={() => handleView(task)}*/}
+                                               {/*         className='ti-btn ti-btn-success ti-btn-sm'>*/}
+                                               {/*         <i className="ri-eye-line"></i>*/}
+                                               {/*     </button>*/}
+                                               {/* </Tooltip>*/}
                                     </span>
                                         </td>
                                     )
