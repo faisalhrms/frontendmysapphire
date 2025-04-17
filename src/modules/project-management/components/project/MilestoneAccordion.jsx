@@ -7,8 +7,9 @@ import Tooltip from '@components/Tooltip.jsx';
 import Avatar from "@components/Avatar.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useDelete} from "@hooks/useDelete.js";
+import ProjectManagement from "@modules/project-management/components/project/TaskTableModel.jsx";
 
-const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false , setShow , setViewData }) => {
 
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 
@@ -162,6 +163,8 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                         </span>
                                                         </Tooltip>
                                                     </HasProjectPermission>
+
+
                                                 </div>
                                             </div>
                                         </HasProjectPermission>
@@ -190,7 +193,11 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                 openTaskOverdueModal={openTaskOverdueModal}
                                 viewOnly={viewOnly}
                                 openTaskDetailModal={openTaskDetailModal}
+                                setShow={setShow}
+                                setViewData={setViewData}
                             />
+
+
                         </div>
                     </div>
                     )}
