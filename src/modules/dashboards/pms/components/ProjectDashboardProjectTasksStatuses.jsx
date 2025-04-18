@@ -20,8 +20,8 @@ const ProjectDashboardProjectTasksStatuses = ({ data, isLoading, isActive, filte
     return (
         <div>
             <PrioritiesTableWrapper data={postGoLiveIssueStatus} statuses={statuses} filters={filters} />
-            <TeamsTableWrapper data={postGoLiveIssueStatusByTeam} statuses={statuses} />
-            <TagsTableWrapper byTags={postGoLiveIssueStatusByTags?.tags} statuses={statuses} />
+            <TeamsTableWrapper data={postGoLiveIssueStatusByTeam} statuses={statuses} filters={filters} />
+            <TagsTableWrapper byTags={postGoLiveIssueStatusByTags?.tags} statuses={statuses} filters={filters} />
         </div>
     );
 };
