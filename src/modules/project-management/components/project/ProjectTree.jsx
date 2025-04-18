@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState , useEffect} from 'react';
 import '@assets/css/custom/project.css';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import MilestoneAccordion from "@modules/project-management/components/project/MilestoneAccordion.jsx";
@@ -79,6 +79,19 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
 
   const [show,setShow] = React.useState(false);
   const [viewData , setViewData] = useState(null);
+
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [show]);
+
 
 
   return (
@@ -196,7 +209,12 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
             <TaskDetailModal task={task} isLoading={isTaskDetailLoading} closeModal={closeTaskDetailModal} />
         }
 
-        {show&&<ProjectManagement show={show} setShow={setShow} viewData={viewData}/>}
+        {show&&
+            <div className="overflow-hidden">
+              <ProjectManagement show={show} setShow={setShow} viewData={viewData}/>
+            </div>
+
+        }
       </>
   );
 };
