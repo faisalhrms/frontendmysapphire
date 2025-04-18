@@ -286,13 +286,13 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-                                               <Tooltip>
-                                                    <button
-                                                        onClick={() => handleView(task)}
-                                                        className='ti-btn ti-btn-success ti-btn-sm'>
-                                                        <i className="ri-eye-line"></i>
-                                                    </button>
-                                                </Tooltip>
+                                               {/*<Tooltip>*/}
+                                               {/*     <button*/}
+                                               {/*         onClick={() => handleView(task)}*/}
+                                               {/*         className='ti-btn ti-btn-success ti-btn-sm'>*/}
+                                               {/*         <i className="ri-eye-line"></i>*/}
+                                               {/*     </button>*/}
+                                               {/* </Tooltip>*/}
                                     </span>
                                         </td>
                                     )
@@ -334,11 +334,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 </td>
                                 <td className='text-center'><AvatarList users={task.users} max={4}/></td>
                                 <td>
-                                    {(
-                                        task.teams?.map(team => (
-                                            <span key={team.id}>{toTitleCase(team.name)}</span>
-                                        ))
-                                    )}
+                                    {task.teams?.map(team => toTitleCase(team.name)).join(', ')}
                                 </td>
                                 <td>{formatDate(task.started_at)}</td>
                                 <td>{task?.aging} Days</td>

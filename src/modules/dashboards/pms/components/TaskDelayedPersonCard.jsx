@@ -1,9 +1,24 @@
 import React from 'react';
 import ApexChart from "@components/charts/ApexChart.jsx";
+import TaskListModal from "@modules/project-management/components/model/TaskListModal.jsx";
+import usePMSStatsDrillDown from "@modules/dashboards/pms/hooks/usePMSStatsDrillDown.js";
+import {formatLabel} from "@helpers/formatters.js";
 
-const TaskDelayedPersonCard = ({ data }) => {
+const TaskDelayedPersonCard = ({ data, filters }) => {
+    const { isTaskModalOpen, fetchData, tasks, loadingTasks, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
+        'dashboard/pms/task/statistics/detail/',
+        filters
+    )
 
+    const handlePointClick = async (event, chartContext, config) => {
+        const {dataPointIndex} = config;
+        await fetchData({
+            type: 'delayed_by_person',
+            category: data?.categories?.[dataPointIndex]
+        });
+    };
     return (
+        <>
             <div className="box">
                 <div className="box-header justify-between">
                     <div className="box-title">Delayed by person</div>
@@ -12,8 +27,8 @@ const TaskDelayedPersonCard = ({ data }) => {
                     <div id="projectAnalysis">
                         <ApexChart
                             additionalOptions={{
-                                grid: { show: true },
-                                dataLabels: { enabled: true },
+                                grid: {show: true},
+                                dataLabels: {enabled: true},
                             }}
                             height={355}
                             series={data?.series}
@@ -21,10 +36,20 @@ const TaskDelayedPersonCard = ({ data }) => {
                             categories={data?.categories}
                             baseWidthPerCategory={150}
                             chartWidth={200}
+                            onPointClick={handlePointClick}
                         />
                     </div>
+                </div>
             </div>
-        </div>
+            {
+                isTaskModalOpen &&
+                <TaskListModal
+                    tasks={tasks}
+                    isLoading={loadingTasks}
+                    closeModal={closeTaskModal}
+                />
+            }
+        </>
     );
 };
 
