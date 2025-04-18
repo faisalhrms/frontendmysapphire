@@ -42,8 +42,9 @@ const CompetitorAnalysis = () => {
     currencyValue
   });
 
-  const convertToMillions = (arr) =>
-    arr ? arr.slice(2).map(value => Number(value.replace(/,/g, "")) / 1_000_000) : [];
+const convertToMillions = arr =>
+  arr ? arr.slice(2).map(v => Number(v.replace(/,/g, "")) / 1_000_000) : [];
+
   const [isDownloading, setIsDownloading] = useState(false);
 
   const downloadPDF = async () => {
