@@ -12,11 +12,9 @@ import HasProjectPermission from "@modules/project-management/components/project
 import {useSelector} from "react-redux";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
-import ProjectManagement from "@modules/project-management/components/project/TaskTableModel.jsx";
-import {showModal} from "@redux/common/delModalSlice.js";
-import MilestoneDetailModel from "@modules/project-management/components/model/TaskDetailModal.jsx";
+import TaskDeadLineItem from "@modules/project-management/components/task/TaskDeadLineItem.jsx";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false , setShow , setViewData }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -70,14 +68,6 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
             className: 'text-gray-500',
         };
     };
-
-
-
-    const handleView = (id)=>{
-            setViewData({...id,milestoneLaunch})
-            setShow(true);
-
-    }
 
 
 
@@ -240,8 +230,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                              )
                                          }
                                      })()}
-                                            <HasProjectPermission globalPermission='add_task' users={projectUsers}
-                                                                  needIcon={true}>
+                                            <HasProjectPermission globalPermission='add_task' users={projectUsers} needIcon={true}>
                                             {milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
@@ -286,13 +275,15 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-                                               {/*<Tooltip>*/}
-                                               {/*     <button*/}
-                                               {/*         onClick={() => handleView(task)}*/}
-                                               {/*         className='ti-btn ti-btn-success ti-btn-sm'>*/}
-                                               {/*         <i className="ri-eye-line"></i>*/}
-                                               {/*     </button>*/}
-                                               {/* </Tooltip>*/}
+                                               <Tooltip
+                                                   id={`view-task-tooltip-${task.id}`}
+                                                   tooltipContent={`View Task (${task.name})`}>
+                                                    <button
+                                                        onClick={() => openTaskDetailModal(task.id)}
+                                                        className='ti-btn ti-btn-success ti-btn-sm'>
+                                                        <i className="ri-eye-line"></i>
+                                                    </button>
+                                                </Tooltip>
                                     </span>
                                         </td>
                                     )
@@ -340,48 +331,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td>{task?.aging} Days</td>
                                 <td>
                                     <div className="flex items-center">
-                                        {
-                                            task.completion_timeline !== null ?
-                                                <span className="me-6 text-success text-[1rem]">
-                                                <Tooltip
-                                                    id={`task-tooltip-${task.id}-info`}
-                                                    tooltipContent={`${task.completion_timeline < 0 ? `Done ${Math.abs(task.completion_timeline)} days after deadline` : 'Done on time'} `}
-                                                >
-                                                    {
-                                                        task.completion_timeline < 0
-                                                            ?
-                                                            <i className="ri-information-line cursor-pointer"></i>
-                                                            :
-                                                            <i className="ri-check-double-line cursor-pointer"></i>
-                                                    }
-                                                </Tooltip>
-                                            </span>
-                                                :
-                                                (
-                                                    task.is_overdue ?
-                                                        <span className="me-6 text-danger text-[1rem]">
-                                                            <Tooltip
-                                                                id={`task-tooltip-${task.id}-overdue`}
-                                                                tooltipContent={`Task is overdue by ${Math.abs(task.days_left)} days`}
-                                                            >
-                                                                <i className="ri-information-line cursor-pointer"></i>
-                                                            </Tooltip>
-                                                        </span>
-                                                        :
-                                                        <span className="me-6 text-secondary text-[1rem]">
-                                                            <Tooltip
-                                                                id={`task-tooltip-${task.id}-days_left`}
-                                                                tooltipContent={`${Math.abs(task.days_left)} days left`}
-                                                            >
-                                                                <i className="ri-information-line cursor-pointer"></i>
-                                                            </Tooltip>
-                                                        </span>
-                                                )
-                                        }
-                                        <span
-                                            className={task.completed_at ? 'line-through' : (task.is_overdue ? 'line-through text-danger' : '')}>
-                                            {formatDate(task.ended_at)}
-                                        </span>
+                                      <TaskDeadLineItem task={task} />
                                     </div>
                                 </td>
 
@@ -394,8 +344,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                             return toTitleCase(task.status);
                                         }
                                         return task.status !== 'under_approval' ? (
-                                            <TaskStatusDropdown status={task.status} taskId={task.id}
-                                                                refetch={refetch}/>
+                                            <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
                                         ) : (
                                             <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
                                         );
@@ -428,8 +377,6 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                    tasks={task.children} openTaskModal={openTaskModal} isChild={true}
                                                    refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}
                                                    openTaskDetailModal={openTaskDetailModal} viewOnly={viewOnly}
-                                                   setShow={setShow}
-                                                   setViewData={setViewData}
                                         />
                                     </td>
                                 </tr>
@@ -438,9 +385,6 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                     </tbody>
                 </table>
             </div>
-
-
-
         </>
     );
 };

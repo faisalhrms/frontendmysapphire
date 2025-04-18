@@ -9,7 +9,7 @@ import ProjectDiscussionItem from "@modules/project-management/components/projec
 import { useSelector } from "react-redux";
 import useDiscussion from "@hooks/useDiscussionHook.js";
 
-const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint,isHeader=true, users = [] }) => {
+const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, needHeader = true, maxHeight = 'max-h-72', users = [] }) => {
     const { user } = useSelector((state) => state.auth);
     const { isModalOpen, openModal, closeModal, selectedIds, attachments, handleSelectedFiles, handleDeleteAttachment, mediaType, clearAttachments } = useFileModal('discussionAttachments');
     const { discussions, isLoading, message, setMessage, selectedUsers, setSelectedUsers, isSubmitting, refetch, handleSubmit } = useDiscussion(selectedIds, clearAttachments, getEndPoint, storeEndPoint);
@@ -62,7 +62,7 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint,isHeader
 
     return (
         <div className="box">
-            {isHeader&& (
+            {needHeader&& (
                 <div className="box-header">
                     <div className="box-title">{title}</div>
                     <div className="flex items-center space-x-2">
@@ -86,7 +86,7 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint,isHeader
             ) : (
                 <div>
                     <PerfectScrollbar
-                        className="box-body max-h-72 text-defaulttextcolor text-defaultsize !py--10 !px-4 ps--active-y">
+                        className={`box-body ${maxHeight} text-defaulttextcolor text-defaultsize !py--10 !px-4 ps--active-y`}>
                         <ul className="list-none profile-timeline">
                             {discussions?.length > 0 ?(
                                 discussions.map((discussion) => (
