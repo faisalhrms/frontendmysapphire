@@ -8,7 +8,9 @@ import { formatDate } from "@helpers/dateTime.js";
 import ProgressBar from "@components/ProgressBar.jsx";
 import Discussion from "@components/Discussion.jsx";
 import { getTaskWithChild } from "../../services/taskService.js";
-
+import {Avatar} from "@mui/material";
+import {generateFile} from "@helpers/media.js";
+import {getBadgeClasses} from "@helpers/badges.js";
 export default function ProjectManagement({ show, setShow, viewData }) {
     const [activeTab, setActiveTab] = useState("updates");
     const [showDropdown, setShowDropdown] = useState(null);
@@ -39,27 +41,6 @@ export default function ProjectManagement({ show, setShow, viewData }) {
     };
 
 
-    const getFileIcon = (extension) => {
-        if (!extension) return 'unknown';
-
-        extension = extension.toLowerCase();
-
-        if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(extension)) {
-            return 'image';
-        } else if (['pdf'].includes(extension)) {
-            return 'pdf';
-        } else if (['doc', 'docx'].includes(extension)) {
-            return 'word';
-        } else if (['xls', 'xlsx'].includes(extension)) {
-            return 'excel';
-        } else if (['ppt', 'pptx'].includes(extension)) {
-            return 'ppt';
-        } else if (['zip', 'rar', '7z'].includes(extension)) {
-            return 'zip';
-        } else {
-            return 'text';
-        }
-    };
 
     const formatFileSize = (bytes) => {
         if (!bytes) return '0 Bytes';
@@ -71,22 +52,35 @@ export default function ProjectManagement({ show, setShow, viewData }) {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
+    const PersonRow = ({ users }) => (
+        <div className="flex items-center border-b border-gray-100">
+            <div className="w-10 flex items-center justify-center">
+                <i className="ri-account-circle-line text-2xl text-gray-600" />
+            </div>
+            <span className="font-medium text-gray-700 w-36 dark:text-gray-200">
+      Person
+    </span>
+            <div className="flex-1 p-4 bg-gray-200 text-center text-gray-700 dark:text-gray-200 dark:bg-bodybg/80 flex justify-center">
+                <AvatarList users={users} max={4} />
+            </div>
+        </div>
+    );
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center" onClick={closeDropdown} style={{ zIndex: 999 , overflow: 'hidden' }}>
-            <div className="bg-white w-full max-w-7xl h-[90vh] rounded-md flex overflow-hidden dark:text-gray-200 dark:bg-bodybg" onClick={(e) => e.stopPropagation()} style={{
+            <div className="bg-white w-[75%] max-w-7xl h-[90vh] rounded-md flex overflow-hidden dark:text-gray-200 dark:bg-bodybg" onClick={(e) => e.stopPropagation()} style={{
                 height: '90vh',
                 overflowY: 'auto',
                 overflowX: 'hidden'
             }}>
 
-                <div className="w-1/2 border-r border-gray-200 overflow-y-auto dark:text-gray-200 dark:bg-bodybg">
+                <div className="w-[40%] border-r border-gray-200 overflow-y-auto dark:text-gray-200 dark:bg-bodybg">
                     <div className="sticky top-0 text-lg font-bold bg-white p-4 z-10 dark:text-gray-200 dark:bg-bodybg">
                         <h1 className="text-lg font-semibold dark:text-gray-200">
                             {viewData?.name || 'Milestone Detail'}
                         </h1>
                         <div className="text-sm ">
                             in
-                            <span className='mx-2'><i class="ri-arrow-right-line"></i></span>
+                            <span className='mx-2'><i class="ri-arrow-right-line "></i></span>
                             <span
                                 className="font-semibold text-blue cursor-pointer hover:text-blue-600">Srl</span>
                         </div>
@@ -96,7 +90,7 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                             {/* Task ID */}
                             <div className="flex items-center border-b border-gray-100 ">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-user-line"></i>
+                                    <i className="ri-user-line text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Task Id</span>
                                 <div
@@ -106,7 +100,7 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                             </div>
                             <div className="flex items-center border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-menu-5-line"></i>
+                                    <i className="ri-menu-5-line text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Name</span>
                                 <div
@@ -114,25 +108,11 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                                     <span>{viewData?.name || ''}</span>
                                 </div>
                             </div>
-
-
-                            <div className="flex items-center border-b border-gray-100">
-                                <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-account-circle-line"></i>
-                                </div>
-                                <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Person</span>
-                                <div
-                                    className="flex-1 p-4 bg-gray-200 text-center text-gray-700 dark:text-gray-200 dark:bg-bodybg/80">
-                                    <div
-                                        className="w-8 h-8 text-black rounded-full flex items-center justify-center mx-auto">
-                                        <AvatarList users={viewData?.users || []} max={4}/>
-                                    </div>
-                                </div>
-                            </div>
+                            <PersonRow users={viewData?.users || []}/>
 
                             <div className="flex items-center border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-group-line"></i>
+                                    <i className="ri-group-line text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Team</span>
                                 <div
@@ -147,7 +127,7 @@ export default function ProjectManagement({ show, setShow, viewData }) {
 
                             <div className="flex items-center border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-history-line"></i>
+                                    <i className="ri-history-line text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Deadline</span>
                                 <div
@@ -197,38 +177,55 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                                 </div>
                             </div>
 
+                            {/*<div className="flex items-center border-b border-gray-100">*/}
+                            {/*    <div className="w-10 flex items-center justify-center">*/}
+                            {/*        <i className="ri-bar-chart-horizontal-line text-2xl text-gray-600"></i>*/}
+                            {/*    </div>*/}
+                            {/*    <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Status</span>*/}
+                            {/*    <div*/}
+                            {/*        className="flex-1 p-4 bg-gray-200 text-center text-gray-700 dark:text-gray-200 dark:bg-bodybg/80">*/}
+                            {/*        <span className={`px-2 py-1 rounded-md ${*/}
+                            {/*            viewData?.status === 'done' || viewData?.status === 'completed' ? 'bg-green-500 text-white' :*/}
+                            {/*                viewData?.status === 'in_progress' ? 'bg-blue-500 text-white' :*/}
+                            {/*                    viewData?.status === 'overdue' ? 'bg-red-500 text-white' : 'bg-gray-300'*/}
+                            {/*        }`}>*/}
+                            {/*            {toTitleCase(viewData?.status || '')}*/}
+                            {/*        </span>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                             <div className="flex items-center border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-bar-chart-horizontal-line"></i>
+                                    <i className="ri-bar-chart-horizontal-line text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Status</span>
+
                                 <div
-                                    className="flex-1 p-4 bg-gray-200 text-center text-gray-700 dark:text-gray-200 dark:bg-bodybg/80">
-                                    <span className={`px-2 py-1 rounded-md ${
-                                        viewData?.status === 'done' || viewData?.status === 'completed' ? 'bg-green-500 text-white' :
-                                            viewData?.status === 'in_progress' ? 'bg-blue-500 text-white' :
-                                                viewData?.status === 'overdue' ? 'bg-red-500 text-white' : 'bg-gray-300'
-                                    }`}>
-                                        {toTitleCase(viewData?.status || '')}
-                                    </span>
+                                    className={`flex-1 p-4 text-center rounded-md ${getBadgeClasses(viewData?.status, '', false)}`}>
+        <span>
+            {toTitleCase(viewData?.status || '')}
+        </span>
                                 </div>
                             </div>
 
                             <div className="flex items-center border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="bi bi-calendar2-check"></i>
+                                    <i className="bi bi-calendar2-check text-2xl text-gray-600"></i>
                                 </div>
                                 <span
                                     className="font-medium text-gray-700 w-36 dark:text-gray-200">Completion Date</span>
                                 <div
                                     className="flex-1 p-4 bg-gray-200 text-center text-gray-700 dark:text-gray-200 dark:bg-bodybg/80">
-                                    <span>{formatDate(viewData?.completed_at)}</span>
+                                    <span>
+      {viewData?.completed_at
+          ? formatDate(viewData.completed_at)
+          : 'Yet to Complete'}
+    </span>
                                 </div>
                             </div>
 
                             <div className="flex items-center border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="bi bi-check-circle"></i>
+                                    <i className="bi bi-check-circle text-2xl text-gray-600"></i>
                                 </div>
                                 <span
                                     className="font-medium text-gray-700 w-36 dark:text-gray-200">Status Completion</span>
@@ -241,7 +238,7 @@ export default function ProjectManagement({ show, setShow, viewData }) {
 
                             <div className="flex items-center  border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-wallet-2-line"></i>
+                                    <i className="ri-wallet-2-line text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Aging</span>
                                 <div
@@ -252,7 +249,7 @@ export default function ProjectManagement({ show, setShow, viewData }) {
 
                             <div className="flex items-center  border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-mist-fill"></i>
+                                    <i className="ri-mist-fill text-2xl text-gray-600"></i>
                                 </div>
                                 <span
                                     className="font-medium text-gray-700 w-36 dark:text-gray-200">Timeline Groups</span>
@@ -264,24 +261,19 @@ export default function ProjectManagement({ show, setShow, viewData }) {
 
                             <div className="flex items-center  border-b border-gray-100">
                                 <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-indent-increase"></i>
+                                    <i className="ri-indent-increase text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Tags</span>
                                 <div
                                     className="flex-1 p-4 bg-gray-200 text-center text-gray-700 dark:text-gray-200 dark:bg-bodybg/80">
-                                    {(
-                                        viewData?.tags?.map(tag => (
-                                            <span key={tag.id}
-                                                  className="badge bg-primary/10 text-primary ml-2">{toTitleCase(tag.name)}</span>
-                                        ))
-                                    )}
+                                    {viewData?.tags?.map(tag => tag.name).join(', ')}
                                 </div>
                             </div>
 
                             {/* Launch */}
                             <div className="flex items-center border-b border-gray-100">
-                                <div className="w-10 flex items-center justify-center">
-                                    <i className="ri-calendar-2-line"></i>
+                            <div className="w-10 flex items-center justify-center">
+                                    <i className="ri-calendar-2-line text-2xl text-gray-600"></i>
                                 </div>
                                 <span className="font-medium text-gray-700 w-36 dark:text-gray-200">Launch</span>
                                 <div
@@ -293,7 +285,7 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                     </div>
                 </div>
 
-                <div className="w-1/2 flex flex-col border-l border-gray-400 my-6">
+                <div className="w-[60%] flex flex-col border-l border-gray-400 my-6">
 
                     <div className="flex justify-between items-center p-4 border-b border-gray-200">
                         <div></div>
@@ -310,7 +302,7 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                             onClick={() => setActiveTab("updates")}
                         >
                             <i className="ri-home-6-line"></i>
-                            <span>Updates / 1</span>
+                            <span>Discussions</span>
                         </button>
                         <button
                             className={`px-4 py-3 flex items-center gap-2 ${
@@ -337,16 +329,13 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                             <div className="h-full bg-gray-50 rounded-lg overflow-hidden">
                                 {attachments?.length === 0 ? (
                                     <div
-                                        className="flex flex-col items-center justify-center h-[calc(100%-60px)] border-2 border-dashed border-gray-300 rounded-lg p-8 transition-all hover:bg-gray-100">
-                                        <div className="text-center">
-                                            <div className="mb-4">
-                                                <i className="ri-file-upload-line text-gray-400 text-5xl"></i>
-                                            </div>
-                                            <h3 className="text-lg font-medium text-gray-700 mb-2">No files
-                                                attached</h3>
-                                            <p className="text-sm text-gray-500">Drag and drop files here or click to
-                                                browse</p>
-                                        </div>
+                                        className="flex flex-col items-center justify-center h-[calc(100%-60px)] bg-gray-50 rounded-lg overflow-hidden p-8">
+                                        <img
+                                            src="https://cdn.monday.com/images/files-gallery/empty-state-v2.svg"
+                                            alt="No files"
+                                            className="w-48 h-auto mb-6"
+                                        />
+                                        <p className="font-bold text-gray-700">There is No File Available</p>
                                     </div>
                                 ) : (
                                     <div className="p-4">
@@ -354,34 +343,50 @@ export default function ProjectManagement({ show, setShow, viewData }) {
                                         <div className="space-y-3">
                                             {attachments.map((attachment) => (
                                                 <div
-                                                    key={attachment?.id}
-                                                    className="flex items-center p-3 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
+                                                    key={attachment.id}
+                                                    className="flex items-center bg-white rounded-lg border border-gray-200 shadow-sm p-4 hover:shadow-md transition-all"
                                                 >
-                                                    <div className="p-2 bg-indigo-50 rounded-md mr-3">
-                                                        <i className={`ri-file-${getFileIcon(attachment?.file_extension)}-line text-indigo-600 text-xl`}></i>
+                                                    {/* Left: use your generateFile() to render either an <img> or <audio> etc. */}
+                                                    <div className="flex-shrink-0">
+                                                        {/*
+         generateFile() returns a string of HTML (an <img> or <audio> tag).
+         We inject it here with dangerouslySetInnerHTML.
+      */}
+                                                        <div
+                                                            className="w-12 h-12 flex items-center justify-center"
+                                                            dangerouslySetInnerHTML={{ __html: generateFile(attachment) }}
+                                                        />
                                                     </div>
-                                                    <div className="flex-1 min-w-0">
+
+                                                    {/* Middle: name + meta */}
+                                                    <div className="flex-1 min-w-0 px-4">
                                                         <p className="text-sm font-medium text-gray-900 truncate">
-                                                            {attachment?.file_name}
+                                                            {attachment.file_name}
+                                                            {attachment.file_extension && `.${attachment.file_extension}`}
                                                         </p>
-                                                        <p className="text-xs text-gray-500">
-                                                            {formatFileSize(attachment?.file_size)} • {attachment?.file_extension.toUpperCase()}
-                                                        </p>
+                                                        <div className="text-xs text-gray-400 mt-1">
+                                                            <span>{formatFileSize(attachment.file_size)}</span>
+                                                            <span className="mx-1">•</span>
+                                                            <span>{formatDate(attachment.created_at)}</span>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex space-x-2">
+
+                                                    {/* Right: actions */}
+                                                    <div className="flex items-center space-x-2">
                                                         <a
-                                                            href={attachment?.file_url}
+                                                            href={attachment.file_url}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="p-1.5 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100"
-                                                            title="Download"
+                                                            className="p-1 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100"
+                                                            title="View / Download"
                                                         >
-                                                            <i className="ri-download-line"></i>
+                                                            <i className="ri-eye-line" />
                                                         </a>
-
                                                     </div>
                                                 </div>
                                             ))}
+
+
                                         </div>
                                     </div>
                                 )}

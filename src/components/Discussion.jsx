@@ -88,17 +88,28 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint,isHeader
                     <PerfectScrollbar
                         className="box-body max-h-72 text-defaulttextcolor text-defaultsize !py--10 !px-4 ps--active-y">
                         <ul className="list-none profile-timeline">
-                            {discussions?.length > 0 &&
+                            {discussions?.length > 0 ?(
                                 discussions.map((discussion) => (
                                     <ProjectDiscussionItem key={discussion.id} discussion={discussion}
                                                            userId={user.id}/>
-                                ))}
+                                ))): (<div className="flex flex-col items-center justify-center">
+                                <img
+                                    src="https://microfrontends.monday.com/mf-feed/latest/static/media/empty-state.8bf98d52.svg"
+                                    alt="No updates"
+                                    className="w-48 h-auto "
+                                />
+                                <p className="font-bold text-gray-700 text-lg mb-2">No Discussion yet</p>
+                                <p className="text-sm text-gray-500 text-center">
+                                    Share progress, mention a teammate, or upload a file to get things moving
+                                </p>
+                            </div>
+                            )}
                         </ul>
                     </PerfectScrollbar>
                     <div className="box-footer">
-                    <div className="!p-0 !border-0">
+                        <div className="!p-0 !border-0">
                             <div className="grid grid-cols-12 gap-4">
-                                <AttachmentsList attachments={attachments} onDelete={handleDeleteAttachment} />
+                                <AttachmentsList attachments={attachments} onDelete={handleDeleteAttachment}/>
                             </div>
                             {/* Display selected users above the input */}
                             {selectedUsers.length > 0 && (
