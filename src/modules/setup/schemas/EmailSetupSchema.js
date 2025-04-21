@@ -11,11 +11,11 @@ const emailSetupSchema = z.object({
     company_id: z.number().min(1, "Company ID is required"),
 
     // Email recipients
-    to_emails_id: z
+    to_user_ids: z
         .array(z.number())
         .min(1, "At least one recipient (To) is required"),
 
-    cc_emails_id: z
+    cc_user_ids: z
         .array(z.number())
         .optional()
         .nullable(),

@@ -6,7 +6,6 @@ import ProjectDetail from '@modules/project-management/views/ProjectDetail.jsx';
 import TaskDetail from '@modules/project-management/views/TaskDetail.jsx';
 import TaskKanban from '@modules/project-management/views/TaskKanban.jsx';
 import TaskList from '@modules/project-management/views/TaskList.jsx';
-import TaskDemo from "@modules/project-management/views/TaskDemo.jsx";
 
 export const PMS_ROUTES = {
   PROJECT: {
@@ -39,10 +38,6 @@ export const PMS_ROUTES = {
       path: "/module/tasks/ecom",
       permission: 'view_ecom_tasks',
     },
-    // MODEL:{
-    //   path: "/module/tasks/task",
-    //
-    // }
   },
 };
 
@@ -82,9 +77,4 @@ export const MODULE_ROUTES = [
     component: ProjectEcom,
     permission: PMS_ROUTES.TASK.ECOM.permission,
   },
-  // {
-  //   path: PMS_ROUTES.TASK.MODEL.path,
-  //   component: TaskDemo,
-  //
-  // },
 ];

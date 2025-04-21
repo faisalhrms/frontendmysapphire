@@ -35,6 +35,7 @@ const Pagination = ({ currentPage, totalPages, paginationDisabled, onPageChange,
                     <ul className={`ti-pagination justify-${justify} mb-${mb}`}>
                         <li className={`page-item ${currentPage <= 1 || paginationDisabled ? 'disabled' : ''}`}>
                             <button
+                                type="button"
                                 className="page-link px-3 py-[0.375rem]"
                                 onClick={prevPage}
                                 disabled={currentPage <= 1 || paginationDisabled}
@@ -45,6 +46,7 @@ const Pagination = ({ currentPage, totalPages, paginationDisabled, onPageChange,
                         {pages.map(page => (
                             <li className={`page-item ${paginationDisabled ? 'disabled' : ''}`} key={page}>
                                 <button
+                                    type="button"
                                     className={`page-link px-3 py-[0.375rem] ${page === currentPage ? 'active' : ''}`}
                                     onClick={() => gotoPage(page)}
                                     disabled={paginationDisabled}
@@ -55,6 +57,7 @@ const Pagination = ({ currentPage, totalPages, paginationDisabled, onPageChange,
                         ))}
                         <li className={`page-item ${currentPage >= totalPages || paginationDisabled ? 'disabled' : ''}`}>
                             <button
+                                type="button"
                                 className="page-link px-3 py-[0.375rem]"
                                 onClick={nextPage}
                                 disabled={currentPage >= totalPages || paginationDisabled}
