@@ -13,21 +13,10 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
         return new Date(year, month - 1, day);
     };
 
-    // useEffect(() => {
-    //     if (filters.date_from && filters.date_to) {
-    //         setLoading(true);
-    //
-    //         fetchSaleCvVsLyData(filters.date_from, filters)
-    //             .then((responseData) => {
-    //                 setData(responseData);
-    //                 setLoading(false);
-    //             })
-    //             .catch((error) => {
-    //                 console.error("Error fetching sales data:", error);
-    //                 setLoading(false);
-    //             });
-    //     }
-    // }, [filters]);
+    const formatNumberWithCommas = (num) => {
+        if (num === 0 || num == null) return "-";
+        return num.toLocaleString();
+    };
 
     const totalCy = data.reduce((total, item) => total + item.FullPriceOfflineCY, 0);
     const totalLy = data.reduce((total, item) => total + item.FullPriceOfflineLY, 0);
@@ -226,10 +215,10 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
 
                             {data?.length > 0 && (
                                 <tr className="dark:text-gray-200 dark:bg-bodybg" style={{ backgroundColor: "#f9f9f9" }}>
-                                    <td className="py-2 px-2 border border-gray-400 text-center font-bold sticky left-0 z-10 dark:text-gray-200 dark:bg-bodybg "
+                                    <td className="sticky left-0 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg "
                                  >
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-center font-bold sticky left-20 z-10 dark:text-gray-200 dark:bg-bodybg "
+                                    <td className="sticky left-16 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg "
                                         >
                                         Total
                                     </td>
@@ -242,7 +231,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                     <td
                                         className={`py-2 px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.FullPriceOfflineAch)}`}
                                     >
-                                        {getAchIcon(totalsAch.FullPriceOfflineAch)} {totalsAch.FullPriceOfflineAch}
+                                        {getAchIcon(totalsAch.FullPriceOfflineAch)} {totalsAch.FullPriceOfflineAch}%
                                     </td>
 
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold  dark:text-gray-200 dark:bg-bodybg ">
@@ -254,7 +243,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                     <td
                                         className={`py-2 px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.DiscountedOfflineAch)}`}
                                     >
-                                        {getAchIcon(totalsAch.DiscountedOfflineAch)} {totalsAch.DiscountedOfflineAch}
+                                        {getAchIcon(totalsAch.DiscountedOfflineAch)} {totalsAch.DiscountedOfflineAch}%
                                     </td>
 
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold  dark:text-gray-200 dark:bg-bodybg ">
@@ -266,7 +255,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                     <td
                                         className={`py-2 px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.TotalOfflineAch)}`}
                                     >
-                                        {getAchIcon(totalsAch.TotalOfflineAch)} {totalsAch.TotalOfflineAch}
+                                        {getAchIcon(totalsAch.TotalOfflineAch)} {totalsAch.TotalOfflineAch}%
                                     </td>
 
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold  dark:text-gray-200 dark:bg-bodybg ">
@@ -278,7 +267,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                     <td
                                         className={`py-2 px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.FullPriceOnlineAch)}`}
                                     >
-                                        {getAchIcon(totalsAch.FullPriceOnlineAch)} {totalsAch.FullPriceOnlineAch}
+                                        {getAchIcon(totalsAch.FullPriceOnlineAch)} {totalsAch.FullPriceOnlineAch}%
                                     </td>
 
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold  dark:text-gray-200 dark:bg-bodybg ">
@@ -290,7 +279,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                     <td
                                         className={`py-2 px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.DiscountedOnlineAch)}`}
                                     >
-                                        {getAchIcon(totalsAch.DiscountedOnlineAch)} {totalsAch.DiscountedOnlineAch}
+                                        {getAchIcon(totalsAch.DiscountedOnlineAch)} {totalsAch.DiscountedOnlineAch}%
                                     </td>
 
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold  dark:text-gray-200 dark:bg-bodybg ">
@@ -302,7 +291,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                     <td
                                         className={`py-2 px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.TotalOnlineAch)}`}
                                     >
-                                        {getAchIcon(totalsAch.TotalOnlineAch)} {totalsAch.TotalOnlineAch}
+                                        {getAchIcon(totalsAch.TotalOnlineAch)} {totalsAch.TotalOnlineAch}%
                                     </td>
 
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold  dark:text-gray-200 dark:bg-bodybg ">
@@ -314,7 +303,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                     <td
                                         className={`py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg  dark:text-gray-200 dark:bg-bodybg   ${getAchColor(totalsAch.TotalAch)}`}
                                     >
-                                        {getAchIcon(totalsAch.TotalAch)} {totalsAch.TotalAch}
+                                        {getAchIcon(totalsAch.TotalAch)} {totalsAch.TotalAch}%
                                     </td>
                                 </tr>
                             )}

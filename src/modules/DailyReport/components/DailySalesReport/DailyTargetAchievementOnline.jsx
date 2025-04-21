@@ -29,52 +29,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
         return Number(result.toFixed(2));
     };
 
-    // useEffect(() => {
-    //     if (filters.date_from && filters.date_to) {
-    //         setLoading(true);
-    //
-    //         fetchTargetSaleData(filters.date_from, filters)
-    //             .then((apiData) => {
-    //                 const startDate = parseDate(filters.date_from);
-    //                 const endDate = parseDate(filters.date_to);
-    //
-    //                 const filtered = apiData.filter((row) => {
-    //                     const rowDate = parseDate(formatApiDate(row.date));
-    //                     return rowDate >= startDate && rowDate <= endDate;
-    //                 });
-    //
-    //                 const computed = filtered.map((row) => {
-    //                     const fullPriceOfflineAch = calcAch(row.fullPriceOfflineSale, row.fullPriceOfflineTarget);
-    //                     const discountedOfflineAch = calcAch(row.discountedOfflineSale, row.discountedOfflineTarget);
-    //                     const totalOfflineAch = calcAch(row.totalOfflineSale, row.totalOfflineTarget);
-    //
-    //                     const fullPriceOnlineAch = calcAch(row.fullPriceOnlineSale, row.fullPriceOnlineTarget);
-    //                     const discountedOnlineAch = calcAch(row.discountedOnlineSale, row.discountedOnlineTarget);
-    //                     const totalOnlineAch = calcAch(row.totalOnlineSale, row.totalOnlineTarget);
-    //
-    //                     const totalAch = calcAch(row.totalSale, row.totalTarget);
-    //
-    //                     return {
-    //                         ...row,
-    //                         fullPriceOfflineAch,
-    //                         discountedOfflineAch,
-    //                         totalOfflineAch,
-    //                         fullPriceOnlineAch,
-    //                         discountedOnlineAch,
-    //                         totalOnlineAch,
-    //                         totalAch
-    //                     };
-    //                 });
-    //
-    //                 setData(computed.length > 0 ? computed : apiData);
-    //                 setLoading(false);
-    //             })
-    //             .catch((error) => {
-    //                 console.error("Error fetching data:", error);
-    //                 setLoading(false);
-    //             });
-    //     }
-    // }, [filters]);
+
 
     const getAchColor = (achPercentage) => {
         if (achPercentage === null || achPercentage === 0) {
@@ -307,7 +262,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {formatNumberWithCommas(totals.fullPriceOfflineSale)}
                                     </td>
                                     <td className={`py-2 px-2 border  border-gray-400 text-center font-bold ${getAchColor(totalsAch.fullPriceOfflineAch)}`}>
-                                        {getAchIcon(totalsAch.fullPriceOfflineAch)} {totalsAch.fullPriceOfflineAch}
+                                        {getAchIcon(totalsAch.fullPriceOfflineAch)} {totalsAch.fullPriceOfflineAch}%
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.discountedOfflineTarget)}
@@ -316,7 +271,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {formatNumberWithCommas(totals.discountedOfflineSale)}
                                     </td>
                                     <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.discountedOfflineAch)}`}>
-                                        {getAchIcon(totalsAch.discountedOfflineAch)} {totalsAch.discountedOfflineAch}
+                                        {getAchIcon(totalsAch.discountedOfflineAch)} {totalsAch.discountedOfflineAch}%
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.totalOfflineTarget)}
@@ -325,7 +280,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {formatNumberWithCommas(totals.totalOfflineSale)}
                                     </td>
                                     <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.totalOfflineAch)}`}>
-                                        {getAchIcon(totalsAch.totalOfflineAch)} {totalsAch.totalOfflineAch}
+                                        {getAchIcon(totalsAch.totalOfflineAch)} {totalsAch.totalOfflineAch}%
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.fullPriceOnlineTarget)}
@@ -334,7 +289,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {formatNumberWithCommas(totals.fullPriceOnlineSale)}
                                     </td>
                                     <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.fullPriceOnlineAch)}`}>
-                                        {getAchIcon(totalsAch.fullPriceOnlineAch)} {totalsAch.fullPriceOnlineAch}
+                                        {getAchIcon(totalsAch.fullPriceOnlineAch)} {totalsAch.fullPriceOnlineAch}%
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.discountedOnlineTarget)}
@@ -343,7 +298,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {formatNumberWithCommas(totals.discountedOnlineSale)}
                                     </td>
                                     <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.discountedOnlineAch)}`}>
-                                        {getAchIcon(totalsAch.discountedOnlineAch)} {totalsAch.discountedOnlineAch}
+                                        {getAchIcon(totalsAch.discountedOnlineAch)} {totalsAch.discountedOnlineAch}%
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.totalOnlineTarget)}
@@ -352,7 +307,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {formatNumberWithCommas(totals.totalOnlineSale)}
                                     </td>
                                     <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.totalOnlineAch)}`}>
-                                        {getAchIcon(totalsAch.totalOnlineAch)} {totalsAch.totalOnlineAch}
+                                        {getAchIcon(totalsAch.totalOnlineAch)} {totalsAch.totalOnlineAch}%
                                     </td>
                                     <td className="py-2 px-2 border border-gray-400 text-right font-bold">
                                         {formatNumberWithCommas(totals.totalTarget)}
@@ -361,7 +316,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {formatNumberWithCommas(totals.totalSale)}
                                     </td>
                                     <td className={`py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg ${getAchColor(totalsAch.totalAch)}`}>
-                                        {getAchIcon(totalsAch.totalAch)} {totalsAch.totalAch}
+                                        {getAchIcon(totalsAch.totalAch)} {totalsAch.totalAch}%
                                     </td>
                                 </tr>
                             )}

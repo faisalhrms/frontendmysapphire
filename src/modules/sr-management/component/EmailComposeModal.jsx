@@ -5,7 +5,6 @@ import {useForm} from "react-hook-form";
 import api from "@config/axiosConfig.js";
 import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
 import useFullScreen from "@hooks/useFullScreen.js";
-import {Link} from "react-router-dom";
 
 const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
     const [includePreviousThread, setIncludePreviousThread] = useState(false);
@@ -22,8 +21,7 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
             message: ""
         }
     });
-    const {isFullscreen, handleFullscreenClick} = useFullScreen();
-    const containerHeight = isFullscreen ? "calc(100vh - 100px)" : "500px";
+
     const preselectedToEmails = useMemo(() => {
         const emails = new Set([...(serviceRequest?.to_email || [])]);
         if (serviceRequest?.reporter_email) {
@@ -76,15 +74,11 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
              className={`hs-overlay fixed inset-0 z-50 bg-black/40 transition-all duration-300 ${isOpen ? "block" : "hidden"}`}
              tabIndex={-1}>
             <div
-                className={`hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex items-center justify-center ${isFullscreen ? "w-full h-full" : "min-h-[calc(100%-3.5rem)] max-w-2xl mx-auto my-auto"}`}>
+                className={`hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex items-center justify-center min-h-[calc(100%-2rem)] max-w-4xl mx-auto my-auto`}>
+
                 <div
-                    className={`ti-modal-content bg-white rounded-lg shadow-xl w-full ${isFullscreen ? "h-full" : ""}`}>
+                    className={`ti-modal-content bg-white rounded-lg shadow-xl w-full`}>
                     <div className="ti-modal-header flex justify-between items-center p-4 border-b">
-                        <Link aria-label="anchor" to="#"
-                              className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen"
-                              onClick={handleFullscreenClick}>
-                            <i className="ri-fullscreen-line"></i>
-                        </Link>
                         <h6 className="modal-title text-[1rem] font-semibold">Compose Email</h6>
                         <button onClick={onClose} type="button"
                                 className="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor">
@@ -92,7 +86,7 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
                         </button>
                     </div>
                     <form onSubmit={handleSubmit(handleSave)}>
-                        <div className="ti-modal-body px-4 py-3 space-y-4" style={{maxHeight: containerHeight}}>
+                        <div className="ti-modal-body px-4 py-3 space-y-4">
                             <SRAsyncSelect key={`to-email-${isOpen}`}
                                            label="To" isMulti name="to_email"
                                            control={control}
@@ -114,7 +108,7 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
                                     errors={errors}
                                     placeholder="Write your email message here"
                                     editorOptions={{
-                                        height: 150,
+                                        height: 200,
                                         buttonList: [
                                             ["undo", "redo"],
                                             ["font", "fontSize", "paragraphStyle"],

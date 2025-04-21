@@ -21,7 +21,6 @@ const ProjectDetail = () => {
   const { projectData } = useProject(id);
   const { milestones, isLoading, refetch } = useProjectMilestonesWithTasks(id);
   const { statistics, statsFetching, statsRefetch, statsError } = useProjectStatistics(id, 6, { enabled: false });
-console.log(`this is project data`,projectData)
   const [importType, setImportType] = useState("M");
   const {
     openUploadModal,

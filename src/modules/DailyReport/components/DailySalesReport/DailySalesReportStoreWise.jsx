@@ -34,28 +34,10 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
         FOL:true,
     });
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             if (filters.date_from && filters.date_to) {
-    //                 setLoading(true);
-    //
-    //                 const lastDayResult = await fetchSaleMtdLdDataLD(filters.date_from);
-    //                 const mtdResult = await fetchSaleMtdLdDataMT(filters.date_from);
-    //
-    //                 setLastDayData(lastDayResult);
-    //                 setMtdData(mtdResult);
-    //                 setLoading(false);
-    //             }
-    //         } catch (error) {
-    //             setError("Error fetching sales data");
-    //             setLoading(false);
-    //             console.error("Error fetching sales data:", error);
-    //         }
-    //     };
-    //
-    //     fetchData();
-    // }, [filters.date_from, filters.date_to]);
+    const formatNumberWithCommas = (num) => {
+        if (num === 0 || num == null) return "-";
+        return num.toLocaleString();
+    };
 
     const getRowBgColor = (type, isHeader) => {
         if (isHeader) {
@@ -248,7 +230,7 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
                                     Total
                                 </td>
                                 <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right font-bold dark:text-gray-200 dark:bg-bodybg`}>
-                                    {(data?.overall_fullprice_sale_qty)}
+                                    {formatNumberWithCommas(data?.overall_fullprice_sale_qty)}
                                 </td>
                                 <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right font-bold dark:text-gray-200 dark:bg-bodybg`}>
                                     {formatNumberWithCommas(data?.overall_fullprice_sale_value)}

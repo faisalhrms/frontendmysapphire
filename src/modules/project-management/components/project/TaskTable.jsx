@@ -12,11 +12,11 @@ import HasProjectPermission from "@modules/project-management/components/project
 import {useSelector} from "react-redux";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
-import ProjectManagement from "@modules/project-management/components/project/TaskTableModel.jsx";
-import {showModal} from "@redux/common/delModalSlice.js";
-import MilestoneDetailModel from "@modules/project-management/components/model/TaskDetailModal.jsx";
+import TaskDeadLineItem from "@modules/project-management/components/task/TaskDeadLineItem.jsx";
+import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
+import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false , setShow , setViewData }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false, needTarget = false }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -33,6 +33,16 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
 
 
     const { handleDeleteClick } = useDelete();
+    const {
+        openTaskDetailModal,
+        closeTaskDetailModal,
+        isTaskDetailModalOpen,
+        isTaskDetailLoading,
+        task,
+    } = useTaskDetailModal()
+
+
+
 
     const sortedTasks = useMemo(() => {
         let sortableTasks = [...tasks];
@@ -73,17 +83,9 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
 
 
 
-    const handleView = (id)=>{
-            setViewData({...id,milestoneLaunch})
-            setShow(true);
-
-    }
-
-
-
     return (
         <>
-           <div className={`table-responsive task-table`}>
+            <div className={`table-responsive task-table`}>
 
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
@@ -99,9 +101,10 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 {getSortIconAndClass('priority').icon}
                             </span>
                         </th>
+
                         <th
                             scope="col"
-                            onClick={() => requestSort('name')}
+
                             className="cursor-pointer"
                         >
                             {isChild ? "Sub Task Name" : "Task Name"}
@@ -286,12 +289,13 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-                                               <Tooltip>
-                                                    <button
-                                                        onClick={() => handleView(task)}
-                                                        className='ti-btn ti-btn-success ti-btn-sm'>
+                                               <Tooltip
+                                                   id={`view-task-tooltip-${task.id}`}
+                                                   tooltipContent={`View Task (${task.name})`}>
+                                                   <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}
+                                                         className='ti-btn ti-btn-info ti-btn-sm'>
                                                         <i className="ri-eye-line"></i>
-                                                    </button>
+                                                   </Link>
                                                 </Tooltip>
                                     </span>
                                         </td>
@@ -321,13 +325,10 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         <Tooltip
                                             id={`task-tooltip-${task.id}`}
                                             tooltipContent={`${task.name}`}>
-                                            <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)} {...(needTarget ? { target: "_blank" } : {})}>
-                                              {getExcerptFromText(task.name, 80)}
-                                                {task.children && task.children.length > 0 && (
-                                                    <span className="badge bg-primary/10 text-primary ms-2">
-                                                            {task.children.length}
-                                                        </span>)
-                                                }
+                                            <Link
+                                                onClick={() => {openTaskDetailModal(task.id)}}
+                                             to="#">
+                                                {getExcerptFromText(task.name, 80)}
                                             </Link>
                                         </Tooltip>
                                     </span>
@@ -340,51 +341,9 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td>{task?.aging} Days</td>
                                 <td>
                                     <div className="flex items-center">
-                                        {
-                                            task.completion_timeline !== null ?
-                                                <span className="me-6 text-success text-[1rem]">
-                                                <Tooltip
-                                                    id={`task-tooltip-${task.id}-info`}
-                                                    tooltipContent={`${task.completion_timeline < 0 ? `Done ${Math.abs(task.completion_timeline)} days after deadline` : 'Done on time'} `}
-                                                >
-                                                    {
-                                                        task.completion_timeline < 0
-                                                            ?
-                                                            <i className="ri-information-line cursor-pointer"></i>
-                                                            :
-                                                            <i className="ri-check-double-line cursor-pointer"></i>
-                                                    }
-                                                </Tooltip>
-                                            </span>
-                                                :
-                                                (
-                                                    task.is_overdue ?
-                                                        <span className="me-6 text-danger text-[1rem]">
-                                                            <Tooltip
-                                                                id={`task-tooltip-${task.id}-overdue`}
-                                                                tooltipContent={`Task is overdue by ${Math.abs(task.days_left)} days`}
-                                                            >
-                                                                <i className="ri-information-line cursor-pointer"></i>
-                                                            </Tooltip>
-                                                        </span>
-                                                        :
-                                                        <span className="me-6 text-secondary text-[1rem]">
-                                                            <Tooltip
-                                                                id={`task-tooltip-${task.id}-days_left`}
-                                                                tooltipContent={`${Math.abs(task.days_left)} days left`}
-                                                            >
-                                                                <i className="ri-information-line cursor-pointer"></i>
-                                                            </Tooltip>
-                                                        </span>
-                                                )
-                                        }
-                                        <span
-                                            className={task.completed_at ? 'line-through' : (task.is_overdue ? 'line-through text-danger' : '')}>
-                                            {formatDate(task.ended_at)}
-                                        </span>
+                                        <TaskDeadLineItem task={task}/>
                                     </div>
                                 </td>
-
 
 
                                 <td>{formatDate(task.completed_at)}</td>
@@ -427,21 +386,26 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                    startedAt={task.started_at} endedAt={task.ended_at}
                                                    tasks={task.children} openTaskModal={openTaskModal} isChild={true}
                                                    refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}
-                                                   openTaskDetailModal={openTaskDetailModal} viewOnly={viewOnly}
-                                                   setShow={setShow}
-                                                   setViewData={setViewData}
+                                                   viewOnly={viewOnly}
                                         />
                                     </td>
                                 </tr>
                             )}
-                        </React.Fragment>))}
+                        </React.Fragment>
+                    ))}
                     </tbody>
                 </table>
             </div>
-
-
-
+            {
+                isTaskDetailModalOpen &&
+                <TaskDetailModalPortal
+                    task={task}
+                    isLoading={isTaskDetailLoading}
+                    closeModal={closeTaskDetailModal}
+                />
+            }
         </>
+
     );
 };
 
