@@ -4,7 +4,7 @@ import React from "react";
 
 const TaskDeadLineItem = ({task}) => {
     return (
-        <span className='flex items-center justify-center'>
+        <span className='flex items-center justify-center font-bold'>
             {
                 task.completion_timeline !== null
                     ?
