@@ -12,8 +12,11 @@ import HasProjectPermission from "@modules/project-management/components/project
 import {useSelector} from "react-redux";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
+import ProjectManagement from "@modules/project-management/components/project/TaskTableModel.jsx";
+import {showModal} from "@redux/common/delModalSlice.js";
+import MilestoneDetailModel from "@modules/project-management/components/model/TaskDetailModal.jsx";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false , setShow , setViewData }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -68,9 +71,20 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
         };
     };
 
+
+
+    const handleView = (id)=>{
+            setViewData({...id,milestoneLaunch})
+            setShow(true);
+
+    }
+
+
+
     return (
         <>
-            <div className={`table-responsive task-table`}>
+           <div className={`table-responsive task-table`}>
+
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
@@ -272,6 +286,13 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
+                                               {/*<Tooltip>*/}
+                                               {/*     <button*/}
+                                               {/*         onClick={() => handleView(task)}*/}
+                                               {/*         className='ti-btn ti-btn-success ti-btn-sm'>*/}
+                                               {/*         <i className="ri-eye-line"></i>*/}
+                                               {/*     </button>*/}
+                                               {/* </Tooltip>*/}
                                     </span>
                                         </td>
                                     )
@@ -313,11 +334,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 </td>
                                 <td className='text-center'><AvatarList users={task.users} max={4}/></td>
                                 <td>
-                                    {(
-                                        task.teams?.map(team => (
-                                            <span key={team.id}>{toTitleCase(team.name)}</span>
-                                        ))
-                                    )}
+                                    {task.teams?.map(team => toTitleCase(team.name)).join(', ')}
                                 </td>
                                 <td>{formatDate(task.started_at)}</td>
                                 <td>{task?.aging} Days</td>
@@ -367,6 +384,9 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         </span>
                                     </div>
                                 </td>
+
+
+
                                 <td>{formatDate(task.completed_at)}</td>
                                 <td className={`min-w-[200px] ${(projectUser?.can_view_only || viewOnly) ? `!p-0 ${getBadgeClasses(task.status, '', false)}` : ''}`}>
                                     {(() => {
@@ -407,7 +427,10 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                    startedAt={task.started_at} endedAt={task.ended_at}
                                                    tasks={task.children} openTaskModal={openTaskModal} isChild={true}
                                                    refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}
-                                                   openTaskDetailModal={openTaskDetailModal} viewOnly={viewOnly}/>
+                                                   openTaskDetailModal={openTaskDetailModal} viewOnly={viewOnly}
+                                                   setShow={setShow}
+                                                   setViewData={setViewData}
+                                        />
                                     </td>
                                 </tr>
                             )}
@@ -415,6 +438,9 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                     </tbody>
                 </table>
             </div>
+
+
+
         </>
     );
 };

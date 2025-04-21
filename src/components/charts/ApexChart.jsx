@@ -283,6 +283,11 @@ const ApexChart = ({
     return (
         <div style={{ overflowX: 'auto', width: '100%' }}>
             <div style={{ width: dynamicChartWidth, minWidth: '100%' }}>
+                {onPointClick && (
+                    <style>
+                        {`.apexcharts-bar-series path { cursor: pointer; }`}
+                    </style>
+                )}
                 <ReactApexChart
                     options={defaultOptions}
                     series={series}

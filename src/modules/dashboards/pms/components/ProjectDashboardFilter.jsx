@@ -7,13 +7,14 @@ import {useSelector} from "react-redux";
 import ProjectDropDown from "@modules/project-management/components/dropdowns/ProjectDropDown.jsx";
 
 const ProjectDashboardFilter = ({ control, errors }) => {
-    const companyId = useSelector((state) => state.auth.user.employee.company.id);
-    const [company, setCompany] = useState(companyId);
+    const employee = useSelector((state) => state.auth.user.employee);
+    const company = employee.company;
+    const [companyId, setCompanyId] = useState(company.id);
     const [department, setDepartment] = useState(null);
     const [workspace, setWorkspace] = useState(null);
 
     const handleCompanySelect = useCallback((id) => {
-        setCompany(id)
+        setCompanyId(id)
         setDepartment(null)
     }, []);
 
@@ -36,11 +37,12 @@ const ProjectDashboardFilter = ({ control, errors }) => {
                                     control={control}
                                     errors={errors}
                                     onCompanySelect={handleCompanySelect}
+                                    data={employee}
                                 />
                             </div>
                             <div className="flex items-center gap-4 flex-1">
                                 <DepartmentDropdown
-                                    company_id={company}
+                                    company_id={companyId}
                                     control={control}
                                     errors={errors}
                                     onDepartmentSelect={handleDepartmentSelect}
@@ -48,7 +50,7 @@ const ProjectDashboardFilter = ({ control, errors }) => {
                             </div>
                             <div className="flex items-center gap-4 flex-1">
                                 <WorkspaceDropdown
-                                    company_id={company}
+                                    company_id={companyId}
                                     department_id={department}
                                     name='workspace_id'
                                     control={control}

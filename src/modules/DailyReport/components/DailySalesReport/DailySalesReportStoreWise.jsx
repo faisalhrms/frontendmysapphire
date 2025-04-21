@@ -248,7 +248,7 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
                                     Total
                                 </td>
                                 <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right font-bold dark:text-gray-200 dark:bg-bodybg`}>
-                                    {(data?.overall_fullprice_sale_qty)}
+                                    {formatNumberWithCommas(data?.overall_fullprice_sale_qty)}
                                 </td>
                                 <td className={`px-4 py-1 border border-gray-300 bg-gray-200 text-right font-bold dark:text-gray-200 dark:bg-bodybg`}>
                                     {formatNumberWithCommas(data?.overall_fullprice_sale_value)}
