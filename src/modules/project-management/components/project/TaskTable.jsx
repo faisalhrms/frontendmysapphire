@@ -13,8 +13,10 @@ import {useSelector} from "react-redux";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 import TaskDeadLineItem from "@modules/project-management/components/task/TaskDeadLineItem.jsx";
+import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
+import TaskDetailModal from "@modules/project-management/components/model/TaskDetailModal.jsx";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false, needTarget = false }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -31,6 +33,16 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
 
 
     const { handleDeleteClick } = useDelete();
+    const {
+        openTaskDetailModal,
+        closeTaskDetailModal,
+        isTaskDetailModalOpen,
+        isTaskDetailLoading,
+        task,
+    } = useTaskDetailModal()
+
+
+
 
     const sortedTasks = useMemo(() => {
         let sortableTasks = [...tasks];
@@ -89,9 +101,10 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 {getSortIconAndClass('priority').icon}
                             </span>
                         </th>
+
                         <th
                             scope="col"
-                            onClick={() => requestSort('name')}
+
                             className="cursor-pointer"
                         >
                             {isChild ? "Sub Task Name" : "Task Name"}
@@ -278,11 +291,9 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                <Tooltip
                                                    id={`view-task-tooltip-${task.id}`}
                                                    tooltipContent={`View Task (${task.name})`}>
-                                                    <button
-                                                        onClick={() => openTaskDetailModal(task.id)}
-                                                        className='ti-btn ti-btn-success ti-btn-sm'>
+                                                   <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
                                                         <i className="ri-eye-line"></i>
-                                                    </button>
+                                                   </Link>
                                                 </Tooltip>
                                     </span>
                                         </td>
@@ -312,14 +323,13 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         <Tooltip
                                             id={`task-tooltip-${task.id}`}
                                             tooltipContent={`${task.name}`}>
-                                            <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)} {...(needTarget ? { target: "_blank" } : {})}>
-                                              {getExcerptFromText(task.name, 80)}
-                                                {task.children && task.children.length > 0 && (
-                                                    <span className="badge bg-primary/10 text-primary ms-2">
-                                                            {task.children.length}
-                                                        </span>)
-                                                }
-                                            </Link>
+                                            <span
+                                                onClick={() => {
+                                                    openTaskDetailModal(task.id);
+                                                }}
+                                            >
+                                    {getExcerptFromText(task.name, 80)}
+                                                    </span>
                                         </Tooltip>
                                     </span>
                                 </td>
@@ -385,7 +395,13 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                     </tbody>
                 </table>
             </div>
+
+            {
+                isTaskDetailModalOpen &&
+                <TaskDetailModal task={task} isLoading={isTaskDetailLoading} closeModal={closeTaskDetailModal} />
+            }
         </>
+
     );
 };
 
