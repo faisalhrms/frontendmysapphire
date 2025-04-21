@@ -4,7 +4,7 @@ const TaskDetailRow = ({ icon, title, children, bodyClasses = '', alignCenter = 
     return (
         <>
             <div className="col-span-4 flex items-center">
-                <span className="mr-1 font-bold">
+                <span className="mr-2 text-lg">
                     <i className={icon}></i>
                 </span>
                 {title}

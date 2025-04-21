@@ -13,21 +13,10 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
         return new Date(year, month - 1, day);
     };
 
-    // useEffect(() => {
-    //     if (filters.date_from && filters.date_to) {
-    //         setLoading(true);
-    //
-    //         fetchSaleCvVsLyData(filters.date_from, filters)
-    //             .then((responseData) => {
-    //                 setData(responseData);
-    //                 setLoading(false);
-    //             })
-    //             .catch((error) => {
-    //                 console.error("Error fetching sales data:", error);
-    //                 setLoading(false);
-    //             });
-    //     }
-    // }, [filters]);
+    const formatNumberWithCommas = (num) => {
+        if (num === 0 || num == null) return "-";
+        return num.toLocaleString();
+    };
 
     const totalCy = data.reduce((total, item) => total + item.FullPriceOfflineCY, 0);
     const totalLy = data.reduce((total, item) => total + item.FullPriceOfflineLY, 0);

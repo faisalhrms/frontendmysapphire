@@ -10,7 +10,6 @@ import TaskDeadLineItem from "@modules/project-management/components/task/TaskDe
 import {Link} from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import Tooltip from "@components/Tooltip.jsx";
 import {generateFile} from "@helpers/media.js";
 
@@ -28,7 +27,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
         <div
             id="taskDetailModal"
             data-hs-overlay-keyboard="false"
-            className="hs-overlay ti-modal hidden [--overlay-backdrop:static] backdrop-blur-[0.08rem] parent-modal">
+            className="hs-overlay ti-modal hidden [--overlay-backdrop:static] backdrop-blur-[0.08rem] bg-gray-900 bg-opacity-50 dark:bg-opacity-80 parent-modal">
             <div
                 className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out w-[90%] !max-w-[1200px] h-[94vh]">
                 <div className="max-h-full overflow-hidden ti-modal-content">
@@ -44,38 +43,32 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                 <Tooltip
                                                     id={`task-name-tooltip-${task.id}`}
                                                     tooltipContent={`${task.name}`}>
-                                                    <h3>{getExcerptFromText(task.name, 30)}</h3>
+                                                    <h3 style={{fontFamily: 'fantasy'}}>{getExcerptFromText(task.name, 40)}</h3>
+
                                                 </Tooltip>
-                                                <div className="text-sm">
+                                                <div className="text-sm font-medium mt-2" >
                                                     in
-                                                    <i className="ri-arrow-right-s-line mx-1"></i>
+                                                    <i className="ri-arrow-right-s-line justify-center mx-2 "></i>
                                                     <Tooltip
                                                         id={`task-milestone-tooltip-${task.id}`}
                                                         tooltipContent={`${task?.milestone?.name}`}>
                                                         {getExcerptFromText(task?.milestone?.name, 30)}
                                                     </Tooltip>
-                                                    <i className="ri-arrow-right-s-line mx-1"></i>
-                                                    <span className="font-semibold">
+
+                                                    <i className="ri-arrow-right-s-line justify-center mx-2 "></i>
+                                                    <span className="font-semibold text-primary">
                                                     <Tooltip
                                                         id={`task-project-tooltip-${task.id}`}
                                                         tooltipContent={`${task?.project?.name}`}>
-                                                        <Link
-                                                            to={PMS_ROUTES.PROJECT.DETAIL.path.replace(':id', task.project.id)}>
-                                                             {getExcerptFromText(task?.project?.name, 30)}
-                                                        </Link>
+                                                         {getExcerptFromText(task?.project?.name, 30)}
                                                 </Tooltip></span> Project
                                                 </div>
                                             </div>
                                             <PerfectScrollbar
                                                 className='max-h-[calc(100vh-10rem)] ps--active-y'
                                             >
-                                                <div className="grid grid-cols-12 gap-4 p-4">
-                                                    <TaskDetailRow
-                                                        icon='bx bx-text'
-                                                        title='ID'
-                                                        children={task.task_no}
-                                                        alignCenter={false}
-                                                    />
+                                                <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium">
+
                                                     <TaskDetailRow
                                                         icon='bx bx-text'
                                                         title='Name'
@@ -84,14 +77,14 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon='bi bi-app-indicator '
                                                         title='Priority'
                                                         bodyClasses={getStatusClasses(task.priority)}
                                                         children={toTitleCase(task.priority)}
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-user-circle'
+                                                        icon='bi bi-person'
                                                         title='Person'
                                                         bodyClasses='!p-1'
                                                     >
@@ -99,13 +92,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     </TaskDetailRow>
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
-                                                        title='Name'
-                                                        children={task.name}
-                                                    />
-
-                                                    <TaskDetailRow
-                                                        icon='ri-group-line'
+                                                        icon='bi bi-people'
                                                         title='Team'
                                                     >
                                                         {(
@@ -117,51 +104,51 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     </TaskDetailRow>
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon='bi bi-calendar2-event'
                                                         title='Started Date'
                                                         children={formatDate(task.started_at)}
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon='bi bi-clipboard2-pulse'
                                                         title='Aging'
                                                         children={`${task?.aging} Days`}
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='ri-calendar-schedule-line'
+                                                        icon='bi bi-calendar-x'
                                                         title='Deadline'
                                                     >
                                                         <TaskDeadLineItem task={task}/>
                                                     </TaskDetailRow>
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon='bi bi-calendar2-check'
                                                         title='Completion Date'
                                                         children={formatDate(task.completed_at)}
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='ri-calendar-schedule-line'
+                                                        icon='ri-line-chart-line '
                                                         title='Status'
                                                         bodyClasses={getBadgeClasses(task.status, '', false)}
                                                         children={toTitleCase(task.status)}
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon=' bi bi-check2-circle'
                                                         title='Completion Timeline'
                                                         children={task.completion_timeline}
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon='bi bi-people'
                                                         title='Timeline Group'
                                                         children={task.time_line_group}
                                                     />
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon='bi bi-tropical-storm'
                                                         title='Progress'
                                                     >
                                                         <div className='flex items-center'>
@@ -173,7 +160,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     </TaskDetailRow>
 
                                                     <TaskDetailRow
-                                                        icon='bx bx-text'
+                                                        icon='bi bi-layout-wtf'
                                                         title='Launch'
                                                         children={task.milestoneLaunch}
                                                     />
@@ -202,29 +189,14 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     className="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary active"
                                                     to="#" id="discussion-item" data-hs-tab="#discussion"
                                                     aria-controls="discussion">
-                                                    <svg className="w-3.5 h-3.5"
-                                                         xmlns="http://www.w3.org/2000/svg"
-                                                         width="16" height="16" fill="currentColor"
-                                                         viewBox="0 0 16 16">
-                                                        <path fillRule="evenodd"
-                                                              d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
-                                                        <path fillRule="evenodd"
-                                                              d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
-                                                    </svg>
+                                                    <i className="bi bi-chat-dots text-lg"></i>
                                                     Discussion
                                                 </Link>
                                                 <Link
                                                     className="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary"
                                                     to="#" id="attachment-item" data-hs-tab="#attachment"
                                                     aria-controls="attachment">
-                                                    <svg className="w-3.5 h-3.5"
-                                                         xmlns="http://www.w3.org/2000/svg"
-                                                         width="16" height="16" fill="currentColor"
-                                                         viewBox="0 0 16 16">
-                                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                                                        <path fillRule="evenodd"
-                                                              d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                                                    </svg>
+                                                    <i className="ri-attachment-2 text-lg"></i>
                                                     Attachments
                                                 </Link>
                                             </nav>
@@ -238,7 +210,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     storeEndPoint={`/pms/tasks/${task?.id}/discussion/`}
                                                     getEndPoint={`/pms/tasks/${task?.id}/discussions/`}
                                                     users={task?.users}
-                                                    maxHeight='max-h-[calc(100vh-24rem)]'
+                                                    maxHeight='max-h-[calc(100vh-35rem)] '
                                                 />
                                             </div>
                                             <div id="attachment" className="hidden" role="tabpanel"
