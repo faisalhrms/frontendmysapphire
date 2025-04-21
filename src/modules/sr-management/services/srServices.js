@@ -1,9 +1,14 @@
-import api from "@config/axiosConfig.js";
+const getYearOptions = (start, end) =>
+  Array.from(
+    { length: end - start + 1 },
+    (_, i) => {
+      const year = start + i
+      return { value: year.toString(), label: year.toString() }
+    }
+  )
 
-export const yearDashboard = [
-    { value: '2024', label: '2024' },
-    { value: '2025', label: '2025' },
-];
+export const yearDashboard = getYearOptions(2024, new Date().getFullYear())
+
 
 export const monthDashboard = [
   { value: "1", label: "January" },

@@ -22,11 +22,6 @@ const EmailSetupList = () => {
                             <i className="ri-edit-line"></i>
                         </button>
                     </Link>
-                    <Link to={`/module/email-setup/detail/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-info ti-btn-sm">
-                            <i className="ri-eye-line"></i>
-                        </button>
-                    </Link>
                 </div>
             ),
         },
@@ -41,7 +36,7 @@ const EmailSetupList = () => {
         },
         {
             Header: "To Emails",
-            accessor: "to_emails",
+            accessor: "to_users",
             Cell: ({ value }) => (
                 <>
                     {value.map((user, idx) => (
@@ -57,7 +52,7 @@ const EmailSetupList = () => {
         },
         {
             Header: "CC Emails",
-            accessor: "cc_emails",
+            accessor: "cc_users",
             Cell: ({ value }) => (
                 <>
                     {value.map((user, idx) => (

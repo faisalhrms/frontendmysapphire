@@ -66,9 +66,9 @@ const statusStyles = {
     sold_to_employee: txtSuccess,
     write_off: txtDanger,
     temporary_allocation:  warning,
-    High: txtDanger,
-    Low: txtSuccess,
-    Medium: txtWarning,
+    high: txtDanger,
+    low: txtSuccess,
+    medium: txtWarning,
 
 };
 

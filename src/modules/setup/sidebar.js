@@ -27,14 +27,14 @@ export const sidebarMenu = [
                 SETUP_ROUTES.COMPANY.READ.permission
 
             ),
-            // generateSidebarItem(
-            //     SETUP_ROUTES.EMAIL.READ.path,
-            //     'link',
-            //     'Email Setup',
-            //     6,
-            //     'bx-laptop',
-            //
-            // )
+            generateSidebarItem(
+                SETUP_ROUTES.EMAIL.READ.path,
+                'link',
+                'Email Setup',
+                6,
+                'bx-laptop',
+
+            )
         ]
     )
 ];

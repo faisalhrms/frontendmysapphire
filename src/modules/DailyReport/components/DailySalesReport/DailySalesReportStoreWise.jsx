@@ -34,28 +34,10 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
         FOL:true,
     });
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             if (filters.date_from && filters.date_to) {
-    //                 setLoading(true);
-    //
-    //                 const lastDayResult = await fetchSaleMtdLdDataLD(filters.date_from);
-    //                 const mtdResult = await fetchSaleMtdLdDataMT(filters.date_from);
-    //
-    //                 setLastDayData(lastDayResult);
-    //                 setMtdData(mtdResult);
-    //                 setLoading(false);
-    //             }
-    //         } catch (error) {
-    //             setError("Error fetching sales data");
-    //             setLoading(false);
-    //             console.error("Error fetching sales data:", error);
-    //         }
-    //     };
-    //
-    //     fetchData();
-    // }, [filters.date_from, filters.date_to]);
+    const formatNumberWithCommas = (num) => {
+        if (num === 0 || num == null) return "-";
+        return num.toLocaleString();
+    };
 
     const getRowBgColor = (type, isHeader) => {
         if (isHeader) {
