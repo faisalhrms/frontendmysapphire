@@ -114,13 +114,15 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                 >
                   <i className="ri-refresh-line font-semibold align-middle"></i> Refresh
                 </button>
-                <Link aria-label="anchor" to="#" className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen" onClick={handleFullscreenClick}>
+                <Link aria-label="anchor" to="#"
+                      className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen"
+                      onClick={handleFullscreenClick}>
                   <i className="ri-fullscreen-line"></i>
                 </Link>
               </div>
             </div>
           </div>
-          <div className="overflow-y-scroll" style={{ maxHeight: containerHeight }}>
+          <div className="overflow-y-scroll" style={{maxHeight: containerHeight}}>
             <div className="box-body">
               {isLoading ? (
                   <LoadingSpinner/>
@@ -184,10 +186,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
             />
         }
 
-        {/*{*/}
-        {/*    isTaskDetailModalOpen &&*/}
-        {/*    <TaskDetailModal task={task} isLoading={isTaskDetailLoading} closeModal={closeTaskDetailModal} />*/}
-        {/*}*/}
+        <div id="modal-root"></div>
       </>
   );
 };

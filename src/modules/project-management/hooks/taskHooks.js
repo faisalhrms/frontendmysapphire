@@ -346,13 +346,6 @@ export const useTaskDetailModal = () => {
   const openTaskDetailModal = (id) => {
     setId(id);
     setIsTaskDetailModalOpen(true);
-    setTimeout(() => {
-      const modal = document.getElementById("taskDetailModal");
-      if (modal) {
-        window.HSOverlay.open(modal);
-        modal.classList.add('open');
-      }
-    }, 200);
   };
 
   const closeTaskDetailModal = () => {
@@ -362,6 +355,19 @@ export const useTaskDetailModal = () => {
     }
     setTimeout(() => setIsTaskDetailModalOpen(false), 200);
   };
+
+  useEffect(() => {
+    const parentModal = document.querySelector('.parent-modal.open');
+    const modalElement = document.getElementById('taskDetailModal');
+    if (modalElement) {
+      isTaskDetailModalOpen ? window.HSOverlay.open(modalElement) : window.HSOverlay.close(modalElement);
+      if (parentModal) {
+        parentModal.classList.toggle('open', isTaskDetailModalOpen);
+        modalElement.classList.toggle('open', isTaskDetailModalOpen);
+        modalElement.classList.toggle('hidden', !isTaskDetailModalOpen);
+      }
+    }
+  }, [isTaskDetailModalOpen]);
 
   const { data: task = {}, isLoading: isTaskDetailLoading, refetch } = useQuery({
     queryKey: ['taskDetail', id],

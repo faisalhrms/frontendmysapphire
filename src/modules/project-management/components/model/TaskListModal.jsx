@@ -8,7 +8,7 @@ const TaskListModal = ({tasks, isLoading, heading = 'Tasks', closeModal}) => {
             <div
                 id="taskListingModal"
                 data-hs-overlay-keyboard="false"
-                className="hs-overlay ti-modal hidden [--overlay-backdrop:static] h-screen w-screen">
+                className="hs-overlay ti-modal hidden [--overlay-backdrop:static] h-screen w-screen bg-gray-900 bg-opacity-50 dark:bg-opacity-80 parent-modal">
                 <div className="hs-overlay-open:mt-0 ti-modal-box mt-10 !m-0 !max-w-full !w-full !h-full">
                     <div className="ti-modal-content !rounded-none">
                         <div className="ti-modal-header">
@@ -30,7 +30,7 @@ const TaskListModal = ({tasks, isLoading, heading = 'Tasks', closeModal}) => {
 
                         <div className="ti-modal-body overflow-y-auto flex-grow">
                             {isLoading ?
-                                <LoadingSpinner />
+                                <LoadingSpinner/>
                                 :
                                 (
                                     tasks.length > 0 ?
@@ -40,9 +40,9 @@ const TaskListModal = ({tasks, isLoading, heading = 'Tasks', closeModal}) => {
                                             needTarget={true}
                                         />
                                         :
-                                        <div class="grid grid-cols-12 gap-x-6">
-                                            <div class="col-span-12 flex items-center justify-center h-64"><p
-                                                class="text-lg text-gray-500">There are no tasks related to you.</p>
+                                        <div className="grid grid-cols-12 gap-x-6">
+                                            <div className="col-span-12 flex items-center justify-center h-64"><p
+                                                className="text-lg text-gray-500">There are no tasks related to you.</p>
                                             </div>
                                         </div>
                                 )
@@ -51,6 +51,7 @@ const TaskListModal = ({tasks, isLoading, heading = 'Tasks', closeModal}) => {
                     </div>
                 </div>
             </div>
+            <div id="modal-root"></div>
         </>
     );
 };

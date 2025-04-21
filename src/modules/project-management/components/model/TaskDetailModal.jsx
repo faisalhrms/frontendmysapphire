@@ -10,7 +10,6 @@ import TaskDeadLineItem from "@modules/project-management/components/task/TaskDe
 import {Link} from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import Tooltip from "@components/Tooltip.jsx";
 import {generateFile} from "@helpers/media.js";
 
@@ -28,7 +27,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
         <div
             id="taskDetailModal"
             data-hs-overlay-keyboard="false"
-            className="hs-overlay ti-modal hidden [--overlay-backdrop:static] backdrop-blur-[0.08rem] parent-modal">
+            className="hs-overlay ti-modal hidden [--overlay-backdrop:static] backdrop-blur-[0.08rem] bg-gray-900 bg-opacity-50 dark:bg-opacity-80 parent-modal">
             <div
                 className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out w-[90%] !max-w-[1200px] h-[94vh]">
                 <div className="max-h-full overflow-hidden ti-modal-content">
@@ -44,7 +43,8 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                 <Tooltip
                                                     id={`task-name-tooltip-${task.id}`}
                                                     tooltipContent={`${task.name}`}>
-                                                    <h3>{getExcerptFromText(task.name, 30)}</h3>
+                                                    <h3 style={{fontFamily: 'fantasy'}}>{getExcerptFromText(task.name, 40)}</h3>
+
                                                 </Tooltip>
                                                 <div className="text-sm font-medium mt-2" >
                                                     in
@@ -60,10 +60,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     <Tooltip
                                                         id={`task-project-tooltip-${task.id}`}
                                                         tooltipContent={`${task?.project?.name}`}>
-                                                        <Link
-                                                            to={PMS_ROUTES.PROJECT.DETAIL.path.replace(':id', task.project.id)}>
-                                                             {getExcerptFromText(task?.project?.name, 30)}
-                                                        </Link>
+                                                         {getExcerptFromText(task?.project?.name, 30)}
                                                 </Tooltip></span> Project
                                                 </div>
                                             </div>
@@ -192,7 +189,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     className="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary active"
                                                     to="#" id="discussion-item" data-hs-tab="#discussion"
                                                     aria-controls="discussion">
-                                                    <i class="bi bi-chat-dots text-lg"></i>
+                                                    <i className="bi bi-chat-dots text-lg"></i>
                                                     Discussion
                                                 </Link>
                                                 <Link
