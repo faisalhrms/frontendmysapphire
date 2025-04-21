@@ -105,19 +105,19 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
           </div>
 
           {discussion.attachments?.length > 0 && (
-            <div className="flex space-x-2">
-              {discussion.attachments.map(attachment => (
-                <Link
-                  key={`${discussion.id}-${attachment.id}`}
-                  to={attachment.file}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span dangerouslySetInnerHTML={{ __html: generateIcon(attachment) }} />
-                </Link>
-              ))}
-            </div>
+                    <p className="profile-activity-media mb-0 flex">
+                        {discussion.attachments.map((attachment) => (
+                            <Link
+                                key={`${discussion.id}-${attachment.id}`}
+                                to={attachment.file}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span dangerouslySetInnerHTML={{ __html: generateIcon(attachment) }} />
+                            </Link>
+                        ))}
+                    </p>
           )}
         </div>
       </div>
