@@ -2,30 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
 
 const StoreWise = ({ filters , newData , error , loading , expand  }) => {
-    // const [newData, setNewData] = useState({});
-    // const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState(null);
+
     const tableContainerRef = useRef(null);
     const [tableData, setTableData] = useState([]);
     const [expandedSections, setExpandedSections] = useState({});
 
-    // const fetchData = async () => {
-    //     try {
-    //         setLoading(true);
-    //         setError(null);
-    //         const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
-    //         setNewData(data || {});
-    //     } catch (err) {
-    //         console.error("Error fetching data:", err);
-    //         setError("Failed to fetch data. Please try again.");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-    //
-    // useEffect(() => {
-    //     fetchData();
-    // }, [filters]);
+    const formatNumberWithCommas = (num) => {
+        if (num === 0 || num == null) return "-";
+        return num.toLocaleString();
+    };
+
 
     const toggleSection = (id) => {
         console.log(id);
@@ -348,13 +334,13 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
                                                 key={valueIndex}
                                                 className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"
                                             >
-                                                {formatNumber(value)}
+                                                {formatNumberWithCommas(value)}
                                             </td>
                                         ))}
 
                                         <td className="border border-gray-300 p-2 text-right font-bold dark:text-gray-200 dark:bg-bodybg"
                                             style={{backgroundColor: "rgb(37 73 177 / 85%)", color: "white"}}>
-                                            {formatNumber(rowTotal)}
+                                            {formatNumberWithCommas(rowTotal)}
                                         </td>
                                     </tr>
                                 );
