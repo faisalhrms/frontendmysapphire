@@ -43,25 +43,24 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                 <Tooltip
                                                     id={`task-name-tooltip-${task.id}`}
                                                     tooltipContent={`${task.name}`}>
-                                                    <h3 style={{fontFamily: 'fantasy'}}>{getExcerptFromText(task.name, 40)}</h3>
-
+                                                    <h3 style={{fontFamily: 'fantasy'}}>{getExcerptFromText(task.name, 35)}</h3>
                                                 </Tooltip>
-                                                <div className="text-sm font-medium mt-2" >
-                                                    in
-                                                    <i className="ri-arrow-right-s-line justify-center mx-2 "></i>
+                                                <div className="text-sm font-medium mt-1">
+                                                    In
+                                                    <i class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
                                                     <Tooltip
                                                         id={`task-milestone-tooltip-${task.id}`}
                                                         tooltipContent={`${task?.milestone?.name}`}>
-                                                        {getExcerptFromText(task?.milestone?.name, 30)}
+                                                        {getExcerptFromText(task?.milestone?.name, 35)}
                                                     </Tooltip>
-
-                                                    <i className="ri-arrow-right-s-line justify-center mx-2 "></i>
+                                                    <i class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
                                                     <span className="font-semibold text-primary">
-                                                    <Tooltip
-                                                        id={`task-project-tooltip-${task.id}`}
-                                                        tooltipContent={`${task?.project?.name}`}>
-                                                         {getExcerptFromText(task?.project?.name, 30)}
-                                                </Tooltip></span> Project
+                                                        <Tooltip
+                                                            id={`task-project-tooltip-${task.id}`}
+                                                            tooltipContent={`${task?.project?.name}`}>
+                                                             {getExcerptFromText(task?.project?.name, 35)}
+                                                        </Tooltip>
+                                                    </span>
                                                 </div>
                                             </div>
                                             <PerfectScrollbar
@@ -72,7 +71,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     <TaskDetailRow
                                                         icon='bx bx-text'
                                                         title='Name'
-                                                        children={getExcerptFromText(task.name, 30)}
+                                                        children={getExcerptFromText(task.name, 35)}
                                                         alignCenter={false}
                                                     />
 
@@ -151,7 +150,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                         icon='bi bi-tropical-storm'
                                                         title='Progress'
                                                     >
-                                                        <div className='flex items-center'>
+                                                        <div className='flex items-center w-full'>
                                                             <ProgressBar
                                                                 value={task.progress}
                                                                 barColor='!bg-success'
@@ -162,7 +161,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     <TaskDetailRow
                                                         icon='bi bi-layout-wtf'
                                                         title='Launch'
-                                                        children={task.milestoneLaunch}
+                                                        children={formatDate(task.milestone.ended_at)}
                                                     />
                                                 </div>
                                             </PerfectScrollbar>
