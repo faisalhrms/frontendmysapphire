@@ -136,41 +136,27 @@ const deleteFile = async (fileId) => {
   }
 };
 
-const downloadBulkCleanFile = async (fileIds) => {
-  const url = `/correction/file/clean/download/bulk/`;
-  try {
-    const response = await api.post(
-      url,
-      { file_ids: fileIds },
-      { responseType: "blob" }
-    );
-    const blob = response.data;
-    const contentDisposition = response.headers["content-disposition"];
-    let filename =
-      fileIds.length === 0 ? "all_clean_data.xlsx" : "bulk_clean_data.zip";
-    if (contentDisposition) {
-      const match = contentDisposition.match(/filename="?([^"]+)"?/);
-      if (match && match[1]) {
-        filename = match[1];
-      }
-    }
-    const downloadUrl = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(downloadUrl);
-  } catch (error) {
-    const serverMessage =
-      error.response?.data?.errors ||
-      error.response?.data?.message ||
-      "Download failed";
-    Notify.error(serverMessage);
-    throw error;
-  }
+const downloadBulkCleanFile = async (fileIds = []) => {
+  const { data, headers } = await api.post(
+    "/correction/file/clean/download/bulk/",
+    { file_ids: fileIds },
+    { responseType: "blob" }
+  );
+  const cd = headers["content-disposition"] || "";
+  const m = cd.match(/filename\*=UTF-8''([^;]+)|filename[^=]*=\s*"?([^";]+)"?/i);
+  const name = m ? decodeURIComponent(m[1] || m[2]) : fileIds.length ? "bulk_clean_data.zip" : "all_clean_data.csv";
+  const url = URL.createObjectURL(data);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 };
+
+
+
 
 export default {
   uploadRawFile,
