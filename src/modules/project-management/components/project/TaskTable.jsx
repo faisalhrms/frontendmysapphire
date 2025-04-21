@@ -275,15 +275,15 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-                                               <Tooltip
-                                                   id={`view-task-tooltip-${task.id}`}
-                                                   tooltipContent={`View Task (${task.name})`}>
-                                                    <button
-                                                        onClick={() => openTaskDetailModal(task.id)}
-                                                        className='ti-btn ti-btn-success ti-btn-sm'>
-                                                        <i className="ri-eye-line"></i>
-                                                    </button>
-                                                </Tooltip>
+                                               {/*<Tooltip*/}
+                                               {/*    id={`view-task-tooltip-${task.id}`}*/}
+                                               {/*    tooltipContent={`View Task (${task.name})`}>*/}
+                                               {/*     <button*/}
+                                               {/*         onClick={() => openTaskDetailModal(task.id)}*/}
+                                               {/*         className='ti-btn ti-btn-success ti-btn-sm'>*/}
+                                               {/*         <i className="ri-eye-line"></i>*/}
+                                               {/*     </button>*/}
+                                               {/* </Tooltip>*/}
                                     </span>
                                         </td>
                                     )
