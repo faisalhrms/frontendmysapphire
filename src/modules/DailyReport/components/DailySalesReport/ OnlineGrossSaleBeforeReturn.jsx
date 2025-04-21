@@ -21,8 +21,11 @@ function OnlineGrossSaleBeforeReturn({ data , loading ,  setDonwloadData }) {
     //     }
     // }, [filters]);
 
+    // const formatNumber = (num) => {
+    //     return num.toLocaleString();
+    // };
     const formatNumber = (num) => {
-        return num.toLocaleString();
+        return num === 0 ? "-" : num.toLocaleString();
     };
 
 

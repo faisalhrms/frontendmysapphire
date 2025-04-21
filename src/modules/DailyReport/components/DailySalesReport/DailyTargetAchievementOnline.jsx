@@ -29,52 +29,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
         return Number(result.toFixed(2));
     };
 
-    // useEffect(() => {
-    //     if (filters.date_from && filters.date_to) {
-    //         setLoading(true);
-    //
-    //         fetchTargetSaleData(filters.date_from, filters)
-    //             .then((apiData) => {
-    //                 const startDate = parseDate(filters.date_from);
-    //                 const endDate = parseDate(filters.date_to);
-    //
-    //                 const filtered = apiData.filter((row) => {
-    //                     const rowDate = parseDate(formatApiDate(row.date));
-    //                     return rowDate >= startDate && rowDate <= endDate;
-    //                 });
-    //
-    //                 const computed = filtered.map((row) => {
-    //                     const fullPriceOfflineAch = calcAch(row.fullPriceOfflineSale, row.fullPriceOfflineTarget);
-    //                     const discountedOfflineAch = calcAch(row.discountedOfflineSale, row.discountedOfflineTarget);
-    //                     const totalOfflineAch = calcAch(row.totalOfflineSale, row.totalOfflineTarget);
-    //
-    //                     const fullPriceOnlineAch = calcAch(row.fullPriceOnlineSale, row.fullPriceOnlineTarget);
-    //                     const discountedOnlineAch = calcAch(row.discountedOnlineSale, row.discountedOnlineTarget);
-    //                     const totalOnlineAch = calcAch(row.totalOnlineSale, row.totalOnlineTarget);
-    //
-    //                     const totalAch = calcAch(row.totalSale, row.totalTarget);
-    //
-    //                     return {
-    //                         ...row,
-    //                         fullPriceOfflineAch,
-    //                         discountedOfflineAch,
-    //                         totalOfflineAch,
-    //                         fullPriceOnlineAch,
-    //                         discountedOnlineAch,
-    //                         totalOnlineAch,
-    //                         totalAch
-    //                     };
-    //                 });
-    //
-    //                 setData(computed.length > 0 ? computed : apiData);
-    //                 setLoading(false);
-    //             })
-    //             .catch((error) => {
-    //                 console.error("Error fetching data:", error);
-    //                 setLoading(false);
-    //             });
-    //     }
-    // }, [filters]);
+
 
     const getAchColor = (achPercentage) => {
         if (achPercentage === null || achPercentage === 0) {
