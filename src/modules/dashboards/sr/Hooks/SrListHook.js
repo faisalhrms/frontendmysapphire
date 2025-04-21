@@ -1,22 +1,27 @@
-import {useEffect, useState} from "react";
-import {serviceRequestData, downloadServiceRequestReport} from "@modules/dashboards/sr/services/SrList.js";
+import { useEffect, useState } from "react";
+import { serviceRequestData, downloadServiceRequestReport } from "@modules/dashboards/sr/services/SrList.js";
 
 export const useServiceRequest = (initialFilters = {}) => {
   const [serviceRequest, setServiceRequest] = useState(null);
   const [filters, setFilters] = useState(initialFilters);
+  const [isDownloading, setIsDownloading] = useState(false);
+
   useEffect(() => {
     const fetchServiceData = async () => {
       try {
         const data = await serviceRequestData(filters);
         setServiceRequest(data);
-      } catch (error) {}
+      } catch (_) {}
     };
     fetchServiceData();
   }, [filters]);
+
   const applyFilters = (newFilters) => {
     setFilters(newFilters);
   };
+
   const downloadExcel = async () => {
+    setIsDownloading(true);
     try {
       const data = await downloadServiceRequestReport(filters);
       const url = window.URL.createObjectURL(new Blob([data]));
@@ -26,7 +31,10 @@ export const useServiceRequest = (initialFilters = {}) => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } catch (error) {}
+    } finally {
+      setIsDownloading(false);
+    }
   };
-  return {serviceRequest, applyFilters, downloadExcel};
+
+  return { serviceRequest, applyFilters, downloadExcel, isDownloading };
 };
