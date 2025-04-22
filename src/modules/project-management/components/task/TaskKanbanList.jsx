@@ -24,7 +24,7 @@ const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoadin
                         {tasks.length > 0 ? (
                             <>
                                 {tasks.map((task) => (
-                                    <TaskKanbanCard key={task.id} task={task} refetch={refetch} />
+                                    <TaskKanbanCard key={task.id} item={task} refetch={refetch} />
                                 ))}
                             </>
                         ) : (
