@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Pagination from "@components/Pagination.jsx";
 import { useSearchHook } from "@hooks/useSearchHook.js";
@@ -14,6 +14,10 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 const WorkDesk = () => {
   const [activeTab, setActiveTab] = useState("pending");
   const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
 
   const { pendingData, isLoading: isPendingLoading } =
     activeTab === "pending" ? usePending(currentPage, 9, searchTerm) : {};
