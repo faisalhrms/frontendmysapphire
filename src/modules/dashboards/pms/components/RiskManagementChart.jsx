@@ -37,7 +37,7 @@ const RiskAnalysisChart = ({ data }) => {
                             <ApexChart
                                 columnWidth="15%"
                                 additionalOptions={{
-                                    legend: { position: 'top' },
+                                    legend: {position: 'top'},
                                     plotOptions: {
                                         bar: {
                                             colors: {
@@ -74,6 +74,8 @@ const RiskAnalysisChart = ({ data }) => {
                     projectId={selectedProjectId}
                 />
             )}
+
+            <div id="modal-root"></div>
         </>
     );
 };

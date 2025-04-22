@@ -188,128 +188,129 @@ const SrDashboard = () => {
   const selRegion = watch('store_region_id')
   const selCity = watch('city_id')
 
-  return (
-    <div className="p-4 bg-gray-50 dark:bg-bodybg min-h-screen">
-      <div className="grid grid-cols-12 gap-x-6 mb-1">
-        <div className="col-span-12">
-          <div className="btn-list float-end space-x-2">
-            <button className="ti-btn bg-primary text-white py-2 px-4" onClick={toggleFilters}>
-              <i className="ri-filter-3-fill"></i> Filters
-            </button>
-            <button className="ti-btn ti-btn-outline-secondary py-2 px-4" onClick={downloadExcel}>
-              <i
-                className="ri-upload-cloud-line"
-                style={isDownloading ? { animation: 'spin 1s infinite linear' } : {}}
-              ></i>{' '}
-              Excel
-            </button>
-          </div>
-          <div
-            className={`transition-all duration-300 ${
-              showFilters ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-            }`}
-          >
-            <div className="box">
-              <div className="box-body">
-                <div className="grid grid-cols-12 gap-4">
-                  <div className="xl:col-span-3 col-span-12">
-                    <FormAsyncSelect
-                      name="company_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Company"
-                      apiUrl="/select/companies"
-                      queryKeyBase="companies"
-                      clientSideSearch
-                      preselectedOptions={formatOptions(filters, 'company')}
-                      needObject={true}
-                      onSelectChange={handleCompanySelect}
-                    />
-                  </div>
-                  <div className="xl:col-span-3 col-span-12">
-                    <FormAsyncSelect
-                      name="store_region_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Store Region"
-                      apiUrl="/select/store_regions"
-                      queryKeyBase="store_regions"
-                      clientSideSearch
-                      preselectedOptions={formatOptions(filters, 'store_region')}
-                      needObject={true}
-                      onSelectChange={handleRegionSelect}
-                    />
-                  </div>
-                  <div className="xl:col-span-3 col-span-12">
-                    <FormAsyncSelect
-                      name="city_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="City"
-                      apiUrl={`/select/cities?store_region_id=${selRegion || ''}`}
-                      queryKeyBase={`cities-${selRegion || ''}`}
-                      clientSideSearch
-                      preselectedOptions={formatOptions(filters, 'city')}
-                      needObject={true}
-                      onSelectChange={handleCitySelect}
-                    />
-                  </div>
-                  <div className="xl:col-span-3 col-span-12">
-                    <FormAsyncSelect
-                      name="location_id"
-                      control={control}
-                      errors={errors}
-                      placeholder="Location"
-                      apiUrl={`/select/locations?city_id=${selCity || ''}`}
-                      queryKeyBase={`locations-${selCity || ''}`}
-                      clientSideSearch
-                      preselectedOptions={formatOptions(filters, 'location')}
-                      needObject={true}
-                      onSelectChange={handleLocationSelect}
-                    />
-                  </div>
-                  <div className="xl:col-span-3 col-span-12">
-                    <DepartmentDropdown
-                      haveLabel={true}
-                      company_id={company?.id || null}
-                      control={control}
-                      errors={errors}
-                      data={filters}
-                      needObject={true}
-                      onDepartmentSelect={handleDepartmentSelect}
-                    />
-                  </div>
-                  <div className="xl:col-span-3 col-span-12">
-                    <SubDepartmentDropdown
-                      haveLabel={true}
-                      department_id={department?.id || null}
-                      control={control}
-                      errors={errors}
-                      data={filters}
-                      needObject={true}
-                      onSubDepartmentSelect={handleSubDepartmentSelect}
-                    />
-                  </div>
-                  <div className="xl:col-span-3 col-span-12">
-                    <FormSelect name="month" control={control} errors={errors} options={monthDashboard} placeholder="Select Month" />
-                  </div>
-                  <div className="xl:col-span-3 col-span-12">
-                    <FormSelect name="year_dashboard" control={control} errors={errors} options={yearDashboard} placeholder="Select Year" />
-                  </div>
+    return (
+        <div className="p-4 bg-gray-50 dark:bg-bodybg min-h-screen">
+            <div className="grid grid-cols-12 gap-x-6 mb-1">
+                <div className="col-span-12">
+                    <div className="btn-list float-end space-x-2">
+                        <button className="ti-btn bg-primary text-white py-2 px-4" onClick={toggleFilters}>
+                            <i className="ri-filter-3-fill"></i> Filters
+                        </button>
+                        <button className="ti-btn ti-btn-outline-secondary py-2 px-4" onClick={downloadExcel}>
+                            <i
+                                className="ri-upload-cloud-line"
+                                style={isDownloading ? {animation: 'spin 1s infinite linear'} : {}}
+                            ></i>{' '}
+                            Excel
+                        </button>
+                    </div>
+                    {showFilters && (
+                            <div className="box">
+                                <div className="box-body">
+                                    <div className="grid grid-cols-12 gap-4">
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <FormAsyncSelect
+                                                name="company_id"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Company"
+                                                apiUrl="/select/companies"
+                                                queryKeyBase="companies"
+                                                clientSideSearch
+                                                preselectedOptions={formatOptions(filters, 'company')}
+                                                needObject={true}
+                                                onSelectChange={handleCompanySelect}
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <FormAsyncSelect
+                                                name="store_region_id"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Store Region"
+                                                apiUrl="/select/store_regions"
+                                                queryKeyBase="store_regions"
+                                                clientSideSearch
+                                                preselectedOptions={formatOptions(filters, 'store_region')}
+                                                needObject={true}
+                                                onSelectChange={handleRegionSelect}
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <FormAsyncSelect
+                                                name="city_id"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="City"
+                                                apiUrl={`/select/cities?store_region_id=${selRegion || ''}`}
+                                                queryKeyBase={`cities-${selRegion || ''}`}
+                                                clientSideSearch
+                                                preselectedOptions={formatOptions(filters, 'city')}
+                                                needObject={true}
+                                                onSelectChange={handleCitySelect}
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <FormAsyncSelect
+                                                name="location_id"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Location"
+                                                apiUrl={`/select/locations?city_id=${selCity || ''}`}
+                                                queryKeyBase={`locations-${selCity || ''}`}
+                                                clientSideSearch
+                                                preselectedOptions={formatOptions(filters, 'location')}
+                                                needObject={true}
+                                                onSelectChange={handleLocationSelect}
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <DepartmentDropdown
+                                                haveLabel={true}
+                                                company_id={company?.id || null}
+                                                control={control}
+                                                errors={errors}
+                                                data={filters}
+                                                needObject={true}
+                                                onDepartmentSelect={handleDepartmentSelect}
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <SubDepartmentDropdown
+                                                haveLabel={true}
+                                                department_id={department?.id || null}
+                                                control={control}
+                                                errors={errors}
+                                                data={filters}
+                                                needObject={true}
+                                                onSubDepartmentSelect={handleSubDepartmentSelect}
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <FormSelect name="month" control={control} errors={errors}
+                                                        options={monthDashboard} placeholder="Select Month"/>
+                                        </div>
+                                        <div className="xl:col-span-3 col-span-12">
+                                            <FormSelect name="year_dashboard" control={control} errors={errors}
+                                                        options={yearDashboard} placeholder="Select Year"/>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center mt-6 space-x-4">
+                                        <button className="ti-btn bg-primary text-white py-2 px-6"
+                                                onClick={onSearchClick}>
+                                            <i className="ri-search-2-line"></i> Apply Filter
+                                        </button>
+                                        <button className="ti-btn ti-btn-outline-secondary py-2 px-6"
+                                                onClick={onClearFilters}>
+                                            <i className="ri-refresh-line"></i> Clear
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                    )}
+
                 </div>
-                <div className="flex justify-center mt-6 space-x-4">
-                  <button className="ti-btn bg-primary text-white py-2 px-6" onClick={onSearchClick}>
-                    <i className="ri-search-2-line"></i> Apply Filter
-                  </button>
-                  <button className="ti-btn ti-btn-outline-secondary py-2 px-6" onClick={onClearFilters}>
-                    <i className="ri-refresh-line"></i> Clear
-                  </button>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
         {[

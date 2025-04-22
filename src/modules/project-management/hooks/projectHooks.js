@@ -9,7 +9,7 @@ import {
     updateProject, uploadProjects
 } from "@modules/project-management/services/projectService.js";
 
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import uploadProjectSchema from "@modules/project-management/schemas/uploadProjectSchema.js";
@@ -185,11 +185,15 @@ export const useUploadProjectModal = (refetch, type = 'P') => {
 };
 
 export const useProjectFilter = () => {
+    const { search } = useLocation();
+    const params = new URLSearchParams(search);
+    const statusFilter = params.get('status') || '';
+
     const filters = useSelector((state) => state.pms.filters);
     const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(projectFilterSchema),
         defaultValues: {
-            status: filters.status,
+            status:statusFilter?(statusFilter==="total"?"":statusFilter): filters.status,
             priority: filters.priority,
             workspaces: filters.workspaces
                 ? filters.workspaces
