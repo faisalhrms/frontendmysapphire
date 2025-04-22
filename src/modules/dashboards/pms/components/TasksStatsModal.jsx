@@ -4,10 +4,28 @@ import ApexChart from "@components/charts/ApexChart.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import {useProjectMilestoneTaskDashboardStatistics} from "@modules/project-management/hooks/projectHooks.js";
 import TaskStatsTable from "@modules/dashboards/pms/components/TaskStatsTable.jsx";
+import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
+import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 
 const TasksStatsModal = React.memo(({ milestoneId, onClose }) => {
 
     const { data, isLoading } = useProjectMilestoneTaskDashboardStatistics(milestoneId);
+
+    const {
+        openTaskDetailModal,
+        closeTaskDetailModal,
+        isTaskDetailModalOpen,
+        isTaskDetailLoading,
+        task,
+    } = useTaskDetailModal()
+
+    const handlePointClick = (event, chartContext, config) => {
+        const { dataPointIndex } = config;
+        const taskId = data.details[dataPointIndex]?.id;
+        if (taskId) {
+            openTaskDetailModal(taskId)
+        }
+    };
 
     return (
         <>
@@ -63,6 +81,7 @@ const TasksStatsModal = React.memo(({ milestoneId, onClose }) => {
                                     xAxisTitle="Tasks"
                                     yAxisTitle="Progress"
                                     baseWidthPerCategory={300}
+                                    onPointClick={handlePointClick}
                                 />
                                 <hr className="border-t border-gray-200 mt-2"/>
                                 <TaskStatsTable rows={data?.details}/>
@@ -75,7 +94,14 @@ const TasksStatsModal = React.memo(({ milestoneId, onClose }) => {
                     </div>
                 </div>
             </div>
-
+            {
+                isTaskDetailModalOpen &&
+                <TaskDetailModalPortal
+                    task={task}
+                    isLoading={isTaskDetailLoading}
+                    closeModal={closeTaskDetailModal}
+                />
+            }
         </>
     );
 });
