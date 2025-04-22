@@ -8,7 +8,7 @@ const TaskListModal = ({tasks, isLoading, heading = 'Tasks', closeModal}) => {
             <div
                 id="taskListingModal"
                 data-hs-overlay-keyboard="false"
-                className="hs-overlay ti-modal hidden [--overlay-backdrop:static] h-screen w-screen bg-gray-900 bg-opacity-50 dark:bg-opacity-80 parent-modal">
+                className="hs-overlay ti-modal [--overlay-backdrop:static] backdrop-blur-[0.08rem] bg-gray-900 bg-opacity-50 dark:bg-opacity-80 parent-modal open">
                 <div className="hs-overlay-open:mt-0 ti-modal-box mt-10 !m-0 !max-w-full !w-full !h-full">
                     <div className="ti-modal-content !rounded-none">
                         <div className="ti-modal-header">
