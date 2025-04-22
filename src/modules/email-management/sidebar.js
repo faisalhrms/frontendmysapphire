@@ -17,7 +17,7 @@ export const sidebarMenu=[
                 'User List',
                 1,
                 '',
-                // EMAIL_MANAGEMENT_ROUTE.READ.permission,
+                EMAIL_MANAGEMENT_ROUTE.READ.permission,
             )]
     )
 ]
