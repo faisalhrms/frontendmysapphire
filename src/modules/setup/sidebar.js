@@ -33,6 +33,7 @@ export const sidebarMenu = [
                 'Email Setup',
                 6,
                 'bx-laptop',
+                SETUP_ROUTES.EMAIL.READ.permission
 
             )
         ]

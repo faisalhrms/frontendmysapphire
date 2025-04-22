@@ -39,17 +39,19 @@ export const SETUP_ROUTES = {
     },
     EMAIL:{
         READ:{
-            path:'/module/email-setup/list'
+            path:'/module/email-setup/list',
+            permission: 'view_emailsetup',
         },
         ADD:{
             path:'/module/email-setup/add',
+            permission: 'add_emailsetup',
         },
         EDIT:{
             path:'/module/email-setup/edit/:id',
+            permission: 'change_emailsetup',
         }
 
-    },
-    READ: undefined,
+    }
 };
 
 export const MODULE_ROUTES = [

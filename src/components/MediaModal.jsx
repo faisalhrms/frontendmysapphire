@@ -14,7 +14,7 @@ const MediaModal = React.memo(({ modalId = 'mediaModal', multiple = false, onClo
             className="hs-overlay ti-modal hidden [--overlay-backdrop:static] h-screen w-screen"
         >
             <div className="hs-overlay-open:mt-0 ti-modal-box mt-10 !m-0 !max-w-full !w-full !h-full">
-                <div className="ti-modal-content !rounded-none">
+                <div className="ti-modal-content !rounded-none h-screen">
                     <div className="ti-modal-header">
                         <button onClick={onClose} type="button" className="hs-dropdown-toggle ti-modal-close-btn">
                             <span className="sr-only">Close</span>
@@ -33,8 +33,7 @@ const MediaModal = React.memo(({ modalId = 'mediaModal', multiple = false, onClo
                             onSelectionChange={handleSelectionChange}
                         />
                     </div>
-                    <div className="ti-modal-footer">
-                    </div>
+
                 </div>
             </div>
         </div>
