@@ -62,3 +62,12 @@ export const getParentErrors = async (fieldDefinitionId) => {
     throw error;
   }
 };
+export const downloadErrorCorrection = async () => {
+  try {
+    const response = await api.get("error/correction/rule/download/", { responseType: "blob" });
+    return response.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to download Error Correction");
+    throw error;
+  }
+};
