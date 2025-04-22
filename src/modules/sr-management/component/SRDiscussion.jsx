@@ -1,10 +1,8 @@
 import React, {useState} from "react";
-import MediaModal from "@components/MediaModal.jsx";
 import Avatar from "@components/Avatar.jsx";
 import AttachmentsList from "@components/AttachmentsList";
 import {useFileModal} from "@hooks/useFileModal";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import {useSelector} from "react-redux";
 import useDiscussion from "@hooks/useDiscussionHook.js";
 import {useForm} from "react-hook-form";
@@ -35,28 +33,23 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
         setMessage,
         isSubmitting,
         refetch,
-        handleSubmit,
+        handleSubmit
     } = useDiscussion(selectedIds, clearAttachments, getEndPoint, storeEndPoint);
-    const handleOpenEmailModal = () => {
-        setIsEmailModalOpen(true);
-    };
-    const handleCloseEmailModal = () => {
-        setIsEmailModalOpen(false);
-    };
-    const { isFullscreen, handleFullscreenClick } = useFullScreen();
+    const handleOpenEmailModal = () => setIsEmailModalOpen(true);
+    const handleCloseEmailModal = () => setIsEmailModalOpen(false);
+    const {isFullscreen, handleFullscreenClick} = useFullScreen();
     const containerHeight = isFullscreen ? "calc(100vh - 100px)" : "500px";
+
     return (
         <>
             <style>{`
-                .custom-scrollbar .ps__thumb-y {
-                    background-color: #808080 !important;
-                }
-                .custom-scrollbar .ps__rail-y {
-                    background-color: #d3d3d3 !important;
-                }
-            `}</style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #d3d3d3; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #808080; border-radius: 3px; }
+      `}</style>
+
             <div className={`box ${isFullscreen ? "box-fullscreen" : ""}`}>
-                <div className="box-header">
+                <div className="box-header flex justify-between items-center">
                     <div className="box-title">{title || "Discussions"}</div>
                     <div className="flex items-center space-x-2">
                         <button
@@ -67,32 +60,53 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                         >
                             <i className="ri-refresh-line font-semibold align-middle"></i> Refresh
                         </button>
-                        <Link aria-label="anchor" to="#" className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen" onClick={handleFullscreenClick}>
+                        <Link
+                            to="#"
+                            aria-label="fullscreen"
+                            className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen"
+                            onClick={handleFullscreenClick}
+                        >
                             <i className="ri-fullscreen-line"></i>
                         </Link>
                     </div>
                 </div>
+
                 {isLoading ? (
                     <LoadingSpinner/>
                 ) : (
                     <>
-                        <PerfectScrollbar
-                            className="box-body max-h-72 text-defaulttextcolor text-defaultsize !py--10 !px-10 ps--active-y custom-scrollbar"
-                            style={{ maxHeight: containerHeight }}
+                        <div
+                            className="box-body text-defaulttextcolor text-defaultsize custom-scrollbar overflow-y-auto scroll-smooth"
+                            style={{height: containerHeight}}
                         >
-                            <ul className="list-none profile-timeline">
-                                {discussions?.length > 0 &&
-                                    discussions.map((discussion) => (
+                            {discussions?.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center p-6">
+                                    <img
+                                        src="https://microfrontends.monday.com/mf-feed/latest/static/media/empty-state.8bf98d52.svg"
+                                        alt="No updates"
+                                        className="w-48 h-auto"
+                                    />
+                                    <p className="font-bold text-gray-700 text-lg mb-2">No Discussion yet</p>
+                                    <p className="text-sm text-gray-500 text-center">
+                                        Share progress, by email or posting comments
+                                    </p>
+                                </div>
+                            ) : (
+                                <ul className="list-none profile-timeline">
+                                    {discussions.map(d => (
                                         <SRDiscussionItem
-                                            key={discussion.id}
-                                            discussion={discussion}
+                                            key={d.id}
+                                            discussion={d}
                                             userId={user?.id}
                                             control={control}
                                             errors={errors}
                                         />
                                     ))}
-                            </ul>
-                        </PerfectScrollbar>
+                                </ul>
+                            )}
+                        </div>
+
+
                         <div className="box-footer">
                             <div className="!p-0 !border-0">
                                 <div className="grid grid-cols-12 gap-4">
@@ -101,10 +115,12 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                                         onDelete={handleDeleteAttachment}
                                     />
                                 </div>
+
                                 <div className="sm:flex items-center leading-none mt-1">
                                     <div className="me-4">
                                         <Avatar avatar={user?.avatar} size="md"/>
                                     </div>
+
                                     <div className="flex-grow me-2">
                                         <div className="inline-flex !w-full">
                                             <input
@@ -113,8 +129,8 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                                                 placeholder="Post Anything"
                                                 aria-label="Discussion message input"
                                                 value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                                onKeyDown={(e) => {
+                                                onChange={e => setMessage(e.target.value)}
+                                                onKeyDown={e => {
                                                     if (e.key === "Enter") {
                                                         e.preventDefault();
                                                         handleSubmit();
@@ -144,6 +160,7 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                         </div>
                     </>
                 )}
+
                 <EmailComposeModal
                     isOpen={isEmailModalOpen}
                     serviceRequest={serviceRequest}
