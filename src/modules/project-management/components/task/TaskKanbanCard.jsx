@@ -5,10 +5,19 @@ import { formatDate } from "@helpers/dateTime.js";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import {Link} from "react-router-dom";
+import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
+import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
 
-const  TaskKanbanCard = ({ task, refetch }) => {
+const  TaskKanbanCard = ({ item, refetch }) => {
 
-    const daysLeft = task.days_left != null ? `${task.days_left} days left` : "No deadline";
+    const daysLeft = item.days_left != null ? `${item.days_left} days left` : "No deadline";
+    const {
+        openTaskDetailModal,
+        closeTaskDetailModal,
+        isTaskDetailModalOpen,
+        isTaskDetailLoading,
+        task,
+    } = useTaskDetailModal()
 
     const taskBorderStyles = {
         open: 'border-t-[3px] border-solid border-primary/30',
@@ -30,20 +39,21 @@ const  TaskKanbanCard = ({ task, refetch }) => {
         return taskBorderStyles[normalizedStatus] || 'border-t-[3px] border-solid border-gray/30';
     };
 
+
     return (
-        <div className={`box kanban-tasks ${getTaskBorderClass(task.status)}`}>
+        <div className={`box kanban-tasks ${getTaskBorderClass(item.status)}`}>
             <div className="box-body !p-0">
                 <div className="p-4 kanban-board-head">
                     <div className="flex text-[#8c9097] dark:text-white/50 justify-between mb-1 text-[.75rem] font-semibold">
                         <div>
-                            <i className="ri-time-line align-middle" /> Created - {formatDate(task.started_at)}
+                            <i className="ri-time-line align-middle" /> Created - {formatDate(item.started_at)}
                         </div>
 
-                        {task.status === "completed" ? (
+                        {item.status === "completed" ? (
                             <div className="text-success">
                                 <i className="ri-check-fill me-1 align-middle"></i>Done
                             </div>
-                        ) : task.status === "under_approval" ? (
+                        ) : item.status === "under_approval" ? (
                             <div className="text-info">
                                 <i className="ri-information-line me-1 align-middle"></i>Under Approval
                             </div>
@@ -54,10 +64,10 @@ const  TaskKanbanCard = ({ task, refetch }) => {
 
                     <div className="flex items-center justify-between">
                         <div className="task-badges flex items-center gap-1 flex-wrap">
-                            <span className="badge bg-light text-default">{task.task_no}</span>
+                            <span className="badge bg-light text-default">{item.task_no}</span>
                             <span className='space-x-1 rtl:space-x-reverse'>
                                 {(
-                                    task?.tags?.map(tag => (
+                                    item?.tags?.map(tag => (
                                         <span key={tag.id} className="badge bg-primary/10 text-primary">{ toTitleCase(tag.name) }</span>
                                     ))
                                 )}
@@ -66,10 +76,12 @@ const  TaskKanbanCard = ({ task, refetch }) => {
                     </div>
 
                     <div className="kanban-content !mt-1">
-                        <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}>
-                        <h6 className="font-semibold mb-1 text-[.9375rem]">{task.name}</h6>
+                        <Link
+                            onClick={() => {openTaskDetailModal(item.id)}}
+                            to="#">
+                            <h6 className="font-semibold mb-1 text-[.9375rem]">{item.name}</h6>
                         <div className="kanban-task-description">
-                            {task.description || "(No description)"}
+                            {item.description || "(No description)"}
                         </div>
                         </Link>
                     </div>
@@ -77,16 +89,25 @@ const  TaskKanbanCard = ({ task, refetch }) => {
 
                 <div className="p-4 border-t dark:border-defaultborder/10 border-dashed">
                     <div className="flex items-center justify-between">
-                        <AvatarList users={task.users}/>
+                        <AvatarList users={item.users}/>
                         {
-                            task.status !== 'under_approval' &&
+                            item.status !== 'under_approval' &&
                             <div className="min-w-[9rem]">
-                                <TaskStatusDropdown status={task.status} taskId={task.id} refetch={refetch}/>
+                                <TaskStatusDropdown status={item.status} taskId={item.id} refetch={refetch}/>
                             </div>
                         }
                     </div>
                 </div>
             </div>
+            {
+                isTaskDetailModalOpen &&
+                <TaskDetailModalPortal
+                    task={task}
+                    isLoading={isTaskDetailLoading}
+                    closeModal={closeTaskDetailModal}
+                />
+            }
+            <div id="modal-root"></div>
         </div>
     );
 };

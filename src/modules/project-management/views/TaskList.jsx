@@ -10,6 +10,8 @@ import AvatarList from "@components/AvatarList.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import Tooltip from "@components/Tooltip.jsx";
 import TaskListFilter from "@modules/project-management/components/task/TaskListFilter.jsx";
+import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
+import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 
 const TaskList = () => {
     const {
@@ -35,6 +37,13 @@ const TaskList = () => {
             []
         )
     );
+    const {
+        openTaskDetailModal,
+        closeTaskDetailModal,
+        isTaskDetailModalOpen,
+        isTaskDetailLoading,
+        task,
+    } = useTaskDetailModal()
 
     const [filters, setFilters] = useState(getFilters());
 
@@ -69,7 +78,7 @@ const TaskList = () => {
                             to={`/module/projects/detail/${project.id}`}
                             className='text-[0.80rem] text-[#323338]'
                             >
-                            {project.name}
+                            {project.name.length>20?project.name.slice(0, 20) + "...":project.name}
                         </Link>
                     </Tooltip>
                 )
@@ -77,7 +86,7 @@ const TaskList = () => {
         },
         { Header: "Milestone", accessor: "milestone.name", disableSortBy: true,
             Cell: ({value}) => (
-                <p className='text-[0.80rem] text-[#323338]'>{value}</p>
+                <p className='text-[0.80rem] text-[#323338]'>{value.length>20?value.slice(0,20)+"...":value}</p>
             )
         },
         { Header: "Task", accessor: "name",
@@ -89,8 +98,10 @@ const TaskList = () => {
                         tooltipContent={`Click To View Task: ${task.name}`}
                     >
                         <Link
-                            to={`/module/tasks/detail/${task.id}`}>
-                            {task.name}
+                            onClick={() => {openTaskDetailModal(task.id)}}
+                            to="#">
+
+                            {task.name.length>20?task.name.slice(0, 20) + "...":task.name}
                         </Link>
                     </Tooltip>
                 )
@@ -188,7 +199,7 @@ const TaskList = () => {
         <>
             <PageHeader currentpage="Task List" activepage="Task" mainpage="Task List"/>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TaskListFilter control={control} errors={errors} clearFilter={onClear} />
+                <TaskListFilter control={control} errors={errors} clearFilter={onClear}/>
             </form>
             <DataTable
                 columns={columns}
@@ -197,6 +208,16 @@ const TaskList = () => {
                 filter={filters}
                 needHeader={false}
             />
+
+            {
+                isTaskDetailModalOpen &&
+                <TaskDetailModalPortal
+                    task={task}
+                    isLoading={isTaskDetailLoading}
+                    closeModal={closeTaskDetailModal}
+                />
+            }
+            <div id="modal-root"></div>
         </>
     );
 };
