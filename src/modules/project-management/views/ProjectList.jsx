@@ -99,7 +99,7 @@ const ProjectList = () => {
                     <div className="box custom-box">
                         <div className="box-body p-4">
                             <div className="flex items-center justify-between gap-2">
-                                <HasPermission permission='add_project'>
+                                <HasPermission permission='pms.add_project'>
                                     <div className="flex items-center gap-2">
                                         <Link to="/module/projects/create" className="ti-btn ti-btn-primary-full !mb-0">
                                             <i className="ri-add-line font-semibold align-middle"></i>
@@ -182,7 +182,7 @@ const ProjectList = () => {
                                     {/*    )}*/}
                                     {/*</div>*/}
                                 </div>
-                                <HasPermission permission='add_project'>
+                                <HasPermission permission='pms.add_project'>
                                     <div className="hs-dropdown ti-dropdown ms-2">
                                         <button type="button" aria-label="button"
                                                 className="ti-btn ti-btn-primary ti-btn-sm" aria-expanded="false">

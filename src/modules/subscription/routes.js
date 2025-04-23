@@ -7,15 +7,15 @@ import SubscriptionRenew from '@modules/subscription/views/SubscriptionRenew.jsx
 export const SUBSCRIPTION_ROUTES = {
     READ: {
         path: '/module/subscription',
-        permission: 'view_subscription',
+        permission: 'subscription.view_subscription',
     },
     CREATE: {
         path: '/module/subscription/create',
-        permission: 'add_subscription',
+        permission: 'subscription.add_subscription',
     },
     EDIT: {
         path: '/module/subscription/edit/:id',
-        permission: 'change_subscription',
+        permission: 'subscription.change_subscription',
     },
     FILTER: {
         path: "/subscriptions?filter=:type",

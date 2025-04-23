@@ -8,19 +8,19 @@ import EcomSalesforce from "../ecom/views/EcomSalesforce.jsx";
 export const ECOM_ROUTES = {
     READ: {
         path: "/module/ecom",
-        permission: "view_ecommerce",
+        permission: "auth.view_ecommerce",
     },
     ADD: {
         path: "/module/ecom/anlysisReport",
-        permission: "ecom_analytics",
+        permission: "auth.ecom_analytics",
     },
     SFD: {
         path: '/module/ecom/salesforcedashboard',
-        permission: 'ecom_salesforce_dashboard',
+        permission: 'auth.ecom_salesforce_dashboard',
     },
     OS:{
         path: '/module/ecom/digitalspent',
-        permission: 'ecom_digitalspent',
+        permission: 'auth.ecom_digitalspent',
     },
     // ODT:{
     //     path: '/module/ecom/orderdetail',

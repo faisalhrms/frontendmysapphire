@@ -247,7 +247,7 @@ const DataSanitizationList = () => {
                         >
                             <i className="ri-upload-cloud-line"></i>
                         </button>
-                        <HasPermission permission='delete_clean_data'>
+                        <HasPermission permission='auth.delete_clean_data'>
                             <button
                                 onClick={() => openConfirmModal(fileId)}
                                 title="Delete File"
