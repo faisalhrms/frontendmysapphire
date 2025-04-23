@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Avatar from "@components/Avatar.jsx";
 import Tooltip from "@components/Tooltip.jsx";
 import { formatDate } from "@helpers/dateTime.js";
-import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import videoIcon from "@assets/images/icon/007-video-file.png";
 import zipIcon from "@assets/images/icon/005-zip-2.png";
 import pdfIcon from "@assets/images/icon/002-pdf-file-format-symbol.png";
@@ -31,7 +30,6 @@ const generateIcon = attachment => {
 const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
   if (!discussion || !control) return null;
   const senderName = userId === discussion.user?.id ? "You" : discussion.user?.full_name || discussion.sender;
-  const defaultMessage = typeof discussion.message === "string" ? discussion.message : "";
 
   return (
     <li className="mb-3">
@@ -90,34 +88,26 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
           )}
 
           <div className="border border-gray-200 rounded-md p-2 bg-white shadow-sm mb-2 text-sm leading-relaxed">
-            <FormRichTextarea
-              name={`message_${discussion.id}`}
-              control={control}
-              errors={errors}
-              readOnly
-              editorOptions={{
-                height: 'auto',
-                buttonList: [],
-                defaultStyle: "font-family:Calibri,sans-serif;font-size:0.85rem;"
-              }}
-              defaultValue={defaultMessage}
-            />
+            <p
+              className="profile-activity-media mb-0 sun-editor-editable"
+              dangerouslySetInnerHTML={{ __html: discussion.message || "" }}
+            ></p>
           </div>
 
           {discussion.attachments?.length > 0 && (
-                    <p className="profile-activity-media mb-0 flex">
-                        {discussion.attachments.map((attachment) => (
-                            <Link
-                                key={`${discussion.id}-${attachment.id}`}
-                                to={attachment.file}
-                                download
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <span dangerouslySetInnerHTML={{ __html: generateIcon(attachment) }} />
-                            </Link>
-                        ))}
-                    </p>
+            <span className="profile-activity-media mb-0 flex bg-gray-50">
+              {discussion.attachments.map(attachment => (
+                <Link
+                  key={`${discussion.id}-${attachment.id}`}
+                  to={attachment.file}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span dangerouslySetInnerHTML={{ __html: generateIcon(attachment) }} />
+                </Link>
+              ))}
+            </span>
           )}
         </div>
       </div>
