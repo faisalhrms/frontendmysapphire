@@ -7,8 +7,7 @@ import {
   getPermissions,
   getAssignedPermissions,
   AssignPermissionsToRole,
-
-} from '@modules/access-control/services/accessService.js'; // Ensure to use the axios instance
+} from '@modules/access-control/services/accessService.js';
 
 const GrantPermission = () => {
   const { id } = useParams();
@@ -17,7 +16,6 @@ const GrantPermission = () => {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmittingLoading] = useState(false);
 
-  // Memoize the columns array to avoid recalculating on every render
   const COLUMNS = useMemo(() => [
     {
       Header: 'Permissions',
@@ -29,18 +27,17 @@ const GrantPermission = () => {
     },
   ], []);
 
-  // Fetch permissions from the API
   useEffect(() => {
     const fetchPermissionsData = async () => {
       setLoading(true);
       try {
-        // Fetch both permissions and assigned permissions in parallel
         const [permissionsList, assignedPermissionsData] = await Promise.all([
           getPermissions(),
           getAssignedPermissions(id),
-        ])
+        ]);
 
-        // Check if assigned permissions data is empty
+
+
         const formattedAssignedPermissions = Array.isArray(assignedPermissionsData)
             ? assignedPermissionsData.reduce((acc, { id, codename }) => {
               acc[id] = { codename, checked: false };
@@ -48,8 +45,9 @@ const GrantPermission = () => {
             }, {})
             : {};
 
-        // Format and set permissions
         const formattedPermissions = formatPermissions(permissionsList, formattedAssignedPermissions);
+
+
         setPermissions(formattedPermissions);
       } catch (err) {
         setError('An error occurred while fetching data');
@@ -61,43 +59,36 @@ const GrantPermission = () => {
     fetchPermissionsData();
   }, [id]);
 
-  // Save permissions
   const handleSavePermissions = async () => {
     try {
       setIsSubmittingLoading(true);
-      // Generate the permission IDs that are checked
-      const formattedPermissions = permissions.flatMap(permissionGroup =>
+
+      const selectedPermissionIds = permissions.flatMap(permissionGroup =>
           Object.keys(permissionGroup.roleWithPermissions.permissions)
               .filter(id => permissionGroup.roleWithPermissions.permissions[id].checked)
-              .map(id => parseInt(id)) // Convert ID to integer
+              .map(id => parseInt(id))
       );
 
-      // Call the AssignPermissionsToRole service
-      await AssignPermissionsToRole(id, formattedPermissions);
-      setIsSubmittingLoading(false);
-      // Optionally, you can show a success notification here
+      await AssignPermissionsToRole(id, selectedPermissionIds);
     } catch (error) {
-      setIsSubmittingLoading(false);
       console.error('Error saving permissions:', error);
-
-      // Optionally, show an error notification here
+    } finally {
+      setIsSubmittingLoading(false);
     }
   };
 
-  // Handle updates to permissions
   const handleUpdatePermissions = (updatedData) => {
     setPermissions(updatedData);
-
-    // You can send the updatedData to the backend if needed
   };
 
-  // Format permissions into the desired structure
+
   const formatPermissions = (data, assignedPermissions) => {
     const groupedPermissions = data.reduce((acc, permission) => {
       const { id, name, codename } = permission;
 
-      // **Updated Grouping Logic:** Use the last part after the underscore
-      let roleName = codename.split('_').pop().toUpperCase();
+      let roleName = codename.includes('_')
+          ? codename.split('_').slice(0, -1).join('_').toUpperCase()
+          : codename.toUpperCase();
 
       if (!acc[roleName]) acc[roleName] = [];
       acc[roleName].push({ id, name, codename });
@@ -109,7 +100,7 @@ const GrantPermission = () => {
         roleName: role,
         permissions: groupedPermissions[role].reduce((acc, { id, name, codename }) => {
           acc[id] = {
-            name, // Correctly use the 'name' property from permission
+            name,
             checked: !!(assignedPermissions[id] && assignedPermissions[id].codename === codename),
           };
           return acc;
