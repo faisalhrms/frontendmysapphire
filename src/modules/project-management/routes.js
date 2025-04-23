@@ -14,11 +14,11 @@ export const PMS_ROUTES = {
     },
     CREATE: {
       path: "/module/projects/create",
-      permission: "add_project",
+      permission: "pms.add_project",
     },
     EDIT: {
       path: "/module/projects/edit/:id",
-      permission: "change_project",
+      permission: "pms.change_project",
     },
     DETAIL: {
       path: "/module/projects/detail/:id",
@@ -36,7 +36,7 @@ export const PMS_ROUTES = {
     },
     ECOM: {
       path: "/module/tasks/ecom",
-      permission: 'view_ecom_tasks',
+      permission: 'pms.view_ecom_tasks',
     },
   },
 };

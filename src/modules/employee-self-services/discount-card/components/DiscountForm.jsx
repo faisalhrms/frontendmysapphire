@@ -17,7 +17,7 @@ const DiscountForm = ({
                       }) => {
     return (
         <div className="col-span-12 xl:col-span-6 ">
-            <HasPermission permission="discount_card_management">
+            <HasPermission permission="auth.discount_card_management">
                 <div className="box">
                     <div className="box-body">
                         <div className="flex flex-wrap justify-between items-center">

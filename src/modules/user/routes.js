@@ -7,15 +7,15 @@ import UserManagementEdit from "@modules/user/views/UserManagementEdit.jsx";
 export const USER_ROUTES = {
     READ: {
         path: '/module/users',
-        permission: 'view_user',
+        permission: 'user.view_user',
     },
     EDIT: {
         path: '/module/users/edit/:id',
-        permission: 'change_user',
+        permission: 'user.change_user',
     },
     CREATE: {
         path: '/module/users/create',
-        permission: 'add_user',
+        permission: 'user.add_user',
     },
     USER_MANAGEMENT:{
         READ:{

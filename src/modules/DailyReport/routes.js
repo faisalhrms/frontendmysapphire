@@ -1,16 +1,15 @@
 import DailySaleReportList from "@modules/DailyReport/views/DailySaleReportList.jsx";
-import ClassOfflineOnlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
 import ClassOfflineOnlineFiscalList from "@modules/DailyReport/views/ClassOfflineOnlineFiscalList.jsx";
 
 
 export const DAILYREPORT_ROUTES = {
     READ: {
         path: "/module/dailyreport",
-        permission: "view_dailyreport",
+        permission: "auth.view_dailyreport",
     },
     CREATE:{
         path: "/module/cf",
-        permission: "view_comparativesalesreport",
+        permission: "auth.view_comparativesalesreport",
 
     },
 

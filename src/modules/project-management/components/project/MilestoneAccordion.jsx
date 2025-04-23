@@ -120,39 +120,42 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                     </div>
                                     {
                                         !viewOnly &&
-                                        <HasProjectPermission globalPermission='change_project' users={projectUsers}>
                                             <div className="flex flex-col items-center">
                                                 <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
                                                 <div className="flex space-x-2">
-                                                    <Tooltip
-                                                        id={`edit-milestone-tooltip-${milestone.id}`}
-                                                        tooltipContent={`Edit Milestone (${milestone.name})`}>
-                                                        <span className="text-primary !py-1 !text-[0.75rem]"
-                                                              onClick={() => openMilestoneModal(milestone.id, true)}>
-                                                            <i className="ri-edit-line align-middle"></i>
-                                                        </span>
-                                                    </Tooltip>
-                                                    {
-                                                        handleUploadModal &&
+                                                    <HasProjectPermission globalPermission='pms.change_project' users={projectUsers}>
                                                         <Tooltip
-                                                            id={`upload-tasks-tooltip-${milestone.id}`}
-                                                            tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}>
-                                                        <span className="text-info !py-1 !text-[0.75rem]"
-                                                              onClick={() => handleUploadModal(milestone.id, 'T')}>
-                                                            <i className="ri-file-upload-line align-middle"></i>
-                                                        </span>
+                                                            id={`edit-milestone-tooltip-${milestone.id}`}
+                                                            tooltipContent={`Edit Milestone (${milestone.name})`}>
+                                                            <span className="text-primary !py-1 !text-[0.75rem]"
+                                                                  onClick={() => openMilestoneModal(milestone.id, true)}>
+                                                                <i className="ri-edit-line align-middle"></i>
+                                                            </span>
                                                         </Tooltip>
-                                                    }
-                                                    <Tooltip
-                                                        id={`add-milestone-tooltip-${milestone.id}`}
-                                                        tooltipContent={`Add New Task In (${milestone.name})`}>
-                                                        <span
-                                                            className="text-success !py-1 !text-[0.75rem] ms-1"
-                                                            onClick={() => openTaskModal(milestone.id, milestone.started_at, milestone.ended_at, milestone.requires_approval)}>
-                                                            <i className="ri-add-circle-line align-middle"></i>
-                                                        </span>
-                                                    </Tooltip>
-                                                    <HasProjectPermission globalPermission='delete_project' users={projectUsers}>
+                                                        {
+                                                            handleUploadModal &&
+                                                            <Tooltip
+                                                                id={`upload-tasks-tooltip-${milestone.id}`}
+                                                                tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}>
+                                                                <span className="text-info !py-1 !text-[0.75rem]"
+                                                                      onClick={() => handleUploadModal(milestone.id, 'T')}>
+                                                                    <i className="ri-file-upload-line align-middle"></i>
+                                                                </span>
+                                                            </Tooltip>
+                                                        }
+                                                    </HasProjectPermission>
+                                                    <HasProjectPermission globalPermission='pms.add_task' users={projectUsers}>
+                                                        <Tooltip
+                                                            id={`add-task-tooltip-${milestone.id}`}
+                                                            tooltipContent={`Add New Task In (${milestone.name})`}>
+                                                                <span
+                                                                    className="text-success !py-1 !text-[0.75rem] ms-1"
+                                                                    onClick={() => openTaskModal(milestone.id, milestone.started_at, milestone.ended_at, milestone.requires_approval)}>
+                                                                    <i className="ri-add-circle-line align-middle"></i>
+                                                                </span>
+                                                        </Tooltip>
+                                                    </HasProjectPermission>
+                                                    <HasProjectPermission globalPermission='pms.delete_project' users={projectUsers}>
                                                         <Tooltip
                                                             id={`delete-milestone-tooltip-${milestone.id}`}
                                                             tooltipContent={`Delete Milestone (${milestone.name})`}>
@@ -162,11 +165,8 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                         </span>
                                                         </Tooltip>
                                                     </HasProjectPermission>
-
-
                                                 </div>
                                             </div>
-                                        </HasProjectPermission>
                                     }
                                 </div>
                             </div>

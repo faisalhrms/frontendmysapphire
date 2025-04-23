@@ -86,21 +86,20 @@ const GrantPermission = () => {
     const groupedPermissions = data.reduce((acc, permission) => {
       const { id, name, codename } = permission;
 
-      let roleName = codename.includes('_')
-          ? codename.split('_').slice(0, -1).join('_').toUpperCase()
-          : codename.toUpperCase();
+      // Extract app name (part before first dot)
+      const appName = codename.split('.')[0];
 
-      if (!acc[roleName]) acc[roleName] = [];
-      acc[roleName].push({ id, name, codename });
+      if (!acc[appName]) acc[appName] = [];
+      acc[appName].push({ id, name, codename });
       return acc;
     }, {});
 
-    return Object.keys(groupedPermissions).map(role => ({
+    return Object.keys(groupedPermissions).map(appName => ({
       roleWithPermissions: {
-        roleName: role,
-        permissions: groupedPermissions[role].reduce((acc, { id, name, codename }) => {
+        roleName: appName.toUpperCase(),
+        permissions: groupedPermissions[appName].reduce((acc, { id, name, codename }) => {
           acc[id] = {
-            name,
+            name: `${codename} (${name})`,  // Display as "codename (name)"
             checked: !!(assignedPermissions[id] && assignedPermissions[id].codename === codename),
           };
           return acc;
@@ -123,7 +122,7 @@ const GrantPermission = () => {
 
   return (
       <>
-        <PageHeader currentpage="Role" activepage="Dashboard" mainpage="Roles" />
+        <PageHeader currentpage="Grant Permissions" activepage="Role" mainpage="Grant Permissions" />
         <div className="box w-full max-h-4xl p-8 mx-auto">
           <div className="box-body">
             <div className="overflow-hidden">
