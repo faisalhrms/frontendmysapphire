@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
-import { useForm } from "react-hook-form";
 import Discussion from "@components/Discussion.jsx";
 import SRDiscussion from "@modules/sr-management/component/SRDiscussion.jsx";
 import ModelRight from "@components/ModalRight.jsx";
@@ -9,6 +7,7 @@ import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import Tooltip from "@components/Tooltip.jsx";
 import useFullScreen from "@hooks/useFullScreen.js";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 function ContentLeft({ generatedReqData, serviceRequest, selectedStatus }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,16 +30,6 @@ function ContentLeft({ generatedReqData, serviceRequest, selectedStatus }) {
       serviceRequest.attachments
     );
   }, [serviceRequest.description, serviceRequest.attachments]);
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      description: processedDescription || "",
-    },
-  });
 
   const getSlaBadgeClasses = (slaHours) => {
     if (slaHours >= 48) {
@@ -204,20 +193,12 @@ function ContentLeft({ generatedReqData, serviceRequest, selectedStatus }) {
             <i className="ri-fullscreen-line"></i>
           </Link>
         </div>
-        <div className="p-3 pt-2">
-          <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
-            <FormRichTextarea
-              name="description"
-              control={control}
-              errors={errors}
-              readOnly
-              editorOptions={{
-                height: 400,
-                buttonList: [],
-              }}
+          <PerfectScrollbar className="box-body box max-h-[60vh] overflow-y-auto">
+            <p
+              className="profile-activity-media mb-0"
+              dangerouslySetInnerHTML={{ __html: processedDescription || "" }}
             />
-          </div>
-        </div>
+          </PerfectScrollbar>
       </div>
       {generatedReqData && Object.keys(generatedReqData).length > 0 && (
         <div className="box shadow-md dark:border dark:border-gray-700 rounded-lg overflow-hidden">
