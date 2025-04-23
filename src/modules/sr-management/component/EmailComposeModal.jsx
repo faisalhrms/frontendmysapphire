@@ -2,9 +2,11 @@ import React, {useMemo, useEffect, useState} from "react";
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 import api from "@config/axiosConfig.js";
 import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
-import useFullScreen from "@hooks/useFullScreen.js";
+import emailSchema from "@modules/sr-management/schema/emailSchema.js";
+
 
 const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
     const [includePreviousThread, setIncludePreviousThread] = useState(false);
@@ -15,6 +17,7 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
         reset,
         formState: {errors, isSubmitting},
     } = useForm({
+        resolver: zodResolver(emailSchema),
         defaultValues: {
             to_email: [],
             cc_email: [],
@@ -29,12 +32,14 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
         }
         return [...emails].map(email => ({label: email, value: email}));
     }, [serviceRequest?.to_email, serviceRequest?.reporter_email]);
+
     const preselectedCcEmails = useMemo(() => {
         const reporterEmail = user?.email;
         const ccEmails = serviceRequest?.cc_email || [];
         const allCcEmails = [...new Set(reporterEmail ? [reporterEmail, ...ccEmails] : ccEmails)];
         return allCcEmails.map(email => ({label: email, value: email}));
     }, [serviceRequest?.cc_email, user?.email]);
+
     useEffect(() => {
         if (isOpen) {
             reset({
@@ -45,6 +50,7 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
             setIncludePreviousThread(false);
         }
     }, [isOpen, reset, preselectedToEmails, preselectedCcEmails]);
+
     const handleSave = async data => {
         const toEmails = data.to_email.map(item => item.value || item);
         const ccEmails = data.cc_email.map(item => item.value || item);
@@ -69,15 +75,14 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
             console.error("Error sending email:", error);
         }
     };
+
     return (
         <div id="email-compose"
              className={`hs-overlay fixed inset-0 z-50 bg-black/40 transition-all duration-300 ${isOpen ? "block" : "hidden"}`}
              tabIndex={-1}>
             <div
                 className={`hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out relative flex items-center justify-center min-h-[calc(100%-2rem)] max-w-4xl mx-auto my-auto`}>
-
-                <div
-                    className={`ti-modal-content bg-white rounded-lg shadow-xl w-full`}>
+                <div className={`ti-modal-content bg-white rounded-lg shadow-xl w-full`}>
                     <div className="ti-modal-header flex justify-between items-center p-4 border-b">
                         <h6 className="modal-title text-[1rem] font-semibold">Compose Email</h6>
                         <button onClick={onClose} type="button"
@@ -119,7 +124,6 @@ const EmailComposeModal = ({isOpen, onClose, serviceRequest, user}) => {
                                     }}
                                 />
                             </div>
-
                             <div className="flex items-center">
                                 <input type="checkbox" id="previous-thread" checked={includePreviousThread}
                                        onChange={e => setIncludePreviousThread(e.target.checked)} className="mr-2"/>

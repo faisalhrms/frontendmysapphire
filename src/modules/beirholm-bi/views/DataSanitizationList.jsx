@@ -143,11 +143,12 @@ const DataSanitizationList = () => {
                 const toggleAll = () => {
                     handleSelectAll(rows, !allSelected);
                 };
-                return <input type="checkbox" checked={allSelected} onChange={toggleAll}/>;
+                return <input type="checkbox" className="form-check-input" checked={allSelected} onChange={toggleAll}/>;
             },
             Cell: ({row}) => (
                 <input
                     type="checkbox"
+                    className="form-check-input"
                     checked={selectedRows.some((item) => item.id === row.original.id)}
                     onChange={(e) => handleSelectRow(row.original, e.target.checked)}
                 />
@@ -267,10 +268,26 @@ const DataSanitizationList = () => {
         {Header: "File Name", accessor: "file_name"},
         {Header: "Product Country", accessor: "product_country"},
         {
-            Header: "Uploaded At",
-            accessor: "uploaded_at",
-            Cell: ({value}) => new Date(value).toLocaleString()
+          Header: "Uploaded at",
+          accessor: "uploaded_at",
+          Cell: ({ value }) =>
+            value ? (
+              <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                {new Date(value).toLocaleString()}
+              </span>
+            ) : null
         },
+        {
+          Header: "Reprocessed at",
+          accessor: "last_reprocessed_at",
+          Cell: ({ value }) =>
+            value ? (
+              <span className="bg-info/10 text-info px-2 py-1 rounded-md">
+                {new Date(value).toLocaleString()}
+              </span>
+            ) : null
+        },
+
         {Header: "Status", accessor: "status"},
         {
             Header: "Progress",
