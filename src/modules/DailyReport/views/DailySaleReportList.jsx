@@ -195,146 +195,115 @@ const [donwloadData, setDonwloadData] = useState({});
 
     return (
         <>
-            <PageHeader currentpage="Daily Sales Report" />
+            <PageHeader currentpage="Daily Sales Report"/>
 
-            <div className="grid grid-cols-12 gap-6">
-                <div className="xl:col-span-12 col-span-12">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                <div className="col-span-12">
                     <div
-                        className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-                        <nav className="flex space-x-4">
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "DailySaleReportList" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("DailySaleReportList")}
-                            >
-                                Store Wise
-                            </Link>
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "OnlineAndBM" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("OnlineAndBM")}
-                            >
-                                Daily Target Achievement
-                            </Link>
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Return" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("Return")}
-                            >
-                                CY Vs LY Growth
-                            </Link>
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "GrossReturn" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("GrossReturn")}
-                            >
-                                Online (Gross Sale before Return)
-                            </Link>
-
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "DailySales" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("DailySales")}
-                            >
-                                Daily Sales Report - Store Wise
-                            </Link>
+                        className="bg-white flex flex-col md:flex-row md:items-center md:justify-between px-3 sm:px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+                        <nav className="flex flex-col sm:flex-row sm:space-x-2 overflow-x-auto">
+                            {[
+                                {tab: "DailySaleReportList", label: "Store Wise"},
+                                {tab: "OnlineAndBM", label: "Daily Target Achievement"},
+                                {tab: "Return", label: "CY Vs LY Growth"},
+                                {tab: "GrossReturn", label: "Online (Gross Sale before Return)"},
+                                {tab: "DailySales", label: "Daily Sales Report - Store Wise"},
+                            ].map(({tab, label}) => (
+                                <Link
+                                    key={tab}
+                                    to="#"
+                                    className={`whitespace-nowrap m-1 border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 text-[0.75rem] font-medium rounded-md ${
+                                        activeTab === tab
+                                            ? "bg-primary text-white"
+                                            : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"
+                                    }`}
+                                    onClick={() => setActiveTab(tab)}
+                                >
+                                    {label}
+                                </Link>
+                            ))}
                         </nav>
-                        <div className="text-center mr-2 flex justify-center space-x-2">
-                            {activeTab === "DailySaleReportList" && (
+
+                        <div className="flex flex-wrap justify-center md:justify-end gap-2 mt-2 md:mt-0">
+                            {(activeTab === "DailySaleReportList" || activeTab === "DailySales") && (
                                 <button
                                     onClick={() => setExpand(!expand)}
                                     type="button"
-                                    className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                    className="ti-btn bg-primary text-white font-medium text-sm rounded py-2 px-3"
                                 >
-                                    {expand ? (
-                                        <i className="ri-arrow-up-s-line"></i>
-                                    ) : (
-                                        <i className="ri-arrow-down-s-line"></i>
-                                    )}
-                                    {expand ? 'Collapse' : 'Expand All'}
+                                    <i className={expand ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"}></i>
+                                    {expand ? "Collapse" : "Expand All"}
                                 </button>
                             )}
-                            {activeTab === "DailySales" && (
-                                <button
-                                    onClick={() => setExpand(!expand)}
-                                    type="button"
-                                    className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
-                                >
-                                    {expand ? (
-                                        <i className="ri-arrow-up-s-line"></i>
-                                    ) : (
-                                        <i className="ri-arrow-down-s-line"></i>
-                                    )}
-                                    {expand ? 'Collapse' : 'Expand All'}
-                                </button>
-                            )}
+
                             <button
                                 type="button"
-                                className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                className="ti-btn bg-primary text-white font-medium text-sm rounded py-2 px-3"
                                 onClick={() => downloadPDF(filters)}
                                 disabled={isDownloading}
                             >
-                                <i
-                                    className={`bi bi-file-earmark-pdf ${isDownloading ? 'spin' : ''} text-lg`}
-                                    style={isDownloading ? {animation: 'spin 1s infinite linear'} : {}}
-                                ></i>
-                                {isDownloading ? '' : 'PDF'}
+                                <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""} text-lg`}></i>
+                                {isDownloading ? "" : "PDF"}
                             </button>
 
                             <button
                                 type="button"
-                                className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
+                                className="ti-btn bg-primary text-white font-medium text-sm rounded py-2 px-3"
                                 onClick={() => setShowFilters(!showFilters)}
                             >
                                 <i className="ri-filter-3-fill inline-block"></i> Filters
                             </button>
                         </div>
-
                     </div>
-                    <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
-                        <p>Amount in Rs </p>
+
+                    <div className="text-primary p-2 rounded-lg text-right text-black">
+                        <p>Amount in Rs</p>
                     </div>
 
                     {showFilters && (
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div
-                                className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
-                                <div className="mt-0">
+                                className="bg-white p-3 mt-2 rounded-lg shadow-md flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 dark:text-gray-200 dark:bg-bodybg">
                                 <FormInput
-                                        type="date"
-                                        name="date_from"
-                                        control={control}
-                                        errors={errors}
-                                        defaultValue={filters.date_from}
-                                        label={true}
-                                    />
-                                </div>
-                                <div className="mt-0">
-                                    <FilterButton/>
-                                </div>
+                                    type="date"
+                                    name="date_from"
+                                    control={control}
+                                    errors={errors}
+                                    defaultValue={filters.date_from}
+                                    label={true}
+                                />
+                                <FilterButton/>
                             </div>
                         </form>
                     )}
 
                     {activeTab === "DailySaleReportList" && (
-                        <StoreWise filters={filters} newData={table1} error={error} loading={loading} expand={expand} setDonwloadData={setDonwloadData}  />
+                        <StoreWise {...{filters, newData: table1, error, loading, expand, setDonwloadData}} />
                     )}
-
                     {activeTab === "OnlineAndBM" && (
-                        <DailyTargetAchievementOnline data={table2} loading={loading} setDonwloadData={setDonwloadData}/>
+                        <DailyTargetAchievementOnline data={table2} loading={loading}
+                                                      setDonwloadData={setDonwloadData}/>
                     )}
                     {activeTab === "Return" && (
                         <CYVsLYGrowth data={table3} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
                     {activeTab === "GrossReturn" && (
-                        <OnlineGrossSaleBeforeReturn  data={table4} loading={loading} setDonwloadData={setDonwloadData}/>
+                        <OnlineGrossSaleBeforeReturn data={table4} loading={loading} setDonwloadData={setDonwloadData}/>
                     )}
-
                     {activeTab === "DailySales" && (
-                        <DailySalesReportStoreWise lastDayData={table5} mtdData={table6}  loading={loading} error={error} expand={expand} setDonwloadData={setDonwloadData} filters={filters}/>
+                        <DailySalesReportStoreWise
+                            lastDayData={table5}
+                            mtdData={table6}
+                            loading={loading}
+                            error={error}
+                            expand={expand}
+                            setDonwloadData={setDonwloadData}
+                            filters={filters}
+                        />
                     )}
                 </div>
             </div>
+
         </>
     );
 };
