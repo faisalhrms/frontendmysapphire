@@ -10,12 +10,9 @@ const ProjectStatusCard = ({ item }) => {
     const { status, last_month, total, percentage_change } = item;
     const styles = getStatusStyles(status);
     const { changeClass, arrowIconClass, ariaLabel } = getChangeStyles(percentage_change);
-    const handleCardClick=()=>{
-        const formattedStatus =  status.toLowerCase().replace(/\s+/g, '_');
-        navigate(`/module/projects?status=${formattedStatus}`);
-    }
+
     return (
-        <div className="box !mb-0 cursor-pointer hover:shadow-lg transition-all duration-200 " onClick={handleCardClick}>
+        <div className="box !mb-0 hover:shadow-lg transition-all duration-200">
             <div className="box-body">
                 <div className="grid grid-cols-12">
                     <div className="col-span-8 pe-0">

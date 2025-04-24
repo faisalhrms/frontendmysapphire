@@ -243,8 +243,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                              )
                                          }
                                      })()}
-                                            <HasProjectPermission globalPermission='add_task' users={projectUsers}
-                                                                  needIcon={true}>
+                                            <HasProjectPermission globalPermission='pms.add_task' users={projectUsers} needIcon={true}>
                                             {milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
@@ -261,7 +260,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
 
                                           </HasProjectPermission>
 
-                                        <HasProjectPermission globalPermission='change_task' users={projectUsers}>
+                                        <HasProjectPermission globalPermission='pms.change_task' users={projectUsers}>
                                             {task.status !== 'under_approval' &&
                                                 <Tooltip
                                                     id={`edit-tooltip-${task.id}-edit`}
@@ -275,7 +274,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-                                        <HasProjectPermission globalPermission='delete_project' users={projectUsers}>
+                                        <HasProjectPermission globalPermission='pms.delete_project' users={projectUsers}>
                                             {
                                                 task.status !== 'under_approval' &&
                                                 <Tooltip

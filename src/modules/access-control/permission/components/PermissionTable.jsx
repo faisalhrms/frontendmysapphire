@@ -6,28 +6,27 @@ import FormButton from "@components/form/FormButton.jsx";
 const customGlobalFilter = (rows, id, filterValue) => {
   if (!filterValue) return rows;
 
-  const searchTerm = filterValue.toLowerCase().replace(/_/g, '');
+  const searchTerm = filterValue.toLowerCase().replace(/[\s_]/g, ''); // Remove spaces and underscores from search term
 
   return rows.filter(row => {
     const { roleName, permissions } = row.original.roleWithPermissions || {};
 
-
-
-    const normalizedRoleName = roleName?.toLowerCase().replace(/_/g, '');
+    // Normalize role name (app name) for comparison (remove spaces and underscores)
+    const normalizedRoleName = roleName?.toLowerCase().replace(/[\s_]/g, '');
     const roleMatches = normalizedRoleName.includes(searchTerm);
 
-    const permissionsMatches = Object.values(permissions || {}).some(permission => {
-      const normalizedPermissionName = permission.name.toLowerCase().replace(/_/g, '');
-      const permissionNameMatches = normalizedPermissionName.includes(searchTerm);
-
-      const permissionCheckedMatches = String(permission.checked).toLowerCase().includes(searchTerm);
-
-      return permissionNameMatches || permissionCheckedMatches;
+    // Check if permission name matches the search term
+    const permissionMatches = Object.values(permissions || {}).some(permission => {
+      // Normalize permission name for comparison (remove spaces and underscores)
+      const normalizedPermissionName = permission.name.toLowerCase().replace(/[\s_]/g, '');
+      return normalizedPermissionName.includes(searchTerm);
     });
 
-    return roleMatches || permissionsMatches;
+    // If either roleName or permission name matches, return true
+    return roleMatches || permissionMatches;
   });
 };
+
 
 export const GlobalFilter = ({ filter, setFilter }) => {
   return (
@@ -170,16 +169,18 @@ const PermissionTable = ({ columns, data, onUpdatePermissions, onSavePermissions
                           </td>
                         </tr>
                         {Object.keys(permissions || {}).map(id => (
-                          <tr key={id} className="border-b border-defaultborder">
-                            <td className="text-start pl-6 p-2">{permissions[id].name}</td>
-                            <td className="text-start p-2">
-                              <input
-                                type="checkbox"
-                                checked={permissions[id].checked}
-                                onChange={(e) => handleCheckboxChange(roleName, id, e.target.checked)} // Pass checked value
-                              />
-                            </td>
-                          </tr>
+                            <tr key={id} className="border-b border-defaultborder">
+                              <td className="text-start pl-6 p-2">
+                                {permissions[id].name}
+                              </td>
+                              <td className="text-start p-2">
+                                <input
+                                    type="checkbox"
+                                    checked={permissions[id].checked}
+                                    onChange={(e) => handleCheckboxChange(roleName, id, e.target.checked)}
+                                />
+                              </td>
+                            </tr>
                         ))}
 
 

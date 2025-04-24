@@ -90,7 +90,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                   onChange={(e) => setSearchTerm(e.target.value)}
               />
               <div className="flex space-x-2">
-                <HasProjectPermission globalPermission='change_project' users={projectUsers}>
+                <HasProjectPermission globalPermission='pms.change_project' users={projectUsers}>
                   <a
                       href={sampleFile}
                       download="sample_upload_tasks_against_milestone.xlsx"
@@ -136,7 +136,6 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                       handleUploadModal={handleUploadModal}
                       refetch={refetch}
                       openTaskOverdueModal={openTaskOverdueModal}
-                      // openTaskDetailModal={openTaskDetailModal}
                   />
               )}
             </div>
