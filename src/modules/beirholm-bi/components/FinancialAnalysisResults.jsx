@@ -61,13 +61,30 @@ const FinancialAnalysisResults = ({analysis, currencyValue, convertToMillions}) 
 
     const equityChartOptions = {
         chart: {type: "bar", stacked: true, height: 350},
-        plotOptions: {bar: {horizontal: true, dataLabels: {position: "center"}}},
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                dataLabels: {
+                    position: "center",
+                    total: {
+                        enabled: true,
+                        offsetX: 10,
+                        style: {fontSize: "12px", fontWeight: "bold"}
+                    }
+                }
+            }
+        },
         colors: ["#1E3A8A", "#64748B", "#94A3B8"],
         xaxis: {categories: years, labels: {formatter: formatSuffix}},
         yaxis: {title: {text: `Value in ${currencyValue}`}},
-        dataLabels: {enabled: true, formatter: formatSuffix, style: {fontSize: "12px"}},
+        dataLabels: {
+            enabled: true,
+            formatter: formatSuffix,
+            style: {fontSize: "12px"}
+        },
         tooltip: {shared: true, intersect: false, y: {formatter: formatSuffix}}
     };
+
 
     const equityChartSeries = [
         {name: "Equity", data: equity},

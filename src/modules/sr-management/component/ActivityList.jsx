@@ -26,7 +26,7 @@ const ActivityList = ({ activities = [], refreshActivities }) => {
       if (response.status === 200) {
         Notify.success("Activity marked as completed");
         setShowConfirmation(false);
-        if (refreshActivities) await refreshActivities();
+       await refreshActivities?.();
       } else {
         Notify.error("Failed to mark activity as completed");
       }

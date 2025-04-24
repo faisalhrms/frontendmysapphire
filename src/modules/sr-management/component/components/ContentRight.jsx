@@ -9,7 +9,7 @@ import Notify from "@helpers/toastNotifications.js";
 import {formatOptions} from "@helpers/formatters.js";
 import ActivityList from "@modules/sr-management/component/ActivityList.jsx";
 
-const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, serviceRequest}) => {
+const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, serviceRequest,refreshServiceData}) => {
     const {control, setValue, getValues, formState: {errors}} = useForm({});
     const [updating, setUpdating] = useState(false);
     const [attachments, setAttachments] = useState(serviceRequest?.attachments || []);
@@ -153,7 +153,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                 <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
                     <h2 className="box-title text-lg font-semibold text-gray-700">SLA Activity</h2>
                 </div>
-                <ActivityList activities={generatedReqData?.activities}/>
+                <ActivityList activities={generatedReqData?.activities} refreshActivities={refreshServiceData}/>
             </div>
             <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mt-4">
                 <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
