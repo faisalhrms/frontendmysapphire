@@ -31,7 +31,7 @@ const equipmentSchema = z.object({
     serial_no: z.string()
         .min(1, "Serial Number is required"),
         // .regex(/^[A-Za-z0-9\-]+$/, "Serial number must be alphanumeric."),
-    part_no: z.string().min(1, "Part No is required").nullable().optional(),
+    part_no: z.string().nullable().optional(),
     status: equipmentStatus.nullable().optional(),
     custodian_id: z.number().min(1, "Custodian Name is required").nullable().optional(),
     purchase_date: dateSchema('Purchase Date',true).optional(),
