@@ -3,7 +3,7 @@ import DigitalSignatures from '@modules/digital-signatures/views/DigitalSignatur
 export const DIGITAL_SIGNATURES_ROUTES = {
   READ: {
     path: "/module/signatures",
-    permission: "view_digital_signature",
+    permission: "auth.view_digital_signature",
   },
 };
 

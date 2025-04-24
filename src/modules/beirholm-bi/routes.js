@@ -15,61 +15,61 @@ import importerClassificationForm from "@modules/beirholm-bi/components/Importer
 export const BEIRHOLM_BI_ROUTES = {
     FIELD_DEFINITION_READ: {
         path: '/module/field/definitions',
-        permission: 'view_beirholm_field_definitions',
+        permission: 'beirholm_bi.view_beirholm_field_definitions',
     },
     FIELD_DEFINITION_CREATE: {
         path: '/module/field/definitions/add/',
-        permission: 'add_beirholm_field_definitions',
+        permission: 'beirholm_bi.add_beirholm_field_definitions',
     },
 
     CORRECTION_RULE_READ: {
         path: '/module/correction/rules',
-        permission: 'view_beirholm_error_correction_rule',
+        permission: 'beirholm_bi.view_beirholm_error_correction_rule',
     },
     CORRECTION_RULE_CREATE: {
         path: '/module/correction/rules/add/',
-        permission: 'add_beirholm_error_correction_rule',
+        permission: 'beirholm_bi.add_beirholm_error_correction_rule',
     },
 
     CORRECTION_PATTERN_READ: {
         path: '/module/correction/patterns',
-        permission: 'view_error_correction_pattern',
+        permission: 'beirholm_bi.view_error_correction_pattern',
     },
     CORRECTION_PATTERN_CREATE: {
         path: '/module/correction/patterns/add/',
-        permission: 'add_error_correction_pattern',
+        permission: 'beirholm_bi.add_error_correction_pattern',
     },
 
     DATA_SANITIZATION_READ: {
         path: '/module/data/sanitization',
-        permission: 'view_data_sanitization',
+        permission: 'beirholm_bi.view_data_sanitization',
     },
 
     CHAT_BOT_READ: {
         path: '/module/chat/bot',
-        permission: 'view_chat_bot',
+        permission: 'auth.view_chat_bot',
     },
     COMPETITOR_ANALYSIS: {
         path: '/module/competitor/analysis',
-        permission: 'view_competitor_analysis',
+        permission: 'auth.view_competitor_analysis',
     },
 
     EXCHANGE_RATE_READ: {
         path: '/module/exchange/rate',
-        permission: 'view_exchange_rate',
+        permission: 'beirholm_bi.view_exchange_rate',
     },
    EXCHANGE_RATE_CREATE: {
         path: '/module/exchange/rate/add/',
-        permission: 'add_exchange_rate',
+        permission: 'beirholm_bi.add_exchange_rate',
     },
 
     IMPORTER_CLASSIFICATION_READ: {
         path: '/module/classification',
-        permission: 'view_importer_classification',
+        permission: 'beirholm_bi.view_importer_classification',
     },
    IMPORTER_CLASSIFICATION_CREATE: {
         path: '/module/classification/add/',
-        permission: 'add_importer_classification',
+        permission: 'beirholm_bi.add_importer_classification',
     },
 };
 

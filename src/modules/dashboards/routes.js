@@ -11,7 +11,7 @@ import CardDasboard from "./ CEODashboard/views/CardDasboard.jsx";
 export const DASHBOARD_ROUTES = {
     PROJECT: {
         path: '/dashboards/project-management-system',
-        permission: 'pms_dashboard',
+        permission: 'auth.pms_dashboard',
     },
     BI: {
         path: '/dashboards/business-intelligence',
@@ -27,23 +27,23 @@ export const DASHBOARD_ROUTES = {
     },
     SUBSCRIPTION: {
         path: '/dashboards/subscription',
-        permission: 'sms_dashboard',
+        permission: 'auth.sms_dashboard',
     },
     SR: {
         path: '/dashboards/sr',
-        permission: 'sr_dashboard',
+        permission: 'auth.sr_dashboard',
     },
     SR_LIST: {
         path: '/dashboards/sr/sr-list/:status',
-        permission: 'sr_dashboard',
+        permission: 'auth.sr_dashboard',
     },
     Equipment: {
         path: '/dashboards/asset',
-        permission: 'it_equipment_dashboard',
+        permission: 'auth.it_equipment_dashboard',
     },
     CEO: {
         path: '/dashboards/eco',
-        permission: 'view_ceo_dashboard',
+        permission: 'auth.view_ceo_dashboard',
 
     },
 

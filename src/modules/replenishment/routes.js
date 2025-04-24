@@ -4,7 +4,7 @@ import ReplenishmentThank from '@modules/replenishment/views/ReplenishmentThank.
 export const REPLENISHMENT_ROUTES = {
     READ: {
         path: '/module/replenishment',
-        permission: 'scm_replenishment_report'
+        permission: 'scm.scm_replenishment_report'
     },
     THANK: {
         path: '/module/replenishment/thank-you',

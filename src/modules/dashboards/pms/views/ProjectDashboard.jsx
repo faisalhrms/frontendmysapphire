@@ -14,7 +14,6 @@ import ProjectDashboardProjectTasksPriorities
 
 
 const ProjectDashboard = () => {
-    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const {
         control,
         handleSubmit,
@@ -24,7 +23,7 @@ const ProjectDashboard = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'company_id', defaultValue: companyId},
+                    { name: 'company_id'},
                     { name: 'department_id'},
                     { name: 'workspace_id'},
                     { name: 'projects'},
@@ -55,7 +54,7 @@ const ProjectDashboard = () => {
     return(
         <>
             <PageHeader currentpage="Project Dashboard" activepage="Dashboards" mainpage="Project Management System"/>
-            <HasPermission permission='pms_dashboard_filters'>
+            <HasPermission permission='pms.pms_dashboard_filters'>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ProjectDashboardFilter control={control} errors={errors}/>
                 </form>

@@ -3,7 +3,7 @@ import TaskApprovalList from '@modules/approvals/task/views/TaskApprovalList.jsx
 export const APPROVAL_ROUTES = {
     TASK: {
         path: '/module/approvals/task',
-        permission: 'manage_task_approvals',
+        permission: 'pms.manage_task_approvals',
     },
 };
 
