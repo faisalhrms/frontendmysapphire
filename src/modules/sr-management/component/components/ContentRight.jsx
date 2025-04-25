@@ -96,7 +96,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                     className="xxl:col-span-4 xl:col-span-6 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12"
                     key={Math.random()}
                 >
-                    <div className="box">
+                    <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
                         <div className="box-header p-4 border-b border-gray-200 bg-blue-50">
                             <h2 className="box-title text-lg font-semibold text-gray-700">Rating & Remarks</h2>
                         </div>
