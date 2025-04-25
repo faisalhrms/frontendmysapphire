@@ -214,7 +214,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                             </div>
                                             <div id="attachment" className="hidden" role="tabpanel"
                                                  aria-labelledby="attachment-item">
-                                                <div className="h-full bg-gray-50 rounded-lg overflow-hidden">
+                                                <div className="h-full bg-gray-50 rounded-lg overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                                                     {task.attachments.length === 0 ? (
                                                         <div
                                                             className="flex flex-col items-center justify-center h-[calc(100%-60px)] rounded-lg overflow-hidden p-8">
@@ -236,7 +236,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                                     {task.attachments.map((attachment) => (
                                                                     <div
                                                                         key={attachment.id}
-                                                                        className="flex items-center bg-white rounded-lg border border-gray-200 shadow-sm p-4 hover:shadow-md transition-all mb-4"
+                                                                        className="flex items-center bg-white rounded-lg border border-gray-200 shadow-sm p-4 hover:shadow-md transition-all mb-4 dark:text-gray-200 dark:bg-bodybg"
                                                                     >
                                                                         <div className="flex-shrink-0">
                                                                             <div
@@ -258,7 +258,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                                                 href={attachment.file_url}
                                                                                 target="_blank"
                                                                                 rel="noopener noreferrer"
-                                                                                className="p-1 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100"
+                                                                                className="ti-btn ti-btn-info ti-btn-sm"
                                                                                 title="View / Download"
                                                                             >
                                                                                 <i className="ri-eye-line"/>

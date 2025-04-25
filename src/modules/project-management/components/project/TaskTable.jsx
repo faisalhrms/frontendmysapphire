@@ -105,7 +105,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                         <th
                             scope="col"
 
-                            className="cursor-pointer"
+                            className="cursor-pointer dark:text-gray-200 dark:bg-bodybg"
                         >
                             {isChild ? "Sub Task Name" : "Task Name"}
                             <span className={`ml-1 ${getSortIconAndClass('name').className}`}>
@@ -303,7 +303,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                                 </td>
                                 <td>
-                                    <span className="flex items-center text-[0.80rem] text-[#323338]">
+                                    <span className="flex items-center dark:text-gray-200 dark:bg-bodybg">
                                         <span onClick={() => toggleSubTasks(task.id)}>
                                             {task.children && task.children.length > 0 && (
                                                 <svg

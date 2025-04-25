@@ -56,7 +56,7 @@ const PrioritiesTableWrapper = ({ data, statuses, filters }) => {
     const rowsWithFooter = useMemo(() => {
         return [
             ...rows,
-            { priority: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals, total: grandTotal }
+            { priority: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg">Total</span>, ...columnTotals, total: grandTotal }
         ];
     }, [rows, columnTotals, grandTotal]);
 
