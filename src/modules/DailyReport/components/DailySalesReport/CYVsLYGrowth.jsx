@@ -228,86 +228,86 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                         >
                                         Total
                                     </td>
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg">
                                         {formatNumberWithCommas(totals.FullPriceOfflineCY)}
                                     </td>
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm  dark:text-gray-200 dark:bg-bodybg">
                                         {formatNumberWithCommas(totals.FullPriceOfflineLY)}
                                     </td>
                                     <td
-                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm   ${getAchColor(totalsAch.FullPriceOfflineAch)}`}
+                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.FullPriceOfflineAch)}`}
                                     >
                                         {getAchIcon(totalsAch.FullPriceOfflineAch)} {totalsAch.FullPriceOfflineAch}%
                                     </td>
 
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg">
                                         {formatNumberWithCommas(totals.DiscountedOfflineCY)}
                                     </td>
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg ">
                                         {formatNumberWithCommas(totals.DiscountedOfflineLY)}
                                     </td>
                                     <td
-                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm   ${getAchColor(totalsAch.DiscountedOfflineAch)}`}
+                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg   ${getAchColor(totalsAch.DiscountedOfflineAch)}`}
                                     >
                                         {getAchIcon(totalsAch.DiscountedOfflineAch)} {totalsAch.DiscountedOfflineAch}%
                                     </td>
 
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg ">
                                         {formatNumberWithCommas(totals.TotalOfflineCY)}
                                     </td>
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg ">
                                         {formatNumberWithCommas(totals.TotalOfflineLY)}
                                     </td>
                                     <td
-                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm  ${getAchColor(totalsAch.TotalOfflineAch)}`}
+                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.TotalOfflineAch)}`}
                                     >
                                         {getAchIcon(totalsAch.TotalOfflineAch)} {totalsAch.TotalOfflineAch}%
                                     </td>
 
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm  dark:text-gray-200 dark:bg-bodybg">
                                         {formatNumberWithCommas(totals.FullPriceOnlineCY)}
                                     </td>
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg ">
                                         {formatNumberWithCommas(totals.FullPriceOnlineLY)}
                                     </td>
                                     <td
-                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm   ${getAchColor(totalsAch.FullPriceOnlineAch)}`}
+                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.FullPriceOnlineAch)}`}
                                     >
                                         {getAchIcon(totalsAch.FullPriceOnlineAch)} {totalsAch.FullPriceOnlineAch}%
                                     </td>
 
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm" >
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg" >
                                         {formatNumberWithCommas(totals.DiscountedOnlineCY)}
                                     </td>
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg ">
                                         {formatNumberWithCommas(totals.DiscountedOnlineLY)}
                                     </td>
                                     <td
-                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm   ${getAchColor(totalsAch.DiscountedOnlineAch)}`}
+                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.DiscountedOnlineAch)}`}
                                     >
                                         {getAchIcon(totalsAch.DiscountedOnlineAch)} {totalsAch.DiscountedOnlineAch}%
                                     </td>
 
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm  dark:text-gray-200 dark:bg-bodybg">
                                         {formatNumberWithCommas(totals.TotalOnlineCY)}
                                     </td>
-                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg ">
                                         {formatNumberWithCommas(totals.TotalOnlineLY)}
                                     </td>
                                     <td
-                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm   ${getAchColor(totalsAch.TotalOnlineAch)}`}
+                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg   ${getAchColor(totalsAch.TotalOnlineAch)}`}
                                     >
                                         {getAchIcon(totalsAch.TotalOnlineAch)} {totalsAch.TotalOnlineAch}%
                                     </td>
 
-                                    <td className="px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm  ">
+                                    <td className="px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg  ">
                                         {formatNumberWithCommas(totals.TotalCY)}
                                     </td>
-                                    <td className="px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm  ">
+                                    <td className="px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg ">
                                         {formatNumberWithCommas(totals.TotalLY)}
                                     </td>
                                     <td
-                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm   ${getAchColor(totalsAch.TotalAch)}`}
+                                        className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm dark:text-gray-200 dark:bg-bodybg  ${getAchColor(totalsAch.TotalAch)}`}
                                     >
                                         {getAchIcon(totalsAch.TotalAch)} {totalsAch.TotalAch}%
                                     </td>

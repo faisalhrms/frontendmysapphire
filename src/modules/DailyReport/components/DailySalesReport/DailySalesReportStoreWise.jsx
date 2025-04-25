@@ -159,17 +159,17 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
                                         {/* Classification Row */}
                                         <tr>
                                             <td
-                                                className={`px-2 py-1 border border-gray-300 bg-gray-200 sticky top-0 left-0 z-10 w-[120px] md:w-[200px] whitespace-nowrap ${getTextStyle(true)} cursor-pointer`}
+                                                className={`px-2 py-1 border border-gray-300 bg-gray-200 sticky dark:text-gray-200 dark:bg-bodybg top-0 left-0 z-10 w-[120px] md:w-[200px] whitespace-nowrap ${getTextStyle(true)} cursor-pointer`}
                                                 onClick={() => handleRowToggle(classification.classification_name, tableType)}
                                             >
                                                 {openRows[classification.classification_name] ? "▼" : "►"} {classification.classification_name}
                                             </td>
-                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(classification.fullprice_sale_qty)}</td>
-                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(classification.fullprice_sale_value)}</td>
-                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(classification.discounted_sale_qty)}</td>
-                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(classification.discounted_sale_value)}</td>
-                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(classification.total_sale_qty)}</td>
-                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(classification.total_sale_value)}</td>
+                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(classification.fullprice_sale_qty)}</td>
+                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(classification.fullprice_sale_value)}</td>
+                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(classification.discounted_sale_qty)}</td>
+                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(classification.discounted_sale_value)}</td>
+                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(classification.total_sale_qty)}</td>
+                                            <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(classification.total_sale_value)}</td>
                                         </tr>
 
                                         {/* Region Rows */}
@@ -178,30 +178,30 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
                                                 <React.Fragment key={region.region}>
                                                     <tr onClick={() => handleRowToggle(region.region, tableType)}
                                                         className="cursor-pointer">
-                                                        <td className={`px-4 py-1 border bg-gray-100 sticky left-0 z-10 w-[120px] md:w-[200px] whitespace-nowrap ${getTextStyle(true)}`}>
+                                                        <td className={`px-4 py-1 border dark:text-gray-200 dark:bg-bodybg bg-gray-100 sticky left-0 z-10 w-[120px] md:w-[200px] whitespace-nowrap ${getTextStyle(true)}`}>
                                                             {openRows[region.region] ? "▼" : "►"} {region.region}
                                                         </td>
-                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100">{formatNumberWithCommas(region.fullprice_sale_qty)}</td>
-                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100">{formatNumberWithCommas(region.fullprice_sale_value)}</td>
-                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100">{formatNumberWithCommas(region.discounted_sale_qty)}</td>
-                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100">{formatNumberWithCommas(region.discounted_sale_value)}</td>
-                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100">{formatNumberWithCommas(region.total_sale_qty)}</td>
-                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100">{formatNumberWithCommas(region.total_sale_value)}</td>
+                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(region.fullprice_sale_qty)}</td>
+                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(region.fullprice_sale_value)}</td>
+                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(region.discounted_sale_qty)}</td>
+                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(region.discounted_sale_value)}</td>
+                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(region.total_sale_qty)}</td>
+                                                        <td className="px-2 py-1 border text-right font-bold bg-gray-100 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(region.total_sale_value)}</td>
                                                     </tr>
 
                                                     {/* Store Rows */}
                                                     {openRows[region.region] &&
                                                         region.stores?.map((store) => (
                                                             <tr key={store.store_name}>
-                                                                <td className="px-2 py-1 border sticky left-0 z-10 bg-white w-[120px] md:w-[200px] whitespace-nowrap">
+                                                                <td className="px-2 py-1 border sticky left-0 z-10 bg-white w-[120px] md:w-[200px] whitespace-nowrap dark:text-gray-200 dark:bg-bodybg">
                                                                     {handleData(store.store_name)}
                                                                 </td>
-                                                                <td className="px-2 py-1 border text-right">{formatNumberWithCommas(handleData(store.fullprice_sale_qty))}</td>
-                                                                <td className="px-2 py-1 border text-right">{formatNumberWithCommas(handleData(store.fullprice_sale_value))}</td>
-                                                                <td className="px-2 py-1 border text-right">{formatNumberWithCommas(handleData(store.discounted_sale_qty))}</td>
-                                                                <td className="px-2 py-1 border text-right">{formatNumberWithCommas(handleData(store.discounted_sale_value))}</td>
-                                                                <td className="px-2 py-1 border text-right">{formatNumberWithCommas(handleData(store.total_sale_qty))}</td>
-                                                                <td className="px-2 py-1 border text-right">{formatNumberWithCommas(handleData(store.total_sale_value))}</td>
+                                                                <td className="px-2 py-1 border text-right dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(handleData(store.fullprice_sale_qty))}</td>
+                                                                <td className="px-2 py-1 border text-right dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(handleData(store.fullprice_sale_value))}</td>
+                                                                <td className="px-2 py-1 border text-right dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(handleData(store.discounted_sale_qty))}</td>
+                                                                <td className="px-2 py-1 border text-right dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(handleData(store.discounted_sale_value))}</td>
+                                                                <td className="px-2 py-1 border text-right dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(handleData(store.total_sale_qty))}</td>
+                                                                <td className="px-2 py-1 border text-right dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(handleData(store.total_sale_value))}</td>
                                                             </tr>
                                                         ))}
                                                 </React.Fragment>
@@ -211,13 +211,13 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
 
                                 {/* Total Row */}
                                 <tr>
-                                    <td className="px-2 py-1 border font-bold sticky left-0 bg-gray-200 w-[120px] md:w-[200px] whitespace-nowrap">{`Total`}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(data?.overall_fullprice_sale_qty)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(data?.overall_fullprice_sale_value)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(data?.overall_discounted_sale_qty)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(data?.overall_discounted_sale_value)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(data?.overall_total_sale_qty)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200">{formatNumberWithCommas(data?.overall_total_sale_value)}</td>
+                                    <td className="px-2 py-1 border font-bold sticky left-0 bg-gray-200 w-[120px] md:w-[200px] whitespace-nowrap dark:text-gray-200 dark:bg-bodybg">{`Total`}</td>
+                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_fullprice_sale_qty)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_fullprice_sale_value)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_discounted_sale_qty)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_discounted_sale_value)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_total_sale_qty)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_total_sale_value)}</td>
                                 </tr>
                                 </tbody>
                             </table>
