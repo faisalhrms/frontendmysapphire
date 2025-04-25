@@ -9,7 +9,7 @@ const SubTaskList = ({ serviceRequest }) => {
     };
 
     return (
-        <div className={`table-responsive task-table`}>
+        <div className={`table-responsive`}>
             <table className="table whitespace-nowrap table-bordered min-w-full">
                 <thead className="table-active">
                 <tr className="border-b border-defaultborder">

@@ -46,7 +46,7 @@ const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) 
     };
 
     return (
-        <div className="box">
+        <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
             <div className="box-header">
                 <div className="box-title">
                     Attachments <span className="badge bg-primary/10 !rounded-full text-primary ms-1">{safeAttachments.length}</span>

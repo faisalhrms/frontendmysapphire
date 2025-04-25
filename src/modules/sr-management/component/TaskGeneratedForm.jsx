@@ -117,7 +117,7 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {}, refresh
 
   const TaskFormHeader = () => (
     <div className="xl:col-span-9 col-span-12">
-      <div className="box">
+      <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
         <div className="box-body">
           <div className="grid grid-cols-12 gap-4">
             <div className="xl:col-span-3 col-span-12">
