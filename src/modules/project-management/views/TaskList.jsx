@@ -76,7 +76,7 @@ const TaskList = () => {
                     >
                         <Link
                             to={`/module/projects/detail/${project.id}`}
-                            className='dark:text-gray-200 dark:bg-bodybg'
+                            className=''
                             >
                             {project.name.length>20?project.name.slice(0, 20) + "...":project.name}
                         </Link>
@@ -86,7 +86,7 @@ const TaskList = () => {
         },
         { Header: "Milestone", accessor: "milestone.name", disableSortBy: true,
             Cell: ({value}) => (
-                <p className='dark:text-gray-200 dark:bg-bodybg'>{value.length>20?value.slice(0,20)+"...":value}</p>
+                <p className=''>{value.length>20?value.slice(0,20)+"...":value}</p>
             )
         },
         { Header: "Task", accessor: "name",
