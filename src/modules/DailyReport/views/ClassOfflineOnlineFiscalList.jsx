@@ -49,7 +49,8 @@ const DailySaleReportList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Daily Sales Report" />
+            <PageHeader currentpage="Comparative Sales Report"   activepage="Report"
+                        mainpage="Comparative Sales Report"/>
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="xl:col-span-12 col-span-12">

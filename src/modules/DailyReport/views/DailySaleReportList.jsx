@@ -195,7 +195,9 @@ const [donwloadData, setDonwloadData] = useState({});
 
     return (
         <>
-            <PageHeader currentpage="Daily Sales Report"/>
+            <PageHeader currentpage="Daily Sales Report"  activepage="Report"
+                        mainpage="Daily Sales Report"/>
+
 
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                 <div className="col-span-12">
