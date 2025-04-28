@@ -67,21 +67,29 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {}, refresh
         );
         if (response.status === 200) {
           Notify.success("Activity created successfully");
+          await refreshServiceData();
         } else {
-          Notify.error("Failed to create activity. Please try again.");
+         Notify.error(
+            error.response?.data?.errors?.detail ||
+            error.response?.data?.message ||
+            "Failed to fetch"
+        );
         }
       } catch (error) {
-        Notify.error("Failed to create activity. Please try again.");
+      Notify.error(
+            error.response?.data?.errors?.detail ||
+            error.response?.data?.message ||
+            "Failed to fetch"
+        );
       }
     }
     setShowConfirmation(false);
   };
-
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (confirmationType === "status") {
-      confirmStatusChange();
+      await confirmStatusChange();
     } else if (confirmationType === "sla") {
-      confirmSLAActivityChange();
+      await confirmSLAActivityChange();
     }
   };
 
@@ -109,7 +117,7 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {}, refresh
 
   const TaskFormHeader = () => (
     <div className="xl:col-span-9 col-span-12">
-      <div className="box">
+      <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
         <div className="box-body">
           <div className="grid grid-cols-12 gap-4">
             <div className="xl:col-span-3 col-span-12">
@@ -185,7 +193,7 @@ function TaskGeneratedForm({ generatedReqData = {}, serviceRequest = {}, refresh
             serviceRequest={serviceRequest}
             selectedStatus={selectedStatus}
           />
-          <ContentRight generatedReqData={generatedReqData} serviceRequest={serviceRequest} />
+          <ContentRight generatedReqData={generatedReqData} serviceRequest={serviceRequest} refreshServiceData={refreshServiceData} />
         </div>
       </div>
     </>

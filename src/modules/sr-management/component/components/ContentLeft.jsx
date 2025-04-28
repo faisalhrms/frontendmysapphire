@@ -179,7 +179,7 @@ function ContentLeft({ generatedReqData, serviceRequest, selectedStatus }) {
           </div>
         </div>
       </div>
-      <div className={`box ${isFullscreen ? "box-fullscreen" : ""}`}>
+      <div className={`box ${isFullscreen ? "box-fullscreen" : ""} shadow-md border border-gray-300 dark:border-gray-700 rounded-lg`}>
         <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
           <h2 className="box-title text-lg font-semibold text-gray-700">
             Description

@@ -56,7 +56,7 @@ const TeamsTableWrapper = ({ data, statuses, filters }) => {
     const rowsWithFooter = useMemo(() => {
         return [
             ...rows,
-            { team: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals, total: grandTotal }
+            { team: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg">Total</span>, ...columnTotals, total: grandTotal }
         ];
     }, [rows, columnTotals, grandTotal]);
 

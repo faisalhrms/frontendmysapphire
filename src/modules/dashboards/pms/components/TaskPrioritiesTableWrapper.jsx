@@ -14,7 +14,7 @@ function transformData(data) {
         let tagTotal = 0;
 
         rows.push({
-            tagTeam: <span className="font-semibold text-[#232323] !text-left">{tag.toUpperCase()}</span>,
+            tagTeam: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg !text-left">{tag.toUpperCase()}</span>,
             tag: tag,
             high: tagHigh,
             medium: tagMedium,
@@ -39,7 +39,7 @@ function transformData(data) {
         });
 
         rows[rows.length - Object.keys(teamsData).length - 1] = {
-            tagTeam: <span className="font-semibold text-[#232323] !text-left">{tag.toUpperCase()}</span>,
+            tagTeam: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg !text-left">{tag.toUpperCase()}</span>,
             tag: tag,
             high: tagHigh,
             medium: tagMedium,
