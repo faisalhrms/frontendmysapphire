@@ -33,6 +33,7 @@ const equipmentSchema = z.object({
         // .regex(/^[A-Za-z0-9\-]+$/, "Serial number must be alphanumeric."),
     part_no: z.string().nullable().optional(),
     status: equipmentStatus.nullable().optional(),
+    previous_custodian: z.string().max(250).nullable().optional(),
     custodian_id: z.number().min(1, "Custodian Name is required").nullable().optional(),
     purchase_date: dateSchema('Purchase Date',true).optional(),
     handover_date: dateSchema('HandOver Date',true).optional(),

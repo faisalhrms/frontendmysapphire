@@ -198,6 +198,26 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         label="Status"
                                     />
                                 </div>
+                                {/* ---------- Quantity ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="quantity"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Quantity"
+                                        type="number"
+                                        min="1"
+                                    />
+                                </div>
+                                {/* ---------- previous Custodian ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormInput
+                                        name="previous_custodian"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Previous Custodian"
+                                    />
+                                </div>
 
                                 {/* ---------- Custodian ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
@@ -211,17 +231,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                     />
 
                                 </div>
-                                {/* ---------- Quantity ---------- */}
-                                <div className="xl:col-span-6 col-span-12">
-                                    <FormInput
-                                        name="quantity"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Quantity"
-                                        type="number"
-                                        min="1"
-                                    />
-                                </div>
+
                                 {/* ---------- Price Paid by Employee ---------- */}
                                 {status === "sold_to_employee" && (
                                     <div className="xl:col-span-6 col-span-12">
