@@ -26,7 +26,6 @@ const columns = [
     )
   },
   { Header: 'Country',       accessor: r => toTitleCase(r.product_country) },
-  { Header: 'Data Category', accessor: r => toTitleCase(r.data_category.name) },
   { Header: 'Source Header', accessor: r => toTitleCase(r.source_header.name) },
   { Header: 'Source Value',  accessor: 'source_value' },
   {

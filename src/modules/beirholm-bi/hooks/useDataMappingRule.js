@@ -11,7 +11,6 @@ export const useDataMappingRule = id => {
   const { handleSubmit, control, setValue, formState: { errors, isSubmitting } } = useForm({
     defaultValues: {
       product_country: '',
-      data_category: '',
       source_header: null,
       source_value: '',
       mapped: [{ mapped_header: null, mapped_value: '' }]
@@ -27,7 +26,6 @@ export const useDataMappingRule = id => {
         : [{ mapped_header: null, mapped_value: '' }]
       replace(rows)
       setValue('product_country', res.product_country)
-      setValue('data_category', res.data_category.id)
       setValue('source_header', res.source_header.id)
       setValue('source_value', res.source_value)
     })
@@ -36,7 +34,6 @@ export const useDataMappingRule = id => {
   const submit = async d => {
     const payload = {
       product_country: d.product_country,
-      data_category: d.data_category,
       source_header: idOrValue(d.source_header),
       source_value: d.source_value,
       mapped: d.mapped.map(r => ({
