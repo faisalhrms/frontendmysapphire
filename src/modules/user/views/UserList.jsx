@@ -3,7 +3,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import PageHeader from '@modules/layouts/includes/PageHeader';
 import DataTable from "@components/DataTable.jsx";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import Phone from "@mui/icons-material/Phone";
@@ -41,7 +41,6 @@ const UserList = () => {
     );
 
     const [filters, setFilters] = useState(getFilters());
-    console.log(`this is filter`, filters);
     const onSubmit = useCallback((formData) => {
         setFilters(formData);
     }, []);
@@ -51,25 +50,24 @@ const UserList = () => {
         setFilters(getFilters());
     }, [resetFilters, getFilters]);
 
-    const handleEdit = (id) => {
-        navigate(`/module/users/edit/${id}`);
-    };
-
     const columns = [
         {
             Header: 'Actions',
             accessor: 'id',
             disableSortBy: true,
             Cell: ({ value }) => (
-                <HasPermission permission='change_user'>
+                <HasPermission permission="user.change_user">
                     <div className="flex space-x-2">
-                        <button
-                            onClick={() => handleEdit(value)}
-                            className="ti-btn ti-btn-primary ti-btn-sm"
-                            title="Edit User"
+                        <Link
+                            to={`/module/users/edit/${value}`}
                         >
-                            <i className="ri-edit-line"></i>
-                        </button>
+                            <button
+                                className="ti-btn ti-btn-primary ti-btn-sm"
+                                title="Edit User"
+                            >
+                                <i className="ri-edit-line"></i>
+                            </button>
+                        </Link>
                     </div>
                 </HasPermission>
             ),
@@ -262,7 +260,7 @@ const UserList = () => {
     ];
 
     const buttons = (
-        <HasPermission permission='add_user'>
+        <HasPermission permission='user.add_user'>
             <div className="flex space-x-2">
                 <button
                     type="button"

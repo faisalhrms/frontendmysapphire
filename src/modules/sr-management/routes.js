@@ -7,7 +7,7 @@ import TaskClosedView from '@modules/sr-management/closed-task-section/views/Tas
 export const SRM_ROUTES = {
     READ: {
         path: '/module/srm',
-        permission: 'view_sr_management',
+        permission: 'auth.view_sr_management',
     },
     PENDING: {
         path: '/module/srm/taskpending/:id',

@@ -53,7 +53,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                         </div>
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
-                                <HasPermission permission='manage_project'>
+                                <HasPermission permission='pms.manage_project'>
                                     <div className="xl:col-span-6  col-span-12">
                                         <FormAsyncSelect
                                             name="company_id"
@@ -192,7 +192,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                 </div>
                 <div
                     className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 sm:col-span-4 col-span-12 sticky top-0 self-start ">
-                    <HasPermission permission='manage_customer_project'>
+                    <HasPermission permission='pms.manage_customer_project'>
                         <div className="box">
                             <div className="box-header">
                                 <div className="box-title"> For Customer</div>

@@ -5,11 +5,11 @@ import {useNavigate} from "react-router-dom";
 const Card = ({ name,icon, color , onClick}) => {
     return (
         <div
-            className={`bg-white flex flex-col  items-center justify-center w-80 h-40 p-6 m-2 ${color} rounded-lg mb-4 transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl cursor-pointer`}
+            className={`bg-white flex flex-col  items-center justify-center w-80 h-40 p-6 m-2 ${color} rounded-lg mb-4 transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl cursor-pointer dark:text-gray-200 dark:bg-bodybg`}
             onClick={onClick}
         >
             <img src={icon} alt={name} className="w-16 h-16 mb-2"/>
-            <h3 className="text-black italic text-lg">{name}</h3>
+            <h3 className="dark:text-gray-200 dark:bg-bodybg italic text-lg">{name}</h3>
         </div>
     );
 };
@@ -17,8 +17,8 @@ const Card = ({ name,icon, color , onClick}) => {
 const CardForm = () => {
     const navigate = useNavigate();
     return (
-        <div className="mt-52 text-black flex justify-center  items-center">
-            <div className="flex space-x-4">
+        <div className="mt-52 text-black flex justify-center  items-center ">
+            <div className="flex space-x-4 ">
                 <Card
                     name="PMS Dashboard"
                     icon="https://res.cloudinary.com/dsarj6ihu/image/upload/v1740415587/clipboard_gnbo47.png"

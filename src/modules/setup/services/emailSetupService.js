@@ -2,8 +2,8 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const emailSetupTypes = [
-    { value: 'user_management', label: 'user_management' },
-    { value: 'abcd_management', label: 'abcd_management' },
+    { value: 'user_management', label: 'User management' },
+    { value: 'abcd_management', label: 'Abcd management' },
     { value: 'maintenance_reminder', label: 'Maintenance Reminder' },
     // Add more as needed
 ];

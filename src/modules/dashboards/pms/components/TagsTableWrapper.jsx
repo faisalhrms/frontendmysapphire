@@ -32,7 +32,7 @@ function transformTagsData(byTags, statuses) {
         });
         const tagTotal = sumCounts(aggregatedRow);
         rows.push({
-            tag: <span className="font-semibold text-[#232323] text-left">{tag.toUpperCase()}</span>,
+            tag: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg] text-left">{tag.toUpperCase()}</span>,
             rowType: "tag",
             tagName: tag,
             ...aggregatedRow,
@@ -88,7 +88,7 @@ const TagsTableWrapper = ({ byTags, statuses, filters }) => {
             return totals;
         }, {});
         const grandTotal = Object.values(footerTotals).reduce((sum, value) => sum + value, 0);
-        return { tag: <span className="font-semibold text-[#232323]">Total</span>, ...footerTotals, total: grandTotal };
+        return { tag: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg">Total</span>, ...footerTotals, total: grandTotal };
     }, [transformedRows, filteredStatuses]);
 
     const rows = useMemo(() => [...transformedRows, footerRow], [transformedRows, footerRow]);

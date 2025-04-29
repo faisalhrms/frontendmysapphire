@@ -5,7 +5,7 @@ import DigitalProfileEdit from '@modules/digital-profiles/views/DigitalProfileEd
 export const DIGITAL_PROFILES_ROUTES = {
     READ: {
         path: "/module/digital/profiles",
-        permission: "view_digital_profiles",
+        permission: "digital_profiles.view_digital_profiles",
     },
     CREATE: {
         path: '/module/digital/profiles/add/',

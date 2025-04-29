@@ -6,8 +6,13 @@ import { getEmailSetupTypeLabel } from "@modules/setup/services/emailSetupServic
 import { toTitleCase } from "@helpers/formatters.js";
 import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
 import {SETUP_ROUTES} from "@modules/setup/routes.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const EmailSetupList = () => {
+const EmailSetupList = ({isActive}) => {
+    if (!isActive){
+        return null
+    }
+
     const [filters, setFilters] = useState({});
 
     const columns = useMemo(() => [
@@ -81,7 +86,7 @@ const EmailSetupList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Email Setups" mainpage="Setups" />
+
             <DataTable
                 columns={columns}
                 title="Email Setups"
@@ -94,3 +99,5 @@ const EmailSetupList = () => {
 };
 
 export default EmailSetupList;
+
+

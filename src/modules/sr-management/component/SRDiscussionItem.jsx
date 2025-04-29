@@ -78,7 +78,7 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
                     text={label}
                     tooltipContent={email}
                   >
-                    <span className="bg-gray-50 text-blue-800 text-[0.6rem] px-1 py-0.5 rounded mr-1 mb-1">
+                    <span className="bg-blue-50 text-blue-800 text-[0.6rem] px-1 py-0.5 rounded mr-1 mb-1">
                       {label}
                     </span>
                   </Tooltip>
@@ -87,7 +87,7 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
             </div>
           )}
 
-          <div className="border border-gray-200 rounded-md p-2 bg-white shadow-sm mb-2 text-sm leading-relaxed">
+          <div className="border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm mb-2 text-sm leading-relaxed">
             <p
               className="profile-activity-media mb-0 sun-editor-editable"
               dangerouslySetInnerHTML={{ __html: discussion.message || "" }}

@@ -13,6 +13,7 @@ const TaskDetailRow = ({ icon, title, children, bodyClasses = '', alignCenter = 
                 <div
                     className={`
                         bg-gray-200 
+                        border border-gray-200 
                         text-gray-800 dark:text-gray-200 dark:bg-bodybg/80 
                         px-4
                         min-h-[40px]

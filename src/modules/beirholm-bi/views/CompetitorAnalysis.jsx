@@ -106,7 +106,6 @@ const convertToMillions = arr =>
               preselectedOptions={competitorCompany ? [{label: "Faisal Spinning Mills", value: "1"}] : []}
             />
           </div>
-          {showCurrencySelect && (
             <div className="w-1/3">
               <label htmlFor="currency" className="form-label">Select Currency</label>
               <Controller
@@ -128,7 +127,6 @@ const convertToMillions = arr =>
               />
               <ErrorMessage message={errors.currency?.message} />
             </div>
-          )}
           <div className="ml-auto">
             <button
               type="button"

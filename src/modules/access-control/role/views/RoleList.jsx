@@ -28,13 +28,13 @@ const Role = () => {
                 console.log("row.original.name:", row.original.name);
                 return (
                   <div className="flex space-x-2">
-                      <HasPermission permission='change_group'>
+                      <HasPermission permission='auth.change_group'>
 
                       <button onClick={() => handleEdit(row.original)} className="ti-btn ti-btn-primary ti-btn-sm">
                       <i className="ri-edit-line"></i>
                     </button>
                           </HasPermission>
-                      <HasPermission permission='manage_permission'>
+                      <HasPermission permission='auth.manage_permission'>
                     <Link
                       to={{
                         pathname: `${row.original.id}/permissions`,

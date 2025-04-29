@@ -55,9 +55,9 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
                             filteredData.map((rowData, rowIndex) => (
                                 <tr key={rowIndex}
                                     onClick={(e) => onRowClick(rowData, e.target.cellIndex, headers)}
-                                    className="border border-inherit border-solid !text-center hover:bg-gray-100">
+                                    className="border border-inherit border-solid dark:text-gray-200 dark:bg-bodybg !text-center hover:bg-gray-100">
                                     {headers.map((header, colIndex) => (
-                                        <td key={colIndex} className={`p-3 text-sm text-gray-700 ${header.align || '!text-center'} ${header?.classes}`}>
+                                        <td key={colIndex} className={`p-3 text-sm dark:text-gray-200 dark:bg-bodybg ${header.align || '!text-center'} ${header?.classes}`}>
                                             {rowData[header.accessor] !== undefined && rowData[header.accessor] !== null ? rowData[header.accessor] : 'N/A'}
                                         </td>
                                     ))}
@@ -65,7 +65,7 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
                             ))
                         ) : (
                             <tr className="text-center">
-                                <td colSpan={headers.length} className="py-4 !text-center">No Data Available</td>
+                                <td colSpan={headers.length} className="py-4 !text-center dark:text-gray-200 dark:bg-bodybg">No Data Available</td>
                             </tr>
                         )}
                         </tbody>
