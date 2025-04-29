@@ -1,96 +1,56 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
-import { getEmailSetupTypeLabel } from "@modules/setup/services/emailSetupService.js";
-import { toTitleCase } from "@helpers/formatters.js";
-import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
-import {SETUP_ROUTES} from "@modules/setup/routes.js";
+import IconTabs from "@components/IconTabs.jsx";
+import CentralReportList from "@modules/DailyReport/components/offlineStorePerformReport/CentralReportList.jsx";
+import NorthReportList from "@modules/DailyReport/components/offlineStorePerformReport/NorthReportList.jsx";
+import SouthReportList from "@modules/DailyReport/components/offlineStorePerformReport/SouthReportList.jsx";
+import FolReportList from "@modules/DailyReport/components/offlineStorePerformReport/FolReportList.jsx";
+import React, {useState} from "react";
+import EmailSetupList from "@modules/setup/components/EmailSetupList.jsx";
+import SendEmail from "@modules/setup/components/SendEmail.jsx";
 
-const EmailSetupList = () => {
-    const [filters, setFilters] = useState({});
-
-    const columns = useMemo(() => [
-        {
-            Header: "Actions",
-            accessor: "id",
-            disableSortBy: true,
-            Cell: ({ row }) => (
-                <div className="flex space-x-2">
-                    <Link to={`/module/email-setup/edit/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-primary ti-btn-sm">
-                            <i className="ri-edit-line"></i>
-                        </button>
-                    </Link>
-                </div>
-            ),
-        },
-        {
-            Header: "Type",
-            accessor: "type",
-            Cell: ({ value }) => (
-                <span className="badge bg-secondary/10 text-secondary">
-                    {getEmailSetupTypeLabel(value)}
-                </span>
-            ),
-        },
-        {
-            Header: "To Emails",
-            accessor: "to_users",
-            Cell: ({ value }) => (
-                <>
-                    {value.map((user, idx) => (
-                        <span
-                            key={idx}
-                            className="badge bg-primary/10 text-primary me-1"
-                        >
-                            {toTitleCase( user.email)}
-                        </span>
-                    ))}
-                </>
-            ),
-        },
-        {
-            Header: "CC Emails",
-            accessor: "cc_users",
-            Cell: ({ value }) => (
-                <>
-                    {value.map((user, idx) => (
-                        <span
-                            key={idx}
-                            className="badge bg-primary/10 text-primary me-1"
-                        >
-                            {toTitleCase( user.email)}
-                        </span>
-                    ))}
-                </>
-            ),
-        },
-    ], []);
-
-    const buttons = (
-        <div className="grid grid-cols-1 sm:grid-cols-1">
-            <Link
-                to={SETUP_ROUTES.EMAIL.ADD.path}
-                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-            >
-                <i className="ri-add-line font-semibold align-middle"></i> Add New Setup
-            </Link>
-        </div>
-    );
-
+const EmailSetup = () => {
+    const [activeTab, setActiveTab] = useState("emailsSetup-list");
+    const handleTabChange = (tabId) => {
+        setActiveTab(tabId);
+    };
     return (
         <>
-            <PageHeader currentpage="Email Setups" mainpage="Setups" />
-            <DataTable
-                columns={columns}
-                title="Email Setups"
-                apiUrl="/setups/email-setups/datatable/"
-                buttons={buttons}
-                filter={filters}
+            <PageHeader currentpage="Emails Setup" activepage="Setup"
+                        mainpage="Emails Setup"/>
+
+            {/*<form onSubmit={handleSubmit(onSubmit)}>*/}
+            {/*    <OfflineStorePerformFilter control={control} errors={errors}/>*/}
+            {/*</form>*/}
+            <IconTabs
+                tabs={[
+                    {
+                        id: "emailsSetup-list",
+                        label: "Add Employees",
+                        content: (
+                            <EmailSetupList isActive={'emailsSetup-list' === activeTab}/>
+
+                        ),
+                    },
+                {
+                    id:"sendEmail",
+                    label: "Send Email",
+                    content: (
+                        <SendEmail isActive={'sendEmail' === activeTab}/>
+                    )
+                },
+                    {
+                        id:"log",
+                        label: "Log",
+                        content: (
+                            <SendEmail isActive={'log' === activeTab}/>
+                        )
+                    }
+
+
+                ]}
+                onTabChange={handleTabChange}
             />
         </>
-    );
-};
-
-export default EmailSetupList;
+    )
+}
+export default EmailSetup

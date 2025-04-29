@@ -4,7 +4,7 @@ import CompanyEdit from '@modules/setup/views/CompanyEdit.jsx';
 import SrTypeList from '@modules/setup/views/SrTypeList.jsx';
 import SrTypes from '@modules/setup/views/SrTypes.jsx';
 import SrTypesEdit from '@modules/setup/views/SrTypesEdit.jsx';
-import EmailSetupList from "@modules/setup/views/EmailSetupList.jsx";
+import EmailSetupList from "@modules/setup/views/EmailSetup.jsx";
 import EmailSetupCreate from "@modules/setup/views/EmailSetupCreate.jsx";
 import EmailSetupEdit from "@modules/setup/views/EmailSetupEdit.jsx";
 
