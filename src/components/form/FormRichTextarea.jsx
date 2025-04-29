@@ -3,12 +3,11 @@ import { Controller } from "react-hook-form";
 import SunEditor from "suneditor-react";
 import ErrorMessage from "@components/form/ErrorMessage.jsx";
 
- const editorStyle = `
- .sun-editor .se-toolbar{position:relative !important;top:auto !important;z-index:auto !important;}
-.sun-editor .se-container, .sun-editor .se-wrapper{overflow:visible !important;}
-.sun-editor .se-tooltip{z-index:10000 !important;}
- `;
-
+const editorStyle = `
+.sun-editor .se-toolbar { position: static !important; }
+.sun-editor .se-container, .sun-editor .se-wrapper { overflow: visible !important; }
+.sun-editor .se-list-layer { overflow: visible !important; z-index: 1000 !important; }
+`;
 
 const FormRichTextarea = forwardRef(({ name, control, errors, placeholder, editorOptions = {}, readOnly, is_required = false, ...rest }, ref) => (
   <>
@@ -25,7 +24,9 @@ const FormRichTextarea = forwardRef(({ name, control, errors, placeholder, edito
           setOptions={{
             ...editorOptions,
             defaultStyle: "font-family:Calibri,sans-serif;font-size:11pt;",
-            stickyToolbar: "false",
+            stickyToolbar: false,
+            mode: "classic",
+            popupDisplay: "bottom"
           }}
           onChange={field.onChange}
           setContents={field.value || ""}

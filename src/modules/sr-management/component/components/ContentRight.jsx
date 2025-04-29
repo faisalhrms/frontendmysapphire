@@ -9,6 +9,8 @@ import Notify from "@helpers/toastNotifications.js";
 import {formatOptions} from "@helpers/formatters.js";
 import ActivityList from "@modules/sr-management/component/ActivityList.jsx";
 import remarks from "../../../../assets/images/media/media-69.svg";
+import RelatedItemsCard from "@modules/sr-management/component/components/RelatedItemsCard.jsx";
+
 const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, serviceRequest, refreshServiceData}) => {
     const {control, setValue, getValues, formState: {errors}} = useForm({});
     const [updating, setUpdating] = useState(false);
@@ -88,13 +90,13 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
             Notify.error("Error removing attachment");
         }
     };
+
     return (
         <div className="w-full lg:w-2/5 rounded-lg mt-4 lg:mt-0 dark:bg-bodybg">
 
             <div className="max-w-6xl mx-auto reviews-container">
                 <div
                     className="xxl:col-span-4 xl:col-span-6 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12"
-                    key={Math.random()}
                 >
                     <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
                         <div className="box-header p-4 border-b border-gray-200 bg-blue-50">
@@ -159,7 +161,10 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                     </div>
                 </div>
             </div>
-
+            <RelatedItemsCard
+                subTasks={Array.isArray(serviceRequest?.sub_tasks) ? serviceRequest.sub_tasks : []}
+                links={Array.isArray(serviceRequest?.linked_requests) ? serviceRequest.linked_requests : []}
+            />
 
             <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
                 <div className="box-header p-4 border-b border-gray-200 bg-blue-50">
@@ -203,12 +208,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                 </div>
                 <ActivityList activities={generatedReqData?.activities} refreshActivities={refreshServiceData}/>
             </div>
-            <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mt-4">
-                <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
-                    <h2 className="box-title text-lg font-semibold text-gray-700">Sub Tasks</h2>
-                </div>
-                <SubTaskList serviceRequest={serviceRequest?.children}/>
-            </div>
+
         </div>
     );
 };

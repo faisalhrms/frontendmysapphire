@@ -62,7 +62,7 @@ const ActivityList = ({activities = [], refreshActivities}) => {
                                     <div className="flex items-center justify-between flex-wrap">
                                         <p className="mb-1 flex items-center gap-2">
                                             <span
-                                                className="font-medium text-gray-700">{activity.sla_activity_name}</span>
+                                                className="font-medium text-defaulttextcolor dark:text-defaulttextcolor/70">{activity.sla_activity_name}</span>
                                             <span
                                                 className="px-2 py-0.5 text-xs bg-gray-90 text-gray-600 rounded-full">
                                           {activity.sla_activity_days} Day SLA
