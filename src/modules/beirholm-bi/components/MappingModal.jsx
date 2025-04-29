@@ -45,20 +45,6 @@ const MappingModal = ({ closeModal, refreshTable }) => {
                     label="Select Country"
                   />
                 </div>
-                <div className="xl:col-span-12 col-span-12">
-                  <FormAsyncSelect
-                    label={true}
-                    name="data_category"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select Data Category"
-                    apiUrl="/select/data/categories/"
-                    queryKeyBase="data_category"
-                    preselectedOptions={[]}
-                    saveOptionEndpoint="/select/data/category/"
-                    allowSaveNewOption={false}
-                  />
-                </div>
                 <div className="col-span-12">
                   <label className="block mb-1 text-sm font-medium">
                     File <span className="text-red-500">xlsx *</span>

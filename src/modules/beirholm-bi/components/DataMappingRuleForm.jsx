@@ -52,18 +52,6 @@ const DataMappingRuleForm = () => {
                             </div>
                             <div className="xl:col-span-3 col-span-12">
                                 <FormAsyncSelect
-                                    label
-                                    name="data_category"
-                                    control={control}
-                                    errors={errors}
-                                    placeholder="Data Category"
-                                    apiUrl="/select/data/categories/"
-                                    queryKeyBase="data_category"
-                                    preselectedOptions={formatOptions(initial, 'data_category')}
-                                />
-                            </div>
-                            <div className="xl:col-span-3 col-span-12">
-                                <FormAsyncSelect
                                     label={true}
                                     name="source_header"
                                     control={control}

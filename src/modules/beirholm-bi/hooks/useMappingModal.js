@@ -8,12 +8,11 @@ export const useMappingModal = () => {
     register,
     formState: { errors, isSubmitting }
   } = useForm({
-    defaultValues: { data_category: '', product_country: '', file: null }
+    defaultValues: { product_country: '', file: null }
   })
   const submit = async d => {
     const fd = new FormData()
     fd.append('file', d.file[0])
-    fd.append('data_category', d.data_category)
     fd.append('product_country', d.product_country)
     await uploadMappingExcel(fd)
   }
