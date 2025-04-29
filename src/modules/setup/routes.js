@@ -4,7 +4,7 @@ import CompanyEdit from '@modules/setup/views/CompanyEdit.jsx';
 import SrTypeList from '@modules/setup/views/SrTypeList.jsx';
 import SrTypes from '@modules/setup/views/SrTypes.jsx';
 import SrTypesEdit from '@modules/setup/views/SrTypesEdit.jsx';
-import EmailSetupList from "@modules/setup/views/EmailSetupList.jsx";
+import EmailSetupList from "@modules/setup/views/EmailSetup.jsx";
 import EmailSetupCreate from "@modules/setup/views/EmailSetupCreate.jsx";
 import EmailSetupEdit from "@modules/setup/views/EmailSetupEdit.jsx";
 
@@ -58,37 +58,46 @@ export const MODULE_ROUTES = [
     {
         path: SETUP_ROUTES.COMPANY.READ.path,
         component: CompanyList,
+        permission: SETUP_ROUTES.COMPANY.READ.permission,
     },
     {
         path: SETUP_ROUTES.COMPANY.CREATE.path,
         component: CompanyForm,
+        permission: SETUP_ROUTES.COMPANY.CREATE.permission,
     },
     {
         path: SETUP_ROUTES.COMPANY.EDIT.path,
         component: CompanyEdit,
+        permission: SETUP_ROUTES.COMPANY.EDIT.permission,
     },
     {
         path: SETUP_ROUTES.SR_TYPE.READ.path,
         component: SrTypeList,
+        permission: SETUP_ROUTES.SR_TYPE.READ.permission,
     },
     {
         path: SETUP_ROUTES.SR_TYPE.CREATE.path,
         component: SrTypes,
+        permission:  SETUP_ROUTES.SR_TYPE.CREATE.permission,
     },
     {
         path: SETUP_ROUTES.SR_TYPE.EDIT.path,
         component: SrTypesEdit,
+        permission: SETUP_ROUTES.SR_TYPE.EDIT.permission,
     },
     {
         path:SETUP_ROUTES.EMAIL.READ.path,
-        component:EmailSetupList
+        component:EmailSetupList,
+        permission: SETUP_ROUTES.EMAIL.READ.permission,
     },
     {
         path:SETUP_ROUTES.EMAIL.ADD.path,
-        component:EmailSetupCreate
+        component:EmailSetupCreate,
+        permission: SETUP_ROUTES.EMAIL.ADD.permission,
     },
     {
         path:SETUP_ROUTES.EMAIL.EDIT.path,
-        component:EmailSetupEdit
+        component:EmailSetupEdit,
+        permission: SETUP_ROUTES.EMAIL.EDIT.permission,
     }
 ];

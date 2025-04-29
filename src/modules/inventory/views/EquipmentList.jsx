@@ -78,6 +78,9 @@ const EquipmentList = () => {
             ),
         },
         { Header: "Code", accessor: "code" },
+        {
+            Header:"Asset Code",accessor: "asset_code"
+        },
         { Header: "Serial No", accessor: "serial_no" },
         {
             Header: "Description",

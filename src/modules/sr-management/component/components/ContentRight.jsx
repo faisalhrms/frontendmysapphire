@@ -8,8 +8,10 @@ import {updateTask, updateServiceRequest} from "@modules/sr-management/services/
 import Notify from "@helpers/toastNotifications.js";
 import {formatOptions} from "@helpers/formatters.js";
 import ActivityList from "@modules/sr-management/component/ActivityList.jsx";
+import remarks from "../../../../assets/images/media/media-69.svg";
+import RelatedItemsCard from "@modules/sr-management/component/components/RelatedItemsCard.jsx";
 
-const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, serviceRequest}) => {
+const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, serviceRequest, refreshServiceData}) => {
     const {control, setValue, getValues, formState: {errors}} = useForm({});
     const [updating, setUpdating] = useState(false);
     const [attachments, setAttachments] = useState(serviceRequest?.attachments || []);
@@ -91,27 +93,78 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
 
     return (
         <div className="w-full lg:w-2/5 rounded-lg mt-4 lg:mt-0 dark:bg-bodybg">
-            <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
-                <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
-                    <h2 className="box-title text-lg font-semibold text-gray-700">Rating & Remarks</h2>
-                    <Rating name="clickable-rating" value={serviceRequest?.rating} readOnly/>
-                </div>
-                <div className="xxl:col-span-4 xl:col-span-6 col-span-12">
-                    <div className="box custom-box">
-                        <div className="box-body">
-                          <textarea
-                              className="form-control text-sm mb-1"
-                              rows="3"
-                              value={serviceRequest?.remarks || ""}
-                              readOnly={true}
-                          />
 
-
+            <div className="max-w-6xl mx-auto reviews-container">
+                <div
+                    className="xxl:col-span-4 xl:col-span-6 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12"
+                >
+                    <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
+                        <div className="box-header p-4 border-b border-gray-200 bg-blue-50">
+                            <h2 className="box-title text-lg font-semibold text-gray-700">Rating & Remarks</h2>
                         </div>
-
+                        <div className="box-body">
+                            {serviceRequest?.rating || serviceRequest?.remarks ? (
+                                <>
+                                    <div className="flex items-center mb-4">
+                            <span className="avatar avatar-md avatar-rounded me-4">
+                                <img src={serviceRequest?.employee_info?.avatar?.small_url} alt=""/>
+                            </span>
+                                        <div>
+                                            <p className="mb-0 font-semibold text-[.875rem] text-primary">
+                                                {serviceRequest?.employee_info?.concern_person || serviceRequest?.reporter}
+                                            </p>
+                                            <p className="mb-0 text-[.625rem] font-semibold text-[#8c9097] dark:text-white/50">
+                                                {serviceRequest?.employee_info?.reporter_location?.name || "-"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="mb-4">
+                            <span className="text-[#8c9097] dark:text-white/50">
+                                {serviceRequest?.remarks || ""}
+                            </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <span className="text-[#8c9097] dark:text-white/50">Rating: </span>
+                                            <span className="text-warning block ms-1 space-x-1 rtl:space-x-reverse">
+                                    {[...Array(5)].map((_, index) => (
+                                        <i
+                                            key={index}
+                                            className={`ri-star-fill ${index < serviceRequest?.rating ? 'text-warning' : 'text-gray-300'}`}
+                                        ></i>
+                                    ))}
+                                </span>
+                                        </div>
+                                        <div
+                                            className="ltr:float-right rtl:float-left text-[0.75rem] font-semibold text-[#8c9097] dark:text-white/50 text-end">
+                                <span className="block font-normal text-[0.75rem] text-success">
+                                    <i>{serviceRequest?.employee_info?.concern_person || serviceRequest?.reporter}</i>
+                                </span>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center py-2">
+                                    <div className="flex justify-center mb-4">
+                                        <img
+                                            src={remarks}
+                                            alt="No updates"
+                                            className="w-[8.5rem]"
+                                        />
+                                    </div>
+                                    <p className="text-sm text-[#8c9097] dark:text-white/50">
+                                        We haven't received any feedback for this service request.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
+            <RelatedItemsCard
+                subTasks={Array.isArray(serviceRequest?.sub_tasks) ? serviceRequest.sub_tasks : []}
+                links={Array.isArray(serviceRequest?.linked_requests) ? serviceRequest.linked_requests : []}
+            />
 
             <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg">
                 <div className="box-header p-4 border-b border-gray-200 bg-blue-50">
@@ -153,14 +206,9 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                 <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
                     <h2 className="box-title text-lg font-semibold text-gray-700">SLA Activity</h2>
                 </div>
-                <ActivityList activities={generatedReqData?.activities}/>
+                <ActivityList activities={generatedReqData?.activities} refreshActivities={refreshServiceData}/>
             </div>
-            <div className="box shadow-md border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden mt-4">
-                <div className="box-header flex justify-between items-center p-4 border-b border-gray-200 bg-blue-50">
-                    <h2 className="box-title text-lg font-semibold text-gray-700">Sub Tasks</h2>
-                </div>
-                <SubTaskList serviceRequest={serviceRequest?.children}/>
-            </div>
+
         </div>
     );
 };
