@@ -127,3 +127,10 @@ export const convertToDateTimeEnd = (date, local = true) => {
     }
     return d.toISOString().slice(0, 16);
 };
+
+
+export const getPastDate = (days = 1) => {
+    const today = new Date();
+    today.setDate(today.getDate() - days);
+    return today.toISOString().slice(0, 10);
+};

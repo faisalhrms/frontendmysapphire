@@ -9,6 +9,7 @@ import FolReportList from "@modules/DailyReport/components/offlineStorePerformRe
 import useFilters from "@hooks/useFilters.js";
 import OfflineStorePerformFilter from "@modules/DailyReport/components/offlineStorePerformanceFilter/OfflineStorePerformFilter.jsx";
 import OthersReportList from "@modules/DailyReport/components/offlineStorePerformReport/OthersReportList.jsx";
+import {getPastDate} from "@helpers/dateTime.js";
 
 const OfflineStorePerformList=()=>{
     const [activeTab, setActiveTab] = useState("central");
@@ -21,7 +22,7 @@ const OfflineStorePerformList=()=>{
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'date'},
+                    { name: 'date',defaultValue: getPastDate()},
                 ],
             }),
             []

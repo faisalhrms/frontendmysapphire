@@ -5,6 +5,7 @@ export const emailSetupTypes = [
     { value: 'user_management', label: 'User management' },
     { value: 'abcd_management', label: 'Abcd management' },
     { value: 'maintenance_reminder', label: 'Maintenance Reminder' },
+    { value: 'pending', label: 'Pending' },
     // Add more as needed
 ];
 
