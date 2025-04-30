@@ -1,15 +1,15 @@
 import React from "react";
 import * as styles from "@helpers/staticDataTableStyles.js";
 const StaticDataTable = ({ data }) => {
+
     const renderPercent = (raw) => {
-        // strip off any “%” already there, parse to number
         const num = parseFloat(String(raw).replace("%", "")) || 0;
         let color = "";
         if (num > 0) color = "text-emerald-600";
         else if (num < 0) color = "text-red";
         return (
             <span className={`font-bold ${color}`}>
-        {num.toLocaleString()}%
+        {num}%
       </span>
         );
     };
@@ -121,16 +121,16 @@ const StaticDataTable = ({ data }) => {
 
                                 {/* TRAFFIC GROWTH */}
                                 <td className={`${styles.tdCell} ${styles.tdRight} ${bgClass}`}>
-                                    {row.tg_ff_cy}
+                                    {row.cy_traffic}
                                 </td>
                                 <td className={`${styles.tdCell} ${styles.tdCenter} ${bgClass}`}>
-                                    {renderPercent(row.tg_ff_conv)}
+                                    {renderPercent(row.conv_per)}
                                 </td>
                                 <td className={`${styles.tdCell} ${styles.tdCenter} ${bgClass}`}>
-                                    {renderPercent(row.tg_ff_growth)}
+                                    {renderPercent(row.ff_growth)}
                                 </td>
                                 <td className={`${styles.tdCell} ${styles.tdCenter} ${bgClass}`}>
-                                    {renderPercent(row.tg_ff_conv_growth)}
+                                    {renderPercent(row.conv_growth)}
                                 </td>
                             </tr>
                         );
