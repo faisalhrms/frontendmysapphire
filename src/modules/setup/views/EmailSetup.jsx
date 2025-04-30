@@ -7,6 +7,7 @@ import FolReportList from "@modules/DailyReport/components/offlineStorePerformRe
 import React, {useState} from "react";
 import EmailSetupList from "@modules/setup/components/EmailSetupList.jsx";
 import SendEmail from "@modules/setup/components/SendEmail.jsx";
+import EmailLog from "@modules/setup/components/EmailLog.jsx";
 
 const EmailSetup = () => {
     const [activeTab, setActiveTab] = useState("emailsSetup-list");
@@ -42,7 +43,7 @@ const EmailSetup = () => {
                         id:"log",
                         label: "Log",
                         content: (
-                            <SendEmail isActive={'log' === activeTab}/>
+                            <EmailLog isActive={'log' === activeTab}/>
                         )
                     }
 
