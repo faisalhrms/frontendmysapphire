@@ -122,7 +122,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
               </div>
             </div>
           </div>
-          <div className="overflow-y-scroll" style={{maxHeight: containerHeight}}>
+          <div className="overflow-y-scroll" style={{ maxHeight: '500px' }}
+          >
             <div className="box-body">
               {isLoading ? (
                   <LoadingSpinner/>
