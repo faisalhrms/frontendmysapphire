@@ -185,7 +185,7 @@ const TaskList = () => {
                 <div className="space-x-1 rtl:space-x-reverse">
                     {Array.isArray(value) && value.length > 0 && (
                         [...new Set(value)].map((tag, index) => (
-                            <span key={index} className="badge !rounded-full bg-light text-default">
+                            <span key={index} className="bbadge badge-md !rounded-full bg-primary/10 text-primary">
                                 {toTitleCase(tag.name)}
                             </span>
                         ))
