@@ -54,7 +54,8 @@ const ProjectTeam = ({ users }) => {
                 <li key={user.id}>
                   <div className="flex items-center">
                     <div className="me-2">
-                      <Avatar avatar={user.avatar} />
+                      <Avatar avatar={user.avatar}
+                              full_name={user.avatar?.full_name || 'N/A'}/>
                     </div>
                     <div className="flex-grow">
                       <span className="font-semibold">
