@@ -8,6 +8,7 @@ import SouthReportList from "@modules/DailyReport/components/offlineStorePerform
 import FolReportList from "@modules/DailyReport/components/offlineStorePerformReport/FolReportList.jsx";
 import useFilters from "@hooks/useFilters.js";
 import OfflineStorePerformFilter from "@modules/DailyReport/components/offlineStorePerformanceFilter/OfflineStorePerformFilter.jsx";
+import OthersReportList from "@modules/DailyReport/components/offlineStorePerformReport/OthersReportList.jsx";
 
 const OfflineStorePerformList=()=>{
     const [activeTab, setActiveTab] = useState("central");
@@ -30,7 +31,11 @@ const OfflineStorePerformList=()=>{
     const [filters, setFilters] = useState(getFilters());
 
     const { data, isLoading } = useFetchWithFilters(
-        activeTab === "central" ? '/reporting/offline-store-performance/central/' : activeTab === "north" ? '/reporting/offline-store-performance/north/' : activeTab === "south" ? '/reporting/offline-store-performance/south/' : '/reporting/offline-store-performance/fol/', filters
+        activeTab === "central" ? '/reporting/offline-store-performance/central/' :
+            activeTab === "north" ? '/reporting/offline-store-performance/north/' :
+                activeTab === "south" ? '/reporting/offline-store-performance/south/' :
+                    activeTab === "others" ? '/reporting/offline-store-performance/others/' :
+                        '/reporting/offline-store-performance/fol/', filters
     );
     const onSubmit = useCallback(
         (formData) => {
@@ -43,11 +48,13 @@ const OfflineStorePerformList=()=>{
     };
     return (
         <>
-            <PageHeader currentpage="Offline Store Performance" activepage="Report" mainpage="Offline Store Performance"/>
+            <PageHeader currentpage="Offline Store Performance" activepage="Report"
+                        mainpage="Offline Store Performance"/>
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <OfflineStorePerformFilter control={control} errors={errors}/>
             </form>
+
             <IconTabs
                 tabs={[
                     {
@@ -55,7 +62,8 @@ const OfflineStorePerformList=()=>{
                         label: "Central Store Performance",
                         icon: <i className="bx bx-location-plus"></i>,
                         content: (
-                            <CentralReportList data={data} isLoading={isLoading} isActive={'central' === activeTab} filters={filters}/>
+                            <CentralReportList data={data} isLoading={isLoading} isActive={'central' === activeTab}
+                                               filters={filters}/>
                         ),
                     },
                     {
@@ -64,7 +72,8 @@ const OfflineStorePerformList=()=>{
                         icon: <i className="bx bx-location-plus"></i>,
                         content: (
                             <>
-                                <NorthReportList data={data} isLoading={isLoading} isActive={'north' === activeTab} filters={filters}/>
+                                <NorthReportList data={data} isLoading={isLoading} isActive={'north' === activeTab}
+                                                 filters={filters}/>
                             </>
                         ),
                     },
@@ -74,7 +83,8 @@ const OfflineStorePerformList=()=>{
                         icon: <i className="bx bx-location-plus"></i>,
                         content: (
                             <>
-                                <SouthReportList data={data} isLoading={isLoading} isActive={'south' === activeTab} filters={filters}/>
+                                <SouthReportList data={data} isLoading={isLoading} isActive={'south' === activeTab}
+                                                 filters={filters}/>
                             </>
                         ),
                     },
@@ -84,13 +94,26 @@ const OfflineStorePerformList=()=>{
                         icon: <i className='bx bx-location-plus'></i>,
                         content: (
                             <>
-                                <FolReportList data={data} isLoading={isLoading} isActive={'fol' === activeTab} filters={filters}/>
+                                <FolReportList data={data} isLoading={isLoading} isActive={'fol' === activeTab}
+                                               filters={filters}/>
+                            </>
+                        ),
+                    },
+                    {
+                        id: "others",
+                        label: "Other Store Performance",
+                        icon: <i className='bx bx-location-plus'></i>,
+                        content: (
+                            <>
+                                <OthersReportList data={data} isLoading={isLoading} isActive={'others' === activeTab}
+                                               filters={filters}/>
                             </>
                         ),
                     },
                 ]}
                 onTabChange={handleTabChange}
             />
+
         </>
     );
 }
