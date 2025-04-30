@@ -34,7 +34,7 @@ const SendEmail = ({ isActive }) => {
                             {/* Email Type */}
                             <div className="xl:col-span-4 col-span-12">
                                 <FormSelect
-                                    name="type"
+                                    name="report_type"
                                     control={control}
                                     errors={errors}
                                     placeholder="Select Email Type"

@@ -19,14 +19,14 @@ export const useSendEmailForm = () => {
         resolver: zodResolver(sendEmailSchema),
         defaultValues: {
             date: new Date().toISOString().slice(0, 10),
-            type: ""
+            report_type: ""
         }
     });
 
     const onSubmit = async (data) => {
         try {
             await sendEmail(data);
-            navigate(-1); // go back or to a success page
+           
         } catch (err) {
             console.error("Send email error:", err);
         }

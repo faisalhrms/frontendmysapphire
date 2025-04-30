@@ -10,7 +10,7 @@ export const sendEmailSchema = z.object({
         .refine((val) => !isNaN(Date.parse(val)), {
             message: "Invalid date format"
         }),
-    type: z.enum(["user_management", "abcd_management", "maintenance_reminder"], {
+    report_type: z.enum(["user_management", "abcd_management", "maintenance_reminder"], {
         errorMap: () => ({ message: "Email type is required" })
     })
 });
