@@ -33,7 +33,7 @@ const StaticDataTable = ({ data }) => {
                         <th colSpan={3} className={styles.headerCell}>Current Year FY2025</th>
                         <th rowSpan={2} className={styles.headerCell}>FP % Of Total</th>
                         <th rowSpan={2} className={styles.headerCell}>GP %</th>
-                        <th colSpan={3} className={styles.headerCell}>Gross Profit RS</th>
+                        <th colSpan={3} className={styles.headerCell}>Gross Profit Rs</th>
                         <th colSpan={2} className={styles.headerCell}>FP Growth From LY</th>
                         <th colSpan={2} className={styles.headerCell}>Total Growth From LY</th>
                         <th colSpan={4} className={styles.headerCell}>Traffic Growth</th>
