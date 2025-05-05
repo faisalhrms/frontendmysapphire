@@ -3,11 +3,11 @@ import ClassOfflineOnlineFiscalList from "@modules/DailyReport/views/ClassOfflin
 import OfflineStorePerformList  from "@modules/DailyReport/views/OfflineStorePerformList.jsx";
 export const DAILYREPORT_ROUTES = {
     READ: {
-        path: "/module/dailyreport",
+        path: "/retail/daily-sales-report",
         permission: "auth.view_dailyreport",
     },
     CREATE:{
-        path: "/module/cf",
+        path: "/retail/comparative-sales-report",
         permission: "auth.view_comparativesalesreport",
 
     },
@@ -18,7 +18,8 @@ export const DAILYREPORT_ROUTES = {
 
 export const OFFLINE_STORE_PERFORMANCE_ROUTE={
     READ:{
-        path:"/module/offline-store-performance",
+        path:"/retail/offline-store-performance",
+        permission:"auth.view_offline_store_performance_report"
     }
 }
 

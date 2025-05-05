@@ -104,10 +104,11 @@ export const downloadDailySaleReport = async (filters) => {
     }
 };
 export const downloadOfflineStorePerformance = async (filters) => {
+
     try {
         const response = await api.get("/reporting/download/offline-store-performance/", {
             params: {
-                filters,
+                date: filters.date,
 
             },
             responseType: 'blob',

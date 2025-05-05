@@ -8,6 +8,7 @@ import {
 } from "@modules/DailyReport/services/wiseside_services.js";
 
 const OfflineStorePerformFilter = ({ control, errors, clearFilter,filters }) => {
+
     // Today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
     const [isDownloading, setIsDownloading] = useState(false);

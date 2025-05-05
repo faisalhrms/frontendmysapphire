@@ -53,7 +53,7 @@ const OfflineStorePerformList=()=>{
                         mainpage="Offline Store Performance"/>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <OfflineStorePerformFilter filter={filters} control={control} errors={errors}/>
+                <OfflineStorePerformFilter filters={filters} control={control} errors={errors}/>
             </form>
 
             <IconTabs
