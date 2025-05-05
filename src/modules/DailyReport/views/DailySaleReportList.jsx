@@ -20,6 +20,7 @@ import {
     fetchTargetSaleData
 } from "@modules/DailyReport/services/wiseside_services.js";
 
+
 const DailySaleReportList = () => {
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
     const [showFilters, setShowFilters] = useState(false);
