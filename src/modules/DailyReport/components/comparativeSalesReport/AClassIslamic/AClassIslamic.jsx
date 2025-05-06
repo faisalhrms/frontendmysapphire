@@ -39,11 +39,11 @@ const AClassIslamic = () => {
                 <div className="mb-6">
                     <table className="w-full border-collapse">
                         <thead>
-                        <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                        <tr className="text-white bg-[#383853]">
                             <th colSpan="7" className="bg-blue-300 border border-gray-400 p-2 text-center">Full Price
                             </th>
                         </tr>
-                        <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                        <tr className="text-white bg-[#383853]">
                             <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">
                             </th>
                             <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">Current
@@ -53,7 +53,7 @@ const AClassIslamic = () => {
                             </th>
                             <th className="bg-blue-300 border border-gray-400 p-2 text-center">Growth</th>
                         </tr>
-                        <tr className="border border-gray-400" style={{backgroundColor: '#0b3588', color: 'white'}}>
+                        <tr className="border border-gray-400 text-white bg-[#4d5875]">
                             <th className="bg-blue-200 p-2 text-center"></th>
                             <th className="bg-blue-200 p-2 text-center"></th>
                             <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Wed)</th>
@@ -100,19 +100,19 @@ const AClassIslamic = () => {
             <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                 <table className="w-full border-collapse">
                     <thead>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                    <tr className="text-white bg-[#383853]">
                         <th rowSpan="2" className="bg-blue-300 border border-gray-400 p-2">A-Class</th>
                         <th colSpan="7" className="bg-blue-300 border border-gray-400 p-2 text-center">Full Price
                         </th>
                     </tr>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                    <tr className="text-white bg-[#383853]">
                         <th colSpan="3" className="bg-blue-300 border border-gray-400 p-2 text-center">Offline</th>
                         <th colSpan="3" className="bg-blue-300 border border-gray-400 p-2 text-center">Online (Excl.
                             UK)
                         </th>
                     </tr>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
-                        <th className="bg-white p-2" style={{backgroundColor: 'rgba(30, 58, 138, 0.85)', color: 'white'}}></th>
+                    <tr className="text-white bg-[#4d5875]">
+                        <th className="bg-white p-2  bg-[#4d5875]" ></th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">Shaban - 25</th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">Shaban - 24</th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">Growth</th>

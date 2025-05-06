@@ -10,12 +10,12 @@ const OnlineSalesGlobal = () => {
             <div className="mb-6">
                 <table className="w-full border-collapse">
                     <thead>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                    <tr className=" text-white bg-[#383853]">
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" rowSpan="2">A-Class</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" colSpan="3">Local</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" colSpan="3">Global (Excl. UK)</th>
                     </tr>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                    <tr className="text-white bg-[#4d5875]">
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-25</th>
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-24</th>
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Growth</th>
