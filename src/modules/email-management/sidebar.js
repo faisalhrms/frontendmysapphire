@@ -18,6 +18,14 @@ export const sidebarMenu=[
                 1,
                 '',
                 // EMAIL_MANAGEMENT_ROUTE.READ.permission,
+            ),
+            generateSidebarItem(
+                EMAIL_MANAGEMENT_ROUTE.READ_ALL.path,
+                'link',
+                'Approval List',
+                1,
+                '',
+                // EMAIL_MANAGEMENT_ROUTE.READ.permission,
             )]
     )
 ]

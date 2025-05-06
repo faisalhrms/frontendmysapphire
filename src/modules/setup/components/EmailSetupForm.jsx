@@ -90,8 +90,8 @@
                                         name="type"
                                         control={control}
                                         errors={errors}
-                                        placeholder="Email Type"
-                                        label="Email Type"
+                                        placeholder="Report Type"
+                                        label="Report Type"
                                         options={emailSetupTypes}
                                         is_required={true}
                                     />

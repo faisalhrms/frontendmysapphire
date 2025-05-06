@@ -24,6 +24,8 @@ const badgeStyles = {
     suspended: warning,
     deactivated: danger,
     pending: warning,
+    approved:success,
+    rejected: danger,
     inactive: danger,
     brand_new: success,
     faulty: danger,
@@ -58,6 +60,8 @@ const statusStyles = {
     active: txtSuccess,
     archived: txtWarning,
     pending: warning,
+    approved:txtSuccess,
+    rejected: txtDanger,
     inactive: txtDanger,
     brand_new: txtSuccess,
     faulty: txtDanger,
@@ -69,6 +73,7 @@ const statusStyles = {
     high: txtDanger,
     low: txtSuccess,
     medium: txtWarning,
+
 
 };
 
