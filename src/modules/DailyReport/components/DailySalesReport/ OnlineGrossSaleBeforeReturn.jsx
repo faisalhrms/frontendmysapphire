@@ -24,7 +24,7 @@ function OnlineGrossSaleBeforeReturn({ data , loading ,  setDonwloadData }) {
             <div style={{maxHeight: '650px', overflowY: 'auto'}}>
                 <table className="min-w-full table-auto border-collapse border border-gray-400">
                     <thead style={{
-                        backgroundColor: "#0b3588",
+                        backgroundColor: "#383853",
                         color: "white",
                         position: "sticky",
                         top: 0,
@@ -58,9 +58,9 @@ function OnlineGrossSaleBeforeReturn({ data , loading ,  setDonwloadData }) {
                     )}
                     </tbody>
                     <tfoot>
-                    <tr className="bg-gray-200 font-bold">
+                    <tr className="bg-gray-200 font-bold bg-[#949eb7]">
                         <td colSpan="2"
-                            className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1">
+                            className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1 bg-[#949eb7]">
                             Total
                         </td>
                         <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1">

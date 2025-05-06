@@ -35,7 +35,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
         if (achPercentage === null || achPercentage === 0) {
             return 'text-black';
         }
-        return achPercentage < 0 ? 'text-danger' : 'text-success';
+        return achPercentage < 0 ? 'text-danger' : 'text-emerald-600';
     };
 
 
@@ -100,15 +100,15 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
 
                     <div className="w-full border-collapse border border-gray-400 table-auto">
                         <table className="w-full border-collapse border border-gray-400">
-                            <thead className="sticky top-0 z-10">
-                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                            <thead className="sticky top-0 border border-gray-400  z-10">
+                            <tr style={{backgroundColor: "#383853", color: "white"}}>
                                 <th rowSpan="2"
                                     className="border border-gray-400 p-2 font-bold sticky left-0 z-10 text-xs sm:text-sm"
-                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}>
+                                    style={{backgroundColor: "#383853", color: "white", minWidth: '80px'}}>
                                 </th>
                                 <th colSpan="1"
                                     className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center sticky left-12 sm:left-20 z-10 text-xs sm:text-sm"
-                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}
+                                    style={{backgroundColor: "#383853", color: "white", minWidth: '80px'}}
                                 >Store Type
                                 </th>
                                 <th colSpan="9"
@@ -121,10 +121,10 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                     className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Total
                                 </th>
                             </tr>
-                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                            <tr style={{backgroundColor: "#383853", color: "white"}}>
                                 <th colSpan="1"
                                     className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center sticky left-12 sm:left-20 z-1 text-xs sm:text-sm"
-                                    style={{backgroundColor: "#0b3588", color: "white"}}
+                                    style={{backgroundColor: "#383853", color: "white"}}
                                 ></th>
                                 <th colSpan="3"
                                     className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Full
@@ -149,10 +149,10 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                 <th colSpan="3"
                                     className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-smr"></th>
                             </tr>
-                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                            <tr style={{backgroundColor: "#4d5875", color: "white"}}>
                                 <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center sticky left-0 z-10 text-xs sm:text-sm"
                                     style={{
-                                        backgroundColor: "#0b3588",
+                                        backgroundColor: "#4d5875",
                                         color: "white",
                                         minWidth: '60px',
                                         maxWidth: '70px'
@@ -161,7 +161,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                 <th colSpan="1"
                                     className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold sticky left-12 sm:left-20 z-10 text-xs sm:text-sm"
                                     style={{
-                                        backgroundColor: "#0b3588",
+                                        backgroundColor: "#4d5875",
                                         color: "white",
                                         minWidth: '50px',
                                         maxWidth: '60px'
@@ -282,10 +282,10 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                             ))}
 
                             {data.length > 0 && (
-                                <tr className="bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg">
-                                    <td className="sticky left-0 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm">
+                                <tr className="bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">
+                                    <td className="sticky left-0 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                     </td>
-                                    <td className="sticky left-12 sm:left-16 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm">
+                                    <td className="sticky left-12 sm:left-16 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                         Total
                                     </td>
                                     <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
