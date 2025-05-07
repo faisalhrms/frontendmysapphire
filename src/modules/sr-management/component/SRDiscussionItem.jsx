@@ -13,7 +13,7 @@ import fileIcon from "@assets/images/icon/008-file.png";
 
 const generateIcon = attachment => {
   const { extension, file, file_name } = attachment;
-  const imgStyle = "height:60px;width:60px;";
+  const imgStyle = "height:50px;width:50px;";
   if ([".png", ".jpg", ".jpeg", ".gif"].includes(extension)) return `<img style="object-fit:contain;" src="${file}" alt="${file_name}">`;
   if ([".mp4", ".avi", ".mov"].includes(extension)) return `<img src="${videoIcon}" alt="${file_name}" style="${imgStyle}">`;
   if ([".zip", ".rar"].includes(extension)) return `<img src="${zipIcon}" alt="${file_name}" style="${imgStyle}">`;
