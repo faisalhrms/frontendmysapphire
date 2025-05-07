@@ -8,8 +8,9 @@ import {toTitleCase} from "@helpers/formatters.js";
 import Tooltip from "@components/Tooltip.jsx";
 import useFullScreen from "@hooks/useFullScreen.js";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import {getSlaBadgeClasses} from "@modules/sr-management/services/srServices.js";
 
-function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
+function ContentLeft({generatedReqData, serviceRequest, selectedStatus, showFooter}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const processEmailContent = (html, attachments) => {
@@ -31,16 +32,6 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
         );
     }, [serviceRequest.description, serviceRequest.attachments]);
 
-    const getSlaBadgeClasses = (slaHours) => {
-        if (slaHours >= 48) {
-            return "bg-green-500/10 text-green-500 px-2 py-1 rounded-md";
-        } else if (slaHours >= 24) {
-            return "bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded-md";
-        } else if (slaHours > 0) {
-            return "bg-red-500/10 text-red-500 px-2 py-1 rounded-md";
-        }
-        return "bg-gray-500/10 text-gray-500 px-2 py-1 rounded-md";
-    };
 
     const chunkArray = (arr, size) => {
         const chunks = [];
@@ -140,32 +131,43 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                                     )}
                                 </td>
                             </tr>
-                            <tr className="border-b border-defaultborder">
-                                <td>CC Employee:</td>
-                                <td className="space-x-1 rtl:space-x-reverse">
-                                    {serviceRequest.cc_email_names ? (
-                                        <div>
-                                            {chunkArray(
-                                                serviceRequest.cc_email_names.split(","),
-                                                2
-                                            ).map((chunk, chunkIndex) => (
-                                                <div key={chunkIndex} className="flex gap-2 mb-1">
-                                                    {chunk.map((email, index) => (
-                                                        <span
-                                                            key={index}
-                                                            className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-md dark:bg-gray-700 dark:text-gray-200"
-                                                        >
-                                {email.trim()}
-                              </span>
-                                                    ))}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <span className="text-gray-500 text-xs">-</span>
-                                    )}
-                                </td>
+                            <tr className="border-b border-defaultborder align-top">
+                              <td className="font-semibold">To Employees:</td>
+                              <td colSpan={3}>
+                                <div className="flex flex-wrap gap-1 max-w-[700px]">
+                                  {serviceRequest.to_email_names
+                                    ? serviceRequest.to_email_names.split(",").map((email, index) => (
+                                        <span
+                                          key={index}
+                                          className="bg-gray-100 text-gray-800 text-xs px-1 py-1 rounded-md dark:bg-gray-700 dark:text-gray-200"
+                                        >
+                                          {email.trim()}
+                                        </span>
+                                      ))
+                                    : <span className="text-gray-500 text-xs">-</span>}
+                                </div>
+                              </td>
                             </tr>
+
+                            <tr className="border-b border-defaultborder align-top">
+                              <td className="font-semibold">CC Employees:</td>
+                              <td colSpan={3}>
+                                <div className="flex flex-wrap gap-1 max-w-[700px]">
+                                  {serviceRequest.cc_email_names
+                                    ? serviceRequest.cc_email_names.split(",").map((email, index) => (
+                                        <span
+                                          key={index}
+                                          className="bg-gray-100 text-gray-800 text-xs px-1 py-1 rounded-md dark:bg-gray-700 dark:text-gray-200"
+                                        >
+                                          {email.trim()}
+                                        </span>
+                                      ))
+                                    : <span className="text-gray-500 text-xs">-</span>}
+                                </div>
+                              </td>
+                            </tr>
+
+
                             <tr className="border-b border-defaultborder">
                                 <td>On Behalf Of:</td>
                                 <td>
@@ -185,14 +187,14 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                     <h2 className="box-title text-lg font-semibold text-gray-700">
                         Description
                     </h2>
-                    <Link
-                        aria-label="anchor"
-                        to="#"
-                        className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen"
-                        onClick={handleFullscreenClick}
-                    >
-                        <i className="ri-fullscreen-line"></i>
-                    </Link>
+                        <button
+                          type="button"
+                          onClick={handleFullscreenClick}
+                          className="flex items-center justify-center w-[1.75rem] h-[1.75rem] text-[0.8rem] py-1 px-2 rounded-sm bg-light border-light shadow-none font-medium"
+                          aria-label="Toggle fullscreen"
+                        >
+                          <i className="ri-fullscreen-line"></i>
+                        </button>
                 </div>
                 <PerfectScrollbar className="box-body box max-h-[60vh] overflow-y-auto">
                     <p
@@ -209,6 +211,7 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus}) {
                         getEndPoint={`/sr-task/${serviceRequest.id}/discussions/`}
                         storeEndPoint={`/sr-task/${serviceRequest.id}/discussion/`}
                         serviceRequest={serviceRequest}
+                        showFooter={showFooter}
                     />
                 </div>
             )}

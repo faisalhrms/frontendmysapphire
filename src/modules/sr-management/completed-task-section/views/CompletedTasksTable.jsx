@@ -23,8 +23,8 @@ const TaskCompletedTable = () => {
         return (
           <div className="flex space-x-2">
             <Link
-              aria-label="anchor"
               to={`/module/srm/taskcompletedform/${id}`}
+              aria-label={`Task-Completed/${id}`}
               rel="noopener noreferrer"
               className="ti-btn ti-btn-success ti-btn-sm"
             >

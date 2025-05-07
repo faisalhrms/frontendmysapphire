@@ -23,8 +23,8 @@ const TaskClosedTable = () => {
         return (
           <div className="flex space-x-2">
             <Link
-              aria-label="anchor"
               to={`/module/srm/taskclosedform/${id}`}
+              aria-label={`Task-Closed/${id}`}
               rel="noopener noreferrer"
               className="ti-btn ti-btn-success ti-btn-sm"
             >
