@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import PendingRequestsTable from "@modules/sr-management/pending-req-section/views/PendingReqTable.jsx";
 import TaskGeneratedTable from "@modules/sr-management/task-genrated-section/views/TaskGeneratedTable.jsx";
 import CompletedTasksTable from "@modules/sr-management/completed-task-section/views/CompletedTasksTable.jsx";
@@ -6,7 +7,8 @@ import TaskClosedTable from "@modules/sr-management/closed-task-section/views/Ta
 import { getUnreadCounts } from "@modules/sr-management/services/Pending.js";
 
 const SrManagement = () => {
-  const [activeTab, setActiveTab] = useState("pending-task");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeStatus, setActiveStatus] = useState(() => searchParams.get("status") || "pending-task");
   const [counts, setCounts] = useState({
     pending: 0,
     generated: 0,
@@ -17,6 +19,10 @@ const SrManagement = () => {
   useEffect(() => {
     getUnreadCounts().then(setCounts);
   }, []);
+
+  useEffect(() => {
+    setActiveStatus(searchParams.get("status") || "pending-task");
+  }, [searchParams]);
 
   const badge = (value) =>
     value > 0 && (
@@ -31,11 +37,11 @@ const SrManagement = () => {
     <div className="p-3">
       <div className="box">
         <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
-          <nav aria-label="Tabs" className="md:flex block !justify-start whitespace-nowrap">
+          <nav aria-label="Statuses" className="md:flex block !justify-start whitespace-nowrap">
             <button
-              onClick={() => setActiveTab("pending-task")}
+              onClick={() => setSearchParams({ status: "pending-task" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                activeTab === "pending-task"
+                activeStatus === "pending-task"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
@@ -44,9 +50,9 @@ const SrManagement = () => {
               {badge(counts.pending)}
             </button>
             <button
-              onClick={() => setActiveTab("generated-task")}
+              onClick={() => setSearchParams({ status: "generated-task" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                activeTab === "generated-task"
+                activeStatus === "generated-task"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
@@ -55,9 +61,9 @@ const SrManagement = () => {
               {badge(counts.generated)}
             </button>
             <button
-              onClick={() => setActiveTab("completed-task")}
+              onClick={() => setSearchParams({ status: "completed-task" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                activeTab === "completed-task"
+                activeStatus === "completed-task"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
@@ -66,9 +72,9 @@ const SrManagement = () => {
               {badge(counts.completed)}
             </button>
             <button
-              onClick={() => setActiveTab("closed-task")}
+              onClick={() => setSearchParams({ status: "closed-task" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
-                activeTab === "closed-task"
+                activeStatus === "closed-task"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
@@ -79,10 +85,10 @@ const SrManagement = () => {
           </nav>
         </div>
         <div className="box-content bg-white">
-          {activeTab === "pending-task" && <PendingRequestsTable />}
-          {activeTab === "generated-task" && <TaskGeneratedTable />}
-          {activeTab === "completed-task" && <CompletedTasksTable />}
-          {activeTab === "closed-task" && <TaskClosedTable />}
+          {activeStatus === "pending-task" && <PendingRequestsTable />}
+          {activeStatus === "generated-task" && <TaskGeneratedTable />}
+          {activeStatus === "completed-task" && <CompletedTasksTable />}
+          {activeStatus === "closed-task" && <TaskClosedTable />}
         </div>
       </div>
     </div>

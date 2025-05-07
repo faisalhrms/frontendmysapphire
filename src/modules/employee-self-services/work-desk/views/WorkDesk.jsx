@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import Pagination from "@components/Pagination.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useSearchHook } from "@hooks/useSearchHook.js";
@@ -13,7 +14,8 @@ import TaskList from "@modules/employee-self-services/work-desk/components/TaskC
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 
 const WorkDesk = () => {
-  const [activeTab, setActiveTab] = useState("pending");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => searchParams.get("status") || "pending");
   const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
 
   const { data: pendingData, isLoading: isPendingLoading } =
@@ -26,6 +28,10 @@ const WorkDesk = () => {
     activeTab === "closed" ? useClosed(currentPage, 9, searchTerm) : {};
 
   const { unreadCounts, refetch: refetchUnread } = useUnreadAssignedCounts();
+
+  useEffect(() => {
+    setActiveTab(searchParams.get("status") || "pending");
+  }, [searchParams]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -43,9 +49,7 @@ const WorkDesk = () => {
         ? inProgressData?.total
         : activeTab === "completed"
         ? completedData?.total
-        : activeTab === "closed"
-        ? closedData?.total
-        : 0) / 9
+        : closedData?.total || 0) / 9
     ) || 0;
 
   const rows =
@@ -55,9 +59,7 @@ const WorkDesk = () => {
       ? inProgressData?.rows || []
       : activeTab === "completed"
       ? completedData?.rows || []
-      : activeTab === "closed"
-      ? closedData?.rows || []
-      : [];
+      : closedData?.rows || [];
 
   const filteredRows = useMemo(() => {
     const term = searchTerm.toLowerCase();
@@ -101,7 +103,7 @@ const WorkDesk = () => {
                     <h6 className="font-semibold mb-0 text-[1rem]">My Work Desk</h6>
                     <nav className="flex sm:space-x-6 flex-wrap">
                       <button
-                        onClick={() => setActiveTab("pending")}
+                        onClick={() => setSearchParams({ status: "pending" })}
                         className={`relative w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:text-primary hs-tab-active:bg-primary/10 rounded-md py-2 px-3 text-sm ${
                           activeTab === "pending"
                             ? "text-primary bg-primary/10"
@@ -112,7 +114,7 @@ const WorkDesk = () => {
                         {badge(unreadCounts.pending)}
                       </button>
                       <button
-                        onClick={() => setActiveTab("in-progress")}
+                        onClick={() => setSearchParams({ status: "in-progress" })}
                         className={`relative w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:text-primary hs-tab-active:bg-primary/10 rounded-md py-2 px-3 text-sm ${
                           activeTab === "in-progress"
                             ? "text-primary bg-primary/10"
@@ -123,7 +125,7 @@ const WorkDesk = () => {
                         {badge(unreadCounts.generated)}
                       </button>
                       <button
-                        onClick={() => setActiveTab("completed")}
+                        onClick={() => setSearchParams({ status: "completed" })}
                         className={`relative w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:text-primary hs-tab-active:bg-primary/10 rounded-md py-2 px-3 text-sm ${
                           activeTab === "completed"
                             ? "text-primary bg-primary/10"
@@ -134,7 +136,7 @@ const WorkDesk = () => {
                         {badge(unreadCounts.completed)}
                       </button>
                       <button
-                        onClick={() => setActiveTab("closed")}
+                        onClick={() => setSearchParams({ status: "closed" })}
                         className={`relative w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:text-primary hs-tab-active:bg-primary/10 rounded-md py-2 px-3 text-sm ${
                           activeTab === "closed"
                             ? "text-primary bg-primary/10"
