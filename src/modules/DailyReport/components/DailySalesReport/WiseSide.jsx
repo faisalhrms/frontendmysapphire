@@ -254,12 +254,15 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
     const formatNumber = (num) => {
         if (typeof num !== "number") return num;
         return num.toLocaleString();
+
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) return "bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]";
+        if (row.isHeader) return " font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]";
         if (row.isSubHeader) return "bg-gray-200 font-medium";
         return "";
+
+
     };
 
     if (loading) return <div>Loading...</div>;
@@ -300,7 +303,7 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
                                 let leftColBgColor = "bg-white";
 
                                 if (row.isHeader) {
-                                    leftColBgColor = "bg-gray-200 bg-[#949eb7]";
+                                    leftColBgColor = " bg-[#949eb7]";
                                 } else if (row.isSubHeader) {
                                     leftColBgColor = row.indent === 0 ? "bg-gray-200" :
                                         row.indent === 1 ? "bg-gray-200" :
