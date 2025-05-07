@@ -26,11 +26,11 @@ const SrManagement = () => {
 
   const badge = (value) =>
     value > 0 && (
-      <span className="flex absolute h-5 w-5 -top-[0.25rem] -right-[0.6rem] transition-all duration-200 ease-in-out">
-        <span className="relative inline-flex rounded-full h-[14.7px] w-[14px] text-[0.625rem] bg-secondary text-white justify-center items-center transition-colors duration-200 ease-in-out">
-          {value}
-        </span>
+    <span className="absolute -top-1 -right-2 z-10 transition-all duration-200 ease-in-out">
+      <span className="flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[10px] bg-secondary text-white leading-none">
+        {value}
       </span>
+    </span>
     );
 
   return (
@@ -69,7 +69,7 @@ const SrManagement = () => {
               }`}
             >
               Task Completed
-              {badge(counts.completed)}
+              {badge(444)}
             </button>
             <button
               onClick={() => setSearchParams({ status: "closed-task" })}
