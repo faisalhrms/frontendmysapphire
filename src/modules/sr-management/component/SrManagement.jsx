@@ -69,7 +69,7 @@ const SrManagement = () => {
               }`}
             >
               Task Completed
-              {badge(444)}
+              {badge(counts.completed)}
             </button>
             <button
               onClick={() => setSearchParams({ status: "closed-task" })}
