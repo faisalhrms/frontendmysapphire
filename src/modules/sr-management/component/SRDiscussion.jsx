@@ -11,7 +11,7 @@ import EmailComposeModal from "@modules/sr-management/component/EmailComposeModa
 import {Link} from "react-router-dom";
 import useFullScreen from "@hooks/useFullScreen.js";
 
-const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceRequest}) => {
+const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceRequest,showFooter = true}) => {
     const {user} = useSelector((state) => state.auth);
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
     const {control, formState: {errors}} = useForm();
@@ -60,14 +60,14 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
                         >
                             <i className="ri-refresh-line font-semibold align-middle"></i> Refresh
                         </button>
-                        <Link
-                            to="#"
-                            aria-label="fullscreen"
-                            className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen"
-                            onClick={handleFullscreenClick}
+                        <button
+                          type="button"
+                          onClick={handleFullscreenClick}
+                          className="flex items-center justify-center w-[1.75rem] h-[1.75rem] text-[0.8rem] py-1 px-2 rounded-sm bg-light border-light shadow-none font-medium"
+                          aria-label="Toggle fullscreen"
                         >
-                            <i className="ri-fullscreen-line"></i>
-                        </Link>
+                          <i className="ri-fullscreen-line"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -108,55 +108,58 @@ const SRDiscussion = ({title, getEndPoint, storeEndPoint = getEndPoint, serviceR
 
 
                         <div className="box-footer">
-                            <div className="!p-0 !border-0">
-                                <div className="grid grid-cols-12 gap-4">
-                                    <AttachmentsList
-                                        attachments={attachments}
-                                        onDelete={handleDeleteAttachment}
-                                    />
-                                </div>
+                            {showFooter && (
 
-                                <div className="sm:flex items-center leading-none mt-1">
-                                    <div className="me-4">
-                                        <Avatar avatar={user?.avatar} size="md"/>
+                                <div className="!p-0 !border-0">
+                                    <div className="grid grid-cols-12 gap-4">
+                                        <AttachmentsList
+                                            attachments={attachments}
+                                            onDelete={handleDeleteAttachment}
+                                        />
                                     </div>
 
-                                    <div className="flex-grow me-2">
-                                        <div className="inline-flex !w-full">
-                                            <input
-                                                type="text"
-                                                className="form-control w-full !rounded-e-none"
-                                                placeholder="Post Anything"
-                                                aria-label="Discussion message input"
-                                                value={message}
-                                                onChange={e => setMessage(e.target.value)}
-                                                onKeyDown={e => {
-                                                    if (e.key === "Enter") {
-                                                        e.preventDefault();
-                                                        handleSubmit();
-                                                    }
-                                                }}
-                                            />
-                                            <button
-                                                disabled={isSubmitting}
-                                                onClick={handleSubmit}
-                                                className="ti-btn bg-primary text-white !rounded-s-none !ml-1 !mb-0"
-                                                type="button"
-                                            >
-                                                Post
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="ti-btn ti-btn-primary-full !ml-1"
-                                                onClick={handleOpenEmailModal}
-                                            >
-                                                <i className="bi bi-envelope-check font-semibold align-middle"></i>
-                                                Email
-                                            </button>
+                                    <div className="sm:flex items-center leading-none mt-1">
+                                        <div className="me-4">
+                                            <Avatar avatar={user?.avatar} size="md"/>
+                                        </div>
+
+                                        <div className="flex-grow me-2">
+                                            <div className="inline-flex !w-full">
+                                                <input
+                                                    type="text"
+                                                    className="form-control w-full !rounded-e-none"
+                                                    placeholder="Post Anything"
+                                                    aria-label="Discussion message input"
+                                                    value={message}
+                                                    onChange={e => setMessage(e.target.value)}
+                                                    onKeyDown={e => {
+                                                        if (e.key === "Enter") {
+                                                            e.preventDefault();
+                                                            handleSubmit();
+                                                        }
+                                                    }}
+                                                />
+                                                <button
+                                                    disabled={isSubmitting}
+                                                    onClick={handleSubmit}
+                                                    className="ti-btn bg-primary text-white !rounded-s-none !ml-1 !mb-0"
+                                                    type="button"
+                                                >
+                                                    Post
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="ti-btn ti-btn-primary-full !ml-1"
+                                                    onClick={handleOpenEmailModal}
+                                                >
+                                                    <i className="bi bi-envelope-check font-semibold align-middle"></i>
+                                                    Email
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </>
                 )}

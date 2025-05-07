@@ -34,7 +34,6 @@ const LoginForm = () => {
       const userData = await login(data).unwrap();
         dispatch(setCredentials(userData));
         Notify.success('Login successful!');
-        navigate(PMS_ROUTES.PROJECT.READ.path);
     } catch (error) {
       if (error.data && error.data.message) {
           Notify.error( error.data.message);

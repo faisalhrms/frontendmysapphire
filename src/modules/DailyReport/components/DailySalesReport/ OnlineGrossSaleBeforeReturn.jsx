@@ -63,13 +63,13 @@ function OnlineGrossSaleBeforeReturn({ data , loading ,  setDonwloadData }) {
                             className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1 bg-[#949eb7]">
                             Total
                         </td>
-                        <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1">
+                        <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1 bg-[#949eb7]">
                             {formatNumber(data.reduce((acc, row) => acc + row.full_price, 0))}
                         </td>
-                        <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1">
+                        <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1 bg-[#949eb7]">
                             {formatNumber(data.reduce((acc, row) => acc + row.discounted, 0))}
                         </td>
-                        <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1">
+                        <td className="px-4 py-2 text-right border border-gray-400 font-bold dark:text-gray-200 dark:bg-bodybg sm:px-2 sm:py-1 bg-[#949eb7]">
                             {formatNumber(data.reduce((acc, row) => acc + row.total, 0))}
                         </td>
                     </tr>
