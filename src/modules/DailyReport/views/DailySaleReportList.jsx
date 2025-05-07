@@ -1,42 +1,43 @@
-import React, {useState, useMemo, useRef, useEffect} from "react";
-import { Link } from "react-router-dom";
-
+import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
-
 import useFilters from "@hooks/useFilters.js";
+import FormInput from "@components/form/FormInput.jsx";
+import FilterButton from "@components/form/FilterButton.jsx";
+import IconTabs from "@components/IconTabs.jsx";
 
 import StoreWise from "../components/DailySalesReport/WiseSide.jsx";
-import FilterButton from "@components/form/FilterButton.jsx";
-import FormInput from "@components/form/FormInput.jsx";
 import DailyTargetAchievementOnline from "@modules/DailyReport/components/DailySalesReport/DailyTargetAchievementOnline.jsx";
 import OnlineGrossSaleBeforeReturn from "@modules/DailyReport/components/DailySalesReport/ OnlineGrossSaleBeforeReturn.jsx";
 import CYVsLYGrowth from "@modules/DailyReport/components/DailySalesReport/CYVsLYGrowth.jsx";
 import DailySalesReportStoreWise from "@modules/DailyReport/components/DailySalesReport/DailySalesReportStoreWise.jsx";
+
 import {
-    downloadDailySaleReport,
-    fetchGrossSaleBeforeReturnData,
-    fetchSaleCvVsLyData, fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT,
     fetchStoreWiseSaleData,
-    fetchTargetSaleData
+    fetchTargetSaleData,
+    downloadDailySaleReport,
+    fetchSaleMtdLdDataLD,
+    fetchSaleMtdLdDataMT,
+    fetchSaleCvVsLyData,
+    fetchGrossSaleBeforeReturnData
 } from "@modules/DailyReport/services/wiseside_services.js";
 
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const DailySaleReportList = () => {
-    const [activeTab, setActiveTab] = useState("DailySaleReportList");
+    const [activeTab, setActiveTab] = useState("storeWise");
     const [showFilters, setShowFilters] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expand, setExpand] = useState(true);
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [donwloadData, setDonwloadData] = useState({});
 
     const [table1, setTable1] = useState({});
     const [table2, setTable2] = useState([]);
     const [table3, setTable3] = useState([]);
     const [table4, setTable4] = useState([]);
-
     const [table5, setTable5] = useState([]);
     const [table6, setTable6] = useState([]);
-
-    const storeWiseRef = useRef();
 
     const getTodayDate = () => new Date().toISOString().slice(0, 10);
     const getYesterdayDate = () => {
@@ -46,62 +47,22 @@ const DailySaleReportList = () => {
     };
 
     const { control, handleSubmit, errors, getFilters } = useFilters(
-        useMemo(
-            () => ({
-                initialFilters: [
-                    { name: "date_from", defaultValue: getYesterdayDate() },
-                    { name: "date_to", defaultValue: getTodayDate() },
-                ],
-            }),
-            []
-        )
+        useMemo(() => ({
+            initialFilters: [
+                { name: "date_from", defaultValue: getYesterdayDate() },
+                { name: "date_to", defaultValue: getTodayDate() },
+            ]
+        }), [])
     );
-
     const [filters, setFilters] = useState(getFilters());
 
-    const onSubmit = async (formData) => {
-        setLoading(true);
-        setTimeout(() => {
-            setFilters(formData);
-            setLoading(false);
-        }, 1000);
-    };
-
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
-            setTable1(data || {});
-
-            const lastDayResult = await fetchSaleMtdLdDataLD(filters.date_from);
-            const mtdResult = await fetchSaleMtdLdDataMT(filters.date_from);
-
-            setTable5(lastDayResult);
-            setTable6(mtdResult);
-        } catch (err) {
-            console.error("Error fetching data:", err);
-            setError("Failed to fetch data. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const parseDate = (dateStr) => {
-        const [year, month, day] = dateStr.split("-");
-        return new Date(year, month - 1, day);
-    };
-
-    const formatApiDate = (dayNumber) => {
-        const day = dayNumber.toString();
-        return `${day}`;
-    };
-
-    const [isDownloading, setIsDownloading] = useState(false);
+    const onSubmit = useCallback((formData) => {
+        setFilters(formData);
+    }, []);
 
     const downloadPDF = async (filters) => {
         try {
-            setIsDownloading(true)
+            setIsDownloading(true);
             const pdfData = await downloadDailySaleReport(filters);
             const blob = new Blob([pdfData], { type: 'application/pdf' });
             const link = document.createElement('a');
@@ -110,203 +71,212 @@ const DailySaleReportList = () => {
             link.click();
         } catch (error) {
             console.error('Error downloading PDF:', error);
-        }finally {
-            setIsDownloading(false)
+        } finally {
+            setIsDownloading(false);
         }
     };
 
+    const parseDate = (dateStr) => {
+        const [year, month, day] = dateStr.split("-");
+        return new Date(year, month - 1, day);
+    };
+    const formatApiDate = (dayNumber) => dayNumber.toString();
+    const calcAch = (sale, target) => target === 0 ? 0 : ((sale / target) * 100).toFixed(2);
+
     useEffect(() => {
+        if (!filters.date_from || !filters.date_to) return;
+
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const [storeData, lastDayData, mtdData] = await Promise.all([
+                    fetchStoreWiseSaleData(filters.date_from, filters),
+                    fetchSaleMtdLdDataLD(filters.date_from),
+                    fetchSaleMtdLdDataMT(filters.date_from)
+                ]);
+                setTable1(storeData || {});
+                setTable5(lastDayData);
+                setTable6(mtdData);
+            } catch (err) {
+                console.error("Error fetching store-wise/mtd/ld data:", err);
+                setError("Failed to fetch data. Please try again.");
+            }
+
+            try {
+                const targetData = await fetchTargetSaleData(filters.date_from, filters);
+                const startDate = parseDate(filters.date_from);
+                const endDate = parseDate(filters.date_to);
+                const filtered = targetData.filter(row => {
+                    const rowDate = parseDate(formatApiDate(row.date));
+                    return rowDate >= startDate && rowDate <= endDate;
+                });
+
+                const computed = filtered.map(row => ({
+                    ...row,
+                    fullPriceOfflineAch: calcAch(row.fullPriceOfflineSale, row.fullPriceOfflineTarget),
+                    discountedOfflineAch: calcAch(row.discountedOfflineSale, row.discountedOfflineTarget),
+                    totalOfflineAch: calcAch(row.totalOfflineSale, row.totalOfflineTarget),
+                    fullPriceOnlineAch: calcAch(row.fullPriceOnlineSale, row.fullPriceOnlineTarget),
+                    discountedOnlineAch: calcAch(row.discountedOnlineSale, row.discountedOnlineTarget),
+                    totalOnlineAch: calcAch(row.totalOnlineSale, row.totalOnlineTarget),
+                    totalAch: calcAch(row.totalSale, row.totalTarget)
+                }));
+
+                setTable2(computed.length > 0 ? computed : targetData);
+            } catch (error) {
+                console.error("Error fetching target data:", error);
+            }
+
+            try {
+                const lyData = await fetchSaleCvVsLyData(filters.date_from, filters);
+                setTable3(lyData);
+            } catch (error) {
+                console.error("Error fetching LY data:", error);
+            }
+
+            try {
+                const grossReturn = await fetchGrossSaleBeforeReturnData(filters.date_from, filters);
+                setTable4(grossReturn);
+            } catch (error) {
+                console.error("Error fetching gross return data:", error);
+            }
+
+            setLoading(false);
+        };
+
         fetchData();
-
-        if (filters.date_from && filters.date_to) {
-            setLoading(true);
-
-            fetchTargetSaleData(filters.date_from, filters)
-                .then((apiData) => {
-                    const startDate = parseDate(filters.date_from);
-                    const endDate = parseDate(filters.date_to);
-
-                    const filtered = apiData.filter((row) => {
-                        const rowDate = parseDate(formatApiDate(row.date));
-                        return rowDate >= startDate && rowDate <= endDate;
-                    });
-
-                    const computed = filtered.map((row) => {
-                        const fullPriceOfflineAch = calcAch(row.fullPriceOfflineSale, row.fullPriceOfflineTarget);
-                        const discountedOfflineAch = calcAch(row.discountedOfflineSale, row.discountedOfflineTarget);
-                        const totalOfflineAch = calcAch(row.totalOfflineSale, row.totalOfflineTarget);
-
-                        const fullPriceOnlineAch = calcAch(row.fullPriceOnlineSale, row.fullPriceOnlineTarget);
-                        const discountedOnlineAch = calcAch(row.discountedOnlineSale, row.discountedOnlineTarget);
-                        const totalOnlineAch = calcAch(row.totalOnlineSale, row.totalOnlineTarget);
-
-                        const totalAch = calcAch(row.totalSale, row.totalTarget);
-
-                        return {
-                            ...row,
-                            fullPriceOfflineAch,
-                            discountedOfflineAch,
-                            totalOfflineAch,
-                            fullPriceOnlineAch,
-                            discountedOnlineAch,
-                            totalOnlineAch,
-                            totalAch
-                        };
-                    });
-
-                    setTable2(computed.length > 0 ? computed : apiData);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                    setLoading(false);
-                });
-        }
-        if (filters.date_from && filters.date_to) {
-            setLoading(true);
-
-            fetchSaleCvVsLyData(filters.date_from, filters)
-                .then((responseData) => {
-                    setTable3(responseData);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error("Error fetching sales data:", error);
-                    setLoading(false);
-                });
-        }
-        if (filters.date_from && filters.date_to) {
-            setLoading(true);
-            fetchGrossSaleBeforeReturnData(filters.date_from, filters)
-                .then((responseData) => {
-                    setTable4(responseData);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error('Error fetching data:', error);
-                    setLoading(false);
-                });
-        }
     }, [filters]);
 
-
-
-const [donwloadData, setDonwloadData] = useState({});
+    const tabs = [
+        {
+            id: "storeWise",
+            label: "Store Wise",
+            icon: <i className="bx bx-store"></i>,
+            content: loading ? <LoadingSpinner /> : (
+                <StoreWise
+                    {...{
+                        filters,
+                        newData: table1,
+                        error,
+                        loading,
+                        expand,
+                        setDonwloadData,
+                    }}
+                />
+            ),
+        },
+        {
+            id: "dailyTarget",
+            label: "Daily Target Achievement",
+            icon: <i className="bx bx-bullseye"></i>,
+            content: loading ? <LoadingSpinner /> : (
+                <DailyTargetAchievementOnline
+                    data={table2}
+                    loading={loading}
+                    setDonwloadData={setDonwloadData}
+                />
+            ),
+        },
+        {
+            id: "cyVsLy",
+            label: "CY Vs LY Growth",
+            icon: <i className="bx bx-bar-chart-alt-2"></i>,
+            content: loading ? <LoadingSpinner /> : (
+                <CYVsLYGrowth
+                    data={table3}
+                    loading={loading}
+                    setDonwloadData={setDonwloadData}
+                />
+            ),
+        },
+        {
+            id: "grossReturn",
+            label: "Online (Gross Sale before Return)",
+            icon: <i className="bx bx-money-withdraw"></i>,
+            content: loading ? <LoadingSpinner /> : (
+                <OnlineGrossSaleBeforeReturn
+                    data={table4}
+                    loading={loading}
+                    setDonwloadData={setDonwloadData}
+                />
+            ),
+        },
+        {
+            id: "dailySales",
+            label: "Daily Sales - Store Wise",
+            icon: <i className="bx bx-analyse"></i>,
+            content: loading ? <LoadingSpinner /> : (
+                <DailySalesReportStoreWise
+                    lastDayData={table5}
+                    mtdData={table6}
+                    loading={loading}
+                    error={error}
+                    expand={expand}
+                    setDonwloadData={setDonwloadData}
+                    filters={filters}
+                />
+            ),
+        },
+    ];
 
 
     return (
         <>
-            <PageHeader currentpage="Daily Sales Report"  activepage="Report"
-                        mainpage="Daily Sales Report"/>
+            <PageHeader currentpage="Daily Sales Report" activepage="Report" mainpage="Daily Sales Report"/>
 
+            <form onSubmit={handleSubmit(onSubmit)}
+                  className="bg-white p-3 mt-2 rounded-lg shadow-md flex flex-col sm:flex-row items-center justify-between gap-3">
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                <div className="col-span-12">
-                    <div
-                        className="bg-white flex flex-col md:flex-row md:items-center md:justify-between px-3 sm:px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-                        <nav className="flex flex-col sm:flex-row sm:space-x-2 overflow-x-auto">
-                            {[
-                                {tab: "DailySaleReportList", label: "Store Wise"},
-                                {tab: "OnlineAndBM", label: "Daily Target Achievement"},
-                                {tab: "Return", label: "CY Vs LY Growth"},
-                                {tab: "GrossReturn", label: "Online (Gross Sale before Return)"},
-                                {tab: "DailySales", label: "Daily Sales Report - Store Wise"},
-                            ].map(({tab, label}) => (
-                                <Link
-                                    key={tab}
-                                    to="#"
-                                    className={`whitespace-nowrap m-1 border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 text-[0.75rem] font-medium rounded-md ${
-                                        activeTab === tab
-                                            ? "bg-primary text-white"
-                                            : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"
-                                    }`}
-                                    onClick={() => setActiveTab(tab)}
-                                >
-                                    {label}
-                                </Link>
-                            ))}
-                        </nav>
-
-                        <div className="flex flex-wrap justify-center md:justify-end gap-2 mt-2 md:mt-0">
-                            {(activeTab === "DailySaleReportList" || activeTab === "DailySales") && (
-                                <button
-                                    onClick={() => setExpand(!expand)}
-                                    type="button"
-                                    className="ti-btn bg-primary text-white font-medium text-sm rounded py-2 px-3"
-                                >
-                                    <i className={expand ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"}></i>
-                                    {expand ? "Collapse" : "Expand All"}
-                                </button>
-                            )}
-
-                            <button
-                                type="button"
-                                className="ti-btn bg-primary text-white font-medium text-sm rounded py-2 px-3"
-                                onClick={() => downloadPDF(filters)}
-                                disabled={isDownloading}
-                            >
-                                <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""} text-lg`}></i>
-                                {isDownloading ? "" : "PDF"}
-                            </button>
-
-                            <button
-                                type="button"
-                                className="ti-btn bg-primary text-white font-medium text-sm rounded py-2 px-3"
-                                onClick={() => setShowFilters(!showFilters)}
-                            >
-                                <i className="ri-filter-3-fill inline-block"></i> Filters
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="text-primary p-2 rounded-lg text-right text-black">
-                        <p>Amount in Rs</p>
-                    </div>
-
-                    {showFilters && (
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <div
-                                className="bg-white p-3 mt-2 rounded-lg shadow-md flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 dark:text-gray-200 dark:bg-bodybg">
-                                <FormInput
-                                    type="date"
-                                    name="date_from"
-                                    control={control}
-                                    errors={errors}
-                                    defaultValue={filters.date_from}
-                                    label={true}
-                                />
-                                <FilterButton/>
-                            </div>
-                        </form>
-                    )}
-
-                    {activeTab === "DailySaleReportList" && (
-                        <StoreWise {...{filters, newData: table1, error, loading, expand, setDonwloadData}} />
-                    )}
-                    {activeTab === "OnlineAndBM" && (
-                        <DailyTargetAchievementOnline data={table2} loading={loading}
-                                                      setDonwloadData={setDonwloadData}/>
-                    )}
-                    {activeTab === "Return" && (
-                        <CYVsLYGrowth data={table3} loading={loading} setDonwloadData={setDonwloadData}/>
-                    )}
-                    {activeTab === "GrossReturn" && (
-                        <OnlineGrossSaleBeforeReturn data={table4} loading={loading} setDonwloadData={setDonwloadData}/>
-                    )}
-                    {activeTab === "DailySales" && (
-                        <DailySalesReportStoreWise
-                            lastDayData={table5}
-                            mtdData={table6}
-                            loading={loading}
-                            error={error}
-                            expand={expand}
-                            setDonwloadData={setDonwloadData}
-                            filters={filters}
-                        />
-                    )}
+                <div className="flex items-center gap-4 flex-1">
+                    <FormInput
+                        type="date"
+                        name="date_from"
+                        control={control}
+                        errors={errors}
+                        defaultValue={filters.date_from}
+                        label={false} // match the screenshot style
+                        className="w-[200px]" // adjust width if needed
+                    />
                 </div>
+
+                {/* Right side: Action buttons */}
+                <div className="flex items-center gap-2">
+                    {(activeTab === "storeWise" || activeTab === "dailySales") && (
+                        <button
+                            type="button"
+                            onClick={() => setExpand(!expand)}
+                            className="ti-btn bg-[#ede9fe] text-[#6b21a8] flex items-center gap-1"
+                        >
+                            <i className={expand ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"}></i>
+                            <span className="text-sm font-medium">
+        {expand ? "Collapse" : "Expand All"}
+    </span>
+                        </button>
+
+                    )}
+
+                    <FilterButton className="bg-[#ede9fe] text-[#6b21a8]" iconOnly/>
+
+
+                    <button
+                        type="button"
+                        onClick={() => downloadPDF(filters)}
+                        disabled={isDownloading}
+                        className="ti-btn bg-[#d1fae5] text-[#047857]"
+                    >
+                        <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""}`}></i>
+                    </button>
+                </div>
+            </form>
+
+
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
             </div>
 
+            <IconTabs tabs={tabs} onTabChange={setActiveTab}/>
         </>
     );
 };
