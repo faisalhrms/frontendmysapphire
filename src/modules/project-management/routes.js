@@ -11,6 +11,7 @@ export const PMS_ROUTES = {
   PROJECT: {
     READ: {
       path: "/module/projects",
+      permission: "pms.view_project",
     },
     CREATE: {
       path: "/module/projects/create",
@@ -22,17 +23,21 @@ export const PMS_ROUTES = {
     },
     DETAIL: {
       path: "/module/projects/detail/:id",
+      permission: "pms.view_project",
     },
   },
   TASK: {
+    READ:{
+      path: "/module/tasks",
+      permission: "pms.view_task",
+    },
     DETAIL: {
       path: "/module/tasks/detail/:id",
+      permission: "pms.view_task",
     },
     KANBAN: {
       path: "/module/tasks/kanban-board",
-    },
-    LIST:{
-      path: "/module/tasks",
+      permission: "pms.view_task",
     },
     ECOM: {
       path: "/module/tasks/ecom",
@@ -45,6 +50,7 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.PROJECT.READ.path,
     component: ProjectList,
+    permission: PMS_ROUTES.PROJECT.READ.permission,
   },
   {
     path: PMS_ROUTES.PROJECT.CREATE.path,
@@ -59,18 +65,22 @@ export const MODULE_ROUTES = [
   {
     path: PMS_ROUTES.PROJECT.DETAIL.path,
     component: ProjectDetail,
+    permission: PMS_ROUTES.PROJECT.READ.permission,
   },
   {
     path: PMS_ROUTES.TASK.DETAIL.path,
     component: TaskDetail,
+    permission: PMS_ROUTES.TASK.READ.permission,
   },
   {
     path: PMS_ROUTES.TASK.KANBAN.path,
     component: TaskKanban,
+    permission: PMS_ROUTES.TASK.READ.permission,
   },
   {
-    path: PMS_ROUTES.TASK.LIST.path,
+    path: PMS_ROUTES.TASK.READ.path,
     component: TaskList,
+    permission: PMS_ROUTES.TASK.READ.permission,
   },
   {
     path: PMS_ROUTES.TASK.ECOM.path,

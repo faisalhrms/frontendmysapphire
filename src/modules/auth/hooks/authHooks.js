@@ -34,6 +34,11 @@ export const useHasPermission = (permission) => {
     }, [permissions, permission, isLoading]);
 };
 
+export const useHasGroup = (group) => {
+    const groups = useSelector((state) => state.auth.user?.groups);
+    return groups?.some(g => g.name === group);
+};
+
 export const useIsAuthenticated = () => {
     const token = useSelector((state) => state.auth.tokens?.access_token);
     const expiresAt = useSelector((state) => state.auth.tokens?.access_token_expires);
