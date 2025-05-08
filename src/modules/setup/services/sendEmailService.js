@@ -9,7 +9,7 @@ import Notify from "@helpers/toastNotifications.js";
  */
 export const sendEmail = async (emailData) => {
     try {
-        const response = await api.post("/emails/send/", emailData);
+        const response = await api.post("/setups/email-send/", emailData);
         Notify.success(response.data.message || "Email sent successfully.");
         return response.data;
     } catch (error) {

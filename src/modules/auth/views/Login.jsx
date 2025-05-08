@@ -6,20 +6,21 @@ import desktopLogoBlack from '@assets/images/brand-logos/desktop-dark.svg';
 import LoginForm from '../components/LoginForm';
 import LoginSlider from "../components/LoginSlider.jsx";
 import React, {useEffect} from "react";
-import {useIsAuthenticated} from "@modules/auth/hooks/authHooks.js";
+import {useHasGroup, useIsAuthenticated} from "@modules/auth/hooks/authHooks.js";
 import {useNavigate} from "react-router-dom";
-import {PMS_ROUTES} from "@modules/project-management/routes.js";
 import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
+import {landing_ROUTES} from "@modules/landing-page/routes.js";
 
 
 const Login = () => {
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
+  const isEmployee = useHasGroup('employee');
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path);
+      isEmployee ? navigate(SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path) : navigate(landing_ROUTES.ABOUT_US.path);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isEmployee]);
 
   return (
     <>

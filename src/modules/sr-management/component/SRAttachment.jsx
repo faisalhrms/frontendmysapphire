@@ -4,20 +4,22 @@ import { formatDate } from "@helpers/dateTime.js";
 import "@assets/css/custom/attachment-card.css";
 import { Link } from "react-router-dom";
 import Notify from "@helpers/toastNotifications.js";
+import {formatBytes, getAttachmentColor, getAttachmentIcon} from "@modules/sr-management/services/srServices.js";
 
-const getAttachmentIcon = (fileType) => {
-    if (!fileType) return "ti ti-file-text";
-    if (fileType.startsWith("image")) return "ri-image-line";
-    if (fileType.startsWith("video")) return "ri-video-line";
-    if (fileType.startsWith("audio") || fileType.includes("audio")) return "ri-user-voice-line";
-    return "ti ti-file-text";
-};
 
-const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) => {
+
+const SRAttachment = ({
+    attachments,
+    onRemoveAttachment,
+    onUpdateAttachments,
+    selectable = false,
+    selectedIds = [],
+    onToggleSelect
+}) => {
     const safeAttachments = Array.isArray(attachments) ? attachments : [];
     const [selectedFile, setSelectedFile] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
-    const fileInputRef = useRef(null); // Reference for the input element
+    const fileInputRef = useRef(null);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -32,13 +34,12 @@ const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) 
                 Notify.error("No file selected");
                 return;
             }
-
-            await onUpdateAttachments({ file: selectedFile }); // Pass only the selected file
-            setSelectedFile(null); // Clear the file state
+            await onUpdateAttachments({ file: selectedFile });
+            setSelectedFile(null);
             if (fileInputRef.current) {
-                fileInputRef.current.value = ""; // Reset the input field
+                fileInputRef.current.value = "";
             }
-        } catch (error) {
+        } catch {
             Notify.error("Error uploading attachment");
         } finally {
             setIsUpdating(false);
@@ -58,9 +59,19 @@ const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) 
                         {safeAttachments.map((attachment, key) => (
                             <li key={key} className="!mb-4 flex items-center justify-between">
                                 <div className="flex items-center">
+                                    {selectable && (
+                                        <div className="me-3">
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            checked={selectedIds.includes(attachment.id)}
+                                            onChange={() => onToggleSelect(attachment.id)}
+                                        />
+                                        </div>
+                                    )}
                                     <div className="me-2">
                                         <span className="shared-file-icon">
-                                            <i className={getAttachmentIcon(attachment.file_type)}></i>
+                                        <i className={`${getAttachmentIcon(attachment.file_type)} ${getAttachmentColor(attachment.file_type)} text-xl`}></i>
                                         </span>
                                     </div>
                                     <div className="flex-grow">
@@ -73,12 +84,13 @@ const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) 
                                         >
                                             {attachment.file_name || "Unknown File"}
                                         </Link>
+                                        <p className="text-xs text-[#8c9097]">{formatBytes(attachment?.size)}</p>
                                         <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.6875rem]">
                                             {formatDate(attachment.created_at)}
                                         </p>
                                     </div>
                                 </div>
-                                {onRemoveAttachment && (
+                                {onRemoveAttachment && !selectable && (
                                     <button
                                         onClick={() => onRemoveAttachment(attachment.id)}
                                         className="ti-btn ti-btn-danger ti-btn-sm"
@@ -91,7 +103,6 @@ const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) 
                     </ul>
                 </div>
             </PerfectScrollbar>
-
             <div className="box-footer border-t p-2 flex items-center justify-between gap-2 rounded-md">
                 <div className="flex-grow !text-xs">
                     <label className="block !text-xs">
@@ -104,7 +115,6 @@ const SRAttachment = ({ attachments, onRemoveAttachment, onUpdateAttachments }) 
                         />
                     </label>
                 </div>
-
                 <button
                     type="button"
                     className="bg-primary text-white text-[0.75rem] px-4 py-2 rounded-full hover:bg-primary/90"

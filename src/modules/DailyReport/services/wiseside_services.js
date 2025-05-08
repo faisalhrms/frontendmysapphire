@@ -103,3 +103,18 @@ export const downloadDailySaleReport = async (filters) => {
         throw error;
     }
 };
+export const downloadOfflineStorePerformance = async (filters) => {
+
+    try {
+        const response = await api.get("/reporting/download/offline-store-performance/", {
+            params: {
+                date: filters.date,
+
+            },
+            responseType: 'blob',
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

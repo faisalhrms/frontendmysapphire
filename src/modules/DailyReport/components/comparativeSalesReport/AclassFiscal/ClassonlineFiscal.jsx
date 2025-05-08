@@ -18,7 +18,7 @@ const ClassonlineFiscal = () => {
     };
 
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-danger' : 'text-success';
+        return growth < 0 ? 'text-danger' : 'text-emerald-600';
     };
 
     return (
@@ -26,11 +26,11 @@ const ClassonlineFiscal = () => {
             <div className="mb-6">
                 <table className="w-full border-collapse">
                     <thead>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
-                        <th colSpan="7" className="bg-blue-300 border border-gray-400 p-2 text-center">Full Price
+                    <tr >
+                        <th colSpan="7" className="bg-blue-300 border border-gray-400 p-2 text-center text-white bg-[#383853]">Full Price
                         </th>
                     </tr>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                    <tr className="text-white bg-[#383853]">
                         <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">
                         </th>
                         <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center">Current
@@ -40,7 +40,7 @@ const ClassonlineFiscal = () => {
                         </th>
                         <th className="bg-blue-300 border border-gray-400 p-2 text-center">Growth</th>
                     </tr>
-                    <tr className="border border-gray-400" style={{backgroundColor: '#0b3588', color: 'white'}}>
+                    <tr className="border border-gray-400 text-white bg-[#4d5875]" >
                         <th className="bg-blue-200 p-2 text-center"></th>
                         <th className="bg-blue-200 p-2 text-center"></th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Wed)</th>
@@ -51,7 +51,7 @@ const ClassonlineFiscal = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    <tr className="bg-gray-200 border border-gray-400 dark:text-gray-200 dark:bg-bodybg">
+                    <tr className="bg-gray-200 border border-gray-400 dark:text-gray-200 dark:bg-bodybg bg-white bg-[#949eb7]">
                         <td className="font-bold p-2"></td>
                         <td className="font-bold p-2">Total</td>
                         <td className="border border-gray-400 p-2 text-right">128,481,379</td>
@@ -82,6 +82,8 @@ const ClassonlineFiscal = () => {
                 </table>
             </div>
         </div>
+
+
     );
 };
 

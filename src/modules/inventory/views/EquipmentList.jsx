@@ -7,8 +7,10 @@ import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import EquipmentListFilter from "@modules/inventory/components/EquipmentListFilter.jsx";
 import useFilters from "@hooks/useFilters.js";
+import {useSelector} from "react-redux";
 
 const EquipmentList = () => {
+    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const { search } = useLocation();
     const params = new URLSearchParams(search);
     const statusFilter = params.get('status') || '';
@@ -23,7 +25,7 @@ const EquipmentList = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: "company_id" },
+                    { name: 'company_id', defaultValue: companyId},
                     { name: "department_id" },
                     { name: "equipment_site_id" },
                     { name: "location_id" },
