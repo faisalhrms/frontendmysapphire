@@ -3,7 +3,7 @@ import {createOtherUser, createUser, getUserById, updateUser} from "@modules/use
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import otherUserCreateSchema from "@modules/user/schemas/otherUserSchema.js";
+import {otherUserCreateSchema} from "@modules/user/schemas/otherUserSchema.js";
 
 export const useUserForm = (userData) => {
 
