@@ -1,18 +1,6 @@
-// import placeholder from "@assets/images/faces/avatar.webp";
-//
-// const Avatar = ({ avatar, classes = '', parentClasses ='',  size='sm', shape='rounded' }) => {
-//     return (
-//         <span className={`avatar avatar-${shape} avatar-${size} ${parentClasses}`}>
-//             <img
-//                 className={classes}
-//                 src={avatar ? avatar.small_url : placeholder}
-//                 alt={avatar ?avatar.file_name : 'Image'}
-//             />
-//         </span>
-//     );
-// };
-// export default Avatar;
-import placeholder from "@assets/images/faces/avatar.webp";
+
+import Tooltip from "@components/Tooltip.jsx";
+import React from "react";
 
 const Avatar = ({ avatar, full_name = '', classes = '', parentClasses = '', size = 'sm', shape = 'rounded' }) => {
 
@@ -30,13 +18,25 @@ const Avatar = ({ avatar, full_name = '', classes = '', parentClasses = '', size
                     className={classes}
                     src={avatar.small_url}
                     alt={avatar.file_name || 'Image'}
+
+                    data-tooltip-id={full_name}
+                    data-tooltip-content={full_name}
                 />
             ) : (
-                <span className={`flex border border-100 text-black  rounded-lg  items-center justify-center w-full h-full dark:text-gray-200 dark:bg-bodybg ${classes}`}>
+                <span
+                    data-tooltip-id={full_name}
+                    data-tooltip-content={full_name}
+                    className={`border  flex cursor-pointer  text-black ti-btn-primary hover:bg-none  rounded-lg  items-center justify-center w-full h-full dark:text-gray-200 dark:bg-bodybg `}>
+
                     {getInitials(full_name)}
 
                 </span>
             )}
+
+            <Tooltip
+                id={full_name}
+                tooltipContent={full_name}
+            />
         </span>
     );
 };

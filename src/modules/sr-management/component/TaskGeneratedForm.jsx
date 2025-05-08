@@ -27,7 +27,6 @@ function TaskGeneratedForm({generatedReqData = {}, serviceRequest = {}, refreshS
     const handleCloseLinkModal = () => setShowLinkModal(false);
 
     const handleLinkTask = async (srNumber) => {
-        console.log(srNumber)
         try {
             const response = await api.post("/service-request/link/", {
                 root_sr: serviceRequest.sr_number,
