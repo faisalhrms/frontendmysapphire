@@ -13,6 +13,13 @@ const AvatarList = ({ users, max = 8, size = 'sm', type = 'avatar-rounded' }) =>
         return users.map(() => generateId());
     }, [users]);
 
+    const getInitials = (name) => {
+        if (!name) return '';
+        const names = name.trim().split(' ');
+        if (names.length === 1) return names[0][0].toUpperCase();
+        return (names[0][0] + names[1][0]).toUpperCase();
+    };
+
     const numAvatarsToShow = Math.max(3, Math.floor(Math.random() * max));
     const visibleAvatars = users.slice(0, numAvatarsToShow);
     const remainingUsers = users.length - numAvatarsToShow;
@@ -21,21 +28,32 @@ const AvatarList = ({ users, max = 8, size = 'sm', type = 'avatar-rounded' }) =>
         <div className="avatar-list-stacked">
             {visibleAvatars.map((user, index) => (
                 <span key={`${user.id}-${index}`} className={`avatar avatar-${size} ${type}`}>
-          <img
-              src={user.avatar ? user.avatar?.small_url : placeholder}
-              alt={user.full_name}
-              data-tooltip-id={tooltipIds[index]}
-              data-tooltip-content={user.full_name}
-              className="cursor-pointer"
-          />
-          <Tooltip
-              id={tooltipIds[index]}
-              tooltipContent={user.full_name}
-          />
+          {user.avatar ? <img
+                  src={user.avatar ? user.avatar?.small_url : placeholder}
+                  alt={user.full_name}
+                  data-tooltip-id={tooltipIds[index]}
+                  data-tooltip-content={user.full_name}
+                  className="cursor-pointer"
+              /> :
+              <span
+                  data-tooltip-id={tooltipIds[index]}
+                  data-tooltip-content={user.full_name}
+                  className={`border flex cursor-pointer  text-black ti-btn-primary  rounded-lg  items-center justify-center w-full h-full dark:text-gray-200 dark:bg-bodybg `}>
+
+                  {getInitials(user.full_name)}
+
+
+
+                </span>
+          }
+                    <Tooltip
+                        id={tooltipIds[index]}
+                        tooltipContent={user.full_name}
+                    />
         </span>
             ))}
             {remainingUsers > 0 && (
-                <span className={`avatar bg-primary text-white text-[0.65rem] font-normal avatar-${size} ${type}`}>
+                <span className={`border  avatar bg-primary text-white text-[0.65rem] font-normal avatar-${size} ${type}`}>
           +{remainingUsers}
         </span>
             )}

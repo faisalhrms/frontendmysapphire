@@ -20,6 +20,14 @@ export const sidebarMenu = [
                 USER_ROUTES.READ.permission
             ),
             generateSidebarItem(
+                USER_ROUTES.OTHER_USER.READ.path,
+                'link',
+                'Other User',
+                3,
+                '',
+                USER_ROUTES.READ.permission
+            ),
+            generateSidebarItem(
                 ACCESS_CONTROL_ROUTES.ROLE.READ.path,
                 'link',
                 'Role',

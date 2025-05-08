@@ -4,6 +4,9 @@ import UserCreate from '@modules/user/views/UserCreate.jsx';
 import UserManagementList from "@modules/user/views/UserManagementList.jsx";
 import UserManagementForm   from "@modules/user/components/UserManagementForm.jsx";
 import UserManagementEdit from "@modules/user/views/UserManagementEdit.jsx";
+import OtherUser from "@modules/user/views/OtherUser.jsx";
+import OtherUserCreate from "@modules/user/views/OtherUserCreate.jsx";
+import OtherUserEdit from "@modules/user/views/OtherUserEdit.jsx";
 export const USER_ROUTES = {
     READ: {
         path: '/module/users',
@@ -30,6 +33,21 @@ export const USER_ROUTES = {
             path: '/module/user-management/create/:id',
             // permission:'create_user_management',
         }
+    },
+    OTHER_USER:{
+        READ:{
+            path:'/module/users/others',
+        },
+        CREATE:{
+            path:'/module/users/OtherUserCreate',
+
+        },
+        EDIT:{
+            path:'/module/users/OtherUserEdit/:id',
+
+        },
+
+
     }
 };
 
@@ -61,5 +79,17 @@ export const MODULE_ROUTES = [
     {
         path: USER_ROUTES.USER_MANAGEMENT.CREATE.path,
         component: UserManagementForm,  // Assuming `UserManagementForm` should handle this
+    },
+    {
+        path: USER_ROUTES.OTHER_USER.READ.path,
+        component: OtherUser,  // Assuming `UserManagementForm` should handle this
+    },
+    {
+        path: USER_ROUTES.OTHER_USER.CREATE.path,
+        component: OtherUserCreate,  // Assuming `UserManagementForm` should handle this
+    },
+    {
+        path: USER_ROUTES.OTHER_USER.EDIT.path,
+        component: OtherUserEdit,  // Assuming `UserManagementForm` should handle this
     }
 ];
