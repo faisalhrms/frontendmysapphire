@@ -68,6 +68,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
             const response = await updateServiceRequest(serviceRequest?.id, {attachments: updatedPayload});
             setAttachments(response.attachments || []);
             Notify.success("Attachment uploaded successfully");
+            await refreshServiceData?.();
         } catch (error) {
             console.error(error);
             Notify.error("Error uploading attachment");
@@ -85,6 +86,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
             const response = await updateServiceRequest(serviceRequest?.id, {attachments: payloadAttachments});
             setAttachments(response.attachments || []);
             Notify.success("Attachment removed successfully");
+            await refreshServiceData?.();
         } catch (error) {
             console.error(error);
             Notify.error("Error removing attachment");
@@ -138,7 +140,7 @@ const ContentRight = ({projectData = {}, isEditMode = false, generatedReqData, s
                                         <div
                                             className="ltr:float-right rtl:float-left text-[0.75rem] font-semibold text-[#8c9097] dark:text-white/50 text-end">
                                 <span className="block font-normal text-[0.75rem] text-success">
-                                    <i>{serviceRequest?.employee_info?.concern_person || serviceRequest?.reporter}</i>
+                                    <i>{serviceRequest?.status}</i>
                                 </span>
                                         </div>
                                     </div>

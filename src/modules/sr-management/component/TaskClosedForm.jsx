@@ -101,8 +101,8 @@ function TaskClosedForm({ generatedReqData = {}, serviceRequest = {} }) {
         <>
          <PageHeader
                 currentpage="Task Closed"
-                activepage="SR Assignment"
-                mainpage="Task Closed"
+                activepage="Task Closed"
+                mainpage="SR Assignment"
             />
         <div className="dark:bg-bodybg p-4 rounded-lg my-6">
             <ConfirmationModal

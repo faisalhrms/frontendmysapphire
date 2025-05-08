@@ -3,7 +3,6 @@ import Tooltip from "@components/Tooltip.jsx";
 import React from "react";
 
 const Avatar = ({ avatar, full_name = '', classes = '', parentClasses = '', size = 'sm', shape = 'rounded' }) => {
-    console.log("full name ", full_name);
 
     const getInitials = (name) => {
         if (!name) return '';

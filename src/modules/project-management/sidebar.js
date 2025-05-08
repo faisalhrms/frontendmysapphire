@@ -16,15 +16,15 @@ export const sidebarMenu = [
                 "Projects",
                 1,
                 "bx bx-message-square-edit",
-                '',
+                PMS_ROUTES.PROJECT.READ.permission,
             ),
             generateSidebarItem(
-                PMS_ROUTES.TASK.LIST.path,
+                PMS_ROUTES.TASK.READ.path,
                 "link",
                 "Task List",
                 2,
                 "bx bx-message-square-edit",
-                '',
+                PMS_ROUTES.TASK.READ.permission,
             ),
             generateSidebarItem(
                 PMS_ROUTES.TASK.KANBAN.path,
@@ -32,7 +32,7 @@ export const sidebarMenu = [
                 "Task kanban Board",
                 3,
                 "bx bx-message-square-edit",
-                '',
+                PMS_ROUTES.TASK.READ.permission,
             ),
             generateSidebarItem(
                 PMS_ROUTES.TASK.ECOM.path,

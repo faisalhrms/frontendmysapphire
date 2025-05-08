@@ -202,8 +202,8 @@ function TaskGeneratedForm({generatedReqData = {}, serviceRequest = {}, refreshS
         <>
             <PageHeader
                 currentpage="Task Generated"
-                activepage="SR Assignment"
-                mainpage="Task Generated"
+                activepage="Task Generated"
+                mainpage="SR Assignment"
             />
             <div className="dark:bg-bodybg p-4 rounded-lg my-6">
                 <ConfirmationModal
