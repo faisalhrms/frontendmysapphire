@@ -10,7 +10,7 @@ import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
 import PassPolicy from "@components/PassPolicy.jsx";
 
 import { createOtherUser } from "../services/userService.js";
-import otherUserSchema from "@modules/user/schemas/OtherUserSchema.js";
+import otherUserSchema from "@modules/user/schemas/otherUserSchema.js";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {useUserForm} from "@modules/user/hooks/userHooks.js";
 
