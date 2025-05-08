@@ -10,7 +10,7 @@ const OnlineSalesGlobal = () => {
             <div className="mb-6">
                 <table className="w-full border-collapse dark:text-gray-200 dark:bg-bodybg">
                     <thead>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
+                    <tr className="text-white bg-[#383853]">
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center"></th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center">Feb-25</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center">Feb-24</th>

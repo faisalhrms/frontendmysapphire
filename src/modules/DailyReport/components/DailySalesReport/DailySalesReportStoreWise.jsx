@@ -129,7 +129,7 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
                             <table
                                 className="min-w-[800px] md:min-w-full border-collapse bg-white dark:text-gray-200 dark:bg-bodybg text-xs md:text-sm">
                                 <thead className="sticky top-0 z-50">
-                                <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                                <tr style={{backgroundColor: "#383853", color: "white"}}>
                                     <th className="py-2 px-2 border border-gray-400 text-center sticky left-0 z-50 bg-blue-900 w-[120px] md:w-[200px]">
                                         SaleType (Map)
                                     </th>
@@ -141,7 +141,7 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
                                     </th>
                                     <th colSpan="2" className="py-2 px-2 border border-gray-400 text-center">Total</th>
                                 </tr>
-                                <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                                <tr style={{backgroundColor: "#4d5875", color: "white"}}>
                                     <th className="py-2 px-2 border border-gray-400 text-center font-bold w-[120px] md:w-[200px]">Store
                                         Name
                                     </th>
@@ -211,13 +211,13 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
 
                                 {/* Total Row */}
                                 <tr>
-                                    <td className="px-2 py-1 border font-bold sticky left-0 bg-gray-200 w-[120px] md:w-[200px] whitespace-nowrap dark:text-gray-200 dark:bg-bodybg">{`Total`}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_fullprice_sale_qty)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_fullprice_sale_value)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_discounted_sale_qty)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_discounted_sale_value)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_total_sale_qty)}</td>
-                                    <td className="px-2 py-1 border text-right font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(data?.overall_total_sale_value)}</td>
+                                    <td className="px-2 py-1 border font-bold sticky left-0  w-[120px] md:w-[200px] whitespace-nowrap dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">{`Total`}</td>
+                                    <td className="px-2 py-1 border text-right font-bold  dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">{formatNumberWithCommas(data?.overall_fullprice_sale_qty)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">{formatNumberWithCommas(data?.overall_fullprice_sale_value)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold  dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">{formatNumberWithCommas(data?.overall_discounted_sale_qty)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold  dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">{formatNumberWithCommas(data?.overall_discounted_sale_value)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold  dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">{formatNumberWithCommas(data?.overall_total_sale_qty)}</td>
+                                    <td className="px-2 py-1 border text-right font-bold  dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">{formatNumberWithCommas(data?.overall_total_sale_value)}</td>
                                 </tr>
                                 </tbody>
                             </table>

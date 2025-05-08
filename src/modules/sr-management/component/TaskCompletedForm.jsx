@@ -99,8 +99,8 @@ function TaskCompletedForm({generatedReqData = {}, serviceRequest = {}}) {
         <>
             <PageHeader
                 currentpage="Task Completed"
-                activepage="SR Assignment"
-                mainpage="Task Completed"
+                activepage="Task Completed"
+                mainpage="SR Assignment"
             />
             <div className="dark:bg-bodybg p-4 rounded-lg my-6">
                 <ConfirmationModal

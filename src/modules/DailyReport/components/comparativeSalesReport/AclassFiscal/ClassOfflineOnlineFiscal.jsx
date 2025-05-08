@@ -47,16 +47,16 @@ const SalesDataTable = () => {
     return (
         <div className="p-6 bg-white mt-4  rounded-lg dark:text-gray-200 dark:bg-bodybg">
             <table className="min-w-full table-auto border-collapse  border-gray-400 border">
-                <thead style={{ backgroundColor: '#0b3588', color: 'white' }}>
-                <tr>
+                <thead >
+                <tr className="text-white bg-[#383853]">
                     <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-50">A Class</th>
                     <th colSpan="6" className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-16 z-50">Full Price</th>
                 </tr>
-                <tr>
+                <tr className="text-white bg-[#383853]">
                     <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline</th>
                     <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
                 </tr>
-                <tr>
+                <tr className="text-white bg-[#4d5875]">
                     <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"></th>
                     <th className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50">Feb</th>
                     <th className="py-2 px-4 border border-gray-400 p-2 text-center">Feb</th>

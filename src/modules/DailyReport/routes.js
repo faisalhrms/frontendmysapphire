@@ -37,7 +37,8 @@ export const MODULE_ROUTES = [
     },
     {
         path:OFFLINE_STORE_PERFORMANCE_ROUTE.READ.path,
-        component:OfflineStorePerformList
+        component:OfflineStorePerformList,
+        permission: OFFLINE_STORE_PERFORMANCE_ROUTE.READ.permission,
     }
 
 

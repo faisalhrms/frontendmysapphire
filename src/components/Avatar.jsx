@@ -15,7 +15,6 @@
 import placeholder from "@assets/images/faces/avatar.webp";
 
 const Avatar = ({ avatar, full_name = '', classes = '', parentClasses = '', size = 'sm', shape = 'rounded' }) => {
-    console.log("full name ", avatar);
 
     const getInitials = (name) => {
         if (!name) return '';

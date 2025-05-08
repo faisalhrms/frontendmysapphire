@@ -3,7 +3,7 @@ import {
     getPendingList,
     getInProgressList,
     getCompletedList,
-    getClosedList
+    getClosedList, getAssignedUnreadCounts
 } from "@modules/employee-self-services/services/work-desk/workDeskServices.js";
 
 export const usePending = (page, size, search) => {
@@ -44,4 +44,14 @@ export const useClosed = (page, size, search) => {
     staleTime: 0,
   });
   return { ...query, closedData: query.data };
+};
+
+export const useUnreadAssignedCounts = () => {
+  const query = useQuery({
+    queryKey: ["unreadAssignedCounts"],
+    queryFn: getAssignedUnreadCounts,
+    keepPreviousData: true,
+    staleTime: 0,
+  });
+  return { ...query, unreadCounts: query.data || {} };
 };
