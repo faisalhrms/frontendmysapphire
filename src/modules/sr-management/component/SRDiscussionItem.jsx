@@ -40,7 +40,7 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
   return (
     <li className="mb-3">
       <div className="flex items-start space-x-2">
-        <Avatar avatar={discussion.user?.avatar} parentClasses="profile-timeline-avatar" />
+        <Avatar avatar={discussion.user?.avatar} full_name={discussion.user?.full_name || discussion.sender} parentClasses="profile-timeline-avatar" />
         <div className="flex-grow">
           <div className="flex justify-between items-center mb-1">
             <span className="font-medium text-sm">{senderName}</span>
