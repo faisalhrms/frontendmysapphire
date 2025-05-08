@@ -1,28 +1,30 @@
+// modules/user/schemas/userManagementSchema.js
 import { z } from "zod";
 import { dateSchema } from "@helpers/schema.js";
 
-// Enum for email host options
-const emailHostEnum = z.enum(["o365", "mdaemon"], {
-    errorMap: () => "Email host must be one of 'o365' or 'mdaemon'",
+const emailHostEnum = z.enum(["d365", "mdaemon"], {
+    errorMap: () => ({ message: "Email host must be one of 'd365' or 'mdaemon'" }),
 });
 
-// Enum for subscriptions
-const subscriptionStatusEnum = z.enum(["active", "inactive"], {
-    errorMap: () => "Subscription status must be 'active' or 'inactive'",
-});
-
-const userManagementSchema = z.object({
-    email_host: emailHostEnum, // Static email host
-    erp_user: z.boolean().default(false), // ERP User boolean
-    one_drive: z.boolean().default(false), // One Drive boolean
-    ms_team: z.boolean().default(false), // MS Team boolean
-    backup_storage: z.number().min(0, "Backup storage must be a positive number"), // Backup storage field (number)
-    subscription_ids: z.array(z.number()).min(1, "At least one subscription is required"), // Multiple subscription LOV
-    start_date: dateSchema("Start Date").nullable().optional(), // Optional start date
-    end_date: dateSchema("End Date").nullable().optional(), // Optional end date
-})
-    .refine(data => {
-        // Ensure ERP user cannot be true without email host
+const userManagementSchema = z
+    .object({
+        email_host: emailHostEnum,
+        erp_user: z.boolean().default(false),
+        one_drive: z.boolean().default(false),
+        ms_team: z.boolean().default(false),
+        backup_storage: z.number().min(0, "Backup storage must be a positive number"),
+        subscription_ids: z.array(z.number()).min(1, "At least one subscription is required"),
+        start_date: dateSchema("Start Date").nullable().optional(),
+        end_date: dateSchema("End Date").nullable().optional(),
+        // new optional assigned flags
+        assigned_email_host: z.boolean().optional(),
+        assigned_erp_user: z.boolean().optional(),
+        assigned_one_drive: z.boolean().optional(),
+        assigned_ms_team: z.boolean().optional(),
+        assigned_backup_storage: z.boolean().optional(),
+        assigned_subscriptions: z.boolean().optional(),
+    })
+    .refine((data) => {
         if (data.erp_user) {
             return data.email_host !== null;
         }
@@ -31,8 +33,7 @@ const userManagementSchema = z.object({
         message: "Email host is required when ERP User is true",
         path: ["email_host"],
     })
-    .refine(data => {
-        // Ensure backup storage must be positive if ERP user is true
+    .refine((data) => {
         if (data.erp_user) {
             return data.backup_storage > 0;
         }
