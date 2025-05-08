@@ -18,7 +18,7 @@ function getNestedValue(obj, path) {
     }, obj);
 }
 
-const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, filter, needHeader = true }) => {
+const DataTable = React.memo(({ columns, apiUrl, title = null, buttons, filter, needHeader = true }) => {
     const {
         data,
         isLoading,
@@ -265,7 +265,10 @@ const DataTable = React.memo(({ columns, apiUrl, title = 'Datatable', buttons, f
             {
                 needHeader &&
                 <div className="box-header justify-between">
-                    <div className="box-title">{title}</div>
+                    {
+                        title &&
+                        <div className="box-title">{title}</div>
+                    }
                     <div className="flex items-center space-x-2">{buttons}</div>
                 </div>
             }
