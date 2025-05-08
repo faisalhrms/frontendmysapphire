@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
 import {updateOverdueTask} from "@modules/project-management/services/taskService.js";
-import otherUserCreateSchema from "@modules/user/schemas/otherUserSchema.js";
+import otherUserCreateSchema from "@modules/user/schemas/OtherUserSchema.js";
 
 export const useUserForm = (userData) => {
 
