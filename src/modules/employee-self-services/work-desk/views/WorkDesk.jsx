@@ -76,9 +76,9 @@ const WorkDesk = () => {
 
   const badge = value =>
     value > 0 && (
-      <span className="absolute -top-1 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-secondary text-white text-[0.625rem] transition-all duration-200 ease-in-out">
-        {value}
-      </span>
+    <span className="absolute -top-1 -right-2 z-10 flex min-w-[16px] h-[16px] px-[6px] items-center justify-center rounded-full bg-secondary text-white text-[10px] leading-none">
+      {value}
+    </span>
     );
 
   const isLoading =
