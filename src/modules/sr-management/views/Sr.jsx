@@ -1,5 +1,5 @@
 import React from 'react';
-import SrManagement from '../component/SrManagement';
+import SrManagement from "@modules/sr-management/component/SrManagement.jsx";
 
 const Sr = () => {
     return (
