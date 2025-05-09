@@ -3,10 +3,7 @@ import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import { getPastDate } from "@helpers/dateTime.js";
 
-const OciDateDropdown = ({ control, errors, filters }) => {
-    const [isDownloading, setIsDownloading] = useState(false);
-
-    const defaultDate = filters?.date || getPastDate(1);
+const OciDateDropdown = ({ control, errors }) => {
 
     return (
         <div className="grid grid-cols-12 gap-6">
@@ -20,7 +17,6 @@ const OciDateDropdown = ({ control, errors, filters }) => {
                                     name="date"
                                     control={control}
                                     errors={errors}
-                                    defaultValue={defaultDate}
                                     min={getPastDate(2)}
                                     max={getPastDate(0)}
                                 />
