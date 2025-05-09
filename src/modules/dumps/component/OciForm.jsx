@@ -68,8 +68,8 @@ const OciForm = ({dumps}) => {
     };
 
     return (<div className="w-full">
-            {dumps && dumps.length > 0 ? (<div className="w-full bg-gray-50 p-4">
-                    <div className="grid grid-cols-1 gap-2">
+            {dumps && dumps.length > 0 ? (<div className="w-full bg-gray-50 p-4 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="grid grid-cols-3 gap-2">
                         {dumps.map((file, index) => (<div key={index}
                                                           className="bg-white rounded-md border border-gray-200 p-3 flex items-center justify-between shadow-sm">
                                 <div className="flex items-center space-x-3">
@@ -89,7 +89,7 @@ const OciForm = ({dumps}) => {
                                         href={file.file_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="w-12 h-12 ti-btn ti-btn-secondary ti-btn-sm flex items-center justify-center rounded "
+                                        className="ti-btn ti-btn-primary !mb-0"
                                         download
                                     >
                                         <i className="ri-download-line"></i>

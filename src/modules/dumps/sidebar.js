@@ -18,6 +18,14 @@ export const sidebarMenu = [
                 '',
                 DUMS_ROUTES.CREATE.permission,
             ),
+            generateSidebarItem(
+                DUMS_ROUTES.READ.path,
+                'link',
+                'Oms',
+                3,
+                '',
+                DUMS_ROUTES.READ.permission,
+            ),
 
         ]
     )
