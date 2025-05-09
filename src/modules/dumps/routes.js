@@ -4,7 +4,7 @@ import oci from "./views/Oci.jsx";
 export const DUMS_ROUTES = {
     CREATE: {
         path: "/module/dumps/oci",
-        permission:"auth.view_oci",
+        permission:"auth.view_oci_dumps",
 
 
     },
