@@ -38,7 +38,7 @@ const AvatarList = ({ users, max = 8, size = 'sm', type = 'avatar-rounded' }) =>
               <span
                   data-tooltip-id={tooltipIds[index]}
                   data-tooltip-content={user.full_name}
-                  className={`border flex cursor-pointer  text-black ti-btn-primary  rounded-lg  items-center justify-center w-full h-full dark:text-gray-200 dark:bg-bodybg `}>
+                  className={` flex cursor-pointer   ti-btn-primary  rounded-full  items-center justify-center w-full h-full `}>
 
                   {getInitials(user.full_name)}
 
@@ -53,7 +53,7 @@ const AvatarList = ({ users, max = 8, size = 'sm', type = 'avatar-rounded' }) =>
         </span>
             ))}
             {remainingUsers > 0 && (
-                <span className={`border  avatar bg-primary text-white text-[0.65rem] font-normal avatar-${size} ${type}`}>
+                <span className={` avatar bg-primary text-white text-[0.65rem] font-normal avatar-${size} ${type}`}>
           +{remainingUsers}
         </span>
             )}

@@ -13,6 +13,7 @@ import { createOtherUser } from "../services/userService.js";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {useUserForm} from "@modules/user/hooks/userHooks.js";
 import {otherUserSchema} from "@modules/user/schemas/otherUserSchema.js";
+import {useNavigate} from "react-router-dom";
 
 const CreateUser = () => {
     const {
@@ -20,6 +21,7 @@ const CreateUser = () => {
         handlePasswordChange,
         policyStatus,
     } = usePasswordPolicy("");
+    const navigate = useNavigate();
 
     const {
         control,
@@ -55,6 +57,7 @@ const CreateUser = () => {
 
             await createOtherUser(payload);
             reset();
+            navigate("/module/users/others");
         } catch (err) {
             console.error("User creation failed:", err.message);
         }
