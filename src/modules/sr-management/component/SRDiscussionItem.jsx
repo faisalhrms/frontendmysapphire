@@ -30,13 +30,13 @@ const generateIcon = attachment => {
 const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
   if (!discussion || !control) return null;
   const senderName = userId === discussion.user?.id ? "You" : discussion.user?.full_name || discussion.sender;
-    const sanitizeHtml = (html) => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
-      const scripts = doc.querySelectorAll("script");
-      scripts.forEach(script => script.remove());
-      return doc.body.innerHTML;
-    };
+  const sanitizeHtml = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    doc.querySelectorAll('script').forEach(el => el.remove());
+    doc.querySelectorAll('a').forEach(el => el.replaceWith(document.createTextNode(el.textContent)));
+    return doc.body.innerHTML;
+  };
   return (
     <li className="mb-3">
       <div className="flex items-start space-x-2">
