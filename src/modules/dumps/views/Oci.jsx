@@ -5,6 +5,7 @@ import useFilters from "@hooks/useFilters.js";
 import { getPastDate } from "@helpers/dateTime.js";
 import OciForm from "../component/OciForm.jsx";
 import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const Oci = () => {
 
@@ -38,10 +39,14 @@ const Oci = () => {
 
     return (
         <>
-            <PageHeader currentpage="Oci Dumps" activepage="Dumps" mainpage="Oci"/>
+            <PageHeader currentpage="Oci Dumps" activepage="Dumps" mainpage="OCI"/>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <OciDateDropdown  filters={filters} control={control} errors={errors} />
-                <OciForm data={data} filters={filters} />
+                <OciDateDropdown control={control} errors={errors} />
+                {
+                    isLoading
+                    ? <LoadingSpinner />
+                    : <OciForm dumps={data} />
+                }
             </form>
         </>
     );
