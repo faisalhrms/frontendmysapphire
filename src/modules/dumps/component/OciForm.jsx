@@ -78,8 +78,8 @@ const OciForm = ({dumps}) => {
                                         <p className="text-sm font-bold text-gray-800 truncate max-w-xs">
                                             {getFileName(file.file_url)}
                                         </p>
-                                        <div className="flex space-x-3 text-xs text-gray-800">
-                                            <span className="text-lg text-bold"> {file.report_hour}</span>
+                                        <div className="flex space-x-3 text-xs ">
+                                            <span className="text-lg text-bold text-success"> {file.report_hour}</span>
                                         </div>
                                     </div>
                                 </div>
