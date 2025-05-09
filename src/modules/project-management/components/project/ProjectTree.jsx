@@ -55,6 +55,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
   const { isFullscreen, handleFullscreenClick } = useFullScreen();
   const containerHeight = isFullscreen ? "calc(100vh - 100px)" : '500px';
 
+  console.log(isFullscreen);
+
   const {
     taskName,
     openTaskOverdueModal,
@@ -75,11 +77,11 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
   //   isTaskDetailLoading,
   //   task,
   // } = useTaskDetailModal()
-
+    const isExpanded = true;
   return (
       <>
-        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`}>
-          <div className="box-header">
+        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`} style={{maxHeight:isFullscreen?'100vh':'50vh', overflowY:'auto'}}>
+          <div className="box-header bg-white dark:bg-bodybg" style={{ position: 'sticky', top: '0', left: '0', width: '100%', zIndex: 10 }}>
             <div className="box-title">Milestone Detail</div>
             <div className="flex items-center space-x-2">
               <input
@@ -122,8 +124,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
               </div>
             </div>
           </div>
-          <div className="overflow-y-scroll" style={{ maxHeight: '500px' }}
-          >
+
             <div className="box-body">
               {isLoading ? (
                   <LoadingSpinner/>
@@ -140,7 +141,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                   />
               )}
             </div>
-          </div>
+
         </div>
 
         <MilestoneModel
