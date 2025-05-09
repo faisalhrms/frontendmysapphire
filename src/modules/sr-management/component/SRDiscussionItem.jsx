@@ -30,11 +30,17 @@ const generateIcon = attachment => {
 const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
   if (!discussion || !control) return null;
   const senderName = userId === discussion.user?.id ? "You" : discussion.user?.full_name || discussion.sender;
-
+    const sanitizeHtml = (html) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      const scripts = doc.querySelectorAll("script");
+      scripts.forEach(script => script.remove());
+      return doc.body.innerHTML;
+    };
   return (
     <li className="mb-3">
       <div className="flex items-start space-x-2">
-        <Avatar avatar={discussion.user?.avatar} parentClasses="profile-timeline-avatar" />
+        <Avatar avatar={discussion.user?.avatar} full_name={discussion.user?.full_name || discussion.sender} parentClasses="profile-timeline-avatar" />
         <div className="flex-grow">
           <div className="flex justify-between items-center mb-1">
             <span className="font-medium text-sm">{senderName}</span>
@@ -90,7 +96,7 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
           <div className="border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm mb-2 text-sm leading-relaxed">
             <p
               className="profile-activity-media mb-0 sun-editor-editable"
-              dangerouslySetInnerHTML={{ __html: discussion.message || "" }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(discussion.message || "") }}
             ></p>
           </div>
 

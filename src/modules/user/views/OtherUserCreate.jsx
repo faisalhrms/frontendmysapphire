@@ -10,9 +10,10 @@ import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
 import PassPolicy from "@components/PassPolicy.jsx";
 
 import { createOtherUser } from "../services/userService.js";
-import otherUserSchema from "@modules/user/schemas/OtherUserSchema.js";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {useUserForm} from "@modules/user/hooks/userHooks.js";
+import {otherUserSchema} from "@modules/user/schemas/otherUserSchema.js";
+import {useNavigate} from "react-router-dom";
 
 const CreateUser = () => {
     const {
@@ -20,6 +21,7 @@ const CreateUser = () => {
         handlePasswordChange,
         policyStatus,
     } = usePasswordPolicy("");
+    const navigate = useNavigate();
 
     const {
         control,
@@ -44,7 +46,7 @@ const CreateUser = () => {
     const onSubmit = async (data) => {
         try {
             const payload = {
-                password: data.password,  // Fixed: no function call on password
+                password: data.password,
                 full_name: data.full_name,
                 email: data.email,
                 phone: data.phone,
@@ -54,7 +56,8 @@ const CreateUser = () => {
             };
 
             await createOtherUser(payload);
-            reset(); // optional: reset form on success
+            reset();
+            navigate("/module/users/others");
         } catch (err) {
             console.error("User creation failed:", err.message);
         }
@@ -62,7 +65,7 @@ const CreateUser = () => {
 
     return (
         <>
-            <PageHeader currentpage="Add User" activepage="Other Users" mainpage="Add User" />
+            <PageHeader currentpage="Add Other User" activepage="Users" mainpage="Add Other User" />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-12 gap-x-6">
                     <div className="col-span-12">
@@ -84,22 +87,6 @@ const CreateUser = () => {
 
                                     <div className="col-span-3 relative">
                                         <FormInput
-                                            type="password"
-                                            name="password"
-                                            control={control}
-                                            errors={errors}
-                                            placeholder="Password"
-                                            onChange={(e) => {
-                                                handlePasswordChange(e);
-                                                setValue("password", e.target.value);
-                                            }}
-                                            value={password}
-                                        />
-                                        <PassPolicy policyStatus={policyStatus} password={password}/>
-                                    </div>
-
-                                    <div className="col-span-3 relative">
-                                        <FormInput
                                             name="full_name"
                                             control={control}
                                             errors={errors}
@@ -114,6 +101,22 @@ const CreateUser = () => {
                                             errors={errors}
                                             placeholder="Email"
                                         />
+                                    </div>
+
+                                    <div className="col-span-3 relative">
+                                        <FormInput
+                                            type="password"
+                                            name="password"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Password"
+                                            onChange={(e) => {
+                                                handlePasswordChange(e);
+                                                setValue("password", e.target.value);
+                                            }}
+                                            value={password}
+                                        />
+                                        <PassPolicy policyStatus={policyStatus} password={password}/>
                                     </div>
 
                                     <div className="col-span-3 relative">

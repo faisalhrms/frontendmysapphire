@@ -4,7 +4,7 @@ import UserCreate from '@modules/user/views/UserCreate.jsx';
 import UserManagementList from "@modules/user/views/UserManagementList.jsx";
 import UserManagementForm   from "@modules/user/components/UserManagementForm.jsx";
 import UserManagementEdit from "@modules/user/views/UserManagementEdit.jsx";
-import OtherUser from "@modules/user/views/OtherUser.jsx";
+import OtherUserList from "@modules/user/views/OtherUserList.jsx";
 import OtherUserCreate from "@modules/user/views/OtherUserCreate.jsx";
 import OtherUserEdit from "@modules/user/views/OtherUserEdit.jsx";
 export const USER_ROUTES = {
@@ -37,17 +37,16 @@ export const USER_ROUTES = {
     OTHER_USER:{
         READ:{
             path:'/module/users/others',
+            permission: 'user.view_user',
         },
         CREATE:{
-            path:'/module/users/OtherUserCreate',
-
+            path:'/module/users/others/create',
+            permission: 'user.add_user',
         },
         EDIT:{
-            path:'/module/users/OtherUserEdit/:id',
-
+            path:'/module/users/others/:id',
+            permission: 'user.change_user',
         },
-
-
     }
 };
 
@@ -78,18 +77,21 @@ export const MODULE_ROUTES = [
     },
     {
         path: USER_ROUTES.USER_MANAGEMENT.CREATE.path,
-        component: UserManagementForm,  // Assuming `UserManagementForm` should handle this
+        component: UserManagementForm,
     },
     {
         path: USER_ROUTES.OTHER_USER.READ.path,
-        component: OtherUser,  // Assuming `UserManagementForm` should handle this
+        component: OtherUserList,
+        permission: USER_ROUTES.OTHER_USER.READ.permission,
     },
     {
         path: USER_ROUTES.OTHER_USER.CREATE.path,
-        component: OtherUserCreate,  // Assuming `UserManagementForm` should handle this
+        component: OtherUserCreate,
+        permission: USER_ROUTES.OTHER_USER.CREATE.permission,
     },
     {
         path: USER_ROUTES.OTHER_USER.EDIT.path,
-        component: OtherUserEdit,  // Assuming `UserManagementForm` should handle this
+        component: OtherUserEdit,
+        permission: USER_ROUTES.OTHER_USER.EDIT.permission,
     }
 ];
