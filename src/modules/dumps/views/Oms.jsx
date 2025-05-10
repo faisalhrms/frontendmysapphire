@@ -28,13 +28,13 @@ const  Oms =()=>{
 
     const [filters, setFilters] = useState(getFilters());
 
-    // const { data, isLoading } = useFetchWithFilters(
-    //     activeTab === "central" ? '/reporting/offline-store-performance/central/' :
-    //         activeTab === "north" ? '/reporting/offline-store-performance/north/' :
-    //             activeTab === "south" ? '/reporting/offline-store-performance/south/' :
-    //                 activeTab === "others" ? '/reporting/offline-store-performance/others/' :
-    //                     '/reporting/offline-store-performance/fol/', filters
-    // );
+    console.log(filters);
+
+    const { data, isLoading } = useFetchWithFilters(
+        activeTab === "Order" ? '//' :'' , filters
+    );
+
+    console.log(data);
     const onSubmit = useCallback(
         (formData) => {
             setFilters(formData);
@@ -60,8 +60,7 @@ const  Oms =()=>{
                         label: "Order Summary",
                         icon: <i className="bx bx-location-plus"></i>,
                         content: (
-                            <OrderSummary disActive={'Order' === activeTab}
-                                              />
+                            <OrderSummary disActive={'Order' === activeTab}  data={data} setFilters={setFilters}/>
                         ),
                     },
 

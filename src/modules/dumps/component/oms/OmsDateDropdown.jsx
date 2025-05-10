@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getPastDate } from "@helpers/dateTime.js";
 import FormInput from "@components/form/FormInput.jsx";
 
-const OmsDateDropdown = ({ control, errors }) => {
+const OmsDateDropdown = ({ control, errors , onDateChange  }) => {
 
     const getFirstDayOfMonth = () => {
         const today = new Date();
@@ -19,6 +19,13 @@ const OmsDateDropdown = ({ control, errors }) => {
 
         const newEndDate = new Date(new Date(selectedStartDate).setDate(new Date(selectedStartDate).getDate() + 30));
         setEndDate(newEndDate.toISOString().split("T")[0]);
+
+        // Return the object with startDate and endDate
+        if (onDateChange) {
+            // onDateChange({ startDate: selectedStartDate, endDate: newEndDate.toISOString().split("T")[0] });
+
+            onDateChange({ date: selectedStartDate });
+        }
     };
 
     return (
@@ -33,8 +40,8 @@ const OmsDateDropdown = ({ control, errors }) => {
                     placeholder="Start Date"
                     value={startDate}
                     onChange={handleStartDateChange}
-                    min={getFirstDayOfMonth()}
-                    max={getPastDate(0)}
+                    // min={getFirstDayOfMonth()}
+                    // max={getPastDate(0)}
                 />
             </div>
 
