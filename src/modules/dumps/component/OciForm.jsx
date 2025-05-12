@@ -20,11 +20,11 @@ const OciForm = ({dumps}) => {
             {dumps && dumps.length > 0 ? (<div className="w-full bg-gray-50 p-6 dark:text-gray-200 dark:bg-bodybg">
                     <div className="grid grid-cols-3 gap-2">
                         {dumps.map((file, index) => (<div key={index}
-                                                          className="bg-white rounded-md border border-gray-200  flex items-center justify-between shadow-sm">
+                                                          className="bg-white rounded-md border border-gray-200  flex items-center justify-between shadow-sm dark:text-gray-200 dark:bg-bodybg">
                                 <div className="flex items-center space-x-3">
                                     {getFileThumbnail(file.file_url)}
                                     <div>
-                                        <p className="text-sm font-bold text-gray-800 truncate max-w-xs">
+                                        <p className="text-sm font-bold text-gray-800 truncate max-w-xs dark:text-gray-200 dark:bg-bodybg">
                                             {getFileName(file.file_url)}
                                         </p>
                                         <div className="flex space-x-3 text-xs ">
