@@ -39,7 +39,7 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
         },
     });
 
-    const { handleUserManagementSubmit } = useUserManagementForm(userData, isEditMode);
+    const { handleUserManagementSubmit } = useUserManagementForm(userData, isEditMode,fromApproval);
 
     useEffect(() => {
         if (userData) {
