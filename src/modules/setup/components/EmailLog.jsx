@@ -1,43 +1,34 @@
 import DataTable from "@components/DataTable.jsx";
-import React, {useMemo} from "react";
-import {Link} from "react-router-dom";
-import {getEmailSetupTypeLabel} from "@modules/setup/services/emailSetupService.js";
-import {toTitleCase} from "@helpers/formatters.js";
-import {formatDate} from "@helpers/dateTime.js";
+import React, { useMemo } from "react";
+import { getEmailSetupTypeLabel } from "@modules/setup/services/emailSetupService.js";
+import { formatDate } from "@helpers/dateTime.js";
 
-const EmailLog = ({isActive}) => {
-    if (!isActive){
-        return null
-    }
+const EmailLog = ({ isActive }) => {
+    if (!isActive) return null;
+
     const columns = useMemo(() => [
         {
             Header: "To Emails",
-            accessor: "to_users",
+            accessor: "to_emails",
             Cell: ({ value }) => (
                 <>
-                    {value.map((user, idx) => (
-                        <span
-                            key={idx}
-                            className="badge bg-primary/10 text-primary me-1"
-                        >
-                            {toTitleCase( user.email)}
-                        </span>
+                    {value.map((email, idx) => (
+                        <span key={idx} className="badge bg-primary/10 text-primary me-1">
+              {email}
+            </span>
                     ))}
                 </>
             ),
         },
         {
             Header: "CC Emails",
-            accessor: "cc_users",
+            accessor: "cc_emails",
             Cell: ({ value }) => (
                 <>
-                    {value.map((user, idx) => (
-                        <span
-                            key={idx}
-                            className="badge bg-primary/10 text-primary me-1"
-                        >
-                            {toTitleCase( user.email)}
-                        </span>
+                    {value.map((email, idx) => (
+                        <span key={idx} className="badge bg-primary/10 text-primary me-1">
+              {email}
+            </span>
                     ))}
                 </>
             ),
@@ -47,8 +38,8 @@ const EmailLog = ({isActive}) => {
             accessor: "report_type",
             Cell: ({ value }) => (
                 <span className="badge bg-secondary/10 text-secondary">
-                    {getEmailSetupTypeLabel(value)}
-                </span>
+          {getEmailSetupTypeLabel(value)}
+        </span>
             ),
         },
         {
@@ -56,29 +47,24 @@ const EmailLog = ({isActive}) => {
             accessor: "status",
             Cell: ({ value }) => (
                 <span className="badge bg-secondary/10 text-secondary">
-                    {(value)}
-                </span>
+          {value.charAt(0).toUpperCase() + value.slice(1)}
+        </span>
             ),
         },
         {
-            Header:"Send At",
+            Header: "Sent At",
             accessor: "sent_at",
-            Cell:({ value }) => (
-                formatDate(value)
-            )
-        }
-
+            Cell: ({ value }) => formatDate(value),
+        },
     ], []);
 
     return (
-        <>
+        <DataTable
+            columns={columns}
+            title="Email Logs"
+            apiUrl="/setups/email-send/datatable/"
+        />
+    );
+};
 
-            <DataTable
-                columns={columns}
-                title="Email Setups"
-                apiUrl="/setups/email-send/datatable/"
-            />
-        </>
-    )
-}
-export default EmailLog
+export default EmailLog;
