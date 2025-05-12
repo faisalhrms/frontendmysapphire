@@ -39,6 +39,11 @@ export const useHasGroup = (group) => {
     return groups?.some(g => g.name === group);
 };
 
+export const useHasUserType = (type = 'employee') => {
+    const userType = useSelector((state) => state.auth.user?.type);
+    return userType === type;
+};
+
 export const useIsAuthenticated = () => {
     const token = useSelector((state) => state.auth.tokens?.access_token);
     const expiresAt = useSelector((state) => state.auth.tokens?.access_token_expires);

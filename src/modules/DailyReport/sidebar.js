@@ -7,7 +7,7 @@ export const sidebarMenu = [
         "sub",
         "Retail",
         9,
-        "bx bx-box",
+        "bi bi-collection",
         "",
         [
             generateSidebarItem(

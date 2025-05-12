@@ -14,7 +14,7 @@ import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
 import { USER_ROUTES } from '@modules/user/routes';
 import useFilters from "@hooks/useFilters.js";
-import UserListFilter from "@modules/user/components/UserListFilter.jsx"; // Ensure the correct path is used
+import UserListFilter from "@modules/user/components/UserListFilter.jsx";
 
 const UserList = () => {
 

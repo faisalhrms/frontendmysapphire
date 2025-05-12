@@ -181,6 +181,7 @@ const DataSanitizationList = () => {
                                 <i className="ri-error-warning-line"></i>
                             )}
                         </button>
+                        <HasPermission permission='beirholm_bi.change_beirholm_clean_data'>
                         <button
                             onClick={() => {
                                 const key = `reprocess_${jobId}`;
@@ -202,6 +203,7 @@ const DataSanitizationList = () => {
                                 <i className="ri-refresh-line"></i>
                             )}
                         </button>
+                         </HasPermission>
                         <button
                             onClick={() => {
                                 const key = `downloadRaw_${fileId}`;
@@ -240,6 +242,7 @@ const DataSanitizationList = () => {
                                 <i className="ri-download-cloud-line"></i>
                             )}
                         </button>
+                        <HasPermission permission='beirholm_bi.add_beirholm_error_correction_rule'>
                         <button
                             onClick={() => openUploadErrorModal(jobId)}
                             title="Upload Missing Rules"
@@ -247,7 +250,8 @@ const DataSanitizationList = () => {
                         >
                             <i className="ri-upload-cloud-line"></i>
                         </button>
-                        <HasPermission permission='auth.delete_clean_data'>
+                        </HasPermission>
+                        <HasPermission permission='beirholm_bi.delete_beirholm_clean_data'>
                             <button
                                 onClick={() => openConfirmModal(fileId)}
                                 title="Delete File"
@@ -303,6 +307,7 @@ const DataSanitizationList = () => {
 
     const buttons = (
         <>
+           <HasPermission permission='beirholm_bi.upload_raw_files'>
             <div className="grid grid-cols-1 sm:grid-cols-1">
                 <button
                     className="ti-btn ti-btn-primary"
@@ -312,9 +317,11 @@ const DataSanitizationList = () => {
                     <i className="ri-upload-line"></i>
                 </button>
             </div>
+            </HasPermission>
             <div className="grid grid-cols-1 sm:grid-cols-1">
                 <DownloadSampleFileButton/>
             </div>
+            <HasPermission permission='beirholm_bi.change_beirholm_clean_data'>
             <div className="grid grid-cols-1 sm:grid-cols-1">
                 <button
                     className="ti-btn ti-btn-info"
@@ -325,6 +332,7 @@ const DataSanitizationList = () => {
                     <i className="ri-refresh-line"></i>
                 </button>
             </div>
+            </HasPermission>
             <div className="grid grid-cols-1 sm:grid-cols-1">
                 <button
                     className="ti-btn ti-btn-dark"

@@ -214,7 +214,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                             </div>
                                             <div id="attachment" className="hidden" role="tabpanel"
                                                  aria-labelledby="attachment-item">
-                                                <div className="h-full bg-gray-50 rounded-lg overflow-hidden dark:text-gray-200 dark:bg-bodybg">
+                                                <div className="h-full rounded-lg overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                                                     {task.attachments.length === 0 ? (
                                                         <div
                                                             className="flex flex-col items-center justify-center h-[calc(100%-60px)] rounded-lg overflow-hidden p-8">
