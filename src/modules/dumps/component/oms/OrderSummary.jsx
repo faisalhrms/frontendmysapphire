@@ -1,56 +1,3 @@
-// import React from 'react';
-// import OmsDateDropdown from "@modules/files/component/oms/OmsDateDropdown.jsx";
-// import { useForm } from "react-hook-form";
-//
-// const OrderSummary = () => {
-//     const { control, handleSubmit, errors } = useForm();
-//
-//     const onSubmit = (data) => {
-//         console.log(data);
-//     };
-//
-//     return (
-//         <div className="w-full bg-gray-50 p-6 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-//             {/* Header Section with Date Picker and Download Button */}
-//             <div className="flex justify-between mb-6 items-center">
-//                 {/* Date Picker Section */}
-//                 <div className="flex gap-6 items-center">
-//                     <OmsDateDropdown control={control} errors={errors} />
-//                 </div>
-//                 {/* Download Button */}
-//                 <div>
-//                     <button
-//                         onClick={handleSubmit(onSubmit)}  // Attach form submit handler
-//                         className="ti-btn ti-btn-primary !mb-0 text-white rounded-lg px-6 py-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
-//                     >
-//                         <i className="ri-download-line mr-2"></i>Download
-//                     </button>
-//
-//                 </div>
-//             </div>
-//
-//             {/* Table Section */}
-//             <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
-//                 <table className="min-w-full table-auto">
-//                 <thead className="bg-gray-100 border-b dark:text-gray-200 dark:bg-bodybg">
-//                     <tr className="dark:text-gray-200 dark:bg-bodybg">
-//                         <th className="py-3 px-6 text-left font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg">File</th>
-//                         <th className="py-3 px-6 text-left font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg">Report Date</th>
-//                         <th className="py-3 px-6 text-left font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg">Report Hour</th>
-//                         <th className="py-3 px-6 text-left font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg">Completion Time</th>
-//                         <th className="py-3 px-6 text-left font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg">Download</th>
-//                     </tr>
-//                     </thead>
-//                     <tbody>
-//                     {/* Add your data rows here */}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         </div>
-//     );
-// };
-//
-// export default OrderSummary;
 import React from 'react';
 import { useForm } from "react-hook-form";
 import OmsDateDropdown from "@modules/dumps/component/oms/OmsDateDropdown.jsx";
@@ -63,7 +10,7 @@ const OrderSummary = ({data , setFilters}) => {
     };
 
     const handleDateChange = (dates) => {
-        console.log(dates); // { startDate, endDate }
+        console.log(dates); 
         setFilters(dates);
     };
 
@@ -85,16 +32,16 @@ const OrderSummary = ({data , setFilters}) => {
 
     return (
         <div className="w-full bg-gray-50 p-6 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-            {/* Header Section with Date Picker and Download Button */}
+
             <div className="flex justify-between mb-6 items-center">
-                {/* Date Picker Section */}
+
                 <div className="flex gap-6 items-center">
                     <OmsDateDropdown control={control} errors={errors} onDateChange={handleDateChange}/>
                 </div>
-                {/* Download Button */}
+
                 <div>
                     <button
-                        onClick={handleSubmit(onSubmit)}  // Attach form submit handler
+                        onClick={handleSubmit(onSubmit)}
                         className="ti-btn ti-btn-primary !mb-0 text-white rounded-lg px-6 py-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
                     >
                         <i className="ri-download-line mr-2"></i>Download
@@ -102,7 +49,6 @@ const OrderSummary = ({data , setFilters}) => {
                 </div>
             </div>
 
-            {/* Cards Section */}
             <div className="w-full">
                 {data && data?.length > 0 ? (<div className="w-full bg-gray-50 p-6 dark:text-gray-200 dark:bg-bodybg">
                     <div className="grid grid-cols-3 gap-2">
