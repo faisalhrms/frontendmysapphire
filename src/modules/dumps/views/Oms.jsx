@@ -1,74 +1,103 @@
-import React, {useCallback, useMemo, useState} from "react";
-import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import React, { useState, useCallback } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import IconTabs from "@components/IconTabs.jsx";
+import OmsFilter from "@modules/dumps/component/oms/OmsFilter.jsx";
+import { downloadOrderSummaryExcel, downloadWmsExcel } from "@modules/dumps/services/dumps_services.js";
+import { dateRangeSchema } from "@modules/dumps/schema/dateRangeSchema.js";
 
-import useFilters from "@hooks/useFilters.js";
-import OfflineStorePerformFilter from "@modules/DailyReport/components/offlineStorePerformanceFilter/OfflineStorePerformFilter.jsx";
-import {getPastDate} from "@helpers/dateTime.js";
-import OrderSummary from "@modules/dumps/component/oms/OrderSummary.jsx";
+const downloadMap = {
+  Order: downloadOrderSummaryExcel,
+  Wms: downloadWmsExcel
+};
 
-const  Oms =()=>{
-    const [activeTab, setActiveTab] = useState("Order");
-    const {
-        control,
-        handleSubmit,
-        errors,
-        getFilters
-    } = useFilters(
-        useMemo(
-            () => ({
-                initialFilters: [
-                    { name: 'date',defaultValue: getPastDate()},
-                ],
-            }),
-            []
-        )
-    );
+const labelMap = {
+  Order: "Order Summary",
+  Wms: "WMS"
+};
 
-    const [filters, setFilters] = useState(getFilters());
+const Oms = () => {
+  const [activeTab, setActiveTab] = useState("Order");
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    defaultValues: { startDate: "", endDate: "" },
+    resolver: zodResolver(dateRangeSchema),
+    mode: "onTouched"
+  });
+  const [startDate, endDate] = useWatch({ control, name: ["startDate", "endDate"] });
 
-    console.log(filters);
+  const onDownloadExcel = useCallback(async () => {
+    const fn = downloadMap[activeTab];
+    if (!fn || !startDate || !endDate) return;
+    const blob = await fn({ startDate, endDate });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${activeTab.toLowerCase()}_${startDate}_${endDate}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  }, [activeTab, startDate, endDate]);
 
-    const { data, isLoading } = useFetchWithFilters(
-        activeTab === "Order" ? '//' :'' , filters
-    );
+  const onDownload = handleSubmit(onDownloadExcel);
 
-    console.log(data);
-    const onSubmit = useCallback(
-        (formData) => {
-            setFilters(formData);
-        },
-        []
-    );
-    const handleTabChange = (tabId) => {
-        setActiveTab(tabId);
-    };
-    return (
-        <>
-            <PageHeader currentpage="Oms Order Summary" activepage="Oms"
-                        mainpage="Order Summary"/>
+  const handleClear = useCallback(() => {
+    reset({ startDate: "", endDate: "" });
+  }, [reset]);
 
-            {/*<form onSubmit={handleSubmit(onSubmit)}>*/}
-            {/*    <OfflineStorePerformFilter filters={filters} control={control} errors={errors}/>*/}
-            {/*</form>*/}
+  const handleTabChange = useCallback(tabId => {
+    setActiveTab(tabId);
+    reset({ startDate: "", endDate: "" });
+  }, [reset]);
 
-            <IconTabs
-                tabs={[
-                    {
-                        id: "Order",
-                        label: "Order Summary",
-                        icon: <i className="bx bx-location-plus"></i>,
-                        content: (
-                            <OrderSummary disActive={'Order' === activeTab}  data={data} setFilters={setFilters}/>
-                        ),
-                    },
+  const currentLabel = labelMap[activeTab];
 
-                ]}
-                onTabChange={handleTabChange}
-            />
+  return (
+    <>
+      <PageHeader
+        currentpage={`Oms ${currentLabel}`}
+        activepage="Oms"
+        mainpage={currentLabel}
+      />
+      <IconTabs
+        tabs={[
+          {
+            id: "Order",
+            label: "Order Summary",
+            icon: <i className="bx bxs-report" />,
+            content: (
+              <OmsFilter
+                control={control}
+                errors={errors}
+                onClear={handleClear}
+                onDownloadExcel={onDownload}
+              />
+            )
+          },
+          {
+            id: "Wms",
+            label: "Wms",
+            icon: <i className="bx bxs-receipt" />,
+            content: (
+              <OmsFilter
+                control={control}
+                errors={errors}
+                onClear={handleClear}
+                onDownloadExcel={onDownload}
+              />
+            )
+          }
+        ]}
+        onTabChange={handleTabChange}
+      />
+    </>
+  );
+};
 
-        </>
-    );
-}
-export default  Oms
+export default Oms;
