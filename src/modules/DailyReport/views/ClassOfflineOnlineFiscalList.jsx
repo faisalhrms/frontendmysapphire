@@ -1,36 +1,59 @@
-import React, { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
-import PageHeader from "../../layouts/includes/PageHeader.jsx";
-import useFilters from "@hooks/useFilters.js";
+import React, {useCallback, useMemo, useState} from "react";
+import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import IconTabs from "@components/IconTabs.jsx";
 
-import FilterButton from "@components/form/FilterButton.jsx";
-import FormInput from "@components/form/FormInput.jsx";
-import ClassonlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassonlineFiscal.jsx";
-import ClassOfflineOnlineFiscal from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
-import OnlineSalesGlobal from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSalesGlobal.jsx";
-import AClassIslamic from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamic.jsx";
-import Current from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/Current.jsx";
+import useFilters from "@hooks/useFilters.js";
+import OfflineStorePerformFilter from "@modules/DailyReport/components/offlineStorePerformanceFilter/OfflineStorePerformFilter.jsx";
+import {getPastDate} from "@helpers/dateTime.js";
+
 import SalesPerformanceTable
     from "@modules/DailyReport/components/comparativeSalesReport/OnlineTargetsAchievement/SalesPerformanceTable.jsx";
-import OnlinesaleThree from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlinesaleThree.jsx";
-import OnlineSaleTwo from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSaleTwo.jsx";
 
-const DailySaleReportList = () => {
-    const [activeTab, setActiveTab] = useState("DailySaleReportList");
-    const [showFilters, setShowFilters] = useState(false);
-    const [loading, setLoading] = useState(false);
+import AClassIslamic from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamic.jsx";
+import AClassFiscal
+    from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/ClassOfflineOnlineFiscal.jsx";
+import OnlineOfflineSale from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlinesaleThree.jsx";
+import ComparativeDate from "@modules/DailyReport/components/comparativeSalesReport/ComparativeDate.jsx";
 
-    const getCurrentDayMinusOne = () => {
-        const date = new Date();
-        date.setDate(date.getDate() - 1);
-        return date.toISOString().slice(0, 10);
-    };
+const OfflineStorePerformList=()=>{
+    const [activeTab, setActiveTab] = useState("ClassonlineFiscal");
+    const date = new Date();
+    const yesterday = new Date(date);
+    yesterday.setDate(date.getDate() - 1); // Subtract one day
 
-    const { control, handleSubmit, errors, getFilters } = useFilters(
+    const today = yesterday.toISOString().split('T')[0];
+
+    const formattedStartOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    formattedStartOfMonth.setHours(0, 0, 0, 0);
+    const startOfMonth = formattedStartOfMonth.toLocaleDateString('en-CA');
+
+
+    // Previous year's yesterday
+    const prevYearYesterday = new Date(date);
+    prevYearYesterday.setFullYear(date.getFullYear() - 1); // Set the year to previous year
+    prevYearYesterday.setDate(date.getDate() - 1); // Subtract one day
+    const formattedPrevYearYesterday = prevYearYesterday.toISOString().split('T')[0];
+
+// First date of the previous year
+    const prevYearStartOfMonth = new Date(date.getFullYear() - 1, date.getMonth(), 1);
+    prevYearStartOfMonth.setHours(0, 0, 0, 0);
+    const startOfPrevYear = prevYearStartOfMonth.toLocaleDateString('en-CA');
+
+
+    const {
+        control,
+        handleSubmit,
+        errors,
+        getFilters
+    } = useFilters(
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: "current_day_minus_one", defaultValue: getCurrentDayMinusOne() },
+                    { name: 'date',defaultValue: getPastDate()},
+                    { name: 'startOfMonth', defaultValue: startOfMonth },
+                    { name: 'startOfPrevYear', defaultValue: startOfPrevYear },
+                    { name: 'prevYearYesterday', defaultValue: formattedPrevYearYesterday },
                 ],
             }),
             []
@@ -39,111 +62,80 @@ const DailySaleReportList = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
-    const onSubmit = async (formData) => {
-        setLoading(true);
-        setTimeout(() => {
-            setFilters(formData);
-            setLoading(false);
-        }, 1000);
-    };
+    const { data, isLoading } = useFetchWithFilters(
+        activeTab === "ClassonlineFiscal" ? '/reporting/comparative-sales/' :
+            activeTab === "Local & Global" ? '//' :
+                activeTab === "AClassIslamic" ? '//' :
+                    activeTab === "Online Targets Achievement" ? '//' :
+                        '//',
+        filters
+    );
 
+    const onSubmit = useCallback(
+        (formData) => {
+            setFilters(formData);
+        },
+        []
+    );
+    const handleTabChange = (tabId) => {
+        setActiveTab(tabId);
+    };
     return (
         <>
-            <PageHeader currentpage="Comparative Sales Report"   activepage="Report"
-                        mainpage="Comparative Sales Report"/>
+            <PageHeader currentpage="Comparative Sales Report" activepage="Report"
+                        mainpage="Offline Store Performance"/>
 
-            <div className="grid grid-cols-12 gap-6">
-                <div className="xl:col-span-12 col-span-12">
-                    <div className="bg-white flex items-center justify-between px-4 py-3 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-                        <nav className="flex space-x-4">
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "DailySaleReportList" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("DailySaleReportList")}
-                            >
-                                A Class (Offline) & Online - Fiscal
-                            </Link>
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Online" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("Online")}
-                            >
-                                Online Sales - Local & Global
-                            </Link>
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Islamic" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("Islamic")}
-                            >
-                                A Class (Offline) & Online - Islamic
-                            </Link>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <ComparativeDate filters={filters} control={control} errors={errors}/>
+            </form>
+            <IconTabs
+                tabs={[
+                    {
+                        id: "ClassonlineFiscal",
+                        label: "A Class (Offline) & Online - Fiscal",
+                        icon: <i className='bx bx-briefcase'></i>,
+                        content: (
+                            <>
+                                <AClassFiscal data={data} isLoading={isLoading} isActive={'others' === activeTab} filters={filters} />
+                            </>
+                        ),
+                    },
+                    {
+                        id: "Local & Global",
+                        label: "Online Sales - Local & Global",
+                        icon: <i className='bx bx-globe'></i>,
+                        content: (
+                            <>
+                                <OnlineOfflineSale data={data} isLoading={isLoading} isActive={'others' === activeTab} filters={filters} />
+                            </>
+                        ),
+                    },
+                    {
+                        id: "AClassIslamic",
+                        label: "A Class (Offline) & Online - Islamic",
+                        icon: <i className='bx bx-building'></i>,
+                        content: (
+                            <>
+                                <AClassIslamic data={data} isLoading={isLoading} isActive={'others' === activeTab} filters={filters} />
+                            </>
+                        ),
+                    },
+                    {
+                        id: "Online Targets Achievement",
+                        label: "Online Targets Achievement",
+                        icon: <i className='bx bx-target-lock'></i>,
+                        content: (
+                            <>
+                                <SalesPerformanceTable data={data} isLoading={isLoading} isActive={'others' === activeTab} filters={filters} />
+                            </>
+                        ),
+                    },
+                ]}
+                onTabChange={handleTabChange}
+            />
 
-                            <Link
-                                to="#"
-                                className={`m-1 block border cursor-pointer text-defaulttextcolor dark:text-defaulttextcolor/70 py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md dark:text-gray-200 dark:bg-bodybg ${activeTab === "Achievement" ? "bg-primary text-white" : "bg-gray-200 dark:text-gray-200 dark:bg-bodybg"}`}
-                                onClick={() => setActiveTab("Achievement")}
-                            >
-                                Online Targets Achievement
-                            </Link>
-                        </nav>
 
-                        <button
-                            type="button"
-                            className="ti-btn bg-primary border mb-2 text-white btn-wave font-medium text-[0.85rem] rounded-[0.35rem] py-[0.51rem] px-[0.86rem] shadow-none"
-                            onClick={() => setShowFilters(!showFilters)}
-                        >
-                            <i className="ri-filter-3-fill inline-block"></i> Filters
-                        </button>
-                    </div>
-
-                    {showFilters && (
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
-                                <div className="mt-0">
-                                    <FormInput
-                                        type="date"
-                                        name="current_day_minus_one"
-                                        control={control}
-                                        errors={errors}
-                                        defaultValue={filters.current_day_minus_one}
-                                        label={"Current Day - 1"}
-                                    />
-                                </div>
-                                <div className="mt-0">
-                                    <FilterButton />
-                                </div>
-                            </div>
-                        </form>
-                    )}
-                    {activeTab === "DailySaleReportList" && (
-                        <Current  filters={filters} loading={loading}/>
-                    )}
-                    {activeTab === "DailySaleReportList" && (
-                        <ClassonlineFiscal  filters={filters} loading={loading}/>
-                    )}
-                    {activeTab === "DailySaleReportList" && (
-                        <ClassOfflineOnlineFiscal  filters={filters} loading={loading}/>
-                    )}
-                    {activeTab === "Online" && (
-                        <OnlineSalesGlobal filters={filters} loading={loading} />
-                    )}
-                    {activeTab === "Online" && (
-                        <OnlineSaleTwo filters={filters} loading={loading} />
-                    )}
-                    {activeTab === "Online" && (
-                        <OnlinesaleThree filters={filters} loading={loading} />
-                    )}
-
-                    {activeTab === "Islamic" && (
-                        <AClassIslamic filters={filters} loading={loading} />
-                    )}
-                    {activeTab === "Achievement" && (
-                        <SalesPerformanceTable filters={filters} loading={loading} />
-                    )}
-                </div>
-            </div>
         </>
     );
-};
-
-export default DailySaleReportList;
+}
+export default OfflineStorePerformList
