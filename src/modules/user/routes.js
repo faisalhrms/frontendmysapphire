@@ -7,6 +7,7 @@ import UserManagementEdit from "@modules/user/views/UserManagementEdit.jsx";
 import OtherUserList from "@modules/user/views/OtherUserList.jsx";
 import OtherUserCreate from "@modules/user/views/OtherUserCreate.jsx";
 import OtherUserEdit from "@modules/user/views/OtherUserEdit.jsx";
+import UserManagementCreate from "@modules/user/views/UserManagementCreate.jsx";
 export const USER_ROUTES = {
     READ: {
         path: '/module/users',
@@ -77,7 +78,7 @@ export const MODULE_ROUTES = [
     },
     {
         path: USER_ROUTES.USER_MANAGEMENT.CREATE.path,
-        component: UserManagementForm,
+        component: UserManagementCreate,
     },
     {
         path: USER_ROUTES.OTHER_USER.READ.path,

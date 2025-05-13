@@ -26,7 +26,6 @@ const UserManagementList = () => {
             <div className="p-3">
                 <div className="box">
                     <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
-                        <div className="box-title ">User Management</div>
                         <UserManagementTable users={users}/> {/* Passing the users to the UserManagementTable */}
                     </div>
                 </div>

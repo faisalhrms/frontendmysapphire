@@ -11,6 +11,7 @@ import Notify from "@helpers/toastNotifications.js";
 import HasPermission from "@components/HasPermission.jsx";
 import useFilters from "@hooks/useFilters.js";
 import DataSanitizeFilter from "@modules/beirholm-bi/components/DataSanitizeFilter.jsx";
+import DownloadErrorChoiceModal from "@modules/beirholm-bi/components/DownloadErrorChoiceModal.jsx";
 
 const DataSanitizationList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +24,15 @@ const DataSanitizationList = () => {
     const [loadingActions, setLoadingActions] = useState({});
     const [selectedRows, setSelectedRows] = useState([]);
     const [bulkProcessing, setBulkProcessing] = useState(false);
-
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+    const openDownloadModal = (id) => {
+        setCurrentJobId(id);
+        setIsDownloadModalOpen(true)
+    };
+    const closeDownloadModal = () => {
+        setCurrentJobId(null);
+        setIsDownloadModalOpen(false)
+    };
     const refreshTable = () => {
         setTableKey(Date.now());
     };
@@ -163,23 +172,11 @@ const DataSanitizationList = () => {
                 return (
                     <div className="flex space-x-2">
                         <button
-                            onClick={() => {
-                                const key = `downloadError_${jobId}`;
-                                setLoadingActions((prev) => ({...prev, [key]: true}));
-                                DataSanitizeService.downloadErrorFile(jobId)
-                                    .finally(() =>
-                                        setLoadingActions((prev) => ({...prev, [key]: false}))
-                                    );
-                            }}
-                            title="Download Error File"
+                            onClick={() => openDownloadModal(jobId)}
+                            title="Download Files"
                             className="ti-btn ti-btn-warning ti-btn-sm"
-                            disabled={loadingActions[`downloadError_${jobId}`]}
                         >
-                            {loadingActions[`downloadError_${jobId}`] ? (
-                                <i className="ri-loader-2-line animate-spin"></i>
-                            ) : (
-                                <i className="ri-error-warning-line"></i>
-                            )}
+                            <i className="ri-error-warning-line"></i>
                         </button>
                         <HasPermission permission='beirholm_bi.change_beirholm_clean_data'>
                         <button
@@ -390,6 +387,9 @@ const DataSanitizationList = () => {
                     onConfirm={handleBulkReprocessConfirm}
                     message="Are you sure you want to reprocess the selected files?"
                 />
+            )}
+            {isDownloadModalOpen && currentJobId && (
+                <DownloadErrorChoiceModal jobId={currentJobId} closeModal={closeDownloadModal}/>
             )}
         </>
     );

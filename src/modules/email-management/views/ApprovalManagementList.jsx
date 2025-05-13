@@ -88,7 +88,7 @@ const ApprovalManagementList = () => {
                 Header: `Assigned ${formatHeader(field)}`,
                 accessor: field,
                 disableSortBy: true,
-                Cell: ({ value }) => (value ? <i className="bx bx-check text-green text-lg" /> : '—'),
+                Cell: ({ value }) => (value ? <i className="bx bx-check text-green text-lg" /> : <i className="bx bx-x text-red text-lg" />),
             })),
         ];
     }, [baseColumns, activeTab]);
