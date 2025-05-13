@@ -1,6 +1,6 @@
 import React from 'react';
 import CurrentPeriodTable
-    from "@modules/DailyReport/components/comparativeSalesReport/Currentdate/CurrentPeriodTable.jsx";
+    from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/CurrentPeriodTable.jsx";
 
 const AClassIslamic = () => {
     const getGrowthColor = (growth) => {
