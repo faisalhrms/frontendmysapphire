@@ -1,6 +1,7 @@
 import React from 'react';
 
 const SummaryTable = ({ data,getGrowthColor }) => {
+    const sales_summary = data?.sales_summary;
     return (
         <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
             <div className="mb-6">
@@ -23,9 +24,14 @@ const SummaryTable = ({ data,getGrowthColor }) => {
                     <tr className="border border-gray-400 text-white bg-[#4d5875]">
                         <th className="bg-blue-200 p-2 text-center"></th>
                         <th className="bg-blue-200 p-2 text-center"></th>
-                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Wed)</th>
+                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">
+                            Last Day ({sales_summary?.this_year?.day})
+                        </th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">MTD</th>
-                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">Last Day (Sat)</th>
+                        <th className="bg-blue-200 border border-gray-400 p-2 text-center">
+                            Last Day ({sales_summary?.last_year?.day})
+                        </th>
+
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">MTD</th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">MTD</th>
                     </tr>

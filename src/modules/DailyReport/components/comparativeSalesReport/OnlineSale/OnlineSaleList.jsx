@@ -1,11 +1,12 @@
 import React from 'react';
 import CurrentPeriodTable
     from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/CurrentPeriodTable.jsx";
-import SummaryTable from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/SummaryTable.jsx";
-import CategoryTable from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/Category.jsx";
+
+import OnlineSalesThree from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlinesaleThree.jsx";
+import OnlineSalesTwo from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSaleTwo.jsx";
 
 
-const AClassFiscal = ({data}) => {
+const OnlineSaleList = ({data}) => {
     const getGrowthColor = (growth) => {
         return growth < 0 ? 'text-danger' : 'text-success';
     };
@@ -16,17 +17,19 @@ const AClassFiscal = ({data}) => {
             <CurrentPeriodTable
                 data={data}
             />
-            <SummaryTable
-               getGrowthColor={getGrowthColor}
-                 data={data}
-           />
-            <CategoryTable
+            <OnlineSalesTwo
+                getGrowthColor={getGrowthColor}
+                data={data}
+
+            />
+            <OnlineSalesThree
                 getGrowthColor={getGrowthColor}
                 data={data}
             />
+
 
         </div>
     );
 };
 
-export default AClassFiscal;
+export default OnlineSaleList;

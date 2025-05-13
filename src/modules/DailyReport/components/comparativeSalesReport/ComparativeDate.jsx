@@ -38,38 +38,38 @@ const ComparativeDate = ({ control,errors, clearFilter,filters }) => {
                     <div className="box-body p-4">
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-4 flex-1">
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="flex-1">
                                     <FormInput
                                         type="date"
                                         name="startOfMonth"
-                                        placeholder="To Cy"
+                                        placeholder="To Current Period"
                                         control={control}
                                         errors={errors}
                                     />
                                 </div>
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="flex-1">
                                     <FormInput
                                         type="date"
-                                        placeholder="From Cy"
+                                        placeholder="From Current Period"
                                         name="date"
                                         control={control}
                                         errors={errors}
                                     />
                                 </div>
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="flex-1">
                                     <FormInput
                                         type="date"
-                                        placeholder="To CL"
+                                        placeholder="To Comparative Period"
                                         name="startOfPrevYear"
                                         control={control}
                                         errors={errors}
                                     />
                                 </div>
 
-                                    <div className="xl:col-span-6 col-span-12">
+                                    <div className="flex-1">
                                         <FormInput
                                             type="date"
-                                            placeholder="From CL"
+                                            placeholder="From Comparative Period"
                                             name="prevYearYesterday"
                                             control={control}
                                             errors={errors}
@@ -85,7 +85,7 @@ const ComparativeDate = ({ control,errors, clearFilter,filters }) => {
                                         disabled={isDownloading}
 
                                     >
-                                        <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""} text-lg`}></i>
+                                        <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""} `}></i>
                                         {isDownloading ? "" : ""}
                                     </button>
 

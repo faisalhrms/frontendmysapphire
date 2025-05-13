@@ -29,7 +29,7 @@ const CategoryTable = ({ data,getGrowthColor }) => {
             <tbody>
             {data?.category_sales?.map((row, index) => (
                 <tr>
-                    <td className="font-bold border border-gray-400 p-2">{row?.category}</td>
+                    <td className="font-bold border border-gray-400 p-2 ">{row?.category}</td>
                     <td className="border border-gray-400 p-2 text-right">{row?.offline?.this_year}</td>
                     <td className="border border-gray-400 p-2 text-right">{row?.offline?.last_year}</td>
                     <td className={`border border-gray-400 p-2 text-right ${getGrowthColor(row?.offline?.growth)}`}>{row?.offline?.growth}%</td>
