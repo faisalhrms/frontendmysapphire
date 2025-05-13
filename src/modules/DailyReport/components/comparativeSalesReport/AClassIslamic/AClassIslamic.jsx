@@ -1,38 +1,24 @@
 import React from 'react';
+import CurrentPeriodTable
+    from "@modules/DailyReport/components/comparativeSalesReport/Currentdate/CurrentPeriodTable.jsx";
 
 const AClassIslamic = () => {
     const getGrowthColor = (growth) => {
         return growth < 0 ? 'text-danger' : 'text-success';
     };
-
+    const fromDate = '01-Jan-25';
+    const toDate = '31-Jan-25';
+    const comparativeFromDate = '01-Jan-24';
+    const comparativeToDate = '31-Jan-24';
     return (
         <div className="font-sans text-sm">
 
-            <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-                <div className="mb-6">
-                    <table className="w-full border-collapse">
-                        <thead>
-                        <tr>
-                            <th className="bg-blue-300 border border-gray-400 p-2"></th>
-                            <th className="bg-blue-300 border border-gray-400 p-2 text-center">Current Period</th>
-                            <th className="bg-blue-300 border border-gray-400 p-2 text-center">Comparative Period</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td className="font-bold p-2 border border-gray-400">From</td>
-                            <td className="border border-gray-400 p-2 text-center">01-Feb-25</td>
-                            <td className="border border-gray-400 p-2 text-center">01-Feb-24</td>
-                        </tr>
-                        <tr>
-                            <td className="font-bold p-2 border border-gray-400">To</td>
-                            <td className="border border-gray-400 p-2 text-center">26-Feb-25</td>
-                            <td className="border border-gray-400 p-2 text-center">26-Feb-24</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <CurrentPeriodTable
+                fromDate={fromDate}
+                toDate={toDate}
+                comparativeFromDate={comparativeFromDate}
+                comparativeToDate={comparativeToDate}
+            />
 
             {/* Summary Table */}
             <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
@@ -112,7 +98,7 @@ const AClassIslamic = () => {
                         </th>
                     </tr>
                     <tr className="text-white bg-[#4d5875]">
-                        <th className="bg-white p-2  bg-[#4d5875]" ></th>
+                        <th className=" p-2  bg-[#4d5875]" ></th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">Shaban - 25</th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">Shaban - 24</th>
                         <th className="bg-blue-200 border border-gray-400 p-2 text-center">Growth</th>
