@@ -75,7 +75,7 @@ const UserManagementTable = ({ users }) => {
                                             </button>
                                         </Link>
                                     ) : (
-                                        <Link to={`/module/user-management/create/${node.user.id}?full_name=${encodeURIComponent(node.user.full_name)}&email=${encodeURIComponent(node.user.email)}`}>
+                                        <Link to={`/module/user-management/create/${node.user.id}`}>
                                             <button className="ti-btn ti-btn-success ti-btn-sm">
                                                 <i className="ri-add-line" />
                                             </button>
@@ -83,7 +83,7 @@ const UserManagementTable = ({ users }) => {
                                     )}
                                 </div>
                             </td>
-                            <td className="border border-gray-300 px-2 py-1 flex items-center" style={{ paddingLeft: depth * 16 }}>
+                            <td className="border border-gray-300 px-2 py-1">
                                 {hasChildren && (
                                     <button onClick={() => toggleExpand(id)} className="mr-2 focus:outline-none">
                                         {expandedIds.has(id) ? '▼' : '▶'}

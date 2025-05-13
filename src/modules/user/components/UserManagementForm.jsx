@@ -12,7 +12,7 @@ import { emailHost, booleanOptions } from "@modules/user/services/userService.js
 import { formatOptions } from "@helpers/formatters.js";
 import userManagementSchema from "@modules/user/schemas/userManagementSchema.js";
 
-const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
+const UserManagementForm = ({ userData = {}, isEditMode = false,initialInstance=false }) => {
     const location = useLocation();
     const fromApproval = Boolean(location.state?.fromApprovalList);
     const { id } = useParams();
@@ -39,7 +39,7 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
         },
     });
 
-    const { handleUserManagementSubmit } = useUserManagementForm(userData, isEditMode,fromApproval);
+    const { handleUserManagementSubmit } = useUserManagementForm(userData, isEditMode,initialInstance,fromApproval);
 
     useEffect(() => {
         if (userData) {
