@@ -9,7 +9,7 @@ import AClassIslamicOnline
 
 const AClassIslamicList = ({data}) => {
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-danger' : 'text-success';
+        return growth < 0 ? 'text-danger' : 'text-emerald-600';
     };
 
 

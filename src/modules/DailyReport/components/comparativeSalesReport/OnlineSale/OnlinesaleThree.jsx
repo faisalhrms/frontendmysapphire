@@ -32,25 +32,25 @@ const OnlineSalesThree = ({ data,getGrowthColor }) => {
                     <tbody>
                     <tr>
                         <td className="font-bold border border-gray-400 p-2">Local Sales</td>
-                        <td className="border border-gray-300 p-1 text-right">{local?.this_year?.mtd}</td>
-                        <td className="border border-gray-300 p-1 text-right">{local?.last_year?.mtd}</td>
+                        <td className="border border-gray-300 p-1 text-right text-black dark:text-gray-200 dark:bg-bodybg ">{local?.this_year?.mtd}</td>
+                        <td className="border border-gray-300 p-1 text-right text-black dark:text-gray-200 dark:bg-bodybg ">{local?.last_year?.mtd}</td>
                         <td className={`p-1 text-center border border-gray-300 ${getGrowthColor(local?.growth)}`}>
                             {local?.growth}%
                         </td>
                     </tr>
                     <tr>
-                        <td className="font-bold border border-gray-400 p-2">Global Sales</td>
-                        <td className="border border-gray-300 p-1 text-right">{global?.this_year?.mtd}</td>
-                        <td className="border border-gray-300 p-1 text-right">{global?.last_year?.mtd}</td>
-                        <td className={`p-1 text-center border border-gray-300 ${getGrowthColor(global?.growth)}`}>
+                        <td className="font-bold border border-gray-400 p-2 ">Global Sales</td>
+                        <td className="border border-gray-300 p-1 text-right text-black dark:text-gray-200 dark:bg-bodybg ">{global?.this_year?.mtd}</td>
+                        <td className="border border-gray-300 p-1 text-right text-black dark:text-gray-200 dark:bg-bodybg ">{global?.last_year?.mtd}</td>
+                        <td className={`p-1 text-center border font-bold border-gray-300  ${getGrowthColor(global?.growth)}`}>
                             {global?.growth}%
                         </td>
                     </tr>
-                    <tr className="font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
-                        <td className="border border-gray-300 p-1">Total</td>
-                        <td className="border border-gray-300 p-1 text-right">{total?.this_year?.mtd}</td>
-                        <td className="border border-gray-300 p-1 text-right">{total?.last_year?.mtd}</td>
-                        <td className={`p-1 text-center border border-gray-300 ${getGrowthColor(total?.growth)}`}>
+                    <tr className="font-bold bg-[#949eb7] dark:text-gray-200 dark:bg-bodybg text-black">
+                        <td className="border border-gray-300 p-1 ">Total</td>
+                        <td className="border border-gray-300 p-1 text-right text-black dark:text-gray-200 dark:bg-bodybg ">{total?.this_year?.mtd}</td>
+                        <td className="border border-gray-300 p-1 text-right text-black dark:text-gray-200 dark:bg-bodybg ">{total?.last_year?.mtd}</td>
+                        <td className={`p-1 text-center border border-gray-300 font-bold text-black ${getGrowthColor(total?.growth)}`}>
                             {total?.growth}%
                         </td>
                     </tr>

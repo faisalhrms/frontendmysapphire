@@ -8,7 +8,7 @@ import OnlineSalesTwo from "@modules/DailyReport/components/comparativeSalesRepo
 
 const OnlineSaleList = ({data}) => {
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-danger' : 'text-success';
+        return growth < 0 ? 'text-danger' : 'text-emerald-600';
     };
 
     return (

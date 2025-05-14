@@ -1,6 +1,14 @@
 import React from 'react';
 
 const CategoryTable = ({ data,getGrowthColor }) => {
+    const formatDate = (date) => {
+        if (!date) return '';
+        const formattedDate = new Date(date).toLocaleDateString('en-US', {
+            month: 'short',
+            year: '2-digit',
+        });
+        return formattedDate;
+    };
     return (
 
     <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
@@ -18,24 +26,26 @@ const CategoryTable = ({ data,getGrowthColor }) => {
             </tr>
             <tr className="text-white bg-[#4d5875]">
                 <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-50"></th>
-                <th className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50">Feb</th>
-                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Feb</th>
+                <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.current?.to_date)}</th>
+                <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.comparative?.to_date)}</th>
                 <th className="py-2 px-4 border border-gray-400 p-2 text-center">Growth%</th>
-                <th className="py-2 px-2 border border-gray-400 p-2 text-center font-bold sticky left-16 z-50">Feb</th>
-                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Feb</th>
+                <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.current?.to_date)}</th>
+                <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.comparative?.to_date)}</th>
                 <th className="py-2 px-4 border border-gray-400 p-2 text-center">Growth%</th>
             </tr>
             </thead>
             <tbody>
             {data?.category_sales?.map((row, index) => (
-                <tr>
-                    <td className="font-bold border border-gray-400 p-2 ">{row?.category}</td>
-                    <td className="border border-gray-400 p-2 text-right">{row?.offline?.this_year}</td>
-                    <td className="border border-gray-400 p-2 text-right">{row?.offline?.last_year}</td>
-                    <td className={`border border-gray-400 p-2 text-right ${getGrowthColor(row?.offline?.growth)}`}>{row?.offline?.growth}%</td>
-                    <td className="border border-gray-400 p-2 text-right">{row?.online?.this_year}</td>
-                    <td className="border border-gray-400 p-2 text-right">{row?.online?.last_year}</td>
-                    <td className={`border border-gray-400 p-2 text-right ${getGrowthColor(row?.online?.growth)}`}>{row?.online?.growth}%</td>
+                <tr
+                    key={index}
+                    className={row.category === "Total" ? "font-bold  bg-[#949eb7] dark:text-gray-200 dark:bg-bodybg text-black" : ""}>
+                <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg   text-black">{row?.category}</td>
+                    <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{row?.offline?.this_year}</td>
+                    <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{row?.offline?.last_year}</td>
+                    <td className={`border border-gray-400 p-2 font-bold dark:text-gray-200 dark:bg-bodybg  text-black text-center ${getGrowthColor(row?.offline?.growth)}`}>{row?.offline?.growth}%</td>
+                    <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg  text-black">{row?.online?.this_year}</td>
+                    <td className="border border-gray-400 p-2 text-right  dark:text-gray-200 dark:bg-bodybg  text-black">{row?.online?.last_year}</td>
+                    <td className={`border border-gray-400 font-bold p-2 text-center dark:text-gray-200 dark:bg-bodybg  text-black ${getGrowthColor(row?.online?.growth)}`}>{row?.online?.growth}%</td>
                 </tr>
             ))}
             </tbody>
