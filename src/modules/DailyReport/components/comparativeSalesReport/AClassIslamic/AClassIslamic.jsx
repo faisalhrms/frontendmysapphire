@@ -13,9 +13,9 @@ console.log(data)
                 </tr>
                 <tr className="text-white bg-[#4d5875]">
                     <th className="bg-blue-200 border border-gray-400 p-2 text-center ">{data?.periods?.hijri?.current?.to_date}</th>
-                    <th className="bg-blue-200 border border-gray-400 p-2 text-center">{data?.periods?.hijri?.current?.from_date}</th>
-                    <th className="bg-blue-200 border border-gray-400 p-2 text-center">Growth</th>
                     <th className="bg-blue-200 border border-gray-400 p-2 text-center">{data?.periods?.hijri?.comparative?.to_date}</th>
+                    <th className="bg-blue-200 border border-gray-400 p-2 text-center">Growth</th>
+                    <th className="bg-blue-200 border border-gray-400 p-2 text-center">{data?.periods?.hijri?.current?.from_date}</th>
                     <th className="bg-blue-200 border border-gray-400 p-2 text-center">{data?.periods?.hijri?.comparative?.from_date}</th>
                     <th className="bg-blue-200 border border-gray-400 p-2 text-center">Growth</th>
                 </tr>
