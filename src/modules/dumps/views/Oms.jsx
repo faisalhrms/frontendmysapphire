@@ -70,7 +70,7 @@ const Oms = () => {
           {
             id: "Order",
             label: "Order Summary",
-            icon: <i className="bx bxs-report" />,
+            icon: <i className="bx  bx-detail" />,
             content: (
               <OmsFilter
                 control={control}
@@ -83,7 +83,7 @@ const Oms = () => {
           {
             id: "Wms",
             label: "Wms",
-            icon: <i className="bx bxs-receipt" />,
+            icon: <i className="bx bx-receipt" />,
             content: (
               <OmsFilter
                 control={control}
