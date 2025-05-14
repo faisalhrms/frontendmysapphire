@@ -32,7 +32,7 @@ const downloadFile = async (url, defaultFilename) => {
         const serverMessage =
             error.response?.data?.errors ||
             error.response?.data?.message ||
-            "Download failed";
+            "No Record";
         Notify.error(serverMessage);
         throw error;
     }
@@ -104,6 +104,11 @@ const downloadErrorFile = async (jobId) => {
     await downloadFile(url, "error_file.xlsx");
 };
 
+const downloadConstructionStatus = async (jobId) => {
+    const url = `/correction/file/${jobId}/download-construction-status/`;
+    await downloadFile(url, "construction_status.xlsx");
+};
+
 const uploadMissingRules = async (jobId, formData) => {
     try {
         const response = await api.post(`/correction/file/${jobId}/upload-missing-rules/`, formData, {
@@ -156,19 +161,7 @@ const downloadBulkCleanFile = async (fileIds = []) => {
 };
 
 
-const downloadConstructionStatus = async (jobId) => {
-  try {
-    const url = `/correction/file/${jobId}/download-construction-status/`;
-    await downloadFile(url, "construction_status.xlsx");
-  } catch (error) {
-    const serverMessage =
-      error.response?.data?.errors ||
-      error.response?.data?.message ||
-      "Download failed";
-    Notify.error(serverMessage);
-    throw error;
-  }
-};
+
 
 export default {
     uploadRawFile,
