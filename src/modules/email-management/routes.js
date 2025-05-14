@@ -5,11 +5,11 @@ import ApprovalManagementList from "@modules/email-management/views/ApprovalMana
 export const EMAIL_MANAGEMENT_ROUTE = {
     READ:{
         path:'/user-management/list',
-         permission:'user.view_ess_modules',
+         permission:'user.view_employee_detail',
     },
     READ_ALL:{
         path:'/user-management/all-approvals',
-        permission:'user.view_ess_modules',
+        permission:'user.view_employee_detail',
     }
 };
 
