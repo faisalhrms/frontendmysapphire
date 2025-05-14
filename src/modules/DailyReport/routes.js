@@ -1,13 +1,14 @@
 import DailySaleReportList from "@modules/DailyReport/views/DailySaleReportList.jsx";
-import ClassOfflineOnlineFiscalList from "@modules/DailyReport/views/ClassOfflineOnlineFiscalList.jsx";
+
 import OfflineStorePerformList  from "@modules/DailyReport/views/OfflineStorePerformList.jsx";
+import ComparativeSaleReportList from "@modules/DailyReport/views/ComparativeSaleReportList.jsx";
 export const DAILYREPORT_ROUTES = {
     READ: {
-        path: "/retail/daily-sales-report",
+        path: "/module/retail/daily-sales-report",
         permission: "auth.view_dailyreport",
     },
     CREATE:{
-        path: "/retail/comparative-sales-report",
+        path: "/module/retail/comparative-sales-report",
         permission: "auth.view_comparativesalesreport",
 
     },
@@ -18,7 +19,7 @@ export const DAILYREPORT_ROUTES = {
 
 export const OFFLINE_STORE_PERFORMANCE_ROUTE={
     READ:{
-        path:"/retail/offline-store-performance",
+        path:"/module/retail/offline-store-performance",
         permission:"auth.view_offline_store_performance_report"
     }
 }
@@ -31,7 +32,7 @@ export const MODULE_ROUTES = [
     },
     {
         path: DAILYREPORT_ROUTES.CREATE.path,
-        component: ClassOfflineOnlineFiscalList,
+        component: ComparativeSaleReportList,
         permission: DAILYREPORT_ROUTES.CREATE.permission,
 
     },

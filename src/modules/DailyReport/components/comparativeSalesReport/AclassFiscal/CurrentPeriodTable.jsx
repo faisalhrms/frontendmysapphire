@@ -15,13 +15,13 @@ const CurrentPeriodTable = ({ data }) => {
                     <tbody>
                     <tr>
                         <td className="font-bold p-2 border border-gray-400">From</td>
-                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.current?.from_date}</td>
-                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.comparative?.from_date}</td>
+                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.gregorian?.current?.from_date}</td>
+                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.gregorian?.comparative?.from_date}</td>
                     </tr>
                     <tr>
                         <td className="font-bold p-2 border border-gray-400">To</td>
-                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.current?.to_date}</td>
-                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.comparative?.to_date}</td>
+                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.gregorian?.current?.to_date}</td>
+                        <td className="border border-gray-400 p-2 text-center">{data?.periods?.gregorian?.comparative?.to_date}</td>
                     </tr>
                     </tbody>
                 </table>
