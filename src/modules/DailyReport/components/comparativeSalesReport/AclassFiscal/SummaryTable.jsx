@@ -39,10 +39,10 @@ const SummaryTable = ({ data,getGrowthColor }) => {
                     <tbody>
                     {data?.sales_summary?.data?.map((row, index) => (
                         <tr key={index}
-                            className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg   text-black">
-                            <td className="font-bold p-2"></td>
+                            className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg   text-black ">
+                            <td className="font-bold p-2  "></td>
                             <td className="font-bold p-2">{row?.category}</td>
-                            <td className="border border-gray-400 p-2 text-right">{row?.this_year?.last_day}</td>
+                            <td className="border border-gray-400 p-2 text-right ">{row?.this_year?.last_day}</td>
                             <td className="border border-gray-400 p-2 text-right">{row?.this_year?.mtd}</td>
                             <td className="border border-gray-400 p-2 text-right">{row?.last_year?.last_day}</td>
                             <td className="border border-gray-400 p-2 text-right">{row?.last_year?.mtd}</td>
