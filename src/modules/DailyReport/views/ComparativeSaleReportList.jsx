@@ -160,7 +160,8 @@ import ComparativeDate from "@modules/DailyReport/components/comparativeSalesRep
 import OnlineSaleList from "@modules/DailyReport/components/comparativeSalesReport/OnlineSale/OnlineSaleList.jsx";
 import AClassIslamicList from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamicList.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import useComparativeReportDates from "@modules/DailyReport/hooks/useComparativeReportDates.js";
+import getComparativeReportDates from "@modules/DailyReport/views/utils.js";
+
 
 const ComparativeSaleReportList = () => {
     const [activeTab, setActiveTab] = useState("ClassonlineFiscal");
@@ -171,7 +172,7 @@ const ComparativeSaleReportList = () => {
         startOfMonth,
         formattedPrevYearYesterday,
         startOfPrevYear,
-    } = useComparativeReportDates();
+    } = getComparativeReportDates ();
 
     const {
         control,
