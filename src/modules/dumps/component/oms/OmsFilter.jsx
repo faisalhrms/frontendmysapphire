@@ -1,9 +1,19 @@
 import React, { useState, useCallback } from "react";
+import { useWatch } from "react-hook-form";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterClearButton from "@components/form/FilterClearButton.jsx";
 
 const OmsFilter = ({ control, errors, onClear, onDownloadExcel }) => {
   const [isDownloading, setIsDownloading] = useState(false);
+
+  const startDateValue = useWatch({ control, name: "startDate" });
+
+  const getMaxEndDate = () => {
+    if (!startDateValue) return undefined;
+    const d = new Date(startDateValue);
+    d.setDate(d.getDate() + 31);
+    return d.toISOString().split("T")[0];
+  };
 
   const handleDownload = useCallback(async () => {
     if (isDownloading) return;
@@ -39,6 +49,8 @@ const OmsFilter = ({ control, errors, onClear, onDownloadExcel }) => {
                   placeholder="To"
                   control={control}
                   errors={errors}
+                  min={startDateValue}
+                  max={getMaxEndDate()}
                 />
               </div>
               <div className="flex items-center gap-2">

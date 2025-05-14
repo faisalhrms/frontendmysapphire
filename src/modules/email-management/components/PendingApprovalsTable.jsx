@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import DataTable from "@components/DataTable.jsx";
 import ApprovalStatusDropdown from "@modules/email-management/components/ApprovalStatusDropdown.jsx";
+import {getBadgeClasses} from "@helpers/badges.js";
 
 const PendingApprovalsTable = ({ refetch }) => {
     // currentUser.employee.id is your own Employee PK
@@ -16,13 +17,6 @@ const PendingApprovalsTable = ({ refetch }) => {
             accessor: "approval_status",
             Cell: ({ cell: { value }, row: { original } }) => {
                 const status = value?.toLowerCase();
-                const statusColors = {
-                    approved: "bg-green text-white",
-                    rejected: "bg-red text-white",
-                    pending: "bg-yellow text-white",
-                };
-
-                // Show dropdown only if this row’s approver_id === your employee.id
                 const amIApprover = original.approver_id === myEmployeeId;
 
                 return amIApprover ? (
@@ -33,9 +27,7 @@ const PendingApprovalsTable = ({ refetch }) => {
                     />
                 ) : (
                     <span
-                        className={`badge me-1 ${
-                            statusColors[status] || "bg-gray-100 text-gray-700"
-                        }`}
+                        className={getBadgeClasses(status)}
                     >
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </span>
@@ -62,7 +54,7 @@ const PendingApprovalsTable = ({ refetch }) => {
         <DataTable
             columns={columns}
             apiUrl="/employee-details/approvals/"
-            title="Pending Approvals"
+            title={null}
         />
     );
 };
