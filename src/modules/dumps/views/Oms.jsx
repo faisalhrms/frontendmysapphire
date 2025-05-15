@@ -4,17 +4,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import IconTabs from "@components/IconTabs.jsx";
 import OmsFilter from "@modules/dumps/component/oms/OmsFilter.jsx";
-import { downloadOrderSummaryExcel, downloadWmsExcel } from "@modules/dumps/services/dumps_services.js";
+import {
+  downloadOrderSummaryExcel,
+  downloadReturnOrderExcel,
+  downloadWmsExcel
+} from "@modules/dumps/services/dumps_services.js";
 import { dateRangeSchema } from "@modules/dumps/schema/dateRangeSchema.js";
 
 const downloadMap = {
   Order: downloadOrderSummaryExcel,
-  Wms: downloadWmsExcel
+  Wms: downloadWmsExcel,
+  return_order: downloadReturnOrderExcel
 };
 
 const labelMap = {
   Order: "Order Summary",
-  Wms: "WMS"
+  Wms: "WMS",
+  return_order: "Return Order"
 };
 
 const Oms = () => {
@@ -38,7 +44,7 @@ const Oms = () => {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${activeTab.toLowerCase()}_${startDate}_${endDate}.xlsx`;
+    link.download = `${activeTab}_${startDate}_${endDate}.xlsx`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -70,7 +76,7 @@ const Oms = () => {
           {
             id: "Order",
             label: "Order Summary",
-            icon: <i className="bx  bx-detail" />,
+            icon: <i className="bx bx-detail" />,
             content: (
               <OmsFilter
                 control={control}
@@ -82,8 +88,21 @@ const Oms = () => {
           },
           {
             id: "Wms",
-            label: "Wms",
+            label: "WMS",
             icon: <i className="bx bx-receipt" />,
+            content: (
+              <OmsFilter
+                control={control}
+                errors={errors}
+                onClear={handleClear}
+                onDownloadExcel={onDownload}
+              />
+            )
+          },
+          {
+            id: "return_order",
+            label: "Return Order",
+            icon: <i className="bx bx-repost" />,
             content: (
               <OmsFilter
                 control={control}
