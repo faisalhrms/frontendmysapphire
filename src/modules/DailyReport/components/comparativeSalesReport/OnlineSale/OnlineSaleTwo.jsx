@@ -38,12 +38,12 @@ const OnlineSalesTwo = ({ data ,getGrowthColor }) => {
                             <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg   text-black">{item.category}</td>
                             <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.local_?.this_year || "-"}</td>
                             <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.local_?.last_year || "-"}</td>
-                            <td className={`border border-gray-300 p-1 font-bold text-center dark:text-gray-200 dark:bg-bodybg   text-black ${getGrowthColor(item.local_?.growth)}`}>
+                            <td className={`border border-gray-300 p-1 font-bold text-center  ${getGrowthColor(item.local_?.growth)}`}>
                                 {item.local_?.growth}%
                             </td>
                             <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.global_?.this_year || "-"}</td>
                             <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.global_?.last_year || "-"}</td>
-                            <td className={`border border-gray-300 p-1 font-bold text-center dark:text-gray-200 dark:bg-bodybg   text-black ${getGrowthColor(item.global_?.growth)}`}>
+                            <td className={`border border-gray-300 p-1 font-bold text-center  ${getGrowthColor(item.global_?.growth)}`}>
                                 {item.global_?.growth}%
                             </td>
                         </tr>
