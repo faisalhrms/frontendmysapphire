@@ -38,7 +38,7 @@ const AClassIslamicOnline = ({ data, getGrowthColor}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {sales_summary.data.map((item, index) => (
+                    {sales_summary?.data?.map((item, index) => (
                         <tr
                             key={index}
                             className={`border border-gray-400 ${
