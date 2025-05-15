@@ -1,4 +1,5 @@
 import api from "@config/axiosConfig.js";
+import Notify from "@helpers/toastNotifications.js";
 
 export const fetchOciDumps = async (date) => {
     try {
@@ -15,26 +16,35 @@ export const fetchOciDumps = async (date) => {
     }
 };
 
-export const downloadOrderSummaryExcel = async ({ startDate, endDate }) => {
-  const { data } = await api.get("/dumps/oms/fetch_order_summary_data/", {
-    params: { date_from: startDate, date_to: endDate },
-    responseType: "blob"
-  });
-  return data;
+const handleError = async (error, message) => {
+  if (error?.response?.data instanceof Blob) {
+    try {
+      const text = await error.response.data.text();
+      const json = JSON.parse(text);
+      Notify.error(json?.detail || json?.errors || message);
+      return;
+    } catch {}
+  }
+  Notify.error(message);
 };
 
-export const downloadReturnOrderExcel = async ({ startDate, endDate }) => {
-  const { data } = await api.get("/dumps/oms/fetch_return_order_data/", {
-    params: { date_from: startDate, date_to: endDate },
-    responseType: "blob"
-  });
-  return data;
+const downloadExcel = async (url, { startDate, endDate }, message) => {
+  try {
+    const { data } = await api.get(url, {
+      params: { date_from: startDate, date_to: endDate },
+      responseType: "blob"
+    });
+    return data;
+  } catch (error) {
+    await handleError(error, message);
+  }
 };
 
-export const downloadWmsExcel = async ({ startDate, endDate }) => {
-  const { data } = await api.get("/dumps/oms/fetch_wms_data/", {
-    params: { date_from: startDate, date_to: endDate },
-    responseType: "blob"
-  });
-  return data;
-};
+export const downloadOrderSummaryExcel = payload =>
+  downloadExcel("/dumps/oms/fetch_order_summary_data/", payload, "Failed to download Order Summary");
+
+export const downloadReturnOrderExcel = payload =>
+  downloadExcel("/dumps/oms/fetch_return_order_data/", payload, "Failed to download Return Order");
+
+export const downloadWmsExcel = payload =>
+  downloadExcel("/dumps/oms/fetch_wms_data/", payload, "Failed to download WMS");

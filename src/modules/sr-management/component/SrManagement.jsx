@@ -46,6 +46,8 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
+              <i className="ri-user-unfollow-line me-1"></i>
+
               Task Pending
               {badge(counts.pending)}
             </button>
@@ -57,6 +59,7 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
+              <i className="ri-run-line me-1"></i>
               Task Generated
               {badge(counts.generated)}
             </button>
@@ -68,6 +71,7 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
+              <i className="ri-checkbox-circle-line me-1"></i>
               Task Completed
               {badge(counts.completed)}
             </button>
@@ -79,17 +83,16 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
+              <i className="ri-lock-line me-1"></i>
               Task Closed
               {badge(counts.closed)}
             </button>
           </nav>
         </div>
-        <div className="box-content bg-white">
           {activeStatus === "pending-task" && <PendingRequestsTable />}
           {activeStatus === "generated-task" && <TaskGeneratedTable />}
           {activeStatus === "completed-task" && <CompletedTasksTable />}
           {activeStatus === "closed-task" && <TaskClosedTable />}
-        </div>
       </div>
     </div>
   );
