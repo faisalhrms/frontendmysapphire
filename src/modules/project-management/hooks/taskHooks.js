@@ -5,7 +5,6 @@ import {
   getTaskWithChild, updateTaskStatus, updateOverdueTask, fetchKanbanTasksAll, getTaskDetail,
 
 } from "@modules/project-management/services/taskService.js";
-import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import taskSchema from "@modules/project-management/schemas/taskSchema.js";
 import { useForm } from "react-hook-form";
@@ -345,15 +344,8 @@ export const useTaskDetailModal = () => {
   const [isTaskDetailModalOpen, setIsTaskDetailModalOpen] = useState(false);
 
   const openTaskDetailModal = (id) => {
-    setId(id); // Set the task ID to trigger the query
+    setId(id);
     setIsTaskDetailModalOpen(true);
-    setTimeout(() => {
-      const modal = document.getElementById("taskDetailModal");
-      if (modal) {
-        window.HSOverlay.open(modal);
-        modal.classList.add('open');
-      }
-    }, 200);
   };
 
   const closeTaskDetailModal = () => {
@@ -361,9 +353,21 @@ export const useTaskDetailModal = () => {
     if (modal) {
       window.HSOverlay.close(modal);
     }
-    setId(null);
-    setTimeout(() => setIsTaskDetailModalOpen(false), 300);
+    setTimeout(() => setIsTaskDetailModalOpen(false), 200);
   };
+
+  useEffect(() => {
+    const parentModal = document.querySelector('.parent-modal.open');
+    const modalElement = document.getElementById('taskDetailModal');
+    if (modalElement) {
+      isTaskDetailModalOpen ? window.HSOverlay.open(modalElement) : window.HSOverlay.close(modalElement);
+      if (parentModal) {
+        parentModal.classList.toggle('open', isTaskDetailModalOpen);
+        modalElement.classList.toggle('open', isTaskDetailModalOpen);
+        modalElement.classList.toggle('hidden', !isTaskDetailModalOpen);
+      }
+    }
+  }, [isTaskDetailModalOpen]);
 
   const { data: task = {}, isLoading: isTaskDetailLoading, refetch } = useQuery({
     queryKey: ['taskDetail', id],

@@ -18,12 +18,12 @@ const SalesPerformanceTable = () => {
             <div className="overflow-x-auto border border-gray-400">
                 <table className="min-w-full table-auto border-collapse">
                     <thead>
-                    <tr style={{ backgroundColor: '#0b3588', color: 'white' }}>
+                    <tr className="text-white bg-[#383853]">
                         <th className="border p-2"></th>
                         <th colSpan="3" className="border p-2 bg-blue-100">Full Price</th>
                         <th colSpan="3" className="border p-2 bg-yellow-100">Discounted</th>
                     </tr>
-                    <tr style={{ backgroundColor: '#0b3588', color: 'white' }}>
+                    <tr className="text-white bg-[#4d5875]">
                         <th className="border border-gray-300  p-2"> Date</th>
                         <th className="border border-gray-300  p-2 bg-blue-50">Actual Sales</th>
                         <th className="border border-gray-300  p-2 bg-blue-50">Target Sales</th>

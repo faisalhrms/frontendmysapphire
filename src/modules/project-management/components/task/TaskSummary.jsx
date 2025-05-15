@@ -10,7 +10,7 @@ const TaskSummary = ({task, openTaskModal}) => {
                 <div className="box-header justify-between">
                     <div className="box-title">Task Summary</div>
                     <div className="btn-list">
-                        <HasProjectPermission globalPermission='change_task' users={task.project_users}>
+                        <HasProjectPermission globalPermission='pms.change_task' users={task.project_users}>
                         {
                             task.status !=='under_approval' && (
                                 <>

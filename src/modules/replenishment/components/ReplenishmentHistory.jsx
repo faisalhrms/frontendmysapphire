@@ -5,6 +5,7 @@ import {formatDate} from "@helpers/dateTime.js";
 import {toTitleCase} from "@helpers/formatters.js";
 
 const ReplenishmentHistory = () => {
+
     const columns = [
         {
             Header: 'File',
@@ -58,6 +59,7 @@ const ReplenishmentHistory = () => {
                 <div className="flex items-center">
                     <Avatar
                         avatar={row.original.created_by.avatar ? row.original.created_by.avatar : null}
+                        full_name={row.original.created_by?.full_name || 'N/A'}
                         size='sm'
                         parentClasses='bg-primary/10 !fill-primary'
                     />

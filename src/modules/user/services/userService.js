@@ -7,13 +7,13 @@ export const statuses = [
     { value: 'deactivated', label: 'Deactivated' }
 ];
 export const emailHost=[
-    {value:'o365',label:'O365'},
+    {value:'d365',label:'D365'},
     {value:'mdaemon',label:'Mdaemon'},
 ]
-export const yesNoDropDown=[
-    {value:'o365',label:'O365'},
-    {value:'mdaemon',label:'Mdaemon'},
-]
+export const booleanOptions = [
+    { value: true, label: "Yes" },
+    { value: false, label: "No" },
+];
 
 
 export const createUser = async (userData) => {

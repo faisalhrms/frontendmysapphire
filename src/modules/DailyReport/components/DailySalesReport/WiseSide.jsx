@@ -1,30 +1,30 @@
 import React, { useEffect, useState, useRef } from "react";
 import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
 
-const StoreWise = ({ filters , expand }) => {
-    const [newData, setNewData] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const StoreWise = ({ filters , newData , error , loading , expand  }) => {
+
     const tableContainerRef = useRef(null);
     const [tableData, setTableData] = useState([]);
     const [expandedSections, setExpandedSections] = useState({});
 
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            const data = await fetchStoreWiseSaleData(filters?.date_from, filters);
-            setNewData(data || {});
-        } catch (err) {
-            console.error("Error fetching data:", err);
-            setError("Failed to fetch data. Please try again.");
-        } finally {
-            setLoading(false);
-        }
+    const formatNumberWithCommas = (num) => {
+        if (num === 0 || num == null) return "-";
+        return num.toLocaleString();
     };
 
-    useEffect(() => {
-        fetchData();
-    }, [filters]);
+
+    const toggleSection = (id) => {
+        console.log(id);
+        setExpandedSections(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+
+    useEffect(()=>{
+        toggleSection('ctype-Offline')
+    },[expand])
+
 
     useEffect(() => {
         if (Object.keys(newData).length > 0) {
@@ -66,7 +66,6 @@ const StoreWise = ({ filters , expand }) => {
                     if (southRow) initialExpanded[southRow.id] = true;
                 }
             }
-
             setExpandedSections(initialExpanded);
         }
     }, [newData]);
@@ -231,17 +230,9 @@ const StoreWise = ({ filters , expand }) => {
         return tableData;
     };
 
-    const toggleSection = (id) => {
-        console.log(id);
-        setExpandedSections(prev => ({
-            ...prev,
-            [id]: !prev[id]
-        }));
-    };
 
-    useEffect(()=>{
-        toggleSection('ctype-Offline')
-    },[expand])
+
+
 
     const isVisible = (row) => {
         if (row.parentId === null) {
@@ -263,12 +254,15 @@ const StoreWise = ({ filters , expand }) => {
     const formatNumber = (num) => {
         if (typeof num !== "number") return num;
         return num.toLocaleString();
+
     };
 
     const getRowStyle = (row) => {
-        if (row.isHeader) return "bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg ";
+        if (row.isHeader) return " font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]";
         if (row.isSubHeader) return "bg-gray-200 font-medium";
         return "";
+
+
     };
 
     if (loading) return <div>Loading...</div>;
@@ -278,25 +272,25 @@ const StoreWise = ({ filters , expand }) => {
 
     return (
         <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-0 ">
-            <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
+            <div className="p-2 sm:p-4 bg-white rounded-lg dark:text-gray-200 dark:bg-bodybg">
                 <div className="relative" ref={tableContainerRef} style={{height: "70vh"}}>
                     <div className="overflow-auto h-full" style={{maxHeight: "calc(100% - 0px)"}}>
-                        <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg">
+                        <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg min-w-max">
                             <thead className="sticky top-0 z-30">
-                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
-                                <th className="border border-gray-700 p-2 font-bold min-w-80 sticky left-0 z-40"
-                                    style={{backgroundColor: "#0b3588", color: "white"}}>
+                            <tr style={{backgroundColor: "#383853", color: "white"}}>
+                                <th className="border border-gray-700 p-2 font-bold min-w-60 sticky left-0 z-40 bg-[#383853] text-white"
+                                    style={{backgroundColor: "#383853", color: "white"}}>
                                     Store Type
                                 </th>
                                 {dateHeaders.map((date, index) => (
                                     <th
                                         key={index}
-                                        className="border border-gray-700 p-2 font-normal text-center min-w-28"
+                                        className="border border-gray-700 p-2 font-normal text-center min-w-28 bg-[#383853] text-white"
                                     >
                                         {date}
                                     </th>
                                 ))}
-                                <th className="border border-gray-900 p-2 font-bold text-center min-w-28">
+                                <th className="border border-gray-900 p-2 font-bold text-center min-w-28 bg-[#383853] text-white">
                                     Total
                                 </th>
                             </tr>
@@ -309,7 +303,7 @@ const StoreWise = ({ filters , expand }) => {
                                 let leftColBgColor = "bg-white";
 
                                 if (row.isHeader) {
-                                    leftColBgColor = "bg-gray-200";
+                                    leftColBgColor = " bg-[#949eb7]";
                                 } else if (row.isSubHeader) {
                                     leftColBgColor = row.indent === 0 ? "bg-gray-200" :
                                         row.indent === 1 ? "bg-gray-200" :
@@ -343,13 +337,13 @@ const StoreWise = ({ filters , expand }) => {
                                                 key={valueIndex}
                                                 className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"
                                             >
-                                                {formatNumber(value)}
+                                                {formatNumberWithCommas(value)}
                                             </td>
                                         ))}
 
-                                        <td className="border border-gray-300 p-2 text-right font-bold dark:text-gray-200 dark:bg-bodybg"
-                                            style={{backgroundColor: "rgb(37 73 177 / 85%)", color: "white"}}>
-                                            {formatNumber(rowTotal)}
+                                        <td className="border border-gray-300 p-2 text-right font-bold dark:text-gray-200 dark:bg-bodybg "
+                                            style={{backgroundColor: "rgb(77, 88, 117)", color: "white"}}>
+                                            {formatNumberWithCommas(rowTotal)}
                                         </td>
                                     </tr>
                                 );

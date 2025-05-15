@@ -1,5 +1,5 @@
 import { generateSidebarItem } from "@helpers/formatters.js";
-import {DAILYREPORT_ROUTES} from "@modules/DailyReport/routes.js";
+import {DAILYREPORT_ROUTES, OFFLINE_STORE_PERFORMANCE_ROUTE} from "@modules/DailyReport/routes.js";
 
 export const sidebarMenu = [
     generateSidebarItem(
@@ -7,7 +7,7 @@ export const sidebarMenu = [
         "sub",
         "Retail",
         9,
-        "bx bx-box",
+        "bi bi-collection",
         "",
         [
             generateSidebarItem(
@@ -22,10 +22,19 @@ export const sidebarMenu = [
                 DAILYREPORT_ROUTES.CREATE.path,
                 "link",
                 "Comparative Sales Report",
-                2,
+                3,
                 "bx bx-message-square-edit",
                 DAILYREPORT_ROUTES.CREATE.permission,
-            )
+            ),
+            generateSidebarItem(
+                OFFLINE_STORE_PERFORMANCE_ROUTE.READ.path,
+                "link",
+                "Offline Store Report",
+                2,
+                "bx bx-message-square-edit",
+                OFFLINE_STORE_PERFORMANCE_ROUTE.READ.permission,
+            ),
+
 
         ]
     )

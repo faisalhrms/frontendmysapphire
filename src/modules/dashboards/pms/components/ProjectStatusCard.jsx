@@ -3,13 +3,16 @@ import {getChangeStyles, getStatusStyles} from "@helpers/statusStyles.js";
 import CountUp from "react-countup";
 import SvgIcon from "@components/SvgIcon.jsx";
 import PercentageIcon from "@components/PercentageIcon.jsx";
+import {useNavigate} from "react-router-dom";
 
 const ProjectStatusCard = ({ item }) => {
+    const navigate = useNavigate();
     const { status, last_month, total, percentage_change } = item;
     const styles = getStatusStyles(status);
     const { changeClass, arrowIconClass, ariaLabel } = getChangeStyles(percentage_change);
+
     return (
-        <div className="box !mb-0">
+        <div className="box !mb-0 hover:shadow-lg transition-all duration-200">
             <div className="box-body">
                 <div className="grid grid-cols-12">
                     <div className="col-span-8 pe-0">

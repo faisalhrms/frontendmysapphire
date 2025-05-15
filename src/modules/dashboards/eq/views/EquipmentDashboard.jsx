@@ -44,7 +44,7 @@ const EquipmentDashboard = () => {
                 activepage="Dashboards"
                 mainpage="Asset Management System"
             />
-            <HasPermission permission='equipment_dashboard_filters'>
+            <HasPermission permission='auth.equipment_dashboard_filters'>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <EquipmentDashboardFilter control={control} errors={errors} />
                 </form>

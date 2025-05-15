@@ -1,11 +1,11 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState , useEffect} from 'react';
 import '@assets/css/custom/project.css';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import MilestoneAccordion from "@modules/project-management/components/project/MilestoneAccordion.jsx";
 import MilestoneModel from "@modules/project-management/components/model/MilestoneModel.jsx";
 import {useMilestoneModal} from "@modules/project-management/hooks/milestoneHooks.js";
 import TaskModel from "@modules/project-management/components/model/TaskModel.jsx";
-import {useTaskDetailModal, useTaskModal, useTaskOverdueModal} from "@modules/project-management/hooks/taskHooks.js";
+import { useTaskModal, useTaskOverdueModal} from "@modules/project-management/hooks/taskHooks.js";
 import sampleFile from "@assets/files/sample_upload_tasks_against_milestone.xlsx";
 import {useMilestoneSearch} from "@modules/project-management/hooks/projectHooks.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
@@ -55,6 +55,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
   const { isFullscreen, handleFullscreenClick } = useFullScreen();
   const containerHeight = isFullscreen ? "calc(100vh - 100px)" : '500px';
 
+  console.log(isFullscreen);
+
   const {
     taskName,
     openTaskOverdueModal,
@@ -68,18 +70,18 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
     dates
   } = useTaskOverdueModal(refetch)
 
-  const {
-    openTaskDetailModal,
-    closeTaskDetailModal,
-    isTaskDetailModalOpen,
-    isTaskDetailLoading,
-    task,
-  } = useTaskDetailModal()
-
+  // const {
+  //   openTaskDetailModal,
+  //   closeTaskDetailModal,
+  //   isTaskDetailModalOpen,
+  //   isTaskDetailLoading,
+  //   task,
+  // } = useTaskDetailModal()
+    const isExpanded = true;
   return (
       <>
-        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`}>
-          <div className="box-header">
+        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`} style={{maxHeight:isFullscreen?'100vh':'50vh', overflowY:'auto'}}>
+          <div className="box-header bg-white dark:bg-bodybg" style={{ position: 'sticky', top: '0', left: '0', width: '100%', zIndex: 10 }}>
             <div className="box-title">Milestone Detail</div>
             <div className="flex items-center space-x-2">
               <input
@@ -90,7 +92,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                   onChange={(e) => setSearchTerm(e.target.value)}
               />
               <div className="flex space-x-2">
-                <HasProjectPermission globalPermission='change_project' users={projectUsers}>
+                <HasProjectPermission globalPermission='pms.change_project' users={projectUsers}>
                   <a
                       href={sampleFile}
                       download="sample_upload_tasks_against_milestone.xlsx"
@@ -114,13 +116,15 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                 >
                   <i className="ri-refresh-line font-semibold align-middle"></i> Refresh
                 </button>
-                <Link aria-label="anchor" to="#" className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen" onClick={handleFullscreenClick}>
+                <Link aria-label="anchor" to="#"
+                      className="flex items-center justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-light border-light shadow-none !font-medium terms-fullscreen"
+                      onClick={handleFullscreenClick}>
                   <i className="ri-fullscreen-line"></i>
                 </Link>
               </div>
             </div>
           </div>
-          <SimpleBar style={{ maxHeight: containerHeight }}>
+
             <div className="box-body">
               {isLoading ? (
                   <LoadingSpinner/>
@@ -134,11 +138,10 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                       handleUploadModal={handleUploadModal}
                       refetch={refetch}
                       openTaskOverdueModal={openTaskOverdueModal}
-                      openTaskDetailModal={openTaskDetailModal}
                   />
               )}
             </div>
-          </SimpleBar>
+
         </div>
 
         <MilestoneModel
@@ -184,10 +187,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
             />
         }
 
-        {
-            isTaskDetailModalOpen &&
-            <TaskDetailModal task={task} isLoading={isTaskDetailLoading} closeModal={closeTaskDetailModal} />
-        }
+        <div id="modal-root"></div>
       </>
   );
 };

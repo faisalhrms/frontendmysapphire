@@ -12,8 +12,11 @@ import HasProjectPermission from "@modules/project-management/components/project
 import {useSelector} from "react-redux";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {useDelete} from "@hooks/useDelete.js";
+import TaskDeadLineItem from "@modules/project-management/components/task/TaskDeadLineItem.jsx";
+import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
+import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false, needTarget = false }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false, needTarget = false }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -30,6 +33,16 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
 
 
     const { handleDeleteClick } = useDelete();
+    const {
+        openTaskDetailModal,
+        closeTaskDetailModal,
+        isTaskDetailModalOpen,
+        isTaskDetailLoading,
+        task,
+    } = useTaskDetailModal()
+
+
+
 
     const sortedTasks = useMemo(() => {
         let sortableTasks = [...tasks];
@@ -68,9 +81,12 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
         };
     };
 
+
+
     return (
         <>
             <div className={`table-responsive task-table`}>
+
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
@@ -85,10 +101,11 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 {getSortIconAndClass('priority').icon}
                             </span>
                         </th>
+
                         <th
                             scope="col"
-                            onClick={() => requestSort('name')}
-                            className="cursor-pointer"
+
+                            className="cursor-pointer dark:text-gray-200 dark:bg-bodybg"
                         >
                             {isChild ? "Sub Task Name" : "Task Name"}
                             <span className={`ml-1 ${getSortIconAndClass('name').className}`}>
@@ -226,8 +243,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                              )
                                          }
                                      })()}
-                                            <HasProjectPermission globalPermission='add_task' users={projectUsers}
-                                                                  needIcon={true}>
+                                            <HasProjectPermission globalPermission='pms.add_task' users={projectUsers} needIcon={true}>
                                             {milestoneStatus === 'active' && task.status !== 'under_approval' && (
                                                 <Tooltip
                                                     id={`add-tooltip-${task.id}-add`}
@@ -244,7 +260,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
 
                                           </HasProjectPermission>
 
-                                        <HasProjectPermission globalPermission='change_task' users={projectUsers}>
+                                        <HasProjectPermission globalPermission='pms.change_task' users={projectUsers}>
                                             {task.status !== 'under_approval' &&
                                                 <Tooltip
                                                     id={`edit-tooltip-${task.id}-edit`}
@@ -258,7 +274,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
-                                        <HasProjectPermission globalPermission='delete_project' users={projectUsers}>
+                                        <HasProjectPermission globalPermission='pms.delete_project' users={projectUsers}>
                                             {
                                                 task.status !== 'under_approval' &&
                                                 <Tooltip
@@ -272,6 +288,14 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                 </Tooltip>
                                             }
                                         </HasProjectPermission>
+                                               <Tooltip
+                                                   id={`view-task-tooltip-${task.id}`}
+                                                   tooltipContent={`View Task (${task.name})`}>
+                                                   <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}
+                                                         className='ti-btn ti-btn-info ti-btn-sm'>
+                                                        <i className="ri-eye-line"></i>
+                                                   </Link>
+                                                </Tooltip>
                                     </span>
                                         </td>
                                     )
@@ -279,7 +303,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                 <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
                                 </td>
                                 <td>
-                                    <span className="flex items-center text-[0.80rem] text-[#323338]">
+                                    <span className="flex items-center dark:text-gray-200 dark:bg-bodybg">
                                         <span onClick={() => toggleSubTasks(task.id)}>
                                             {task.children && task.children.length > 0 && (
                                                 <svg
@@ -300,73 +324,27 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         <Tooltip
                                             id={`task-tooltip-${task.id}`}
                                             tooltipContent={`${task.name}`}>
-                                            <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)} {...(needTarget ? { target: "_blank" } : {})}>
-                                              {getExcerptFromText(task.name, 80)}
-                                                {task.children && task.children.length > 0 && (
-                                                    <span className="badge bg-primary/10 text-primary ms-2">
-                                                            {task.children.length}
-                                                        </span>)
-                                                }
+                                            <Link
+                                                onClick={() => {openTaskDetailModal(task.id)}}
+                                             to="#">
+                                                {getExcerptFromText(task.name, 80)}
                                             </Link>
                                         </Tooltip>
                                     </span>
                                 </td>
                                 <td className='text-center'><AvatarList users={task.users} max={4}/></td>
                                 <td>
-                                    {(
-                                        task.teams?.map(team => (
-                                            <span key={team.id}>{toTitleCase(team.name)}</span>
-                                        ))
-                                    )}
+                                    {task.teams?.map(team => toTitleCase(team.name)).join(', ')}
                                 </td>
                                 <td>{formatDate(task.started_at)}</td>
                                 <td>{task?.aging} Days</td>
                                 <td>
                                     <div className="flex items-center">
-                                        {
-                                            task.completion_timeline !== null ?
-                                                <span className="me-6 text-success text-[1rem]">
-                                                <Tooltip
-                                                    id={`task-tooltip-${task.id}-info`}
-                                                    tooltipContent={`${task.completion_timeline < 0 ? `Done ${Math.abs(task.completion_timeline)} days after deadline` : 'Done on time'} `}
-                                                >
-                                                    {
-                                                        task.completion_timeline < 0
-                                                            ?
-                                                            <i className="ri-information-line cursor-pointer"></i>
-                                                            :
-                                                            <i className="ri-check-double-line cursor-pointer"></i>
-                                                    }
-                                                </Tooltip>
-                                            </span>
-                                                :
-                                                (
-                                                    task.is_overdue ?
-                                                        <span className="me-6 text-danger text-[1rem]">
-                                                            <Tooltip
-                                                                id={`task-tooltip-${task.id}-overdue`}
-                                                                tooltipContent={`Task is overdue by ${Math.abs(task.days_left)} days`}
-                                                            >
-                                                                <i className="ri-information-line cursor-pointer"></i>
-                                                            </Tooltip>
-                                                        </span>
-                                                        :
-                                                        <span className="me-6 text-secondary text-[1rem]">
-                                                            <Tooltip
-                                                                id={`task-tooltip-${task.id}-days_left`}
-                                                                tooltipContent={`${Math.abs(task.days_left)} days left`}
-                                                            >
-                                                                <i className="ri-information-line cursor-pointer"></i>
-                                                            </Tooltip>
-                                                        </span>
-                                                )
-                                        }
-                                        <span
-                                            className={task.completed_at ? 'line-through' : (task.is_overdue ? 'line-through text-danger' : '')}>
-                                            {formatDate(task.ended_at)}
-                                        </span>
+                                        <TaskDeadLineItem task={task}/>
                                     </div>
                                 </td>
+
+
                                 <td>{formatDate(task.completed_at)}</td>
                                 <td className={`min-w-[200px] ${(projectUser?.can_view_only || viewOnly) ? `!p-0 ${getBadgeClasses(task.status, '', false)}` : ''}`}>
                                     {(() => {
@@ -389,11 +367,15 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         <ProgressBar value={task.progress} barColor='!bg-success' withStatus={false}/>
                                     </div>
                                 </td>
-                                <td><AvatarList users={task.external_users} max={4}/></td>
+                                <td><AvatarList users={task.external_users} max={4}
+                                                full_name={task.avatar?.full_name || 'N/A'}/></td>
                                 <td className="min-w-[180px]">
                                     <div className="flex items-center flex-wrap">
                                         <div className="me-2 leading-none">
-                                            <Avatar avatar={task?.created_by?.avatar} size='xs'/>
+                                            <Avatar avatar={task?.created_by?.avatar} size='xs'
+                                                    full_name={task.created_by?.full_name || 'N/A'}/>
+
+
                                         </div>
                                         <span>{toTitleCase(task?.created_by?.full_name)}</span>
                                     </div>
@@ -407,15 +389,26 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                                    startedAt={task.started_at} endedAt={task.ended_at}
                                                    tasks={task.children} openTaskModal={openTaskModal} isChild={true}
                                                    refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}
-                                                   openTaskDetailModal={openTaskDetailModal} viewOnly={viewOnly}/>
+                                                   viewOnly={viewOnly}
+                                        />
                                     </td>
                                 </tr>
                             )}
-                        </React.Fragment>))}
+                        </React.Fragment>
+                    ))}
                     </tbody>
                 </table>
             </div>
+            {
+                isTaskDetailModalOpen &&
+                <TaskDetailModalPortal
+                    task={task}
+                    isLoading={isTaskDetailLoading}
+                    closeModal={closeTaskDetailModal}
+                />
+            }
         </>
+
     );
 };
 

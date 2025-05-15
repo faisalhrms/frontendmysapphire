@@ -8,7 +8,7 @@ import Avatar from "@components/Avatar.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false , setShow , setViewData }) => {
 
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 
@@ -36,8 +36,10 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
     return (
         <>
             <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
-                <div className="hs-accordion-group">
-                {Array.isArray(milestones) && milestones.map((milestone) => (<div
+                <div className="hs-accordion-group ">
+
+                {Array.isArray(milestones) && milestones.map((milestone) => (
+                    <div
                     className={`hs-accordion accordion-item mb-4 ${milestone.priority === 'low' ? 'custom-accordion-primary' : (milestone.priority === 'medium' ? 'custom-accordion-secondary' : 'custom-accordion-danger')}`}
                     key={milestone.id}>
                     <button
@@ -100,7 +102,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Priority</p>
                                         <span className={getBadgeClasses(milestone.priority)}>{toTitleCase(milestone.priority)}</span>
-                                        
+
                                     </div>
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Started At</p>
@@ -113,46 +115,58 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Created By</p>
                                         <div className="flex items-center flex-wrap">
-                                            <div className="me-2 leading-none">
-                                                <Avatar avatar={milestone?.created_by?.avatar} size='xs'/>
+                                            <div className="me-2 leading-none flex items-center">
+                                                <Avatar avatar={milestone?.created_by?.avatar} size='xs'
+                                                        full_name={milestone?.created_by?.full_name || 'N/A'}
+
+                                                />
+                                                <div className='ms-2'>
+                                                    <p className="font-semibold mb-0 flex items-center">
+                                                        {milestone?.created_by?.full_name || 'N/A'}
+                                                    </p>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     {
                                         !viewOnly &&
-                                        <HasProjectPermission globalPermission='change_project' users={projectUsers}>
-                                            <div className="flex flex-col items-center">
-                                                <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
-                                                <div className="flex space-x-2">
-                                                    <Tooltip
-                                                        id={`edit-milestone-tooltip-${milestone.id}`}
-                                                        tooltipContent={`Edit Milestone (${milestone.name})`}>
-                                                        <span className="text-primary !py-1 !text-[0.75rem]"
-                                                              onClick={() => openMilestoneModal(milestone.id, true)}>
-                                                            <i className="ri-edit-line align-middle"></i>
-                                                        </span>
-                                                    </Tooltip>
-                                                    {
-                                                        handleUploadModal &&
+                                        <div className="flex flex-col items-center">
+                                            <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
+                                            <div className="flex space-x-2">
+                                                    <HasProjectPermission globalPermission='pms.change_project' users={projectUsers}>
                                                         <Tooltip
-                                                            id={`upload-tasks-tooltip-${milestone.id}`}
-                                                            tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}>
-                                                        <span className="text-info !py-1 !text-[0.75rem]"
-                                                              onClick={() => handleUploadModal(milestone.id, 'T')}>
-                                                            <i className="ri-file-upload-line align-middle"></i>
-                                                        </span>
+                                                            id={`edit-milestone-tooltip-${milestone.id}`}
+                                                            tooltipContent={`Edit Milestone (${milestone.name})`}>
+                                                            <span className="text-primary !py-1 !text-[0.75rem]"
+                                                                  onClick={() => openMilestoneModal(milestone.id, true)}>
+                                                                <i className="ri-edit-line align-middle"></i>
+                                                            </span>
                                                         </Tooltip>
-                                                    }
-                                                    <Tooltip
-                                                        id={`add-milestone-tooltip-${milestone.id}`}
-                                                        tooltipContent={`Add New Task In (${milestone.name})`}>
-                                                        <span
-                                                            className="text-success !py-1 !text-[0.75rem] ms-1"
-                                                            onClick={() => openTaskModal(milestone.id, milestone.started_at, milestone.ended_at, milestone.requires_approval)}>
-                                                            <i className="ri-add-circle-line align-middle"></i>
-                                                        </span>
-                                                    </Tooltip>
-                                                    <HasProjectPermission globalPermission='delete_project' users={projectUsers}>
+                                                        {
+                                                            handleUploadModal &&
+                                                            <Tooltip
+                                                                id={`upload-tasks-tooltip-${milestone.id}`}
+                                                                tooltipContent={`Upload Tasks In Milestone (${milestone.name})`}>
+                                                                <span className="text-info !py-1 !text-[0.75rem]"
+                                                                      onClick={() => handleUploadModal(milestone.id, 'T')}>
+                                                                    <i className="ri-file-upload-line align-middle"></i>
+                                                                </span>
+                                                            </Tooltip>
+                                                        }
+                                                    </HasProjectPermission>
+                                                    <HasProjectPermission globalPermission='pms.add_task' users={projectUsers}>
+                                                        <Tooltip
+                                                            id={`add-task-tooltip-${milestone.id}`}
+                                                            tooltipContent={`Add New Task In (${milestone.name})`}>
+                                                                <span
+                                                                    className="text-success !py-1 !text-[0.75rem] ms-1"
+                                                                    onClick={() => openTaskModal(milestone.id, milestone.started_at, milestone.ended_at, milestone.requires_approval)}>
+                                                                    <i className="ri-add-circle-line align-middle"></i>
+                                                                </span>
+                                                        </Tooltip>
+                                                    </HasProjectPermission>
+                                                    <HasProjectPermission globalPermission='pms.delete_project' users={projectUsers}>
                                                         <Tooltip
                                                             id={`delete-milestone-tooltip-${milestone.id}`}
                                                             tooltipContent={`Delete Milestone (${milestone.name})`}>
@@ -164,7 +178,6 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                     </HasProjectPermission>
                                                 </div>
                                             </div>
-                                        </HasProjectPermission>
                                     }
                                 </div>
                             </div>
@@ -191,6 +204,8 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                 viewOnly={viewOnly}
                                 openTaskDetailModal={openTaskDetailModal}
                             />
+
+
                         </div>
                     </div>
                     )}

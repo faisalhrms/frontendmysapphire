@@ -1,73 +1,58 @@
 import React from 'react';
 
-const OnlineSalesGlobal = () => {
-    const getGrowthColor = (growth) => {
-        return growth.startsWith('-') ? 'text-danger' : 'text-success';
-    };
+const OnlineSalesTwo = ({ data ,getGrowthColor }) => {
 
+    const formatDate = (date) => {
+        if (!date) return '';
+        const formattedDate = new Date(date).toLocaleDateString('en-US', {
+            month: 'short',
+            year: '2-digit',
+        });
+        return formattedDate;
+    };
     return (
         <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
             <div className="mb-6">
                 <table className="w-full border-collapse">
-                    <thead>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
-                        <th className="bg-blue-300 border border-gray-300 p-2 text-center" rowSpan="2">A-Class</th>
+                    <thead  >
+                    <tr className="text-white bg-[#383853]">
+                        <th className="bg-blue-300 border border-gray-300 p-2 text-center" rowSpan="2">Category</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" colSpan="3">Local</th>
                         <th className="bg-blue-300 border border-gray-300 p-2 text-center" colSpan="3">Global (Excl. UK)</th>
                     </tr>
-                    <tr style={{backgroundColor: '#0b3588', color: 'white'}}>
-                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-25</th>
-                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-24</th>
+                    <tr className="text-white bg-[#4d5875]">
+                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.current?.to_date)}</th>
+                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.comparative?.to_date)}</th>
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Growth</th>
-                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-25</th>
-                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">Feb-24</th>
+                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.current?.from_date)}</th>
+                        <th className="bg-blue-200 border border-gray-300 p-2 text-center">{formatDate(data?.periods?.gregorian?.comparative?.from_date)}</th>
                         <th className="bg-blue-200 border border-gray-300 p-2 text-center">Growth</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td className="font-bold border border-gray-400 p-2">Unstitched Women</td>
-                        <td className="border border-gray-300 p-1 text-right">363,386,760</td>
-                        <td className="border border-gray-300 p-1 text-right">276,410,990</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("31%")}`}>31%</td>
-                        <td className="border border-gray-300 p-1 text-right">3,001,880</td>
-                        <td className="border border-gray-300 p-1 text-right">1,692,150</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("77%")}`}>77%</td>
-                    </tr>
-                    <tr>
-                        <td className="font-bold border border-gray-400 p-2">Stitched Women</td>
-                        <td className="border border-gray-300 p-1 text-right">44,943,870</td>
-                        <td className="border border-gray-300 p-1 text-right">60,285,930</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("-25%")}`}>-25%</td>
-                        <td className="border border-gray-300 p-1 text-right">16,716,560</td>
-                        <td className="border border-gray-300 p-1 text-right">10,224,250</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("63%")}`}>63%</td>
-                    </tr>
-                    <tr>
-                        <td className="font-bold border border-gray-400 p-2">Men's Stitched</td>
-                        <td className="border border-gray-300 p-1 text-right">2,000,460</td>
-                        <td className="border border-gray-300 p-1 text-right">4,680,360</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("-57%")}`}>-57%</td>
-                        <td className="border border-gray-300 p-1 text-right">2,489,480</td>
-                        <td className="border border-gray-300 p-1 text-right">2,037,340</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("22%")}`}>22%</td>
-                    </tr>
-                    <tr className="font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
-                        <td className="border border-gray-300 p-1 text-left">Total</td>
-                        <td className="border border-gray-300 p-1 text-right">434,812,611</td>
-                        <td className="border border-gray-300 p-1 text-right">393,254,868</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("-11%")}`}>-11%</td>
-                        <td className="border border-gray-300 p-1 text-right">25,450,600</td>
-                        <td className="border border-gray-300 p-1 text-right">18,330,400</td>
-                        <td className={`border border-gray-300 p-1 text-center ${getGrowthColor("39%")}`}>39%</td>
-                    </tr>
+                    {data?.category_sales?.map((item, idx) => (
+                        <tr
+                            key={idx}
+                            className={item.category === "Total" ? "font-bold bg-[#949eb7] dark:text-gray-200 dark:bg-bodybg text-black" : ""}
+                        >
+                            <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg   text-black">{item.category}</td>
+                            <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.local_?.this_year || "-"}</td>
+                            <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.local_?.last_year || "-"}</td>
+                            <td className={`border border-gray-300 p-1 font-bold text-center  ${getGrowthColor(item.local_?.growth)}`}>
+                                {item.local_?.growth}%
+                            </td>
+                            <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.global_?.this_year || "-"}</td>
+                            <td className="border border-gray-300 p-1 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{item.global_?.last_year || "-"}</td>
+                            <td className={`border border-gray-300 p-1 font-bold text-center  ${getGrowthColor(item.global_?.growth)}`}>
+                                {item.global_?.growth}%
+                            </td>
+                        </tr>
+                    ))}
                     </tbody>
                 </table>
             </div>
-
-
         </div>
     );
 };
 
-export default OnlineSalesGlobal;
+export default OnlineSalesTwo;

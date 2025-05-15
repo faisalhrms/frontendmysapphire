@@ -44,21 +44,22 @@ export const sidebarMenu = [
                 BEIRHOLM_BI_ROUTES.CORRECTION_PATTERN_READ.permission
             ),
             generateSidebarItem(
+                BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_LIST.path,
+                'link',
+                'Data Mapping Rules',
+                5,
+                '',
+                BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_LIST.permission
+            ),
+            generateSidebarItem(
                 BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_READ.path,
                 'link',
                 'Exchange Rates',
-                5,
+                6,
                 '',
                 BEIRHOLM_BI_ROUTES.EXCHANGE_RATE_READ.permission
             ),
-            generateSidebarItem(
-                BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_READ.path,
-                'link',
-                'Classifications',
-                6,
-                '',
-                BEIRHOLM_BI_ROUTES.IMPORTER_CLASSIFICATION_READ.permission
-            ),
+
             generateSidebarItem(
                 BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
                 'link',

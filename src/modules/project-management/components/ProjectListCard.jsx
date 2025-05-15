@@ -27,7 +27,7 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                 <span><i className="bi bi-eye"></i></span>
                             </Link>
                         </Tooltip>
-                        <HasProjectPermission globalPermission='change_project' users={project.users}>
+                        <HasProjectPermission globalPermission='pms.change_project' users={project.users}>
                             <Tooltip
                                 id={`project-tooltip-edit-${project.id}`}
                                 text={`(${project.project_no}) ${project.name}`}
@@ -47,7 +47,7 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                                 </button>
                             </Tooltip>
                         </HasProjectPermission>
-                        <HasProjectPermission globalPermission='delete_project' users={project.users}>
+                        <HasProjectPermission globalPermission='pms.delete_project' users={project.users}>
                             <Tooltip
                                 id={`project-tooltip-delete-${project.id}`}
                                 text={`(${project.project_no}) ${project.name}`}
@@ -92,7 +92,8 @@ const ProjectListCard = ({ project, openModal, refetch }) => {
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                         <div>
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Team:</span>
-                            <AvatarList users={project.users}/>
+                            <AvatarList users={project.users}
+                            />
                         </div>
                         <div>
                         <span

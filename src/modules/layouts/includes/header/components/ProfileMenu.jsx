@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {logout} from "@modules/auth/redux/authSlice.js";
 import Avatar from "@components/Avatar.jsx";
+import HasPermission from "@components/HasPermission.jsx";
+import {PMS_ROUTES} from "@modules/project-management/routes.js";
 
 const ProfileMenu = () => {
     const user = useSelector((state) => state.auth.user);
@@ -13,13 +15,15 @@ const ProfileMenu = () => {
         dispatch(logout());
         navigate(`${import.meta.env.BASE_URL}`);
     };
-
     return (
         <>
             <div className="header-element md:!px-[0.65rem] px-2 hs-dropdown !items-center ti-dropdown [--placement:bottom-left]">
                 <button id="dropdown-profile" type="button"
                     className="hs-dropdown-toggle ti-dropdown-toggle !gap-2 !p-0 flex-shrink-0 sm:me-2 me-0 !rounded-full !shadow-none text-xs align-middle !border-0 !shadow-transparent ">
-                    <Avatar avatar={user?.avatar} classes='online' />
+                    <Avatar avatar={user?.avatar} classes='online'
+                            full_name={user?.full_name || 'N/A'}
+
+                    />
                 </button>
                 <div className="md:block hidden dropdown-profile cursor-pointer">
                     <p className="font-semibold mb-0 leading-none text-[#536485] text-[0.813rem] ">
@@ -32,27 +36,30 @@ const ProfileMenu = () => {
                     aria-labelledby="dropdown-profile">
 
                     <ul className="text-defaulttextcolor font-medium dark:text-[#8c9097] dark:text-white/50">
+                        <HasPermission permission='user.view_ess_modules'>
+                            <li>
+                                <Link
+                                    className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex"
+                                    to={`${import.meta.env.BASE_URL}pages/profile/`}>
+                                    <i className="ti ti-user-circle text-[1.125rem] me-2 opacity-[0.7]"></i>Profile
+                                </Link>
+                            </li>
+                        </HasPermission>
+                        <HasPermission permission={PMS_ROUTES.TASK.READ.permission}>
+                            <li>
+                                <Link
+                                    className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex"
+                                    to={`${import.meta.env.BASE_URL}module/tasks/kanban-board`}>
+                                    <i className="ti ti-clipboard text-[1.125rem] me-2 opacity-[0.7]"></i>Task Manager
+                                </Link>
+                            </li>
+                        </HasPermission>
                         <li>
                             <Link
-                                className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex"
-                                to={`${import.meta.env.BASE_URL}pages/profile/`}>
-                                <i className="ti ti-user-circle text-[1.125rem] me-2 opacity-[0.7]"></i>Profile
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                className="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex"
-                                to={`${import.meta.env.BASE_URL}module/tasks/kanban-board`}>
-                                <i className="ti ti-clipboard text-[1.125rem] me-2 opacity-[0.7]"></i>Task Manager
-                            </Link>
-                        </li>
-
-                        <li>
-                            <Link
-                            className="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex"
-                            to={`${import.meta.env.BASE_URL}`}
-                            onClick={handleLogout}>
-                            <i className="ti ti-logout text-[1.125rem] me-2 opacity-[0.7]"></i>Log Out
+                                className="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex"
+                                to={`${import.meta.env.BASE_URL}`}
+                                onClick={handleLogout}>
+                                <i className="ti ti-logout text-[1.125rem] me-2 opacity-[0.7]"></i>Log Out
                             </Link>
                         </li>
                     </ul>

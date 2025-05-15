@@ -82,3 +82,13 @@ export const updateServiceRequest = async (id, requestData) => {
         throw error;
     }
 };
+
+export const getUnreadCounts = async () => {
+    try {
+        const response = await api.get("/service-request/unread-counts/");
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching unread counts");
+        return { pending: 0, generated: 0, completed: 0, closed: 0 };
+    }
+};

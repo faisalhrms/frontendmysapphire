@@ -1,48 +1,59 @@
 import React, { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@components/form/FormInput.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
-import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-import { useUserManagementForm } from "@modules/user/hooks/userManagementHooks.js";  // Assuming you have a hook for submission
-import { emailHost } from "@modules/user/services/userService.js"; // Assuming email host comes from this service
+import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import FormButton from "@components/form/FormButton.jsx";
+import { useParams, useLocation } from "react-router-dom";
+import { useUserManagementForm } from "@modules/user/hooks/userManagementHooks.js";
+import { emailHost, booleanOptions } from "@modules/user/services/userService.js";
 import { formatOptions } from "@helpers/formatters.js";
 import userManagementSchema from "@modules/user/schemas/userManagementSchema.js";
 
-const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
-    const {
-        control,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-        setValue,
-    } = useForm({
-        resolver: zodResolver(userManagementSchema),  // Assuming you have a user schema
+const UserManagementForm = ({ userData = {}, isEditMode = false,initialInstance=false }) => {
+    const location = useLocation();
+    const fromApproval = Boolean(location.state?.fromApprovalList);
+    const { id } = useParams();
+    const queryParams = new URLSearchParams(location.search);
+    const passedFullName = queryParams.get('full_name') || userData?.user?.full_name;
+    const passedEmail = queryParams.get('email') || userData?.user?.email;
+
+    const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } = useForm({
+        resolver: zodResolver(userManagementSchema),
         defaultValues: {
             ...userData,
-            employee_id: userData?.employee_id || "", // Assuming userData has the employee_id
-            email_host: userData?.email_host || "",
+            email_host: userData?.email_host || null,
             erp_user: userData?.erp_user ?? false,
             one_drive: userData?.one_drive ?? false,
             ms_team: userData?.ms_team ?? false,
             backup_storage: userData?.backup_storage || 0,
-            subscriptions: userData?.subscriptions || [],
+            subscription_ids: userData?.subscription_ids || [],
+            assigned_email_host: userData?.assigned_email_host ?? false,
+            assigned_erp_user: userData?.assigned_erp_user ?? false,
+            assigned_one_drive: userData?.assigned_one_drive ?? false,
+            assigned_ms_team: userData?.assigned_ms_team ?? false,
+            assigned_backup_storage: userData?.assigned_backup_storage ?? false,
+            assigned_subscriptions: userData?.assigned_subscriptions ?? false,
         },
     });
 
-    const { handleUserManagementSubmit } = useUserManagementForm(userData, isEditMode);
+    const { handleUserManagementSubmit } = useUserManagementForm(userData, isEditMode,initialInstance,fromApproval);
 
     useEffect(() => {
         if (userData) {
-            Object.keys(userData).forEach((key) => {
-                setValue(key, userData[key]);
-            });
+            Object.keys(userData).forEach(key => setValue(key, userData[key]));
         }
     }, [userData, setValue]);
 
+    const onSubmit = data => {
+        if (!isEditMode && id) data.user = parseInt(id);
+        handleUserManagementSubmit(data);
+    };
+
     return (
-        <form onSubmit={handleSubmit(handleUserManagementSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="md:col-span-12 sm:col-span-12 col-span-12">
                     <div className="box">
@@ -51,94 +62,182 @@ const UserManagementForm = ({ userData = {}, isEditMode = false }) => {
                         </div>
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
-                                {/* ---------- Employee ---------- */}
+                                {/* Display User Full Name and Email */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormAsyncSelect
-                                        name="employee_id"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Employee"
-                                        apiUrl="/select/employees-by-full-reporting-hierarchy/"
-                                        queryKeyBase="employees"
-                                        clientSideSearch={false}
-                                        preselectedOptions={formatOptions(userData, "employee")}
-                                        isRequired={true}
-                                    />
+                                    <div className="form-group">
+                                        <label className="form-label">Full Name</label>
+                                        <p className="form-text">{passedFullName}</p></div>
+                                </div>
+
+                                <div className="xl:col-span-4 col-span-12">
+                                    <div className="form-group">
+                                        <label className="form-label">Email</label>
+                                        <p className="form-text">{passedEmail}</p>  {/* Showing the passed email */}
+                                    </div>
                                 </div>
 
                                 {/* ---------- Email Host ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormSelect
-                                        name="email_host"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Email Host"
-                                        options={emailHost}  // Static options
-                                        isRequired={true}
-                                    />
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                            <FormSelect
+                                                name="email_host"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Email Host"
+                                                options={emailHost}
+                                                isRequired={!fromApproval}
+                                                isDisabled={fromApproval}
+                                            />
+                                        </div>
+                                        {fromApproval && (
+                                            <FormCheckbox
+                                                name="assigned_email_host"
+                                                control={control}
+                                                errors={errors}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
+
 
                                 {/* ---------- ERP User ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormCheckbox
-                                        name="erp_user"
-                                        control={control}
-                                        errors={errors}
-                                        label="ERP User"
-                                    />
-                                </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                            <FormSelect
+                                                name="erp_user"
+                                                control={control}
+                                                errors={errors}
+                                                label="ERP User"
+                                                isClearable={false}
+                                                placeholder="ERP User"
+                                                options={booleanOptions}
+                                                isRequired={!fromApproval}
+                                                isDisabled={fromApproval}
+                                            />
+                                        </div>
+                                            {fromApproval && (
+                                                <FormCheckbox
+                                                    name="assigned_erp_user"
+                                                    control={control}
+                                                    errors={errors}
+                                                />
+                                            )}
+                                    </div>
+                                        </div>
 
-                                {/* ---------- One Drive ---------- */}
+                                        {/* ---------- One Drive ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormCheckbox
-                                        name="one_drive"
-                                        control={control}
-                                        errors={errors}
-                                        label="One Drive"
-                                    />
-                                </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                            <FormSelect
+                                                name="one_drive"
+                                                control={control}
+                                                isClearable={false}
+                                                errors={errors}
+                                                placeholder="One Drive"
+                                                label="One Drive"
+                                                options={booleanOptions}
+                                                isRequired={!fromApproval}
+                                                isDisabled={fromApproval}
+                                            />
+                                        </div>
+                                            {fromApproval && (
+                                                <FormCheckbox
+                                                    name="assigned_one_drive"
+                                                    control={control}
+                                                    errors={errors}
 
-                                {/* ---------- MS Team ---------- */}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+
+                                        {/* ---------- MS Team ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormCheckbox
-                                        name="ms_team"
-                                        control={control}
-                                        errors={errors}
-                                        label="MS Team"
-                                    />
-                                </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                            <FormSelect
+                                                name="ms_team"
+                                                control={control}
+                                                errors={errors}
+                                                isClearable={false}
+                                                placeholder="MS Team"
+                                                label="MS Team"
+                                                options={booleanOptions}
+                                                isRequired={!fromApproval}
+                                                isDisabled={fromApproval}
+                                            />
+                                        </div>
+                                            {fromApproval && (
+                                                <FormCheckbox
+                                                    name="assigned_ms_team"
+                                                    control={control}
+                                                    errors={errors}
 
-                                {/* ---------- Backup Storage ---------- */}
+                                                />
+                                            )}
+                                    </div>
+                                        </div>
+
+                                        {/* ---------- Backup Storage ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormInput
-                                        name="backup_storage"
-                                        type="number"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Backup Storage"
-                                    />
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                            <FormInput
+                                                name="backup_storage"
+                                                type="number"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Backup Storage"
+                                                disabled={fromApproval}
+                                            />
+                                        </div>
+                                            {fromApproval && (
+                                                <FormCheckbox
+                                                    name="assigned_backup_storage"
+                                                    control={control}
+                                                    errors={errors}
+
+                                                />
+                                            )}
+                                        </div>
                                 </div>
 
-                                {/* ---------- Subscriptions ---------- */}
+                                        {/* ---------- Subscriptions ---------- */}
                                 <div className="xl:col-span-4 col-span-12">
-                                    <FormAsyncSelect
-                                        name="subscriptions"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Subscriptions"
-                                        isMulti={true}
-                                        apiUrl="/select/subscriptions/"
-                                        queryKeyBase="subscriptions"
-                                        preselectedOptions={formatOptions(userData, "subscriptions")}
-                                        isRequired={true}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex-1">
+                                            <FormAsyncSelect
+                                                name="subscription_ids"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Subscriptions"
+                                                isMulti={true}
+                                                apiUrl="/select/subscriptions/"
+                                                queryKeyBase="subscriptions"
+                                                preselectedOptions={formatOptions(userData, "subscriptions")}
+                                                isRequired={!fromApproval}
+                                                isDisabled={fromApproval}
+                                            />
+                                        </div>
+                                            {fromApproval && (
+                                                <FormCheckbox
+                                                    name="assigned_subscriptions"
+                                                    control={control}
+                                                    errors={errors}
 
-                        <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
-                            <FormButton isLoading={isSubmitting} />
-                        </div>
+                                                />
+                                            )}
+                                        </div>
+                                </div>
+                                    </div>
+                                </div>
+
+                                <div className="px-6 py-4 border-t border-dashed sm:flex justify-end">
+                                <FormButton isLoading={isSubmitting}/>
+                                </div>
                     </div>
                 </div>
             </div>

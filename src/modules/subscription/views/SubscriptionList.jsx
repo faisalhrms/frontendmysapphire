@@ -25,14 +25,14 @@ const SubscriptionList = () => {
             disableSortBy: true,
             Cell: ({ row }) => (
                 <div className="flex space-x-2">
-                    <HasPermission permission="change_subscription">
+                    <HasPermission permission="subscription.change_subscription">
                         <Link to={`/module/subscription/edit/${row.original.id}`}>
                             <button className="ti-btn ti-btn-primary ti-btn-sm">
                                 <i className="ri-edit-line"></i>
                             </button>
                         </Link>
                     </HasPermission>
-                    <HasPermission permission="view_subscription">
+                    <HasPermission permission="subscription.view_subscription">
                         <Link to={`/module/subscription/detail/${row.original.id}`}>
                             <button className="ti-btn ti-btn-info ti-btn-sm">
                                 <i className="ri-eye-line"></i>
@@ -81,7 +81,7 @@ const SubscriptionList = () => {
 
     const buttons = (
         <div className="flex items-center space-x-2">
-            <HasPermission permission="add_subscription">
+            <HasPermission permission="subscription.add_subscription">
                 <Link
                     to={SUBSCRIPTION_ROUTES.CREATE.path}
                     className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"

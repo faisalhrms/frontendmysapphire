@@ -1,59 +1,37 @@
-import React, { useEffect, useState } from "react";
+// UserManagementList.jsx
+import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
+import UserManagementTable from "@modules/user/components/UserManagementTable.jsx"; // Importing UserManagementTable
+import { useUserManagementList } from "@modules/user/hooks/userManagementHooks.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx"; // Importing hook
 
-const UserManagementList = (props) => {
+const UserManagementList = () => {
     const { search } = useLocation();
     const params = new URLSearchParams(search);
-    const statusFilter = params.get('status') || ''; // Example of using search parameters for filters
+    const statusFilter = params.get("status") || ""; // Example of using search parameters for filters
 
-    // Setting up columns
-    const columns = [
+    const { users, loading, error } = useUserManagementList(1, 10, statusFilter); // Fetching users with status filter
 
-        { Header: "Full Name", accessor: "user.full_name" },
-        { Header: "Email", accessor: "user.email" },
-        {
-            Header: "Email Host",
-            accessor: "email_host",
-            Cell: ({ value }) => value === null ? "N/A" : value ? "Yes" : "No"
-        },
-        {
-            Header: "ERP User",
-            accessor: "erp_user",
-            Cell: ({ value }) => value === null ? "N/A" : value ? "Yes" : "No"
-        },
-        {
-            Header: "One Drive",
-            accessor: "one_drive",
-            Cell: ({ value }) => value === null ? "N/A" : value ? "Yes" : "No"
-        },
-        {
-            Header: "MS Team",
-            accessor: "ms_team",
-            Cell: ({ value }) => value === null ? "N/A" : value ? "Yes" : "No"
-        },
-        {
-            Header: "Subscriptions",
-            accessor: "subscriptions",
-            Cell: ({ value }) => value.length === 0 ? "Null" : value
-        }
-    ];
+    if (loading) {
+        return <LoadingSpinner/>;
+    }
 
-    // Buttons (if needed for any specific actions like "Add User" or similar)
-
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
         <>
-            <PageHeader currentpage="User Management" mainpage="User Management" />
-            <DataTable
-                columns={columns}
-                title="User Management"
-                apiUrl={`/employee-details/list?status=${statusFilter}`} // Example API call with filter
+            <div className="p-3">
+                <div className="box">
+                    <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
+                        <UserManagementTable users={users}/> {/* Passing the users to the UserManagementTable */}
+                    </div>
+                </div>
+            </div>
+                    </>
+                    );
+                    };
 
-            />
-        </>
-    );
-};
-
-export default UserManagementList;
+                    export default UserManagementList;

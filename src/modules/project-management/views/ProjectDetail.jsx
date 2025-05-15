@@ -21,7 +21,6 @@ const ProjectDetail = () => {
   const { projectData } = useProject(id);
   const { milestones, isLoading, refetch } = useProjectMilestonesWithTasks(id);
   const { statistics, statsFetching, statsRefetch, statsError } = useProjectStatistics(id, 6, { enabled: false });
-
   const [importType, setImportType] = useState("M");
   const {
     openUploadModal,
@@ -67,18 +66,21 @@ const ProjectDetail = () => {
                                   project={projectData}
                                   handleUploadModal={handleUploadModal}
                               />
-                              <ProjectTree
-                                  projectId={projectData.id}
-                                  projectStatus={projectData.status}
-                                  approval={projectData.requires_approval}
-                                  startedAt={projectData.started_at}
-                                  endedAt={projectData.ended_at}
-                                  projectUsers={projectData.users}
-                                  milestones={milestones}
-                                  isLoading={isLoading}
-                                  refetch={refetch}
-                                  handleUploadModal={handleUploadModal}
-                              />
+
+                                <ProjectTree
+                                    projectId={projectData.id}
+                                    projectStatus={projectData.status}
+                                    approval={projectData.requires_approval}
+                                    startedAt={projectData.started_at}
+                                    endedAt={projectData.ended_at}
+                                    projectUsers={projectData.users}
+                                    milestones={milestones}
+                                    isLoading={isLoading}
+                                    refetch={refetch}
+                                    handleUploadModal={handleUploadModal}
+                                />
+
+
                               <Discussion
                                   title="Project Discussions"
                                   storeEndPoint={`/pms/projects/${id}/discussion/`}

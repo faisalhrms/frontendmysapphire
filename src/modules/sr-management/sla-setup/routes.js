@@ -6,7 +6,7 @@ import SlaSetupEdit from "@modules/sr-management/sla-setup/views/SlaSetupEdit.js
 export const SLA_SETUP_ROUTES = {
     READ: {
         path: "/module/sla/setup",
-        permission: "view_sr_sla",
+        permission: "sr_management.view_sr_sla",
     },
     CREATE: {
         path: '/module/sla/setup/add/',

@@ -14,7 +14,7 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                 <div className="box-header justify-between">
                     <div className="box-title">Project Summary</div>
                     <div className="flex items-center space-x-2">
-                        <HasProjectPermission globalPermission='change_project' users={project.users}>
+                        <HasProjectPermission globalPermission='pms.change_project' users={project.users}>
                             <div className="flex space-x-2">
                                 <a
                                     href={sampleFile}
@@ -51,7 +51,9 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                             <span className="block text-[#8c9097] dark:text-white/50 text-[0.75rem]">Manager</span>
                             <div className="flex items-center flex-wrap">
                                 <div className="me-2 leading-none">
-                                    <Avatar avatar={project.manager.avatar}/>
+                                    <Avatar avatar={project.manager.avatar}
+                                            full_name={project.avatar?.full_name || 'N/A'}/>
+
                                 </div>
                                 <span
                                     className="block text-[.875rem] dark:text-defaulttextcolor/70 font-semibold">{toTitleCase(project.manager.full_name)}</span>

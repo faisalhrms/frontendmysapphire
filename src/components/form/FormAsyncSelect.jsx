@@ -169,17 +169,18 @@ const FormAsyncSelect = ({
 
                             field.onChange(selectedValues);
 
-                            if (onSelectChange) {
-                                if (needObject) {
-                                    const updatedOption = selectedOption.map(opt => ({
-                                        id: opt.value,
-                                        name: opt.label,
-                                    }));
-                                    onSelectChange(updatedOption);
-                                } else {
-                                    onSelectChange(selectedValues);
-                                }
+                        if (onSelectChange) {
+                            if (needObject) {
+                               const payload = isMulti
+                                    ? selectedOption.map(opt => ({ id: opt.value, name: opt.label }))
+                                    : selectedOption
+                                        ? { id: selectedOption.value, name: selectedOption.label }
+                                        : null;
+                                onSelectChange(payload);
+                           } else {
+                                onSelectChange(selectedValues);
                             }
+                        }
                         }
                     }, [handleCreateOption, isMulti, onSelectChange, optionsWithSelected, field]);
 

@@ -2,9 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTargetSaleData } from "../../services/wiseside_services.js";
 
-const DailyTargetAchievementOnline = ({ filters }) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+const DailyTargetAchievementOnline = ({ data , loading }) => {
+    // const [data, setData] = useState([]);
+    // const [loading, setLoading] = useState(false);
+
+    console.log(data)
 
     const formatApiDate = (dayNumber) => {
         const day = dayNumber.toString();
@@ -27,56 +29,15 @@ const DailyTargetAchievementOnline = ({ filters }) => {
         return Number(result.toFixed(2));
     };
 
-    useEffect(() => {
-        if (filters.date_from && filters.date_to) {
-            setLoading(true);
 
-            fetchTargetSaleData(filters.date_from, filters)
-                .then((apiData) => {
-                    const startDate = parseDate(filters.date_from);
-                    const endDate = parseDate(filters.date_to);
-
-                    const filtered = apiData.filter((row) => {
-                        const rowDate = parseDate(formatApiDate(row.date));
-                        return rowDate >= startDate && rowDate <= endDate;
-                    });
-
-                    const computed = filtered.map((row) => {
-                        const fullPriceOfflineAch = calcAch(row.fullPriceOfflineSale, row.fullPriceOfflineTarget);
-                        const discountedOfflineAch = calcAch(row.discountedOfflineSale, row.discountedOfflineTarget);
-                        const totalOfflineAch = calcAch(row.totalOfflineSale, row.totalOfflineTarget);
-
-                        const fullPriceOnlineAch = calcAch(row.fullPriceOnlineSale, row.fullPriceOnlineTarget);
-                        const discountedOnlineAch = calcAch(row.discountedOnlineSale, row.discountedOnlineTarget);
-                        const totalOnlineAch = calcAch(row.totalOnlineSale, row.totalOnlineTarget);
-
-                        const totalAch = calcAch(row.totalSale, row.totalTarget);
-
-                        return {
-                            ...row,
-                            fullPriceOfflineAch,
-                            discountedOfflineAch,
-                            totalOfflineAch,
-                            fullPriceOnlineAch,
-                            discountedOnlineAch,
-                            totalOnlineAch,
-                            totalAch
-                        };
-                    });
-
-                    setData(computed.length > 0 ? computed : apiData);
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                    setLoading(false);
-                });
-        }
-    }, [filters]);
 
     const getAchColor = (achPercentage) => {
-        return achPercentage < 0 ? 'text-red-500' : 'text-green-500';
+        if (achPercentage === null || achPercentage === 0) {
+            return 'text-black';
+        }
+        return achPercentage < 0 ? 'text-danger' : 'text-emerald-600';
     };
+
 
     const getAchIcon = (achPercentage) => {
         return achPercentage < 0
@@ -135,79 +96,112 @@ const DailyTargetAchievementOnline = ({ filters }) => {
             {loading ? (
                 <div className="text-center py-4">Loading...</div>
             ) : (
-                <div className="relative">
+                <div className="relative overflow-x-auto">
 
-                    <div className="relative overflow-auto" style={{ maxHeight: '70vh'}}>
+                    <div className="w-full border-collapse border border-gray-400 table-auto">
                         <table className="w-full border-collapse border border-gray-400">
-                            <thead className="sticky top-0 z-10">
-                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
-                                <th rowSpan="2" className="border border-gray-400 p-2 font-bold sticky left-0 z-10"
-                                    style={{
-                                        backgroundColor: "#0b3588", color: "white"
-
-                                    }}
-                                >
+                            <thead className="sticky top-0 border border-gray-400  z-10">
+                            <tr style={{backgroundColor: "#383853", color: "white"}}>
+                                <th rowSpan="2"
+                                    className="border border-gray-400 p-2 font-bold sticky left-0 z-10 text-xs sm:text-sm"
+                                    style={{backgroundColor: "#383853", color: "white", minWidth: '80px'}}>
                                 </th>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-10"
-                                    style={{backgroundColor: "#0b3588", color: "white"}}
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center sticky left-12 sm:left-20 z-10 text-xs sm:text-sm"
+                                    style={{backgroundColor: "#383853", color: "white", minWidth: '80px'}}
                                 >Store Type
                                 </th>
-                                <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Offline
+                                <th colSpan="9"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Offline
                                 </th>
-                                <th colSpan="9" className="py-2 px-2 border border-gray-400 p-2 text-center">Online</th>
-                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
+                                <th colSpan="9"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Online
+                                </th>
+                                <th colSpan="3"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Total
+                                </th>
                             </tr>
-                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
+                            <tr style={{backgroundColor: "#383853", color: "white"}}>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center sticky left-20 z-1"
-                                    style={{backgroundColor: "#0b3588", color: "white"}}
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center sticky left-12 sm:left-20 z-1 text-xs sm:text-sm"
+                                    style={{backgroundColor: "#383853", color: "white"}}
                                 ></th>
-                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full
+                                <th colSpan="3"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Full
                                     Price
                                 </th>
                                 <th colSpan="3"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Discounted
                                 </th>
-                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
-                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Full
+                                <th colSpan="3"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Total
+                                </th>
+                                <th colSpan="3"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Full
                                     Price
                                 </th>
                                 <th colSpan="3"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center">Discounted
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-smr">Discounted
                                 </th>
-                                <th colSpan="3" className="py-2 px-2 border border-gray-400 p-2 text-center">Total</th>
-                                <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 text-center"></th>
+                                <th colSpan="3"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-sm">Total
+                                </th>
+                                <th colSpan="3"
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center text-xs sm:text-smr"></th>
                             </tr>
-                            <tr style={{backgroundColor: "#0b3588", color: "white"}}>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center sticky left-0 z-10"
-                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}>Date
+                            <tr style={{backgroundColor: "#4d5875", color: "white"}}>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center sticky left-0 z-10 text-xs sm:text-sm"
+                                    style={{
+                                        backgroundColor: "#4d5875",
+                                        color: "white",
+                                        minWidth: '60px',
+                                        maxWidth: '70px'
+                                    }}>Date
                                 </th>
                                 <th colSpan="1"
-                                    className="py-2 px-2 border border-gray-400 p-2 text-center font-bold  sticky left-20 z-10"
-                                    style={{backgroundColor: "#0b3588", color: "white", minWidth: '80px'}}>Day
+                                    className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold sticky left-12 sm:left-20 z-10 text-xs sm:text-sm"
+                                    style={{
+                                        backgroundColor: "#4d5875",
+                                        color: "white",
+                                        minWidth: '50px',
+                                        maxWidth: '60px'
+                                    }}>Day
                                 </th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Target</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Actual Sale</th>
-                                <th className="py-2 px-4 border border-gray-400 p-2 text-center">Ach%</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Target</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Actual
+                                    Sale
+                                </th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Ach%</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Target</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Actual
+                                    Sale
+                                </th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Ach%</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Target</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Actual
+                                    Sale
+                                </th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Ach%</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Target</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Actual
+                                    Sale
+                                </th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Ach%</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Target</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Actual
+                                    Sale
+                                </th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Ach%</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Target</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Actual
+                                    Sale
+                                </th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Ach%</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Target</th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Actual
+                                    Sale
+                                </th>
+                                <th className="py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center text-xs sm:text-sm">Ach%</th>
                             </tr>
                             </thead>
 
@@ -215,147 +209,147 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                             {data.map((row, index) => (
                                 <tr key={index}>
 
-                                    <td className="sticky  left-0  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
-                                    {formatApiDate(row.date)}
+                                    <td className="sticky left-0 z-20 py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center font-bold bg-white dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm whitespace-nowrap">
+                                        {formatApiDate(row.date)}
                                     </td>
-                                    <td className="sticky  left-20  font-bold  py-2 px-4 border border-gray-400 text-center bg-white dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky left-12 sm:left-20 z-20 py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center font-bold bg-white dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm whitespace-nowrap">
                                         {row.day}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.fullPriceOfflineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.fullPriceOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.fullPriceOfflineAch)}`}>
-                                        {getAchIcon(row.fullPriceOfflineAch)} {row.fullPriceOfflineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border font-bold border-gray-400 text-right text-xs sm:text-sm ${getAchColor(row.fullPriceOfflineAch)}`}>
+                                        {getAchIcon(row.fullPriceOfflineAch)} {row.fullPriceOfflineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.discountedOfflineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.discountedOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.discountedOfflineAch)}`}>
-                                        {getAchIcon(row.discountedOfflineAch)} {row.discountedOfflineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border font-bold border-gray-400 text-right text-xs sm:text-sm ${getAchColor(row.discountedOfflineAch)}`}>
+                                        {getAchIcon(row.discountedOfflineAch)} {row.discountedOfflineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.totalOfflineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.totalOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.totalOfflineAch)}`}>
-                                        {getAchIcon(row.totalOfflineAch)} {row.totalOfflineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border font-bold border-gray-400 text-right text-xs sm:text-sm ${getAchColor(row.totalOfflineAch)}`}>
+                                        {getAchIcon(row.totalOfflineAch)} {row.totalOfflineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.fullPriceOnlineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.fullPriceOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.fullPriceOnlineAch)}`}>
-                                        {getAchIcon(row.fullPriceOnlineAch)} {row.fullPriceOnlineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border font-bold border-gray-400 text-right text-xs sm:text-sm ${getAchColor(row.fullPriceOnlineAch)}`}>
+                                        {getAchIcon(row.fullPriceOnlineAch)} {row.fullPriceOnlineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.discountedOnlineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.discountedOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.discountedOnlineAch)}`}>
-                                        {getAchIcon(row.discountedOnlineAch)} {row.discountedOnlineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border font-bold border-gray-400 text-right text-xs sm:text-sm ${getAchColor(row.discountedOnlineAch)}`}>
+                                        {getAchIcon(row.discountedOnlineAch)} {row.discountedOnlineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.totalOnlineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.totalOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.totalOnlineAch)}`}>
-                                        {getAchIcon(row.totalOnlineAch)} {row.totalOnlineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border font-bold border-gray-400 text-right text-xs sm:text-sm ${getAchColor(row.totalOnlineAch)}`}>
+                                        {getAchIcon(row.totalOnlineAch)} {row.totalOnlineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.totalTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right text-xs sm:text-sm">
                                         {formatNumberWithCommas(row.totalSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center ${getAchColor(row.totalAch)}`}>
-                                        {getAchIcon(row.totalAch)} {row.totalAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border font-bold border-gray-400 text-right text-xs sm:text-sm ${getAchColor(row.totalAch)}`}>
+                                        {getAchIcon(row.totalAch)} {row.totalAch}%
                                     </td>
                                 </tr>
                             ))}
 
                             {data.length > 0 && (
-                                <tr className="bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg">
-                                    <td className="sticky left-0 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                                <tr className="font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">
+                                    <td className="sticky left-0 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                     </td>
-                                    <td className="sticky left-16 z-20 py-2 px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                                    <td className="sticky left-12 sm:left-16 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                         Total
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.fullPriceOfflineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.fullPriceOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.fullPriceOfflineAch)}`}>
-                                        {getAchIcon(totalsAch.fullPriceOfflineAch)} {totalsAch.fullPriceOfflineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm  ${getAchColor(totalsAch.fullPriceOfflineAch)}`}>
+                                        {getAchIcon(totalsAch.fullPriceOfflineAch)} {totalsAch.fullPriceOfflineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.discountedOfflineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.discountedOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.discountedOfflineAch)}`}>
-                                        {getAchIcon(totalsAch.discountedOfflineAch)} {totalsAch.discountedOfflineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ${getAchColor(totalsAch.discountedOfflineAch)}`}>
+                                        {getAchIcon(totalsAch.discountedOfflineAch)} {totalsAch.discountedOfflineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.totalOfflineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.totalOfflineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.totalOfflineAch)}`}>
-                                        {getAchIcon(totalsAch.totalOfflineAch)} {totalsAch.totalOfflineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ${getAchColor(totalsAch.totalOfflineAch)}`}>
+                                        {getAchIcon(totalsAch.totalOfflineAch)} {totalsAch.totalOfflineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.fullPriceOnlineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.fullPriceOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.fullPriceOnlineAch)}`}>
-                                        {getAchIcon(totalsAch.fullPriceOnlineAch)} {totalsAch.fullPriceOnlineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ${getAchColor(totalsAch.fullPriceOnlineAch)}`}>
+                                        {getAchIcon(totalsAch.fullPriceOnlineAch)} {totalsAch.fullPriceOnlineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.discountedOnlineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.discountedOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.discountedOnlineAch)}`}>
-                                        {getAchIcon(totalsAch.discountedOnlineAch)} {totalsAch.discountedOnlineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ${getAchColor(totalsAch.discountedOnlineAch)}`}>
+                                        {getAchIcon(totalsAch.discountedOnlineAch)} {totalsAch.discountedOnlineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.totalOnlineTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.totalOnlineSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold ${getAchColor(totalsAch.totalOnlineAch)}`}>
-                                        {getAchIcon(totalsAch.totalOnlineAch)} {totalsAch.totalOnlineAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ${getAchColor(totalsAch.totalOnlineAch)}`}>
+                                        {getAchIcon(totalsAch.totalOnlineAch)} {totalsAch.totalOnlineAch}%
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.totalTarget)}
                                     </td>
-                                    <td className="py-2 px-2 border border-gray-400 text-right font-bold">
+                                    <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">
                                         {formatNumberWithCommas(totals.totalSale)}
                                     </td>
-                                    <td className={`py-2 px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg ${getAchColor(totalsAch.totalAch)}`}>
-                                        {getAchIcon(totalsAch.totalAch)} {totalsAch.totalAch}
+                                    <td className={`py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm ${getAchColor(totalsAch.totalAch)}`}>
+                                        {getAchIcon(totalsAch.totalAch)} {totalsAch.totalAch}%
                                     </td>
                                 </tr>
                             )}
@@ -364,7 +358,7 @@ const DailyTargetAchievementOnline = ({ filters }) => {
                     </div>
                 </div>
             )}
-            <div className="mt-4 text-xs text-danger text-left ml-4 font-bold">
+            <div className="mt-4 text-xs text-red-600 text-left ml-4 font-bold">
                 <p>*Omni Added in E-Store and Excluded from B&M.</p>
             </div>
         </div>

@@ -3,7 +3,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import PageHeader from '@modules/layouts/includes/PageHeader';
 import DataTable from "@components/DataTable.jsx";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import Phone from "@mui/icons-material/Phone";
@@ -14,7 +14,7 @@ import HasPermission from "@components/HasPermission.jsx";
 import Avatar from "@components/Avatar.jsx";
 import { USER_ROUTES } from '@modules/user/routes';
 import useFilters from "@hooks/useFilters.js";
-import UserListFilter from "@modules/user/components/UserListFilter.jsx"; // Ensure the correct path is used
+import UserListFilter from "@modules/user/components/UserListFilter.jsx";
 
 const UserList = () => {
 
@@ -41,7 +41,6 @@ const UserList = () => {
     );
 
     const [filters, setFilters] = useState(getFilters());
-    console.log(`this is filter`, filters);
     const onSubmit = useCallback((formData) => {
         setFilters(formData);
     }, []);
@@ -51,25 +50,24 @@ const UserList = () => {
         setFilters(getFilters());
     }, [resetFilters, getFilters]);
 
-    const handleEdit = (id) => {
-        navigate(`/module/users/edit/${id}`);
-    };
-
     const columns = [
         {
             Header: 'Actions',
             accessor: 'id',
             disableSortBy: true,
             Cell: ({ value }) => (
-                <HasPermission permission='change_user'>
+                <HasPermission permission="user.change_user">
                     <div className="flex space-x-2">
-                        <button
-                            onClick={() => handleEdit(value)}
-                            className="ti-btn ti-btn-primary ti-btn-sm"
-                            title="Edit User"
+                        <Link
+                            to={`/module/users/edit/${value}`}
                         >
-                            <i className="ri-edit-line"></i>
-                        </button>
+                            <button
+                                className="ti-btn ti-btn-primary ti-btn-sm"
+                                title="Edit User"
+                            >
+                                <i className="ri-edit-line"></i>
+                            </button>
+                        </Link>
                     </div>
                 </HasPermission>
             ),
@@ -82,6 +80,7 @@ const UserList = () => {
                 <div className="flex items-center">
                     <Avatar
                         avatar={row.original.avatar ? row.original.avatar : null}
+                        full_name={row.original.full_name || 'N/A'}
                         size='md'
                         parentClasses='bg-primary/10 !fill-primary'
                     />
@@ -262,7 +261,7 @@ const UserList = () => {
     ];
 
     const buttons = (
-        <HasPermission permission='add_user'>
+        <HasPermission permission='user.add_user'>
             <div className="flex space-x-2">
                 <button
                     type="button"

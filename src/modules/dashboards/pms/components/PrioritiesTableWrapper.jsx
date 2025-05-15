@@ -1,6 +1,12 @@
 import React, { useMemo } from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
-import { toTitleCase } from "@helpers/formatters.js";
+import {formatLabel, toTitleCase} from "@helpers/formatters.js";
+import usePMSStatsDrillDown from "@modules/dashboards/pms/hooks/usePMSStatsDrillDown.js";
+import TaskListModal from "@modules/project-management/components/model/TaskListModal.jsx";
+
+const statusCellClasses = {
+    completed: "bg-green/10 text-success cursor-pointer",
+};
 
 function transformPrioritiesData(data, statuses) {
     return Object.entries(data).map(([priority, statusData]) => {
@@ -20,12 +26,14 @@ function createPrioritiesHeaders(statuses) {
         ...statuses.map((status) => ({
             label: toTitleCase(status),
             accessor: status,
+            classes: "cursor-pointer",
+            ...(status === "completed" && { classes: statusCellClasses.completed }),
         })),
-        { label: "Total", accessor: "total" },
+        { label: "Total", accessor: "total", classes: "cursor-pointer" },
     ];
 }
 
-const PrioritiesTable = ({ data, statuses }) => {
+const PrioritiesTableWrapper = ({ data, statuses, filters }) => {
     const rows = useMemo(() => transformPrioritiesData(data, statuses), [data, statuses]);
     const filteredStatuses = useMemo(() => {
         return statuses.filter(status => {
@@ -48,33 +56,46 @@ const PrioritiesTable = ({ data, statuses }) => {
     const rowsWithFooter = useMemo(() => {
         return [
             ...rows,
-            { priority: <span className="font-semibold text-[#232323]">Total</span>, ...columnTotals, total: grandTotal }
+            { priority: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg">Total</span>, ...columnTotals, total: grandTotal }
         ];
     }, [rows, columnTotals, grandTotal]);
 
     const headers = useMemo(() => createPrioritiesHeaders(filteredStatuses), [filteredStatuses]);
-    const handleRowClick = (rowData, colIndex, headers) => {
-        // Exclude the 'priority' column by checking the accessor
+
+    const { isTaskModalOpen, fetchData, tasks, loadingTasks, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
+        'dashboard/pms/project/tasks/status/detail/',
+        filters
+    )
+
+    const handleRowClick = async (rowData, colIndex, headers) => {
         const header = headers[colIndex];
-        if (header?.accessor){
-            if (header.accessor === 'priority') {
-                // Do nothing if the clicked column is 'priority'
-                return;
-            }
-
-            // Get the column label (header)
-            const columnHeader = header.label;
-
-            // Log the column header and priority value
-            console.log(`Column Header: ${columnHeader}`);
-            console.log(`Priority: ${rowData.priority}`);
+        if (header?.accessor && header.accessor !== "priority") {
+            await fetchData({
+                status: formatLabel(header.label),
+                priority: rowData?.priority?.props?.children ? null : rowData?.priority.toLowerCase(),
+            });
         }
     };
     return (
         <div>
-            <ClientSideTable config={{ headers }} data={rowsWithFooter} title="Priority Wise Status" height="400px" tHeadClasses='table-bg-dark' onRowClick={handleRowClick} />
+            <ClientSideTable
+                config={{ headers }}
+                data={rowsWithFooter}
+                title="Priority Wise Status"
+                height="400px"
+                tHeadClasses='table-bg-dark'
+                onRowClick={handleRowClick}
+            />
+            {
+                isTaskModalOpen &&
+                <TaskListModal
+                    tasks={tasks}
+                    isLoading={loadingTasks}
+                    closeModal={closeTaskModal}
+                />
+            }
         </div>
     );
 };
 
-export default PrioritiesTable;
+export default PrioritiesTableWrapper;

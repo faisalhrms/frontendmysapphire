@@ -11,42 +11,42 @@ import EquipmentHistory from '@modules/inventory/views/EquipmentHistory.jsx';
 export const INVENTORY_ROUTES = {
     READ: {
         path: '/module/asset',
-        permission: 'view_equipment',
+        permission: 'inventory.view_equipment',
     },
     ADD: {
         path: '/module/asset/add',
-        permission: 'add_equipment',
+        permission: 'inventory.add_equipment',
     },
     DETAIL: {
         path: '/module/asset/detail/:id',
-        permission: 'view_equipment',
+        permission: 'inventory.view_equipment',
     },
     EDIT: {
         path: '/module/asset/edit/:id',
-        permission: 'change_equipment',
+        permission: 'inventory.change_equipment',
     },
     SUMMARY: {
         path: '/module/asset/transaction',
     },
     LAPTOP_LIST: {
         path: '/module/asset/laptop-list',
-        permission: 'view_equipment',
+        permission: 'inventory.view_equipment',
     },
     EQUIPMENT_REPORT: {
         path: '/module/asset/equipment-report',
-        permission: 'view_equipment',
+        permission: 'inventory.view_equipment',
     },
     EQUIPMENT_REASSIGN: {
         path: '/module/asset/asset-reassign/:id',
-        permission: 'add_equipment',
+        permission: 'inventory.add_equipment',
     },
     EQUIPMENT_SITE_WISE: {
         path: '/module/asset/equipment-site-wise',
-        permission: 'view_equipment',
+        permission: 'inventory.view_equipment',
     },
     EQUIPMENT_HISTORY: {
         path: '/module/asset/equipment-history/:id',
-        permission: 'view_equipment',
+        permission: 'inventory.view_equipment',
     },
 };
 

@@ -14,7 +14,7 @@ function transformData(data) {
         let tagTotal = 0;
 
         rows.push({
-            tagTeam: <span className="font-semibold text-[#232323] !text-left">{tag.toUpperCase()}</span>,
+            tagTeam: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg !text-left">{tag.toUpperCase()}</span>,
             tag: tag,
             high: tagHigh,
             medium: tagMedium,
@@ -39,7 +39,7 @@ function transformData(data) {
         });
 
         rows[rows.length - Object.keys(teamsData).length - 1] = {
-            tagTeam: <span className="font-semibold text-[#232323] !text-left">{tag.toUpperCase()}</span>,
+            tagTeam: <span className="font-semibold dark:text-gray-200 dark:bg-bodybg !text-left">{tag.toUpperCase()}</span>,
             tag: tag,
             high: tagHigh,
             medium: tagMedium,
@@ -66,11 +66,22 @@ const TaskPrioritiesTableWrapper = ({ data, title = 'Pending Tasks by Tag/Team',
 
     const headers = useMemo(() => createHeaders(), []);
 
-    const { isTaskModalOpen, tasks, loadingTasks, handleRowClick, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
+    const { isTaskModalOpen, fetchData, tasks, loadingTasks, openTaskModal, closeTaskModal } = usePMSStatsDrillDown(
         'dashboard/pms/project/tasks/priority/detail/',
-        filters,
-        type
+        filters
     )
+
+    const handleRowClick = async (rowData, colIndex, headers) => {
+        const header = headers[colIndex];
+        if (header?.accessor && header.accessor !== "tagTeam") {
+            await fetchData({
+                priority: header.label.toLowerCase() === 'total' ? null : header.label.toLowerCase(),
+                tag: rowData?.tag,
+                team: rowData?.tagTeam?.props?.children ? null : rowData?.tagTeam,
+                type: type
+            });
+        }
+    };
 
     return (
         <>

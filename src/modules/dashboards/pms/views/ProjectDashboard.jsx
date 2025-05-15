@@ -14,7 +14,6 @@ import ProjectDashboardProjectTasksPriorities
 
 
 const ProjectDashboard = () => {
-    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const {
         control,
         handleSubmit,
@@ -24,7 +23,7 @@ const ProjectDashboard = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'company_id', defaultValue: companyId},
+                    { name: 'company_id'},
                     { name: 'department_id'},
                     { name: 'workspace_id'},
                     { name: 'projects'},
@@ -55,7 +54,7 @@ const ProjectDashboard = () => {
     return(
         <>
             <PageHeader currentpage="Project Dashboard" activepage="Dashboards" mainpage="Project Management System"/>
-            <HasPermission permission='pms_dashboard_filters'>
+            <HasPermission permission='pms.pms_dashboard_filters'>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <ProjectDashboardFilter control={control} errors={errors}/>
                 </form>
@@ -67,7 +66,7 @@ const ProjectDashboard = () => {
                         label: "Project Overview",
                         icon: <i className="bx bx-task"></i>,
                         content: (
-                            <ProjectDashboardStats data={data} isLoading={isLoading} isActive={'project_overview' === activeTab}  filters={filters}/>
+                            <ProjectDashboardStats data={data} isLoading={isLoading} isActive={'project_overview' === activeTab} filters={filters} />
                         ),
                     },
                     {
@@ -76,7 +75,7 @@ const ProjectDashboard = () => {
                         icon: <i className="bx bx-bar-chart"></i>,
                         content: (
                             <>
-                                <ProjectDashboardTaskStats data={data} isLoading={isLoading} isActive={'task_overview' === activeTab} />
+                                <ProjectDashboardTaskStats data={data} isLoading={isLoading} isActive={'task_overview' === activeTab} filters={filters} />
                             </>
                         ),
                     },
@@ -86,7 +85,7 @@ const ProjectDashboard = () => {
                         icon: <i className="bx bx-stats"></i>,
                         content: (
                             <>
-                                <ProjectDashboardProjectTasksStatuses data={data} isLoading={isLoading} isActive={'project_status_overview' === activeTab} />
+                                <ProjectDashboardProjectTasksStatuses data={data} isLoading={isLoading} filters={filters} isActive={'project_status_overview' === activeTab} />
                             </>
                         ),
                     },
