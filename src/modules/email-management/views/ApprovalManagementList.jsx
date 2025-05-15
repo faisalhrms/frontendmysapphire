@@ -16,7 +16,7 @@ const ApprovalManagementList = () => {
                 accessor: 'user.full_name',
                 Cell: ({ row }) => {
                     const name = row.original.user.full_name || '—';
-                    if (activeTab === 'approved' && row.original.id) {
+                    if (activeTab === 'under_process' && row.original.id) {
                         return (
                             <Link
                                 to={`/module/user-management/edit/${row.original.id}`}
@@ -35,23 +35,80 @@ const ApprovalManagementList = () => {
                 accessor: 'user.email',
                 Cell: ({ value }) => value || '—',
             },
+
+            // ─── New Columns ───────────────────────────────────────────────────────────
+            {
+                Header: 'Email Host',
+                accessor: 'email_host',
+                Cell: ({ cell: { value } }) => (
+                    <span className="badge bg-secondary/10 text-secondary">
+          {value?.toUpperCase() || '—'}
+        </span>
+                ),
+            },
+            {
+                Header: 'ERP User',
+                accessor: 'erp_user',
+                Cell: ({ cell: { value } }) => (
+                    <span
+
+                    >
+          {value ? 'Yes' : 'No'}
+        </span>
+                ),
+            },
+            {
+                Header: 'OneDrive',
+                accessor: 'one_drive',
+                Cell: ({ cell: { value } }) => (
+                    <span
+
+                    >
+          {value ? 'Yes' : 'No'}
+        </span>
+                ),
+            },
+            {
+                Header: 'MS Teams',
+                accessor: 'ms_team',
+                Cell: ({ cell: { value } }) => (
+                    <span
+
+                    >
+          {value ? 'Yes' : 'No'}
+        </span>
+                ),
+            },
+            {
+                Header: 'Backup Storage',
+                accessor: 'backup_storage',
+                Cell: ({ cell: { value } }) => (
+                    <span>
+          {value != null ? `${value} GB` : '—'}
+        </span>
+                ),
+            },
+            // ─────────────────────────────────────────────────────────────────────────
+
             {
                 Header: 'Subscriptions',
                 accessor: 'subscriptions',
                 disableSortBy: true,
-                Cell: ({ value }) => (
+                Cell: ({ value }) =>
                     Array.isArray(value) && value.length ? (
                         <div className="space-x-1 rtl:space-x-reverse">
                             {value.map(sub => (
-                                <span key={sub.id} className="badge bg-primary/10 text-primary">
-                  {toTitleCase(sub.name)}
-                </span>
+                                <span
+                                    key={sub.id}
+                                    className="badge bg-primary/10 text-primary"
+                                >
+                {toTitleCase(sub.name)}
+              </span>
                             ))}
                         </div>
                     ) : (
                         '—'
-                    )
-                ),
+                    ),
             },
             {
                 Header: 'Approver',
@@ -59,13 +116,18 @@ const ApprovalManagementList = () => {
                 Cell: ({ row }) => row.original.approver?.full_name || '—',
             },
             {
-                Header: 'Approval Status',
+                Header: 'Status',
                 accessor: 'approval_status',
-                Cell: ({ value }) => <span className={getBadgeClasses(value)}>{toTitleCase(value)}</span>,
+                Cell: ({ value }) => (
+                    <span className={getBadgeClasses(value)}>
+          {toTitleCase(value)}
+        </span>
+                ),
             },
         ],
         [activeTab]
     );
+
 
     const assignedColumns = useMemo(() => {
         const formatHeader = field =>
@@ -116,13 +178,13 @@ const ApprovalManagementList = () => {
                         ),
                     },
                     {
-                        id: 'approved',
-                        label: 'Approved',
+                        id: 'under_process',
+                        label: 'Under Process',
                         icon: <i className="bx bx-check-circle" />,
                         content: (
                             <DataTable
-                                title="Approved Approvals"
-                                apiUrl='/employee-details/approvals-all/approved/'
+                                title="Under Process"
+                                apiUrl='/employee-details/approvals-all/under_process/'
                                 columns={baseColumns}
                             />
                         ),
@@ -135,18 +197,6 @@ const ApprovalManagementList = () => {
                             <DataTable
                                 title="Pending Approvals"
                                 apiUrl='/employee-details/approvals-all/pending/'
-                                columns={baseColumns}
-                            />
-                        ),
-                    },
-                    {
-                        id: 'rejected',
-                        label: 'Rejected',
-                        icon: <i className="bx bx-x-circle" />,
-                        content: (
-                            <DataTable
-                                title="Rejected Approvals"
-                                apiUrl='/employee-details/approvals-all/rejected/'
                                 columns={baseColumns}
                             />
                         ),

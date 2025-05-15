@@ -15,6 +15,7 @@ const AClassFiscal = ({data}) => {
 
             <CurrentPeriodTable
                 data={data}
+
             />
             <SummaryTable
                getGrowthColor={getGrowthColor}

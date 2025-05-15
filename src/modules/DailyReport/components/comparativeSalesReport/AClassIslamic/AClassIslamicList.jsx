@@ -5,6 +5,7 @@ import CurrentPeriodTable
 import AClassIslamic from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamic.jsx";
 import AClassIslamicOnline
     from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/AClassIslamicOnline.jsx";
+import IslamicDate from "@modules/DailyReport/components/comparativeSalesReport/AClassIslamic/IslamicDate.jsx";
 
 
 const AClassIslamicList = ({data}) => {
@@ -16,9 +17,8 @@ const AClassIslamicList = ({data}) => {
     return (
         <div className="font-sans text-sm">
 
-            <CurrentPeriodTable
-                data={data}
-            />
+            <IslamicDate data={data} />
+
             <AClassIslamicOnline
                 getGrowthColor={getGrowthColor}
                 data={data}
