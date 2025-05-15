@@ -1,5 +1,4 @@
 import React from 'react';
-
 const CategoryTable = ({ data,getGrowthColor }) => {
     const formatDate = (date) => {
         if (!date) return '';
@@ -42,10 +41,10 @@ const CategoryTable = ({ data,getGrowthColor }) => {
                 <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg   text-black">{row?.category}</td>
                     <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{row?.offline?.this_year}</td>
                     <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg   text-black">{row?.offline?.last_year}</td>
-                    <td className={`border border-gray-400 p-2 font-bold dark:text-gray-200 dark:bg-bodybg  text-black text-center ${getGrowthColor(row?.offline?.growth)}`}>{row?.offline?.growth}%</td>
+                    <td className={`border border-gray-400 p-2 font-bold  text-center ${getGrowthColor(row?.offline?.growth)}`}>{row?.offline?.growth}%</td>
                     <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg  text-black">{row?.online?.this_year}</td>
                     <td className="border border-gray-400 p-2 text-right  dark:text-gray-200 dark:bg-bodybg  text-black">{row?.online?.last_year}</td>
-                    <td className={`border border-gray-400 font-bold p-2 text-center dark:text-gray-200 dark:bg-bodybg  text-black ${getGrowthColor(row?.online?.growth)}`}>{row?.online?.growth}%</td>
+                    <td className={`border border-gray-400 font-bold p-2 text-center  ${getGrowthColor(row?.online?.growth)}`}>{row?.online?.growth}%</td>
                 </tr>
             ))}
             </tbody>

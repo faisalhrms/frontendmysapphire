@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AClassIslamic = ({ data ,getGrowthColor }) => {
-console.log(data)
+
     return (
         <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
             <table className="w-full border-collapse">
@@ -27,12 +27,12 @@ console.log(data)
                         <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg   text-black">{item.category}</td>
                         <td className="border border-gray-400 p-2 text-right text-black dark:text-gray-200 dark:bg-bodybg  ">{item.offline?.this_year ?? '-'}</td>
                         <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg ">{item.offline?.last_year ?? '-'}</td>
-                        <td className={`border border-gray-400 p-2 font-bold text-center dark:text-gray-200 dark:bg-bodybg  ${getGrowthColor(item.offline?.growth ?? 0)}`}>
+                        <td className={`border border-gray-400 p-2 font-bold text-center   ${getGrowthColor(item.offline?.growth ?? 0)}`}>
                             {item.offline?.growth ?? 0}%
                         </td>
                         <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg  ">{item.online?.this_year ?? '-'}</td>
                         <td className="border border-gray-400 p-2 text-right dark:text-gray-200 dark:bg-bodybg ">{item.online?.last_year ?? '-'}</td>
-                        <td className={`border border-gray-400 p-2 font-bold text-center dark:text-gray-200 dark:bg-bodybg  ${getGrowthColor(item.online?.growth ?? 0)}`}>
+                        <td className={`border border-gray-400 p-2 font-bold text-center  ${getGrowthColor(item.online?.growth ?? 0)}`}>
                             {item.online?.growth ?? 0}%
                         </td>
                     </tr>

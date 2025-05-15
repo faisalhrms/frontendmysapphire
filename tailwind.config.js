@@ -9,7 +9,9 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}",
     "!./src/**/node_modules/**",
     './node_modules/preline/preline.js',
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.{js,ts}",
   ],
+
 theme: {
   screens: {
     lg: "992px",
@@ -31,6 +33,7 @@ theme: {
     inter: ["Inter", "sans-serif"],
     Montserrat: ["Montserrat","sans-serif"],
   },
+
   fontSize: {
     defaultsize: '0.813rem',
     xs:'0.75rem',
