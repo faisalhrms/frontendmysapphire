@@ -38,7 +38,7 @@ const AClassIslamicOnline = ({ data, getGrowthColor}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {sales_summary.data.map((item, index) => (
+                    {sales_summary?.data?.map((item, index) => (
                         <tr
                             key={index}
                             className={`border border-gray-400 ${
@@ -51,7 +51,7 @@ const AClassIslamicOnline = ({ data, getGrowthColor}) => {
                             <td className="border border-gray-400 p-2 text-right text-black dark:text-gray-200 dark:bg-bodybg">{item.this_year.mtd}</td>
                             <td className="border border-gray-400 p-2 text-right text-black dark:text-gray-200 dark:bg-bodybg">{item.last_year.last_day}</td>
                             <td className="border border-gray-400 p-2 text-right text-black dark:text-gray-200 dark:bg-bodybg">{item.last_year.mtd}</td>
-                            <td className={`border border-gray-400 p-2 font-bold text-center dark:text-gray-200 dark:bg-bodybg text-black ${getGrowthColor(item.growth)}`}>
+                            <td className={`border border-gray-400 p-2 font-bold text-center  ${getGrowthColor(item.growth)}`}>
                                 {item.growth}%
                             </td>
                         </tr>

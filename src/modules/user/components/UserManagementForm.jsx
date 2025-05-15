@@ -24,7 +24,7 @@ const UserManagementForm = ({ userData = {}, isEditMode = false,initialInstance=
         resolver: zodResolver(userManagementSchema),
         defaultValues: {
             ...userData,
-            email_host: userData?.email_host || "",
+            email_host: userData?.email_host || null,
             erp_user: userData?.erp_user ?? false,
             one_drive: userData?.one_drive ?? false,
             ms_team: userData?.ms_team ?? false,
@@ -110,6 +110,7 @@ const UserManagementForm = ({ userData = {}, isEditMode = false,initialInstance=
                                                 control={control}
                                                 errors={errors}
                                                 label="ERP User"
+                                                isClearable={false}
                                                 placeholder="ERP User"
                                                 options={booleanOptions}
                                                 isRequired={!fromApproval}
@@ -133,6 +134,7 @@ const UserManagementForm = ({ userData = {}, isEditMode = false,initialInstance=
                                             <FormSelect
                                                 name="one_drive"
                                                 control={control}
+                                                isClearable={false}
                                                 errors={errors}
                                                 placeholder="One Drive"
                                                 label="One Drive"
@@ -160,6 +162,7 @@ const UserManagementForm = ({ userData = {}, isEditMode = false,initialInstance=
                                                 name="ms_team"
                                                 control={control}
                                                 errors={errors}
+                                                isClearable={false}
                                                 placeholder="MS Team"
                                                 label="MS Team"
                                                 options={booleanOptions}

@@ -23,6 +23,18 @@ const labelMap = {
   return_order: "Return Order"
 };
 
+const formatDate = d => {
+  const t = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return t.toISOString().split("T")[0];
+};
+
+const today = new Date();
+today.setDate(today.getDate() - 1);
+const defaultEndDate = formatDate(today);
+
+const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+const defaultStartDate = formatDate(startOfMonth);
+
 const Oms = () => {
   const [activeTab, setActiveTab] = useState("Order");
   const {
@@ -31,7 +43,7 @@ const Oms = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    defaultValues: { startDate: "", endDate: "" },
+    defaultValues: { startDate: defaultStartDate, endDate: defaultEndDate },
     resolver: zodResolver(dateRangeSchema),
     mode: "onTouched"
   });
@@ -54,23 +66,19 @@ const Oms = () => {
   const onDownload = handleSubmit(onDownloadExcel);
 
   const handleClear = useCallback(() => {
-    reset({ startDate: "", endDate: "" });
+    reset({ startDate: defaultStartDate, endDate: defaultEndDate });
   }, [reset]);
 
   const handleTabChange = useCallback(tabId => {
     setActiveTab(tabId);
-    reset({ startDate: "", endDate: "" });
+    reset({ startDate: defaultStartDate, endDate: defaultEndDate });
   }, [reset]);
 
   const currentLabel = labelMap[activeTab];
 
   return (
     <>
-      <PageHeader
-        currentpage={`Oms ${currentLabel}`}
-        activepage="Oms"
-        mainpage={currentLabel}
-      />
+      <PageHeader currentpage={`Oms ${currentLabel}`} activepage="Oms" mainpage={currentLabel} />
       <IconTabs
         tabs={[
           {

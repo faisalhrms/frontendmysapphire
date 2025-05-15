@@ -373,7 +373,8 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                     <div className="flex items-center flex-wrap">
                                         <div className="me-2 leading-none">
                                             <Avatar avatar={task?.created_by?.avatar} size='xs'
-                                                    full_name={task.avatar?.full_name || 'N/A'}/>
+                                                    full_name={task.created_by?.full_name || 'N/A'}/>
+
 
                                         </div>
                                         <span>{toTitleCase(task?.created_by?.full_name)}</span>
