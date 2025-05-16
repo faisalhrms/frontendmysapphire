@@ -46,12 +46,12 @@ const ComparativeSaleReportList = () => {
     );
 
     const [filters, setFilters] = useState(getFilters());
-
+    const hideOnlyComparativePeriod = activeTab === "AClassIslamic";
     const { data, isLoading } = useFetchWithFilters(
         activeTab === "ClassonlineFiscal" ? '/reporting/comparative/fiscal-sales/' :
             activeTab === "Local & Global" ? '/reporting/comparative/online-sales/' :
                 activeTab === "AClassIslamic" ? '/reporting/comparative/islamic-sales/' :
-                    activeTab === "Online Targets Achievement" ? '//' :
+                    activeTab === "online_target" ? '/reporting/comparative/online-target/' :
                         '',
         filters
     );
@@ -73,7 +73,8 @@ const ComparativeSaleReportList = () => {
             />
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <ComparativeDate filters={filters} control={control} errors={errors} />
+                <ComparativeDate filters={filters} control={control} errors={errors}
+                                 hideOnlyComparativePeriod={hideOnlyComparativePeriod}/>
             </form>
 
             <IconTabs
@@ -97,10 +98,10 @@ const ComparativeSaleReportList = () => {
                         content: isLoading ? <LoadingSpinner /> : <AClassIslamicList data={data} isLoading={isLoading} isActive={activeTab === 'AClassIslamic'} filters={filters} />
                     },
                     {
-                        id: "Online Targets Achievement",
+                        id: "online_target",
                         label: "Online Targets Achievement",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: isLoading ? <LoadingSpinner /> : <SalesPerformanceTable data={data} isLoading={isLoading} isActive={activeTab === 'Online Targets Achievement'} filters={filters} />
+                        content: activeTab === 'online_target' ? (isLoading ? <LoadingSpinner /> : <SalesPerformanceTable data={data} isLoading={isLoading} isActive={activeTab === 'online_target'} filters={filters} />) : ''
                     },
                 ]}
                 onTabChange={handleTabChange}
