@@ -60,7 +60,7 @@ const LoginForm = () => {
           <div className="xl:col-span-12 col-span-12">
             <label htmlFor="signin-password" className="form-label mt-3 text-default block">Password
               <Link to={`/resetpassword/`} className="ltr:float-right rtl:float-left text-danger">
-                Forget password?
+                Forgot password?
               </Link>
             </label>
             <div className="input-group">
