@@ -7,7 +7,7 @@ import CategoryTable from "@modules/DailyReport/components/comparativeSalesRepor
 
 const AClassFiscal = ({data}) => {
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-danger' : 'text-emerald-600';
+        return growth < 0 ? 'text-red' : 'text-emerald-600';
     };
 
     return (
