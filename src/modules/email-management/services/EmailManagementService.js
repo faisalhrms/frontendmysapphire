@@ -4,7 +4,7 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const emailApprovalTypes = [
-    { value: 'approved', label: 'Approved' },
+    { value: 'under_process', label: 'Under Process' },
     { value: 'rejected', label: 'Rejected' },
     { value: 'pending', label: 'Pending' },
     // Add more as needed
