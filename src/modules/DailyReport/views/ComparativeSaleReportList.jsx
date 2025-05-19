@@ -61,8 +61,8 @@ const ComparativeSaleReportList = () => {
                     activeTab === "online_target" ? '/reporting/comparative/online-target/' :
                         activeTab === "offline_unstitiched" ? '/reporting/comparative/category/Offline/Unstitched Women/Full Price/' :
                             activeTab === "online_unstitiched" ? '/reporting/comparative/category/Online/Unstitched Women/Full Price/' :
-                                activeTab === "offline_stitiched" ? '//' :
-                                    activeTab === "online_stitiched" ? '//' :
+                                activeTab === "offline_stitiched" ? '/reporting/comparative/category/Offline/Stitched Women/Full Price/' :
+                                    activeTab === "online_stitiched" ? '/reporting/comparative/category/Online/Stitched Women/Full Price/' :
                         '',
         filters
     );
@@ -118,25 +118,25 @@ const ComparativeSaleReportList = () => {
                         id: "offline_unstitiched",
                         label: " Offline (A-Class) - Unstitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched data={data} isLoading={isLoading} isActive={activeTab === 'offline_unstitiched'} filters={filters} />) : ''
+                        content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading} isActive={activeTab === 'offline_unstitiched'} filters={filters} />) : ''
                     },
                     {
                         id: "online_unstitiched",
                         label: "Online - Unstitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner /> : <OnlineUnstitiched data={data} isLoading={isLoading} isActive={activeTab === 'online_unstitiched'} filters={filters} />) : ''
+                        content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading} isActive={activeTab === 'online_unstitiched'} filters={filters} />) : ''
                     },
                     {
                         id: "offline_stitiched",
                         label: "Offline (A-Class) - Stitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner /> : <OfflineStitiched data={data} isLoading={isLoading} isActive={activeTab === 'offline_stitiched'} filters={filters} />) : ''
+                        content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched color='text-emerald-600' title='Stitiched Women' data={data} isLoading={isLoading} isActive={activeTab === 'offline_stitiched'} filters={filters} />) : ''
                     },
                     {
                         id: "online_stitiched",
                         label: "Online - Stitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner /> : <OnlineStitiched data={data} isLoading={isLoading} isActive={activeTab === 'online_stitiched'} filters={filters} />) : ''
+                        content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched  color='text-emerald-600' data={data} title='Stitiched Women' isLoading={isLoading} isActive={activeTab === 'online_stitiched'} filters={filters} />) : ''
                     },
                 ]}
                 onTabChange={handleTabChange}

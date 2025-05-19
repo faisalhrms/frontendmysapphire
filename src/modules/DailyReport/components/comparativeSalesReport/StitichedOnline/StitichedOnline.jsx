@@ -11,8 +11,8 @@ export default function OnlineStitiched() {
                         Stitched Women
                     </th>
                 </tr>
-                </thead>
-                <tbody>
+
+
                 <tr className="bg-blue-100">
                     <th className="border border-gray-300 p-2 font-medium" rowSpan={2}>Full Price</th>
                     <th className="border border-gray-300 p-2 text-center font-medium" colSpan={3}>Eid - 1</th>
@@ -88,7 +88,7 @@ export default function OnlineStitiched() {
                 </tr>
 
                 <tr >
-                  
+
                     <td className="border border-gray-300 p-1 bg-red-100 font-medium text-center">
                         <select className="w-full bg-red-100 text-center font-medium border-none appearance-none">
                             <option value="CY">CY</option>
@@ -103,16 +103,11 @@ export default function OnlineStitiched() {
                     </td>
 
                 </tr>
+            </thead>
 
 
-                {[1, 2, 3, 4].map((row) => (
-                    <tr key={row}>
-                        <td className="border border-gray-300 p-2"></td>
-                        <td className="border border-gray-300 p-2"></td>
 
-                    </tr>
-                ))}
-                </tbody>
+
             </table>
         </div>
     );
