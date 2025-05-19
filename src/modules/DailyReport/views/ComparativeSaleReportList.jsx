@@ -52,10 +52,10 @@ const ComparativeSaleReportList = () => {
             activeTab === "Local & Global" ? '/reporting/comparative/online-sales/' :
                 activeTab === "AClassIslamic" ? '/reporting/comparative/islamic-sales/' :
                     activeTab === "online_target" ? '/reporting/comparative/online-target/' :
-                        // activeTab === "offline_unstitiched" ? '//' :
-                        //     activeTab === "online_unstitiched" ? '//' :
-                        //         activeTab === "offline_stitiched" ? '//' :
-                        //             activeTab === "online_stitiched" ? '//' :
+                        activeTab === "offline_unstitiched" ? '//' :
+                            activeTab === "online_unstitiched" ? '//' :
+                                activeTab === "offline_stitiched" ? '//' :
+                                    activeTab === "online_stitiched" ? '//' :
                         '',
         filters
     );
@@ -107,30 +107,30 @@ const ComparativeSaleReportList = () => {
                         icon: <i className='bx bx-target-lock'></i>,
                         content: activeTab === 'online_target' ? (isLoading ? <LoadingSpinner /> : <SalesPerformanceTable data={data} isLoading={isLoading} isActive={activeTab === 'online_target'} filters={filters} />) : ''
                     },
-                    // {
-                    //     id: "offline_unstitiched",
-                    //     label: " Offline (A-Class) - Unstitiched - Full Price Sales",
-                    //     icon: <i className='bx bx-target-lock'></i>,
-                    //     content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched data={data} isLoading={isLoading} isActive={activeTab === 'offline_unstitiched'} filters={filters} />) : ''
-                    // },
-                    // {
-                    //     id: "online_unstitiched",
-                    //     label: "Online - Unstitiched - Full Price Sales",
-                    //     icon: <i className='bx bx-target-lock'></i>,
-                    //     content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner /> : <OnlineUnstitiched data={data} isLoading={isLoading} isActive={activeTab === 'online_unstitiched'} filters={filters} />) : ''
-                    // },
-                    // {
-                    //     id: "offline_stitiched",
-                    //     label: "Offline (A-Class) - Stitiched - Full Price Sales",
-                    //     icon: <i className='bx bx-target-lock'></i>,
-                    //     content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner /> : <OfflineStitiched data={data} isLoading={isLoading} isActive={activeTab === 'offline_stitiched'} filters={filters} />) : ''
-                    // },
-                    // {
-                    //     id: "online_stitiched",
-                    //     label: "Online - Stitiched - Full Price Sales",
-                    //     icon: <i className='bx bx-target-lock'></i>,
-                    //     content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner /> : <OnlineStitiched data={data} isLoading={isLoading} isActive={activeTab === 'online_stitiched'} filters={filters} />) : ''
-                    // },
+                    {
+                        id: "offline_unstitiched",
+                        label: " Offline (A-Class) - Unstitiched - Full Price Sales",
+                        icon: <i className='bx bx-target-lock'></i>,
+                        content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched data={data} isLoading={isLoading} isActive={activeTab === 'offline_unstitiched'} filters={filters} />) : ''
+                    },
+                    {
+                        id: "online_unstitiched",
+                        label: "Online - Unstitiched - Full Price Sales",
+                        icon: <i className='bx bx-target-lock'></i>,
+                        content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner /> : <OnlineUnstitiched data={data} isLoading={isLoading} isActive={activeTab === 'online_unstitiched'} filters={filters} />) : ''
+                    },
+                    {
+                        id: "offline_stitiched",
+                        label: "Offline (A-Class) - Stitiched - Full Price Sales",
+                        icon: <i className='bx bx-target-lock'></i>,
+                        content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner /> : <OfflineStitiched data={data} isLoading={isLoading} isActive={activeTab === 'offline_stitiched'} filters={filters} />) : ''
+                    },
+                    {
+                        id: "online_stitiched",
+                        label: "Online - Stitiched - Full Price Sales",
+                        icon: <i className='bx bx-target-lock'></i>,
+                        content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner /> : <OnlineStitiched data={data} isLoading={isLoading} isActive={activeTab === 'online_stitiched'} filters={filters} />) : ''
+                    },
                 ]}
                 onTabChange={handleTabChange}
             />

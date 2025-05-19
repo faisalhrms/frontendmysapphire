@@ -13,7 +13,7 @@ const SalesPerformanceTable = ({ data, isLoading }) => {
 
             <div
                 className="overflow-x-auto overflow-y-auto border border-gray-400"
-                style={{ maxHeight: '550px' }}
+                style={{ maxHeight: '650px' }}
             >
                 <table className="min-w-full table-auto border-collapse">
                     <thead>

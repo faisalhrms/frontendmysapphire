@@ -117,4 +117,19 @@ export const downloadOfflineStorePerformance = async (filters) => {
     } catch (error) {
         throw error;
     }
+};
+export const downloadComparativeSaleReport = async (filters) => {
+
+    try {
+        const response = await api.get("/reporting/download/comparative-sales-report", {
+            params: {
+                date: filters.date,
+
+            },
+            responseType: 'blob',
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 }
