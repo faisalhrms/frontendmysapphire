@@ -59,8 +59,8 @@ const ComparativeSaleReportList = () => {
             activeTab === "Local & Global" ? '/reporting/comparative/online-sales/' :
                 activeTab === "AClassIslamic" ? '/reporting/comparative/islamic-sales/' :
                     activeTab === "online_target" ? '/reporting/comparative/online-target/' :
-                        activeTab === "offline_unstitiched" ? '//' :
-                            activeTab === "online_unstitiched" ? '//' :
+                        activeTab === "offline_unstitiched" ? '/reporting/comparative/category/Offline/Unstitched Women/Full Price/' :
+                            activeTab === "online_unstitiched" ? '/reporting/comparative/category/Online/Unstitched Women/Full Price/' :
                                 activeTab === "offline_stitiched" ? '//' :
                                     activeTab === "online_stitiched" ? '//' :
                         '',
