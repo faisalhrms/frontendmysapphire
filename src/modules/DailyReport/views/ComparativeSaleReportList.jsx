@@ -14,6 +14,13 @@ import AClassIslamicList from "@modules/DailyReport/components/comparativeSalesR
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 import getComparativeReportDates from "@modules/DailyReport/views/utils.js";
+import OnlineStitiched
+    from "@modules/DailyReport/components/comparativeSalesReport/StitichedOnline/StitichedOnline.jsx";
+import OfflineStitiched
+    from "@modules/DailyReport/components/comparativeSalesReport/StitichedOffline/OfflineStitiched.jsx";
+import OnlineUnstitiched
+    from "@modules/DailyReport/components/comparativeSalesReport/OnlineUnstitiched/UnstitichedOnline.jsx";
+import Unstitiched from "@modules/DailyReport/components/comparativeSalesReport/OfflineUnstitiched/Unstitiched.jsx";
 
 const ComparativeSaleReportList = () => {
     const [activeTab, setActiveTab] = useState("ClassonlineFiscal");
