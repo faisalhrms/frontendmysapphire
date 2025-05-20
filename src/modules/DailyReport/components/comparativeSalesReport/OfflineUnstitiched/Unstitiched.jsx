@@ -6,8 +6,13 @@ const Unstitiched = ({ data, title, color }) => {
     };
 
     return (
-        <div className="p-6 bg-white mt-1 rounded-lg dark:text-gray-200 dark:bg-bodybg mb-6">
-            <div className="w-full bg-white overflow-x-auto overflow-y-auto dark:text-gray-200 dark:bg-bodybg "
+        <>
+            <p className="text-primary p-2 rounded-lg text-right text-black">
+                	Amount in Rs.
+            </p>
+
+    <div className="p-6 bg-white mt-1 rounded-lg dark:text-gray-200 dark:bg-bodybg mb-6">
+        <div className="w-full bg-white overflow-x-auto overflow-y-auto dark:text-gray-200 dark:bg-bodybg "
                  style={{maxHeight: '650px'}}>
                 <div className="min-w-full  border border-gray-400">
                     <table className="w-full border-collapse table-auto">
@@ -147,6 +152,7 @@ const Unstitiched = ({ data, title, color }) => {
                 </div>
             </div>
         </div>
+        </>
             );
             };
 

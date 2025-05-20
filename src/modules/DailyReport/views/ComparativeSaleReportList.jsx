@@ -40,6 +40,9 @@ const ComparativeSaleReportList = () => {
                     { name: 'cy_to', defaultValue:  getPastDate()},
                     { name: 'ly_from', defaultValue: startOfPrevYear },
                     { name: 'ly_to', defaultValue: formattedPrevYearYesterday },
+                    { name: 'category', defaultValue: 'Fragrance'},
+                    { name: 'group', defaultValue: 'Offline'},
+                    { name: 'sale_type', defaultValue: 'Full Price'},
                 ],
             }),
             [startOfMonth, startOfPrevYear, formattedPrevYearYesterday]
@@ -62,6 +65,7 @@ const ComparativeSaleReportList = () => {
                             activeTab === "online_unstitiched" ? '/reporting/comparative/category/Online/Unstitched Women/Full Price/' :
                                 activeTab === "offline_stitiched" ? '/reporting/comparative/category/Offline/Stitched Women/Full Price/' :
                                     activeTab === "online_stitiched" ? '/reporting/comparative/category/Online/Stitched Women/Full Price/' :
+                                    activeTab === "other_category" ? `/reporting/comparative/category/${filters.group}/${filters.category}/${filters.sale_type}/` :
                         '',
         filters
     );
@@ -83,58 +87,89 @@ const ComparativeSaleReportList = () => {
             />
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <ComparativeDate filters={filters} control={control} errors={errors} hideOnlyComparativePeriod={hideOnlyComparativePeriod}/>
+                <ComparativeDate filters={filters} control={control} errors={errors}
+                                 hideOnlyComparativePeriod={hideOnlyComparativePeriod}
+                                 showCategoryFilters={activeTab === 'other_category'}/>
             </form>
 
+
             <IconTabs
+
                 tabs={[
+
                     {
                         id: "ClassonlineFiscal",
                         label: "A Class (Offline) & Online - Fiscal",
                         icon: <i className='bx bx-briefcase'></i>,
-                        content: isLoading ? <LoadingSpinner /> : <AClassFiscal data={data} isLoading={isLoading} isActive={activeTab === 'ClassonlineFiscal'} filters={filters} />
+                        content: isLoading ? <LoadingSpinner/> :
+                            <AClassFiscal data={data} isLoading={isLoading} isActive={activeTab === 'ClassonlineFiscal'}
+                                          filters={filters}/>
+
                     },
                     {
                         id: "Local & Global",
                         label: "Online Sales - Local & Global",
                         icon: <i className='bx bx-globe'></i>,
-                        content: isLoading ? <LoadingSpinner /> : <OnlineSaleList data={data} isLoading={isLoading} isActive={activeTab === 'Local & Global'} filters={filters} />
+                        content: isLoading ? <LoadingSpinner/> :
+                            <OnlineSaleList data={data} isLoading={isLoading} isActive={activeTab === 'Local & Global'}
+                                            filters={filters}/>
                     },
                     {
                         id: "AClassIslamic",
                         label: "A Class (Offline) & Online - Islamic",
                         icon: <i className='bi bi-book-half'></i>,
-                        content: isLoading ? <LoadingSpinner /> : <AClassIslamicList data={data} isLoading={isLoading} isActive={activeTab === 'AClassIslamic'} filters={filters} />
+                        content: isLoading ? <LoadingSpinner/> : <AClassIslamicList data={data} isLoading={isLoading}
+                                                                                    isActive={activeTab === 'AClassIslamic'}
+                                                                                    filters={filters}/>
                     },
                     {
                         id: "online_target",
                         label: "Online Targets Achievement",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'online_target' ? (isLoading ? <LoadingSpinner /> : <SalesPerformanceTable data={data} isLoading={isLoading} isActive={activeTab === 'online_target'} filters={filters} />) : ''
+                        content: activeTab === 'online_target' ? (isLoading ? <LoadingSpinner/> :
+                            <SalesPerformanceTable data={data} isLoading={isLoading}
+                                                   isActive={activeTab === 'online_target'} filters={filters}/>) : ''
                     },
                     {
                         id: "offline_unstitiched",
                         label: " Offline (A-Class) - Unstitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading} isActive={activeTab === 'offline_unstitiched'} filters={filters} />) : ''
+                        content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner/> :
+                            <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading}
+                                         isActive={activeTab === 'offline_unstitiched'} filters={filters}/>) : ''
                     },
                     {
                         id: "online_unstitiched",
                         label: "Online - Unstitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading} isActive={activeTab === 'online_unstitiched'} filters={filters} />) : ''
+                        content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner/> :
+                            <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading}
+                                         isActive={activeTab === 'online_unstitiched'} filters={filters}/>) : ''
                     },
                     {
                         id: "offline_stitiched",
                         label: "Offline (A-Class) - Stitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched color='text-emerald-600' title='Stitiched Women' data={data} isLoading={isLoading} isActive={activeTab === 'offline_stitiched'} filters={filters} />) : ''
+                        content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner/> :
+                            <Unstitiched color='text-emerald-600' title='Stitiched Women' data={data}
+                                         isLoading={isLoading} isActive={activeTab === 'offline_stitiched'}
+                                         filters={filters}/>) : ''
                     },
                     {
                         id: "online_stitiched",
                         label: "Online - Stitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched  color='text-emerald-600' data={data} title='Stitiched Women' isLoading={isLoading} isActive={activeTab === 'online_stitiched'} filters={filters} />) : ''
+                        content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner/> :
+                            <Unstitiched color='text-emerald-600' data={data} title='Stitiched Women'
+                                         isLoading={isLoading} isActive={activeTab === 'online_stitiched'}
+                                         filters={filters}/>) : ''
+                    },
+                    {
+                        id: "other_category",
+                        label: "Other Category - Sales",
+                        icon: <i className='bx bx-target-lock'></i>,
+                        content: activeTab === 'other_category' ? (isLoading ? <LoadingSpinner/> :
+                            <Unstitiched color='text-emerald-600' data={data} title={filters.category}/>) : ''
                     },
                 ]}
                 onTabChange={handleTabChange}
