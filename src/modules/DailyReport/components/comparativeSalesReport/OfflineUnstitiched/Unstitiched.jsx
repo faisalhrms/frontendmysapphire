@@ -2,119 +2,57 @@ import React from 'react';
 
 const Unstitiched = ({ data, title, color }) => {
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-red-600' : 'text-emerald-600';
+        return growth < 0 ? 'text-red' : 'text-emerald-600';
     };
 
     return (
-
-        <div
-            className="w-full bg-white overflow-y-auto"
-            style={{ maxHeight: '650px' }}
-        >
-
-            <div className="min-w-full">
-                <table className="w-full border-collapse">
+        <div className="w-full bg-white overflow-x-auto overflow-y-auto" style={{ maxHeight: '650px' }}>
+            <div className="min-w-full  border border-gray-400">
+                <table className="w-full border-collapse table-auto">
                     <thead>
                     <tr>
                         <th
-                            className={`font-medium text-center p-2 border border-gray-300 ${color}`}
+                            className={`text-left font-bold p-2 border border-gray-400 ${color}`}
                             colSpan={19}
-                            style={{
-                                position: 'sticky',
-                                top: 0,
-                                backgroundColor: 'white',
-                                zIndex: 50,
-                            }}
                         >
                             {title || ''}
                         </th>
                     </tr>
                     {data?.thead?.length <= 0 ? (
                         <tr>
-                            <th
-                                colSpan={19}
-                                className="text-center p-4"
-                                style={{ backgroundColor: 'white', position: 'sticky', top: 40, zIndex: 40 }}
-                            >
+                            <th colSpan={19} className="text-center p-4 sticky top-0 z-40 bg-white">
                                 No Data
                             </th>
                         </tr>
                     ) : (
                         <>
-                            <tr
-                                className="text-white bg-[#383853]"
-                                style={{ position: 'sticky', top: 40, zIndex: 45 }}
-                            >
+                            <tr className="text-white bg-[#383853] border border-gray-300">
                                 <th
-                                    className="border border-gray-300 p-2 font-medium bg-[#383853]"
-                                    rowSpan={2}
-
+                                    className="border border-gray-400 p-2 font-medium bg-[#383853] sticky top-0 z-10"
                                 >
                                     Full Price
                                 </th>
                                 {data?.thead?.map((thead, idx) => (
                                     <th
                                         key={idx}
-                                        className="border border-gray-300 p-2 font-medium bg-[#383853]"
+                                        className="border border-gray-400 p-2 font-medium bg-[#383853] sticky top-0 z-20"
                                         colSpan={3}
-
                                     >
                                         {thead.season}
                                     </th>
                                 ))}
                             </tr>
-                            <tr
-                                className="text-white bg-[#383853]"
-                                style={{ position: 'sticky', top: 72, zIndex: 45 }}
-                            >
-                                {data?.thead?.map((thead, idx) => (
-                                    <React.Fragment key={idx}>
-                                        <th className="border border-gray-300 p-1 text-center">CY</th>
-                                        <th className="border border-gray-300 p-1 text-center">LY</th>
-                                        <th className="border border-gray-300 p-1 text-center">Growth%</th>
-                                    </React.Fragment>
-                                ))}
-                            </tr>
-                            <tr
-                                className="text-white bg-[#4d5875]"
-                                style={{ position: 'sticky', top: 96, zIndex: 44 }}
-                            >
+                            <tr className="text-white bg-[#383853]">
                                 <th
-                                    className="border border-gray-300 p-2 font-medium bg-[#4d5875]"
-
+                                    className="border border-gray-300 p-1 text-center sticky top-[38px] z-20 bg-[#383853]"
                                 >
                                     Dates
                                 </th>
                                 {data?.thead?.map((thead, idx) => (
                                     <React.Fragment key={idx}>
-                                        <th
-                                            className="border border-gray-300 p-1 text-right bg-[#4d5875]"
-
-                                        >
-                                            {thead?.cy_launches.length > 0 && (
-                                                <select className="form-control form-control-sm border">
-                                                    {thead.cy_launches.map((cy_launch, i) => (
-                                                        <option key={i}>{cy_launch}</option>
-                                                    ))}
-                                                </select>
-                                            )}
-                                        </th>
-                                        <th
-                                            className="border border-gray-300 p-1 text-right bg-[#4d5875]"
-
-                                        >
-                                            {thead?.ly_launches.length > 0 && (
-                                                <select className="form-control form-control-sm border">
-                                                    {thead.ly_launches.map((ly_launch, i) => (
-                                                        <option key={i}>{ly_launch}</option>
-                                                    ))}
-                                                </select>
-                                            )}
-                                        </th>
-                                        <th
-                                            className="border border-gray-300 p-1 text-center bg-[#4d5875]"
-                                         
-                                        ></th>
+                                        <th className="border border-gray-400 p-1 text-center">CY</th>
+                                        <th className="border border-gray-400 p-1 text-center">LY</th>
+                                        <th className="border border-gray-400 p-1 text-center">Growth%</th>
                                     </React.Fragment>
                                 ))}
                             </tr>
@@ -129,17 +67,17 @@ const Unstitiched = ({ data, title, color }) => {
 
                         return (
                             <tr
-                                className={`bg-blue-100 text-xs ${
-                                    isLastRow ? 'text-white bg-[#4d5875]' : ''
-                                }`}
+                                className={`text-sm ${isLastRow ? 'text-white bg-[#4d5875]' : ''}`}
                                 key={rowIndex}
                                 style={
                                     isLastRow
-                                        ? { position: 'sticky', bottom: 0, zIndex: 40 }
+                                        ? { position: 'sticky', bottom: 0, backgroundColor: '#4d5875', zIndex: 5 }
                                         : {}
                                 }
                             >
-                                <td className="border border-gray-300 p-1 text-center">
+                                <td
+                                    className="border border-gray-400 p-2 text-center sticky left-0 text-black"
+                                >
                                     {row.date}
                                 </td>
                                 {seasons.map((season) => {
@@ -147,25 +85,19 @@ const Unstitiched = ({ data, title, color }) => {
                                     return (
                                         <React.Fragment key={season}>
                                             <td
-                                                className={`border border-gray-400 text-black dark:text-gray-200 dark:bg-bodybg text-right ${
-                                                    isLastRow ? 'text-white bg-[#4d5875]' : ''
-                                                }`}
+                                                className={`border border-gray-400 text-right ${isLastRow ? 'text-white bg-[#4d5875]' : ''}`}
                                             >
                                                 {cy_sale}
                                             </td>
                                             <td
-                                                className={`border border-gray-400 text-black dark:text-gray-200 dark:bg-bodybg text-right ${
-                                                    isLastRow ? 'text-white bg-[#4d5875]' : ''
-                                                }`}
+                                                className={`border border-gray-400 text-right ${isLastRow ? 'text-white bg-[#4d5875]' : ''}`}
                                             >
                                                 {ly_sale}
                                             </td>
                                             <td
-                                                className={`border border-gray-400 text-black dark:text-gray-200 dark:bg-bodybg text-center ${
-                                                    getGrowthColor(growth)
-                                                } ${isLastRow ? 'text-white bg-[#4d5875]' : ''}`}
+                                                className={`border border-gray-400 font-bold text-center ${getGrowthColor(growth)} ${isLastRow ? 'text-white bg-[#4d5875]' : ''}`}
                                             >
-                                                {growth}%
+                                                {growth}
                                             </td>
                                         </React.Fragment>
                                     );
