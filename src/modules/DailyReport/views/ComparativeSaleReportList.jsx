@@ -40,6 +40,9 @@ const ComparativeSaleReportList = () => {
                     { name: 'cy_to', defaultValue:  getPastDate()},
                     { name: 'ly_from', defaultValue: startOfPrevYear },
                     { name: 'ly_to', defaultValue: formattedPrevYearYesterday },
+                    { name: 'category', defaultValue: 'Fragrance'},
+                    { name: 'group', defaultValue: 'Offline'},
+                    { name: 'sale_type', defaultValue: 'Full Price'},
                 ],
             }),
             [startOfMonth, startOfPrevYear, formattedPrevYearYesterday]
@@ -62,6 +65,7 @@ const ComparativeSaleReportList = () => {
                             activeTab === "online_unstitiched" ? '/reporting/comparative/category/Online/Unstitched Women/Full Price/' :
                                 activeTab === "offline_stitiched" ? '/reporting/comparative/category/Offline/Stitched Women/Full Price/' :
                                     activeTab === "online_stitiched" ? '/reporting/comparative/category/Online/Stitched Women/Full Price/' :
+                                    activeTab === "other_category" ? `/reporting/comparative/category/${filters.group}/${filters.category}/${filters.sale_type}/` :
                         '',
         filters
     );
@@ -83,7 +87,7 @@ const ComparativeSaleReportList = () => {
             />
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <ComparativeDate filters={filters} control={control} errors={errors} hideOnlyComparativePeriod={hideOnlyComparativePeriod}/>
+                <ComparativeDate filters={filters} control={control} errors={errors} hideOnlyComparativePeriod={hideOnlyComparativePeriod} showCategoryFilters={activeTab === 'other_category'} />
             </form>
 
             <IconTabs
@@ -135,6 +139,12 @@ const ComparativeSaleReportList = () => {
                         label: "Online - Stitiched - Full Price Sales",
                         icon: <i className='bx bx-target-lock'></i>,
                         content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner /> : <Unstitiched  color='text-emerald-600' data={data} title='Stitiched Women' isLoading={isLoading} isActive={activeTab === 'online_stitiched'} filters={filters} />) : ''
+                    },
+                    {
+                        id: "other_category",
+                        label: "Other Category - Sales",
+                        icon: <i className='bx bx-target-lock'></i>,
+                        content: activeTab === 'other_category' ? (isLoading ? <LoadingSpinner /> : <Unstitiched  color='text-emerald-600' data={data} title={filters.category} />) : ''
                     },
                 ]}
                 onTabChange={handleTabChange}
