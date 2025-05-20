@@ -162,6 +162,8 @@ export const generateDatesArray = (rawData) => {
 
 // comparative sale report
 
+
+
 const getComparativeReportDates = () => {
     const date = new Date();
 
@@ -191,3 +193,6 @@ const getComparativeReportDates = () => {
 };
 
 export default getComparativeReportDates;
+
+
+

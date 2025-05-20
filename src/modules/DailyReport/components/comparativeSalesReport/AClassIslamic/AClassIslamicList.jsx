@@ -10,7 +10,7 @@ import IslamicDate from "@modules/DailyReport/components/comparativeSalesReport/
 
 const AClassIslamicList = ({data}) => {
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-danger' : 'text-emerald-600';
+        return growth < 0 ? 'text-red' : 'text-emerald-600';
     };
 
 

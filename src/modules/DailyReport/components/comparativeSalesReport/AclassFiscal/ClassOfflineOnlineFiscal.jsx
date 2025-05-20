@@ -5,9 +5,12 @@ import SummaryTable from "@modules/DailyReport/components/comparativeSalesReport
 import CategoryTable from "@modules/DailyReport/components/comparativeSalesReport/AclassFiscal/Category.jsx";
 
 
-const AClassFiscal = ({data}) => {
+const AClassFiscal = ({data,isLoading}) => {
+    if (isLoading) {
+        return null;
+    }
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-danger' : 'text-emerald-600';
+        return growth < 0 ? 'text-red' : 'text-emerald-600';
     };
 
     return (

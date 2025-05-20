@@ -14,7 +14,7 @@ const IconTabs = ({ tabs, onTabChange }) => {
     return (
         <div>
             <div className="sm:border-b-2 border-gray-200 dark:border-white/10">
-                <nav className="-mb-0.5 sm:flex sm:space-x-6 rtl:space-x-reverse">
+                <nav className="-mb-0.5 sm:flex sm:space-x-6 overflow-x-auto rtl:space-x-reverse">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
