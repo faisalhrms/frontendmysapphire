@@ -14,12 +14,6 @@ import AClassIslamicList from "@modules/DailyReport/components/comparativeSalesR
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 import getComparativeReportDates from "@modules/DailyReport/views/utils.js";
-import OnlineStitiched
-    from "@modules/DailyReport/components/comparativeSalesReport/StitichedOnline/StitichedOnline.jsx";
-import OfflineStitiched
-    from "@modules/DailyReport/components/comparativeSalesReport/StitichedOffline/OfflineStitiched.jsx";
-import OnlineUnstitiched
-    from "@modules/DailyReport/components/comparativeSalesReport/OnlineUnstitiched/UnstitichedOnline.jsx";
 import Unstitiched from "@modules/DailyReport/components/comparativeSalesReport/OfflineUnstitiched/Unstitiched.jsx";
 
 const ComparativeSaleReportList = () => {
@@ -42,10 +36,10 @@ const ComparativeSaleReportList = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'date', defaultValue: getPastDate() },
-                    { name: 'startOfMonth', defaultValue: startOfMonth },
-                    { name: 'startOfPrevYear', defaultValue: startOfPrevYear },
-                    { name: 'prevYearYesterday', defaultValue: formattedPrevYearYesterday },
+                    { name: 'cy_from', defaultValue: startOfMonth },
+                    { name: 'cy_to', defaultValue:  getPastDate()},
+                    { name: 'ly_from', defaultValue: startOfPrevYear },
+                    { name: 'ly_to', defaultValue: formattedPrevYearYesterday },
                 ],
             }),
             [startOfMonth, startOfPrevYear, formattedPrevYearYesterday]
@@ -84,8 +78,7 @@ const ComparativeSaleReportList = () => {
             />
 
             <form onSubmit={handleSubmit(onSubmit)}>
-                <ComparativeDate filters={filters} control={control} errors={errors}
-                                 hideOnlyComparativePeriod={hideOnlyComparativePeriod}/>
+                <ComparativeDate filters={filters} control={control} errors={errors} hideOnlyComparativePeriod={hideOnlyComparativePeriod}/>
             </form>
 
             <IconTabs

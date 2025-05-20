@@ -39,8 +39,8 @@ const ComparativeDate = ({
                                 <div className="flex-1">
                                     <FormInput
                                         type="date"
-                                        name="startOfMonth"
-                                        placeholder="To Current Period"
+                                        placeholder="From Current Period"
+                                        name="cy_from"
                                         control={control}
                                         errors={errors}
                                     />
@@ -48,8 +48,8 @@ const ComparativeDate = ({
                                 <div className="flex-1">
                                     <FormInput
                                         type="date"
-                                        placeholder="From Current Period"
-                                        name="date"
+                                        name="cy_to"
+                                        placeholder="To Current Period"
                                         control={control}
                                         errors={errors}
                                     />
@@ -59,8 +59,8 @@ const ComparativeDate = ({
                                         <div className="flex-1">
                                             <FormInput
                                                 type="date"
-                                                placeholder="To Comparative Period"
-                                                name="startOfPrevYear"
+                                                placeholder="From Comparative Period"
+                                                name="ly_from"
                                                 control={control}
                                                 errors={errors}
                                             />
@@ -69,8 +69,8 @@ const ComparativeDate = ({
                                         <div className="flex-1">
                                             <FormInput
                                                 type="date"
-                                                placeholder="From Comparative Period"
-                                                name="prevYearYesterday"
+                                                placeholder="To Comparative Period"
+                                                name="ly_to"
                                                 control={control}
                                                 errors={errors}
                                             />
@@ -79,8 +79,8 @@ const ComparativeDate = ({
                                 )}
                             </div>
                             <div className="flex items-center gap-4 mt-6 flex-2">
-                                <FilterButton />
-                                <FilterClearButton onClick={clearFilter} />
+                                <FilterButton/>
+                                <FilterClearButton onClick={clearFilter}/>
                                 <button
                                     type="button"
                                     className="ti-btn ti-btn-success !mb-0"
