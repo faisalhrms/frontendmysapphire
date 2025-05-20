@@ -14,9 +14,9 @@ const OnlineSaleList = ({data}) => {
     return (
         <div className="font-sans text-sm">
 
-            <CurrentPeriodTable
-                data={data}
-            />
+            {/*<CurrentPeriodTable*/}
+            {/*    data={data}*/}
+            {/*/>*/}
             <OnlineSalesTwo
                 getGrowthColor={getGrowthColor}
                 data={data}

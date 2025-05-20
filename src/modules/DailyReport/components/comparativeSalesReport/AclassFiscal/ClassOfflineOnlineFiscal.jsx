@@ -16,10 +16,10 @@ const AClassFiscal = ({data,isLoading}) => {
     return (
         <div className="font-sans text-sm">
 
-            <CurrentPeriodTable
-                data={data}
+            {/*<CurrentPeriodTable*/}
+            {/*    data={data}*/}
 
-            />
+            {/*/>*/}
             <SummaryTable
                getGrowthColor={getGrowthColor}
                  data={data}

@@ -9,10 +9,15 @@ const SalesPerformanceTable = ({ data, isLoading }) => {
     };
 
     return (
-        <div className="p-6 bg-white mt-4 rounded-lg dark:text-gray-200 dark:bg-bodybg mb-6">
+        <>
+            <p className="text-primary p-2 rounded-lg text-right text-black">
+                Amount in Rs.
+            </p>
 
-            <div
-                className="overflow-x-auto overflow-y-auto border border-gray-400"
+    <div className="p-6 bg-white  rounded-lg dark:text-gray-200 dark:bg-bodybg mb-6">
+
+        <div
+            className="overflow-x-auto overflow-y-auto border border-gray-400"
                 style={{ maxHeight: '650px' }}
             >
                 <table className="min-w-full table-auto border-collapse">
@@ -80,6 +85,7 @@ const SalesPerformanceTable = ({ data, isLoading }) => {
                 </table>
             </div>
         </div>
+        </>
     );
 };
 

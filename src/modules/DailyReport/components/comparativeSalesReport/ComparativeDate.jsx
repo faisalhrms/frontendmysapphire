@@ -84,6 +84,7 @@ const ComparativeDate = ({
                                 {
                                     showCategoryFilters &&
                                     <>
+
                                         <div className="flex-1">
                                             <FormAsyncSelect
                                                 name="category"
@@ -93,16 +94,29 @@ const ComparativeDate = ({
                                                 apiUrl="/reporting/select/categories/"
                                                 queryKeyBase="report_categories"
                                                 clientSideSearch={true}
-                                                preselectedOptions={
-                                                    [
-                                                        {
-                                                            label: filters.category,
-                                                            value: filters.category,
-                                                        },
-                                                    ]}
+                                                preselectedOptions={[
+                                                    {
+                                                        label: filters.category,
+                                                        value: filters.category,
+                                                    },
+                                                ]}
                                                 isClearable={false}
+
+                                                styles={{
+                                                    menu: (provided) => ({
+                                                        ...provided,
+                                                        zIndex: 100
+                                                    }),
+                                                    menuPortal: (provided) => ({
+                                                        ...provided,
+                                                        zIndex: 9999
+                                                    })
+                                                }}
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
                                             />
                                         </div>
+                                       
                                         <div className="flex-1">
                                             <FormSelect
                                                 name="group"
