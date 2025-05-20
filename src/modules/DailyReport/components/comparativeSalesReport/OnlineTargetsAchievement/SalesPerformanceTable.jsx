@@ -54,7 +54,7 @@ const SalesPerformanceTable = ({ data, isLoading }) => {
 
                         return (
                             <tr key={index} className={rowClass} style={totalRowStyle}>
-                                <td className="border p-2 text-center border-gray-400 text-black dark:text-gray-200 dark:bg-bodybg">{row.date}</td>
+                                <td className="border p-2 text-center border-gray-400 text-black dark:text-gray-200 font-bold dark:bg-bodybg">{row.date}</td>
                                 <td className="border border-gray-400 p-2 text-right text-black dark:text-gray-200 dark:bg-bodybg">{row.full_price.actual_sale}</td>
                                 <td className="border border-gray-400 p-2 text-right text-black dark:text-gray-200 dark:bg-bodybg">{row.full_price.target_sale}</td>
                                 <td

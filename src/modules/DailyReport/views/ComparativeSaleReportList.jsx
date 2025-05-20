@@ -47,7 +47,12 @@ const ComparativeSaleReportList = () => {
     );
 
     const [filters, setFilters] = useState(getFilters());
-    const hideOnlyComparativePeriod = activeTab === "AClassIslamic";
+
+    const hideOnlyComparativePeriod = [
+        "AClassIslamic",
+        "online_target",
+
+    ].includes(activeTab);
     const { data, isLoading } = useFetchWithFilters(
         activeTab === "ClassonlineFiscal" ? '/reporting/comparative/fiscal-sales/' :
             activeTab === "Local & Global" ? '/reporting/comparative/online-sales/' :
