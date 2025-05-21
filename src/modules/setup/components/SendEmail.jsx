@@ -46,7 +46,7 @@ const SendEmail = ({ isActive }) => {
 
                             {/* Submit Button */}
                             <div className="xl:col-span-4 pt-7 col-span-12">
-                                <FormButton isSubmitting={isSubmitting} className="w-full"/>
+                                <FormButton  isSubmitting={isSubmitting} className="w-full"/>
                             </div>
                         </div>
                     </div>

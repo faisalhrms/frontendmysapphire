@@ -8,31 +8,20 @@ import Tooltip from "@components/Tooltip.jsx";
 import HighlightCell from "@modules/sr-management/component/HighlightCell.jsx";
 
 const TaskGeneratedTable = () => {
-    const navigate = useNavigate();
-
-    const onViewTask = (id) => {
-        navigate(`/module/srm/taskgeneratedform/${id}`);
-    };
-
     const columns = [
         {
             Header: "Action",
-            accessor: "action",
-            Cell: ({row}) => {
-                const {id} = row.original;
-                return (
-                    <div className="flex space-x-2">
-                        <Link
-                            aria-label="anchor"
-                            to={`/module/srm/taskgeneratedform/${id}`}
-                            rel="noopener noreferrer"
-                            className="ti-btn ti-btn-success ti-btn-sm"
-                        >
-                            <i className="ri-eye-line"></i>
-                        </Link>
-                    </div>
-                );
-            },
+            accessor: "id",
+            Cell: ({row}) => (
+                <div className="flex space-x-2">
+                <Link
+                    to={`/module/srm/taskgeneratedform/${row.original.id}`}
+                    className="ti-btn ti-btn-info ti-btn-sm inline-flex items-center justify-center"
+                >
+                    <i className="ri-eye-line"></i>
+                </Link>
+                </div>
+            ),
         },
         {
             Header: "SR #",

@@ -18,11 +18,10 @@ const TaskCard = ({ task, statusLabel }) => {
     }
   }, [task.is_read]);
 
-  let daysLeft = "";
-  if (task.need_by_date) {
-    const diff = Math.ceil((new Date(task.need_by_date) - new Date()) / (1000 * 60 * 60 * 24));
-    daysLeft = diff > 0 ? `${diff} days left` : "0 days left";
-  } else daysLeft = "N/A";
+  const diff = task.need_by_date
+    ? Math.ceil((new Date(task.need_by_date) - new Date()) / (1000 * 60 * 60 * 24))
+    : null;
+  const daysLeft = diff !== null ? (diff > 0 ? `${diff} days left` : "0 days left") : "N/A";
 
   const assignees = task.sr_tasks?.[0]?.assignees || [];
   const assigneeNames = assignees.map(a => a.name).join(", ") || "Unassigned";
@@ -32,7 +31,7 @@ const TaskCard = ({ task, statusLabel }) => {
   return (
     <div
       style={{ borderInlineStart: `0.45rem solid ${!task.is_read ? borderColor : "transparent"}` }}
-      className="box flex flex-col h-auto"
+      className="box flex flex-col h-auto !mb-0"
     >
       <div className="box-body flex flex-col">
         <div className="flex justify-between mb-1 text-[.75rem] font-semibold">

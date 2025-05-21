@@ -34,7 +34,6 @@ const LoginForm = () => {
       const userData = await login(data).unwrap();
         dispatch(setCredentials(userData));
         Notify.success('Login successful!');
-        navigate(PMS_ROUTES.PROJECT.READ.path);
     } catch (error) {
       if (error.data && error.data.message) {
           Notify.error( error.data.message);
@@ -61,7 +60,7 @@ const LoginForm = () => {
           <div className="xl:col-span-12 col-span-12">
             <label htmlFor="signin-password" className="form-label mt-3 text-default block">Password
               <Link to={`/resetpassword/`} className="ltr:float-right rtl:float-left text-danger">
-                Forget password?
+                Forgot password?
               </Link>
             </label>
             <div className="input-group">

@@ -68,6 +68,7 @@ const useFilters = (config) => {
         updateFilters,
         getFilters,
         errors,
+        setValue
     };
 };
 

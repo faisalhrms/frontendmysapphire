@@ -50,8 +50,8 @@ const CompanyList = () => {
       Cell: ({ row }) => (
         <div className="flex items-center">
           <Avatar
-            avatar={
-              row.original?.media }
+            avatar={row.original?.media }
+            full_name={row.original.full_name || 'N/A'}
             size="md"
             parentClasses="bg-primary/10 !fill-primary"
           />

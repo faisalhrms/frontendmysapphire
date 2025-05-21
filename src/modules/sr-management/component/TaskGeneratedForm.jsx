@@ -27,7 +27,6 @@ function TaskGeneratedForm({generatedReqData = {}, serviceRequest = {}, refreshS
     const handleCloseLinkModal = () => setShowLinkModal(false);
 
     const handleLinkTask = async (srNumber) => {
-        console.log(srNumber)
         try {
             const response = await api.post("/service-request/link/", {
                 root_sr: serviceRequest.sr_number,
@@ -202,8 +201,8 @@ function TaskGeneratedForm({generatedReqData = {}, serviceRequest = {}, refreshS
         <>
             <PageHeader
                 currentpage="Task Generated"
-                activepage="SR Assignment"
-                mainpage="Task Generated"
+                activepage="Task Generated"
+                mainpage="SR Assignment"
             />
             <div className="dark:bg-bodybg p-4 rounded-lg my-6">
                 <ConfirmationModal

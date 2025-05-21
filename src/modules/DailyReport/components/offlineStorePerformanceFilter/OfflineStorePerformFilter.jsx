@@ -53,7 +53,7 @@ const OfflineStorePerformFilter = ({ control, errors, clearFilter,filters }) => 
                                 disabled={isDownloading}
 
                             >
-                                <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""} text-lg`}></i>
+                                <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""} `}></i>
                                 {isDownloading ? "" : ""}
                             </button>
 

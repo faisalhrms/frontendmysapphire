@@ -13,7 +13,7 @@ import fileIcon from "@assets/images/icon/008-file.png";
 
 const generateIcon = attachment => {
   const { extension, file, file_name } = attachment;
-  const imgStyle = "height:60px;width:60px;";
+  const imgStyle = "height:50px;width:50px;";
   if ([".png", ".jpg", ".jpeg", ".gif"].includes(extension)) return `<img style="object-fit:contain;" src="${file}" alt="${file_name}">`;
   if ([".mp4", ".avi", ".mov"].includes(extension)) return `<img src="${videoIcon}" alt="${file_name}" style="${imgStyle}">`;
   if ([".zip", ".rar"].includes(extension)) return `<img src="${zipIcon}" alt="${file_name}" style="${imgStyle}">`;
@@ -30,11 +30,17 @@ const generateIcon = attachment => {
 const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
   if (!discussion || !control) return null;
   const senderName = userId === discussion.user?.id ? "You" : discussion.user?.full_name || discussion.sender;
-
+  const sanitizeHtml = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    doc.querySelectorAll('script').forEach(el => el.remove());
+    doc.querySelectorAll('a').forEach(el => el.replaceWith(document.createTextNode(el.textContent)));
+    return doc.body.innerHTML;
+  };
   return (
     <li className="mb-3">
       <div className="flex items-start space-x-2">
-        <Avatar avatar={discussion.user?.avatar} parentClasses="profile-timeline-avatar" />
+        <Avatar avatar={discussion.user?.avatar} full_name={discussion.user?.full_name || discussion.sender} parentClasses="profile-timeline-avatar" />
         <div className="flex-grow">
           <div className="flex justify-between items-center mb-1">
             <span className="font-medium text-sm">{senderName}</span>
@@ -90,7 +96,7 @@ const SRDiscussionItem = ({ discussion, userId, control, errors }) => {
           <div className="border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm mb-2 text-sm leading-relaxed">
             <p
               className="profile-activity-media mb-0 sun-editor-editable"
-              dangerouslySetInnerHTML={{ __html: discussion.message || "" }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(discussion.message || "") }}
             ></p>
           </div>
 

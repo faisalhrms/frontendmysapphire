@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import {getUsers, createUser, updateUser, getUserManagementById} from "@modules/user/services/userManagementService.js";
 import {useNavigate} from "react-router-dom";
 
-export const useUserManagementForm = (userData, isEditMode) => {
+export const useUserManagementForm = (userData, isEditMode,initialInstance,fromApproval) => {
     const navigate = useNavigate();
 
     const handleUserManagementSubmit = async (data) => {
@@ -11,8 +11,14 @@ export const useUserManagementForm = (userData, isEditMode) => {
             let response;
             if (isEditMode) {
                 response = await updateUser(userData.id, data);
-                navigate("/user-management/list");
-            } else {
+                if(fromApproval) {
+                    navigate("/user-management/all-approvals")
+                }
+                else{
+                    navigate("/user-management/list");
+                }
+
+            } else if(initialInstance) {
                 response = await createUser(data);
                 navigate("/user-management/list");
             }

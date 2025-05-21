@@ -5,7 +5,7 @@ import { useUpdateApprovalStatus } from "@modules/email-management/hooks/EmailMa
 // Define the status options for approvals as needed
 const approvalStatuses = [
     { label: "Pending", value: "pending" },
-    { label: "Approved", value: "approved" },
+    { label: "Under Process", value: "under_process" },
     { label: "Rejected", value: "rejected" },
 ];
 

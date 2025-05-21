@@ -282,10 +282,10 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                             ))}
 
                             {data.length > 0 && (
-                                <tr className="bg-gray-200 font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">
-                                    <td className="sticky left-0 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
+                                <tr className="font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">
+                                    <td className="sticky left-0 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                     </td>
-                                    <td className="sticky left-12 sm:left-16 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold bg-gray-200 dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
+                                    <td className="sticky left-12 sm:left-16 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold  dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                         Total
                                     </td>
                                     <td className="py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-right font-bold text-xs sm:text-sm">

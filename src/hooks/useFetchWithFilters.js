@@ -51,8 +51,6 @@ export const useFetchWithFilters = (endpoint, filters = {}, queryOptions = {}) =
         const queryString = buildQueryString(cleanedFilters);  // Use the manual query string builder
         const url = queryString ? `${endpoint}?${queryString}` : endpoint;
 
-        console.log('Requesting URL:', url);  // Debugging: Check the full URL being sent
-
         try {
             const response = await api.get(url);
             return response.data.data;

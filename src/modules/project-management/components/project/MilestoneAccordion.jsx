@@ -36,8 +36,10 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
     return (
         <>
             <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
-                <div className="hs-accordion-group">
-                {Array.isArray(milestones) && milestones.map((milestone) => (<div
+                <div className="hs-accordion-group ">
+
+                {Array.isArray(milestones) && milestones.map((milestone) => (
+                    <div
                     className={`hs-accordion accordion-item mb-4 ${milestone.priority === 'low' ? 'custom-accordion-primary' : (milestone.priority === 'medium' ? 'custom-accordion-secondary' : 'custom-accordion-danger')}`}
                     key={milestone.id}>
                     <button
@@ -100,7 +102,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Priority</p>
                                         <span className={getBadgeClasses(milestone.priority)}>{toTitleCase(milestone.priority)}</span>
-                                        
+
                                     </div>
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Started At</p>
@@ -111,18 +113,27 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                         <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{formatDate(milestone.ended_at)}</p>
                                     </div>
                                     <div className="flex flex-col items-start">
-                                        <p className="font-semibold mb-[1.4px] text-[0.813rem]">Created By</p>
+                                        <p className="font-semibold mb-[1.4px] text-[0.813rem] whitespace-nowrap overflow-hidden text-ellipsis">Created By</p>
                                         <div className="flex items-center flex-wrap">
-                                            <div className="me-2 leading-none">
-                                                <Avatar avatar={milestone?.created_by?.avatar} size='xs'/>
+                                            <div className="me-2 leading-none flex items-center">
+                                                <Avatar avatar={milestone?.created_by?.avatar} size='sm'
+                                                        full_name={milestone?.created_by?.full_name || 'N/A'}
+
+                                                />
+                                                <div className='ms-2'>
+                                                    <p className="font-semibold mb-0 flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
+                                                        {milestone?.created_by?.full_name || 'N/A'}
+                                                    </p>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     {
                                         !viewOnly &&
-                                            <div className="flex flex-col items-center">
-                                                <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
-                                                <div className="flex space-x-2">
+                                        <div className="flex flex-col items-center">
+                                            <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
+                                            <div className="flex space-x-2">
                                                     <HasProjectPermission globalPermission='pms.change_project' users={projectUsers}>
                                                         <Tooltip
                                                             id={`edit-milestone-tooltip-${milestone.id}`}

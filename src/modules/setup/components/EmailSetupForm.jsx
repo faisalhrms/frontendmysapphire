@@ -1,111 +1,105 @@
-    import React, { useEffect } from "react";
-    import { useForm } from "react-hook-form";
-    import { zodResolver } from "@hookform/resolvers/zod";
-    import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSelector } from "react-redux";
 
-    import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
-    import FormSelect from "@components/form/FormSelect.jsx";
-    import FormButton from "@components/form/FormButton.jsx";
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import FormSelect      from "@components/form/FormSelect.jsx";
+import FormButton      from "@components/form/FormButton.jsx";
 
-    import {emailSetupTypes, getEmailSetupTypeLabel} from "@modules/setup/services/emailSetupService.js";
-    import emailSetupSchema from "@modules/setup/schemas/EmailSetupSchema.js";
-    import {useEmailSetupForm} from "@modules/setup/hooks/emailSetupHook.js";
-    import {formatOptions, formatOptionsWithConcatenation} from "@helpers/formatters.js";
+import {
+    emailSetupTypes,
+} from "@modules/setup/services/emailSetupService.js";
+import emailSetupSchema from "@modules/setup/schemas/EmailSetupSchema.js";
+import { useEmailSetupForm } from "@modules/setup/hooks/emailSetupHook.js";
 
-    const EmailSetupForm = ({ emailSetupData, isEditMode = false }) => {
-        const companyId = useSelector((state) => state.auth.user.employee.company.id);
+const EmailSetupForm = ({ emailSetupData, isEditMode = false }) => {
+    const companyId = useSelector((s) => s.auth.user.employee.company.id);
 
-        const {
-            control,
-            handleSubmit,
-            formState: { errors, isSubmitting },
-            setValue,
-        } = useForm({
+    const { control, handleSubmit, formState: { errors, isSubmitting }, setValue } =
+        useForm({
             resolver: zodResolver(emailSetupSchema),
             defaultValues: {
                 ...emailSetupData,
                 company_id: emailSetupData?.company_id || companyId,
-                to_users: emailSetupData?.to_users || [],
-                cc_users: emailSetupData?.cc_users || [],
+                to_emails: emailSetupData?.to_emails || [],
+                cc_emails: emailSetupData?.cc_emails || [],
                 type: emailSetupData?.type || "",
             },
         });
 
-        const { handleEmailSetupSubmit } = useEmailSetupForm(emailSetupData, isEditMode);
-        useEffect(() => {
-            if (emailSetupData) {
-                Object.keys(emailSetupData).forEach((key) => {
-                    setValue(key, emailSetupData[key]);
-                });
-            }
-        }, [emailSetupData, setValue]);
+    const { handleEmailSetupSubmit } = useEmailSetupForm(emailSetupData, isEditMode);
 
-        return (
-            <form onSubmit={handleSubmit(handleEmailSetupSubmit)} className="grid grid-cols-12 gap-x-6">
-                <div className="xxl:col-span-12 col-span-12">
-                    <div className="box">
-                        <div className="box-header">
-                            <div className="box-title">Email Setup Info</div>
-                        </div>
-                        <div className="box-body">
-                            <div className="grid grid-cols-12 gap-4">
-                                {/* To Emails */}
-                                <div className="xl:col-span-6 col-span-12">
-                                    <FormAsyncSelect
-                                        name="to_user_ids"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="To Emails"
-                                        label="To Emails"
-                                        isMulti={true}
-                                        is_required={true}
-                                        clientSideSearch={false}
-                                        apiUrl="/select/users/"
-                                        queryKeyBase="to_users"
-                                        preselectedOptions={formatOptionsWithConcatenation(emailSetupData, "to_users", "id", ["full_name", "email"])}
+    useEffect(() => {
+        if (emailSetupData) {
+            Object.keys(emailSetupData).forEach((key) => {
+                setValue(key, emailSetupData[key]);
+            });
+        }
+    }, [emailSetupData, setValue]);
 
-                                    />
-                                </div>
+    return (
+        <form onSubmit={handleSubmit(handleEmailSetupSubmit)} className="grid grid-cols-12 gap-x-6">
+            <div className="col-span-12">
+                <div className="box">
+                    <div className="box-header"><h3 className="box-title">Email Setup</h3></div>
+                    <div className="box-body grid grid-cols-12 gap-4">
 
-                                {/* CC Emails */}
-                                <div className="xl:col-span-6 col-span-12">
-                                    <FormAsyncSelect
-                                        name="cc_user_ids"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="CC Emails"
-                                        label="CC Emails"
-                                        isMulti={true}
-                                        apiUrl="/select/users/"
-                                        queryKeyBase="cc_users"
-                                        preselectedOptions={formatOptionsWithConcatenation(emailSetupData, "cc_users", "id", ["full_name", "email"])}
-
-                                        is_required={false}
-                                    />
-                                </div>
-
-                                {/* Type */}
-                                <div className="xl:col-span-6 col-span-12">
-                                    <FormSelect
-                                        name="type"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Report Type"
-                                        label="Report Type"
-                                        options={emailSetupTypes}
-                                        is_required={true}
-                                    />
-                                </div>
-                            </div>
+                        {/* To Emails */}
+                        <div className="col-span-12 xl:col-span-6">
+                            <FormAsyncSelect
+                                name="to_emails"
+                                control={control}
+                                errors={errors}
+                                label="To Emails"
+                                placeholder="Select Emails"
+                                isMulti
+                                is_required
+                                clientSideSearch={false}
+                                apiUrl="/select/user-emails/"
+                                queryKeyBase="to_emails"
+                                // no preselectedOptions helper needed if value=label=value
+                                preselectedOptions={emailSetupData?.to_emails.map((e) => ({label: e, value: e}))}
+                            />
                         </div>
 
-                        <div className="box-footer">
-                            <FormButton isSubmitting={isSubmitting} />
+                        {/* CC Emails */}
+                        <div className="col-span-12 xl:col-span-6">
+                            <FormAsyncSelect
+                                name="cc_emails"
+                                control={control}
+                                errors={errors}
+                                label="CC Emails"
+                                placeholder="Select Emails"
+                                isMulti
+                                clientSideSearch={false}
+                                apiUrl="/select/user-emails/"
+                                queryKeyBase="cc_emails"
+                                preselectedOptions={emailSetupData?.cc_emails.map((e) => ({label: e, value: e}))}
+                            />
                         </div>
+
+                        {/* Type */}
+                        <div className="col-span-12 xl:col-span-6">
+                            <FormSelect
+                                name="type"
+                                control={control}
+                                errors={errors}
+                                label="Report Type"
+                                placeholder="Select type"
+                                options={emailSetupTypes}
+                                is_required
+                            />
+                        </div>
+
+                    </div>
+                    <div className="box-footer">
+                        <FormButton isSubmitting={isSubmitting} />
                     </div>
                 </div>
-            </form>
-        );
-    };
+            </div>
+        </form>
+    );
+};
 
-    export default EmailSetupForm;
+export default EmailSetupForm;
