@@ -4,6 +4,7 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 
 const ObjectiveWiseSpentSummary = ({ filters }) => {
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -11,7 +12,7 @@ const ObjectiveWiseSpentSummary = ({ filters }) => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const apiResponse = await fetchdigitalspent(filters);
+                const apiResponse = await fetchdigitalspent(filters.date_from);
 
                 const formattedData = Object.keys(apiResponse).map((region) => {
                     const entries = apiResponse[region];

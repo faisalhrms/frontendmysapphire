@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
 import FormInput from "@components/form/FormInput.jsx";
 import useFilters from "@hooks/useFilters.js";
@@ -12,14 +11,14 @@ const ObjectiveSpend = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const getTodayDate = () => new Date().toISOString().slice(0, 10);
+    const getYesterdayDate = () => new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().slice(0, 10);
 
     const { control, handleSubmit, errors, getFilters } = useFilters(
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: "date_from", defaultValue: getTodayDate() },
-                    { name: "date_to", defaultValue: getTodayDate() },
+                    { name: "date_from", defaultValue: getYesterdayDate() },
+                    { name: "date_to", defaultValue: getYesterdayDate() },
                 ],
             }),
             []
@@ -28,14 +27,12 @@ const ObjectiveSpend = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
-
     const onSubmit = async (formData) => {
         setLoading(true);
         setTimeout(() => {
             setFilters(formData);
             setLoading(false);
         }, 1000);
-
     };
 
     return (
@@ -71,19 +68,18 @@ const ObjectiveSpend = () => {
                             <div className="bg-white p-3 mt-2 rounded-lg shadow-md flex items-center space-x-4 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="mt-0">
                                     <FormInput
-                                    type="date"
-                                    placeholder="Till Date "
-                                    name="date_from"
-                                    control={control}
-                                    errors={errors}
-                                    defaultValue={filters.date_from}
-                                    label={true}
-                                />
+                                        type="date"
+                                        placeholder="Till Date "
+                                        name="date_from"
+                                        control={control}
+                                        errors={errors}
+                                        defaultValue={filters.date_from}
+                                        label={true}
+                                    />
                                 </div>
-                        <div className="mt-6">
-                              <FilterButton />
-                                 </div>
-
+                                <div className="mt-6">
+                                    <FilterButton />
+                                </div>
                             </div>
                         </form>
                     )}
