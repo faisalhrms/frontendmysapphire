@@ -2,8 +2,13 @@ import React from 'react';
 import {formatDate} from "@helpers/dateTime.js";
 const CurrentPeriodTable = ({ data}) => {
     return (
-        <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-            <div className="mb-6 dark:text-gray-200 dark:bg-bodybg">
+        <>
+            <p className="text-primary p-2 rounded-lg text-right text-black">
+                Amount in Rs.
+            </p>
+
+    <div className="p-4 bg-white  mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
+        <div className="mb-6 dark:text-gray-200 dark:bg-bodybg">
                 <table className="w-full border-collapse dark:text-gray-200 dark:bg-bodybg">
                     <thead>
                     <tr>
@@ -27,6 +32,7 @@ const CurrentPeriodTable = ({ data}) => {
                 </table>
             </div>
         </div>
+        </>
     );
 };
 

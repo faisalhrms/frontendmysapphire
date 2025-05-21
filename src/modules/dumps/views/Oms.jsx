@@ -12,9 +12,9 @@ import {
 import { dateRangeSchema } from "@modules/dumps/schema/dateRangeSchema.js";
 
 const downloadMap = {
-  Order: downloadOrderSummaryExcel,
-  Wms: downloadWmsExcel,
-  return_order: downloadReturnOrderExcel
+  Order: { fn: downloadOrderSummaryExcel, ext: "csv" },
+  Wms: { fn: downloadWmsExcel, ext: "csv" },
+  return_order: { fn: downloadReturnOrderExcel, ext: "csv" }
 };
 
 const labelMap = {
@@ -49,21 +49,21 @@ const Oms = () => {
   });
   const [startDate, endDate] = useWatch({ control, name: ["startDate", "endDate"] });
 
-  const onDownloadExcel = useCallback(async () => {
-    const fn = downloadMap[activeTab];
-    if (!fn || !startDate || !endDate) return;
-    const blob = await fn({ startDate, endDate });
+  const onDownloadFile = useCallback(async () => {
+    const item = downloadMap[activeTab];
+    if (!item || !startDate || !endDate) return;
+    const blob = await item.fn({ startDate, endDate });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${activeTab}_${startDate}_${endDate}.xlsx`;
+    link.download = `${activeTab}_${startDate}_${endDate}.${item.ext}`;
     document.body.appendChild(link);
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
   }, [activeTab, startDate, endDate]);
 
-  const onDownload = handleSubmit(onDownloadExcel);
+  const onDownload = handleSubmit(onDownloadFile);
 
   const handleClear = useCallback(() => {
     reset({ startDate: defaultStartDate, endDate: defaultEndDate });
