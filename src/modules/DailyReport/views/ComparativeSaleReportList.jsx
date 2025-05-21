@@ -31,7 +31,8 @@ const ComparativeSaleReportList = () => {
         control,
         handleSubmit,
         errors,
-        getFilters
+        getFilters,
+        setValue,
     } = useFilters(
         useMemo(
             () => ({
@@ -49,7 +50,9 @@ const ComparativeSaleReportList = () => {
         )
     );
 
+
     const [filters, setFilters] = useState(getFilters());
+
 
     const hideOnlyComparativePeriod = [
         "AClassIslamic",
@@ -89,7 +92,9 @@ const ComparativeSaleReportList = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <ComparativeDate filters={filters} control={control} errors={errors}
                                  hideOnlyComparativePeriod={hideOnlyComparativePeriod}
-                                 showCategoryFilters={activeTab === 'other_category'}/>
+                                 showCategoryFilters={activeTab === 'other_category'}
+                                 setValue={setValue}
+                />
             </form>
 
 

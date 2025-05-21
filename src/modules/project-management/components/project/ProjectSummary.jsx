@@ -52,7 +52,7 @@ const ProjectSummary = ({project, handleUploadModal}) => {
                             <div className="flex items-center flex-wrap">
                                 <div className="me-2 leading-none">
                                     <Avatar avatar={project.manager.avatar}
-                                            full_name={project.avatar?.full_name || 'N/A'}/>
+                                            full_name={project?.manager?.full_name || 'N/A'}/>
 
                                 </div>
                                 <span
