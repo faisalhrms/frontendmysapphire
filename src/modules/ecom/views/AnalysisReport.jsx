@@ -121,7 +121,7 @@ const AnalysisReport = () => {
         <>
             <PageHeader currentpage="E-Commerce" />
 
-            {/* Filter form always visible for the active tab */}
+
             <AnalysisDate
                 activeTab={activeTab}
                 orderControl={orderControl}
