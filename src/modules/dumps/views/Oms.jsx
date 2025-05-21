@@ -13,8 +13,8 @@ import { dateRangeSchema } from "@modules/dumps/schema/dateRangeSchema.js";
 
 const downloadMap = {
   Order: { fn: downloadOrderSummaryExcel, ext: "csv" },
-  Wms: { fn: downloadWmsExcel, ext: "xlsx" },
-  return_order: { fn: downloadReturnOrderExcel, ext: "xlsx" }
+  Wms: { fn: downloadWmsExcel, ext: "csv" },
+  return_order: { fn: downloadReturnOrderExcel, ext: "csv" }
 };
 
 const labelMap = {
