@@ -104,7 +104,7 @@ const ComparativeSaleReportList = () => {
 
                     {
                         id: "ClassonlineFiscal",
-                        label: "A Class (Offline) & Online - Fiscal",
+                        label: " Offline (A Class) & Online - Fiscal",
                         icon: <i className='bx bx-briefcase'></i>,
                         content: isLoading ? <LoadingSpinner/> :
                             <AClassFiscal data={data} isLoading={isLoading} isActive={activeTab === 'ClassonlineFiscal'}
@@ -121,7 +121,7 @@ const ComparativeSaleReportList = () => {
                     },
                     {
                         id: "AClassIslamic",
-                        label: "A Class (Offline) & Online - Islamic",
+                        label: "Offline  (A Class) & Online - Islamic",
                         icon: <i className='bi bi-book-half'></i>,
                         content: isLoading ? <LoadingSpinner/> : <AClassIslamicList data={data} isLoading={isLoading}
                                                                                     isActive={activeTab === 'AClassIslamic'}
