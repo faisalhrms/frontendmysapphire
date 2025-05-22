@@ -14,71 +14,82 @@ const AnalysisDate = ({
                           onOrderSubmit,
                           onErrorSubmit,
                           clearFilter,
+                          getErrorFilters,
                           hideOnlyComparativePeriod,
                       }) => {
-
-
     return (
-        <div className="grid grid-cols-12 gap-6 mb-6">
+        <div className="grid grid-cols-12 gap-6">
             <div className="col-span-12">
                 <div className="box custom-box">
                     <div className="box-body p-4">
-                        <div className="flex items-center justify-between gap-4">
 
                                 {activeTab === "orderSource" && (
-                                    <form onSubmit={handleOrderSubmit(onOrderSubmit)} className="mb-0">
-                                        <div className="col-span-3">
-                                            <FormInput
-                                                type="date"
-                                                name="date_from"
-                                                control={orderControl}
-                                                defaultValue={orderFilters.date_from}
-                                                label={true}
-                                            />
-                                        </div>
-                                        <div className="col-span-3">
-                                            <FormInput
-                                                type="date"
-                                                name="date_to"
-                                                control={orderControl}
-                                                defaultValue={orderFilters.date_to}
-                                                label={true}
-                                            />
-                                        </div>
-                                        <FilterButton/>
+                                    <form onSubmit={handleOrderSubmit(onOrderSubmit)} className="flex items-center justify-between gap-4">
+
+                                            <div className="flex-1">
+                                                <FormInput
+                                                    type="date"
+                                                    name="date_from"
+                                                    placeholder="From Date"
+                                                    control={orderControl}
+                                                    defaultValue={orderFilters.date_from}
+                                                    label={true}
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <FormInput
+                                                    type="date"
+                                                    name="date_to"
+                                                    placeholder="To Date"
+                                                    control={orderControl}
+                                                    defaultValue={orderFilters.date_to}
+                                                    label={true}
+                                                />
+                                            </div>
+                                            <FilterButton/>
 
                                     </form>
                                 )}
 
                                 {activeTab === "404error" && (
-                                    <form onSubmit={handleErrorSubmit(onErrorSubmit)} className="mb-0">
-                                            <FormInput
-                                                type="date"
-                                                name="date_from"
-                                                control={errorControl}
-                                                defaultValue={errorFilters.date_from || defaultErrorDateFrom} // fallback to 1 May
-                                                label={true}
-                                            />
-                                            <FormInput
-                                                type="date"
-                                                name="date_to"
-                                                control={errorControl}
-                                                defaultValue={errorFilters.date_to || defaultErrorDateTo} // fallback to yesterday
-                                                label={true}
-                                            />
+                                    <form onSubmit={handleErrorSubmit(onErrorSubmit)}
+                                          className="flex items-center justify-between gap-4">
 
-                                            <FilterButton />
+                                            <div className="flex-1">
+                                                <FormInput
+                                                    type="date"
+                                                    name="date_from"
+                                                    placeholder="From Date"
+                                                    control={errorControl}
+                                                    defaultValue={getErrorFilters().date_from}
+                                                    label="From Date"
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <FormInput
+                                                    type="date"
+                                                    name="date_to"
+                                                    placeholder="To Date"
+                                                    control={errorControl}
+                                                    defaultValue={getErrorFilters().date_to}
+                                                    label="To Date"
+                                                />
+                                            </div>
+
+                                                <FilterButton/>
+                                                <FilterClearButton onClick={clearFilter}/>
+
+
                                     </form>
                                 )}
                             </div>
-                            <div className="flex items-center gap-4 mt-6 flex-1">
-                                <FilterClearButton onClick={clearFilter} />
-                            </div>
+
                         </div>
                     </div>
                 </div>
-            </div>
-    );
-};
 
-export default React.memo(AnalysisDate);
+
+            );
+            };
+
+            export default React.memo(AnalysisDate);

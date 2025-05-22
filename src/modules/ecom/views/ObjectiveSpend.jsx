@@ -5,16 +5,21 @@ import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import IconTabs from "@components/IconTabs.jsx";
 import ObjectiveWiseSpentSummary from "../components/DigitalSpent/ObjectiveWiseSpentSummary.jsx";
 import DigitalDate from "@modules/ecom/components/DigitalSpent/Digitaldate.jsx";
+import getComparativeReportDates from "@modules/DailyReport/views/utils.js";
+
 
 const ObjectiveSpend = () => {
     const [activeTab, setActiveTab] = useState("ObjectiveWiseSpentSummary");
 
     const getTodayDate = () => new Date().toISOString().slice(0, 10);
-
+    const {
+        today,
+        startOfMonth,
+    } = getComparativeReportDates();
     const { control, handleSubmit, errors, getFilters } = useFilters(
         useMemo(
             () => ({
-                initialFilters: [{ name: "till_date", defaultValue: getTodayDate() }],
+                initialFilters: [{ name: "till_date", defaultValue:  today, }],
             }),
             []
         )

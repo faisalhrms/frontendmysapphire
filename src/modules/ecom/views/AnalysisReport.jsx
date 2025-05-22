@@ -9,10 +9,14 @@ import AnalysisConversionTable from "../components/AnalysisConversionTable.jsx";
 import AnalysisErrorForm from "../components/AnalysisError/AnalysisErrorform.jsx";
 import ErrorChart from "../components/AnalysisError/ErrorChart.jsx";
 import AnalysisDate from "@modules/ecom/components/AnalysisError/AnalysisDate.jsx";
+import getComparativeReportDates from "@modules/DailyReport/views/utils.js";
 
 const AnalysisReport = () => {
     const [activeTab, setActiveTab] = useState("orderSource");
-
+    const {
+        today,
+        startOfMonth,
+    } = getComparativeReportDates();
     // Order Source Filters hook
     const {
         control: orderControl,
@@ -25,22 +29,20 @@ const AnalysisReport = () => {
                 initialFilters: [
                     {
                         name: "date_from",
-                        defaultValue: new Date(Date.now() - 86400000)
-                            .toISOString()
-                            .slice(0, 10),
+                        defaultValue:today,
                     },
                     {
                         name: "date_to",
-                        defaultValue: new Date(Date.now() - 86400000)
-                            .toISOString()
-                            .slice(0, 10),
+                        defaultValue: today,
                     },
                 ],
             }),
             []
         )
     );
+
     const [orderFilters, setOrderFilters] = useState(getOrderFilters());
+
 
     // 404 Error Filters hook
     const {
@@ -54,40 +56,39 @@ const AnalysisReport = () => {
                 initialFilters: [
                     {
                         name: "date_from",
-                        defaultValue: new Date(
-                            new Date().getFullYear(),
-                            new Date().getMonth(),
-                            1
-                        )
-                            .toISOString()
-                            .slice(0, 10),
+                        defaultValue: startOfMonth,
                     },
                     {
                         name: "date_to",
-                        defaultValue: new Date(Date.now() - 86400000)
-                            .toISOString()
-                            .slice(0, 10),
+                        defaultValue: today, // yesterday
                     },
                 ],
             }),
             []
         )
     );
+
     const [errorFilters, setErrorFilters] = useState(getErrorFilters());
 
-    const hideOnlyComparativePeriod = ["orderSource", "404error"].includes(
-        activeTab
-    );
+    const hideOnlyComparativePeriod = ["orderSource", "404error"].includes(activeTab);
 
     const { data: orderData, isLoading: orderLoading } = useFetchWithFilters(
-        activeTab === "orderSource" ? "/ecom/analytics/fetch_order_source/" : "",
+
+            activeTab === "orderSource" ? "/ecom/analytics/fetch_order_source_cc/" :
+                '',
         orderFilters
     );
 
+    console.log(orderData)
+
     const { data: errorData, isLoading: errorLoading } = useFetchWithFilters(
-        activeTab === "404error" ? "/ecom/analytics/fetch_404_error_summary/" : "",
+        activeTab === "404error" ? '/ecom/analytics/fetch_404_error_summary/' :
+
+                    '',
         errorFilters
     );
+
+
 
     const onOrderSubmit = useCallback(
         (formData) => {
@@ -121,7 +122,6 @@ const AnalysisReport = () => {
         <>
             <PageHeader currentpage="E-Commerce" />
 
-
             <AnalysisDate
                 activeTab={activeTab}
                 orderControl={orderControl}
@@ -133,6 +133,7 @@ const AnalysisReport = () => {
                 onOrderSubmit={onOrderSubmit}
                 onErrorSubmit={onErrorSubmit}
                 clearFilter={clearFilter}
+                getErrorFilters={getErrorFilters}
                 hideOnlyComparativePeriod={hideOnlyComparativePeriod}
             />
 
@@ -146,10 +147,10 @@ const AnalysisReport = () => {
                         icon: <i className="bx bx-pie-chart-alt"></i>,
                         content: (
                             <>
-                                <OrdersBySourceChart data={orderData || []} loading={orderLoading} />
+                                <OrdersBySourceChart data={orderData?.source_code} loading={orderLoading} />
                                 <AnalysisTable
                                     title="Order Source Analysis"
-                                    data={orderData || []}
+                                    data={orderData?.source_code}
                                     loading={orderLoading}
                                     filters={orderFilters}
                                 />
