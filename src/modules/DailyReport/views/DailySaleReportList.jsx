@@ -191,7 +191,7 @@ const DailySaleReportList = () => {
 
 
 
-const [donwloadData, setDonwloadData] = useState({});
+    const [donwloadData, setDonwloadData] = useState({});
 
 
     return (
