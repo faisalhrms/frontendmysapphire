@@ -25,7 +25,7 @@ export const sidebarMenu=[
                 'Approval List',
                 1,
                 '',
-                EMAIL_MANAGEMENT_ROUTE.READ.permission,
+                EMAIL_MANAGEMENT_ROUTE.READ_ALL.permission,
             )]
     )
 ]

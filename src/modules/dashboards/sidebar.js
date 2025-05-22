@@ -73,7 +73,15 @@ export const sidebarMenu = [
                 8,
                 '',
                DASHBOARD_ROUTES.CEO.permission,
-            )
+            ),
+                generateSidebarItem(
+                    DASHBOARD_ROUTES.URP.path,
+                    'link',
+                    'URP Dashboard',
+                    9,
+                    '',
+                    DASHBOARD_ROUTES.URP.permission
+                )
         ]
     ),
 ];
