@@ -247,7 +247,7 @@ const DailySaleReportList = () => {
                         <button
                             type="button"
                             onClick={() => setExpand(!expand)}
-                            className="ti-btn bg-[#ede9fe] text-[#6b21a8] flex items-center gap-1"
+                            className="ti-btn ti-btn-primary !mb-0 items-center gap-1"
                         >
                             <i className={expand ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"}></i>
                             <span className="text-sm font-medium">
@@ -257,14 +257,14 @@ const DailySaleReportList = () => {
 
                     )}
 
-                    <FilterButton className="bg-[#ede9fe] text-[#6b21a8]" iconOnly/>
+                    <FilterButton className="ti-btn ti-btn-primary !mb-0" iconOnly/>
 
 
                     <button
                         type="button"
                         onClick={() => downloadPDF(filters)}
                         disabled={isDownloading}
-                        className="ti-btn bg-[#d1fae5] text-[#047857]"
+                        className="ti-btn ti-btn-success !mb-0"
                     >
                         <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""}`}></i>
                     </button>
@@ -282,3 +282,7 @@ const DailySaleReportList = () => {
 };
 
 export default DailySaleReportList;
+
+
+
+
