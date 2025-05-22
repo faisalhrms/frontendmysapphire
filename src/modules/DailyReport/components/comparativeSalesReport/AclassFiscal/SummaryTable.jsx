@@ -3,8 +3,13 @@ import React from 'react';
 const SummaryTable = ({ data,getGrowthColor }) => {
     const sales_summary = data?.sales_summary;
     return (
-        <div className="p-4 bg-white mt-4 mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-            <div className="mb-6">
+        <>
+            <p className="text-primary p-2 rounded-lg text-right text-black">
+                Amount in Rs.
+            </p>
+
+    <div className="p-4 bg-white  mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
+        <div className="mb-6">
                 <table className="w-full border-collapse">
                     <thead>
                     <tr className="text-white bg-[#383853]">
@@ -62,6 +67,7 @@ const SummaryTable = ({ data,getGrowthColor }) => {
                 </table>
             </div>
         </div>
+        </>
     )
 };
 

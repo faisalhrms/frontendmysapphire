@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FilterClearButton from "@components/form/FilterClearButton.jsx";
@@ -6,12 +6,15 @@ import {downloadComparativeSaleReport} from "@modules/DailyReport/services/wises
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {formatOptions} from "@helpers/formatters.js";
 import FormSelect from "@components/form/FormSelect.jsx";
+import { useWatch } from "react-hook-form";
+import {getPastDate} from "@helpers/dateTime.js";
 
 const ComparativeDate = ({
                              control,
                              errors,
                              clearFilter,
                              filters,
+                             setValue,
                              hideOnlyComparativePeriod = false,
                              showCategoryFilters = false,
                          }) => {
@@ -32,6 +35,47 @@ const ComparativeDate = ({
             setIsDownloading(false);
         }
     };
+
+    const cyFromDate = useWatch({
+        control,
+        name: "cy_from",
+    });
+
+    const cyToDate = useWatch({
+        control,
+        name: "cy_to",
+    });
+
+    useEffect(() => {
+        if (cyFromDate) {
+            const cyDate = new Date(cyFromDate);
+            const lyDate = new Date(cyDate);
+            lyDate.setFullYear(cyDate.getFullYear() - 1);
+            const lyFromFormatted = lyDate.toISOString().split("T")[0];
+            setValue("ly_from", lyFromFormatted, { shouldValidate: true, shouldDirty: true });
+        }
+    }, [cyFromDate, setValue]);
+
+
+    useEffect(() => {
+        if (cyToDate) {
+            const cyDate = new Date(cyToDate);
+            const lyDate = new Date(cyDate);
+            lyDate.setFullYear(cyDate.getFullYear() - 1);
+            const lyToFormatted = lyDate.toISOString().split("T")[0];
+            setValue("ly_to", lyToFormatted, { shouldValidate: true, shouldDirty: true });
+        }
+    }, [cyToDate, setValue]);
+
+    const minDate = useMemo(() => {
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        return firstDay.toISOString().split("T")[0];
+    }, []);
+
+    const maxDate = useMemo(() => {
+        return new Date().toISOString().split("T")[0];
+    }, []);
 
     return (
         <div className="grid grid-cols-12 gap-6">
@@ -56,6 +100,8 @@ const ComparativeDate = ({
                                         placeholder="To Current Period"
                                         control={control}
                                         errors={errors}
+                                        min={minDate}
+                                        max={maxDate}
                                     />
                                 </div>
                                 {!hideOnlyComparativePeriod && (
@@ -124,7 +170,7 @@ const ComparativeDate = ({
                                                 errors={errors}
                                                 placeholder="Group"
                                                 options={[
-                                                    {value: "Offline", label: "Offline"},
+                                                    {value: "Offline", label: "Offline (A Class)"},
                                                     {value: "Online", label: "Online"},
                                                 ]}
                                                 isClearable={false}

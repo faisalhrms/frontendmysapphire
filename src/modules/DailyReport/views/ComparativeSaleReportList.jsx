@@ -31,7 +31,8 @@ const ComparativeSaleReportList = () => {
         control,
         handleSubmit,
         errors,
-        getFilters
+        getFilters,
+        setValue,
     } = useFilters(
         useMemo(
             () => ({
@@ -49,7 +50,9 @@ const ComparativeSaleReportList = () => {
         )
     );
 
+
     const [filters, setFilters] = useState(getFilters());
+
 
     const hideOnlyComparativePeriod = [
         "AClassIslamic",
@@ -89,7 +92,9 @@ const ComparativeSaleReportList = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <ComparativeDate filters={filters} control={control} errors={errors}
                                  hideOnlyComparativePeriod={hideOnlyComparativePeriod}
-                                 showCategoryFilters={activeTab === 'other_category'}/>
+                                 showCategoryFilters={activeTab === 'other_category'}
+                                 setValue={setValue}
+                />
             </form>
 
 
@@ -99,7 +104,7 @@ const ComparativeSaleReportList = () => {
 
                     {
                         id: "ClassonlineFiscal",
-                        label: "A Class (Offline) & Online - Fiscal",
+                        label: " Offline (A Class) & Online - Fiscal",
                         icon: <i className='bx bx-briefcase'></i>,
                         content: isLoading ? <LoadingSpinner/> :
                             <AClassFiscal data={data} isLoading={isLoading} isActive={activeTab === 'ClassonlineFiscal'}
@@ -116,7 +121,7 @@ const ComparativeSaleReportList = () => {
                     },
                     {
                         id: "AClassIslamic",
-                        label: "A Class (Offline) & Online - Islamic",
+                        label: "Offline  (A Class) & Online - Islamic",
                         icon: <i className='bi bi-book-half'></i>,
                         content: isLoading ? <LoadingSpinner/> : <AClassIslamicList data={data} isLoading={isLoading}
                                                                                     isActive={activeTab === 'AClassIslamic'}
