@@ -12,7 +12,15 @@ const formatPercentage = (value) => {
     };
 };
 
-const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
+const defaultHeaders = [
+    { label: "Group", accessor: "source_group", align: "left" },
+    { label: "Orders", accessor: "orders", align: "right" },
+    { label: "Merchandise Total", accessor: "merchandise_total", align: "right" },
+    { label: "Avg Merchandise Total Per Order", accessor: "avg_merchandise_total", align: "right" },
+    { label: "Items Per Order", accessor: "avg_items_per_order", align: "right" },
+];
+
+const AnalysisTable = ({ title, headers = defaultHeaders, data = [], loading }) => {
     return (
         <div className="p-4 bg-white shadow-lg rounded-lg mb-6 dark:text-gray-200 dark:bg-bodybg">
             <div className="flex justify-between items-center mb-4">
@@ -25,7 +33,7 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                 ) : (
                     <table className="w-full table-fixed border-collapse dark:text-gray-200 dark:bg-bodybg ">
                         <thead className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
-                        <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+                        <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
                             {headers.map((header, index) => (
                                 <th
                                     key={index}
@@ -40,10 +48,7 @@ const AnalysisTable = ({ title, headers = [], data = [], loading }) => {
                         <tbody>
                         {data.length > 0 ? (
                             data.map((row, rowIndex) => (
-                                <tr
-                                    key={rowIndex}
-                                    className="border hover:bg-gray-50 dark:hover:bg-gray-700"
-                                >
+                                <tr key={rowIndex} className="border hover:bg-gray-50 dark:hover:bg-gray-700">
                                     {headers.map((header, colIndex) => (
                                         <td
                                             key={colIndex}
