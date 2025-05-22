@@ -166,9 +166,13 @@ const UrpTables = () => {
         navigate(`/module/users/permissions/details?ids=${ids}`);
     };
 
-    const roleButton = (
-        // <HasPermission permission='role_create'>
+    const roleButtons = (
         <div className="flex space-x-2">
+            {selectedRoles.length > 0 && (
+                <button className="hs-dropdown-toggle ti-btn ti-btn-info !py-1 !px-2 !text-[0.75rem]" onClick={handleRoleDetail}>
+                    Detail View
+                </button>
+            )}
             <button
                 type="button"
                 onClick={() => setIsRoleModalOpen(true)}
@@ -177,10 +181,14 @@ const UrpTables = () => {
                 <i className="ri-add-line font-semibold align-middle"></i> Create Role
             </button>
         </div>
-        // </HasPermission>
     );
-    const permissionButton = (
+    const permissionButtons = (
         <div className="flex space-x-2">
+            {selectedPermissions.length > 0 && (
+                <button className=" hs-dropdown-toggle ti-btn ti-btn-info !py-1 !px-2 !text-[0.75rem]" onClick={handlePermissionDetail}>
+                    Detail View
+                </button>
+            )}
             <button
                 type="button"
                 className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
@@ -194,16 +202,12 @@ const UrpTables = () => {
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
                 <div>
-                    {selectedRoles.length > 0 && (
-                        <button className="ti-btn ti-btn-info mb-2" onClick={handleRoleDetail}>
-                            Detail View
-                        </button>
-                    )}
+
                     <DataTable
                         columns={roleColumns}
                         apiUrl="/groups/datatable/"
                         title="Roles"
-                        buttons={roleButton}
+                        buttons={roleButtons}
                     />
                     <RoleModal
                         isOpen={isRoleModalOpen}
@@ -213,16 +217,12 @@ const UrpTables = () => {
                 </div>
 
                 <div>
-                    {selectedPermissions.length > 0 && (
-                        <button className="ti-btn ti-btn-info mb-2" onClick={handlePermissionDetail}>
-                            Detail View
-                        </button>
-                    )}
+
                     <DataTable
                         columns={permissionColumns}
                         apiUrl="/permissions/datatable/"
                         title="Permissions"
-                        buttons={permissionButton}
+                        buttons={permissionButtons}
                     />
                     <PermissionModal
                         isOpen={isPermissionModalOpen}

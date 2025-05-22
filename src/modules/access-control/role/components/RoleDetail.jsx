@@ -51,7 +51,7 @@ const RoleDetail = () => {
                     <div key={role.id} className="bg-white shadow-lg rounded-xl overflow-hidden">
                         <div className="bg-gray-50 px-6 py-4 border-b">
                             <h2 className="text-2xl font-semibold text-gray-800">
-                                {role.name}
+                               Role Name: {role.name}
                                 <span className="text-sm ml-2 text-gray-500 font-normal">(ID: {role.id})</span>
                             </h2>
                         </div>

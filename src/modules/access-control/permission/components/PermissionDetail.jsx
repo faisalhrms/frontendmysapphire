@@ -51,7 +51,7 @@ const PermissionDetail = () => {
                     <div key={permission.id} className="bg-white shadow-lg rounded-xl overflow-hidden">
                         <div className="bg-gray-50 px-6 py-4 border-b">
                             <h2 className="text-2xl font-semibold text-gray-800">
-                                {permission.name}
+                               Permission Name: {permission.name}
                                 <span className="text-sm ml-2 text-gray-500 font-normal">(ID: {permission.id})</span>
                             </h2>
                             <code className="text-sm text-gray-600 mt-1 block">

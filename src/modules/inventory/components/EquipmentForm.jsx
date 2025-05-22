@@ -350,6 +350,8 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                     />
                                 </div>
 
+
+
                                 {/* ---------- Specs ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormTextarea
@@ -358,6 +360,27 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Specification"
+                                        rows={5}
+                                    />
+                                </div>
+                                {/* ---------- remarks ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormTextarea
+                                        name="remarks"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Remarks"
+                                        rows={5}
+                                    />
+                                </div>
+
+                                {/* ---------- maintenance_history ---------- */}
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormTextarea
+                                        name="maintenance_history"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Maintenance History"
                                         rows={5}
                                     />
                                 </div>
@@ -447,6 +470,21 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                         </div>
                     </div>
 
+                    <div className="box">
+                        <div className="box-header">
+                            <div className="box-title">Warranty Expiry Date</div>
+                        </div>
+                        <div className="box-body">
+                            <FormInput
+                                type="date"
+                                name="warranty_expire"
+                                label={false}
+                                control={control}
+                                errors={errors}
+                                placeholder="Warranty Expiry Date"
+                            />
+                        </div>
+                    </div>
                     {/* Store Communication Ready Checkbox */}
                     <div className="box">
                         <div className="box-header">
@@ -454,7 +492,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                         </div>
                         <div className="box-body">
                             <FormCheckbox
-                                
+
                                 name="store_comm_ready"
                                 label="Store Communication Ready"
                                 control={control}

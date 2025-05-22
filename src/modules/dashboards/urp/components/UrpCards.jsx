@@ -13,7 +13,7 @@ const UrpCards = ({ cardData }) => {
             key: 'total_users',
             label: 'Total Users',
             value: cardData.total_users,
-            icon: <i className="bx bx-user text-8xl text-emerald-500"></i>
+            icon: <i className="ri-user-3-line text-6xl text-emerald-500"></i>
         },
         {
             key: 'total_permissions',
