@@ -13,7 +13,7 @@ export const fetchExecutiveSummary = async () => {
 };
 export const fetchPendingOrders = async () => {
     try {
-        const response = await api.post("/salesforce/fetch_pending_orders/", {
+        const response = await api.get("/salesforce/fetch_pending_orders/", {
 
         });
 
