@@ -4,7 +4,19 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const authApi = createApi({
     reducerPath: 'authApi',
-    baseQuery: fetchBaseQuery({baseUrl}),
+    baseQuery: fetchBaseQuery({
+        baseUrl,
+        prepareHeaders: (headers, { getState }) => {
+            // Get the token from the auth state
+            const token = getState().auth.tokens?.access_token;
+
+            // If we have a token, add it to the headers
+            if (token) {
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            return headers;
+        },
+    }),
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (credentials) => ({
@@ -13,8 +25,15 @@ export const authApi = createApi({
                 body: credentials,
             }),
         }),
+        resetPassword: builder.mutation({
+            query: ({ userId, password }) => ({
+                url: `/auth/users/${userId}/password/`,
+                method: 'POST',
+                body: { password },
+            }),
+        }),
     }),
 });
 
-export const { useLoginMutation } = authApi;
+export const { useLoginMutation ,useResetPasswordMutation } = authApi;
 export const { middleware } = authApi;

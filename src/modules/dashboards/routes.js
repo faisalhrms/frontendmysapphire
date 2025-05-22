@@ -7,6 +7,7 @@ import SrTabs from '@modules/dashboards/sr/views/SrTabs.jsx';
 import SrList from '@modules/dashboards/sr/views/SrList.jsx';
 import EquipmentDashboard from '@modules/dashboards/eq/views/EquipmentDashboard.jsx';
 import CardDasboard from "./ CEODashboard/views/CardDasboard.jsx";
+import UrpDashboard from "@modules/dashboards/urp/views/UrpDashboard.jsx";
 
 export const DASHBOARD_ROUTES = {
     PROJECT: {
@@ -46,6 +47,10 @@ export const DASHBOARD_ROUTES = {
         permission: 'auth.view_ceo_dashboard',
 
     },
+    URP:{
+        path: '/dashboards/urp-dashboard',
+        permission: 'auth.urp_dashboard',
+    }
 
 };
 
@@ -94,5 +99,10 @@ export const MODULE_ROUTES = [
         component: CardDasboard,
         permission: DASHBOARD_ROUTES.CEO.permission,
     },
+    {
+        path:DASHBOARD_ROUTES.URP.path,
+        component:UrpDashboard,
+        permission: DASHBOARD_ROUTES.URP.permission
+    }
 
 ];
