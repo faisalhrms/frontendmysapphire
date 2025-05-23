@@ -1,42 +1,18 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import {getStatusClasses} from "@helpers/badges.js";
-import useFilters from "@hooks/useFilters.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import Tooltip from "@components/Tooltip.jsx";
-import TaskListFilter from "@modules/project-management/components/task/TaskListFilter.jsx";
 import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
 import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
+import {taskStatuses} from "@modules/project-management/services/taskService.js";
 
 const TaskList = () => {
-    const {
-        control,
-        handleSubmit,
-        errors,
-        getFilters,
-        resetFilters,
-    } = useFilters(
-        useMemo(
-            () => ({
-                initialFilters: [
-                    { name: "workspaces" },
-                    { name: "teams" },
-                    { name: "status" },
-                    { name: "tags" },
-                    { name: "deadline_from" },
-                    { name: "deadline_to" },
-                    { name: "launch" },
-                    { name: "is_ecom" }
-                ],
-            }),
-            []
-        )
-    );
     const {
         openTaskDetailModal,
         closeTaskDetailModal,
@@ -44,17 +20,6 @@ const TaskList = () => {
         isTaskDetailLoading,
         task,
     } = useTaskDetailModal()
-
-    const [filters, setFilters] = useState(getFilters());
-
-    const onSubmit = useCallback((formData) => {
-        setFilters(formData);
-    }, []);
-
-    const onClear = useCallback(() => {
-        resetFilters();
-        setFilters(getFilters());
-    }, [resetFilters, getFilters]);
 
     const columns = [
         {
@@ -64,9 +29,17 @@ const TaskList = () => {
             Cell: ({ value }) => {
                 return <span className="badge badge-md !rounded-full bg-primary/10 text-primary"> {value ?? 'N/A'}</span>
             },
+            filterType: 'text',
+            filterable: true,
+            filterKey: 'milestone__project__workspace__name'
         },
         {
-            Header: "Project", accessor: "project.name", disableSortBy: true,
+            Header: "Project",
+            accessor: "project.name",
+            disableSortBy: true,
+            filterType: 'text',
+            filterable: true,
+            filterKey: 'milestone__project__name',
             Cell: ({row}) => {
                 const project = row.original.project;
                 return (
@@ -84,12 +57,22 @@ const TaskList = () => {
                 )
             },
         },
-        { Header: "Milestone", accessor: "milestone.name", disableSortBy: true,
+        {
+            Header: "Milestone",
+            accessor: "milestone.name",
+            disableSortBy: true,
+            filterType: 'text',
+            filterable: true,
+            filterKey: 'milestone__name',
             Cell: ({value}) => (
                 <p className=''>{value.length>20?value.slice(0,20)+"...":value}</p>
             )
         },
-        { Header: "Task", accessor: "name",
+        {
+            Header: "Task",
+            accessor: "name",
+            filterType: 'text',
+            filterable: true,
             Cell: ({row}) => {
                 const task = row.original;
                 return (
@@ -111,6 +94,9 @@ const TaskList = () => {
             Header: 'Teams',
             accessor: 'teams',
             disableSortBy: true,
+            filterType: 'text',
+            filterable: true,
+            filterKey: 'teams__name',
             Cell: ({ value }) => (
                 <div className="space-x-1 rtl:space-x-reverse">
                     {Array.isArray(value) && value.length > 0 && (
@@ -127,6 +113,9 @@ const TaskList = () => {
             Header: 'Person',
             accessor: 'users',
             disableSortBy: true,
+            filterType: 'text',
+            filterable: true,
+            filterKey: 'users__full_name',
             Cell: ({row}) => {
                 const users = row.original.users;
                 return (
@@ -140,10 +129,15 @@ const TaskList = () => {
             Header: "Deadline",
             accessor: "ended_at",
             Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
+            filterType: 'datetime',
+            filterable: true,
         },
         {
             Header: "Status",
             accessor: "status",
+            filterType: 'select',
+            filterable: true,
+            filterOptions: taskStatuses,
             Cell: ({ row }) => (
                 <span className={getStatusClasses(row.original.status)}>
                 {toTitleCase(row.original.status)}
@@ -153,22 +147,34 @@ const TaskList = () => {
         {
             Header: "Completion Date",
             accessor: "completed_at",
-            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : "")
+            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
+            filterType: 'datetime',
+            filterable: true,
         },
-        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, },
-        { Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, },
-        { Header: "Launch/Milestone Deadline", accessor: "milestone.ended_at", disableSortBy: true,
+        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, filterable: false},
+        { Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, filterable: false},
+        {
+            Header: "Launch/Milestone Deadline",
+            accessor: "milestone.ended_at",
+            disableSortBy: true,
+            filterType: 'date',
+            filterable: true,
+            filterKey: 'milestone__ended_at',
             Cell: ({value}) => (
                 formatDate(value, "MMM dd, yyyy")
             )
         },
-        { Header: "E-com Deliverable", accessor: "is_ecom",
+        { Header: "E-com Deliverable",
+            accessor: "is_ecom",
+            filterType: 'boolean',
+            filterable: true,
             Cell: ({value}) => (value ? 'Yes': 'No')
         },
         {
             Header: 'Progress',
             accessor: 'progress',
             disableSortBy: true,
+            filterable: false,
             Cell: ({ row }) => {
                 return (
                     <ProgressBar
@@ -181,6 +187,9 @@ const TaskList = () => {
         {
             Header: 'Tags',
             accessor: 'tags',
+            filterType: 'text',
+            filterable: true,
+            filterKey: 'tags__name',
             Cell: ({ value }) => (
                 <div className="space-x-1 rtl:space-x-reverse">
                     {Array.isArray(value) && value.length > 0 && (
@@ -198,15 +207,12 @@ const TaskList = () => {
     return (
         <>
             <PageHeader currentpage="Task List" activepage="Task" mainpage="Task List"/>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <TaskListFilter control={control} errors={errors} clearFilter={onClear}/>
-            </form>
             <DataTable
                 columns={columns}
                 title="Tasks"
                 apiUrl="/pms/tasks/datatable/"
-                filter={filters}
                 needHeader={false}
+                enableAdvancedFilters={true}
             />
 
             {
