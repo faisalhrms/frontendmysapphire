@@ -17,12 +17,8 @@ const SubscriptionDashboard = () => {
     const { activeSubscriptions, pendingSubscriptions, loading: subscriptionsLoading } = useActiveAndPendingSubscriptions();
     const { lineChartData, donutChartData, loading: chartsLoading } = useSubscriptionCharts();
 
-    console.log("activeSubscriptions:", activeSubscriptions);
-    console.log("pendingSubscriptions:", pendingSubscriptions);
-    console.log("summaryData:", summaryData);
-
     if (summaryLoading || subscriptionsLoading || chartsLoading) {
-        return <LoadingSpinner/>; // Replace with your loading component if you have one
+        return <LoadingSpinner/>;
     }
 
 
