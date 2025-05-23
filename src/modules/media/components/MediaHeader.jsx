@@ -1,4 +1,18 @@
-const MediaHeader = ({ handleSearchChange, totalFiles, onFileChange, selectedFilesCount, needSelectedValue, handleSubmit }) => {
+import DeleteModal from "@components/modals/DeleteModal.jsx";
+import React from "react";
+import {useDelete} from "@hooks/useDelete.js";
+import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
+import Tooltip from "@components/Tooltip.jsx";
+
+const MediaHeader = ({ handleSearchChange, totalFiles, onFileChange, selectedFilesCount, needSelectedValue, handleSubmit,file ,apiEndpoint, itemName }) => {
+    const { handleDeleteClick } = useDelete();
+    const {
+        openTaskDetailModal,
+        closeTaskDetailModal,
+        isTaskDetailModalOpen,
+        isTaskDetailLoading,
+        task,
+    } = useTaskDetailModal()
     return (
         <div className="flex p-4 items-center justify-between border-b dark:border-defaultborder/10">
             <div className="flex items-center gap-6 flex-grow">
@@ -60,6 +74,17 @@ const MediaHeader = ({ handleSearchChange, totalFiles, onFileChange, selectedFil
                         Save Selected File
                     </button>
                 )}
+
+                    <Tooltip
+                        id={`delete-task-tooltip-${task.id}`}
+                        tooltipContent={`Delete Task (${task.name})`}>
+                        <button
+                            onClick={() => handleDeleteClick(itemName )}
+                            className='ti-btn ti-btn-danger ti-btn-sm w-max'>
+                            <i className="ri-delete-bin-2-line align-middle"></i>
+                        </button>
+                    </Tooltip>
+
 
                 <label htmlFor="uploadFile1"
                        className="flex  bg-primary hover:bg-primary/70 text-white text-base font-medium px-4 py-2.5 outline-none rounded w-max cursor-pointer mx-auto">

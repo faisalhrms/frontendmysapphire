@@ -2,6 +2,7 @@ import {Link} from "react-router-dom";
 import React from "react";
 import FileItem from "@modules/media/components/FileItem.jsx";
 
+
 const FileMeta = ({file}) => {
     return(
         <>
@@ -21,13 +22,15 @@ const FileMeta = ({file}) => {
                         <ul className="list-group">
                             <li className="list-group-item">
                                 <div>
-                                    <span className="font-semibold dark:text-gray-200 dark:bg-bodybg">File Format : </span><span
-                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{ file.file_extension }</span>
+                                    <span
+                                        className="font-semibold dark:text-gray-200 dark:bg-bodybg">File Format : </span><span
+                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{file.file_extension}</span>
                                 </div>
                             </li>
                             <li className="list-group-item">
                                 <div>
-                                    <p className="font-semibold mb-0 dark:text-gray-200 dark:bg-bodybg">File Description : </p>
+                                    <p className="font-semibold mb-0 dark:text-gray-200 dark:bg-bodybg">File Description
+                                        : </p>
                                     <span className="text-[.75rem] text-[#8c9097] dark:text-white/50">
                                         {`The size of this file is ${file.file_size}KB. ${file.file_type.startsWith('image/') ? `The dimensions of this file are ${file.file_height}px in height & ${file.file_width}px in width.` : ''}`}
                                     </span>
@@ -36,7 +39,12 @@ const FileMeta = ({file}) => {
                             <li className="list-group-item">
                                 <p className="font-semibold mb-0 dark:text-gray-200 dark:bg-bodybg">File Location : </p>
                                 <span
-                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{ file.file_path }</span>
+                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{file.file_path}</span>
+                            </li>
+                            <li className="list-group-item">
+                                <p className="font-semibold mb-0 dark:text-gray-200 dark:bg-bodybg"> Created By : </p>
+                                <span
+                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{}</span>
                             </li>
                         </ul>
                     </div>
