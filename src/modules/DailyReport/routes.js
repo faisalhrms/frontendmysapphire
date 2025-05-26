@@ -10,7 +10,6 @@ export const DAILYREPORT_ROUTES = {
     CREATE:{
         path: "/module/retail/comparative-sales-report",
         permission: "auth.view_comparativesalesreport",
-
     },
 
 
