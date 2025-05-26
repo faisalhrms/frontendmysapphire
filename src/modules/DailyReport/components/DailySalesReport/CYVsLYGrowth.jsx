@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchSaleCvVsLyData } from "../../services/wiseside_services.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
-const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
+const CYVsLYGrowth = ({ data , loading }) => {
     // const [data, setData] = useState([]);
     // const [loading, setLoading] = useState(false);
     const [downloadData, setDownloadData] = useState({});
@@ -18,8 +18,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
         return num.toLocaleString();
     };
 
-    const totalCy = data.reduce((total, item) => total + item.FullPriceOfflineCY, 0);
-    const totalLy = data.reduce((total, item) => total + item.FullPriceOfflineLY, 0);
+
 
     const getAchColor = (achPercentage) => {
         if (achPercentage === null || achPercentage === 0) {
@@ -38,7 +37,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
         return Number(result.toFixed(2));
     };
 
-    const totals = data.reduce(
+    const totals = data?data:[]?.reduce(
         (acc, row) => {
             acc.FullPriceOfflineCY += row.FullPriceOfflineCY || 0;
             acc.FullPriceOfflineLY += row.FullPriceOfflineLY || 0;
@@ -99,7 +98,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
             totalsAch:totalsAch,
             totals:totals
         }
-         setDonwloadData(payload)
+         // setDonwloadData(payload)
     },[data])
 
     return (
@@ -175,7 +174,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                             </tr>
                             </thead>
                             <tbody>
-                            {data?.map((row, index) => (
+                            {data?.length > 0 && (data?.map((row, index) => (
                                 <tr key={index}>
                                     <td className="sticky left-0 z-20 py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center font-bold bg-white dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm whitespace-nowrap"
                                         >{row.Date}</td>
@@ -217,7 +216,7 @@ const CYVsLYGrowth = ({ data , loading,setDonwloadData }) => {
                                         {getAchIcon(row.TotalGrowth)} {row.TotalGrowth}%
                                     </td>
                                 </tr>
-                            ))}
+                            )))}
 
                             {data?.length > 0 && (
                                 <tr className=" font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">

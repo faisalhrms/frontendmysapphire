@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT } from "../../services/wiseside_services.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
+import {getPastDate} from "@helpers/dateTime.js";
 
 const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , filters }) => {
     // const [lastDayData, setLastDayData] = useState([]);
@@ -240,7 +241,7 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
     return (
         <div className="w-full px-2 sm:px-4 py-4 dark:text-gray-200 dark:bg-bodybg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 dark:text-gray-200 dark:bg-bodybg">
-                {renderTable(lastDayData, `Last Day (${formatDate(filters?.date_from)})`, "lastDay")}
+                {renderTable(lastDayData, `Last Day (${getPastDate()})`, "lastDay")}
                 {renderTable(mtdData, "MTD", "mtd")}
             </div>
         </div>

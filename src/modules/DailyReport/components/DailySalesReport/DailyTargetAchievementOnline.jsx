@@ -9,7 +9,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
     console.log(data)
 
     const formatApiDate = (dayNumber) => {
-        const day = dayNumber.toString();
+        const day = dayNumber?.toString();
         return `${day}`;
     };
 
@@ -45,7 +45,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
             : <i className=""></i>;
     };
 
-    const totals = data.reduce(
+    const totals = data?data:[]?.reduce(
         (acc, row) => {
             acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
             acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
@@ -206,7 +206,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                             </thead>
 
                             <tbody>
-                            {data.map((row, index) => (
+                            {data?.length > 0 && (data?.map((row, index) => (
                                 <tr key={index}>
 
                                     <td className="sticky left-0 z-20 py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center font-bold bg-white dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm whitespace-nowrap">
@@ -279,9 +279,9 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {getAchIcon(row.totalAch)} {row.totalAch}%
                                     </td>
                                 </tr>
-                            ))}
+                            )))}
 
-                            {data.length > 0 && (
+                            {data?.length > 0 && (
                                 <tr className="font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">
                                     <td className="sticky left-0 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                     </td>

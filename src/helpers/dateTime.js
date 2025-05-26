@@ -134,3 +134,9 @@ export const getPastDate = (days = 1) => {
     today.setDate(today.getDate() - days);
     return today.toISOString().slice(0, 10);
 };
+
+export const getCurrentDate = (days = 0) => {
+    const today = new Date();
+    today.setDate(today.getDate() - days);
+    return today.toISOString().slice(0, 10);
+};

@@ -138,24 +138,14 @@ import { fetchPendingOrders, FetchPendingOrderLib } from "../../services/salesfo
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 import Modal from "../../components/SalesforceDashboard/Model.jsx";  // Import the Modal component
 
-const AgingFormComponent = () => {
+const AgingFormComponent = ({pendingOrdersData,loadingOrders , pendingOrdersLibData , loadingOrdersLib}) => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [modalTitle, setModalTitle] = useState("");
-    const { data: pendingOrdersData, isLoading: loadingOrders } = useQuery({
-        queryKey: ["pendingOrders", selectedDate],
-        queryFn: () => fetchPendingOrders(selectedDate),
-        staleTime: 60000,
-        refetchOnWindowFocus: false
-    });
 
-    const { data: pendingOrdersLibData, isLoading: loadingOrdersLib } = useQuery({
-        queryKey: ["pendingOrdersLib", selectedDate],
-        queryFn: () => FetchPendingOrderLib(selectedDate),
-        staleTime: 60000,
-        refetchOnWindowFocus: false
-    });
+
+
 
     const handleDateChange = (event) => {
         setSelectedDate(event.target.value);

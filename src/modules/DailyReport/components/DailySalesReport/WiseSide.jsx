@@ -27,7 +27,7 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
 
 
     useEffect(() => {
-        if (Object.keys(newData).length > 0) {
+        if (Object?.keys(newData)?.length > 0) {
             const data = prepareDataForTable(newData);
             setTableData(data);
 
@@ -83,7 +83,7 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
             .filter((dateKey) => dateKey !== "Total")
             .map((dateKey) => {
                 const [year, month, day] = dateKey.split("-");
-                return `${day.padStart(2, "0")}-${getMonthName(month)}-${year}`;
+                return `${day?.padStart(2, "0")}-${getMonthName(month)}-${year}`;
             });
     };
 
@@ -271,8 +271,14 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
     const dateHeaders = generateDatesArray(newData);
 
     return (
-        <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-0 ">
-            <div className="p-2 sm:p-4 bg-white rounded-lg dark:text-gray-200 dark:bg-bodybg">
+        <>
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
+    <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-0 ">
+        <div className="p-2 sm:p-4 bg-white rounded-lg dark:text-gray-200 dark:bg-bodybg">
                 <div className="relative" ref={tableContainerRef} style={{height: "70vh"}}>
                     <div className="overflow-auto h-full" style={{maxHeight: "calc(100% - 0px)"}}>
                         <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg min-w-max">
@@ -357,6 +363,7 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

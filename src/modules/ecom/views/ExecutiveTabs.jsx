@@ -266,16 +266,12 @@ const EcomSaleforce = () => {
 
     // Data fetching
     const { data: executiveData, isLoading: executiveLoading } = useFetchWithFilters(
-        "/salesforce/fetch_executive_summary/",
+        activeTab === "executiveSummary"?"/salesforce/fetch_executive_summary/":
+            activeTab === "agingLiabilities"?"/salesforce/fetch_pending_orders/":'',
         filters,
-        { enabled: activeTab === "executiveSummary" }
     );
 
-    const { data: agingData, isLoading: agingLoading } = useFetchWithFilters(
-        "/salesforce/fetch_pending_orders/",
-        {},
-        { enabled: activeTab === "agingLiabilities" }
-    );
+
 
     const onSubmit = useCallback((formData) => {
         setFilters(formData);
@@ -318,7 +314,8 @@ const EcomSaleforce = () => {
                                         <p>{errorMessage}</p>
                                     </div>
                                 )}
-                                <ExecutiveForm filters={filters} />
+                                <ExecutiveForm filters={filters}  data={executiveData}
+                                               isLoading={executiveLoading}/>
                             </>
 
                         ),
@@ -342,8 +339,10 @@ const EcomSaleforce = () => {
                                     </div>
                                 )}
                                 <AgingForm
-                                    data={agingData}
-                                    loading={agingLoading}
+                                    pendingOrdersLibData={executiveData}
+                                    loadingOrdersLib={executiveLoading}
+                                    pendingOrdersData={executiveData}
+                                    loadingOrders={executiveLoading}
                                 />
                             </div>
                         ),

@@ -115,13 +115,13 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem] whitespace-nowrap overflow-hidden text-ellipsis">Created By</p>
                                         <div className="flex items-center flex-wrap">
-                                            <div className="me-2 leading-none text-xs flex items-center">
-                                                <Avatar avatar={milestone?.created_by?.avatar} size='sm'
+                                            <div className="me-2 leading-none  flex items-center">
+                                                <Avatar avatar={milestone?.created_by?.avatar}
                                                         full_name={milestone?.created_by?.full_name || 'N/A' }
 
                                                 />
                                                 <div className='ms-2'>
-                                                    <p className="text-[#8c9097] text-xs dark:text-white/50 ">
+                                                    <p className="text-[#8c9097] dark:text-white/50 text-[0.65rem]">
                                                         {milestone?.created_by?.full_name || 'N/A'}
                                                     </p>
 
