@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import {useForm, useWatch} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
@@ -46,6 +46,35 @@ const ResetPassView = () => {
             Notify.error(err.data?.message || err.message || 'Failed to reset password.');
         }
     };
+    const newPassword = useWatch({ control, name: "newPassword" });
+    const passwordPolicies = [
+        {
+            id: 1,
+            text: 'At least 8 characters',
+            test: (pw) => pw?.length >= 8
+        },
+        {
+            id: 2,
+            text: 'At least one uppercase letter',
+            test: (pw) => /[A-Z]/.test(pw)
+        },
+        {
+            id: 3,
+            text: 'At least one lowercase letter',
+            test: (pw) => /[a-z]/.test(pw)
+        },
+        {
+            id: 4,
+            text: 'At least one number',
+            test: (pw) => /\d/.test(pw)
+        },
+        {
+            id: 5,
+            text: 'At least one special character (@$!%*?&)',
+            test: (pw) => /[@$!%*?&]/.test(pw)
+        },
+    ];
+
 
     return (
         <div
@@ -97,6 +126,29 @@ const ResetPassView = () => {
                   <i className={`text-lg ${showConfirm ? 'ri-eye-line' : 'ri-eye-off-line'}`}></i>
                 </span>
                             </div>
+                        </div>
+                        {/* Password Policy Indicators */}
+                        <div className="space-y-2 mt-4">
+                            {passwordPolicies.map((policy) => {
+                                const isValid = policy.test(newPassword);
+                                return (
+                                    <div
+                                        key={policy.id}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <i
+                                            className={`${
+                                                isValid ? 'ri-check-line' : 'ri-close-line'
+                                            } text-sm ${
+                                                isValid ? 'text-emerald-500' : 'text-rose-500'
+                                            } w-4 flex justify-center`}
+                                        />
+                                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                                    {policy.text}
+                                </span>
+                                    </div>
+                                );
+                            })}
                         </div>
 
                         <div className="mt-6">
