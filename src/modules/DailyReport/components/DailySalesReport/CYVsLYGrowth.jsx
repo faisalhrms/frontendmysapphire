@@ -102,8 +102,14 @@ const CYVsLYGrowth = ({ data , loading }) => {
     },[data])
 
     return (
-        <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-4">
-            <div className="relative">
+        <>
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
+    <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-4">
+        <div className="relative">
                 {loading ? (
                     <div className="text-center py-4">Loading...</div>
                 ) : (
@@ -321,6 +327,7 @@ const CYVsLYGrowth = ({ data , loading }) => {
                 <p>*Omni Added in E-Store and Excluded from B&M.</p>
             </div>
         </div>
+        </>
     );
 };
 

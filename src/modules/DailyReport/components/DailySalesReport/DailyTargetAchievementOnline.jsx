@@ -1,12 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { fetchTargetSaleData } from "../../services/wiseside_services.js";
-
-const DailyTargetAchievementOnline = ({ data , loading }) => {
-    // const [data, setData] = useState([]);
-    // const [loading, setLoading] = useState(false);
-
-    console.log(data)
+import loadingSpinner from "@components/LoadingSpinner.jsx";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
+const DailyTargetAchievementOnline = ({ data , isLoading }) => {
 
     const formatApiDate = (dayNumber) => {
         const day = dayNumber?.toString();
@@ -92,11 +89,15 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
     };
 
     return (
-        <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-4">
-            {loading ? (
-                <div className="text-center py-4">Loading...</div>
-            ) : (
-                <div className="relative overflow-x-auto">
+        <>
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
+    <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-4">
+
+        <div className="relative overflow-x-auto">
 
                     <div className="w-full border-collapse border border-gray-400 table-auto">
                         <table className="w-full border-collapse border border-gray-400">
@@ -357,11 +358,12 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                         </table>
                     </div>
                 </div>
-            )}
+
             <div className="mt-4 text-xs text-red-600 text-left ml-4 font-bold">
                 <p>*Omni Added in E-Store and Excluded from B&M.</p>
             </div>
         </div>
+        </>
     );
 };
 
