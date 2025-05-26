@@ -5,10 +5,10 @@ import ObjectiveSpend from "@modules/ecom/views/ObjectiveSpend.jsx"
 import InventoryRecon from "@modules/ecom/views/InventoryRecon.jsx";
 
 export const ECOM_ROUTES = {
-    READ: {
-        path: "/module/ecom",
-        permission: "auth.view_ecommerce",
-    },
+    // READ: {
+    //     path: "/module/ecom",
+    //     permission: "auth.view_ecommerce",
+    // },
     ADD: {
         path: "/module/ecom/anlysisReport",
         permission: "auth.ecom_analytics",
@@ -28,11 +28,11 @@ export const ECOM_ROUTES = {
 };
 
 export const MODULE_ROUTES = [
-    {
-        path: ECOM_ROUTES.READ.path,
-        component: OrderShopify,
-        permission: ECOM_ROUTES.READ.permission,
-    },
+    // {
+    //     path: ECOM_ROUTES.READ.path,
+    //     component: OrderShopify,
+    //     permission: ECOM_ROUTES.READ.permission,
+    // },
     {
         path: ECOM_ROUTES.ADD.path,
         component: AnalysisReport,

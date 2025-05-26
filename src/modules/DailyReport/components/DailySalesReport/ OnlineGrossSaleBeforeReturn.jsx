@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchGrossSaleBeforeReturnData } from "../../services/wiseside_services.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-function OnlineGrossSaleBeforeReturn({ data , loading }) {
+function OnlineGrossSaleBeforeReturn({ data ,isLoading }) {
 
     const [downloadData, setDownloadData] = useState({});
     const formatNumber = (num) => {
@@ -20,8 +21,14 @@ function OnlineGrossSaleBeforeReturn({ data , loading }) {
 
 
     return (
-        <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-            <div style={{maxHeight: '650px', overflowY: 'auto'}}>
+        <>
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
+    <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
+    <div style={{maxHeight: '650px', overflowY: 'auto'}}>
                 <table className="min-w-full table-auto border-collapse border border-gray-400">
                     <thead style={{
                         backgroundColor: "#383853",
@@ -41,9 +48,9 @@ function OnlineGrossSaleBeforeReturn({ data , loading }) {
                     </tr>
                     </thead>
                     <tbody>
-                    {loading ? (
+                    {isLoading ? (
                         <tr>
-                            <td colSpan="5" className="text-center py-4">Loading...</td>
+                            <td colSpan="5" className="text-center py-4"><LoadingSpinner/></td>
                         </tr>
                     ) : (
                         data?.length > 0 && (data?.map((row, index) => (
@@ -81,7 +88,7 @@ function OnlineGrossSaleBeforeReturn({ data , loading }) {
                 <p>*Omni Added in E-Store and Excluded from B&M.</p>
             </div>
         </div>
-
+        </>
     );
 }
 

@@ -10,9 +10,10 @@ import DailyTargetAchievementOnline from "@modules/DailyReport/components/DailyS
 import CYVsLYGrowth from "@modules/DailyReport/components/DailySalesReport/CYVsLYGrowth.jsx";
 import OnlineGrossSaleBeforeReturn from "@modules/DailyReport/components/DailySalesReport/ OnlineGrossSaleBeforeReturn.jsx";
 import DailySalesReportStoreWise from "@modules/DailyReport/components/DailySalesReport/DailySalesReportStoreWise.jsx";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 
-const OfflineStorePerformList = () => {
+const DailySaleReportList = () => {
 
     const {
         control, handleSubmit, errors, getFilters, setValue,
@@ -59,44 +60,47 @@ const OfflineStorePerformList = () => {
                     id: "OnlineAndBM",
                     label: "Daily Target Achievement",
                     icon: <i className="bx bx-target-lock"></i>,
-                    content: (
+                    content : isLoading ? <LoadingSpinner/> :
                         <DailyTargetAchievementOnline
                             data={data || []}
-                            loading={isLoading}
-                        />),
+                            isLoading={isLoading}
+                            isActive={'OnlineAndBM' === activeTab}
+                        />
                 }, {
                     id: "Return",
                     label: "CY Vs LY Growth",
                     icon: <i className="bx bx-line-chart"></i>,
-                    content: (<CYVsLYGrowth
+                    content: isLoading ? <LoadingSpinner/> :
+                        <CYVsLYGrowth
                             data={data || []}
-                            loading={isLoading}
-                        />),
+                            isLoading={isLoading}
+                            isActive={'Return' === activeTab}
+                        />
                 }, {
                     id: "GrossReturn",
                     label: "Online(Gross Sale before return)",
                     icon: <i className="bx bx-cloud-download"></i>,
-                    content: (<OnlineGrossSaleBeforeReturn
-                            data={data || []}
-                            loading={isLoading}
-                        />),
-                }, {
+                    content:  <OnlineGrossSaleBeforeReturn
+                        data={data || []}
+                        isLoading={isLoading}
+                    />
+                },  {
                     id: "DailySales",
                     label: "Daily Sales Report - store wise",
                     icon: <i className="bx bx-spreadsheet"></i>,
-                    content: (
+                    content: isLoading ? <LoadingSpinner/> :
                         <DailySalesReportStoreWise
                             lastDayData={data}
-                            loading={isLoading}
+                            isLoading={isLoading}
                             expand={expand}
                             filters={{...filters, p_type: 'MTD'}}
                         />
 
-                    ),
+
                 },]}
                 onTabChange={handleTabChange}
             />
         </>);
 };
 
-export default OfflineStorePerformList
+export default  DailySaleReportList

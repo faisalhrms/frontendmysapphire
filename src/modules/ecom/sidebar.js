@@ -10,14 +10,14 @@ export const sidebarMenu = [
         "bx bx-box",
         "",
         [
-            generateSidebarItem(
-                ECOM_ROUTES.READ.path,
-                "link",
-                "Status Report",
-                1,
-                "bx bx-message-square-edit",
-            ECOM_ROUTES.READ.permission,
-            ),
+            // generateSidebarItem(
+            //     ECOM_ROUTES.READ.path,
+            //     "link",
+            //     "Status Report",
+            //     1,
+            //     "bx bx-message-square-edit",
+            // ECOM_ROUTES.READ.permission,
+            // ),
             generateSidebarItem(
                 ECOM_ROUTES.ADD.path,
                 "link",

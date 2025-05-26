@@ -209,12 +209,20 @@ const SalesDataTable = ({ lastDayData , loading , expand , filters }) => {
     if (loading) return <div>Loading...</div>;
 
     return (
-        <div className="w-full px-2 sm:px-4 py-4 dark:text-gray-200 dark:bg-bodybg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 dark:text-gray-200 dark:bg-bodybg">
+        <>
+
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
+    <div className="w-full px-2 sm:px-4 py-1 dark:text-gray-200 dark:bg-bodybg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 dark:text-gray-200 dark:bg-bodybg">
                 {renderTable(lastDayData, `Last Day (${getPastDate()})`, "lastDay")}
                 {renderTable(data, "MTD", "mtd")}
             </div>
         </div>
+        </>
 
 
     );
