@@ -117,15 +117,20 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                         <div className="flex items-center flex-wrap">
                                             <div className="me-2 leading-none  flex items-center">
                                                 <Avatar avatar={milestone?.created_by?.avatar}
-                                                        full_name={milestone?.created_by?.full_name || 'N/A' }
+                                                        full_name={getExcerptFromText(milestone?.created_by?.full_name || 'N/A' ,9) }
 
                                                 />
-                                                <div className='ms-2'>
-                                                    <p className="text-[#8c9097] dark:text-white/50 text-[0.65rem]">
-                                                        {milestone?.created_by?.full_name || 'N/A'}
-                                                    </p>
+                                                <Tooltip
+                                                    id={`/module/projects/detail/${milestone.id}`}
+                                                    tooltipContent={milestone?.created_by?.full_name || 'N/A'}
+                                                >
+                                                    <div className="ms-2">
+                                                        <p className="text-[#8c9097] dark:text-white/50 text-[0.65rem]">
+                                                            {getExcerptFromText(milestone?.created_by?.full_name || 'N/A', 9)}
+                                                        </p>
+                                                    </div>
+                                                </Tooltip>
 
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
