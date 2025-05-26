@@ -33,8 +33,7 @@ const functionMap = {
     oms,
 };
 
-const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
-    const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters, dateFrom, dateTo);
+const ExecutiveForm = ({ data ,isLoading, filters, dateFrom, dateTo }) => {
     const [showModal, setShowModal] = useState(false);
     const [isModelLoading, setModelLoading] = useState(false);
     const [modalType, setModalType] = useState(null);

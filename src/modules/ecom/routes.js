@@ -1,15 +1,14 @@
 import OrderShopify from "@modules/ecom/views/OrderShopify.jsx";
 import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
 import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
-import ObjectiveSpend from "../../modules/ecom/views/ObjectiveSpend.jsx"
-import OrderDetail from "./views/OrderDetail.jsx";
-import EcomSalesforce from "../ecom/views/EcomSalesforce.jsx";
+import ObjectiveSpend from "@modules/ecom/views/ObjectiveSpend.jsx"
+import InventoryRecon from "@modules/ecom/views/InventoryRecon.jsx";
 
 export const ECOM_ROUTES = {
-    READ: {
-        path: "/module/ecom",
-        permission: "auth.view_ecommerce",
-    },
+    // READ: {
+    //     path: "/module/ecom",
+    //     permission: "auth.view_ecommerce",
+    // },
     ADD: {
         path: "/module/ecom/anlysisReport",
         permission: "auth.ecom_analytics",
@@ -22,20 +21,18 @@ export const ECOM_ROUTES = {
         path: '/module/ecom/digitalspent',
         permission: 'auth.ecom_digitalspent',
     },
-    // ODT:{
-    //     path: '/module/ecom/orderdetail',
-    //     permission: 'ecom_digitalspent',
-    // },
-
-
+    IR:{
+        path: '/module/ecom/inventory-recon',
+        permission: 'auth.inventory_recon',
+    },
 };
 
 export const MODULE_ROUTES = [
-    {
-        path: ECOM_ROUTES.READ.path,
-        component: OrderShopify,
-        permission: ECOM_ROUTES.READ.permission,
-    },
+    // {
+    //     path: ECOM_ROUTES.READ.path,
+    //     component: OrderShopify,
+    //     permission: ECOM_ROUTES.READ.permission,
+    // },
     {
         path: ECOM_ROUTES.ADD.path,
         component: AnalysisReport,
@@ -51,15 +48,10 @@ export const MODULE_ROUTES = [
         component: ObjectiveSpend,
         permission: ECOM_ROUTES.OS.permission,
     },
-    // {
-    //     path: ECOM_ROUTES.ODT.path,
-    //     component: OrderDetail,
-    //     permission: ECOM_ROUTES.ODT.permission,
-    // },
-    // {
-    //     path: ECOM_ROUTES.ESF.path,
-    //     component: EcomSalesforce,
-    //
-    // },
+    {
+        path: ECOM_ROUTES.IR.path,
+        component: InventoryRecon,
+        permission: ECOM_ROUTES.OS.permission,
+    },
 
 ];
