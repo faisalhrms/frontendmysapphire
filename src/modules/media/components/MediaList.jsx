@@ -11,22 +11,21 @@ import MediaHeader from "@modules/media/components/MediaHeader.jsx";
 const MediaList = ({ needFileMeta = true, multiSelect = true, needSelectedValue = false, onSelectionChange, type = '' }) => {
     const { uploadFiles, uploading } = useMediaFileUpload();
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
-    const { data, isLoading } = useMediaFiles(currentPage, 12, searchTerm, type);
-
+    const { data, isLoading, refetch } = useMediaFiles(currentPage, 12, searchTerm, type);
     const [filesList, setFilesList] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [fileMeta, setFileMeta] = useState(null);
-
+    const [totalFilesCount, setTotalFilesCount] = useState(0);
     const handlePageChange = useCallback((newPage) => {
         setCurrentPage(newPage);
     }, [setCurrentPage]);
-
     const onFileChange = useCallback(async (e) => {
         const files = e.target.files;
         if (files.length > 0) {
             const uploadedFiles = await uploadFiles(files);
             if (uploadedFiles) {
                 setFilesList((prevFiles) => [...uploadedFiles, ...prevFiles]);
+                setTotalFilesCount((prevCount) => prevCount + uploadedFiles.length);
             }
         }
         e.target.value = "";
@@ -38,6 +37,7 @@ const MediaList = ({ needFileMeta = true, multiSelect = true, needSelectedValue 
             if (data.rows.length > 0) {
                 const firstFile = data.rows[0];
                 setSelectedFiles([firstFile.id]);
+                setTotalFilesCount(data.total);
                 if (needFileMeta) {
                     setFileMeta(firstFile);
                 }
@@ -83,11 +83,13 @@ const MediaList = ({ needFileMeta = true, multiSelect = true, needSelectedValue 
             <div className="file-manager-folders">
                 <MediaHeader
                     handleSearchChange={handleSearchChange}
-                    totalFiles={data ? data.total : 0}
+                    totalFiles={totalFilesCount}
                     onFileChange={onFileChange}
                     selectedFilesCount={selectedFiles.length}
                     needSelectedValue={needSelectedValue}
                     handleSubmit={handleSubmit}
+                    selectedFiles={selectedFiles}
+                    refetch={refetch}
                 />
                 {isLoading || uploading ? (
                     <LoadingSpinner />

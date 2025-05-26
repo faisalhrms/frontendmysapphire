@@ -37,14 +37,9 @@ const FileMeta = ({file}) => {
                                 </div>
                             </li>
                             <li className="list-group-item">
-                                <p className="font-semibold mb-0 dark:text-gray-200 dark:bg-bodybg">File Location : </p>
+                                <p className="font-semibold mb-0 dark:text-gray-200 dark:bg-bodybg"> Uploaded By : </p>
                                 <span
-                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{file.file_path}</span>
-                            </li>
-                            <li className="list-group-item">
-                                <p className="font-semibold mb-0 dark:text-gray-200 dark:bg-bodybg"> Created By : </p>
-                                <span
-                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{}</span>
+                                    className="text-[.75rem] text-[#8c9097] dark:text-white/50">{file?.created_by?.full_name} ({file?.created_by?.email})</span>
                             </li>
                         </ul>
                     </div>
