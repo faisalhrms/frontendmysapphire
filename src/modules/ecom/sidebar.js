@@ -41,6 +41,14 @@ export const sidebarMenu = [
                 4,
                 '',
                 ECOM_ROUTES.OS.permission,
+            ),
+            generateSidebarItem(
+                ECOM_ROUTES.IR.path,
+                'link',
+                'Inventory Recon',
+                5,
+                '',
+                ECOM_ROUTES.IR.permission,
             )
         ]
     )

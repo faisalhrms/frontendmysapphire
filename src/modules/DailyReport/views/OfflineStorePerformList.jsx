@@ -49,8 +49,7 @@ const OfflineStorePerformList=()=>{
     };
     return (
         <>
-            <PageHeader currentpage="Offline Store Performance" activepage="Report"
-                        mainpage="Offline Store Performance"/>
+            <PageHeader currentpage="Offline Store Performance" activepage="Report" mainpage="Offline Store Performance"/>
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <OfflineStorePerformFilter filters={filters} control={control} errors={errors}/>
