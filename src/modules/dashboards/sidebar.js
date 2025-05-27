@@ -81,7 +81,15 @@ export const sidebarMenu = [
                     9,
                     '',
                     DASHBOARD_ROUTES.URP.permission
-                )
+                ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.BeirholmBI.path,
+                'link',
+                'Export Data Analysis',
+                9,
+                '',
+               DASHBOARD_ROUTES.BeirholmBI.permission,
+            )
         ]
     ),
 ];
