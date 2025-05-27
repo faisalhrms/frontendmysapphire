@@ -46,7 +46,9 @@ const AnalysisDate = ({
                                                     label={true}
                                                 />
                                             </div>
+                                        <div className=" mt-6">
                                             <FilterButton/>
+                                        </div>
 
                                     </form>
                                 )}
@@ -55,33 +57,33 @@ const AnalysisDate = ({
                                     <form onSubmit={handleErrorSubmit(onErrorSubmit)}
                                           className="flex items-center justify-between gap-4">
 
-                                            <div className="flex-1">
-                                                <FormInput
-                                                    type="date"
-                                                    name="date_from"
-                                                    placeholder="From Date"
-                                                    control={errorControl}
-                                                    defaultValue={getErrorFilters().date_from}
-                                                    label="From Date"
-                                                />
-                                            </div>
-                                            <div className="flex-1">
-                                                <FormInput
-                                                    type="date"
-                                                    name="date_to"
-                                                    placeholder="To Date"
-                                                    control={errorControl}
-                                                    defaultValue={getErrorFilters().date_to}
-                                                    label="To Date"
-                                                />
-                                            </div>
-
-                                                <FilterButton/>
-                                                <FilterClearButton onClick={clearFilter}/>
+                                        <div className="flex-1">
+                                            <FormInput
+                                                type="date"
+                                                name="date_from"
+                                                placeholder="From Date"
+                                                control={errorControl}
+                                                defaultValue={getErrorFilters().date_from}
+                                                label="From Date"
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <FormInput
+                                                type="date"
+                                                name="date_to"
+                                                placeholder="To Date"
+                                                control={errorControl}
+                                                defaultValue={getErrorFilters().date_to}
+                                                label="To Date"
+                                            />
+                                        </div>
+                                        <div className=" mt-6">
+                                            <FilterButton/>
+                                        </div>
 
 
                                     </form>
-                                )}
+                                    )}
                             </div>
 
                         </div>
