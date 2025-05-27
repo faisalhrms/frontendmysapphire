@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, {useMemo, useState} from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FilterClearButton from "@components/form/FilterClearButton.jsx";
 
 const DigitalDate = ({ control, errors, clearFilter, filters }) => {
-    const getToday = () => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    };
+  const yesterday = useMemo(() => {
+    const d = new Date()
+    d.setDate(d.getDate() - 1)
+    return d.toISOString().split("T")[0]
+  }, [])
     const [isDownloading, setIsDownloading] = useState(false);
     return (
         <div className="grid grid-cols-12 gap-6">
@@ -22,13 +23,12 @@ const DigitalDate = ({ control, errors, clearFilter, filters }) => {
                                     name="till_date"
                                     control={control}
                                     errors={errors}
-                                    defaultValue={filters?.till_date || getToday()}
+                                    defaultValue={filters?.till_date || yesterday()}
                                     label={true}
                                 />
                             </div>
                             <div className="flex items-center gap-4 mt-6 flex-2">
                                 <FilterButton />
-                                <FilterClearButton onClick={clearFilter} />
                             </div>
                         </div>
                     </div>

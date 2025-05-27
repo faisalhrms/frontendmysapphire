@@ -2,7 +2,8 @@ import React from "react"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
 import * as styles from "@helpers/staticDataTableStyles.js"
 
-const getGrowthColor = g => (g < 0 ? "text-red" : "text-emerald-600")
+const getGrowthColor = growth =>
+  growth > 7 ? "text-red" : "text-emerald-600"
 
 const DayWiseSalesSpent = ({ data = {}, loading }) => {
   if (loading) {
