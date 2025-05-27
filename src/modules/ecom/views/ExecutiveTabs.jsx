@@ -194,7 +194,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
 import useFilters from "@hooks/useFilters.js";
-import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+import {useFetchWithFilters, usePostWithFilters} from "@hooks/useFetchWithFilters.js";
 import api from "../../../config/axiosConfig.js";
 import IconTabs from "@components/IconTabs.jsx";
 import EcomReconciliation from "../components/EcomSalesForce/EcomReconciliation.jsx";
@@ -268,6 +268,7 @@ const EcomSaleforce = () => {
     const { data: executiveData, isLoading: executiveLoading } = useFetchWithFilters(
         activeTab === "executiveSummary"?"/salesforce/fetch_executive_summary/":
             activeTab === "agingLiabilities"?"/salesforce/fetch_pending_orders/":'',
+
         filters,
     );
 
@@ -339,10 +340,10 @@ const EcomSaleforce = () => {
                                     </div>
                                 )}
                                 <AgingForm
-                                    pendingOrdersLibData={executiveData}
-                                    loadingOrdersLib={executiveLoading}
                                     pendingOrdersData={executiveData}
                                     loadingOrders={executiveLoading}
+                                    filters={filters}
+                                    activeTab={activeTab}
                                 />
                             </div>
                         ),
