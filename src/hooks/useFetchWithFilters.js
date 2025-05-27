@@ -77,3 +77,38 @@ export const useFetchWithFilters = (endpoint, filters = {}, queryOptions = {}) =
 
     return { data, error, isLoading, refetch };
 };
+
+
+export const usePostWithFilters = (endpoint, filters = {}, queryOptions = {}) => {
+    const cleanedFilters = useMemo(() => cleanFilters(filters), [filters]);
+
+    const fetchFunction = async () => {
+        const queryString = buildQueryString(cleanedFilters);  // Use the manual query string builder
+        const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+
+        try {
+            const response = await api.post(url);
+            return response.data.data;
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    const queryKey = useMemo(() => (endpoint ? [endpoint, cleanedFilters] : null), [endpoint, cleanedFilters]);
+
+    const { data, error, isLoading, refetch } = useQuery({
+        queryKey,
+        queryFn: fetchFunction,
+        enabled: !!queryKey,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+        retry: 1,
+        onError: (error) => {
+            const errorMessage = error.response?.data?.message || 'Failed to fetch data';
+            Notify.error(errorMessage);
+        },
+        ...queryOptions,
+    });
+
+    return { data, error, isLoading, refetch };
+};
