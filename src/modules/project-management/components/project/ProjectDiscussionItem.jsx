@@ -10,7 +10,8 @@ const ProjectDiscussionItem = ({discussion, userId}) => {
         <>
             <li>
                 <div>
-                    <Avatar avatar={discussion.user.avatar} parentClasses='profile-timeline-avatar'/>
+                    <Avatar avatar={discussion.user.avatar} parentClasses='profile-timeline-avatar'
+                            full_name={discussion?.user?.full_name || 'N/A'}/>
                     <p className="mb-2">
                         {
                             userId === discussion.user.id ? <b>You</b> : <b>{discussion.user.full_name}</b>

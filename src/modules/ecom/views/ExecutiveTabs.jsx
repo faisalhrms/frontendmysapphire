@@ -194,7 +194,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
 import useFilters from "@hooks/useFilters.js";
-import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+import {useFetchWithFilters, usePostWithFilters} from "@hooks/useFetchWithFilters.js";
 import api from "../../../config/axiosConfig.js";
 import IconTabs from "@components/IconTabs.jsx";
 import EcomReconciliation from "../components/EcomSalesForce/EcomReconciliation.jsx";
@@ -266,16 +266,13 @@ const EcomSaleforce = () => {
 
     // Data fetching
     const { data: executiveData, isLoading: executiveLoading } = useFetchWithFilters(
-        "/salesforce/fetch_executive_summary/",
+        activeTab === "executiveSummary"?"/salesforce/fetch_executive_summary/":
+            activeTab === "agingLiabilities"?"/salesforce/fetch_pending_orders/":'',
+
         filters,
-        { enabled: activeTab === "executiveSummary" }
     );
 
-    const { data: agingData, isLoading: agingLoading } = useFetchWithFilters(
-        "/salesforce/fetch_pending_orders/",
-        {},
-        { enabled: activeTab === "agingLiabilities" }
-    );
+
 
     const onSubmit = useCallback((formData) => {
         setFilters(formData);
@@ -318,7 +315,8 @@ const EcomSaleforce = () => {
                                         <p>{errorMessage}</p>
                                     </div>
                                 )}
-                                <ExecutiveForm filters={filters} />
+                                <ExecutiveForm filters={filters}  data={executiveData}
+                                               isLoading={executiveLoading}/>
                             </>
 
                         ),
@@ -342,8 +340,10 @@ const EcomSaleforce = () => {
                                     </div>
                                 )}
                                 <AgingForm
-                                    data={agingData}
-                                    loading={agingLoading}
+                                    pendingOrdersData={executiveData}
+                                    loadingOrders={executiveLoading}
+                                    filters={filters}
+                                    activeTab={activeTab}
                                 />
                             </div>
                         ),

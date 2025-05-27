@@ -56,7 +56,7 @@ const AnalysisConversionTable = ({ filters }) => {
                 ) : (
                     <table className="w-full border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                         <thead className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
-                        <tr style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}}>
+                        <tr class="bg-[#383853] text-white ">
                             <th className="border p-2 text-center dark:text-gray-200 dark:bg-bodybg">
                                 Group
                             </th>

@@ -86,7 +86,6 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
     return (
         <>
             <div className={`table-responsive task-table`}>
-
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
@@ -300,8 +299,7 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                         </td>
                                     )
                                 }
-                                <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
-                                </td>
+                                <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span></td>
                                 <td>
                                     <span className="flex items-center dark:text-gray-200 dark:bg-bodybg">
                                         <span onClick={() => toggleSubTasks(task.id)}>
@@ -327,7 +325,12 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                                             <Link
                                                 onClick={() => {openTaskDetailModal(task.id)}}
                                              to="#">
-                                                {getExcerptFromText(task.name, 80)}
+                                                {getExcerptFromText(task.name, 60)}
+                                                {task.has_attachments && (
+                                                    <span className='ml-1 text-primary text-[0.8rem]' title="Has attachments">
+                                                        <i className="bi bi-paperclip"></i>
+                                                    </span>
+                                                )}
                                             </Link>
                                         </Tooltip>
                                     </span>

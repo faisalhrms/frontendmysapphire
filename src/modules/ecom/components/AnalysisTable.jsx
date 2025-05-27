@@ -33,7 +33,7 @@ const AnalysisTable = ({ title, headers = defaultHeaders, data = [], loading }) 
                 ) : (
                     <table className="w-full table-fixed border-collapse dark:text-gray-200 dark:bg-bodybg ">
                         <thead className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
-                        <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
+                        <tr className="bg-[#383853] text-white Traffic Conversion">
                             {headers.map((header, index) => (
                                 <th
                                     key={index}
