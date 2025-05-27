@@ -64,12 +64,13 @@ const MediaHeader = ({ handleSearchChange, totalFiles, onFileChange, selectedFil
                     </button>
                 )}
 
-
+                {selectedFilesCount > 0 && (
                         <button
                             onClick={() => handleDeleteClick(`/media/bulk-delete/`,selectedFilesCount + ' files', refetch,{ids:selectedFiles})}
                             className='ti-btn ti-btn-danger ti-btn-sm w-max'>
                             <i className="ri-delete-bin-2-line align-middle"></i>
                         </button>
+                    )}
 
 
                 <label htmlFor="uploadFile1"
