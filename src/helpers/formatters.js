@@ -139,3 +139,17 @@ export function formatLabel(label) {
     if (!label || label.toLowerCase() === 'total') return null;
     return label.toLowerCase().replace(/\s+/g, '_');
 }
+
+export function getPositiveNegativeColor(value){
+    if (value === null || value === undefined) return;
+
+    if (typeof value === 'string') {
+        const cleaned = value.replace(/,/g, '').trim();
+        if (cleaned === '' || cleaned === '-' || isNaN(Number(cleaned))) {
+            return;
+        }
+        value = Number(cleaned);
+    }
+
+    return value < 0 ? 'text-red' : 'text-emerald-600';
+}

@@ -29,7 +29,7 @@ const AnalysisReport = () => {
                 initialFilters: [
                     {
                         name: "date_from",
-                        defaultValue:today,
+                        defaultValue:activeTab==="404error"?startOfMonth:today,
                     },
                     {
                         name: "date_to",
@@ -44,49 +44,18 @@ const AnalysisReport = () => {
     const [orderFilters, setOrderFilters] = useState(getOrderFilters());
 
 
-    // 404 Error Filters hook
-    const {
-        control: errorControl,
-        handleSubmit: handleErrorSubmit,
-        getFilters: getErrorFilters,
-        reset: resetErrorFilters,
-    } = useFilters(
-        useMemo(
-            () => ({
-                initialFilters: [
-                    {
-                        name: "date_from",
-                        defaultValue: startOfMonth,
-                    },
-                    {
-                        name: "date_to",
-                        defaultValue: today, // yesterday
-                    },
-                ],
-            }),
-            []
-        )
-    );
 
-    const [errorFilters, setErrorFilters] = useState(getErrorFilters());
 
     const hideOnlyComparativePeriod = ["orderSource", "404error"].includes(activeTab);
 
     const { data: orderData, isLoading: orderLoading } = useFetchWithFilters(
 
             activeTab === "orderSource" ? "/ecom/analytics/fetch_order_source_cc/" :
+                activeTab === "404error" ? '/ecom/analytics/fetch_404_error_summary/' :
                 '',
         orderFilters
     );
 
-    console.log(orderData)
-
-    const { data: errorData, isLoading: errorLoading } = useFetchWithFilters(
-        activeTab === "404error" ? '/ecom/analytics/fetch_404_error_summary/' :
-
-                    '',
-        errorFilters
-    );
 
 
 
@@ -99,19 +68,16 @@ const AnalysisReport = () => {
 
     const onErrorSubmit = useCallback(
         (formData) => {
-            setErrorFilters(formData);
+            setOrderFilters(formData);
         },
         []
     );
 
     const clearFilter = () => {
-        if (activeTab === "orderSource") {
+
             resetOrderFilters();
             setOrderFilters(getOrderFilters());
-        } else if (activeTab === "404error") {
-            resetErrorFilters();
-            setErrorFilters(getErrorFilters());
-        }
+
     };
 
     const handleTabChange = (tab) => {
@@ -125,15 +91,15 @@ const AnalysisReport = () => {
             <AnalysisDate
                 activeTab={activeTab}
                 orderControl={orderControl}
-                errorControl={errorControl}
+                errorControl={orderControl}
                 orderFilters={orderFilters}
-                errorFilters={errorFilters}
+                errorFilters={orderFilters}
                 handleOrderSubmit={handleOrderSubmit}
-                handleErrorSubmit={handleErrorSubmit}
+                handleErrorSubmit={handleOrderSubmit}
                 onOrderSubmit={onOrderSubmit}
-                onErrorSubmit={onErrorSubmit}
+                onErrorSubmit={onOrderSubmit}
                 clearFilter={clearFilter}
-                getErrorFilters={getErrorFilters}
+                getErrorFilters={getOrderFilters}
                 hideOnlyComparativePeriod={hideOnlyComparativePeriod}
             />
 
@@ -165,12 +131,13 @@ const AnalysisReport = () => {
                         content: (
                             <>
                                 <div className="w-96">
-                                    <AnalysisErrorForm errorData={errorData || []} />
+                                    <AnalysisErrorForm errorData={orderData || []} />
                                 </div>
                                 <ErrorChart
-                                    dateFrom={errorFilters.date_from}
-                                    dateTo={errorFilters.date_to}
-                                    data={errorData || []}
+                                    dateFrom={orderFilters.date_from}
+                                    dateTo={orderFilters.date_to}
+                                    chartData={orderData || []}
+                                    loading={orderLoading}
                                 />
                             </>
                         ),
