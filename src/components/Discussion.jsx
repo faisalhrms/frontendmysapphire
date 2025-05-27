@@ -119,7 +119,9 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, needHea
                                             key={user.id}
                                             className="inline-flex items-center px-2 py-1 bg-gray-200 rounded-full"
                                         >
-                                            <Avatar avatar={user.avatar} size="sm" />
+                                            <Avatar avatar={user.avatar} size="sm"
+                                                    full_name={user.full_name || 'N/A'}
+                                            />
                                             <span className="ml-2">{user.email}</span>
                                             <button
                                                 type="button"
@@ -134,7 +136,9 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, needHea
                             )}
                             <div className="sm:flex items-center leading-none mt-1">
                                 <div className="me-4">
-                                    <Avatar avatar={user.avatar} size="md" />
+                                    <Avatar avatar={user.avatar} size="md"
+                                            full_name={user.full_name || 'N/A'}
+                                    />
                                 </div>
                                 <div className="flex-grow me-2">
                                     <div className="relative inline-flex !w-full">
@@ -161,7 +165,8 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, needHea
                                                             }`}
                                                             onClick={() => handleSuggestionClick(user)}
                                                         >
-                                                            <Avatar avatar={user.avatar} size="sm" />
+                                                            <Avatar avatar={user.avatar} size="sm"
+                                                                    full_name={user.full_name || 'N/A'}/>
                                                             <div className="ml-2">
                                                                 <div className="text-gray-500">{user.email}</div>
                                                             </div>
