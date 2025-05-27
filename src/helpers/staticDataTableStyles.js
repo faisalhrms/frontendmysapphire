@@ -10,9 +10,9 @@ export const rowEven        = "dark:text-gray-200 dark:bg-bodybg";
 export const rowOdd         = "dark:text-gray-200 dark:bg-bodybg";
 
 // new styles:
-export const rowSpecial     = "bg-gray-300 text-black font-bold";   // for LFL or NEW
-export const rowTotal       = "bg-gray-500 text-black font-bold text-sm";   // for TOTAL rows
+export const rowSpecial     = "bg-gray-300 text-black font-bold border border-gray-400";   // for LFL or NEW
+export const rowTotal       = "bg-gray-500 text-black font-bold border border-gray-200 text-sm";   // for TOTAL rows
 
 export const tdCell         = "border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg";
 export const tdRight        = "text-right";
-export const tdCenter       = "text-center";
+export const tdCenter       = "text-center p-2";

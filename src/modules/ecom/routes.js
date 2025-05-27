@@ -1,9 +1,9 @@
 import OrderShopify from "@modules/ecom/views/OrderShopify.jsx";
 import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
 import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
-import ObjectiveSpend from "../../modules/ecom/views/ObjectiveSpend.jsx"
 import OrderDetail from "./views/OrderDetail.jsx";
 import EcomSalesforce from "../ecom/views/EcomSalesforce.jsx";
+import DigitalSpent from "@modules/ecom/views/DigitalSpent.jsx";
 
 export const ECOM_ROUTES = {
     READ: {
@@ -48,7 +48,7 @@ export const MODULE_ROUTES = [
     },
     {
         path: ECOM_ROUTES.OS.path,
-        component: ObjectiveSpend,
+        component: DigitalSpent,
         permission: ECOM_ROUTES.OS.permission,
     },
     // {
