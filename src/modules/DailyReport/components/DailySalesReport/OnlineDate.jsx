@@ -70,7 +70,7 @@ const OfflineStorePerformFilter = ({control, errors, clearFilter, filters , acti
                                 {isDownloading ? "" : ""}
                             </button>
                                 <FilterButton/>
-                            <FilterClearButton onClick={clearFilter}/>
+                         
 
 
                         </div>

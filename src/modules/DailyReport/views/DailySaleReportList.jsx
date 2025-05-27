@@ -83,6 +83,7 @@ const DailySaleReportList = () => {
                     content:  <OnlineGrossSaleBeforeReturn
                         data={data || []}
                         isLoading={isLoading}
+                        isActive={'GrossReturn' === activeTab}
                     />
                 },  {
                     id: "DailySales",
@@ -94,6 +95,7 @@ const DailySaleReportList = () => {
                             isLoading={isLoading}
                             expand={expand}
                             filters={{...filters, p_type: 'MTD'}}
+                            activeTab={activeTab}
                         />
 
 

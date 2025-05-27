@@ -29,7 +29,7 @@ const Unstitiched = ({ data, title, color }) => {
                                 }}
                             >
                                 <th
-                                    className={`text-sm text-white bg-[#383853] text-center p-2 border-2 border-blue-400 ${color}`}
+                                    className={`text-sm text-white bg-[#383853]  text-center p-2 border-2 border-blue-400 ${color}`}
                                     colSpan={19}
                                     style={{ borderCollapse: 'separate' }}
                                 >
@@ -106,7 +106,7 @@ const Unstitiched = ({ data, title, color }) => {
                                             // backgroundColor: 'white'
                                         }}
                                     >
-                                        <th className="border border-400 p-2 text-sm  min-w-[120px] sticky left-0 z-10">
+                                        <th className="border-2 border-blue-400 p-2 text-center sticky font-bold left-0 bg-white z-35 min-w-[120px]">
                                             Dates
                                         </th>
                                         {data?.thead?.map((thead, idx) => (
