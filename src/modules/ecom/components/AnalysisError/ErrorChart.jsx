@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ApexChart from "@components/charts/ApexChart.jsx";
 import { fetch404ErrorSummary } from "../../services/Analysis_services.jsx"
 import AnalysisErrorModal from "./AnalysisErrorModal.jsx";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const EquipmentDepartmentStats = ({ chartData,loading,dateFrom, dateTo }) => {
 
@@ -31,7 +32,7 @@ const EquipmentDepartmentStats = ({ chartData,loading,dateFrom, dateTo }) => {
                 </div>
                 <div className="box-body">
                     {loading ? (
-                        <div className="text-center text-gray-500">Loading...</div>
+                        <div className="text-center text-gray-500"><LoadingSpinner/></div>
                     ) : error ? (
                         <div className="text-center text-red-500">{error}</div>
                     ) : chartData?.series?.length > 0 ? (

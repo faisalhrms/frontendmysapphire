@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {getPastDate} from "@helpers/dateTime.js";
 import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
 
-const SalesDataTable = ({ lastDayData , loading , expand , filters }) => {
+const SalesDataTable = ({ lastDayData , loading , expand , filters,activeTab }) => {
 
     const [openRowsLastDay, setOpenRowsLastDay] = useState({
         "A-Class": true,
@@ -86,7 +86,9 @@ const SalesDataTable = ({ lastDayData , loading , expand , filters }) => {
 
 
     const { data, isLoading } = useFetchWithFilters(
-        '/reporting/fetch_sale_mtd_ld_data/',
+        activeTab === "DailySales"? '/reporting/fetch_sale_mtd_ld_data/':'',
+
+
         filters
     )
     const renderTable = (data, title, tableType) => {

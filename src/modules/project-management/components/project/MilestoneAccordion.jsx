@@ -8,7 +8,7 @@ import Avatar from "@components/Avatar.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false , setShow , setViewData }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false }) => {
 
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 

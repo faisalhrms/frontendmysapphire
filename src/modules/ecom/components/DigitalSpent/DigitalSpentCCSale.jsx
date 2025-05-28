@@ -79,7 +79,7 @@ const DigitalSpentCCSale = ({ data = {}, loading }) => {
                       </td>
                     )}
                     {idx === 0 && (
-                      <td rowSpan={group.length} className={`${styles.tdCell} ${styles.stickyCell}`}>
+                      <td rowSpan={group.length} className={`${styles.tdCell} ${styles.tdCenter}`}>
                         {row.sale_type}
                       </td>
                     )}
