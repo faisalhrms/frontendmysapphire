@@ -5,7 +5,7 @@ import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 
 const OrdersFulfillmentSummary = ({ filters, dateFrom, dateTo }) => {
-    const validDateFrom = dateFrom || new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0]; // Default to 30 days ago
+    const validDateFrom = dateFrom || new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split("T")[0];
     const validDateTo = dateTo || new Date().toISOString().split("T")[0];
 
 
