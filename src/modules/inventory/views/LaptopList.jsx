@@ -114,7 +114,7 @@ const LaptopList = () => {
             filterable: true, },
         { Header: "Maturity Date", accessor: "maturity_date", filterType: 'date',
             filterable: true, },
-        { Header: "Purchase Price", accessor: "purchase_price" , filterType: 'date',
+        { Header: "Purchase Price", accessor: "purchase_price" , filterType: 'text',
             filterable: true,},
         { Header: "Accessories", accessor: "accessories" },
         { Header: "Employee Status", accessor: "emp_status" },
