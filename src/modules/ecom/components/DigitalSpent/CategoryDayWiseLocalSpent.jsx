@@ -15,7 +15,7 @@ const CategoryDayWiseLocalSpent = ({ data = {}, loading }) => {
   }
 
   const rows = data.Local || []
-  const categories = rows.length ? Object.keys(rows[0].categories) : []
+  const categories = [...new Set(rows.flatMap(r => Object.keys(r.categories)))]
   const dataRows = rows.filter(r => r.date !== "Total")
   const totalRow = rows.find(r => r.date === "Total")
 
