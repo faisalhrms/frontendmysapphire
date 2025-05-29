@@ -48,6 +48,10 @@ const OrdersFulfillmentSummary = ({ filters, dateFrom, dateTo }) => {
                 accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Returned")?.value )}</span>
             },
             {
+                label: <span className="dark:text-gray-200 dark:bg-bodybg">Others</span>,
+                accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(fulfilment_data.find(row => row.status === "Others")?.value )}</span>
+            },
+            {
                 label: <span className="dark:text-gray-200 dark:bg-bodybg font-bold" >Reconciliation</span>,
                 accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(summary.reconciliation)}</span>
             }
