@@ -3,6 +3,7 @@ import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
 import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
 import DigitalSpent from "@modules/ecom/views/DigitalSpent.jsx";
 import InventoryRecon from "@modules/ecom/views/InventoryRecon.jsx";
+import EcomWeeklyReport from "@modules/ecom/views/EcomWeeklyReport.jsx";
 
 export const ECOM_ROUTES = {
     // READ: {
@@ -23,7 +24,11 @@ export const ECOM_ROUTES = {
     },
     IR:{
         path: '/module/ecom/inventory-recon',
-        permission: 'auth.inventory_recon',
+        permission: 'auth.ecom_inventory_recon',
+    },
+    WR:{
+        path: '/module/ecom/weekly-report',
+        permission: 'auth.ecom_weekly_report',
     },
 };
 
@@ -52,6 +57,11 @@ export const MODULE_ROUTES = [
         path: ECOM_ROUTES.IR.path,
         component: InventoryRecon,
         permission: ECOM_ROUTES.OS.permission,
+    },
+    {
+        path: ECOM_ROUTES.WR.path,
+        component: EcomWeeklyReport,
+        permission: ECOM_ROUTES.WR.permission,
     },
 
 ];
