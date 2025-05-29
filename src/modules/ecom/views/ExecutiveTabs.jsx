@@ -95,12 +95,9 @@ const EcomSaleforce = () => {
     return (
         <>
             <PageHeader currentpage="Salesforce Dashboard"  activepage="Executive Summary" mainpage="Salesforce Dashboard"/>
-
-
             <form onSubmit={handleSubmit(onSubmit)}>
                 <SaleForceDates control={control} errors={errors} filters={filters} activeTab={activeTab} handleSubmit={handleSubmit} onSubmit={onSubmit} currentDate={currentDate}/>
             </form>
-
 
             <IconTabs
                 tabs={[
