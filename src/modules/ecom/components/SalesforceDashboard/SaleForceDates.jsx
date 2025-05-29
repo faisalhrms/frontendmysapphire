@@ -1,22 +1,14 @@
 import React, { useState } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
-import FilterClearButton from "@components/form/FilterClearButton.jsx";
 
-const SaleForceDates = ({ control, errors, clearFilter, filters ,activeTab , handleSubmit , onSubmit,currentDate}) => {
-    const getToday = () => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    };
-    const [isDownloading, setIsDownloading] = useState(false);
+const SaleForceDates = ({ control, errors ,activeTab ,currentDate}) => {
     return (
         <div className="grid grid-cols-12 gap-6">
             <div className="col-span-12">
-
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex-1">
                                 {activeTab === "executiveSummary" ? (
-                                        <form onSubmit={handleSubmit(onSubmit)}>
                                             <div className="grid grid-cols-12 gap-6 mb-4">
                                                 <div className="col-span-12">
                                                     <div className="box custom-box">
@@ -52,7 +44,6 @@ const SaleForceDates = ({ control, errors, clearFilter, filters ,activeTab , han
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
                                     ) :
                                     <div className="box custom-box p-6">
                                         <div className="text-right  ">

@@ -40,9 +40,9 @@ const CategoryDayWiseLocalSpent = ({ data = {}, loading }) => {
             <tr className={styles.subHeaderRow}>
               {categories.map(cat => (
                 <Fragment key={cat}>
-                  <th className={`${styles.headerCell} sticky top-[35px] bg-gray-700 z-10`}>Sale</th>
-                  <th className={`${styles.headerCell} sticky top-[35px] bg-gray-700 z-10`}>Spent</th>
-                  <th className={`${styles.headerCell} sticky top-[35px] bg-gray-700 z-10`}>% of Sale</th>
+                  <th className={`${styles.headerCell} sticky  bg-gray-700 z-10`}>Sale</th>
+                  <th className={`${styles.headerCell} sticky  bg-gray-700 z-10`}>Spent</th>
+                  <th className={`${styles.headerCell} sticky  bg-gray-700 z-10`}>% of Sale</th>
                 </Fragment>
               ))}
             </tr>
@@ -79,7 +79,7 @@ const CategoryDayWiseLocalSpent = ({ data = {}, loading }) => {
           {totalRow && (
             <tfoot>
               <tr>
-                <td className={`${styles.tdCell} sticky left-0 bottom-0 font-bold z-[25] bg-gray-500`}>
+                <td className={`${styles.tdCell} text-center sticky left-0 bottom-0 font-bold z-[25] bg-gray-500`}>
                   Total
                 </td>
                 {categories.map(cat => {

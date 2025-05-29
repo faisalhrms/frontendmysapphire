@@ -82,7 +82,7 @@ const EquipmentList = () => {
                 </span>
             ),
         },
-        { Header: "Purchase Price", accessor: "purchase_price" , filterType: 'date',
+        { Header: "Purchase Price", accessor: "purchase_price" , filterType: 'text',
             filterable: true,},
         {
             Header: "Custodian",
