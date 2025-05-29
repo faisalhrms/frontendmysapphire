@@ -21,7 +21,6 @@ const DailyWebsiteVisitors = ({ loading, data = {} }) => {
 
   return (
     <div className={styles.wrapper}>
-      <h3 className="text-lg font-bold mb-2">Daily Website Visitors and Conversion</h3>
 
       <div className="overflow-x-auto overflow-y-auto max-h-[600px] mb-5">
         <table className={`${styles.table} table-fixed`}>
