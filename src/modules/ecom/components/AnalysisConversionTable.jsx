@@ -5,15 +5,15 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 const formatNumber = (num) =>
     num !== null && num !== undefined
         ? num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })
-        : "N/A";
+        : "0";
 
 const formatFloat = (num) =>
     num !== null && num !== undefined
         ? num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : "N/A";
+        : "0";
 
 const formatPercentage = (num) =>
-    num !== null && num !== undefined ? `${num.toFixed(2)}%` : "N/A";
+    num !== null && num !== undefined ? `${num.toFixed(2)}%` : "0";
 
 const AnalysisConversionTable = ({ filters }) => {
     const [data, setData] = React.useState([]);
@@ -74,9 +74,9 @@ const AnalysisConversionTable = ({ filters }) => {
 
             <div className="overflow-x-auto mb-4 dark:text-gray-200 dark:bg-bodybg">
                 {loading ? (
-                    <p className="text-center text-gray-600 dark:text-gray-200 dark:bg-bodybg">
+                    <div className="text-center text-gray-600 dark:text-gray-200 dark:bg-bodybg">
                         <LoadingSpinner />
-                    </p>
+                    </div>
                 ) : (
                     <table className="w-full border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                         <thead className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg">
@@ -108,10 +108,10 @@ const AnalysisConversionTable = ({ filters }) => {
                                         <td className="border p-2 text-right dark:text-gray-200 dark:bg-bodybg">
                                             {row.orders && row.total_qty
                                                 ? (row.total_qty / row.orders).toFixed(2)
-                                                : "N/A"}
+                                                : "0"}
                                         </td>
                                         <td className="border p-2 text-right dark:text-gray-200 dark:bg-bodybg">
-                                            {row.conversion ? `${row.conversion.toFixed(2)}%` : "N/A"}
+                                            {row.conversion ? `${row.conversion.toFixed(2)}%` : "0"}
                                         </td>
                                     </tr>
                                 ))}

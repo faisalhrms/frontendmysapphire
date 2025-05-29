@@ -86,7 +86,7 @@ const AnalysisReport = () => {
 
     return (
         <>
-            <PageHeader currentpage="E-Commerce" />
+            <PageHeader currentpage="E-Commerce" activepage="Analysis" mainpage="E-Commerce"/>
 
             <AnalysisDate
                 activeTab={activeTab}
@@ -120,7 +120,7 @@ const AnalysisReport = () => {
                                     loading={orderLoading}
                                     filters={orderFilters}
                                 />
-                                <AnalysisConversionTable filters={orderFilters} />
+                                <AnalysisConversionTable filters={orderFilters}   loading={orderLoading} />
                             </>
                         ),
                     },
