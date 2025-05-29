@@ -4,12 +4,12 @@ import LoadingSpinner from "@components/LoadingSpinner";
 const formatNumber = (num) =>
     num !== null && num !== undefined
         ? num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })
-        : "N/A";
+        : "0";
 
 const formatFloat = (num) =>
     num !== null && num !== undefined
         ? num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : "N/A";
+        : "0";
 
 const defaultHeaders = [
     { label: "Group", accessor: "source_group", align: "left" },
