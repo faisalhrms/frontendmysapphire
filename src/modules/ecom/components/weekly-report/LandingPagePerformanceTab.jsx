@@ -28,7 +28,7 @@ const LandingPagePerformanceTab = ({data, isLoading, isActive}) => {
         ],
     };
     return (
-        <ClientSideTable height="800px" tHeadClasses='text-white bg-[#383853]' config={tableConfig} data={tableData} title='Landing page mostly is showing (Not Set)'/>
+        <ClientSideTable height="800px" tHeadClasses='text-white bg-[#383853]' config={tableConfig} data={tableData} title='Landing page performance'/>
     )
 }
 export default LandingPagePerformanceTab

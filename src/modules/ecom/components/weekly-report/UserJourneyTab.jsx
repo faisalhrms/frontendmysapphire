@@ -21,24 +21,39 @@ const Item = ({data, isLoading, title = 'Week'}) => {
                                 columnWidth="50%"
                                 chartWidth={530}
                                 additionalOptions={{
-                                    legend: {position: 'top'},
+                                    legend: { position: 'top' },
                                     dataLabels: {
                                         enabled: true,
                                         formatter: function (val) {
-                                            return `${val.toLocaleString()}`;
+                                            return val > 0.1 ? `${val.toLocaleString()}` : '';
                                         },
+                                        offsetY: -20,
+                                        style: {
+                                            fontSize: '11px',
+                                            colors: ['#000']
+                                        },
+                                    },
+                                    plotOptions: {
+                                        bar: {
+                                            dataLabels: {
+                                                position: 'top',
+                                                hideOverflowingLabels: false
+                                            },
+                                            minHeight: 20
+                                        }
                                     },
                                     chart: {
                                         toolbar: {
                                             show: true,
-                                        },
-                                    },
+                                        }
+                                    }
                                 }}
                                 labels={data.chart.categories}
                                 height={330}
                                 series={data.chart.series}
                                 baseWidthPerCategory={2}
                             />
+
                             <table className="min-w-full table-auto border-collapse border border-gray-400">
                                 <thead style={{
                                     backgroundColor: "#383853",
@@ -92,17 +107,36 @@ const Item = ({data, isLoading, title = 'Week'}) => {
                     <div className="box-footer !p-0">
                         <div className="grid grid-cols-12 justify-center">
                             {data?.chart?.categories.map((label, index) => {
+                                const value = data?.chart?.series[0]?.data[index]?.toLocaleString();
+                                const abandonment = data?.details?.abandonment;
+                                let extraText = "";
+
+                                if (label === "Visits with Carts") {
+                                    extraText = `${abandonment?.cart}`;
+                                } else if (label === "Visits with Checkouts") {
+                                    extraText = `${abandonment?.checkout}`;
+                                } else if (label === "Visits with Orders") {
+                                    extraText = `${abandonment?.conv}`;
+                                }
+                                else if (label === "Total Visits") {
+                                    extraText = `${abandonment?.total}`;
+                                }
+
                                 return (
                                     <div className="col-span-3 pe-0 text-center" key={index}>
                                         <div className="sm:p-4 p-2">
-                                        <span
-                                            className="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">{label}</span>
-                                            <span
-                                                className="block text-[1rem] font-semibold">{data?.chart?.series[0]?.data[index]?.toLocaleString()}</span>
+                                            <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">{label}</span>
+                                            <span className="block text-[1rem] font-semibold">{value}</span>
+                                            {extraText && (
+                                                <span className="block text-[1rem] font-semibold text-primary">
+                                                    {extraText}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
-                                )
+                                );
                             })}
+
                         </div>
                     </div>
                 </div>
