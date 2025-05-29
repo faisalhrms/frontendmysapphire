@@ -8,14 +8,14 @@ const AnalysisDate = ({
                           orderControl,
                           errorControl,
                           orderFilters,
-                          errorFilters,
+    
                           handleOrderSubmit,
                           handleErrorSubmit,
                           onOrderSubmit,
                           onErrorSubmit,
-                          clearFilter,
+
                           getErrorFilters,
-                          hideOnlyComparativePeriod,
+
                       }) => {
     return (
         <div className="grid grid-cols-12 gap-6">

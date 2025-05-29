@@ -94,7 +94,7 @@ const EcomSaleforce = () => {
 
     return (
         <>
-            <PageHeader currentpage="Salesforce Dashboard"/>
+            <PageHeader currentpage="Salesforce Dashboard"  activepage="Executive Summary" mainpage="Salesforce Dashboard"/>
 
 
             <form onSubmit={handleSubmit(onSubmit)}>
