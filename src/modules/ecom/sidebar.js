@@ -49,6 +49,14 @@ export const sidebarMenu = [
                 5,
                 '',
                 ECOM_ROUTES.IR.permission,
+            ),
+            generateSidebarItem(
+                ECOM_ROUTES.WR.path,
+                'link',
+                'Weekly Report',
+                6,
+                '',
+                ECOM_ROUTES.WR.permission,
             )
         ]
     )

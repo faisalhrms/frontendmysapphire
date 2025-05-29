@@ -3,29 +3,31 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx"
 import useFilters from "@hooks/useFilters.js"
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js"
 import IconTabs from "@components/IconTabs.jsx"
-import getComparativeReportDates from "@modules/DailyReport/views/utils.js"
+
 import DigitalDate from "@modules/ecom/components/DigitalSpent/Digitaldate.jsx"
 import DigitalSpentDate from "@modules/ecom/components/DigitalSpent/DigitalSpentDate.jsx"
+
 import ObjectiveWiseSpentSummary from "@modules/ecom/components/DigitalSpent/ObjectiveWiseSpentSummary.jsx"
-import CategoryWiseSpent from "@modules/ecom/components/DigitalSpent/CategoryWiseSpent.jsx"
-import DigitalSpentCCSale from "@modules/ecom/components/DigitalSpent/DigitalSpentCCSale.jsx"
-import DayWiseSalesSpent from "@modules/ecom/components/DigitalSpent/DayWiseSalesSpent.jsx"
-import CategoryDayWiseLocalSpent from "@modules/ecom/components/DigitalSpent/CategoryDayWiseLocalSpent.jsx"
-import DailyWebsiteVisitors from "@modules/ecom/components/DigitalSpent/DailyWebsiteVisitors.jsx"
+import CategoryWiseSpent            from "@modules/ecom/components/DigitalSpent/CategoryWiseSpent.jsx"
+import DigitalSpentCCSale           from "@modules/ecom/components/DigitalSpent/DigitalSpentCCSale.jsx"
+import DayWiseSalesSpent            from "@modules/ecom/components/DigitalSpent/DayWiseSalesSpent.jsx"
+import CategoryDayWiseLocalSpent    from "@modules/ecom/components/DigitalSpent/CategoryDayWiseLocalSpent.jsx"
+import DailyWebsiteVisitors         from "@modules/ecom/components/DigitalSpent/DailyWebsiteVisitors.jsx"
+import CategoryOrdersCount          from "@modules/ecom/components/DigitalSpent/CategoryOrdersCount.jsx"
 
 const DigitalSpent = () => {
   const [activeTab, setActiveTab] = useState("ObjectiveWiseSpentSummary")
-  const { today } = getComparativeReportDates()
+  const today = new Date()
   const yesterday = useMemo(() => {
-    const d = new Date()
+    const d = new Date(today)
     d.setDate(d.getDate() - 1)
     return d.toISOString().split("T")[0]
-  }, [])
+  }, [today])
   const thirtyDaysAgo = useMemo(() => {
-    const now = new Date()
-    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30)
+    const d = new Date(today)
+    d.setDate(d.getDate() - 30)
     return d.toISOString().split("T")[0]
-  }, [])
+  }, [today])
 
   const {
     control,
@@ -37,11 +39,11 @@ const DigitalSpent = () => {
   } = useFilters(
     useMemo(() => ({
       initialFilters: [
-        { name: "till_date", defaultValue: today },
-        { name: "ds_from", defaultValue: thirtyDaysAgo },
-        { name: "ds_to", defaultValue: yesterday }
+        { name: "till_date", defaultValue: yesterday },
+        { name: "ds_from",   defaultValue: thirtyDaysAgo },
+        { name: "ds_to",     defaultValue: yesterday }
       ]
-    }), [today, thirtyDaysAgo, yesterday])
+    }), [thirtyDaysAgo, yesterday])
   )
 
   const [filters, setFilters] = useState(getFilters())
@@ -49,23 +51,26 @@ const DigitalSpent = () => {
   const endpoint =
     activeTab === "ObjectiveWiseSpentSummary"
       ? "/digital_spent/fetch_objective_wise_summary/"
-      : activeTab === "CategoryWiseSpent"
+    : activeTab === "CategoryWiseSpent"
       ? "/digital_spent/fetch_category_wise_summary/"
-      : activeTab === "DigitalSpentCCSale"
+    : activeTab === "DigitalSpentCCSale"
       ? "/digital_spent/fetch_digital_spent_cc_sales/"
-      : activeTab === "DayWiseSalesSpent"
+    : activeTab === "DayWiseSalesSpent"
       ? "/digital_spent/fetch_day_wise_sales_spent/"
-      : activeTab === "CategoryDayWiseLocalSpent"
+    : activeTab === "CategoryDayWiseLocalSpent"
       ? "/digital_spent/fetch_category_day_wise_local_spent/"
-      : activeTab === "DailyWebsiteVisitors"
+    : activeTab === "DailyWebsiteVisitors"
       ? "/digital_spent/fetch_cc_order_summary/"
-      : ""
+    : activeTab === "CategoryOrdersCount"
+      ? "/digital_spent/fetch_category_orders_count/"
+    : ""
 
   const params = useMemo(() => {
     if (
       activeTab === "ObjectiveWiseSpentSummary" ||
-      activeTab === "DigitalSpentCCSale" ||
-      activeTab === "CategoryWiseSpent"
+      activeTab === "CategoryWiseSpent"      ||
+      activeTab === "DigitalSpentCCSale"     ||
+      activeTab === "CategoryOrdersCount"
     ) {
       return { till_date: filters.till_date }
     }
@@ -104,7 +109,11 @@ const DigitalSpent = () => {
       icon: <i className="bx bx-pie-chart-alt" />,
       content:
         activeTab === "CategoryWiseSpent" && (
-          <CategoryWiseSpent filters={filters} loading={isLoading} data={data} />
+          <CategoryWiseSpent
+            filters={filters}
+            loading={isLoading}
+            data={data}
+          />
         )
     },
     {
@@ -113,7 +122,11 @@ const DigitalSpent = () => {
       icon: <i className="bx bx-bar-chart-alt" />,
       content:
         activeTab === "DigitalSpentCCSale" && (
-          <DigitalSpentCCSale filters={filters} loading={isLoading} data={data} />
+          <DigitalSpentCCSale
+            filters={filters}
+            loading={isLoading}
+            data={data}
+          />
         )
     },
     {
@@ -122,7 +135,11 @@ const DigitalSpent = () => {
       icon: <i className="bx bx-calendar-alt" />,
       content:
         activeTab === "DayWiseSalesSpent" && (
-          <DayWiseSalesSpent filters={filters} loading={isLoading} data={data} />
+          <DayWiseSalesSpent
+            filters={filters}
+            loading={isLoading}
+            data={data}
+          />
         )
     },
     {
@@ -150,35 +167,49 @@ const DigitalSpent = () => {
             data={data}
           />
         )
+    },
+    {
+      id: "CategoryOrdersCount",
+      label: "Category Orders Count",
+      icon: <i className="bx bx-list-ul" />,
+      content:
+        activeTab === "CategoryOrdersCount" && (
+          <CategoryOrdersCount
+            filters={filters}
+            loading={isLoading}
+            data={data}
+          />
+        )
     }
   ]
 
-return (
-  <>
-    <PageHeader currentpage="Digital Spent" />
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {(activeTab === "ObjectiveWiseSpentSummary" ||
-        activeTab === "DigitalSpentCCSale" ||
-        activeTab === "CategoryWiseSpent") ? (
-        <DigitalDate
-          control={control}
-          errors={errors}
-          clearFilter={clearFilter}
-          filters={filters}
-        />
-      ) : (
-        <DigitalSpentDate
-          control={control}
-          errors={errors}
-          clearFilter={clearFilter}
-          filters={filters}
-          setValue={setValue}
-        />
-      )}
-    </form>
-    <IconTabs tabs={tabs} onTabChange={handleTabChange} />
-  </>
-)
+  return (
+    <>
+      <PageHeader currentpage="Digital Spent" />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {(activeTab === "ObjectiveWiseSpentSummary" ||
+          activeTab === "CategoryWiseSpent"      ||
+          activeTab === "DigitalSpentCCSale"     ||
+          activeTab === "CategoryOrdersCount") ? (
+          <DigitalDate
+            control={control}
+            errors={errors}
+            clearFilter={clearFilter}
+            filters={filters}
+          />
+        ) : (
+          <DigitalSpentDate
+            control={control}
+            errors={errors}
+            clearFilter={clearFilter}
+            filters={filters}
+            setValue={setValue}
+          />
+        )}
+      </form>
+      <IconTabs tabs={tabs} onTabChange={handleTabChange} />
+    </>
+  )
 }
 
 export default DigitalSpent
