@@ -8,6 +8,8 @@ import UserJourneyTab from "@modules/ecom/components/weekly-report/UserJourneyTa
 import SourceBasedPerformanceTab from "@modules/ecom/components/weekly-report/SourceBasedPerformanceTab.jsx";
 import LandingPagePerformanceTab from "@modules/ecom/components/weekly-report/LandingPagePerformanceTab.jsx";
 import WebsiteSearchTab from "@modules/ecom/components/weekly-report/WebsiteSearchTab.jsx";
+import ComparativeDate from "@modules/DailyReport/components/comparativeSalesReport/ComparativeDate.jsx";
+import WeeklyReportFilter from "@modules/ecom/components/weekly-report/WeeklyReportFilter.jsx";
 
 const EcomWeeklyReport = () =>{
     const [activeTab, setActiveTab] = useState("user_journey");
@@ -46,7 +48,12 @@ const EcomWeeklyReport = () =>{
     return (
         <>
             <PageHeader currentpage="Ecom Weekly Report" activepage="Reports" mainpage="Ecom Weekly Report"/>
-
+            {
+                activeTab !== 'landing_page_performance' &&
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <WeeklyReportFilter filters={filters} control={control} errors={errors}/>
+                </form>
+            }
             <IconTabs
                 tabs={[
                     {
@@ -57,6 +64,7 @@ const EcomWeeklyReport = () =>{
                             <UserJourneyTab data={data}
                                             isLoading={isLoading}
                                             isActive={'user_journey' === activeTab}
+                                            filters={filters}
                             />
                         ),
                     },
