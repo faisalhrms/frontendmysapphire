@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ApexChart from "@components/charts/ApexChart.jsx";
-import { fetch404ErrorSummary } from "../../services/Analysis_services.jsx"
+
 import AnalysisErrorModal from "./AnalysisErrorModal.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const EquipmentDepartmentStats = ({ chartData,loading,dateFrom, dateTo }) => {
+const EquipmentDepartmentStats = ({ chartData,loading, }) => {
 
     const [error, setError] = useState(null);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -51,7 +51,6 @@ const EquipmentDepartmentStats = ({ chartData,loading,dateFrom, dateTo }) => {
             </div>
             {isErrorModalOpen && selectedDate && (
                 <AnalysisErrorModal
-                    // title={`Error Report - ${new Date().toLocaleDateString()}`}
                     title="404 Error Report"
                     onClose={closeErrorModal}
                     date={selectedDate}
