@@ -64,7 +64,8 @@ const AnalysisDate = ({
                                                 placeholder="From Date"
                                                 control={errorControl}
                                                 defaultValue={getErrorFilters().date_from}
-                                                label="From Date"
+                                                // label="From Date"
+                                                label={true}
                                             />
                                         </div>
                                         <div className="flex-1">
@@ -74,7 +75,8 @@ const AnalysisDate = ({
                                                 placeholder="To Date"
                                                 control={errorControl}
                                                 defaultValue={getErrorFilters().date_to}
-                                                label="To Date"
+                                                label={true}
+                                                // label="To Date"
                                             />
                                         </div>
                                         <div className=" mt-6">
