@@ -9,7 +9,6 @@ import EcomDatatable from "../../components/EcomSalesForce/EcomDatatable.jsx"
 
 import {
     commerce_cloud,
-
     total_orders_oms,
     multiple_fo,
     single_fo,
