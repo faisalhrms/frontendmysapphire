@@ -4,12 +4,9 @@ import useFilters from "@hooks/useFilters.js";
 import {useFetchWithFilters, usePostWithFilters} from "@hooks/useFetchWithFilters.js";
 import api from "../../../config/axiosConfig.js";
 import IconTabs from "@components/IconTabs.jsx";
-import EcomReconciliation from "../components/EcomSalesForce/EcomReconciliation.jsx";
+
 import AgingForm from "../components/SalesforceDashboard/AgingForm.jsx";
-import FormInput from "@components/form/FormInput.jsx";
-import FilterButton from "@components/form/FilterButton.jsx";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import DigitalDate from "@modules/ecom/components/DigitalSpent/Digitaldate.jsx";
+
 import SaleForceDates from "@modules/ecom/components/SalesforceDashboard/SaleForceDates.jsx";
 import ExecutiveForm from "@modules/ecom/components/SalesforceDashboard/ExecutiveForm.jsx";
 
@@ -72,7 +69,7 @@ const EcomSaleforce = () => {
     const [filters, setFilters] = useState(getFilters());
 
 
-    const { data: executiveData, isLoading: executiveLoading } = useFetchWithFilters(
+    const { data: executiveData, isLoading: executiveLoading,refetch } = useFetchWithFilters(
         activeTab === "executiveSummary"?"/salesforce/fetch_executive_summary/":
             activeTab === "agingLiabilities"?"/salesforce/fetch_pending_orders/":'',
 
@@ -96,7 +93,7 @@ const EcomSaleforce = () => {
         <>
             <PageHeader currentpage="Salesforce Dashboard"  activepage="Executive Summary" mainpage="Salesforce Dashboard"/>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <SaleForceDates control={control} errors={errors} filters={filters} activeTab={activeTab} handleSubmit={handleSubmit} onSubmit={onSubmit} currentDate={currentDate}/>
+                <SaleForceDates  refetch ={refetch} control={control} errors={errors} filters={filters} activeTab={activeTab} handleSubmit={handleSubmit} onSubmit={onSubmit} currentDate={currentDate}/>
             </form>
 
             <IconTabs
@@ -119,7 +116,7 @@ const EcomSaleforce = () => {
                                         <p>{errorMessage}</p>
                                     </div>
                                 )}
-                                <ExecutiveForm filters={filters}  data={executiveData}
+                                <ExecutiveForm filters={filters}  data={executiveData} refetch ={refetch}
                                                isLoading={executiveLoading}/>
                             </>
 
@@ -127,7 +124,7 @@ const EcomSaleforce = () => {
                     },
                     {
                         id: "agingLiabilities",
-                        label: "Aging’s for Pending Liabilities",
+                        label: "Aging for Pending Liabilities",
                         icon: <i className="bx bx-time-five"></i>,
                         content: (
                             <div className="">
@@ -148,6 +145,7 @@ const EcomSaleforce = () => {
                                     loadingOrders={executiveLoading}
                                     filters={filters}
                                     activeTab={activeTab}
+                                    refetch ={refetch}
                                 />
                             </div>
                         ),

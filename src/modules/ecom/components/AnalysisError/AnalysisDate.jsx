@@ -1,7 +1,7 @@
 import React from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
-import FilterClearButton from "@components/form/FilterClearButton.jsx";
+
 
 const AnalysisDate = ({
                           activeTab,
@@ -64,7 +64,8 @@ const AnalysisDate = ({
                                                 placeholder="From Date"
                                                 control={errorControl}
                                                 defaultValue={getErrorFilters().date_from}
-                                                label="From Date"
+                                                // label="From Date"
+                                                label={true}
                                             />
                                         </div>
                                         <div className="flex-1">
@@ -74,7 +75,8 @@ const AnalysisDate = ({
                                                 placeholder="To Date"
                                                 control={errorControl}
                                                 defaultValue={getErrorFilters().date_to}
-                                                label="To Date"
+                                                label={true}
+                                                // label="To Date"
                                             />
                                         </div>
                                         <div className=" mt-6">
