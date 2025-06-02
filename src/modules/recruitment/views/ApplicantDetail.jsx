@@ -14,14 +14,11 @@ import { formatDate } from "@helpers/dateTime.js";
 
 const ApplicantDetail = () => {
     const { id } = useParams();
-    const { applicantData, isLoading } = useApplicant(id);
+    const { applicantData } = useApplicant(id);
 
-    if (isLoading) {
-        return <LoadingSpinner />;
-    }
 
     if (!applicantData) {
-        return <div className="text-center p-10">Applicant not found</div>;
+        return <LoadingSpinner />;
     }
 
     return (
