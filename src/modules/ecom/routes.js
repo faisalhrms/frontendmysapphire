@@ -1,4 +1,3 @@
-import OrderShopify from "@modules/ecom/views/OrderShopify.jsx";
 import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
 import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
 import DigitalSpent from "@modules/ecom/views/DigitalSpent.jsx";
