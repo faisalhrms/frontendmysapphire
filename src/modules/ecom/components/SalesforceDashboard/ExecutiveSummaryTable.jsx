@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { formatNumberWithCommas } from "@helpers/formatters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const ExecutiveSummaryTable = ({ title, data, totals, isLoading }) => {
