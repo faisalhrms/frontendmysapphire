@@ -23,6 +23,7 @@ const EcomWeeklyReport = () =>{
             () => ({
                 initialFilters: [
                     { name: 'date',defaultValue: getPastDate(0)},
+                    { name: 'top', defaultValue: null }
                 ],
             }),
             []
@@ -49,9 +50,8 @@ const EcomWeeklyReport = () =>{
         <>
             <PageHeader currentpage="Ecom Weekly Report" activepage="Reports" mainpage="Ecom Weekly Report"/>
             {
-                activeTab !== 'landing_page_performance' &&
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <WeeklyReportFilter filters={filters} control={control} errors={errors}/>
+                    <WeeklyReportFilter filters={filters} control={control} errors={errors} activeTab={activeTab}/>
                 </form>
             }
             <IconTabs
