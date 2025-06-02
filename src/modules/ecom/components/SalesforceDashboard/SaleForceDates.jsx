@@ -82,8 +82,17 @@ const SaleForceDates = ({ control, errors ,activeTab ,currentDate ,refetch,filte
                                     ) :
                                     <div className="box custom-box p-6">
                                         <div className="text-right  ">
+
                                             <span className="text-gray-800 font-semibold">As On: </span>
-                                            <span className="text-primary font-bold">{currentDate}</span>
+                                            <span className="text-primary font-bold mr-4">{currentDate}</span>
+                                            <button
+                                                type="button"
+                                                onClick={refetch}
+
+                                                className="hs-dropdown-toggle ti-btn ti-btn-success-full"
+                                            >
+                                                <i className="ri-refresh-line inline-block"></i> Refresh
+                                            </button>
                                         </div>
                                     </div>
 
