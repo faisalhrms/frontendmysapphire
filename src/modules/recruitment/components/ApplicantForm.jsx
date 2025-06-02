@@ -9,7 +9,7 @@ import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import {formatNestedOptions, formatOptions} from "@helpers/formatters.js";
-import applicantSchema from "@modules/recruitment/schemas/applicantSchema.js";
+import applicantSchema from "@modules/recruitment/schemas/ApplicantSchema.js";
 import { useApplicantForm } from "@modules/recruitment/hooks/recruitmentHooks.js";
 import SubFormSection from "@components/form/SubFormSection.jsx";
 
@@ -186,6 +186,8 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                             applicantData,
                                             "recommended_positions"
                                         )}
+                                        saveOptionEndpoint="/select/applicant/position/"
+                                        allowSaveNewOption={true}
                                     />
                                 </div>
                                 <div className="col-span-12">
