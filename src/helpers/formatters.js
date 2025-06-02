@@ -15,6 +15,60 @@ export const formatOptions = (data, key, valueKey = 'id', labelKey = 'name') => 
     }];
 };
 
+// helpers/formatters.js
+// helpers/formatters.js
+export const formatNestedOptions = (data, key, valueKey = 'id', labelKey = 'name') => {
+    if (!data) return [];
+
+    let target = data;
+
+    // If key is provided, try to access it
+    if (key) {
+        // Handle dot notation for nested keys (e.g., 'location.name')
+        if (key.includes('.')) {
+            const keys = key.split('.');
+            target = keys.reduce((obj, k) => (obj && obj[k]) ? obj[k] : null, data);
+        } else {
+            target = data[key];
+        }
+    }
+
+    // Handle array data
+    if (Array.isArray(target)) {
+        return target.map(item => {
+            // If item is an object
+            if (item && typeof item === 'object') {
+                return {
+                    value: item[valueKey],
+                    label: item[labelKey] || `Item ${item[valueKey]}`
+                };
+            }
+            // If item is a primitive
+            return {
+                value: item,
+                label: `${key} ${item}`
+            };
+        });
+    }
+
+    // Handle single object
+    if (target && typeof target === 'object') {
+        return [{
+            value: target[valueKey],
+            label: target[labelKey] || `Item ${target[valueKey]}`
+        }];
+    }
+
+    // Handle primitive values
+    if (target !== undefined && target !== null) {
+        return [{
+            value: target,
+            label: `${key} ${target}`
+        }];
+    }
+
+    return [];
+};
 export const formatOptionsWithConcatenation = (data, key, valueKey = 'id', labelKeys = ['name']) => {
     if (!data || !data[key]) return [];
 
