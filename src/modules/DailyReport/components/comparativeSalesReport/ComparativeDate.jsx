@@ -194,7 +194,7 @@ const ComparativeDate = ({
                             </div>
                             <div className="flex items-center gap-4 mt-6 flex-2">
                                 <FilterButton/>
-                                <FilterClearButton onClick={clearFilter}/>
+                                {/*<FilterClearButton onClick={clearFilter}/>*/}
                                 <button
                                     type="button"
                                     className="ti-btn ti-btn-success !mb-0"
