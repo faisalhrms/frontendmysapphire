@@ -23,6 +23,7 @@ const EcomWeeklyReport = () =>{
             () => ({
                 initialFilters: [
                     { name: 'date',defaultValue: getPastDate(0)},
+                    { name: 'top', defaultValue: null }
                 ],
             }),
             []
@@ -31,7 +32,7 @@ const EcomWeeklyReport = () =>{
 
     const [filters, setFilters] = useState(getFilters());
 
-    const { data, isLoading } = useFetchWithFilters(
+    const { data, isLoading, refetch } = useFetchWithFilters(
         activeTab === "user_journey" ? '/ecom/weekly-report/user-journey/weekly/' :
             activeTab === "source_based_performance" ? '/ecom/weekly-report/source-based-performance/' :
                 activeTab === "landing_page_performance" ? '/ecom/weekly-report/landing-page-performance/' : '', filters
@@ -50,9 +51,9 @@ const EcomWeeklyReport = () =>{
             <PageHeader currentpage="Ecom Weekly Report" activepage="Reports" mainpage="Ecom Weekly Report"/>
             {
                 activeTab !== 'landing_page_performance' &&
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <WeeklyReportFilter filters={filters} control={control} errors={errors}/>
-                </form>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <WeeklyReportFilter filters={filters} control={control} errors={errors} activeTab={activeTab}/>
+                    </form>
             }
             <IconTabs
                 tabs={[
@@ -87,6 +88,10 @@ const EcomWeeklyReport = () =>{
                             <LandingPagePerformanceTab data={data}
                                                        isLoading={isLoading}
                                                        isActive={'landing_page_performance' === activeTab}
+                                                       control={control}
+                                                       errors={errors}
+                                                       handleSubmit={handleSubmit}
+                                                       onSubmit={onSubmit}
                             />
                         ),
                     },

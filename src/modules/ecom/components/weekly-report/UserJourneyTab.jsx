@@ -106,37 +106,25 @@ const Item = ({data, isLoading, title = 'Week'}) => {
                     </div>
                     <div className="box-footer !p-0">
                         <div className="grid grid-cols-12 justify-center">
-                            {data?.chart?.categories.map((label, index) => {
-                                const value = data?.chart?.series[0]?.data[index]?.toLocaleString();
-                                const abandonment = data?.details?.abandonment;
-                                let extraText = "";
-
-                                if (label === "Visits with Carts") {
-                                    extraText = `${abandonment?.cart}`;
-                                } else if (label === "Visits with Checkouts") {
-                                    extraText = `${abandonment?.checkout}`;
-                                } else if (label === "Visits with Orders") {
-                                    extraText = `${abandonment?.conv}`;
-                                }
-                                else if (label === "Total Visits") {
-                                    extraText = `${abandonment?.total}`;
-                                }
-
+                            {data?.details?.meta_data.map((item, index) => {
                                 return (
-                                    <div className="col-span-3 pe-0 text-center" key={index}>
-                                        <div className="sm:p-4 p-2">
-                                            <span className="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">{label}</span>
-                                            <span className="block text-[1rem] font-semibold">{value}</span>
-                                            {extraText && (
+                                    <>
+                                        <div className="col-span-3 pe-0 text-center" key={index}>
+                                            <div className="sm:p-4 p-2">
+                                                <span
+                                                    className="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">{item.category}</span>
+                                                <span className="block text-[1rem] font-semibold">{item.total}</span>
                                                 <span className="block text-[1rem] font-semibold text-primary">
-                                                    {extraText}
+                                                    {item.abandonment}
                                                 </span>
-                                            )}
+                                                <span className="block text-warning">
+                                                    {item.reverse_abandonment}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </>
                                 );
                             })}
-
                         </div>
                     </div>
                 </div>
@@ -148,12 +136,15 @@ const UserJourneyTab = ({data, isLoading, isActive, filters}) => {
     if (!isActive) {
         return null
     }
-    const { data : monthlyData, isLoading: monthlyDataLoading } = useFetchWithFilters('/ecom/weekly-report/user-journey/monthly/', filters);
+    const {
+        data: monthlyData,
+        isLoading: monthlyDataLoading
+    } = useFetchWithFilters('/ecom/weekly-report/user-journey/monthly/', filters);
     return (
         <>
             <div className="grid grid-cols-12 gap-x-6 mt-4">
-                <Item data={data} isLoading={isLoading} />
-                <Item data={monthlyData} isLoading={monthlyDataLoading} title='Month to date' />
+                <Item data={data} isLoading={isLoading}/>
+                <Item data={monthlyData} isLoading={monthlyDataLoading} title='Month to date'/>
             </div>
         </>
     )
