@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import {Provider} from 'react-redux';
+import {BrowserRouter, Route, Routes, useNavigate} from 'react-router-dom';
+import {Provider, useSelector} from 'react-redux';
 import './index.scss';
 import Login from "@modules/auth/views/Login.jsx";
 import store from './redux/store';
@@ -15,6 +15,7 @@ import App from "@modules/layouts/App.jsx";
 import Toast from "@components/Toast.jsx";
 import ForgotPassView from "@modules/auth/views/ForgotPassView.jsx";
 import VCardProfile from "@modules/digital-profiles/views/VCardProfile.jsx";
+import ResetPassView from "@modules/auth/views/ResetPassView.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -32,6 +33,31 @@ const queryClient = new QueryClient({
     },
 });
 
+// A guard for routes requiring password reset
+const PasswordResetGuard = ({ children }) => {
+    const user = useSelector((state) => state.auth.user);
+    const tokens = useSelector((state) => state.auth.tokens);
+    const navigate = useNavigate();
+
+    React.useEffect(() => {
+        // Check if we have both user data and valid tokens
+        if (user && tokens?.access_token) {
+            console.log(`i am in first phase of user and token`)
+            if (user.password_changed_at === null) {
+                navigate(`${import.meta.env.BASE_URL}reset-old-password`, { replace: true });
+                console.log(`i am in reset-old-password`)
+            }
+        } else {
+            debugger
+            navigate(`${import.meta.env.BASE_URL}`, { replace: true });
+            console.log(`i am in about`)
+
+        }
+    }, [user, tokens, navigate]);
+
+    return user && tokens?.access_token ? children : null;
+};
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.Fragment>
         <QueryClientProvider client={queryClient}>
@@ -39,19 +65,21 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <BrowserRouter>
                     <ScrollToTop/>
                     <Routes>
-                        {/* Authentication Layout for Login and related routes */}
                         <Route path={`${import.meta.env.BASE_URL}`} element={<Authentication/>}>
                             <Route index element={<Login/>}/>
                             <Route path="resetpassword" element={<ForgotPassView/>}/>
+                            <Route path="reset-old-password" element={<ResetPassView/>}/>
                             <Route path="vcard/profile/:id" element={<VCardProfile />} />
                             <Route path="resetpassword/:uidb64/:token" element={<ForgotPassView />} />
                         </Route>
 
-                        {/* Error Route */}
                         <Route path={`${import.meta.env.BASE_URL}/error/:code`} element={<Error/>}/>
 
-                        {/* Main App Layout */}
-                        <Route path={`${import.meta.env.BASE_URL}`} element={<App/>}>
+                        <Route path={`${import.meta.env.BASE_URL}`} element={
+                            <PasswordResetGuard>
+                                <App/>
+                            </PasswordResetGuard>
+                        }>
                             <Route path="*" element={<AppRoutes/>}/>
                         </Route>
                     </Routes>
@@ -62,3 +90,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </QueryClientProvider>
     </React.Fragment>
 );
+
+export default PasswordResetGuard;

@@ -1,13 +1,11 @@
-
 import React from "react";
 import PropTypes from "prop-types";
-import { formatNumberWithCommas } from "@helpers/formatters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const ExecutiveSummaryTable = ({ title, data, totals, isLoading }) => {
     return (
         <div className="w-3/5 bg-white p-4 shadow-md rounded-lg mb-6 dark:text-gray-200 dark:bg-bodybg ">
-            <h2  style={{backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white"}} className="text-sm font-bold text-gray-900 px-4 py-2 bg-gray-200 dark:text-gray-200 dark:bg-bodybg ">{title}</h2>
+            <h2  className="text-sm font-bold  px-4 py-2 dark:text-gray-200 dark:bg-bodybg bg-[#383853] text-white ">{title}</h2>
 
             <table className="min-w-full border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                 <tbody className="text-black text-sm dark:text-gray-200 dark:bg-bodybg">

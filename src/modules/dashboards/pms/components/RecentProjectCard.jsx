@@ -28,6 +28,8 @@ const RecentProjectCard = ({ projects }) => {
                                                     avatar={project.manager ? project.manager?.avatar : null}
                                                     size='md'
                                                     parentClasses='bg-primary/10 !fill-primary'
+                                                    full_name={project?.manager?.full_name || 'N/A' }
+
                                                 />
                                             </div>
                                             <div>

@@ -8,15 +8,15 @@ import OnlineSalesTwo from "@modules/DailyReport/components/comparativeSalesRepo
 
 const OnlineSaleList = ({data}) => {
     const getGrowthColor = (growth) => {
-        return growth < 0 ? 'text-danger' : 'text-emerald-600';
+        return growth < 0 ? 'text-red' : 'text-emerald-600';
     };
 
     return (
         <div className="font-sans text-sm">
 
-            <CurrentPeriodTable
-                data={data}
-            />
+            {/*<CurrentPeriodTable*/}
+            {/*    data={data}*/}
+            {/*/>*/}
             <OnlineSalesTwo
                 getGrowthColor={getGrowthColor}
                 data={data}

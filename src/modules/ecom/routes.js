@@ -1,15 +1,14 @@
-import OrderShopify from "@modules/ecom/views/OrderShopify.jsx";
 import AnalysisReport from "@modules/ecom/views/AnalysisReport.jsx";
 import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
-import ObjectiveSpend from "../../modules/ecom/views/ObjectiveSpend.jsx"
-import OrderDetail from "./views/OrderDetail.jsx";
-import EcomSalesforce from "../ecom/views/EcomSalesforce.jsx";
+import DigitalSpent from "@modules/ecom/views/DigitalSpent.jsx";
+import InventoryRecon from "@modules/ecom/views/InventoryRecon.jsx";
+import EcomWeeklyReport from "@modules/ecom/views/EcomWeeklyReport.jsx";
 
 export const ECOM_ROUTES = {
-    READ: {
-        path: "/module/ecom",
-        permission: "auth.view_ecommerce",
-    },
+    // READ: {
+    //     path: "/module/ecom",
+    //     permission: "auth.view_ecommerce",
+    // },
     ADD: {
         path: "/module/ecom/anlysisReport",
         permission: "auth.ecom_analytics",
@@ -22,20 +21,22 @@ export const ECOM_ROUTES = {
         path: '/module/ecom/digitalspent',
         permission: 'auth.ecom_digitalspent',
     },
-    // ODT:{
-    //     path: '/module/ecom/orderdetail',
-    //     permission: 'ecom_digitalspent',
-    // },
-
-
+    IR:{
+        path: '/module/ecom/inventory-recon',
+        permission: 'auth.ecom_inventory_recon',
+    },
+    WR:{
+        path: '/module/ecom/weekly-report',
+        permission: 'auth.ecom_weekly_report',
+    },
 };
 
 export const MODULE_ROUTES = [
-    {
-        path: ECOM_ROUTES.READ.path,
-        component: OrderShopify,
-        permission: ECOM_ROUTES.READ.permission,
-    },
+    // {
+    //     path: ECOM_ROUTES.READ.path,
+    //     component: OrderShopify,
+    //     permission: ECOM_ROUTES.READ.permission,
+    // },
     {
         path: ECOM_ROUTES.ADD.path,
         component: AnalysisReport,
@@ -48,18 +49,18 @@ export const MODULE_ROUTES = [
     },
     {
         path: ECOM_ROUTES.OS.path,
-        component: ObjectiveSpend,
+        component: DigitalSpent,
         permission: ECOM_ROUTES.OS.permission,
     },
-    // {
-    //     path: ECOM_ROUTES.ODT.path,
-    //     component: OrderDetail,
-    //     permission: ECOM_ROUTES.ODT.permission,
-    // },
-    // {
-    //     path: ECOM_ROUTES.ESF.path,
-    //     component: EcomSalesforce,
-    //
-    // },
+    {
+        path: ECOM_ROUTES.IR.path,
+        component: InventoryRecon,
+        permission: ECOM_ROUTES.OS.permission,
+    },
+    {
+        path: ECOM_ROUTES.WR.path,
+        component: EcomWeeklyReport,
+        permission: ECOM_ROUTES.WR.permission,
+    },
 
 ];

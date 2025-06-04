@@ -2,6 +2,7 @@ import React from "react";
 import CountUp from "react-countup";
 import InventorySvgIcon from "@components/InventorySvgIcon.jsx";
 
+let filters;
 const AnalysisErrorForm = ({ errorData = { filters} }) => {
     if (!errorData || typeof errorData !== "object") {
         return <div className="box">No data available</div>;

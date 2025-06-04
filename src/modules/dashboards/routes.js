@@ -7,6 +7,8 @@ import SrTabs from '@modules/dashboards/sr/views/SrTabs.jsx';
 import SrList from '@modules/dashboards/sr/views/SrList.jsx';
 import EquipmentDashboard from '@modules/dashboards/eq/views/EquipmentDashboard.jsx';
 import CardDasboard from "./ CEODashboard/views/CardDasboard.jsx";
+import UrpDashboard from "@modules/dashboards/urp/views/UrpDashboard.jsx";
+import ExportData from "@modules/dashboards/beirholmBi/views/ExportData.jsx";
 
 export const DASHBOARD_ROUTES = {
     PROJECT: {
@@ -44,6 +46,15 @@ export const DASHBOARD_ROUTES = {
     CEO: {
         path: '/dashboards/eco',
         permission: 'auth.view_ceo_dashboard',
+
+    },
+    URP:{
+        path: '/dashboards/urp-dashboard',
+        permission: 'auth.urp_dashboard',
+    },
+    BeirholmBI: {
+        path: '/dashboards/beirholm/export/analysis',
+        permission: 'auth.view_export_data_dashboard',
 
     },
 
@@ -93,6 +104,16 @@ export const MODULE_ROUTES = [
         path: DASHBOARD_ROUTES.CEO.path,
         component: CardDasboard,
         permission: DASHBOARD_ROUTES.CEO.permission,
+    },
+    {
+        path:DASHBOARD_ROUTES.URP.path,
+        component:UrpDashboard,
+        permission: DASHBOARD_ROUTES.URP.permission
+    },
+    {
+        path: DASHBOARD_ROUTES.BeirholmBI.path,
+        component: ExportData,
+        permission: DASHBOARD_ROUTES.BeirholmBI.permission,
     },
 
 ];

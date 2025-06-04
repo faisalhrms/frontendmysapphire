@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ExecutiveSummaryTable from "./ExecutiveSummaryTable.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 import Model from "./Model.jsx";
 import BreakupOrdersFO from "../../components/SalesforceDashboard/BreakupOrdersFO.jsx"
@@ -10,7 +9,6 @@ import EcomDatatable from "../../components/EcomSalesForce/EcomDatatable.jsx"
 
 import {
     commerce_cloud,
-
     total_orders_oms,
     multiple_fo,
     single_fo,
@@ -33,8 +31,7 @@ const functionMap = {
     oms,
 };
 
-const ExecutiveForm = ({ filters, dateFrom, dateTo }) => {
-    const { data, isLoading } = useFetchWithFilters('/salesforce/fetch_executive_summary/', filters, dateFrom, dateTo);
+const ExecutiveForm = ({ data ,isLoading, filters, dateFrom, dateTo }) => {
     const [showModal, setShowModal] = useState(false);
     const [isModelLoading, setModelLoading] = useState(false);
     const [modalType, setModalType] = useState(null);

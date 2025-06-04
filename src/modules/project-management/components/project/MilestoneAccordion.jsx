@@ -8,7 +8,7 @@ import Avatar from "@components/Avatar.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useDelete} from "@hooks/useDelete.js";
 
-const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false , setShow , setViewData }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false }) => {
 
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 
@@ -113,19 +113,24 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                         <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{formatDate(milestone.ended_at)}</p>
                                     </div>
                                     <div className="flex flex-col items-start">
-                                        <p className="font-semibold mb-[1.4px] text-[0.813rem]">Created By</p>
+                                        <p className="font-semibold mb-[1.4px] text-[0.813rem] whitespace-nowrap overflow-hidden text-ellipsis">Created By</p>
                                         <div className="flex items-center flex-wrap">
-                                            <div className="me-2 leading-none flex items-center">
-                                                <Avatar avatar={milestone?.created_by?.avatar} size='xs'
-                                                        full_name={milestone?.created_by?.full_name || 'N/A'}
+                                            <div className="me-2 leading-none  flex items-center">
+                                                <Avatar avatar={milestone?.created_by?.avatar}
+                                                        full_name={(milestone?.created_by?.full_name || 'N/A' ) }
 
                                                 />
-                                                <div className='ms-2'>
-                                                    <p className="font-semibold mb-0 flex items-center">
-                                                        {milestone?.created_by?.full_name || 'N/A'}
-                                                    </p>
+                                                <Tooltip
+                                                    id={`/module/projects/detail/${milestone.id}`}
+                                                    tooltipContent={milestone?.created_by?.full_name || 'N/A'}
+                                                >
+                                                    <div className="ms-2">
+                                                        <p className="text-[#8c9097] dark:text-white/50 text-[0.65rem]">
+                                                            {getExcerptFromText(milestone?.created_by?.full_name || 'N/A', 9)}
+                                                        </p>
+                                                    </div>
+                                                </Tooltip>
 
-                                                </div>
                                             </div>
                                         </div>
                                     </div>

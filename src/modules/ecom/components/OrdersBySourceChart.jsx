@@ -4,6 +4,7 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import {formatAmountWithCommas} from "../../../helpers/formatters.js";
 
 const OrdersBySourceChart = ({ data, loading }) => {
+
     const chartDataOrders = useMemo(() => {
         if (!data || !Array.isArray(data)) return { labels: [], series: [] };
 

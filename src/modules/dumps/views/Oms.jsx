@@ -12,9 +12,9 @@ import {
 import { dateRangeSchema } from "@modules/dumps/schema/dateRangeSchema.js";
 
 const downloadMap = {
-  Order: downloadOrderSummaryExcel,
-  Wms: downloadWmsExcel,
-  return_order: downloadReturnOrderExcel
+  Order: { fn: downloadOrderSummaryExcel, ext: "csv" },
+  Wms: { fn: downloadWmsExcel, ext: "csv" },
+  return_order: { fn: downloadReturnOrderExcel, ext: "csv" }
 };
 
 const labelMap = {
@@ -22,6 +22,18 @@ const labelMap = {
   Wms: "WMS",
   return_order: "Return Order"
 };
+
+const formatDate = d => {
+  const t = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return t.toISOString().split("T")[0];
+};
+
+const today = new Date();
+today.setDate(today.getDate() - 1);
+const defaultEndDate = formatDate(today);
+
+const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+const defaultStartDate = formatDate(startOfMonth);
 
 const Oms = () => {
   const [activeTab, setActiveTab] = useState("Order");
@@ -31,46 +43,42 @@ const Oms = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    defaultValues: { startDate: "", endDate: "" },
+    defaultValues: { startDate: defaultStartDate, endDate: defaultEndDate },
     resolver: zodResolver(dateRangeSchema),
     mode: "onTouched"
   });
   const [startDate, endDate] = useWatch({ control, name: ["startDate", "endDate"] });
 
-  const onDownloadExcel = useCallback(async () => {
-    const fn = downloadMap[activeTab];
-    if (!fn || !startDate || !endDate) return;
-    const blob = await fn({ startDate, endDate });
+  const onDownloadFile = useCallback(async () => {
+    const item = downloadMap[activeTab];
+    if (!item || !startDate || !endDate) return;
+    const blob = await item.fn({ startDate, endDate });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${activeTab}_${startDate}_${endDate}.xlsx`;
+    link.download = `${activeTab}_${startDate}_${endDate}.${item.ext}`;
     document.body.appendChild(link);
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
   }, [activeTab, startDate, endDate]);
 
-  const onDownload = handleSubmit(onDownloadExcel);
+  const onDownload = handleSubmit(onDownloadFile);
 
   const handleClear = useCallback(() => {
-    reset({ startDate: "", endDate: "" });
+    reset({ startDate: defaultStartDate, endDate: defaultEndDate });
   }, [reset]);
 
   const handleTabChange = useCallback(tabId => {
     setActiveTab(tabId);
-    reset({ startDate: "", endDate: "" });
+    reset({ startDate: defaultStartDate, endDate: defaultEndDate });
   }, [reset]);
 
   const currentLabel = labelMap[activeTab];
 
   return (
     <>
-      <PageHeader
-        currentpage={`Oms ${currentLabel}`}
-        activepage="Oms"
-        mainpage={currentLabel}
-      />
+      <PageHeader currentpage={`Oms ${currentLabel}`} activepage="Oms" mainpage={currentLabel} />
       <IconTabs
         tabs={[
           {

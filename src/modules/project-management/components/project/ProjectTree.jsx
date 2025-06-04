@@ -9,11 +9,9 @@ import { useTaskModal, useTaskOverdueModal} from "@modules/project-management/ho
 import sampleFile from "@assets/files/sample_upload_tasks_against_milestone.xlsx";
 import {useMilestoneSearch} from "@modules/project-management/hooks/projectHooks.js";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
-import SimpleBar from "simplebar-react";
 import useFullScreen from "@hooks/useFullScreen.js";
 import {Link} from "react-router-dom";
 import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
-import TaskDetailModal from "@modules/project-management/components/model/TaskDetailModal.jsx";
 
 const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, projectUsers, milestones = [], isLoading, refetch, handleUploadModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -53,9 +51,6 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
   }, [searchTerm, milestones]);
 
   const { isFullscreen, handleFullscreenClick } = useFullScreen();
-  const containerHeight = isFullscreen ? "calc(100vh - 100px)" : '500px';
-
-  console.log(isFullscreen);
 
   const {
     taskName,
@@ -69,15 +64,6 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
     isOverdueTaskModalOpen,
     dates
   } = useTaskOverdueModal(refetch)
-
-  // const {
-  //   openTaskDetailModal,
-  //   closeTaskDetailModal,
-  //   isTaskDetailModalOpen,
-  //   isTaskDetailLoading,
-  //   task,
-  // } = useTaskDetailModal()
-    const isExpanded = true;
   return (
       <>
         <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`} style={{maxHeight:isFullscreen?'100vh':'50vh', overflowY:'auto'}}>
