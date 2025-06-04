@@ -1,9 +1,8 @@
 import React from "react"
 import FormInput from "@components/form/FormInput.jsx"
 import FilterButton from "@components/form/FilterButton.jsx"
-import FilterClearButton from "@components/form/FilterClearButton.jsx"
 
-const DigitalSpentDate = ({ control, errors, clearFilter, filters, setValue }) => {
+const DigitalSpentDate = ({ control, errors, clearFilter, filters, setValue, onDownload, isDownloading }) => {
   const ensure = (key, offset) => {
     if (!filters[key]) {
       const d = new Date()
@@ -44,6 +43,14 @@ const DigitalSpentDate = ({ control, errors, clearFilter, filters, setValue }) =
               </div>
               <div className="flex items-center gap-4 mt-6">
                 <FilterButton />
+                <button
+                  type="button"
+                  onClick={onDownload}
+                  disabled={isDownloading}
+                  className="ti-btn ti-btn-success !mb-0"
+                >
+                  <i className={`bi bi-file-earmark-pdf`} style={isDownloading ? { animation: "spin 1s linear infinite" } : {}}></i>
+                </button>
               </div>
             </div>
           </div>

@@ -13,6 +13,7 @@ const ExportDashboardFilter = ({ control, errors }) => (
               <Controller
                 name="date"
                 control={control}
+                defaultValue={[]}
                 render={({ field }) => (
                   <DateDropdown
                     value={field.value}
