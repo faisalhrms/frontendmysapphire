@@ -37,7 +37,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
             date_of_birth: "",
             mobile_number: "",
             email: "",
-            status: "pending",
+            status: "submitted",
             remarks: "",
             home_address: "",
             city: "",
@@ -88,58 +88,35 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                         </div>
                         <div className="box-body p-6">
                             <div className="grid grid-cols-12 gap-6">
-                                <div className="col-span-6">
+                                <div className="col-span-3">
                                     <FormInput name="full_name" control={control} errors={errors}
                                                placeholder="Full Name" is_required className="w-full"/>
                                 </div>
-                                <div className="col-span-6">
+                                <div className="col-span-3">
                                     <FormInput name="father_name" control={control} errors={errors}
                                                placeholder="Father Name" is_required className="w-full"/>
                                 </div>
-                                <div className="col-span-4">
-                                    <FormInput name="cnic" control={control} errors={errors} placeholder="CNIC"
-                                               is_required className="w-full"/>
-                                </div>
-                                <div className="col-span-4">
-                                    <FormInput type="date" name="date_of_birth" control={control} errors={errors}
-                                               placeholder="Date of Birth" is_required className="w-full"/>
-                                </div>
-                                <div className="col-span-4">
-                                    <FormInput name="mobile_number" control={control} errors={errors}
-                                               placeholder="Mobile Number" is_required className="w-full"/>
-                                </div>
-                                <div className="col-span-6">
+                                <div className="col-span-3">
                                     <FormInput name="email" control={control} errors={errors}
                                                placeholder="Email Address" is_required className="w-full"/>
                                 </div>
-                                <div className="col-span-6">
-                                    <FormSelect
-                                        name="status"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Status"
-                                        options={[
-                                            {value: "pending", label: "Pending"},
-                                            {value: "approved", label: "Approved"},
-                                            {value: "rejected", label: "Rejected"},
-                                        ]}
-                                        is_required
-                                        className="w-full"
-                                    />
+                                <div className="col-span-3">
+                                    <FormInput name="cnic" control={control} errors={errors} placeholder="CNIC"
+                                               is_required className="w-full"/>
                                 </div>
-                                <div className="col-span-6">
-                                    <FormTextarea name="remarks" control={control} errors={errors} placeholder="Remarks"
-                                                  rows={3} className="w-full"/>
+                                <div className="col-span-3">
+                                    <FormInput type="date" name="date_of_birth" control={control} errors={errors}
+                                               placeholder="Date of Birth" is_required className="w-full"/>
                                 </div>
-                                <div className="col-span-6">
-                                    <FormTextarea name="home_address" control={control} errors={errors}
-                                                  placeholder="Home Address" rows={3} className="w-full"/>
+                                <div className="col-span-3">
+                                    <FormInput name="mobile_number" control={control} errors={errors}
+                                               placeholder="Mobile Number" is_required className="w-full"/>
                                 </div>
-                                <div className="col-span-6">
+                                <div className="col-span-3">
                                     <FormInput name="city" control={control} errors={errors} placeholder="City"
                                                is_required className="w-full"/>
                                 </div>
-                                <div className="col-span-6">
+                                <div className="col-span-3">
 
                                     <FormAsyncSelect
                                         name="created_by_location_id"
@@ -161,7 +138,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         name="preferred_store_location_id"
                                         control={control}
                                         errors={errors}
-                                        placeholder="Preferred Store Location"
+                                        placeholder="Preferred Store"
                                         apiUrl="/select/locations/"
                                         queryKeyBase="locations"
                                         clientSideSearch={false}
@@ -190,6 +167,32 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         allowSaveNewOption={true}
                                     />
                                 </div>
+
+
+                                {/*<div className="col-span-6">*/}
+                                {/*    <FormSelect*/}
+                                {/*        name="status"*/}
+                                {/*        control={control}*/}
+                                {/*        errors={errors}*/}
+                                {/*        placeholder="Status"*/}
+                                {/*        options={[*/}
+                                {/*            {value: "pending", label: "Pending"},*/}
+                                {/*            {value: "approved", label: "Approved"},*/}
+                                {/*            {value: "rejected", label: "Rejected"},*/}
+                                {/*        ]}*/}
+                                {/*        is_required*/}
+                                {/*        className="w-full"*/}
+                                {/*    />*/}
+                                {/*</div>*/}
+                                <div className="col-span-6">
+                                    <FormTextarea name="remarks" control={control} errors={errors} placeholder="Remarks"
+                                                  rows={3} className="w-full"/>
+                                </div>
+                                <div className="col-span-6">
+                                    <FormTextarea name="home_address" control={control} errors={errors}
+                                                  placeholder="Home Address" rows={3} className="w-full"/>
+                                </div>
+
                                 <div className="col-span-12">
                                     <GalleryUpload
                                         currentValue={applicantData?.attachment_ids}
@@ -247,7 +250,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                        className="w-full"/>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <button type="button" onClick={() => removeQual(idx)}
+                                        <button type="button" onClick={() => removeQual(idx)}
                                                     className="ti-btn ti-btn-danger ti-btn-sm"
                                                     title="Remove this qualification">
                                                 <i className="ti ti-trash"></i>

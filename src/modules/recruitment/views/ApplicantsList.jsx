@@ -7,8 +7,10 @@ import { RECRUITMENTS_ROUTES } from "@modules/recruitment/routes.js"; // define 
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
+import {useHasPermission} from "@modules/auth/hooks/authHooks.js";
+import ApplicantStatusDropDown from "@modules/recruitment/components/ApplicantStatusDropDown.jsx";
 
-const ApplicantsList = () => {
+const ApplicantsList = ({ refetch }) => {
     const { search } = useLocation();
     const params = new URLSearchParams(search);
     const statusFilter = params.get("status") || "";
@@ -46,20 +48,33 @@ const ApplicantsList = () => {
             filterType: "text",
         },
         {
-            Header: "Status",
+            Header: "Applicant Status",
             accessor: "status",
             filterable: true,
             filterType: "select",
             filterOptions: [
-                { value: "pending", label: "Pending" },
-                { value: "approved", label: "Approved" },
-                { value: "rejected", label: "Rejected" },
+                { label: "Recommended", value: "recommended" },
+                { label: "Not Recommended", value: "not_recommended" },
+                { label: "Park for the role", value: "park_for_the_role" },
+                { label: "Blacklist", value: "blacklist" },
+                { label: "Submitted", value: "submitted" },
             ],
-            Cell: ({ row }) => (
-                <span className={getBadgeClasses(row.original.status)}>
-          {toTitleCase(row.original.status)}
-        </span>
-            ),
+            Cell: ({ row }) => {
+                // Get permission status
+                const canChangeStatus = useHasPermission("auth.change_applicant_status");
+
+                return canChangeStatus ? (
+                    <ApplicantStatusDropDown
+                        status={row.original.status}
+                        applicantId={row.original.id}
+                        refetch={refetch}  // Pass your refetch function here
+                    />
+                ) : (
+                    <span className={getBadgeClasses(row.original.status)}>
+                {toTitleCase(row.original.status)}
+            </span>
+                );
+            },
         },
         {
             Header: "Qualifications",

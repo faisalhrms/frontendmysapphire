@@ -2,7 +2,7 @@ import { z } from "zod";
 import { dateSchema } from "@helpers/schema.js";
 
 // Define ApplicantStatus as enum
-const applicantStatus = z.enum(["approved", "pending", "rejected"]);
+const applicantStatus = z.enum(["submitted", "blacklist", "park_for_the_role","not_recommended","recommended"]);
 
 // Nested schemas
 const qualificationSchema = z.object({
