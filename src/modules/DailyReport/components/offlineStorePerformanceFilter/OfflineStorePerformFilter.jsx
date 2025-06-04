@@ -46,7 +46,19 @@ const OfflineStorePerformFilter = ({ control, errors, clearFilter,filters }) => 
                             </div>
                             <FilterButton/>
                             <FilterClearButton onClick={clearFilter}/>
-
+                            <button
+                                type="button"
+                                className="ti-btn ti-btn-success !mb-0"
+                                onClick={downloadPDF}
+                                disabled={isDownloading}
+                            >
+                                <i
+                                    className={`bi bi-file-earmark-pdf ${
+                                        isDownloading ? "spin" : ""
+                                    } `}
+                                ></i>
+                                {isDownloading ? "" : ""}
+                            </button>
 
                         </div>
                     </div>

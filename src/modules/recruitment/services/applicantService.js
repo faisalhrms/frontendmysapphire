@@ -33,3 +33,15 @@ export const getApplicantById = async (id) => {
         Notify.error(error.response?.data?.message);
     }
 };
+
+
+export const updateStatus = async (applicantId, status) => {
+    try {
+        const response = await api.post(`/recruitment/applicants/${applicantId}/update-status/`, { status });
+        Notify.success(response.data.message);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+        throw Error(error.response?.data?.message || 'An error occurred');
+    }
+};

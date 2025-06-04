@@ -1,4 +1,6 @@
 import { formatDate } from "@helpers/dateTime.js";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {toTitleCase} from "@helpers/formatters.js";
 
 const ApplicantSummary = ({ applicantData }) => {
     return (
@@ -21,8 +23,8 @@ const ApplicantSummary = ({ applicantData }) => {
                             </div>
                             <div>
                                 <span className="text-gray-500 me-1">Status:</span>
-                                <span className="font-medium capitalize">
-                                    {applicantData.status}
+                                <span className={getBadgeClasses(applicantData.status)}>
+                                    {toTitleCase(applicantData.status)}
                                 </span>
                             </div>
                             <div>

@@ -1,8 +1,12 @@
 import {useNavigate} from "react-router-dom";
-import {createApplicant, getApplicantById, updateApplicant} from "@modules/recruitment/services/applicantService.js";
+import {
+    createApplicant,
+    getApplicantById,
+    updateApplicant,
+    updateStatus
+} from "@modules/recruitment/services/applicantService.js";
 import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
-import {useEffect, useState} from "react";
-import {getEquipmentById} from "@modules/inventory/services/inventoryService.js";
+import {useCallback, useEffect, useState} from "react";
 
 
 export const useApplicantForm = (applicantData, isEditMode) => {
@@ -51,4 +55,21 @@ export const useApplicant = (id) => {
     }, [id]);
 
     return { applicantData };
+};
+
+export const useUpdateStatus = () => {
+    const [isLoading, setLoading] = useState(false);
+
+    const handleStatus = useCallback(async (applicantId,status) => {
+        setLoading(true);
+        try {
+            return await updateStatus(applicantId, status);
+        } catch (err) {
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    return { handleStatus, isLoading };
 };
