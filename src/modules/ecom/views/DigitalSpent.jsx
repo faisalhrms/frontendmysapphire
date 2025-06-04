@@ -3,6 +3,7 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx"
 import useFilters from "@hooks/useFilters.js"
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js"
 import IconTabs from "@components/IconTabs.jsx"
+import api from "@config/axiosConfig.js"
 
 import DigitalDate from "@modules/ecom/components/DigitalSpent/Digitaldate.jsx"
 import DigitalSpentDate from "@modules/ecom/components/DigitalSpent/DigitalSpentDate.jsx"
@@ -17,6 +18,7 @@ import CategoryOrdersCount          from "@modules/ecom/components/DigitalSpent/
 
 const DigitalSpent = () => {
   const [activeTab, setActiveTab] = useState("ObjectiveWiseSpentSummary")
+  const [isDownloading, setIsDownloading] = useState(false)
   const today = new Date()
   const yesterday = useMemo(() => {
     const d = new Date(today)
@@ -88,6 +90,41 @@ const DigitalSpent = () => {
     setActiveTab(tabId)
     setFilters(getFilters())
   }
+
+const handleDownload = async () => {
+  setIsDownloading(true)
+  let url = ""
+  if (activeTab === "ObjectiveWiseSpentSummary") {
+    url = "/reporting/digital_spent/pdf_objective_wise_spent/"
+  } else if (activeTab === "CategoryWiseSpent") {
+    url = "/reporting/digital_spent/pdf_category_wise_spent/"
+  } else if (activeTab === "DigitalSpentCCSale") {
+    url = "/reporting/digital_spent/pdf_cc_sales_spent/"
+  } else if (activeTab === "DayWiseSalesSpent") {
+    url = "/reporting/digital_spent/pdf_day_wise_spent/"
+  } else if (activeTab === "CategoryDayWiseLocalSpent") {
+    url = "/reporting/digital_spent/pdf_category_day_wise_local_spent/"
+  } else if (activeTab === "DailyWebsiteVisitors") {
+    url = "/reporting/digital_spent/pdf_cc_order_summary/"
+  } else if (activeTab === "CategoryOrdersCount") {
+    url = "/reporting/digital_spent/pdf_category_orders_count/"
+  }
+  try {
+    const response = await api.get(url, { params, responseType: "blob" })
+    const blob = new Blob([response.data], { type: "application/pdf" })
+    const link = document.createElement("a")
+    link.href = window.URL.createObjectURL(blob)
+    link.download = `${activeTab}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } catch (err) {
+  } finally {
+    setIsDownloading(false)
+  }
+}
+
+
 
   const tabs = [
     {
@@ -196,6 +233,8 @@ const DigitalSpent = () => {
             errors={errors}
             clearFilter={clearFilter}
             filters={filters}
+            onDownload={handleDownload}
+            isDownloading={isDownloading}
           />
         ) : (
           <DigitalSpentDate
@@ -204,6 +243,8 @@ const DigitalSpent = () => {
             clearFilter={clearFilter}
             filters={filters}
             setValue={setValue}
+            onDownload={handleDownload}
+            isDownloading={isDownloading}
           />
         )}
       </form>
