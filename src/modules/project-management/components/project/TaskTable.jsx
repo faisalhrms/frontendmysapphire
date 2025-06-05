@@ -16,7 +16,7 @@ import TaskDeadLineItem from "@modules/project-management/components/task/TaskDe
 import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
 import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 
-const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false, needTarget = false }) => {
+const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestoneStatus, milestoneLaunch, startedAt = null, endedAt = null, isChild = false, refetch, openTaskOverdueModal, viewOnly = false, visibleColumns = useSelector((state) => state.pms.visibleColumns),}) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -60,6 +60,25 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
         return sortableTasks;
     }, [tasks, sortConfig]);
 
+    const columnHeaders = [
+        { key: 'actions', label: 'Actions', visible: !viewOnly && visibleColumns.actions },
+        { key: 'priority', label: 'Priority', visible: visibleColumns.priority },
+        { key: 'name', label: isChild ? 'Sub Task Name' : 'Task Name', visible: visibleColumns.name },
+        { key: 'person', label: 'Person', visible: visibleColumns.person },
+        { key: 'teams', label: 'Teams', visible: visibleColumns.teams },
+        { key: 'started_at', label: 'Started Date', visible: visibleColumns.started_at },
+        { key: 'aging', label: 'Aging', visible: visibleColumns.aging },
+        { key: 'ended_at', label: 'Deadline', visible: visibleColumns.ended_at },
+        { key: 'completed_at', label: 'Completion Date', visible: visibleColumns.completed_at },
+        { key: 'status', label: 'Status', visible: visibleColumns.status },
+        { key: 'completion_timeline', label: 'Completion Timeline', visible: visibleColumns.completion_timeline },
+        { key: 'time_line_group', label: 'Timeline Groups', visible: visibleColumns.time_line_group },
+        { key: 'launch', label: 'Launch', visible: visibleColumns.launch },
+        { key: 'progress', label: 'Progress', visible: visibleColumns.progress },
+        { key: 'external_users', label: 'External Users', visible: visibleColumns.external_users },
+        { key: 'created_by', label: 'Created By', visible: visibleColumns.created_by }
+    ];
+
     const requestSort = (key) => {
         let direction = 'asc';
         if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -89,310 +108,229 @@ const TaskTable = ({projectStatus, projectUsers, tasks, openTaskModal, milestone
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
-                        {!viewOnly && <th scope="col">Actions</th>}
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('priority')}
-                            className="cursor-pointer"
-                        >
-                            Priority
-                            <span className={`ml-1 ${getSortIconAndClass('priority').className}`}>
-                                {getSortIconAndClass('priority').icon}
-                            </span>
-                        </th>
-
-                        <th
-                            scope="col"
-
-                            className="cursor-pointer dark:text-gray-200 dark:bg-bodybg"
-                        >
-                            {isChild ? "Sub Task Name" : "Task Name"}
-                            <span className={`ml-1 ${getSortIconAndClass('name').className}`}>
-                                {getSortIconAndClass('name').icon}
-                            </span>
-                        </th>
-                        <th scope="col">Person</th>
-                        <th scope="col">Teams</th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('started_at')}
-                            className="cursor-pointer"
-                        >
-                            Started Date
-                            <span className={`ml-1 ${getSortIconAndClass('started_at').className}`}>
-                                {getSortIconAndClass('started_at').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('aging')}
-                            className="cursor-pointer"
-                        >
-                            Aging
-                            <span className={`ml-1 ${getSortIconAndClass('aging').className}`}>
-                                {getSortIconAndClass('aging').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('ended_at')}
-                            className="cursor-pointer"
-                        >
-                            Deadline
-                            <span className={`ml-1 ${getSortIconAndClass('ended_at').className}`}>
-                                {getSortIconAndClass('ended_at').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('completed_at')}
-                            className="cursor-pointer"
-                        >
-                            Completion Date
-                            <span className={`ml-1 ${getSortIconAndClass('completed_at').className}`}>
-                                {getSortIconAndClass('completed_at').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('status')}
-                            className="cursor-pointer"
-                        >
-                            Status
-                            <span className={`ml-1 ${getSortIconAndClass('status').className}`}>
-                                {getSortIconAndClass('status').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('completion_timeline')}
-                            className="cursor-pointer"
-                        >
-                            Completion Timeline
-                            <span className={`ml-1 ${getSortIconAndClass('completion_timeline').className}`}>
-                                {getSortIconAndClass('completion_timeline').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('time_line_group')}
-                            className="cursor-pointer"
-                        >
-                            Timeline Groups
-                            <span className={`ml-1 ${getSortIconAndClass('time_line_group').className}`}>
-                                {getSortIconAndClass('time_line_group').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('launch')}
-                            className="cursor-pointer"
-                        >
-                            Launch
-                            <span className={`ml-1 ${getSortIconAndClass('launch').className}`}>
-                                {getSortIconAndClass('launch').icon}
-                            </span>
-                        </th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('progress')}
-                            className="cursor-pointer"
-                        >
-                            Progress
-                            <span className={`ml-1 ${getSortIconAndClass('progress').className}`}>
-                                {getSortIconAndClass('progress').icon}
-                            </span>
-                        </th>
-                        <th scope="col">External Users</th>
-                        <th
-                            scope="col"
-                            onClick={() => requestSort('created_by')}
-                            className="cursor-pointer"
-                        >
-                            Created By
-                            <span className={`ml-1 ${getSortIconAndClass('created_by').className}`}>
-                                {getSortIconAndClass('created_by').icon}
-                            </span>
-                        </th>
+                        {columnHeaders.map((header) => (
+                            header.visible && (
+                                <th
+                                    key={header.key}
+                                    scope="col"
+                                    onClick={['actions', 'person', 'teams', 'external_users'].includes(header.key) ? undefined : () => requestSort(header.key)}
+                                    className={`${['actions', 'person', 'teams', 'external_users'].includes(header.key) ? '' : 'cursor-pointer'}`}
+                                >
+                                    {header.label}
+                                    {['actions', 'person', 'teams', 'external_users'].includes(header.key) ? null : (
+                                        <span className={`ml-1 ${getSortIconAndClass(header.key).className}`}>
+                                            {getSortIconAndClass(header.key).icon}
+                                        </span>
+                                    )}
+                                </th>
+                            )
+                        ))}
                     </tr>
                     </thead>
                     <tbody>
                     {sortedTasks.map((task) => (
                         <React.Fragment key={task.id}>
                             <tr className={`border-b border-defaultborder}`}>
-                                {
-                                    !viewOnly &&
-                                    (
-                                        <td>
-                                        <span className={`${!projectUser?.can_view_only ? 'flex space-x-2' : ''}`}>
-                                     {(() => {
-                                         if (!projectUser?.can_view_only) {
-                                             return (
-                                                 task.is_overdue &&
-                                                 <Tooltip
-                                                     id={`add-tooltip-${task.id}-overdue`}
-                                                     tooltipContent={`Request For Change (${task.name}) Due Date`}
-                                                 >
-                                                     <button
-                                                         onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name, startedAt, endedAt)}
-                                                         className='ti-btn ti-btn-danger ti-btn-sm'>
-                                                         <i className="ri-calendar-2-line align-middle"></i>
-                                                     </button>
-                                                 </Tooltip>
-                                             )
-                                         }
-                                     })()}
-                                            <HasProjectPermission globalPermission='pms.add_task' users={projectUsers} needIcon={true}>
-                                            {milestoneStatus === 'active' && task.status !== 'under_approval' && (
-                                                <Tooltip
-                                                    id={`add-tooltip-${task.id}-add`}
-                                                    tooltipContent={`Add Sub Task To (${task.name})`}
-                                                >
-                                                    <button
-                                                        onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.requires_approval, task.id)}
-                                                        className='ti-btn ti-btn-success ti-btn-sm'>
-                                                        <i className="ri-add-circle-line align-middle"></i>
-                                                    </button>
-                                                </Tooltip>
-                                            )
-                                            }
-
-                                          </HasProjectPermission>
-
-                                        <HasProjectPermission globalPermission='pms.change_task' users={projectUsers}>
-                                            {task.status !== 'under_approval' &&
-                                                <Tooltip
-                                                    id={`edit-tooltip-${task.id}-edit`}
-                                                    tooltipContent={`Edit (${task.name})`}
-                                                >
-                                                    <button
-                                                        onClick={() => openTaskModal(task.id, startedAt, endedAt, task.requires_approval, null, true)}
-                                                        className='ti-btn ti-btn-primary ti-btn-sm'>
-                                                        <i className="ri-edit-line align-middle"></i>
-                                                    </button>
-                                                </Tooltip>
-                                            }
-                                        </HasProjectPermission>
-                                        <HasProjectPermission globalPermission='pms.delete_project' users={projectUsers}>
-                                            {
-                                                task.status !== 'under_approval' &&
-                                                <Tooltip
-                                                    id={`delete-task-tooltip-${task.id}`}
-                                                    tooltipContent={`Delete Task (${task.name})`}>
-                                                    <button
-                                                        onClick={() => handleDeleteClick(`/pms/tasks/${task.id}/delete/`, task.name, refetch)}
-                                                        className='ti-btn ti-btn-danger ti-btn-sm'>
-                                                        <i className="ri-delete-bin-2-line align-middle"></i>
-                                                    </button>
-                                                </Tooltip>
-                                            }
-                                        </HasProjectPermission>
-                                               <Tooltip
-                                                   id={`view-task-tooltip-${task.id}`}
-                                                   tooltipContent={`View Task (${task.name})`}>
-                                                   <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}
-                                                         className='ti-btn ti-btn-info ti-btn-sm'>
-                                                        <i className="ri-eye-line"></i>
-                                                   </Link>
-                                                </Tooltip>
-                                    </span>
-                                        </td>
-                                    )
-                                }
-                                <td><span className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span></td>
-                                <td>
-                                    <span className="flex items-center dark:text-gray-200 dark:bg-bodybg">
-                                        <span onClick={() => toggleSubTasks(task.id)}>
-                                            {task.children && task.children.length > 0 && (
-                                                <svg
-                                                    className={`w-4 h-4 mr-2 cursor-pointer text-dark ${activeTaskId === task.id ? 'transform rotate-90' : ''}`}
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor">
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M9 5l7 7-7 7"
-                                                    />
-                                                </svg>
-                                            )}
-                                        </span>
-                                        <Tooltip
-                                            id={`task-tooltip-${task.id}`}
-                                            tooltipContent={`${task.name}`}>
-                                            <Link
-                                                onClick={() => {openTaskDetailModal(task.id)}}
-                                             to="#">
-                                                {getExcerptFromText(task.name, 60)}
-                                                {task.has_attachments && (
-                                                    <span className='ml-1 text-primary text-[0.8rem]' title="Has attachments">
-                                                        <i className="bi bi-paperclip"></i>
-                                                    </span>
-                                                )}
-                                            </Link>
-                                        </Tooltip>
-                                    </span>
-                                </td>
-                                <td className='text-center'><AvatarList users={task.users} max={4}/></td>
-                                <td>
-                                    {task.teams?.map(team => toTitleCase(team.name)).join(', ')}
-                                </td>
-                                <td>{formatDate(task.started_at)}</td>
-                                <td>{task?.aging} Days</td>
-                                <td>
-                                    <div className="flex items-center">
-                                        <TaskDeadLineItem task={task}/>
-                                    </div>
-                                </td>
-
-
-                                <td>{formatDate(task.completed_at)}</td>
-                                <td className={`min-w-[200px] ${(projectUser?.can_view_only || viewOnly) ? `!p-0 ${getBadgeClasses(task.status, '', false)}` : ''}`}>
-                                    {(() => {
-                                        if (projectUser?.can_view_only || viewOnly) {
-                                            return toTitleCase(task.status);
-                                        }
-                                        return task.status !== 'under_approval' ? (
-                                            <TaskStatusDropdown status={task.status} taskId={task.id}
-                                                                refetch={refetch}/>
-                                        ) : (
-                                            <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
-                                        );
-                                    })()}
-                                </td>
-                                <td className='text-center'>{task.completion_timeline}</td>
-                                <td className='text-center'>{task.time_line_group}</td>
-                                <td className='text-center'>{milestoneLaunch ? formatDate(milestoneLaunch) : ''}</td>
-                                <td className="min-w-[200px]">
-                                    <div className='flex items-center'>
-                                        <ProgressBar value={task.progress} barColor='!bg-success' withStatus={false}/>
-                                    </div>
-                                </td>
-                                <td><AvatarList users={task.external_users} max={4}
-                                                full_name={task.avatar?.full_name || 'N/A'}/></td>
-                                <td className="min-w-[180px]">
-                                    <div className="flex items-center flex-wrap">
-                                        <div className="me-2 leading-none">
-                                            <Avatar avatar={task?.created_by?.avatar} size='xs'
-                                                    full_name={task.created_by?.full_name || 'N/A'}/>
-
-
+                                {!viewOnly && visibleColumns.actions && (
+                                    <td>
+                      <span className={`${!projectUser?.can_view_only ? 'flex space-x-2' : ''}`}>
+                        {task.is_overdue && !projectUser?.can_view_only && (
+                            <Tooltip
+                                id={`add-tooltip-${task.id}-overdue`}
+                                tooltipContent={`Request For Change (${task.name}) Due Date`}
+                            >
+                                <button
+                                    onClick={() => openTaskOverdueModal(task.id, task.ended_at, task.name, startedAt, endedAt)}
+                                    className='ti-btn ti-btn-danger ti-btn-sm'>
+                                    <i className="ri-calendar-2-line align-middle"></i>
+                                </button>
+                            </Tooltip>
+                        )}
+                          <HasProjectPermission globalPermission='pms.add_task' users={projectUsers} needIcon={true}>
+                          {milestoneStatus === 'active' && task.status !== 'under_approval' && (
+                              <Tooltip
+                                  id={`add-tooltip-${task.id}-add`}
+                                  tooltipContent={`Add Sub Task To (${task.name})`}
+                              >
+                                  <button
+                                      onClick={() => openTaskModal(task.milestone_id, task.started_at, task.ended_at, task.requires_approval, task.id)}
+                                      className='ti-btn ti-btn-success ti-btn-sm'>
+                                      <i className="ri-add-circle-line align-middle"></i>
+                                  </button>
+                              </Tooltip>
+                          )}
+                        </HasProjectPermission>
+                        <HasProjectPermission globalPermission='pms.change_task' users={projectUsers}>
+                          {task.status !== 'under_approval' &&
+                              <Tooltip
+                                  id={`edit-tooltip-${task.id}-edit`}
+                                  tooltipContent={`Edit (${task.name})`}
+                              >
+                                  <button
+                                      onClick={() => openTaskModal(task.id, startedAt, endedAt, task.requires_approval, null, true)}
+                                      className='ti-btn ti-btn-primary ti-btn-sm'>
+                                      <i className="ri-edit-line align-middle"></i>
+                                  </button>
+                              </Tooltip>
+                          }
+                        </HasProjectPermission>
+                        <HasProjectPermission globalPermission='pms.delete_project' users={projectUsers}>
+                          {task.status !== 'under_approval' &&
+                              <Tooltip
+                                  id={`delete-task-tooltip-${task.id}`}
+                                  tooltipContent={`Delete Task (${task.name})`}>
+                                  <button
+                                      onClick={() => handleDeleteClick(`/pms/tasks/${task.id}/delete/`, task.name, refetch)}
+                                      className='ti-btn ti-btn-danger ti-btn-sm'>
+                                      <i className="ri-delete-bin-2-line align-middle"></i>
+                                  </button>
+                              </Tooltip>
+                          }
+                        </HasProjectPermission>
+                        <Tooltip
+                            id={`view-task-tooltip-${task.id}`}
+                            tooltipContent={`View Task (${task.name})`}>
+                          <Link to={PMS_ROUTES.TASK.DETAIL.path.replace(':id', task.id)}
+                                className='ti-btn ti-btn-info ti-btn-sm'>
+                            <i className="ri-eye-line"></i>
+                          </Link>
+                        </Tooltip>
+                      </span>
+                                    </td>
+                                )}
+                                {visibleColumns.priority && (
+                                    <td><span
+                                        className={getBadgeClasses(task.priority)}>{toTitleCase(task.priority)}</span>
+                                    </td>
+                                )}
+                                {visibleColumns.name && (
+                                    <td>
+                      <span className="flex items-center dark:text-gray-200 dark:bg-bodybg">
+                        <span onClick={() => toggleSubTasks(task.id)}>
+                          {task.children && task.children.length > 0 && (
+                              <svg
+                                  className={`w-4 h-4 mr-2 cursor-pointer text-dark ${activeTaskId === task.id ? 'transform rotate-90' : ''}`}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor">
+                                  <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M9 5l7 7-7 7"
+                                  />
+                              </svg>
+                          )}
+                        </span>
+                        <Tooltip
+                            id={`task-tooltip-${task.id}`}
+                            tooltipContent={`${task.name}`}>
+                          <Link
+                              onClick={() => {
+                                  openTaskDetailModal(task.id)
+                              }}
+                              to="#">
+                            {getExcerptFromText(task.name, 60)}
+                              {task.has_attachments && (
+                                  <span className='ml-1 text-primary text-[0.8rem]' title="Has attachments">
+                                <i className="bi bi-paperclip"></i>
+                              </span>
+                              )}
+                          </Link>
+                        </Tooltip>
+                      </span>
+                                    </td>
+                                )}
+                                {visibleColumns.person && (
+                                    <td className='text-center'><AvatarList users={task.users} max={4}/></td>
+                                )}
+                                {visibleColumns.teams && (
+                                    <td>
+                                        {task.teams?.map(team => toTitleCase(team.name)).join(', ')}
+                                    </td>
+                                )}
+                                {visibleColumns.started_at && (
+                                    <td>{formatDate(task.started_at)}</td>
+                                )}
+                                {visibleColumns.aging && (
+                                    <td>{task?.aging} Days</td>
+                                )}
+                                {visibleColumns.ended_at && (
+                                    <td>
+                                        <div className="flex items-center">
+                                            <TaskDeadLineItem task={task}/>
                                         </div>
-                                        <span>{toTitleCase(task?.created_by?.full_name)}</span>
-                                    </div>
-                                </td>
+                                    </td>
+                                )}
+                                {visibleColumns.completed_at && (
+                                    <td>{formatDate(task.completed_at)}</td>
+                                )}
+                                {visibleColumns.status && (
+                                    <td className={`min-w-[200px] ${(projectUser?.can_view_only || viewOnly) ? `!p-0 ${getBadgeClasses(task.status, '', false)}` : ''}`}>
+                                        {(() => {
+                                            if (projectUser?.can_view_only || viewOnly) {
+                                                return toTitleCase(task.status);
+                                            }
+                                            return task.status !== 'under_approval' ? (
+                                                <TaskStatusDropdown status={task.status} taskId={task.id}
+                                                                    refetch={refetch}/>
+                                            ) : (
+                                                <p className={getStatusClasses(task.status)}>{toTitleCase(task.status)}</p>
+                                            );
+                                        })()}
+                                    </td>
+                                )}
+                                {visibleColumns.completion_timeline && (
+                                    <td className='text-center'>{task.completion_timeline}</td>
+                                )}
+                                {visibleColumns.time_line_group && (
+                                    <td className='text-center'>{task.time_line_group}</td>
+                                )}
+                                {visibleColumns.launch && (
+                                    <td className='text-center'>{milestoneLaunch ? formatDate(milestoneLaunch) : ''}</td>
+                                )}
+                                {visibleColumns.progress && (
+                                    <td className="min-w-[200px]">
+                                        <div className='flex items-center'>
+                                            <ProgressBar value={task.progress} barColor='!bg-success'
+                                                         withStatus={false}/>
+                                        </div>
+                                    </td>
+                                )}
+                                {visibleColumns.external_users && (
+                                    <td><AvatarList users={task.external_users} max={4}
+                                                    full_name={task.avatar?.full_name || 'N/A'}/></td>
+                                )}
+                                {visibleColumns.created_by && (
+                                    <td className="min-w-[180px]">
+                                        <div className="flex items-center flex-wrap">
+                                            <div className="me-2 leading-none">
+                                                <Avatar avatar={task?.created_by?.avatar} size='xs'
+                                                        full_name={task.created_by?.full_name || 'N/A'}/>
+                                            </div>
+                                            <span>{toTitleCase(task?.created_by?.full_name)}</span>
+                                        </div>
+                                    </td>
+                                )}
                             </tr>
                             {activeTaskId === task.id && task.children && task.children.length > 0 && (
                                 <tr>
-                                    <td colSpan="8">
-                                        <TaskTable projectStatus={projectStatus} projectUsers={projectUsers}
-                                                   milestoneStatus={milestoneStatus} milestoneLaunch={milestoneLaunch}
-                                                   startedAt={task.started_at} endedAt={task.ended_at}
-                                                   tasks={task.children} openTaskModal={openTaskModal} isChild={true}
-                                                   refetch={refetch} openTaskOverdueModal={openTaskOverdueModal}
-                                                   viewOnly={viewOnly}
+                                    <td colSpan={columnHeaders.filter(h => h.visible).length}>
+                                        <TaskTable
+                                            projectStatus={projectStatus}
+                                            projectUsers={projectUsers}
+                                            milestoneStatus={milestoneStatus}
+                                            milestoneLaunch={milestoneLaunch}
+                                            startedAt={task.started_at}
+                                            endedAt={task.ended_at}
+                                            tasks={task.children}
+                                            openTaskModal={openTaskModal}
+                                            isChild={true}
+                                            refetch={refetch}
+                                            openTaskOverdueModal={openTaskOverdueModal}
+                                            visibleColumns={visibleColumns}
+                                            viewOnly={viewOnly}
                                         />
                                     </td>
                                 </tr>
