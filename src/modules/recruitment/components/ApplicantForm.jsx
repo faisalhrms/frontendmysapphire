@@ -198,7 +198,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         currentValue={applicantData?.attachment_ids}
                                         files={applicantData?.attachments}
                                         inputName="attachment_ids"
-                                        placeholder="Attachments"
+                                        placeholder="Resume/Documents"
                                         control={control}
                                         errors={errors}
                                         className="w-full"
@@ -222,7 +222,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Level</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Years
                                         Completed
@@ -276,7 +276,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Years in Role</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Exp</th>
+                                    {/*<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Exp</th>*/}
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                                 </tr>
                                 </thead>
@@ -298,12 +298,12 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                        name={`experience_set.${idx}.years_in_role`} control={control}
                                                        errors={errors} placeholder="Years" className="w-full"/>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <FormInput label={false}
-                                                       name={`experience_set.${idx}.total_experience_years`}
-                                                       control={control} errors={errors} placeholder="Total"
-                                                       className="w-full"/>
-                                        </td>
+                                        {/*<td className="px-6 py-4 whitespace-nowrap">*/}
+                                        {/*    <FormInput label={false}*/}
+                                        {/*               name={`experience_set.${idx}.total_experience_years`}*/}
+                                        {/*               control={control} errors={errors} placeholder="Total"*/}
+                                        {/*               className="w-full"/>*/}
+                                        {/*</td>*/}
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
                                             <button type="button" onClick={() => removeExp(idx)}
                                                     className="ti-btn ti-btn-danger ti-btn-sm"
@@ -323,66 +323,66 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                         </div>
                     </SubFormSection>
 
-                    <SubFormSection title="Referrals" className="mt-6">
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referrer Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Location</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                {refFields.map((item, idx) => (
-                                    <tr key={item.id} className="hover:bg-gray-100">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <FormInput label={false} name={`referral_set.${idx}.referrer_name`}
-                                                       control={control} errors={errors} placeholder="Name"
-                                                       className="w-full"/>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <FormInput label={false} name={`referral_set.${idx}.referrer_designation`}
-                                                       control={control} errors={errors} placeholder="Designation"
-                                                       className="w-full"/>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                    {/*<SubFormSection title="Referrals" className="mt-6">*/}
+                    {/*    <div className="overflow-x-auto">*/}
+                    {/*        <table className="min-w-full divide-y divide-gray-200">*/}
+                    {/*            <thead className="bg-gray-50">*/}
+                    {/*            <tr>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referrer Name</th>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Location</th>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>*/}
+                    {/*            </tr>*/}
+                    {/*            </thead>*/}
+                    {/*            <tbody className="bg-white divide-y divide-gray-200">*/}
+                    {/*            {refFields.map((item, idx) => (*/}
+                    {/*                <tr key={item.id} className="hover:bg-gray-100">*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap">*/}
+                    {/*                        <FormInput label={false} name={`referral_set.${idx}.referrer_name`}*/}
+                    {/*                                   control={control} errors={errors} placeholder="Name"*/}
+                    {/*                                   className="w-full"/>*/}
+                    {/*                    </td>*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap">*/}
+                    {/*                        <FormInput label={false} name={`referral_set.${idx}.referrer_designation`}*/}
+                    {/*                                   control={control} errors={errors} placeholder="Designation"*/}
+                    {/*                                   className="w-full"/>*/}
+                    {/*                    </td>*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap">*/}
 
-                                            <FormAsyncSelect
-                                                label={false}
-                                                name={`referral_set.${idx}.referrer_store_location_id`}
-                                                control={control}
-                                                errors={errors}
-                                                placeholder="Store Location"
-                                                apiUrl="/select/locations/"
-                                                queryKeyBase="locations"
-                                                clientSideSearch={false}
-                                                preselectedOptions={formatNestedOptions(
-                                                    item, // Current referral item
-                                                    'referrer_store_location' // Key to look for
-                                                )}
-                                                menuPortalTarget={document.body}
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <button type="button" onClick={() => removeRef(idx)}
-                                                    className="ti-btn ti-btn-danger ti-btn-sm"
-                                                    title="Remove this referral">
-                                                <i className="ti ti-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="flex justify-end m-4">
-                            <button type="button" onClick={() => appendRef({ referrer_name: "", referrer_designation: "", referrer_store_location_id: null })} className="ti-btn ti-btn-secondary ti-btn-md" title="Add a new referral">
-                                Add Referral
-                            </button>
-                        </div>
-                    </SubFormSection>
+                    {/*                        <FormAsyncSelect*/}
+                    {/*                            label={false}*/}
+                    {/*                            name={`referral_set.${idx}.referrer_store_location_id`}*/}
+                    {/*                            control={control}*/}
+                    {/*                            errors={errors}*/}
+                    {/*                            placeholder="Store Location"*/}
+                    {/*                            apiUrl="/select/locations/"*/}
+                    {/*                            queryKeyBase="locations"*/}
+                    {/*                            clientSideSearch={false}*/}
+                    {/*                            preselectedOptions={formatNestedOptions(*/}
+                    {/*                                item, // Current referral item*/}
+                    {/*                                'referrer_store_location' // Key to look for*/}
+                    {/*                            )}*/}
+                    {/*                            menuPortalTarget={document.body}*/}
+                    {/*                        />*/}
+                    {/*                    </td>*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap text-right">*/}
+                    {/*                        <button type="button" onClick={() => removeRef(idx)}*/}
+                    {/*                                className="ti-btn ti-btn-danger ti-btn-sm"*/}
+                    {/*                                title="Remove this referral">*/}
+                    {/*                            <i className="ti ti-trash"></i>*/}
+                    {/*                        </button>*/}
+                    {/*                    </td>*/}
+                    {/*                </tr>*/}
+                    {/*            ))}*/}
+                    {/*            </tbody>*/}
+                    {/*        </table>*/}
+                    {/*    </div>*/}
+                    {/*    <div className="flex justify-end m-4">*/}
+                    {/*        <button type="button" onClick={() => appendRef({ referrer_name: "", referrer_designation: "", referrer_store_location_id: null })} className="ti-btn ti-btn-secondary ti-btn-md" title="Add a new referral">*/}
+                    {/*            Add Referral*/}
+                    {/*        </button>*/}
+                    {/*    </div>*/}
+                    {/*</SubFormSection>*/}
 
                 </div>
             </div>

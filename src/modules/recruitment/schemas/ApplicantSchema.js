@@ -28,9 +28,29 @@ const referralSchema = z.object({
 const applicantSchema = z.object({
     full_name: z.string().nonempty("Full name is required"),
     father_name: z.string().nonempty("Father name is required"),
-    cnic: z.string().nonempty("CNIC is required"),
-    date_of_birth: dateSchema('Date of Birth', true),
-    mobile_number: z.string().nonempty("Mobile number is required"),
+    cnic: z
+        .string()
+        .nonempty("CNIC is required")
+        .regex(/^\d{5}-\d{7}-\d{1}$/, "CNIC must be in the format 00000-0000000-0"),
+    date_of_birth: dateSchema('Date of Birth', true).refine((dateStr) => {
+        if (!dateStr || typeof dateStr !== "string") return false;
+
+        const inputDate = new Date(dateStr);
+        if (isNaN(inputDate.getTime())) return false; // invalid date
+
+        const today = new Date();
+        const minAllowedDate = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
+
+        return inputDate < minAllowedDate;
+    }, {
+        message: "Date of Birth must be at least 15 years before today",
+    }),
+
+
+    mobile_number: z
+        .string()
+        .nonempty("Mobile number is required")
+        .regex(/^03\d{2}-\d{7}$/, "Mobile number must be in the format 0300-0000000"),
     email: z.string().email("Invalid email address"),
     status: applicantStatus.default("pending"),
     remarks: z.string().max(500).optional(),
