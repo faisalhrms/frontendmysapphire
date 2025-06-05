@@ -9,37 +9,13 @@ import AgingForm from "../components/SalesforceDashboard/AgingForm.jsx";
 
 import SaleForceDates from "@modules/ecom/components/SalesforceDashboard/SaleForceDates.jsx";
 import ExecutiveForm from "@modules/ecom/components/SalesforceDashboard/ExecutiveForm.jsx";
+import useSalesforceSyncTime from "@modules/ecom/hooks/useSalesforceSyncTime.js";
 
 const EcomSaleforce = () => {
     const [activeTab, setActiveTab] = useState("executiveSummary");
     const [currentDate, setCurrentDate] = useState("");
-    const [showsynctime, setshowsynctime] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
 
-    const fetchSyncTime = async () => {
-        try {
-            const response = await api.post('/salesforce/fetch_sync_time_cc/');
-            setshowsynctime(response.data.data.show_sync_time)
-        } catch (error) {
-            if (error.response) {
-                if (error.response.status === 404) {
-                    setErrorMessage("The data was last updated on Feb 25, 2025 - 04:15 PM");
-                } else {
-                    setErrorMessage(`Error fetching sync time: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
-                }
-            } else if (error.request) {
-
-                setErrorMessage("No response from the server. Please check your connection.");
-            } else {
-
-                setErrorMessage(`Error: ${error.message}`);
-            }
-            console.error("Error fetching sync time:", error);
-        }
-    };
-    useEffect(() => {
-        fetchSyncTime();
-    }, []);
+    const { syncTime, errorMessage } = useSalesforceSyncTime();
 
 
     useEffect(() => {
@@ -104,9 +80,9 @@ const EcomSaleforce = () => {
                         icon: <i className="bx bx-pie-chart-alt"></i>,
                         content: (
                             <>
-                                {showsynctime && (
+                                {syncTime && (
                                     <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
-                                        <p>{showsynctime}</p>
+                                        <p>{syncTime}</p>
                                     </div>
                                 )}
 
@@ -128,9 +104,9 @@ const EcomSaleforce = () => {
                         icon: <i className="bx bx-time-five"></i>,
                         content: (
                             <div className="">
-                                {showsynctime && (
+                                {syncTime && (
                                     <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
-                                        <p>{showsynctime}</p>
+                                        <p>{syncTime}</p>
                                     </div>
                                 )}
 
