@@ -91,16 +91,12 @@ const ApplicantsTable = ({ apiUrl, title }) => {
             },
         },
         {
-            Header: "Recommended Positions",
-            accessor: "recommended_positions",
+            Header: "Recommended Position",
+            accessor: "recommended_position.name",
             disableSortBy: true,
-            Cell: ({ row }) => (
-                <span>
-          {row.original.recommended_positions
-              .map((p) => p.name)
-              .join(", ")}
-        </span>
-            ),
+            filterable: true,
+            filterType: "text",
+            filterKey: "recommended_position__name",
         },
         {
             Header: "Location",

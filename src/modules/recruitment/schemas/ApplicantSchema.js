@@ -15,7 +15,6 @@ const experienceSchema = z.object({
     company_name: z.string().nonempty("Company name is required"),
     designation: z.string().nonempty("Designation is required"),
     years_in_role: z.string().min(0, "Years in role must be non-negative"),
-    total_experience_years: z.string().min(0, "Total experience must be non-negative"),
 });
 
 const referralSchema = z.object({
@@ -46,6 +45,15 @@ const applicantSchema = z.object({
         message: "Date of Birth must be at least 15 years before today",
     }),
 
+    total_experience_years: z
+        .string({
+            required_error: "Total experience is required",
+            invalid_type_error: "Total experience must be a string",
+        })
+        .min(0, "Total experience must be non-negative"),
+
+    referred_by: z.string().optional(),
+    referred_by_designation: z.string().optional(),
 
     mobile_number: z
         .string()
@@ -61,7 +69,7 @@ const applicantSchema = z.object({
     experience_set: z.array(experienceSchema).optional(),
     referral_set: z.array(referralSchema).optional(),
 
-    recommendation_ids: z.array(z.number()).min(1, "At least one recommendation is required"),
+    recommended_position_id: z.number().min(1, "Recommendation id is required"),
 
     attachment_ids: z.array(z.number().min(1)).optional(),
 
