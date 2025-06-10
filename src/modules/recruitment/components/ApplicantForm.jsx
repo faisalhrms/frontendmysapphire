@@ -8,12 +8,14 @@ import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
-import {formatNestedOptions, formatOptions} from "@helpers/formatters.js";
+import {formatNestedOptions, formatOptions, formatOptionsForApplicant} from "@helpers/formatters.js";
 import applicantSchema from "@modules/recruitment/schemas/ApplicantSchema.js";
 import { useApplicantForm } from "@modules/recruitment/hooks/recruitmentHooks.js";
 import SubFormSection from "@components/form/SubFormSection.jsx";
+import {useSelector} from "react-redux";
 
 const ApplicantForm = ({ applicantData, isEditMode = false }) => {
+    const currentUser = useSelector(state => state.auth.user);
     const transformedData = useMemo(() => {
         if (!applicantData) return null;
         return {
@@ -27,6 +29,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
         control,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(applicantSchema),
@@ -41,6 +44,9 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
             remarks: "",
             home_address: "",
             city: "",
+            total_experience_years: 0,
+            referred_by: "",
+            referred_by_designation: "",
             created_by_location_id: null,
             preferred_store_location_id: null,
             qualification_set: [],
@@ -67,6 +73,23 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
     const { handleApplicantSubmit } = useApplicantForm(applicantData, isEditMode);
     const status = useWatch({ control, name: "status" });
 
+    const createdByLocationOptions = useMemo(() => {
+        // For edit mode, use applicant data
+        if (isEditMode && applicantData) {
+            return formatOptionsForApplicant(applicantData, "created_by_location");
+        }
+
+        // For create mode, use current user's location
+        if (!isEditMode && currentUser?.employee?.location) {
+            return [{
+                value: currentUser.employee.location.id,
+                label: currentUser.employee.location.name
+            }];
+        }
+
+        return [];
+    }, [isEditMode, applicantData, currentUser]);
+
     useEffect(() => {
         if (transformedData) {
             reset({
@@ -77,6 +100,22 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
         }
     }, [transformedData, reset]);
 
+    useEffect(() => {
+        if (!isEditMode && currentUser) {
+            // Set Your Location from user's location
+            if (currentUser.employee?.location?.id) {
+                setValue("created_by_location_id", currentUser.employee.location.id);
+            }
+
+            // Set Referred By fields from user's info
+            if (currentUser.employee?.full_name) {
+                setValue("referred_by", currentUser.employee.full_name);
+            }
+            if (currentUser.employee?.designation?.name) {
+                setValue("referred_by_designation", currentUser.employee.designation.name);
+            }
+        }
+    }, [isEditMode, currentUser, setValue]);
     return (
         <form onSubmit={handleSubmit(handleApplicantSubmit)} className="p-4">
             <div className="grid grid-cols-12 gap-6">
@@ -117,6 +156,34 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                is_required className="w-full"/>
                                 </div>
                                 <div className="col-span-3">
+                                    <FormInput
+                                        name="total_experience_years"
+                                        control={control}
+                                        errors={errors}
+                                        type="number"
+                                        placeholder="Total Experience (Years)"
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="col-span-4">
+                                    <FormInput
+                                        name="referred_by"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Referred By"
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="col-span-4">
+                                    <FormInput
+                                        name="referred_by_designation"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Referrer Designation"
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="col-span-4">
 
                                     <FormAsyncSelect
                                         name="created_by_location_id"
@@ -127,10 +194,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         apiUrl="/select/locations/"
                                         queryKeyBase="locations"
                                         clientSideSearch={false}
-                                        preselectedOptions={formatOptions(
-                                            applicantData,
-                                            "created_by_location"
-                                        )}
+                                        preselectedOptions={createdByLocationOptions}
                                     />
                                 </div>
                                 <div className="col-span-6">
@@ -151,8 +215,8 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                 <div className="col-span-6">
 
                                     <FormAsyncSelect
-                                        isMulti={true}
-                                        name="recommendation_ids"
+
+                                        name="recommended_position_id"
                                         control={control}
                                         errors={errors}
                                         placeholder="Recommended Positions"
@@ -161,7 +225,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         clientSideSearch={false}
                                         preselectedOptions={formatOptions(
                                             applicantData,
-                                            "recommended_positions"
+                                            "recommended_position"
                                         )}
                                         saveOptionEndpoint="/select/applicant/position/"
                                         allowSaveNewOption={true}
