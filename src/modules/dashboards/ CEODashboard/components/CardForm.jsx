@@ -82,7 +82,7 @@ const CardForm = () => {
                     name="Salesforce Dashboard"
                     icon="https://res.cloudinary.com/dsarj6ihu/image/upload/v1739448566/networking_w0haty.png"
                     color="bg-blue-500"
-                    onClick={() => navigate('/module/ecom/sfd')}
+                    onClick={() => navigate('/module/ecom/salesforcedashboard')}
                 />
                 <Card
                     name="Analytics"
