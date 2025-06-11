@@ -8,12 +8,14 @@ import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
-import {formatNestedOptions, formatOptions} from "@helpers/formatters.js";
+import {formatNestedOptions, formatOptions, formatOptionsForApplicant} from "@helpers/formatters.js";
 import applicantSchema from "@modules/recruitment/schemas/ApplicantSchema.js";
 import { useApplicantForm } from "@modules/recruitment/hooks/recruitmentHooks.js";
 import SubFormSection from "@components/form/SubFormSection.jsx";
+import {useSelector} from "react-redux";
 
 const ApplicantForm = ({ applicantData, isEditMode = false }) => {
+    const currentUser = useSelector(state => state.auth.user);
     const transformedData = useMemo(() => {
         if (!applicantData) return null;
         return {
@@ -27,6 +29,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
         control,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(applicantSchema),
@@ -41,6 +44,9 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
             remarks: "",
             home_address: "",
             city: "",
+            total_experience_years: 0,
+            referred_by: "",
+            referred_by_designation: "",
             created_by_location_id: null,
             preferred_store_location_id: null,
             qualification_set: [],
@@ -67,6 +73,23 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
     const { handleApplicantSubmit } = useApplicantForm(applicantData, isEditMode);
     const status = useWatch({ control, name: "status" });
 
+    const createdByLocationOptions = useMemo(() => {
+        // For edit mode, use applicant data
+        if (isEditMode && applicantData) {
+            return formatOptionsForApplicant(applicantData, "created_by_location");
+        }
+
+        // For create mode, use current user's location
+        if (!isEditMode && currentUser?.employee?.location) {
+            return [{
+                value: currentUser.employee.location.id,
+                label: currentUser.employee.location.name
+            }];
+        }
+
+        return [];
+    }, [isEditMode, applicantData, currentUser]);
+
     useEffect(() => {
         if (transformedData) {
             reset({
@@ -77,6 +100,22 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
         }
     }, [transformedData, reset]);
 
+    useEffect(() => {
+        if (!isEditMode && currentUser) {
+            // Set Your Location from user's location
+            if (currentUser.employee?.location?.id) {
+                setValue("created_by_location_id", currentUser.employee.location.id);
+            }
+
+            // Set Referred By fields from user's info
+            if (currentUser.employee?.full_name) {
+                setValue("referred_by", currentUser.employee.full_name);
+            }
+            if (currentUser.employee?.designation?.name) {
+                setValue("referred_by_designation", currentUser.employee.designation.name);
+            }
+        }
+    }, [isEditMode, currentUser, setValue]);
     return (
         <form onSubmit={handleSubmit(handleApplicantSubmit)} className="p-4">
             <div className="grid grid-cols-12 gap-6">
@@ -117,6 +156,34 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                is_required className="w-full"/>
                                 </div>
                                 <div className="col-span-3">
+                                    <FormInput
+                                        name="total_experience_years"
+                                        control={control}
+                                        errors={errors}
+                                        type="number"
+                                        placeholder="Total Experience (Years)"
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="col-span-4">
+                                    <FormInput
+                                        name="referred_by"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Referred By"
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="col-span-4">
+                                    <FormInput
+                                        name="referred_by_designation"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Referrer Designation"
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div className="col-span-4">
 
                                     <FormAsyncSelect
                                         name="created_by_location_id"
@@ -127,10 +194,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         apiUrl="/select/locations/"
                                         queryKeyBase="locations"
                                         clientSideSearch={false}
-                                        preselectedOptions={formatOptions(
-                                            applicantData,
-                                            "created_by_location"
-                                        )}
+                                        preselectedOptions={createdByLocationOptions}
                                     />
                                 </div>
                                 <div className="col-span-6">
@@ -151,8 +215,8 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                 <div className="col-span-6">
 
                                     <FormAsyncSelect
-                                        isMulti={true}
-                                        name="recommendation_ids"
+
+                                        name="recommended_position_id"
                                         control={control}
                                         errors={errors}
                                         placeholder="Recommended Positions"
@@ -161,7 +225,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         clientSideSearch={false}
                                         preselectedOptions={formatOptions(
                                             applicantData,
-                                            "recommended_positions"
+                                            "recommended_position"
                                         )}
                                         saveOptionEndpoint="/select/applicant/position/"
                                         allowSaveNewOption={true}
@@ -198,7 +262,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                         currentValue={applicantData?.attachment_ids}
                                         files={applicantData?.attachments}
                                         inputName="attachment_ids"
-                                        placeholder="Attachments"
+                                        placeholder="Resume/Documents"
                                         control={control}
                                         errors={errors}
                                         className="w-full"
@@ -222,7 +286,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Level</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Years
                                         Completed
@@ -276,7 +340,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Years in Role</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Exp</th>
+                                    {/*<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Exp</th>*/}
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                                 </tr>
                                 </thead>
@@ -298,12 +362,12 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                        name={`experience_set.${idx}.years_in_role`} control={control}
                                                        errors={errors} placeholder="Years" className="w-full"/>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <FormInput label={false}
-                                                       name={`experience_set.${idx}.total_experience_years`}
-                                                       control={control} errors={errors} placeholder="Total"
-                                                       className="w-full"/>
-                                        </td>
+                                        {/*<td className="px-6 py-4 whitespace-nowrap">*/}
+                                        {/*    <FormInput label={false}*/}
+                                        {/*               name={`experience_set.${idx}.total_experience_years`}*/}
+                                        {/*               control={control} errors={errors} placeholder="Total"*/}
+                                        {/*               className="w-full"/>*/}
+                                        {/*</td>*/}
                                         <td className="px-6 py-4 whitespace-nowrap text-right">
                                             <button type="button" onClick={() => removeExp(idx)}
                                                     className="ti-btn ti-btn-danger ti-btn-sm"
@@ -323,66 +387,66 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                         </div>
                     </SubFormSection>
 
-                    <SubFormSection title="Referrals" className="mt-6">
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referrer Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Location</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                {refFields.map((item, idx) => (
-                                    <tr key={item.id} className="hover:bg-gray-100">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <FormInput label={false} name={`referral_set.${idx}.referrer_name`}
-                                                       control={control} errors={errors} placeholder="Name"
-                                                       className="w-full"/>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <FormInput label={false} name={`referral_set.${idx}.referrer_designation`}
-                                                       control={control} errors={errors} placeholder="Designation"
-                                                       className="w-full"/>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                    {/*<SubFormSection title="Referrals" className="mt-6">*/}
+                    {/*    <div className="overflow-x-auto">*/}
+                    {/*        <table className="min-w-full divide-y divide-gray-200">*/}
+                    {/*            <thead className="bg-gray-50">*/}
+                    {/*            <tr>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referrer Name</th>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Store Location</th>*/}
+                    {/*                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>*/}
+                    {/*            </tr>*/}
+                    {/*            </thead>*/}
+                    {/*            <tbody className="bg-white divide-y divide-gray-200">*/}
+                    {/*            {refFields.map((item, idx) => (*/}
+                    {/*                <tr key={item.id} className="hover:bg-gray-100">*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap">*/}
+                    {/*                        <FormInput label={false} name={`referral_set.${idx}.referrer_name`}*/}
+                    {/*                                   control={control} errors={errors} placeholder="Name"*/}
+                    {/*                                   className="w-full"/>*/}
+                    {/*                    </td>*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap">*/}
+                    {/*                        <FormInput label={false} name={`referral_set.${idx}.referrer_designation`}*/}
+                    {/*                                   control={control} errors={errors} placeholder="Designation"*/}
+                    {/*                                   className="w-full"/>*/}
+                    {/*                    </td>*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap">*/}
 
-                                            <FormAsyncSelect
-                                                label={false}
-                                                name={`referral_set.${idx}.referrer_store_location_id`}
-                                                control={control}
-                                                errors={errors}
-                                                placeholder="Store Location"
-                                                apiUrl="/select/locations/"
-                                                queryKeyBase="locations"
-                                                clientSideSearch={false}
-                                                preselectedOptions={formatNestedOptions(
-                                                    item, // Current referral item
-                                                    'referrer_store_location' // Key to look for
-                                                )}
-                                                menuPortalTarget={document.body}
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <button type="button" onClick={() => removeRef(idx)}
-                                                    className="ti-btn ti-btn-danger ti-btn-sm"
-                                                    title="Remove this referral">
-                                                <i className="ti ti-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="flex justify-end m-4">
-                            <button type="button" onClick={() => appendRef({ referrer_name: "", referrer_designation: "", referrer_store_location_id: null })} className="ti-btn ti-btn-secondary ti-btn-md" title="Add a new referral">
-                                Add Referral
-                            </button>
-                        </div>
-                    </SubFormSection>
+                    {/*                        <FormAsyncSelect*/}
+                    {/*                            label={false}*/}
+                    {/*                            name={`referral_set.${idx}.referrer_store_location_id`}*/}
+                    {/*                            control={control}*/}
+                    {/*                            errors={errors}*/}
+                    {/*                            placeholder="Store Location"*/}
+                    {/*                            apiUrl="/select/locations/"*/}
+                    {/*                            queryKeyBase="locations"*/}
+                    {/*                            clientSideSearch={false}*/}
+                    {/*                            preselectedOptions={formatNestedOptions(*/}
+                    {/*                                item, // Current referral item*/}
+                    {/*                                'referrer_store_location' // Key to look for*/}
+                    {/*                            )}*/}
+                    {/*                            menuPortalTarget={document.body}*/}
+                    {/*                        />*/}
+                    {/*                    </td>*/}
+                    {/*                    <td className="px-6 py-4 whitespace-nowrap text-right">*/}
+                    {/*                        <button type="button" onClick={() => removeRef(idx)}*/}
+                    {/*                                className="ti-btn ti-btn-danger ti-btn-sm"*/}
+                    {/*                                title="Remove this referral">*/}
+                    {/*                            <i className="ti ti-trash"></i>*/}
+                    {/*                        </button>*/}
+                    {/*                    </td>*/}
+                    {/*                </tr>*/}
+                    {/*            ))}*/}
+                    {/*            </tbody>*/}
+                    {/*        </table>*/}
+                    {/*    </div>*/}
+                    {/*    <div className="flex justify-end m-4">*/}
+                    {/*        <button type="button" onClick={() => appendRef({ referrer_name: "", referrer_designation: "", referrer_store_location_id: null })} className="ti-btn ti-btn-secondary ti-btn-md" title="Add a new referral">*/}
+                    {/*            Add Referral*/}
+                    {/*        </button>*/}
+                    {/*    </div>*/}
+                    {/*</SubFormSection>*/}
 
                 </div>
             </div>

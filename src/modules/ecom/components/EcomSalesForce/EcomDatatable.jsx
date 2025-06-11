@@ -6,7 +6,7 @@ const EcomDatatable = ({ data = [], type }) => {
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     if (!Array.isArray(data)) {
-        // console.error("EcomDatatable: 'data' is not an array", data);
+
         return null;
     }
 
