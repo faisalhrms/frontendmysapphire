@@ -91,38 +91,30 @@ const DigitalSpent = () => {
     setFilters(getFilters())
   }
 
-const handleDownload = async () => {
-  setIsDownloading(true)
-  let url = ""
-  if (activeTab === "ObjectiveWiseSpentSummary") {
-    url = "/reporting/digital_spent/pdf_objective_wise_spent/"
-  } else if (activeTab === "CategoryWiseSpent") {
-    url = "/reporting/digital_spent/pdf_category_wise_spent/"
-  } else if (activeTab === "DigitalSpentCCSale") {
-    url = "/reporting/digital_spent/pdf_cc_sales_spent/"
-  } else if (activeTab === "DayWiseSalesSpent") {
-    url = "/reporting/digital_spent/pdf_day_wise_spent/"
-  } else if (activeTab === "CategoryDayWiseLocalSpent") {
-    url = "/reporting/digital_spent/pdf_category_day_wise_local_spent/"
-  } else if (activeTab === "DailyWebsiteVisitors") {
-    url = "/reporting/digital_spent/pdf_cc_order_summary/"
-  } else if (activeTab === "CategoryOrdersCount") {
-    url = "/reporting/digital_spent/pdf_category_orders_count/"
-  }
-  try {
-    const response = await api.get(url, { params, responseType: "blob" })
-    const blob = new Blob([response.data], { type: "application/pdf" })
-    const link = document.createElement("a")
-    link.href = window.URL.createObjectURL(blob)
-    link.download = `${activeTab}.pdf`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  } catch (err) {
-  } finally {
-    setIsDownloading(false)
-  }
-}
+ const handleDownload = async () => {
+   setIsDownloading(true)
+   try {
+     const response = await api.get(
+       "/reporting/digital_spent/pdf_all_spent/",
+       {
+         params: {
+           ds_from: filters.ds_from,
+           ds_to: filters.ds_to
+         },
+         responseType: "blob"
+       }
+     )
+     const blob = new Blob([response.data], { type: "application/pdf" })
+     const link = document.createElement("a")
+     link.href = window.URL.createObjectURL(blob)
+     link.download = `DigitalSpent_${filters.ds_from}_to_${filters.ds_to}.pdf`
+     document.body.appendChild(link)
+     link.click()
+     document.body.removeChild(link)
+   } finally {
+     setIsDownloading(false)
+   }
+ }
 
 
 
