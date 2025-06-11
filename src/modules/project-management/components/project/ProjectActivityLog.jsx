@@ -61,6 +61,8 @@ const ProjectActivityLog = ({ id, projectName }) => {
       user_assigned: 'ri-user-settings-line',
       user_unassigned: 'ri-user-settings-line',
       dates_changed: 'ri-calendar-event-line',
+      status_changed: 'ri-checkbox-circle-line',
+      priority_changed: 'ri-flag-line',
     };
     return icons[actionType] || 'ri-information-line text-gray-600';
   };
@@ -73,16 +75,18 @@ const ProjectActivityLog = ({ id, projectName }) => {
       tag_added: 'bg-info/10 bg-outline-info',
       tag_removed: 'bg-warning/10 bg-outline-warning',
       team_added: 'bg-info/10 bg-outline-info',
-      team_removed: 'bg-info/10 bg-outline-info',
+      team_removed: 'bg-warning/10 bg-outline-info',
       member_added: 'bg-info/10 bg-outline-info',
       member_removed: 'bg-warning/10 bg-outline-warning',
       attachment_added: 'bg-info/10 bg-outline-info',
       attachment_removed: 'bg-warning/10 bg-outline-warning',
       user_assigned: 'bg-info/10 bg-outline-info',
       user_unassigned: 'bg-warning/10 bg-outline-warning',
-      dates_changed: 'bg-info/10 bg-outline-info',
+      dates_changed: 'bg-warning/10 bg-outline-warning',
+      status_changed: 'bg-warning/10 bg-outline-warning',
+      priority_changed: 'bg-warning/10 bg-outline-warning',
     };
-    return colors[actionType] || 'bg-info/10 bg-outline-info';
+    return colors[actionType] || 'text-gray-500 bg-gray-50 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300';
   };
 
   const getContextName = (log) => {
@@ -102,6 +106,15 @@ const ProjectActivityLog = ({ id, projectName }) => {
     const contextName = getContextName(log);
     const contextType = getContextType(log);
     const quotedText = message.match(/['"]([^'"]+)['"]/)?.[1] || '';
+    const parts = message.split(/(['"][^'"]+['"])/);
+    const boldText = parts
+        .map(part => {
+          if (/^['"].*['"]$/.test(part)) {
+            return `<strong>${part.slice(1, -1)}</strong>`;
+          }
+          return part;
+        })
+        .join('');
 
     switch(action_type) {
       case 'created':
@@ -111,12 +124,18 @@ const ProjectActivityLog = ({ id, projectName }) => {
           details: null
         };
 
+      case 'deleted':
+        return {
+          action: `Deleted ${contextType.toLowerCase()}`,
+          target: contextName,
+          details: null
+        };
+
       case 'updated':
-        const updateDetails = message.replace(/['"][^'"]+['"]/, '').trim();
         return {
           action: `Updated ${contextType.toLowerCase()}`,
           target: contextName,
-          details: updateDetails
+          details: boldText
         };
 
       case 'tag_added':
@@ -124,6 +143,20 @@ const ProjectActivityLog = ({ id, projectName }) => {
           action: 'Added tag',
           target: contextName,
           details: `Tag: ${quotedText}`
+        };
+
+      case 'status_changed':
+        return {
+          action: 'Status changed',
+          target: contextName,
+          details: boldText
+        };
+
+      case 'priority_changed':
+        return {
+          action: 'Priority changed',
+          target: contextName,
+          details: boldText
         };
 
       case 'team_added':
@@ -151,7 +184,20 @@ const ProjectActivityLog = ({ id, projectName }) => {
         return {
           action: 'Added attachment',
           target: contextName,
-          details: `File: ${quotedText}`
+          details: `<div class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                            <span class="badge bg-success text-white me-2">File</span>
+                            <span class="text-[0.6875rem]"> ${quotedText}</span>
+                    </div>`
+        };
+
+      case 'attachment_removed':
+        return {
+          action: 'Attachment removed',
+          target: contextName,
+          details: `<div class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                           <span class="badge bg-success text-white me-2">File</span>
+                           <span class="text-[0.6875rem]"> ${quotedText}</span>
+                    </div>`
         };
 
       case 'user_assigned':
@@ -165,21 +211,14 @@ const ProjectActivityLog = ({ id, projectName }) => {
         return {
           action: 'Updated dates',
           target: contextName,
-          details: message.replace(/['"][^'"]+['"]/, '').trim()
-        };
-
-      case 'commented':
-        return {
-          action: 'Added comment',
-          target: contextName,
-          details: null
+          details: boldText
         };
 
       default:
         return {
           action: 'Updated',
           target: contextName,
-          details: message
+          details: boldText
         };
     }
   };
@@ -193,69 +232,49 @@ const ProjectActivityLog = ({ id, projectName }) => {
     const messageData = formatActionMessage(log);
 
     return (
-        <div key={`${log.id || created_at}`} className={`!border-l-4 ${actionColor} rounded-r-lg mb-4 shadow-sm hover:shadow-md transition-shadow duration-200`}>
-          <div className="p-4">
-            <div className="flex items-start space-x-3">
-              {/* Icon */}
-              <div className="flex-shrink-0 mt-1">
-                <div className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm border border-gray-200 dark:border-gray-600">
-                  <i className={`${actionIcon} text-sm`}></i>
+        <React.Fragment key={`${log.id || created_at}`}>
+          <li>
+            <div className="timeline-time text-end">
+              <span className="date">{moment(created_at).format('dddd').toUpperCase()}</span>
+              <span className="time inline-block">{moment(created_at).format('HH:mm')}</span>
+            </div>
+            <div className="timeline-icon" style={{insetInlineStart: '15.9%'}}>
+              <Avatar
+                  avatar={created_by?.avatar}
+                  size="xs"
+                  full_name={userName}
+                  classes='rounded-full shadow-lg'
+                  parentClasses="rounded-full -start-3 ring-4 ring-white dark:ring-gray-900 dark:bg-blue-900"
+              />
+            </div>
+            <div className={`timeline-body rounded-lg shadow-xs`}>
+                <div className="items-center justify-between mb-3 sm:flex">
+                  <time className="mb-1 text-xs font-normal text-gray-500 sm:order-last sm:mb-0">{moment(created_at).fromNow()}</time>
+                  <h3 className="flex items-center mb-1 text-lg text-gray-900 dark:text-white">
+                    <span style={{fontFamily: 'cursive'}}>
+                      {messageData.target}
+                    </span>
+                    <span className="bg-gray-100 text-gray-800 text-xs me-2 px-2.5 rounded-sm dark:bg-gray-700 dark:text-gray-400 border border-gray-500 ml-4 border-dashed font-normal">{contextType}</span>
+                  </h3>
                 </div>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2 mb-1">
-                  <Avatar
-                      avatar={created_by?.avatar}
-                      size="xs"
-                      full_name={userName}
-                      parentClasses="flex-shrink-0"
-                  />
-                  <span className="font-medium text-gray-900 dark:text-white text-sm">
-                  {userName}
-                </span>
-                  <span className="text-gray-500 dark:text-gray-400 text-sm">
-                  {messageData.action}
-                </span>
+              <div style={{fontFamily: 'cursive'}}
+                   className={`p-3 text-xs italic font-normal border border-gray-200 rounded-lg  ${actionColor}`}>
+                <div className="font-semibold text-gray-900 mb-2">#{userName}
+                  <i className="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
+                  <span className='font-normal'><i className={`mr-1 ${actionIcon}`}></i>{messageData.action}</span>
                 </div>
-
-                <div className="flex items-center space-x-2 mb-2">
-                <span className="inline-flex items-center badge !rounded-full bg-black text-white">
-                  {contextType}
-                </span>
-                  <span className="font-medium text-gray-900 dark:text-white text-sm">
-                  {messageData.target}
-                </span>
-                </div>
-
-                {messageData.details && (
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-md p-3 mt-2">
-                      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                        {messageData.details}
-                      </p>
-                    </div>
-                )}
-
-                <div className="flex items-center justify-between mt-3">
-                  <time className="text-xs text-gray-500 dark:text-gray-400">
-                    {moment(created_at).format('MMM D, YYYY [at] h:mm A')}
-                  </time>
-                  <span className="text-xs text-gray-400 dark:text-gray-500">
-                  {moment(created_at).fromNow()}
-                </span>
-                </div>
+                <div dangerouslySetInnerHTML={{__html: messageData.details}}/>
               </div>
             </div>
-          </div>
-        </div>
+          </li>
+        </React.Fragment>
     );
   };
 
   if (isLoading) {
     return (
         <div className="flex justify-center py-8">
-          <LoadingSpinner />
+          <LoadingSpinner/>
         </div>
     );
   }
@@ -263,7 +282,8 @@ const ProjectActivityLog = ({ id, projectName }) => {
   if (isError) {
     return (
         <div className="text-center py-8">
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md mx-auto">
+          <div
+              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md mx-auto">
             <i className="ri-error-warning-line text-red-600 text-2xl mb-2 block"></i>
             <h3 className="text-lg font-medium text-red-900 dark:text-red-200 mb-1">
               Unable to load activity
@@ -293,30 +313,15 @@ const ProjectActivityLog = ({ id, projectName }) => {
   }
 
   return (
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-          {/* Header */}
-          <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-            <div className="flex items-center space-x-3">
-              <i className="ri-history-line text-gray-600 dark:text-gray-400 text-xl"></i>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Activity
-              </h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-              Recent project updates
-            </span>
-            </div>
-          </div>
-
-          {/* Activity List */}
-          <div className="p-6">
-            <div className="space-y-4">
-              {data.pages.map((page, pageIndex) =>
+          <>
+            <div className="container">
+            <ul className="timeline list-none text-[0.813rem] text-defaulttextcolor mb-10">
+              {data.pages.map((page) =>
                   page.rows.map((log) => renderLogItem(log))
               )}
-            </div>
+            </ul>
+          </div>
 
-            {/* Load More */}
             {hasNextPage && (
                 <div
                     className="text-center py-6 border-t border-gray-200 dark:border-gray-700 mt-6"
@@ -324,10 +329,10 @@ const ProjectActivityLog = ({ id, projectName }) => {
                 >
                   {isFetchingNextPage ? (
                       <div className="flex items-center justify-center space-x-2">
-                        <LoadingSpinner />
+                        <LoadingSpinner/>
                         <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Loading more activity...
-                  </span>
+                      Loading more activity...
+                    </span>
                       </div>
                   ) : (
                       <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -336,10 +341,9 @@ const ProjectActivityLog = ({ id, projectName }) => {
                   )}
                 </div>
             )}
-          </div>
-        </div>
-      </div>
-  );
+          </>
+)
+  ;
 };
 
 export default ProjectActivityLog;
