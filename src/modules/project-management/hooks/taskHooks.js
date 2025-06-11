@@ -11,6 +11,8 @@ import { useForm } from "react-hook-form";
 import {useState, useEffect, useCallback} from "react";
 import {useQuery} from "@tanstack/react-query";
 import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
+import api from "@config/axiosConfig.js";
+import Notify from "@helpers/toastNotifications.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -384,3 +386,28 @@ export const useTaskDetailModal = () => {
   };
 };
 
+export const useTaskActivityLog = (id) => {
+  const [data, setData] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchActivityLog = async () => {
+      setLoading(true);
+
+      try {
+        const response = await api.get(`pms/tasks/${id}/activity-log/`);
+        return setData(response.data.data);
+      } catch (error) {
+        Notify.error(error.response?.data?.message || 'Failed to get task activity log');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivityLog();
+  }, [id]);
+
+  return { data, isLoading };
+};
