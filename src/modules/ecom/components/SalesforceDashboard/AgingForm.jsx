@@ -18,9 +18,9 @@ const AgingFormComponent = ({pendingOrdersData,loadingOrders  , filters , active
     );
 
 
-    const handleDateChange = (event) => {
-        setSelectedDate(event.target.value);
-    };
+    // const handleDateChange = (event) => {
+    //     setSelectedDate(event.target.value);
+    // };
 
     const handleModalOpen = (row) => {
         setModalData(row);
