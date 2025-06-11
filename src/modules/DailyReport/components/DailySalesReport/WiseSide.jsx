@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
@@ -13,9 +12,8 @@ const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
         return num.toLocaleString();
     };
 
-
     const toggleSection = (id) => {
-        // console.log(id);
+
         setExpandedSections(prev => ({
             ...prev,
             [id]: !prev[id]
@@ -32,10 +30,10 @@ const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
             const data = prepareDataForTable(newData);
             setTableData(data);
 
-            // Initial expanded sections
+
             const initialExpanded = {};
 
-            // Find "FOL" section and expand it by default
+
             const folRow = data.find(row => row.type === "FOL");
             if (folRow) {
                 initialExpanded[folRow.id] = true;
@@ -227,11 +225,6 @@ const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
 
         return tableData;
     };
-
-
-
-
-
     const isVisible = (row) => {
         if (row.parentId === null) {
             return true;
@@ -248,13 +241,11 @@ const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
 
         return true;
     };
-
     const formatNumber = (num) => {
         if (typeof num !== "number") return num;
         return num.toLocaleString();
 
     };
-
     const getRowStyle = (row) => {
         if (row.isHeader) return " font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]";
         if (row.isSubHeader) return "bg-gray-200 font-medium";
@@ -262,9 +253,6 @@ const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
 
 
     };
-
-
-
     const dateHeaders = generateDatesArray(newData);
 
     return (
@@ -358,65 +346,6 @@ const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
                                     );
                                 })
                             )}
-                            {/*{isLoading ? (*/}
-                            {/*    <tr>*/}
-                            {/*        <td colSpan="5" className="text-center py-4"><LoadingSpinner/></td>*/}
-                            {/*    </tr>*/}
-                            {/*) : (*/}
-                            {/*    {tableData.map((row, rowIndex) => {*/}
-                            {/*    if (!isVisible(row)) return null;*/}
-
-                            {/*    const rowTotal = row.values.reduce((acc, val) => acc + val, 0);*/}
-                            {/*    let leftColBgColor = "bg-white";*/}
-
-                            {/*    if (row.isHeader) {*/}
-                            {/*        leftColBgColor = " bg-[#949eb7]";*/}
-                            {/*    } else if (row.isSubHeader) {*/}
-                            {/*        leftColBgColor = row.indent === 0 ? "bg-gray-200" :*/}
-                            {/*            row.indent === 1 ? "bg-gray-200" :*/}
-                            {/*                row.indent === 2 ? "bg-gray-200" : "bg-gray-200";*/}
-                            {/*    }*/}
-
-                            {/*    return (*/}
-                            {/*        <tr key={rowIndex} className={getRowStyle(row)}>*/}
-                            {/*            <td*/}
-                            {/*                className={`border border-gray-300 p-2 sticky left-0 z-20 dark:text-gray-200 dark:bg-bodybg ${leftColBgColor} ${*/}
-                            {/*                    row.isHeader ? "font-bold" : row.isSubHeader ? "font-bold" : ""*/}
-                            {/*                } ${row.hasChildren ? "cursor-pointer" : ""}`}*/}
-                            {/*                style={{*/}
-                            {/*                    paddingLeft: row.indent ? `${row.indent}rem` : "0.5rem",*/}
-                            {/*                }}*/}
-                            {/*                onClick={() => row.hasChildren && toggleSection(row.id)}*/}
-                            {/*            >*/}
-                            {/*                {row.hasChildren && (*/}
-                            {/*                    <span className="mr-2">*/}
-                            {/*                            {expandedSections[row.id] ? "▼" : "►"}*/}
-                            {/*                        </span>*/}
-                            {/*                )}*/}
-                            {/*                {row.type}*/}
-                            {/*                {row.fmStatus === 'Flagship' && (*/}
-                            {/*                    <i className="ri-vip-crown-2-fill ml-1" style={{color: "#F28B00"}}></i>*/}
-                            {/*                )}*/}
-                            {/*            </td>*/}
-
-                            {/*            {row.values.map((value, valueIndex) => (*/}
-                            {/*                <td*/}
-                            {/*                    key={valueIndex}*/}
-                            {/*                    className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"*/}
-                            {/*                >*/}
-                            {/*                    {formatNumberWithCommas(value)}*/}
-                            {/*                </td>*/}
-                            {/*            ))}*/}
-
-                            {/*            <td className="border border-gray-300 p-2 text-right font-bold dark:text-gray-200 dark:bg-bodybg "*/}
-                            {/*                style={{backgroundColor: "rgb(77, 88, 117)", color: "white"}}>*/}
-                            {/*                {formatNumberWithCommas(rowTotal)}*/}
-                            {/*            </td>*/}
-                            {/*        </tr>*/}
-                            {/*    );*/}
-                            {/*})}*/}
-
-                            {/*    ))}*/}
                             </tbody>
                         </table>
                     </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import * as styles from "@helpers/staticDataTableStyles.js";
-import {tdCenter} from "@helpers/staticDataTableStyles.js";
+
 
 const ObjectiveWiseSpentSummary = ({ filters, data = {}, loading }) => {
   const formattedDate = filters?.till_date

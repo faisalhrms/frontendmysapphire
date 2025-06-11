@@ -91,8 +91,6 @@ const AnalysisErrorModal = React.memo(({ title, date, onClose, filters }) => {
                             </svg>
                         </button>
                     </div>
-
-                    {/* Search Bar */}
                     <div className="p-4 flex justify-end">
                         <input
                             type="text"

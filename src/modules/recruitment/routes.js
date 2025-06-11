@@ -2,6 +2,7 @@ import ApplicantsList from "@modules/recruitment/views/ApplicantsList.jsx";
 import ApplicantAdd from "@modules/recruitment/views/ApplicantAdd.jsx";
 import ApplicantEdit from "@modules/recruitment/views/ApplicantEdit.jsx";
 import ApplicantDetail from "@modules/recruitment/views/ApplicantDetail.jsx";
+import ApplicantLists from "@modules/recruitment/views/ApplicantLists.jsx";
 
 export const RECRUITMENTS_ROUTES = {
     READ:{
@@ -21,7 +22,7 @@ export const RECRUITMENTS_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path: RECRUITMENTS_ROUTES.READ.path,
-        component:ApplicantsList
+        component:ApplicantLists
     },
     {
         path:RECRUITMENTS_ROUTES.ADD.path,
