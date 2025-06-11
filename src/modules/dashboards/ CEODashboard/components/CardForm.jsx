@@ -6,7 +6,7 @@ const Card = ({ name, icon, color, onClick }) => (
         className={`bg-white custom-card text-center w-90 h-60 p-6 m-2 ${color} rounded-lg mb-4 transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl cursor-pointer dark:text-gray-200 dark:bg-bodybg`}
         onClick={onClick}
     >
-        <img src={icon} alt={name} className="w-16 h-16 mt-8 avatar avatar-xl avatar-rounded me-2 mb-2" />
+        <img src={icon} alt={name} className="w-20 h-20 mt-8 avatar avatar-xl avatar-rounded me-2 mb-2" />
         <h3 className="mb-4 text-muted fs-11 dark:text-gray-200">{name}</h3>
     </div>
 );
@@ -26,9 +26,10 @@ const CardForm = () => {
                 />
                 <Card
                     name="Salesforce Dashboard"
-                    icon="https://res.cloudinary.com/dsarj6ihu/image/upload/v1739448566/networking_w0haty.png"
+                    icon="https://res.cloudinary.com/dtsguaevl/image/upload/v1749617983/1_Salesforce_fc08f6ce4677-desktop_h2d86q.jpg"
                     color="bg-blue-500"
                     onClick={() => navigate('/module/ecom/salesforcedashboard')}
+
                 />
                 <Card
                     name="Analytics"
