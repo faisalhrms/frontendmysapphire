@@ -1,21 +1,18 @@
 import React, {useState} from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
-import FilterClearButton from "@components/form/FilterClearButton.jsx";
 import {
     downloadDailySaleReport,
-    downloadOfflineStorePerformance
+
 } from "@modules/DailyReport/services/wiseside_services.js";
 
-const OfflineStorePerformFilter = ({control, errors, clearFilter, filters , activeTab , expand , setExpand}) => {
+const OnlineDate = ({control, errors, clearFilter, filters , activeTab , expand , setExpand}) => {
 
-    // Today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split('T')[0];
+    // const today = new Date().toISOString().split('T')[0];
     const [isDownloading, setIsDownloading] = useState(false);
 
     const downloadPDF = async (filters) => {
         try {
-            // setIsDownloading(true)
             const pdfData = await downloadDailySaleReport(filters);
             const blob = new Blob([pdfData], { type: 'application/pdf' });
             const link = document.createElement('a');
@@ -31,9 +28,7 @@ const OfflineStorePerformFilter = ({control, errors, clearFilter, filters , acti
 
     return (
         <>
-
-
-    <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12">
             <div className="box custom-box">
             <div className="box-body p-4">
@@ -70,9 +65,6 @@ const OfflineStorePerformFilter = ({control, errors, clearFilter, filters , acti
                                 {isDownloading ? "" : ""}
                             </button>
                                 <FilterButton/>
-                         
-
-
                         </div>
                     </div>
                 </div>
@@ -82,4 +74,4 @@ const OfflineStorePerformFilter = ({control, errors, clearFilter, filters , acti
     );
 };
 
-export default React.memo(OfflineStorePerformFilter);
+export default React.memo(OnlineDate);

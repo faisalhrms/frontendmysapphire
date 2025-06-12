@@ -1,55 +1,23 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import PageHeader from "../../layouts/includes/PageHeader.jsx";
 import useFilters from "@hooks/useFilters.js";
-import {useFetchWithFilters, usePostWithFilters} from "@hooks/useFetchWithFilters.js";
-import api from "../../../config/axiosConfig.js";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import IconTabs from "@components/IconTabs.jsx";
 
 import AgingForm from "../components/SalesforceDashboard/AgingForm.jsx";
-
 import SaleForceDates from "@modules/ecom/components/SalesforceDashboard/SaleForceDates.jsx";
 import ExecutiveForm from "@modules/ecom/components/SalesforceDashboard/ExecutiveForm.jsx";
+import useSalesforceSyncTime from "@modules/ecom/hooks/useSalesforceSyncTime.js";
 
 const EcomSaleforce = () => {
     const [activeTab, setActiveTab] = useState("executiveSummary");
     const [currentDate, setCurrentDate] = useState("");
-    const [showsynctime, setshowsynctime] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [modalType, setModalType] = useState("");
+    const [isModelLoading, setIsModelLoading] = useState(false);
 
-    const fetchSyncTime = async () => {
-        try {
-            const response = await api.post('/salesforce/fetch_sync_time_cc/');
-            setshowsynctime(response.data.data.show_sync_time)
-        } catch (error) {
-            if (error.response) {
-                if (error.response.status === 404) {
-                    setErrorMessage("The data was last updated on Feb 25, 2025 - 04:15 PM");
-                } else {
-                    setErrorMessage(`Error fetching sync time: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
-                }
-            } else if (error.request) {
-
-                setErrorMessage("No response from the server. Please check your connection.");
-            } else {
-
-                setErrorMessage(`Error: ${error.message}`);
-            }
-            console.error("Error fetching sync time:", error);
-        }
-    };
-    useEffect(() => {
-        fetchSyncTime();
-    }, []);
-
-
-    useEffect(() => {
-        const date = new Date();
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = date.toLocaleString('default', { month: 'short' });
-        const year = date.getFullYear();
-        setCurrentDate(`${day}-${month}-${year}`);
-    }, []);
-
+    const { syncTime, errorMessage, refetch } = useSalesforceSyncTime();
+    console.log(`this is synctime`, syncTime);
 
     const { control, handleSubmit, errors, getFilters } = useFilters(
         useMemo(() => ({
@@ -68,15 +36,11 @@ const EcomSaleforce = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
-
-    const { data: executiveData, isLoading: executiveLoading,refetch } = useFetchWithFilters(
-        activeTab === "executiveSummary"?"/salesforce/fetch_executive_summary/":
-            activeTab === "agingLiabilities"?"/salesforce/fetch_pending_orders/":'',
-
-        filters,
+    const { data: executiveData, isLoading: executiveLoading, refetch: originalRefetch } = useFetchWithFilters(
+        activeTab === "executiveSummary" ? "/salesforce/fetch_executive_summary/" :
+            activeTab === "agingLiabilities" ? "/salesforce/fetch_pending_orders/" : '',
+        filters
     );
-
-
 
     const onSubmit = useCallback((formData) => {
         setFilters(formData);
@@ -87,13 +51,38 @@ const EcomSaleforce = () => {
     }, []);
 
 
+    const handleRefetch = async () => {
+        setIsModelLoading(true);
+        try {
 
+            const refreshedData = await refetch(filters, activeTab);
+
+
+            await originalRefetch();
+
+            console.log("Refetch completed successfully", refreshedData);
+        } catch (error) {
+            console.error("Error during refetch:", error);
+        } finally {
+            setIsModelLoading(false);
+        }
+    };
 
     return (
         <>
-            <PageHeader currentpage="Salesforce Dashboard"  activepage="Executive Summary" mainpage="Salesforce Dashboard"/>
+            <PageHeader currentpage="Salesforce Dashboard" activepage="Executive Summary" mainpage="Salesforce Dashboard"/>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <SaleForceDates  refetch ={refetch} control={control} errors={errors} filters={filters} activeTab={activeTab} handleSubmit={handleSubmit} onSubmit={onSubmit} currentDate={currentDate}/>
+                <SaleForceDates
+                    refetch={handleRefetch}
+                    control={control}
+                    errors={errors}
+                    filters={filters}
+                    activeTab={activeTab}
+                    handleSubmit={handleSubmit}
+                    onSubmit={onSubmit}
+                    currentDate={currentDate}
+                    isLoading={isModelLoading}
+                />
             </form>
 
             <IconTabs
@@ -104,22 +93,24 @@ const EcomSaleforce = () => {
                         icon: <i className="bx bx-pie-chart-alt"></i>,
                         content: (
                             <>
-                                {showsynctime && (
-                                    <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
-                                        <p>{showsynctime}</p>
+                                {syncTime && (
+                                    <div className="error-message text-primary p-2 rounded-lg text-right text-black">
+                                        <p>{syncTime}</p>
                                     </div>
                                 )}
-
-
                                 {errorMessage && (
-                                    <div className="error-message alert alert-primary  p-2 rounded-lg shadow-md text-center text-black mb-2">
+                                    <div className="error-message alert alert-primary p-2 rounded-lg shadow-md text-center text-black mb-2">
                                         <p>{errorMessage}</p>
                                     </div>
                                 )}
-                                <ExecutiveForm filters={filters}  data={executiveData} refetch ={refetch}
-                                               isLoading={executiveLoading}/>
+                                <ExecutiveForm
+                                    filters={filters}
+                                    syncTime={syncTime}
+                                    data={executiveData}
+                                    refetch={handleRefetch}
+                                    isLoading={executiveLoading || isModelLoading}
+                                />
                             </>
-
                         ),
                     },
                     {
@@ -127,26 +118,33 @@ const EcomSaleforce = () => {
                         label: "Aging for Pending Liabilities",
                         icon: <i className="bx bx-time-five"></i>,
                         content: (
-                            <div className="">
-                                {showsynctime && (
-                                    <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
-                                        <p>{showsynctime}</p>
+                            <div>
+                                {syncTime && (
+                                    <div className="error-message text-primary p-2 rounded-lg text-right text-black">
+                                        <p>{syncTime}</p>
                                     </div>
                                 )}
-
-
                                 {errorMessage && (
-                                    <div className="error-message alert alert-primary  p-2 rounded-lg shadow-md text-center text-black mb-2">
+                                    <div className="error-message alert alert-primary p-2 rounded-lg shadow-md text-center text-black mb-2">
                                         <p>{errorMessage}</p>
                                     </div>
                                 )}
                                 <AgingForm
                                     pendingOrdersData={executiveData}
-                                    loadingOrders={executiveLoading}
+                                    loadingOrders={executiveLoading || isModelLoading}
                                     filters={filters}
                                     activeTab={activeTab}
-                                    refetch ={refetch}
+                                    refetch={handleRefetch}
                                 />
+
+
+                                <button
+                                    onClick={handleRefetch}
+                                    disabled={isModelLoading}
+                                    className="btn btn-primary mt-3"
+                                >
+                                    {isModelLoading ? "Refreshing..." : "Refresh Data"}
+                                </button>
                             </div>
                         ),
                     },

@@ -31,7 +31,8 @@ const functionMap = {
     oms,
 };
 
-const ExecutiveForm = ({ data ,isLoading, filters, dateFrom, dateTo }) => {
+const ExecutiveForm = ({ data ,isLoading, filters, dateFrom, dateTo,syncTime }) => {
+
     const [showModal, setShowModal] = useState(false);
     const [isModelLoading, setModelLoading] = useState(false);
     const [modalType, setModalType] = useState(null);
@@ -55,7 +56,10 @@ const ExecutiveForm = ({ data ,isLoading, filters, dateFrom, dateTo }) => {
             if (typeof selectedFunction === "function") {
                 const res = await selectedFunction({ dateFrom: filters?.date_from, dateTo: filters?.date_to });
                 setModalTitle(type.replace(/_/g, " ").toUpperCase());
+
                 setApiData(res||[]);
+
+
             } else {
                 console.log("Error: Invalid type function passed to fetchModalData");
             }
@@ -67,6 +71,7 @@ const ExecutiveForm = ({ data ,isLoading, filters, dateFrom, dateTo }) => {
             setModelLoading(false);
         }
     };
+
 
     const reconciliationData = isLoading
         ? [{ label: <LoadingSpinner />, accessor: "" }]
@@ -175,7 +180,7 @@ const ExecutiveForm = ({ data ,isLoading, filters, dateFrom, dateTo }) => {
             <OrdersFulfillmentSummary filters={filters} dateFrom={dateFrom} dateTo={dateTo} />
 
             {showModal && (
-                <Model modalType={modalType} loading={isModelLoading} onClose={() => setShowModal(false) }>
+                <Model modalType={modalType} loading={isModelLoading}   syncTime={syncTime}  onClose={() => setShowModal(false) }>
                     <EcomDatatable data={apiData} type={modalType}/>
                 </Model>
             )}

@@ -3,6 +3,7 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx"
 import useFilters from "@hooks/useFilters.js"
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js"
 import IconTabs from "@components/IconTabs.jsx"
+import api from "@config/axiosConfig.js"
 
 import DigitalDate from "@modules/ecom/components/DigitalSpent/Digitaldate.jsx"
 import DigitalSpentDate from "@modules/ecom/components/DigitalSpent/DigitalSpentDate.jsx"
@@ -17,6 +18,7 @@ import CategoryOrdersCount          from "@modules/ecom/components/DigitalSpent/
 
 const DigitalSpent = () => {
   const [activeTab, setActiveTab] = useState("ObjectiveWiseSpentSummary")
+  const [isDownloading, setIsDownloading] = useState(false)
   const today = new Date()
   const yesterday = useMemo(() => {
     const d = new Date(today)
@@ -88,6 +90,33 @@ const DigitalSpent = () => {
     setActiveTab(tabId)
     setFilters(getFilters())
   }
+
+ const handleDownload = async () => {
+   setIsDownloading(true)
+   try {
+     const response = await api.get(
+       "/reporting/digital_spent/pdf_all_spent/",
+       {
+         params: {
+           ds_from: filters.ds_from,
+           ds_to: filters.ds_to
+         },
+         responseType: "blob"
+       }
+     )
+     const blob = new Blob([response.data], { type: "application/pdf" })
+     const link = document.createElement("a")
+     link.href = window.URL.createObjectURL(blob)
+     link.download = `DigitalSpent_${filters.ds_from}_to_${filters.ds_to}.pdf`
+     document.body.appendChild(link)
+     link.click()
+     document.body.removeChild(link)
+   } finally {
+     setIsDownloading(false)
+   }
+ }
+
+
 
   const tabs = [
     {
@@ -196,6 +225,8 @@ const DigitalSpent = () => {
             errors={errors}
             clearFilter={clearFilter}
             filters={filters}
+            onDownload={handleDownload}
+            isDownloading={isDownloading}
           />
         ) : (
           <DigitalSpentDate
@@ -204,6 +235,8 @@ const DigitalSpent = () => {
             clearFilter={clearFilter}
             filters={filters}
             setValue={setValue}
+            onDownload={handleDownload}
+            isDownloading={isDownloading}
           />
         )}
       </form>

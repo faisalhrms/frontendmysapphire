@@ -16,6 +16,33 @@ export const formatOptions = (data, key, valueKey = 'id', labelKey = 'name') => 
 };
 
 // helpers/formatters.js
+export const formatOptionsForApplicant = (data, key, valueKey = 'id', labelKey = 'name') => {
+    if (!data) return [];
+
+    // If key is provided, extract that property
+    const target = key ? data[key] : data;
+
+    if (!target) return [];
+
+    if (Array.isArray(target)) {
+        return target.map(item => ({
+            value: item[valueKey],
+            label: item[labelKey],
+        }));
+    }
+
+    // Handle single object
+    if (typeof target === 'object') {
+        return [{
+            value: target[valueKey],
+            label: target[labelKey],
+        }];
+    }
+
+    return [];
+};
+
+// helpers/formatters.js
 // helpers/formatters.js
 export const formatNestedOptions = (data, key, valueKey = 'id', labelKey = 'name') => {
     if (!data) return [];
