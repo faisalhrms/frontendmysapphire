@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import {downloadsaleforce} from "@modules/ecom/services/salesforcedashboard_services.js";
 
-const SaleForceDates = ({ control, errors ,activeTab ,currentDate ,refetch,filters}) => {
+const SaleForceDates = ({ control, errors ,activeTab  ,refetch,filters}) => {
     const [isDownloading, setIsDownloading] = useState(false);
+    const [currentDate, setCurrentDate] = useState('');
 
+    useEffect(() => {
+        const date = new Date();
+        const formattedDate = date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        });
+
+        setCurrentDate(formattedDate);
+    }, []);
     const downloadPDF = async (filters) => {
         try {
             // setIsDownloading(true)
