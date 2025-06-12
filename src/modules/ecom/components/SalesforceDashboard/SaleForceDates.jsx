@@ -67,14 +67,14 @@ const SaleForceDates = ({ control, errors ,activeTab  ,refetch,filters}) => {
                                                                 </div>
                                                                 <div className="flex items-center gap-4 mt-6">
                                                                     <FilterButton/>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={refetch}
+                                                                    {/*<button*/}
+                                                                    {/*    type="button"*/}
+                                                                    {/*    onClick={refetch}*/}
 
-                                                                        className="hs-dropdown-toggle ti-btn ti-btn-success-full"
-                                                                    >
-                                                                        <i className="ri-refresh-line inline-block"></i> Refresh
-                                                                    </button>
+                                                                    {/*    className="hs-dropdown-toggle ti-btn ti-btn-success-full"*/}
+                                                                    {/*>*/}
+                                                                    {/*    <i className="ri-refresh-line inline-block"></i> Refresh*/}
+                                                                    {/*</button>*/}
                                                                     <button
                                                                         type="button"
                                                                         className="ti-btn ti-btn-success !mb-0 text-white font-medium text-sm rounded py-2 px-3"
@@ -96,14 +96,14 @@ const SaleForceDates = ({ control, errors ,activeTab  ,refetch,filters}) => {
 
                                             <span className="text-gray-800 font-semibold">As On: </span>
                                             <span className="text-primary font-bold mr-4">{currentDate}</span>
-                                            <button
-                                                type="button"
-                                                onClick={refetch}
+                                            {/*<button*/}
+                                            {/*    type="button"*/}
+                                            {/*    onClick={refetch}*/}
 
-                                                className="hs-dropdown-toggle ti-btn ti-btn-success-full"
-                                            >
-                                                <i className="ri-refresh-line inline-block"></i> Refresh
-                                            </button>
+                                            {/*    className="hs-dropdown-toggle ti-btn ti-btn-success-full"*/}
+                                            {/*>*/}
+                                            {/*    <i className="ri-refresh-line inline-block"></i> Refresh*/}
+                                            {/*</button>*/}
                                         </div>
                                     </div>
 
