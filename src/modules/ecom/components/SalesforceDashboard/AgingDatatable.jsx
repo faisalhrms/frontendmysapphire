@@ -1,7 +1,6 @@
-
 import React, { useMemo } from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
-import { formatNumberWithCommas } from "@helpers/formatters.js";
+
 
 const AgingDatatable = ({ data = [], columns, pageSize = 10 }) => {
     const memoizedColumns = useMemo(() => columns, [columns]);
