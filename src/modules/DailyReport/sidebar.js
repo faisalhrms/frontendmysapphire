@@ -1,5 +1,5 @@
 import { generateSidebarItem } from "@helpers/formatters.js";
-import {DAILYREPORT_ROUTES, OFFLINE_STORE_PERFORMANCE_ROUTE} from "@modules/DailyReport/routes.js";
+import {DAILYREPORT_ROUTES, OFFLINE_STORE_PERFORMANCE_ROUTE, UPLOAD_TARGET_ROUTE} from "@modules/DailyReport/routes.js";
 
 export const sidebarMenu = [
     generateSidebarItem(
@@ -34,6 +34,14 @@ export const sidebarMenu = [
                 "bx bx-message-square-edit",
                 OFFLINE_STORE_PERFORMANCE_ROUTE.READ.permission,
             ),
+            generateSidebarItem(
+                UPLOAD_TARGET_ROUTE.ADD.path,
+                "link",
+                "Upload Target",
+                2,
+                "bx bx-message-square-edit",
+                // UPLOAD_TARGET_ROUTE.ADD.permission,
+            )
 
 
         ]
