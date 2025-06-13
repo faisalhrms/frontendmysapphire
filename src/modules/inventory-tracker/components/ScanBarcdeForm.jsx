@@ -77,7 +77,7 @@ const ScanBarcdeForm = () => {
                         {!scanning && (
                             <button
                                 onClick={handleScanClick}
-                                className="p-3 text-gray-600 hover:text-gray-900 rounded-full bg-white shadow-md border-2 border-gray-300 hover:border-gray-400 transition duration-300 ease-in-out"
+                                className="p-2 text-gray-600 hover:text-gray-900 rounded-full bg-white shadow-md border-2 border-gray-300 hover:border-gray-400 transition duration-300 ease-in-out"
                                 title={scanning ? "Stop Scanning" : "Scan Barcode"}
                                 type="button"
                             >
