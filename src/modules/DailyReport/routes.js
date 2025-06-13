@@ -26,7 +26,7 @@ export const OFFLINE_STORE_PERFORMANCE_ROUTE={
 export const UPLOAD_TARGET_ROUTE={
     ADD:{
         path:"/module/retail/target-upload",
-        permission: "auth.target-upload",
+        // permission: "auth.target-upload",
     }
 }
 export const MODULE_ROUTES = [
@@ -49,7 +49,7 @@ export const MODULE_ROUTES = [
     {
         path:UPLOAD_TARGET_ROUTE.ADD.path,
         component:UploadTarget,
-        permission: UPLOAD_TARGET_ROUTE.ADD.permission,
+        // permission: UPLOAD_TARGET_ROUTE.ADD.permission,
     }
 
 

@@ -221,7 +221,9 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                     name="cnic"
                                                     control={control}
                                                     errors={errors}
-                                                    placeholder="Cnic"
+                                                    separateLabel={true}
+                                                    labelText="CNIC Number"
+                                                    placeholder="e.g. xxxxx-xxxxxxx-x"
                                                     is_required
                                                     className="w-full"
                                                     maxLength={15}
@@ -230,6 +232,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                         setValue("cnic", formatted);
                                                     }}
                                                 />
+
                                             </div>
                                             <div className="col-span-3">
                                                 <FormInput type="date" name="date_of_birth" control={control}
@@ -241,7 +244,9 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                                     name="mobile_number"
                                                     control={control}
                                                     errors={errors}
-                                                    placeholder="Mobile Phone"
+                                                    separateLabel={true}
+                                                    labelText="Mobile Number"
+                                                    placeholder="e.g. xxxx-xxxxxxx"
                                                     is_required
                                                     className="w-full"
                                                     maxLength={12}

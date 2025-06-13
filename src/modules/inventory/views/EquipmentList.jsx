@@ -10,7 +10,18 @@ import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js
 const EquipmentList = () => {
     const { search } = useLocation();
     const params = new URLSearchParams(search);
-    const statusFilter = params.get('status') || '';
+    const queryParams = {};
+    [
+        'status',
+        'company_id',
+        'department_id',
+        'location_id',
+        'equipment_site_id',
+        'equipment_type_id',
+        'custodian_id'
+    ].forEach(param => {
+        if (params.get(param)) queryParams[param] = params.get(param);
+    });
 
 
     const columns = [
@@ -91,11 +102,13 @@ const EquipmentList = () => {
             filterType: "text",
             filterKey: 'custodian__full_name',
         },
+
         { Header: "Department", accessor: "department",
             filterable: true,
             filterType: "text",
             filterKey: 'department__name'
         },
+
         { Header: "Asset Site", accessor: "equipment_site",
             filterable: true,
             filterType: "text",
@@ -110,6 +123,13 @@ const EquipmentList = () => {
             filterType: "text",
             filterKey: 'location__name'
         },
+        {
+            Header: "Company",
+            accessor: "company.name",
+            filterable: false,
+            Cell: ({ row }) => <span>{row.original.company?.name || "-"}</span>,
+        },
+
     ];
 
     const buttons = (
@@ -130,7 +150,7 @@ const EquipmentList = () => {
             <DataTable
                 columns={columns}
                 title="Assets"
-                apiUrl={`/equipments/datatable/?status=${statusFilter}`}
+                apiUrl={`/equipments/datatable/?${new URLSearchParams(queryParams).toString()}`}
                 buttons={buttons}
                 enableAdvancedFilters={true}
             />

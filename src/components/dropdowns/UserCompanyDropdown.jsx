@@ -5,7 +5,7 @@ import React from "react";
 const CompanyDropdown = ({
                              control,
                              errors,
-                             data,
+                             eqData,
                              multiple = false,
                              dataKey = 'company',
                              classes = '',
@@ -25,7 +25,7 @@ const CompanyDropdown = ({
             apiUrl="/select/user/companies/"
             queryKeyBase="companies"
             clientSideSearch={true}
-            preselectedOptions={data ? formatOptions(data, dataKey) : []}
+            preselectedOptions={formatOptions(eqData, 'company')}
             className={classes}
             onSelectChange={onCompanySelect}
         />
