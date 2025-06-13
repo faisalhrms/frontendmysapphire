@@ -46,9 +46,9 @@ const applicantSchema = z.object({
     }),
 
     total_experience_years: z
-        .string({
+        .number({
             required_error: "Total experience is required",
-            invalid_type_error: "Total experience must be a string",
+            invalid_type_error: "Total experience must be a number",
         })
         .min(0, "Total experience must be non-negative"),
 
@@ -57,8 +57,7 @@ const applicantSchema = z.object({
 
     mobile_number: z
         .string()
-        .nonempty("Mobile number is required")
-        .regex(/^03\d{2}-\d{7}$/, "Mobile number must be in the format 0300-0000000"),
+        .nonempty("Mobile number is required"),
     email: z.string().email("Invalid email address"),
     status: applicantStatus.default("pending"),
     remarks: z.string().max(500).optional(),
