@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {BrowserRouter, Route, Routes, useNavigate} from 'react-router-dom';
+import {BrowserRouter, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import {Provider, useSelector} from 'react-redux';
 import './index.scss';
 import Login from "@modules/auth/views/Login.jsx";
@@ -38,22 +38,20 @@ const PasswordResetGuard = ({ children }) => {
     const user = useSelector((state) => state.auth.user);
     const tokens = useSelector((state) => state.auth.tokens);
     const navigate = useNavigate();
-
+    const location = useLocation();
     React.useEffect(() => {
-        // Check if we have both user data and valid tokens
         if (user && tokens?.access_token) {
-            console.log(`i am in first phase of user and token`)
             if (user.password_changed_at === null) {
                 navigate(`${import.meta.env.BASE_URL}reset-old-password`, { replace: true });
-                console.log(`i am in reset-old-password`)
             }
         } else {
-            debugger
-            navigate(`${import.meta.env.BASE_URL}`, { replace: true });
-            console.log(`i am in about`)
-
+            // Redirect to login with current path as state
+            navigate(`${import.meta.env.BASE_URL}`, {
+                replace: true,
+                state: { from: location } // Preserve current location
+            });
         }
-    }, [user, tokens, navigate]);
+    }, [user, tokens, navigate, location]); // Add location dependency
 
     return user && tokens?.access_token ? children : null;
 };
