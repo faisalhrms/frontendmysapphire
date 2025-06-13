@@ -1,13 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 
 const Card = ({ name, icon, color, onClick }) => (
     <div
-        className={`bg-white custom-card text-center w-90 h-60 p-6 m-2 ${color} rounded-lg mb-4 transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl cursor-pointer dark:text-gray-200 dark:bg-bodybg`}
+        className={`bg-white border border-gray-200  shadow-xl custom-card text-center w-[210px] h-[280px] p-6 m-2 ${color} rounded-lg mb-4 transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl cursor-pointer dark:text-gray-200 dark:bg-bodybg`}
         onClick={onClick}
     >
-        <img src={icon} alt={name} className="w-20 h-20 mt-8 avatar avatar-xl avatar-rounded me-2 mb-2" />
-        <h3 className="mb-4 text-muted fs-11 dark:text-gray-200">{name}</h3>
+        <img src={icon} alt={name} className="w-28 h-28 mt-4 justify-center items-center  ml-4 dark:text-gray-200 dark:bg-bodybg" />
+        <h3 className="mb-2 mt-6 font-bold  fs-10  dark:text-gray-200 dark:bg-bodybg">{name}</h3>
     </div>
 );
 
@@ -15,7 +16,9 @@ const CardForm = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="mt-52 flex justify-center items-center">
+        <>
+            <PageHeader currentpage="CEO Dashboard" activepage="dashboard" mainpage="CEO Dashboard"/>
+        <div className="mt-18 mb-4 flex justify-center items-center">
         
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card
@@ -26,7 +29,7 @@ const CardForm = () => {
                 />
                 <Card
                     name="Salesforce Dashboard"
-                    icon="https://res.cloudinary.com/dtsguaevl/image/upload/v1749617983/1_Salesforce_fc08f6ce4677-desktop_h2d86q.jpg"
+                    icon="https://res.cloudinary.com/dtsguaevl/image/upload/v1749809060/im4444_nbrht2.png"
                     color="bg-blue-500"
                     onClick={() => navigate('/module/ecom/salesforcedashboard')}
 
@@ -39,12 +42,13 @@ const CardForm = () => {
                 />
                 <Card
                     name="E-com Deliverables"
-                    icon="https://res.cloudinary.com/dsarj6ihu/image/upload/v1740472073/shopping-cart_o1qkxe.png"
-                    color="bg-yellow-500"
+                    icon="https://res.cloudinary.com/dtsguaevl/image/upload/v1749809261/25619_lgndgs.png"
+                    color="bg-black"
                     onClick={() => navigate('/module/tasks/ecom')}
                 />
             </div>
         </div>
+        </>
     );
 };
 

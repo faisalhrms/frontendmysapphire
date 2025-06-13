@@ -7,9 +7,8 @@ import {getPastDate} from "@helpers/dateTime.js";
 import UserJourneyTab from "@modules/ecom/components/weekly-report/UserJourneyTab.jsx";
 import SourceBasedPerformanceTab from "@modules/ecom/components/weekly-report/SourceBasedPerformanceTab.jsx";
 import LandingPagePerformanceTab from "@modules/ecom/components/weekly-report/LandingPagePerformanceTab.jsx";
-import WebsiteSearchTab from "@modules/ecom/components/weekly-report/WebsiteSearchTab.jsx";
-import ComparativeDate from "@modules/DailyReport/components/comparativeSalesReport/ComparativeDate.jsx";
 import WeeklyReportFilter from "@modules/ecom/components/weekly-report/WeeklyReportFilter.jsx";
+import HourTrafficRate from "@modules/ecom/components/weekly-report/HourTrafficRate.jsx";
 
 const EcomWeeklyReport = () =>{
     const [activeTab, setActiveTab] = useState("user_journey");
@@ -23,7 +22,8 @@ const EcomWeeklyReport = () =>{
             () => ({
                 initialFilters: [
                     { name: 'date',defaultValue: getPastDate(0)},
-                    { name: 'top', defaultValue: null }
+                    { name: 'top', defaultValue: null },
+                    { name: 'hour', defaultValue: null },
                 ],
             }),
             []
@@ -31,11 +31,12 @@ const EcomWeeklyReport = () =>{
     );
 
     const [filters, setFilters] = useState(getFilters());
-
     const { data, isLoading, refetch } = useFetchWithFilters(
         activeTab === "user_journey" ? '/ecom/weekly-report/user-journey/weekly/' :
             activeTab === "source_based_performance" ? '/ecom/weekly-report/source-based-performance/' :
-                activeTab === "landing_page_performance" ? '/ecom/weekly-report/landing-page-performance/' : '', filters
+                activeTab === "landing_page_performance" ? '/ecom/weekly-report/landing-page-performance/' :
+                    activeTab === "hour_traffic_rate" ? '/ecom/weekly-report/traffic-performance/' :
+                        '', filters
     );
     const onSubmit = useCallback(
         (formData) => {
@@ -49,12 +50,9 @@ const EcomWeeklyReport = () =>{
     return (
         <>
             <PageHeader currentpage="Ecom Weekly Report" activepage="Reports" mainpage="Ecom Weekly Report"/>
-            {
-                activeTab !== 'landing_page_performance' &&
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <WeeklyReportFilter filters={filters} control={control} errors={errors} activeTab={activeTab}/>
                     </form>
-            }
             <IconTabs
                 tabs={[
                     {
@@ -95,17 +93,17 @@ const EcomWeeklyReport = () =>{
                             />
                         ),
                     },
-                    // {
-                    //     id: "website_search",
-                    //     label: "Website Search",
-                    //     icon: <i className="bi bi-search"></i>,
-                    //     content: (
-                    //         <WebsiteSearchTab data={data}
-                    //                           isLoading={isLoading}
-                    //                           isActive={'website_search' === activeTab}
-                    //         />
-                    //     ),
-                    // },
+                    {
+                        id: "hour_traffic_rate",
+                        label: "Hour Traffic Rate",
+                        icon: <i className="bi bi-clock-history"></i>,
+                        content: (
+                            <HourTrafficRate data={data}
+                                              isLoading={isLoading}
+                                              isActive={'hour_traffic_rate' === activeTab}
+                            />
+                        ),
+                    },
                 ]}
                 onTabChange={handleTabChange}
             />
