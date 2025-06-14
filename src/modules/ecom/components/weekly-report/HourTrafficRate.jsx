@@ -11,7 +11,9 @@ const HourTrafficRate = ({data, isLoading, isActive}) => {
     return (
         <>
             <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-                <div className="mb-6 overflow-auto" style={{ maxHeight: '500px' }}>
+                <div className="mb-6 overflow-auto"
+                     // style={{ maxHeight: '800px' }}
+                    >
                     <table className="w-full border-collapse">
                         <thead style={{
                             position: "sticky",

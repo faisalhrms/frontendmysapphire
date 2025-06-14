@@ -95,7 +95,7 @@ const EcomWeeklyReport = () =>{
                     },
                     {
                         id: "hour_traffic_rate",
-                        label: "Hour Traffic Rate",
+                        label: "Hourly Traffic Rate",
                         icon: <i className="bi bi-clock-history"></i>,
                         content: (
                             <HourTrafficRate data={data}
