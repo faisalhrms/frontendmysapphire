@@ -27,10 +27,10 @@ const ScanBarcodePage = () => {
 
 
     const [filters, setFilters] = useState(getFilters());
-
+    console.log(filters)
 
     const { data, isLoading } = useFetchWithFilters(
-        activeTab === "scan_bar_code" ? `/inventory-tracker/barcode/?barcode=U3FEHE25V319` :
+        (activeTab === "scan_bar_code" && filters?.barcode!=='') ? `/inventory-tracker/barcode/` :
          '',
         filters
     );
@@ -62,7 +62,7 @@ const ScanBarcodePage = () => {
                         label: "Scan Barcode",
                         icon: <i className="bx bx-barcode"></i>,
                         content: (
-                            <ScanBarcdeForm data={data} isLoading={isLoading} />
+                            <ScanBarcdeForm data={data} isLoading={isLoading} setFilters={setFilters} filters={filters} />
                         )
                     },
                     {
