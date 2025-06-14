@@ -105,7 +105,7 @@ const SalesForceOrderExceptionReport = () => {
                                                 <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.created)}</td>
                                                 <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.on_hold)}</td>
                                                 <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.order_with_exception)}</td>
-                                                <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.total)}</td>
+                                                <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-danger text-right">{formatNumberWithCommas(row?.total)}</td>
                                             </tr>
                                         ))}
                                         </tbody>
@@ -153,7 +153,7 @@ const SalesForceOrderExceptionReport = () => {
                                                 <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.cn_exception)}</td>
                                                 <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.exception)}</td>
                                                 <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.on_hold)}</td>
-                                                <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">{formatNumberWithCommas(row?.total)}</td>
+                                                <td className=" border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-danger text-right">{formatNumberWithCommas(row?.total)}</td>
                                             </tr>
                                         ))}
                                         </tbody>
@@ -163,14 +163,37 @@ const SalesForceOrderExceptionReport = () => {
                             <div className='xl:col-span-6 col-span-12'>
                                 <div className="p-2 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                                     <div className='grid grid-cols-12 gap-x-2'>
-                                        <FailureSummaryTable title="SO Invoiced" data={data?.so_invoicing_failure_summary}/>
-                                        <FailureSummaryTable title="SO Cancel" data={data?.so_cancellation_failure_summary}/>
-                                        <FailureSummaryTable title="RO Creation" data={data?.ro_creation_failure_summary}/>
-                                        <FailureSummaryTable title="SO Creation" data={data?.so_creation_failure_summary}/>
+                                        <div className='xl:col-span-3 col-span-12'>
+                                            <FailureSummaryTable title="SO Invoiced"
+                                                                 data={data?.so_invoicing_failure_summary}/>
+                                        </div>
+                                        <div className='xl:col-span-3 col-span-12'>
+                                            <FailureSummaryTable title="SO Cancel"
+                                                                 data={data?.so_cancellation_failure_summary}/>
+                                        </div>
+                                        <div className='xl:col-span-3 col-span-12'>
+                                            <FailureSummaryTable title="RO Creation"
+                                                                 data={data?.ro_creation_failure_summary}/>
+                                        </div>
+                                        <div className='xl:col-span-3 col-span-12'>
+                                            <FailureSummaryTable title="SO Creation"
+                                                                 data={data?.so_creation_failure_summary}/>
+                                        </div>
+                                        </div>
+
+                                    <div className='grid grid-cols-12 gap-x-2 mt-8'>
+                                        <div className='xl:col-span-6 col-span-12'>
+                                            <FailureSummaryTable title="Orders with partial FO"
+                                                                 data={data?.order_with_pfo_summary}/>
+                                        </div>
+                                        <div className='xl:col-span-6 col-span-12'>
+                                            <FailureSummaryTable title="Orders with no FO"
+                                                                 data={data?.order_with_no_fo_summary}/>
+                                        </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         )}
                     </>
         </>
