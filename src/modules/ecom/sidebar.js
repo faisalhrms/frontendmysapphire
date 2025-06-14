@@ -58,14 +58,6 @@ export const sidebarMenu = [
                 '',
                 ECOM_ROUTES.WR.permission,
             ),
-            generateSidebarItem(
-                ECOM_ROUTES.SO.path,
-                'link',
-                'Order Status',
-                7,
-                '',
-                ECOM_ROUTES.SO.permission,
-            )
         ]
     )
 ];
