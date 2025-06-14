@@ -3,7 +3,6 @@ import {formatNumberWithCommas} from "@helpers/formatters.js";
 
 const FailureSummaryTable = ({ title, data }) => {
     return (
-        <div className='xl:col-span-3 col-span-12'>
             <table className="w-full border-collapse">
                 <thead>
                 <tr className="text-white bg-[#383853]">
@@ -23,14 +22,13 @@ const FailureSummaryTable = ({ title, data }) => {
                         <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black">
                             {row?.month}
                         </td>
-                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
+                        <td className={`border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-right ${row.month === "Grand Total" ? "text-danger" : "text-black"}`} >
                             {formatNumberWithCommas(row?.total)}
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
-        </div>
     );
 };
 
