@@ -1,24 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import IconTabs from "@components/IconTabs.jsx";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import ScanBarcdeForm from "@modules/inventory-tracker/components/ScanBarcdeForm.jsx";
 import ProductDatatableTab from "@modules/inventory-tracker/components/ProductList.jsx";
-import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+import useFilters from "@hooks/useFilters.js";
 
 const ScanBarcodePage = () => {
-    const [activeTab, setActiveTab] = useState("ScanBarcode");
+    const [activeTab, setActiveTab] = useState("scan_bar_code");
+
+
+    const {
+        control,
+        handleSubmit,
+        errors,
+        getFilters
+    } = useFilters(
+        useMemo(() => ({
+            initialFilters: [
+                { name: 'barcode', defaultValue: '' },
+                { name: 'status', defaultValue: null },
+                { name: 'category', defaultValue: null }
+            ]
+        }), [])
+    );
+
+
+    const [filters, setFilters] = useState(getFilters());
+
+
+    const { data, isLoading } = useFetchWithFilters(
+        activeTab === "scan_bar_code" ? `/inventory-tracker/barcode/?barcode=U3FEHE25V319` :
+         '',
+        filters
+    );
+
+
+    const onSubmit = useCallback(
+        (formData) => {
+            setFilters(formData);
+        },
+        []
+    );
 
     const handleTabChange = (tabId) => {
         setActiveTab(tabId);
     };
 
-    // const { data, isLoading } = useFetchWithFilters(
-    //     activeTab === "scan_bar_code" ? '/inventory-tracker/barcode/?barcode=U3FEHE25V319'
-    //     , filters
-    // );
     return (
         <>
-            <PageHeader currentpage="Inventory Tracker"/>
+            <PageHeader currentpage="Inventory Tracker" />
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+
+            </form>
 
             <IconTabs
                 tabs={[
@@ -27,7 +62,7 @@ const ScanBarcodePage = () => {
                         label: "Scan Barcode",
                         icon: <i className="bx bx-barcode"></i>,
                         content: (
-                            <ScanBarcdeForm />
+                            <ScanBarcdeForm data={data} isLoading={isLoading} />
                         )
                     },
                     {
@@ -35,7 +70,7 @@ const ScanBarcodePage = () => {
                         label: "Product List",
                         icon: <i className="bx bx-list-ul"></i>,
                         content: (
-                            <ProductDatatableTab />
+                            <ProductDatatableTab  />
                         )
                     }
                 ]}

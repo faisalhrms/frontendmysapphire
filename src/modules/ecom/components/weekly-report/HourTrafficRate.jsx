@@ -12,7 +12,7 @@ const HourTrafficRate = ({data, isLoading, isActive}) => {
         <>
             <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                 <div className="mb-6 overflow-auto"
-                     // style={{ maxHeight: '800px' }}
+
                     >
                     <table className="w-full border-collapse">
                         <thead style={{
@@ -22,33 +22,30 @@ const HourTrafficRate = ({data, isLoading, isActive}) => {
                             backgroundColor: "#383853"
                         }}>
                         <tr className="text-white">
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Hour</th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">
-                                <div className="flex items-center">
-                                    <span className="mr-1"></span>
-                                    New users
-                                </div>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Hour</th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">
+                                New users
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Returning
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Returning
                                 users
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Total
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Total
                                 users
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Bounce
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Bounce
                                 rate
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Add to
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Add to
                                 carts
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Checkouts</th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Ecommerce
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Checkouts</th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Ecommerce
                                 purchases
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium border-r border-gray-300">Ecommerce
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Ecommerce
                                 revenue
                             </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium">User key event rate</th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">User key event rate</th>
                         </tr>
                         </thead>
                         <tbody>

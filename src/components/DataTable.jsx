@@ -763,7 +763,7 @@ const DataTable = React.memo(({
                         {enableAdvancedFilters && (
                             <button
                                 type="button"
-                                className="btn btn-sm btn-outline-primary whitespace-nowrap"
+                                className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
                                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                             >
                                 <i className={`ri-filter-${showAdvancedFilters ? '3' : '2'}-line mr-1`}></i>
