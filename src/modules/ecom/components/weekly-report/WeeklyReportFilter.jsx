@@ -8,13 +8,13 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
         return new Date().toISOString().split("T")[0];
     }, []);
 
-
     const hourOptions = useMemo(() => {
-        return Array.from({ length: 23 }, (_, i) => ({
-            label: (i + 1).toString(),
-            value: (i + 1).toString(),
+        return Array.from({ length: 24 }, (_, i) => ({
+            label: i.toString(),
+            value: i.toString(),
         }));
     }, []);
+
 
     return (
         <div className="grid grid-cols-12 gap-6">
@@ -36,7 +36,7 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
                                 </div>
                                 {activeTab === "landing_page_performance" && (
                                     <div className="flex-1">
-                                        {/* Replaced FormInput with FormSelect */}
+
                                         <FormSelect
                                             name="hour"
                                             control={control}
