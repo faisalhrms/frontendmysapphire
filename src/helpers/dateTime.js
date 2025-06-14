@@ -135,6 +135,23 @@ export const getPastDate = (days = 1) => {
     return today.toISOString().slice(0, 10);
 };
 
+export const getPastDateTime = (days = 0) => {
+    const today = new Date();
+    today.setDate(today.getDate() - days);
+
+    const startOfToday = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        0, 0, 0, 0
+    );
+
+    return {
+        startOfToday: startOfToday.toISOString(),
+        now: today.toISOString()
+    };
+};
+
 export const getDateRangeFromTimePeriod = (timePeriod) => {
     const today = new Date();
     let startDate, endDate;

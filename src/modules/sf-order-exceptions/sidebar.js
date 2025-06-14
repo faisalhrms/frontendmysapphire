@@ -18,6 +18,14 @@ export const sidebarMenu = [
                 "bx bx-message-square-edit",
                 SF_ORDER_EXCEPTION_ROUTES.ORDER_EXCEPTIONS.permission,
             ),
+            generateSidebarItem(
+                SF_ORDER_EXCEPTION_ROUTES.ORDER_STATUS.path,
+                "link",
+                "Order Status",
+                1,
+                "bx bx-message-square-edit",
+                SF_ORDER_EXCEPTION_ROUTES.ORDER_STATUS.permission,
+            ),
         ]
     )
 ];
