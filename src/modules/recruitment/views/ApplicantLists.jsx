@@ -8,7 +8,7 @@ import ApplicantsTable from "@modules/recruitment/components/ApplicantsTable.jsx
 const tabDefinitions = [
     {
         id: "allApplicant",
-        label: "All Applicant",
+        label: "All Applicants",
         icon: <i className="ri-file-list-line"></i>,
         content: (
             <ApplicantsTable
@@ -20,7 +20,7 @@ const tabDefinitions = [
     },
     {
         id: "locationBased",
-        label: "Location Based",
+        label: "Applicants",
         icon: <i className="ri-map-pin-line"></i>,
         content: (
             <ApplicantsTable

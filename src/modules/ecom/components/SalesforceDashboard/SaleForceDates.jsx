@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import {downloadsaleforce} from "@modules/ecom/services/salesforcedashboard_services.js";
 
-const SaleForceDates = ({ control, errors ,activeTab ,currentDate ,refetch,filters}) => {
+const SaleForceDates = ({ control, errors ,activeTab  ,refetch,filters}) => {
     const [isDownloading, setIsDownloading] = useState(false);
+    const [currentDate, setCurrentDate] = useState('');
 
+    useEffect(() => {
+        const date = new Date();
+        const formattedDate = date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        });
+
+        setCurrentDate(formattedDate);
+    }, []);
     const downloadPDF = async (filters) => {
         try {
             // setIsDownloading(true)
@@ -56,14 +67,14 @@ const SaleForceDates = ({ control, errors ,activeTab ,currentDate ,refetch,filte
                                                                 </div>
                                                                 <div className="flex items-center gap-4 mt-6">
                                                                     <FilterButton/>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={refetch}
+                                                                    {/*<button*/}
+                                                                    {/*    type="button"*/}
+                                                                    {/*    onClick={refetch}*/}
 
-                                                                        className="hs-dropdown-toggle ti-btn ti-btn-success-full"
-                                                                    >
-                                                                        <i className="ri-refresh-line inline-block"></i> Refresh
-                                                                    </button>
+                                                                    {/*    className="hs-dropdown-toggle ti-btn ti-btn-success-full"*/}
+                                                                    {/*>*/}
+                                                                    {/*    <i className="ri-refresh-line inline-block"></i> Refresh*/}
+                                                                    {/*</button>*/}
                                                                     <button
                                                                         type="button"
                                                                         className="ti-btn ti-btn-success !mb-0 text-white font-medium text-sm rounded py-2 px-3"
@@ -85,14 +96,14 @@ const SaleForceDates = ({ control, errors ,activeTab ,currentDate ,refetch,filte
 
                                             <span className="text-gray-800 font-semibold">As On: </span>
                                             <span className="text-primary font-bold mr-4">{currentDate}</span>
-                                            <button
-                                                type="button"
-                                                onClick={refetch}
+                                            {/*<button*/}
+                                            {/*    type="button"*/}
+                                            {/*    onClick={refetch}*/}
 
-                                                className="hs-dropdown-toggle ti-btn ti-btn-success-full"
-                                            >
-                                                <i className="ri-refresh-line inline-block"></i> Refresh
-                                            </button>
+                                            {/*    className="hs-dropdown-toggle ti-btn ti-btn-success-full"*/}
+                                            {/*>*/}
+                                            {/*    <i className="ri-refresh-line inline-block"></i> Refresh*/}
+                                            {/*</button>*/}
                                         </div>
                                     </div>
 

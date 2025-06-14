@@ -26,6 +26,7 @@ const EquipmentDashboardStats = ({ filters }) => {
                     <EquipmentStatusCard
                         key={index}
                         item={item}
+                        currentFilters={filters}  // Pass current filters
                     />
                 ))}
             </div>

@@ -58,7 +58,7 @@ const Modal = ({
 
                         {syncTime && (
                             <div className="text-primary p-2 rounded-lg text-black">
-                                <p className="text-sm">{`Date: ${syncTime}`}</p>
+                                <p className="text-sm">{` ${syncTime}`}</p>
                             </div>
                         )}
 

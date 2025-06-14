@@ -12,6 +12,8 @@ const FormInput = ({
                        className = "",
                        label = true,
                        is_required = false,
+                       separateLabel = false,
+                       labelText = "",
                        ...rest
                    }) => {
     const fieldError = name
@@ -23,7 +25,7 @@ const FormInput = ({
         <>
             {label && (
                 <label htmlFor={name} className="form-label">
-                    {placeholder}
+                    {separateLabel ? labelText : placeholder}
                     {is_required && <span className="text-rose-500 pl-1"> *</span>}
                 </label>
             )}
