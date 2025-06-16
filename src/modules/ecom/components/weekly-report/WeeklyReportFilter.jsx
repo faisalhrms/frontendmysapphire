@@ -34,9 +34,8 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
                                         label={false}
                                     />
                                 </div>
-                                {activeTab === "landing_page_performance" && (
+                                {(activeTab === "landing_page_performance" || activeTab === "order_detail_from_cc" || activeTab === "top_selling_article" || activeTab === "hour_traffic_rate") && (
                                     <div className="flex-1">
-
                                         <FormSelect
                                             name="hour"
                                             control={control}
@@ -47,6 +46,9 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
                                         />
                                     </div>
                                 )}
+
+
+
                             </div>
                             <div className="flex items-center gap-4 flex-2">
                                 <FilterButton />

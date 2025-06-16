@@ -14,47 +14,155 @@ const TopSellingReport = ({ data, isLoading, isActive }) => {
     return (
         <>
             <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-                <div className="mb-6 overflow-auto">
+                <div className="mb-6 overflow-auto  max-h-[600px]">
                     <table className="w-full border-collapse">
                         <thead
                             style={{
+                                backgroundColor: "#383853",
+                                color: "white",
                                 position: "sticky",
                                 top: 0,
-                                zIndex: 10,
-                                backgroundColor: "#383853",
+                                zIndex: 10
                             }}
                         >
                         <tr className="text-white">
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center  sticky left-0 z-10  bg-[#383853]">Date</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center sticky ">Hour</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center sticky ">Minutes</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center ">Product 1</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center"
-                                style={{width: '100px', whiteSpace: 'nowrap'}}>Qty 1
+
+
+                            <th
+                                className="bg-blue-200 border border-gray-300 p-2 text-center sticky left-0 z-30 top-0 bg-[#383853]"
+                                style={{
+                                    width: '120px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                Date
                             </th>
 
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Revenue 1</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center"   style={{width: '100px', whiteSpace: 'nowrap'}}>Product 2</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center"
-                                style={{width: '100px', whiteSpace: 'nowrap'}}>Qty 2
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center  "
+                                style={{
+                                    width: '120px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}>Hour
                             </th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Revenue 2</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Product 3</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center"
-                                style={{width: '100px', whiteSpace: 'nowrap'}}>Qty 3
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center "
+                                style={{
+                                    width: '120px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}>Minutes
                             </th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Revenue 3</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Product 4</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center"
-                                style={{width: '100px', whiteSpace: 'nowrap'}}>Qty 4
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Product 1
                             </th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Revenue 4</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Product 5</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center"
-                                style={{width: '100px', whiteSpace: 'nowrap'}}>Qty 5
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '100px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Qty 1
                             </th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Revenue 5</th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Revenue 1
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Product 2
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '100px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Qty 2
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Revenue 2
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Product 3
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '100px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Qty 3
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Revenue 3
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Product 4
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '100px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Qty 4
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Revenue 4
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Product 5
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '100px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Qty 5
+                            </th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center" style={{
+                                width: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }}>Revenue 5
+                            </th>
                         </tr>
+
                         </thead>
                         <tbody>
                         {data &&
@@ -66,10 +174,10 @@ const TopSellingReport = ({ data, isLoading, isActive }) => {
                                             item.hour === "Total" ? "bg-[#949eb7] font-bold" : ""
                                         }`}
                                     >
-                                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-center text-black sticky left-0 z-40  bg-white ">
+                                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-center text-black sticky  left-0  z-35   bg-white ">
                                             {item.creation_date}
                                         </td>
-                                        <td className="border border-gray-300 p-2 text-center dark:text-gray-200 dark:bg-bodybg text-black  ">
+                                        <td className="border border-gray-300 p-2 text-center dark:text-gray-200 dark:bg-bodybg text-black">
                                             {item.hour}
                                         </td>
                                         <td className="border border-gray-300 p-2 text-center dark:text-gray-200 dark:bg-bodybg text-black ">
