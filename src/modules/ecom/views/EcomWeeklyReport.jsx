@@ -110,7 +110,7 @@ const EcomWeeklyReport = () =>{
                     },
                     {
                         id: "order_detail_from_cc",
-                        label: "Order Detail from CC ",
+                        label: "Order Detail From CC ",
                         icon: <i className="bi bi-box"></i>,
                         content: (
                             <OrderDetailReport data={data}
