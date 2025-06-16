@@ -19,4 +19,4 @@ const ReportSyncTime = ({endpoint = '/reporting/sf/fetch-sync-time/', syncType =
     )
 }
 
-export default React.memo(ReportSyncTime);
+export default ReportSyncTime;
