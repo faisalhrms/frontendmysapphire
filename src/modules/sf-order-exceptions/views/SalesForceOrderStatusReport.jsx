@@ -14,7 +14,7 @@ import HourlyOrderReport from "@modules/sf-order-exceptions/components/HourlyOrd
 
 const SalesForceOrderStatusReport = () => {
     const [activeTab, setActiveTab] = useState("fo_status_summary");
-    const { syncTime, errorMessage } = useSalesforceSyncTime();
+
     const {startOfToday, now} = getPastDateTime()
     const {
         control,
@@ -27,6 +27,7 @@ const SalesForceOrderStatusReport = () => {
                 initialFilters: [
                     { name: 'from_dt',defaultValue: startOfToday},
                     { name: 'to_dt',defaultValue: now},
+                    { name: 'date',defaultValue: getPastDate(0)},
                 ],
             }),
             []
@@ -37,7 +38,7 @@ const SalesForceOrderStatusReport = () => {
 
     const { data, isLoading, refetch } = useFetchWithFilters(
         activeTab === "fo_status_summary" ? '/reporting/sf/order-status/' :
-            activeTab === "hourly_order_report" ? '/reporting/sf/order-status/' :
+            activeTab === "hourly_order_report" ? '/reporting/sf/order-status/hourly/' :
                 '', filters
     );
     const onSubmit = useCallback(
@@ -60,22 +61,38 @@ const SalesForceOrderStatusReport = () => {
                         <div className="box custom-box">
                             <div className="box-body p-4">
                                 <div className="flex items-center justify-between gap-4">
-                                    <div className="flex items-center gap-4 flex-1">
-                                        <FormInput
-                                            type="datetime-local"
-                                            name="from_dt"
-                                            control={control}
-                                            errors={errors}
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-4 flex-1">
-                                        <FormInput
-                                            type="datetime-local"
-                                            name="to_dt"
-                                            control={control}
-                                            errors={errors}
-                                        />
-                                    </div>
+                                    {
+                                        activeTab === "fo_status_summary" ?
+                                            <>
+                                                <div className="flex items-center gap-4 flex-1">
+                                                    <FormInput
+                                                        type="datetime-local"
+                                                        name="from_dt"
+                                                        control={control}
+                                                        errors={errors}
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-4 flex-1">
+                                                    <FormInput
+                                                        type="datetime-local"
+                                                        name="to_dt"
+                                                        control={control}
+                                                        errors={errors}
+                                                    />
+                                                </div>
+                                            </>
+                                            :
+                                            <>
+                                                <div className="flex items-center gap-4 flex-1">
+                                                    <FormInput
+                                                        type="date"
+                                                        name="date"
+                                                        control={control}
+                                                        errors={errors}
+                                                    />
+                                                </div>
+                                            </>
+                                    }
                                     <FilterButton/>
                                 </div>
                             </div>
@@ -84,18 +101,6 @@ const SalesForceOrderStatusReport = () => {
                 </div>
             </form>
             <>
-                {syncTime && (
-                    <div className="error-message text-primary p-2 rounded-lg text-right text-black ">
-                        <p>{syncTime}</p>
-                    </div>
-                )}
-
-                {errorMessage && (
-                    <div
-                        className="error-message alert alert-primary p-2 rounded-lg shadow-md text-center text-black mb-2">
-                        <p>{errorMessage}</p>
-                    </div>
-                )}
 
                 <IconTabs
                     tabs={[
@@ -104,17 +109,19 @@ const SalesForceOrderStatusReport = () => {
                             label: "FO Status Summary",
                             icon: <i className="bi bi-graph-up"></i>,
                             content: (
-                                <SalesForceOrderStatusTable  data={data}
-                                                             isLoading={isLoading}
-                                                             isActive={'fo_status_summary' === activeTab} />
+                                <SalesForceOrderStatusTable data={data}
+                                                            isLoading={isLoading}
+                                                            isActive={'fo_status_summary' === activeTab}/>
                             ),
                         },
                         {
                             id: "hourly_order_report",
-                            label: "Hourly Order Report",
+                            label: "Hourly Order Summary",
                             icon: <i className="bi bi-clock-history"></i>,
                             content: (
-                                <HourlyOrderReport/>
+                                <HourlyOrderReport data={data}
+                                                   isLoading={isLoading}
+                                                   isActive={'hourly_order_report' === activeTab}/>
                             ),
                         },
                     ]}

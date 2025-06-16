@@ -12,7 +12,7 @@ const OrderDetailReport = ({data, isLoading, isActive}) => {
     return (
         <>
             <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-                <div className="mb-6 overflow-auto"
+                <div className="mb-6 overflow-auto max-h-[600px]"
 
                 >
                     <table className="w-full border-collapse">
@@ -22,7 +22,7 @@ const OrderDetailReport = ({data, isLoading, isActive}) => {
                             zIndex: 10,
                             backgroundColor: "#383853"
                         }}>
-                        <tr className="text-white">
+                        <tr className="text-white ">
                             <th className="bg-blue-200 border border-gray-300 p-2 text-center">Hour</th>
                             <th className="bg-blue-200 border border-gray-300 p-2 text-center">Minutes
                             </th>
