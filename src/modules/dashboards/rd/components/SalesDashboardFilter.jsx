@@ -1,8 +1,6 @@
 import React from 'react';
 import WeeklyReportFilter from "@modules/ecom/components/weekly-report/WeeklyReportFilter.jsx";
 import OrderExceptionFilter from "@modules/sf-order-exceptions/components/OrderExceptionFilter.jsx";
-import FormInput from "@components/form/FormInput.jsx";
-import FilterButton from "@components/form/FilterButton.jsx";
 import SalesForceOrderStatusFilter from "@modules/sf-order-exceptions/components/SalesForceOrderStatusFilter.jsx";
 
 const SalesDashboardFilter = ({

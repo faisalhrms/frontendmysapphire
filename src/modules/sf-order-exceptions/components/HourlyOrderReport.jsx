@@ -1,6 +1,7 @@
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import React from "react";
 import {formatNumberWithCommas} from "@helpers/formatters.js";
+import ReportSyncTime from "@components/reports/ReportSyncTime.jsx";
 
 const HourlyOrderReport= ({data, isLoading, isActive}) => {
     if (!isActive) {
@@ -11,6 +12,7 @@ const HourlyOrderReport= ({data, isLoading, isActive}) => {
     }
     return (
         <>
+            <ReportSyncTime />
             <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                 <div className="mb-6 overflow-auto max-h-[600px]"
 

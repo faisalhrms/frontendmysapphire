@@ -17,7 +17,6 @@ const EcomSaleforce = () => {
     const [isModelLoading, setIsModelLoading] = useState(false);
 
     const { syncTime, errorMessage, refetch } = useSalesforceSyncTime();
-    console.log(`this is synctime`, syncTime);
 
     const { control, handleSubmit, errors, getFilters } = useFilters(
         useMemo(() => ({

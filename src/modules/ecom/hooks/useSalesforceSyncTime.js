@@ -1,18 +1,20 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import api from "@config/axiosConfig.js";
 
-const useSalesForceSyncTime = (endpoint = '/salesforce/fetch_sync_time_cc/', syncType = 'main') => {
+const useSalesForceSyncTime = (endpoint = '/salesforce/fetch_sync_time_cc/', syncType = 'main', type = 'post') => {
     const [syncTime, setSyncTime] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     const fetchSyncTime = async () => {
         try {
-
             const url = `${endpoint}?sync_type=${syncType}`;
+            let response;
 
-
-            const response = await api.post(url);
-
+            if (type === 'post') {
+                response = await api.post(url);
+            } else {
+                response = await api.get(url);
+            }
             setSyncTime(response.data.data.show_sync_time);
             setErrorMessage("");
         } catch (error) {
@@ -33,57 +35,11 @@ const useSalesForceSyncTime = (endpoint = '/salesforce/fetch_sync_time_cc/', syn
         }
     };
 
-    const fetchExecutiveSummary = async (filters) => {
-        try {
-            const { date_from, date_to } = filters;
-            const response = await api.get("/salesforce/fetch_executive_summary/", {
-                params: { date_from, date_to},
-            });
-            return response.data;
-        } catch (error) {
-            console.error("Error fetching executive summary:", error);
-            throw error;
-        }
-    };
-
-    const fetchPendingOrders = async (filters) => {
-        try {
-            const { date_from, date_to } = filters;
-            const response = await api.get("/salesforce/fetch_pending_orders/", {
-                params: { date_from, date_to,  },
-            });
-            return response.data;
-        } catch (error) {
-            console.error("Error fetching pending orders:", error);
-            throw error;
-        }
-    };
-
-
-    const refetch = useCallback(async (filters = {}, activeTab = "executiveSummary") => {
-        try {
-            await fetchSyncTime();
-
-            let executiveData = null;
-
-            if (activeTab === "executiveSummary") {
-                executiveData = await fetchExecutiveSummary(filters);
-            } else if (activeTab === "agingLiabilities") {
-                executiveData = await fetchPendingOrders(filters);
-            }
-
-            return executiveData;
-        } catch (error) {
-            console.error("Error in refetch:", error);
-            return null;
-        }
-    }, [endpoint, syncType]);
-
     useEffect(() => {
         fetchSyncTime();
     }, [endpoint, syncType]);
 
-    return { syncTime, errorMessage, refetch };
+    return { syncTime, errorMessage };
 };
 
 export default useSalesForceSyncTime;

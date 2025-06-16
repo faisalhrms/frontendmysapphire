@@ -12,7 +12,7 @@ const Modal = ({
                    activeTab = "executiveSummary"
                }) => {
 
-    const { syncTime, errorMessage, refetch } = useSalesForceSyncTime(
+    const { syncTime, errorMessage } = useSalesForceSyncTime(
         '/salesforce/fetch_sync_time_cc/',
         'dd'
     );
@@ -39,14 +39,6 @@ const Modal = ({
     } else {
         title = "Modal";
     }
-
-    const handleModalRefresh = async () => {
-        try {
-            await refetch(filters, activeTab);
-        } catch (error) {
-            console.error("Error refreshing modal data:", error);
-        }
-    };
 
     return (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
