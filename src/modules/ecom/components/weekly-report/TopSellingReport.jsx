@@ -14,7 +14,7 @@ const TopSellingReport = ({ data, isLoading, isActive }) => {
     return (
         <>
             <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-                <div className="mb-6 overflow-auto  max-h-[800px]">
+                <div className="mb-6 overflow-auto  max-h-[600px]">
                     <table className="w-full border-collapse">
                         <thead
                             style={{
