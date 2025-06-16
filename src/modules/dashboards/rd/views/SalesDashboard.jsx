@@ -1,4 +1,3 @@
-// ReportingDashboard.jsx (updated)
 import React, {useCallback, useMemo, useState} from "react";
 import useFilters from "@hooks/useFilters.js";
 import {getPastDate, getPastDateTime} from "@helpers/dateTime.js";
@@ -11,9 +10,11 @@ import OrderDetailReport from "@modules/ecom/components/weekly-report/OrderDetai
 import TopSellingReport from "@modules/ecom/components/weekly-report/TopSellingReport.jsx";
 import SalesDashboardFilter from "@modules/dashboards/rd/components/SalesDashboardFilter.jsx";
 import SalesForceOrderExceptionTable from "@modules/sf-order-exceptions/components/SalesForceOrderExceptionTable.jsx";
-import SalesForceOrderStatusTable from "@modules/sf-order-exceptions/components/SalesForceOrderStatusTable.jsx"; // Import the new component
+import SalesForceOrderStatusTable from "@modules/sf-order-exceptions/components/SalesForceOrderStatusTable.jsx";
+import HourlyOrderReport from "@modules/sf-order-exceptions/components/HourlyOrderReport.jsx";
+import SalesForceOrderReconTable from "@modules/sf-order-exceptions/components/SalesForceOrderReconTable.jsx";
 
-const ReportingDashboard = () => {
+const SalesDashboard = () => {
     const [activeTab, setActiveTab] = useState("landing_page_performance");
     const { startOfToday, now } = getPastDateTime();
 
@@ -39,32 +40,17 @@ const ReportingDashboard = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
-    const transformedFilters = useMemo(() => {
-        // Create tab-specific filters
-        if (activeTab === "sf_order_status") {
-            return {
-                from_dt: filters.from_dt,
-                to_dt: filters.to_dt
-            };
-        }
-        if (activeTab === "sf_order_exceptions") {
-            return { date: filters.date };
-        }
-        return {
-            date: filters.date,
-            top: filters.top,
-            hour: filters.hour
-        };
-    }, [filters, activeTab]);
-
     const { data, isLoading, refetch } = useFetchWithFilters(
         activeTab === "landing_page_performance" ? '/ecom/weekly-report/landing-page-performance/' :
             activeTab === "hour_traffic_rate" ? '/ecom/weekly-report/traffic-performance/' :
                 activeTab === "order_detail_from_cc" ? '/ecom/weekly-report/order-detail-15minutes/' :
                     activeTab === "top_selling_article" ? '/ecom/weekly-report/top-selling-articles-15minutes/' :
                         activeTab === "sf_order_exceptions" ? '/reporting/sf/order-exception/' :
-                            activeTab === "sf_order_status" ? '/reporting/sf/order-status/' : '',
-        transformedFilters
+                            activeTab === "sf_order_status" ? '/reporting/sf/order-status/' :
+                                activeTab === "order_recon_summary" ? '/reporting/sf/order-status/recon/' :
+                                activeTab === "sf_order_hourly_status" ? '/reporting/sf/order-status/hourly/' :
+                                '',
+        filters
     );
 
     const onSubmit = useCallback(
@@ -80,7 +66,7 @@ const ReportingDashboard = () => {
 
     return (
         <>
-            <PageHeader currentpage="Reporting Dashboard" activepage="Reports" mainpage="Dashboard"/>
+            <PageHeader currentpage="Sales Dashboard" activepage="Sales" mainpage="Dashboard"/>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <SalesDashboardFilter
                     activeTab={activeTab}
@@ -121,8 +107,8 @@ const ReportingDashboard = () => {
                     },
                     {
                         id: "order_detail_from_cc",
-                        label: "Order detail from CC",
-                        icon: <i className="bi bi-clock-history"></i>,
+                        label: "Order Detail From CC",
+                        icon: <i className="bi bi-box"></i>,
                         content: (
                             <OrderDetailReport
                                 data={data}
@@ -134,7 +120,7 @@ const ReportingDashboard = () => {
                     {
                         id: "top_selling_article",
                         label: "Top Selling Article",
-                        icon: <i className="bi bi-clock-history"></i>,
+                        icon: <i className="bi bi-bar-chart-line"></i>,
                         content: (
                             <TopSellingReport
                                 data={data}
@@ -153,12 +139,33 @@ const ReportingDashboard = () => {
                     },
                     {
                         id: "sf_order_status",
-                        label: "Order Status",
-                        icon: <i className="bi bi-list-check"></i>,
+                        label: "FulFillment Order Status Summary",
+                        icon: <i className="bi bi-box-seam"></i>,
                         content: (
-                            <SalesForceOrderStatusTable  data={data}
+                            <SalesForceOrderStatusTable data={data}
+                                                        isLoading={isLoading}
+                                                        isActive={'sf_order_status' === activeTab}/>
+
+                        ),
+                    },
+                    {
+                        id: "order_recon_summary",
+                        label: "Order Summary Recon",
+                        icon: <i className="bi bi-boxes"></i>,
+                        content: (
+                            <SalesForceOrderReconTable data={data}
+                                                       isLoading={isLoading}
+                                                       isActive={'order_recon_summary' === activeTab}/>
+                        ),
+                    },
+                    {
+                        id: "sf_order_hourly_status",
+                        label: "Hourly Order Summary",
+                        icon: <i className="bi bi-hourglass-bottom"></i>,
+                        content: (
+                            <HourlyOrderReport  data={data}
                                                          isLoading={isLoading}
-                                                         isActive={'sf_order_status' === activeTab} />
+                                                         isActive={'sf_order_hourly_status' === activeTab} />
 
                         ),
                     },
@@ -168,4 +175,4 @@ const ReportingDashboard = () => {
         </>
     )
 }
-export default ReportingDashboard;
+export default SalesDashboard;

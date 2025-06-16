@@ -32,7 +32,7 @@ const SalesForceOrderStatusTable = ({ data, isLoading, isActive }) => {
                         className={
                             row.status === "Grand Total"
                                 ? "font-bold bg-[#949eb7] dark:text-gray-200 dark:bg-bodybg text-black"
-                                : ""
+                                : "font-bold"
                         }
                     >
                         <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black">

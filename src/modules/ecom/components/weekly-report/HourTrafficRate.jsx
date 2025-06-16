@@ -46,6 +46,7 @@ const HourTrafficRate = ({data, isLoading, isActive}) => {
                                 revenue
                             </th>
                             <th className="bg-blue-200 border border-gray-300 p-2 text-center">User key event rate</th>
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Sessions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -63,6 +64,7 @@ const HourTrafficRate = ({data, isLoading, isActive}) => {
                                         <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{item.ecommerce_purchases}</td>
                                         <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{item.gross_purchase_revenue}</td>
                                         <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{item.engagement_rate}%</td>
+                                        <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{item.sessions}</td>
                                     </tr>
                                 </React.Fragment>
                             ))}
