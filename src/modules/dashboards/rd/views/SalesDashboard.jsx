@@ -13,6 +13,7 @@ import SalesForceOrderExceptionTable from "@modules/sf-order-exceptions/componen
 import SalesForceOrderStatusTable from "@modules/sf-order-exceptions/components/SalesForceOrderStatusTable.jsx";
 import HourlyOrderReport from "@modules/sf-order-exceptions/components/HourlyOrderReport.jsx";
 import SalesForceOrderReconTable from "@modules/sf-order-exceptions/components/SalesForceOrderReconTable.jsx";
+import TopSellingProductsReport from "@modules/ecom/components/weekly-report/TopSellingProductsReport.jsx";
 
 const SalesDashboard = () => {
     const [activeTab, setActiveTab] = useState("landing_page_performance");
@@ -28,6 +29,8 @@ const SalesDashboard = () => {
             () => ({
                 initialFilters: [
                     { name: 'date', defaultValue: getPastDate(0)},
+                    { name: 'date_from', defaultValue: getPastDate(0)},
+                    { name: 'date_to', defaultValue: getPastDate(0)},
                     { name: 'top', defaultValue: 10 },
                     { name: 'hour', defaultValue: null },
                     { name: 'from_dt', defaultValue: startOfToday },
@@ -44,11 +47,10 @@ const SalesDashboard = () => {
         activeTab === "landing_page_performance" ? '/ecom/weekly-report/landing-page-performance/' :
             activeTab === "hour_traffic_rate" ? '/ecom/weekly-report/traffic-performance/' :
                 activeTab === "order_detail_from_cc" ? '/ecom/weekly-report/order-detail-15minutes/' :
-                    activeTab === "top_selling_article" ? '/ecom/weekly-report/top-selling-articles-15minutes/' :
                         activeTab === "sf_order_exceptions" ? '/reporting/sf/order-exception/' :
-                            activeTab === "sf_order_status" ? '/reporting/sf/order-status/' :
+                            activeTab === "fo_status_summary" ? '/reporting/sf/order-status/' :
                                 activeTab === "order_recon_summary" ? '/reporting/sf/order-status/recon/' :
-                                activeTab === "sf_order_hourly_status" ? '/reporting/sf/order-status/hourly/' :
+                                activeTab === "hourly_order_report" ? '/reporting/sf/order-status/hourly/' :
                                 '',
         filters
     );
@@ -118,15 +120,11 @@ const SalesDashboard = () => {
                         ),
                     },
                     {
-                        id: "top_selling_article",
-                        label: "Top Selling Article",
-                        icon: <i className="bi bi-bar-chart-line"></i>,
+                        id: "top_selling_products",
+                        label: "Top Selling Products",
+                        icon: <i className="bi bi-hand-thumbs-up"></i>,
                         content: (
-                            <TopSellingReport
-                                data={data}
-                                isLoading={isLoading}
-                                isActive={'top_selling_article' === activeTab}
-                            />
+                            <TopSellingProductsReport filters={filters} isActive={'top_selling_products' === activeTab}/>
                         ),
                     },
                     {
@@ -138,13 +136,13 @@ const SalesDashboard = () => {
                         ),
                     },
                     {
-                        id: "sf_order_status",
+                        id: "fo_status_summary",
                         label: "FulFillment Order Status Summary",
                         icon: <i className="bi bi-box-seam"></i>,
                         content: (
                             <SalesForceOrderStatusTable data={data}
                                                         isLoading={isLoading}
-                                                        isActive={'sf_order_status' === activeTab}/>
+                                                        isActive={'fo_status_summary' === activeTab}/>
 
                         ),
                     },
@@ -159,13 +157,13 @@ const SalesDashboard = () => {
                         ),
                     },
                     {
-                        id: "sf_order_hourly_status",
+                        id: "hourly_order_report",
                         label: "Hourly Order Summary",
                         icon: <i className="bi bi-hourglass-bottom"></i>,
                         content: (
-                            <HourlyOrderReport  data={data}
+                            <HourlyOrderReport data={data}
                                                          isLoading={isLoading}
-                                                         isActive={'sf_order_hourly_status' === activeTab} />
+                                                         isActive={'hourly_order_report' === activeTab} />
 
                         ),
                     },

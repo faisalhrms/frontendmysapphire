@@ -13,10 +13,11 @@ const SalesDashboardFilter = ({
         "landing_page_performance",
         "hour_traffic_rate",
         "order_detail_from_cc",
-        "top_selling_article"
+        "top_selling_article",
+        "top_selling_products"
     ];
 
-    if (activeTab === "sf_order_status" || activeTab==="sf_order_hourly_status" || activeTab === 'order_recon_summary') {
+    if (activeTab === "fo_status_summary" || activeTab==="hourly_order_report" || activeTab === 'order_recon_summary') {
         return <SalesForceOrderStatusFilter control={control} errors={errors} activeTab={activeTab} />;
     }
 

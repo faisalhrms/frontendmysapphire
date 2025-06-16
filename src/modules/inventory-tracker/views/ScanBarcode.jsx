@@ -27,7 +27,6 @@ const ScanBarcodePage = () => {
 
 
     const [filters, setFilters] = useState(getFilters());
-    console.log(filters)
 
     const { data, isLoading } = useFetchWithFilters(
         (activeTab === "scan_bar_code" && filters?.barcode!=='') ? `/inventory-tracker/barcode/` :

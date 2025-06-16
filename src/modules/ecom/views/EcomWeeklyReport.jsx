@@ -11,6 +11,8 @@ import WeeklyReportFilter from "@modules/ecom/components/weekly-report/WeeklyRep
 import HourTrafficRate from "@modules/ecom/components/weekly-report/HourTrafficRate.jsx";
 import OrderDetailReport from "@modules/ecom/components/weekly-report/OrderDetailReport.jsx";
 import TopSellingReport from "@modules/ecom/components/weekly-report/TopSellingReport.jsx";
+import TopSellingProductsReport from "@modules/ecom/components/weekly-report/TopSellingProductsReport.jsx";
+import {startOfToday} from "date-fns";
 
 const EcomWeeklyReport = () =>{
     const [activeTab, setActiveTab] = useState("user_journey");
@@ -18,7 +20,8 @@ const EcomWeeklyReport = () =>{
         control,
         handleSubmit,
         errors,
-        getFilters
+        getFilters,
+
     } = useFilters(
         useMemo(
             () => ({
@@ -26,6 +29,15 @@ const EcomWeeklyReport = () =>{
                     { name: 'date',defaultValue: getPastDate(0)},
                     { name: 'top', defaultValue: 10 },
                     { name: 'hour', defaultValue: null },
+                    {
+                        name: "date_from",
+                        defaultValue: getPastDate(0),
+                    },
+                    {
+                        name: "date_to",
+                        defaultValue: getPastDate(0)
+                    },
+
                 ],
             }),
             []
@@ -120,8 +132,16 @@ const EcomWeeklyReport = () =>{
                         ),
                     },
                     {
+                        id: "top_selling_products",
+                        label: "Top Selling Products",
+                        icon: <i className="bi bi-hand-thumbs-up"></i>,
+                        content: (
+                            <TopSellingProductsReport filters={filters} isActive={'top_selling_products' === activeTab}/>
+                        ),
+                    },
+                    {
                         id: "top_selling_article",
-                        label: "Top Selling Article",
+                        label: "Hourly Top Selling Articles",
                         icon: <i className="bi bi-bar-chart-line"></i>,
                         content: (
                             <TopSellingReport data={data}
