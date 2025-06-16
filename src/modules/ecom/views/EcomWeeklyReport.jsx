@@ -24,7 +24,7 @@ const EcomWeeklyReport = () =>{
             () => ({
                 initialFilters: [
                     { name: 'date',defaultValue: getPastDate(0)},
-                    { name: 'top', defaultValue: null },
+                    { name: 'top', defaultValue: 10 },
                     { name: 'hour', defaultValue: null },
                 ],
             }),
@@ -110,8 +110,8 @@ const EcomWeeklyReport = () =>{
                     },
                     {
                         id: "order_detail_from_cc",
-                        label: "Order detail from CC ",
-                        icon: <i className="bi bi-clock-history"></i>,
+                        label: "Order Detail from CC ",
+                        icon: <i className="bi bi-box"></i>,
                         content: (
                             <OrderDetailReport data={data}
                                              isLoading={isLoading}
@@ -122,7 +122,7 @@ const EcomWeeklyReport = () =>{
                     {
                         id: "top_selling_article",
                         label: "Top Selling Article",
-                        icon: <i className="bi bi-clock-history"></i>,
+                        icon: <i className="bi bi-bar-chart-line"></i>,
                         content: (
                             <TopSellingReport data={data}
                                               isLoading={isLoading}

@@ -14,7 +14,7 @@ const HourTrafficRate = ({data, isLoading, isActive}) => {
                 <div className="mb-6 overflow-auto"
 
                     >
-                    <table className="w-full border-collapse">
+                    <table className="w-full border-collapse max-h-[800px]">
                         <thead style={{
                             position: "sticky",
                             top: 0,

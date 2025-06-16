@@ -16,8 +16,13 @@ const SourceBasedPerformanceTab = ({data, isLoading, isActive}) => {
 
             <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                 <div className="mb-6">
-                    <table className="w-full border-collapse">
-                        <thead>
+                    <table className="w-full border-collapse max-h-[800px]">
+                        <thead style={{
+                            position: "sticky",
+                            top: 0,
+                            zIndex: 10,
+                            backgroundColor: "#383853"
+                        }}>
                         <tr className="text-white bg-[#383853]">
                             <th className="bg-blue-300 border border-gray-300 p-2 text-center" rowSpan="2">Source/Medium</th>
                             <th className="bg-blue-300 border border-gray-300 p-2 text-center" colSpan="3">CY</th>
