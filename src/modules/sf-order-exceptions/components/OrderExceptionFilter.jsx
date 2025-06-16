@@ -1,11 +1,6 @@
 import React, {useState} from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
-import FilterClearButton from "@components/form/FilterClearButton.jsx";
-import {
-    downloadDailySaleReport,
-    downloadOfflineStorePerformance
-} from "@modules/DailyReport/services/wiseside_services.js";
 
 const OrderExceptionFilter = ({ control, errors }) => {
     return (
