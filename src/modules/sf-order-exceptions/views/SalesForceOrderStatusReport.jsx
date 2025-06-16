@@ -22,8 +22,8 @@ const SalesForceOrderStatusReport = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'from',defaultValue: startOfToday},
-                    { name: 'to',defaultValue: now},
+                    { name: 'from_dt',defaultValue: startOfToday},
+                    { name: 'to_dt',defaultValue: now},
                 ],
             }),
             []
@@ -53,7 +53,7 @@ const SalesForceOrderStatusReport = () => {
                                     <div className="flex items-center gap-4 flex-1">
                                         <FormInput
                                             type="datetime-local"
-                                            name="from"
+                                            name="from_dt"
                                             control={control}
                                             errors={errors}
                                         />
@@ -61,7 +61,7 @@ const SalesForceOrderStatusReport = () => {
                                     <div className="flex items-center gap-4 flex-1">
                                         <FormInput
                                             type="datetime-local"
-                                            name="to"
+                                            name="to_dt"
                                             control={control}
                                             errors={errors}
                                         />
