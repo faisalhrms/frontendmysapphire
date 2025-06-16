@@ -11,7 +11,8 @@ import TopSellingReport from "@modules/ecom/components/weekly-report/TopSellingR
 import SalesDashboardFilter from "@modules/dashboards/rd/components/SalesDashboardFilter.jsx";
 import SalesForceOrderExceptionTable from "@modules/sf-order-exceptions/components/SalesForceOrderExceptionTable.jsx";
 import SalesForceOrderStatusTable from "@modules/sf-order-exceptions/components/SalesForceOrderStatusTable.jsx";
-import HourlyOrderReport from "@modules/sf-order-exceptions/components/HourlyOrderReport.jsx"; // Import the new component
+import HourlyOrderReport from "@modules/sf-order-exceptions/components/HourlyOrderReport.jsx";
+import SalesForceOrderReconTable from "@modules/sf-order-exceptions/components/SalesForceOrderReconTable.jsx";
 
 const SalesDashboard = () => {
     const [activeTab, setActiveTab] = useState("landing_page_performance");
@@ -39,31 +40,17 @@ const SalesDashboard = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
-    const transformedFilters = useMemo(() => {
-        if (activeTab === "sf_order_status") {
-            return {
-                from_dt: filters.from_dt,
-                to_dt: filters.to_dt
-            };
-        }
-        if (activeTab === "sf_order_exceptions") {
-            return { date: filters.date };
-        }
-        return {
-            date: filters.date,
-            top: filters.top,
-            hour: filters.hour
-        };
-    }, [filters, activeTab]);
-
     const { data, isLoading, refetch } = useFetchWithFilters(
         activeTab === "landing_page_performance" ? '/ecom/weekly-report/landing-page-performance/' :
             activeTab === "hour_traffic_rate" ? '/ecom/weekly-report/traffic-performance/' :
                 activeTab === "order_detail_from_cc" ? '/ecom/weekly-report/order-detail-15minutes/' :
                     activeTab === "top_selling_article" ? '/ecom/weekly-report/top-selling-articles-15minutes/' :
                         activeTab === "sf_order_exceptions" ? '/reporting/sf/order-exception/' :
-                            activeTab === "sf_order_status" ? '/reporting/sf/order-status/' : '',
-        transformedFilters
+                            activeTab === "sf_order_status" ? '/reporting/sf/order-status/' :
+                                activeTab === "order_recon_summary" ? '/reporting/sf/order-status/recon/' :
+                                activeTab === "sf_order_hourly_status" ? '/reporting/sf/order-status/hourly/' :
+                                '',
+        filters
     );
 
     const onSubmit = useCallback(
@@ -159,6 +146,16 @@ const SalesDashboard = () => {
                                                         isLoading={isLoading}
                                                         isActive={'sf_order_status' === activeTab}/>
 
+                        ),
+                    },
+                    {
+                        id: "order_recon_summary",
+                        label: "Order Summary Recon",
+                        icon: <i className="bi bi-boxes"></i>,
+                        content: (
+                            <SalesForceOrderReconTable data={data}
+                                                       isLoading={isLoading}
+                                                       isActive={'order_recon_summary' === activeTab}/>
                         ),
                     },
                     {
