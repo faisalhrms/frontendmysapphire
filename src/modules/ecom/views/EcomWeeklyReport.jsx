@@ -9,6 +9,8 @@ import SourceBasedPerformanceTab from "@modules/ecom/components/weekly-report/So
 import LandingPagePerformanceTab from "@modules/ecom/components/weekly-report/LandingPagePerformanceTab.jsx";
 import WeeklyReportFilter from "@modules/ecom/components/weekly-report/WeeklyReportFilter.jsx";
 import HourTrafficRate from "@modules/ecom/components/weekly-report/HourTrafficRate.jsx";
+import OrderDetailReport from "@modules/ecom/components/weekly-report/OrderDetailReport.jsx";
+import TopSellingReport from "@modules/ecom/components/weekly-report/TopSellingReport.jsx";
 
 const EcomWeeklyReport = () =>{
     const [activeTab, setActiveTab] = useState("user_journey");
@@ -36,6 +38,8 @@ const EcomWeeklyReport = () =>{
             activeTab === "source_based_performance" ? '/ecom/weekly-report/source-based-performance/' :
                 activeTab === "landing_page_performance" ? '/ecom/weekly-report/landing-page-performance/' :
                     activeTab === "hour_traffic_rate" ? '/ecom/weekly-report/traffic-performance/' :
+                        activeTab === "order_detail_from_cc" ? '/ecom/weekly-report/order-detail-15minutes/' :
+                            activeTab === "top_selling_article" ? '/ecom/weekly-report/top-selling-articles-15minutes/' :
                         '', filters
     );
     const onSubmit = useCallback(
@@ -101,6 +105,28 @@ const EcomWeeklyReport = () =>{
                             <HourTrafficRate data={data}
                                               isLoading={isLoading}
                                               isActive={'hour_traffic_rate' === activeTab}
+                            />
+                        ),
+                    },
+                    {
+                        id: "order_detail_from_cc",
+                        label: "Order detail from CC ",
+                        icon: <i className="bi bi-clock-history"></i>,
+                        content: (
+                            <OrderDetailReport data={data}
+                                             isLoading={isLoading}
+                                             isActive={'order_detail_from_cc' === activeTab}
+                            />
+                        ),
+                    },
+                    {
+                        id: "top_selling_article",
+                        label: "Top Selling Article",
+                        icon: <i className="bi bi-clock-history"></i>,
+                        content: (
+                            <TopSellingReport data={data}
+                                              isLoading={isLoading}
+                                              isActive={'top_selling_article' === activeTab}
                             />
                         ),
                     },
