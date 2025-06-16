@@ -46,12 +46,32 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
                                         />
                                     </div>
                                 )}
+                                {activeTab === "top_selling_products" && (
+                                    <div className="flex">
+                                        <div className="flex-1">
+                                            <FormInput
+                                                type="date"
+                                                name="date_from"
+                                                placeholder="From Date"
+                                                label={false}
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <FormInput
+                                                type="date"
+                                                name="date_to"
+                                                placeholder="To Date"
 
+                                                label={false}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
 
 
                             </div>
                             <div className="flex items-center gap-4 flex-2">
-                                <FilterButton />
+                                <FilterButton/>
                             </div>
                         </div>
                     </div>

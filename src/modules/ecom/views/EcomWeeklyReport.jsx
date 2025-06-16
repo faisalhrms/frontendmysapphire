@@ -12,6 +12,7 @@ import HourTrafficRate from "@modules/ecom/components/weekly-report/HourTrafficR
 import OrderDetailReport from "@modules/ecom/components/weekly-report/OrderDetailReport.jsx";
 import TopSellingReport from "@modules/ecom/components/weekly-report/TopSellingReport.jsx";
 import TopSellingProductsReport from "@modules/ecom/components/weekly-report/TopSellingProductsReport.jsx";
+import {startOfToday} from "date-fns";
 
 const EcomWeeklyReport = () =>{
     const [activeTab, setActiveTab] = useState("user_journey");
@@ -19,7 +20,8 @@ const EcomWeeklyReport = () =>{
         control,
         handleSubmit,
         errors,
-        getFilters
+        getFilters,
+
     } = useFilters(
         useMemo(
             () => ({
@@ -27,6 +29,15 @@ const EcomWeeklyReport = () =>{
                     { name: 'date',defaultValue: getPastDate(0)},
                     { name: 'top', defaultValue: 10 },
                     { name: 'hour', defaultValue: null },
+                    {
+                        name: "date_from",
+                        defaultValue: getPastDate(0),
+                    },
+                    {
+                        name: "date_to",
+                        defaultValue: getPastDate(0)
+                    },
+
                 ],
             }),
             []
