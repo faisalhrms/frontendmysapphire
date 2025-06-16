@@ -11,6 +11,7 @@ import WeeklyReportFilter from "@modules/ecom/components/weekly-report/WeeklyRep
 import HourTrafficRate from "@modules/ecom/components/weekly-report/HourTrafficRate.jsx";
 import OrderDetailReport from "@modules/ecom/components/weekly-report/OrderDetailReport.jsx";
 import TopSellingReport from "@modules/ecom/components/weekly-report/TopSellingReport.jsx";
+import TopSellingProductsReport from "@modules/ecom/components/weekly-report/TopSellingProductsReport.jsx";
 
 const EcomWeeklyReport = () =>{
     const [activeTab, setActiveTab] = useState("user_journey");
@@ -120,8 +121,17 @@ const EcomWeeklyReport = () =>{
                         ),
                     },
                     {
+                        id: "top_selling_products",
+                        label: "Top Selling Products",
+                        icon: <i className="bi bi-bar-chart-line"></i>,
+                        content: (
+                            <TopSellingProductsReport isActive={'top_selling_products' === activeTab}
+                            />
+                        ),
+                    },
+                    {
                         id: "top_selling_article",
-                        label: "Top Selling Article",
+                        label: "Hourly Top Selling Articles",
                         icon: <i className="bi bi-bar-chart-line"></i>,
                         content: (
                             <TopSellingReport data={data}
