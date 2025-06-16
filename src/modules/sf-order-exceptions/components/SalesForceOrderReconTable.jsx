@@ -33,7 +33,7 @@ const SalesForceOrderReconTable = ({ data, isLoading, isActive }) => {
                                             Total Orders
                                         </td>
                                         <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
-                                            {formatNumberWithCommas(data?.no_fo_result)}
+                                            {formatNumberWithCommas(data?.total_result)}
                                         </td>
                                     </tr>
                                     <tr>
