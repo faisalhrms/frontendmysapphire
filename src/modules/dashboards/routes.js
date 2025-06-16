@@ -9,7 +9,7 @@ import EquipmentDashboard from '@modules/dashboards/eq/views/EquipmentDashboard.
 import CardDasboard from "./ CEODashboard/views/CardDasboard.jsx";
 import UrpDashboard from "@modules/dashboards/urp/views/UrpDashboard.jsx";
 import ExportData from "@modules/dashboards/beirholmBi/views/ExportData.jsx";
-import ReportingDashboard from "@modules/dashboards/rd/views/ReportingDashboard.jsx";
+import SalesDashboard from "@modules/dashboards/rd/views/SalesDashboard.jsx";
 export const DASHBOARD_ROUTES = {
     PROJECT: {
         path: '/dashboards/project-management-system',
@@ -57,8 +57,10 @@ export const DASHBOARD_ROUTES = {
         permission: 'auth.view_export_data_dashboard',
 
     },
-    REPORTING_DASHBOARD:{
-        path: '/dashboards/reports',
+    SALES_DASHBOARD:{
+        path: '/dashboards/sales',
+        permission: 'auth.view_sales_dashboard',
+
     }
 
 };
@@ -119,8 +121,9 @@ export const MODULE_ROUTES = [
         permission: DASHBOARD_ROUTES.BeirholmBI.permission,
     },
     {
-        path:DASHBOARD_ROUTES.REPORTING_DASHBOARD.path,
-        component:ReportingDashboard,
+        path:DASHBOARD_ROUTES.SALES_DASHBOARD.path,
+        component:SalesDashboard,
+         permission: DASHBOARD_ROUTES.SALES_DASHBOARD.permission,
 
     }
 

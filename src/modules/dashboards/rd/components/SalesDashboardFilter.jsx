@@ -20,29 +20,46 @@ const SalesDashboardFilter = ({
     ];
 
     // Salesforce Order Status specific filter
-    if (activeTab === "sf_order_status") {
+    if (activeTab === "sf_order_status"||activeTab==="sf_order_hourly_status") {
         return (
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12">
                     <div className="box custom-box">
                         <div className="box-body p-4">
                             <div className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-4 flex-1">
-                                    <FormInput
-                                        type="datetime-local"
-                                        name="from_dt"
-                                        control={control}
-                                        errors={errors}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-4 flex-1">
-                                    <FormInput
-                                        type="datetime-local"
-                                        name="to_dt"
-                                        control={control}
-                                        errors={errors}
-                                    />
-                                </div>
+                                {
+                                    activeTab === "sf_order_status"?
+                                        <>
+                                            <div className="flex items-center gap-4 flex-1">
+                                                <FormInput
+                                                    type="datetime-local"
+                                                    name="from_dt"
+                                                    control={control}
+                                                    errors={errors}
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-4 flex-1">
+                                                <FormInput
+                                                    type="datetime-local"
+                                                    name="to_dt"
+                                                    control={control}
+                                                    errors={errors}
+                                                />
+                                            </div>
+                                        </>
+                                        :
+                                        <div className="flex items-center gap-4 flex-1">
+                                        <FormInput
+                                            type="date"
+                                            placeholder="From Current Period"
+                                            name="date"
+                                            control={control}
+                                            errors={errors}
+                                            label={false}
+                                        />
+                                        </div>
+
+                                }
                                 <FilterButton/>
                             </div>
                         </div>
@@ -52,9 +69,10 @@ const SalesDashboardFilter = ({
         );
     }
 
+
     // Salesforce Order Exceptions filter
     if (activeTab === "sf_order_exceptions") {
-        return <OrderExceptionFilter control={control} errors={errors} />;
+        return <OrderExceptionFilter control={control} errors={errors}/>;
     }
 
     // Default filter for ecommerce tabs

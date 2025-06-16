@@ -91,12 +91,12 @@ export const sidebarMenu = [
                DASHBOARD_ROUTES.BeirholmBI.permission,
             ),
             generateSidebarItem(
-                DASHBOARD_ROUTES.REPORTING_DASHBOARD.path,
+                DASHBOARD_ROUTES.SALES_DASHBOARD.path,
                 'link',
-                'Reporting Dashboard',
+                'Sales Dashboard',
                 10,
                 '',
-                '',
+                DASHBOARD_ROUTES.SALES_DASHBOARD.permission,
             )
 
         ]
