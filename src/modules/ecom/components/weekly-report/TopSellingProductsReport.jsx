@@ -1,74 +1,45 @@
 import React from "react";
-import { formatNumberWithCommas } from "@helpers/formatters.js";
 import DataTable from "@components/DataTable.jsx";
+import {formatNumberWithCommas} from "@helpers/formatters.js";
 
-const TopSellingProductsReport = ({isActive }) => {
+const TopSellingProductsReport = ({isActive, filters }) => {
     if (!isActive) {
         return null;
     }
 
     const columns = [
         {
-            Header: 'Barcode',
-            accessor: 'barcode',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
+            Header: 'Sku',
+            accessor: 'productid',
+            Cell: ({ row }) => (
+                    <a href={row.original?.c_imageurl} target='_blank'>
+                        <div className="flex items-center">
+                            <div className="me-2">
+                            <span className="avatar avatar-lg">
+                                <img src={row.original?.c_imageurl} alt={row.original?.productid}/></span>
+                            </div>
+                            <div className="font-semibold text-primary underline">{row.original?.productid}</div>
+                        </div>
+                    </a>
+            )
         },
         {
-            Header: 'Ware House Name',
-            accessor: 'warehousename',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
+            Header: 'Name',
+            accessor: 'itemtext',
         },
         {
-            Header: 'Ware House Code',
-            accessor: 'warehousecode',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
+            Header: 'Ordered QTY',
+            accessor: 'qtyordered',
+            Cell: ({ value }) => (
+                <span><i class="bi bi-bag me-1 text-gray-500"></i>{formatNumberWithCommas(value)}</span>
+            )
         },
         {
-            Header: 'Sales Price',
-            accessor: 'salesprice',
-            Cell: ({ value }) => <span>{formatNumberWithCommas(value) || 'N/A'}</span>
-
-        },
-        {
-            Header: 'Onhand Qty',
-            accessor: 'onhand_qty',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
-        },
-
-        {
-            Header: 'Discount Price',
-            accessor: 'discount_price',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
-        },
-        {
-            Header: 'Discount Per',
-            accessor: 'discount_per',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
-        },
-        {
-            Header: 'Size Set',
-            accessor: 'size_set',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
-        },
-        {
-            Header: 'Size',
-            accessor: 'size',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
-        },
-        {
-            Header: 'Combos',
-            accessor: 'combos',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
-        },
-        {
-            Header: 'Vm Trend',
-            accessor: 'vm_trend',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
-        },
-        {
-            Header: 'Sync Time',
-            accessor: 'sync_time',
-            Cell: ({ value }) => <span>{value || 'N/A'}</span>
+            Header: 'Revenue',
+            accessor: 'revenue',
+            Cell: ({ value }) => (
+               <span className='font-bold'>RS.{formatNumberWithCommas(value)}</span>
+            )
         },
 
     ];
@@ -78,8 +49,9 @@ const TopSellingProductsReport = ({isActive }) => {
 
             <DataTable
                 columns={columns}
-                apiUrl="/inventory-tracker/datatable/"
+                apiUrl="ecom/weekly-report/top-selling-products/"
                 needHeader={false}
+                filter={filters}
             />
         </>
     );

@@ -134,10 +134,9 @@ const EcomWeeklyReport = () =>{
                     {
                         id: "top_selling_products",
                         label: "Top Selling Products",
-                        icon: <i className="bi bi-bar-chart-line"></i>,
+                        icon: <i className="bi bi-hand-thumbs-up"></i>,
                         content: (
-                            <TopSellingProductsReport isActive={'top_selling_products' === activeTab}
-                            />
+                            <TopSellingProductsReport filters={filters} isActive={'top_selling_products' === activeTab}/>
                         ),
                     },
                     {

@@ -23,7 +23,6 @@ const SalesForceOrderStatusReport = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'date', defaultValue: getPastDate(0)},
                     { name: 'from_dt',defaultValue: startOfToday},
                     { name: 'to_dt',defaultValue: now},
                 ],

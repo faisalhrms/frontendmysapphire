@@ -38,7 +38,7 @@ const SalesForceOrderReconTable = ({ data, isLoading, isActive }) => {
                                     </tr>
                                     <tr>
                                         <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-left font-bold">
-                                            Equals
+                                            Equals FO
                                         </td>
                                         <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
                                             {formatNumberWithCommas(data?.equals_result)}

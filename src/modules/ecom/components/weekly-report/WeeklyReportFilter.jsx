@@ -23,17 +23,19 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
                     <div className="box-body p-4">
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-4 flex-1">
+                                {activeTab !== "top_selling_products" && (
                                 <div className="flex-1">
-                                    <FormInput
-                                        type="date"
-                                        placeholder="From Current Period"
-                                        name="date"
-                                        max={maxDate}
-                                        control={control}
-                                        errors={errors}
-                                        label={false}
-                                    />
+                                        <FormInput
+                                            type="date"
+                                            placeholder="From Current Period"
+                                            name="date"
+                                            max={maxDate}
+                                            control={control}
+                                            errors={errors}
+                                            label={false}
+                                        />
                                 </div>
+                                )}
                                 {(activeTab === "landing_page_performance" || activeTab === "order_detail_from_cc" || activeTab === "top_selling_article" || activeTab === "hour_traffic_rate") && (
                                     <div className="flex-1">
                                         <FormSelect
@@ -47,9 +49,11 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
                                     </div>
                                 )}
                                 {activeTab === "top_selling_products" && (
-                                    <div className="flex">
+                                    <>
                                         <div className="flex-1">
                                             <FormInput
+                                                control={control}
+                                                errors={errors}
                                                 type="date"
                                                 name="date_from"
                                                 placeholder="From Date"
@@ -58,14 +62,15 @@ const WeeklyReportFilter = ({ control, errors, activeTab }) => {
                                         </div>
                                         <div className="flex-1">
                                             <FormInput
+                                                control={control}
+                                                errors={errors}
                                                 type="date"
                                                 name="date_to"
                                                 placeholder="To Date"
-
                                                 label={false}
                                             />
                                         </div>
-                                    </div>
+                                    </>
                                 )}
 
 

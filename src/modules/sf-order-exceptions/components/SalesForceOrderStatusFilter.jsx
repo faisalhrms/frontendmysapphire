@@ -10,7 +10,6 @@ const SalesForceOrderStatusFilter = ({ control, errors, activeTab }) => {
                     <div className="box-body p-4">
                         <div className="flex items-center justify-between gap-4">
                             {
-                                activeTab === "fo_status_summary" || activeTab === "order_recon_summary" ?
                                     <>
                                         <div className="flex items-center gap-4 flex-1">
                                             <FormInput
@@ -20,32 +19,27 @@ const SalesForceOrderStatusFilter = ({ control, errors, activeTab }) => {
                                                 errors={errors}
                                             />
                                         </div>
-                                        <div className="flex items-center gap-4 flex-1">
-                                            <FormInput
-                                                type="datetime-local"
-                                                name="to_dt"
-                                                control={control}
-                                                errors={errors}
-                                            />
-                                        </div>
-                                    </>
-                                    :
-                                    <div className="flex items-center gap-4 flex-1">
-                                        <FormInput
-                                            type="date"
-                                            name="date"
-                                            control={control}
-                                            errors={errors}
-                                        />
+                                        { activeTab !== 'hourly_order_report' &&
+                                            (
+                                                <div className="flex items-center gap-4 flex-1">
+                                                    <FormInput
+                                                        type="datetime-local"
+                                                        name="to_dt"
+                                                        control={control}
+                                                        errors={errors}
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                            < />
+                                        }
+                                        <FilterButton/>
                                     </div>
-                            }
-                            <FilterButton/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                );
+                            };
 
-export default React.memo(SalesForceOrderStatusFilter);
+                            export default React.memo(SalesForceOrderStatusFilter);

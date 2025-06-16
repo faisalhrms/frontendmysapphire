@@ -34,7 +34,7 @@ const HourlyOrderReport= ({data, isLoading, isActive}) => {
                             </th>
                             <th className="bg-blue-200 border border-gray-300 p-2 text-center">Courier Allocation
                             </th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">D365 Courier Allocation
+                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">d365 SO Creation
                             </th>
                             <th className="bg-blue-200 border border-gray-300 p-2 text-center">Printing
                             </th>
@@ -51,7 +51,7 @@ const HourlyOrderReport= ({data, isLoading, isActive}) => {
                         {data && data.length > 0 &&
                             data?.map((item, sourceIndex) => (
                                 <React.Fragment key={`source-${sourceIndex}`}>
-                                    <tr className={`dark:text-gray-200 dark:bg-bodybg text-black ${item.hour === 'Total' ? 'bg-[#949eb7] font-bold' : ''}`}>
+                                    <tr className={`dark:text-gray-200 dark:bg-bodybg text-black ${item.hour === 'Grand Total' ? 'bg-[#949eb7] font-bold' : ''}`}>
                                         <td className='border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-center text-black'>{item.hour}</td>
                                         <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{formatNumberWithCommas(item.order_landed_sfcc)}</td>
                                         <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{formatNumberWithCommas(item.os_created_oms)}</td>
