@@ -274,19 +274,25 @@ const ScanBarcdeForm = ({ setFilters, filters, data }) => {
 
 
             {hasSearched && (!data || !data.item) && (
-                <div className="max-w-4xl mx-auto bg-white font-sans mb-4 p-4 sm:p-6">
-                    <div className="p-4 text-center">
-                        <div className="flex items-center justify-center mb-4">
-                            <i className="bi bi-exclamation-triangle-fill  text-2xl"></i>
+                <div className=" mx-auto bg-white font-sans mb-4 p-4 sm:p-6 text-center  ">
+
+                        <div className="flex items-center justify-center ">
+                            <svg className="custom-alert-icon fill-warning inline-flex"
+                                 xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 0 24 24"
+                                 width="50px" fill="#000000">
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                            </svg>
+
                         </div>
-                        <h3 className="text-lg font-semibold text-red-700 mb-2">No Data Found</h3>
-                        <p className="text-red-600 mb-2">
+                        <h3 className="text-lg font-semibold text-red-700  mb-4">No Data Found</h3>
+                        <p className=" mb-2">
                             The scanned barcode could not be found in the system or doesn't match the expected format.
                         </p>
-                        <p className="text-red-600 mb-4 text-sm">
+                        <p className=" mb-4 text-sm">
                             Please scan a valid product barcode or check if the barcode is correct.
                         </p>
-                        <div className="flex items-center gap-4 mt-4 ml-2 mb-4">
+                        <div className="flex items-center gap-4 mt-8 ml-2 mb-2">
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-success !mb-0 text-white  text-sm rounded py-2 px-3"
@@ -305,7 +311,7 @@ const ScanBarcdeForm = ({ setFilters, filters, data }) => {
                             </button>
                         </div>
                     </div>
-                </div>
+
             )}
         </form>
     );
