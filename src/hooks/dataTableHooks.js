@@ -25,9 +25,9 @@ export const useDataTable = (apiUrl, pageSize, filter = null, enableAdvancedFilt
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: [apiUrl, page, size, search, combinedFilters, sortField, sortDirection, enableAdvancedFilters],
         queryFn: fetchData,
-        keepPreviousData: false,
+        keepPreviousData: true,
         staleTime: 0,
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
         refetchOnReconnect: false,
     });
 
