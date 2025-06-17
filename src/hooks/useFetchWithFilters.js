@@ -66,7 +66,8 @@ export const useFetchWithFilters = (endpoint, filters = {}, queryOptions = {}) =
         queryFn: fetchFunction,
         enabled: !!queryKey,
         keepPreviousData: true,
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
+        staleTime: 0,
         retry: 1,
         onError: (error) => {
             const errorMessage = error.response?.data?.message || 'Failed to fetch data';

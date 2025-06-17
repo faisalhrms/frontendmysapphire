@@ -40,7 +40,7 @@ export const sidebarMenu = [
                 "Upload Target",
                 2,
                 "bx bx-message-square-edit",
-                // UPLOAD_TARGET_ROUTE.ADD.permission,
+                 UPLOAD_TARGET_ROUTE.ADD.permission,
             )
 
 

@@ -16,7 +16,7 @@ import SalesForceOrderReconTable from "@modules/sf-order-exceptions/components/S
 import TopSellingProductsReport from "@modules/ecom/components/weekly-report/TopSellingProductsReport.jsx";
 
 const SalesDashboard = () => {
-    const [activeTab, setActiveTab] = useState("landing_page_performance");
+    const [activeTab, setActiveTab] = useState("top_selling_products");
     const { startOfToday, now } = getPastDateTime();
 
     const {
@@ -80,19 +80,11 @@ const SalesDashboard = () => {
             <IconTabs
                 tabs={[
                     {
-                        id: "landing_page_performance",
-                        label: "Landing Page Performance",
-                        icon: <i className="bi bi-graph-up"></i>,
+                        id: "top_selling_products",
+                        label: "Top Selling Products",
+                        icon: <i className="bi bi-hand-thumbs-up"></i>,
                         content: (
-                            <LandingPagePerformanceTab
-                                data={data}
-                                isLoading={isLoading}
-                                isActive={'landing_page_performance' === activeTab}
-                                control={control}
-                                errors={errors}
-                                handleSubmit={handleSubmit}
-                                onSubmit={onSubmit}
-                            />
+                            <TopSellingProductsReport filters={filters} isActive={'top_selling_products' === activeTab}/>
                         ),
                     },
                     {
@@ -120,19 +112,11 @@ const SalesDashboard = () => {
                         ),
                     },
                     {
-                        id: "top_selling_products",
-                        label: "Top Selling Products",
-                        icon: <i className="bi bi-hand-thumbs-up"></i>,
-                        content: (
-                            <TopSellingProductsReport filters={filters} isActive={'top_selling_products' === activeTab}/>
-                        ),
-                    },
-                    {
                         id: "sf_order_exceptions",
                         label: "Order Exceptions",
                         icon: <i className="bi bi-exclamation-triangle"></i>,
                         content: (
-                            <SalesForceOrderExceptionTable data={data} isLoading={isLoading}  isActive={'sf_order_exceptions' === activeTab}  />
+                            <SalesForceOrderExceptionTable data={data} isLoading={isLoading} isActive={'sf_order_exceptions' === activeTab}  />
                         ),
                     },
                     {
@@ -165,6 +149,22 @@ const SalesDashboard = () => {
                                                          isLoading={isLoading}
                                                          isActive={'hourly_order_report' === activeTab} />
 
+                        ),
+                    },
+                    {
+                        id: "landing_page_performance",
+                        label: "Landing Page Performance",
+                        icon: <i className="bi bi-graph-up"></i>,
+                        content: (
+                            <LandingPagePerformanceTab
+                                data={data}
+                                isLoading={isLoading}
+                                isActive={'landing_page_performance' === activeTab}
+                                control={control}
+                                errors={errors}
+                                handleSubmit={handleSubmit}
+                                onSubmit={onSubmit}
+                            />
                         ),
                     },
                 ]}
