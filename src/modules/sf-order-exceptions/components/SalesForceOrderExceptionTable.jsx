@@ -4,7 +4,10 @@ import FailureSummaryTable from "@modules/sf-order-exceptions/components/Failure
 import { formatNumberWithCommas } from "@helpers/formatters.js";
 import ReportSyncTime from "@components/reports/ReportSyncTime.jsx";
 
-const SalesForceOrderExceptionTable = ({ data, isLoading }) => {
+const SalesForceOrderExceptionTable = ({ data, isLoading, isActive = true }) => {
+    if (!isActive) {
+        return null
+    }
     if (isLoading) {
         return <LoadingSpinner />;
     }
