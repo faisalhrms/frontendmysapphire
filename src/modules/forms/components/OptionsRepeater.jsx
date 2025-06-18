@@ -15,9 +15,9 @@ const OptionsRepeater = ({ fieldIndex, control, setValue, errors }) => {
 
     return (
         <div className="col-span-12">
-            <label className="block text-sm font-medium mb-2">Options</label>
+            <label className="block text-sm font-medium mb-2 ml-4 mt-4">Options</label>
             {fields.map((option, optionIndex) => (
-                <div key={option.id} className="grid grid-cols-12 gap-2 mb-2">
+                <div key={option.id} className="grid grid-cols-12 gap-2  ml-4 mt-4 mb-4">
                     <div className="col-span-5">
                         <input
                             className="form-control form-control-sm border-dotted"
@@ -38,13 +38,13 @@ const OptionsRepeater = ({ fieldIndex, control, setValue, errors }) => {
                             <span className="text-red text-xs">{errors.fields[fieldIndex].options[optionIndex].value.message}</span>
                         )}
                     </div>
-                    <div className="col-span-2 flex items-center">
+                    <div className="col-span-2 flex items-center ml-4">
                         <button
                             type="button"
-                            onClick={() => append({ label: '', value: '' })}
+                            onClick={() => append({label: '', value: ''})}
                             className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] mr-2"
                         >
-                            + Add Option
+                            <i class="bi bi-plus-circle-fill"></i>
                         </button>
                         {fields.length > 1 && (
                             <button
@@ -52,7 +52,7 @@ const OptionsRepeater = ({ fieldIndex, control, setValue, errors }) => {
                                 onClick={() => remove(optionIndex)}
                                 className="ti-btn ti-btn-outline-danger !py-1 !px-2 !text-[0.75rem]"
                             >
-                                Remove
+                                <i class="bi bi-trash3-fill"></i>
                             </button>
                         )}
                     </div>
