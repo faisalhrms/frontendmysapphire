@@ -16,6 +16,7 @@ export const sidebarMenu = [
                 "Create",
                 1,
                 "bx bx-message-square-edit",
+                FORMS_ROUTES.CREATE.permission,
             ),
         ]
     )
