@@ -213,7 +213,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                 {fields.map((field, index) => {
                                     const fieldType = watchedFieldTypes?.[index]?.field_type;
                                     return (
-                                        <div key={field.id} className="grid grid-cols-12 gap-4 mb-4">
+                                        <div key={field.id} className="grid grid-cols-12 gap-4 mb-4 ">
                                             <div className="xl:col-span-2 col-span-12">
                                                 <FormInput
                                                     name={`fields.${index}.label`}
@@ -223,7 +223,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                                     label={false}
                                                 />
                                             </div>
-                                            <div className="xl:col-span-2 col-span-12">
+                                            <div className="xl:col-span-2 col-span-12 ">
                                                 <FormInput
                                                     name={`fields.${index}.name`}
                                                     control={control}
@@ -273,14 +273,14 @@ const DynamicFormBuilder = ({ formData }) => {
                                                     <button
                                                         type="button"
                                                         onClick={() => remove(index)}
-                                                        className="ti-btn ti-btn-danger-full !py-1 !px-2 !text-[0.75rem]"
+                                                        className="ti-btn ti-btn-danger ti-btn-sm w-max"
                                                     >
-                                                        Remove
+                                                        <i class="bi bi-trash3-fill"></i>
                                                     </button>
                                                 )}
                                             </div>
                                             {['select', 'radio', 'checkbox'].includes(fieldType) && (
-                                                <div className="xl:col-span-12 col-span-12">
+                                                <div className="xl:col-span-12 col-span-12 border border-gray-400 mr-4 ml-4 rounded-lg mt-10">
                                                     <OptionsRepeater
                                                         fieldIndex={index}
                                                         control={control}
@@ -289,9 +289,9 @@ const DynamicFormBuilder = ({ formData }) => {
                                                     />
                                                 </div>
                                             )}
-                                            <div className="xl:col-span-12 col-span-12">
+                                            <div className="xl:col-span-12 col-span-12 ">
                                                 <div
-                                                    className="px-4 py-2 border-t border-dashed dark:border-defaultborder sm:flex justify-end border-gray-400"></div>
+                                                    className="px-4 py-2 dark:border-defaultborder sm:flex justify-end border-gray-400"></div>
                                             </div>
                                         </div>
                                     );
