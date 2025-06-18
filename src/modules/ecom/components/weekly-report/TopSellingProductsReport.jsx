@@ -31,7 +31,7 @@ const TopSellingProductsReport = ({isActive, filters }) => {
             Header: 'Ordered QTY',
             accessor: 'qtyordered',
             Cell: ({ value }) => (
-                <span><i class="bi bi-bag me-1 text-gray-500"></i>{formatNumberWithCommas(value)}</span>
+                <span><i className="bi bi-bag me-1 text-gray-500"></i>{formatNumberWithCommas(value)}</span>
             )
         },
         {
