@@ -11,6 +11,7 @@ import FormButton from '@components/form/FormButton.jsx';
 import OptionsRepeater from '@modules/forms/components/OptionsRepeater.jsx';
 import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
 import FormCheckbox from '@components/form/FormCheckbox.jsx';
+import api from "@config/axiosConfig.js";
 
 const fieldTypeOptions = [
     { value: 'text', label: 'Text' },
@@ -43,7 +44,7 @@ const DynamicFormBuilder = ({ formData }) => {
             is_active: true,
             expired_at: undefined,
             notification_emails: [],
-            fields: [{ label: '', name: '', field_type: 'text', required: false, options: [], order: 1 }],
+            fields: [{ label: '', name: '', short_description: '', field_type: 'text', required: false, options: [], order: 1 }],
             ...formData,
         },
     });
@@ -74,7 +75,7 @@ const DynamicFormBuilder = ({ formData }) => {
                 formData.fields?.map((field) => ({
                     ...field,
                     options: field.options?.length ? field.options : ['select', 'radio', 'checkbox'].includes(field.field_type) ? [{ label: '', value: '' }] : [],
-                })) || [{ label: '', name: '', field_type: 'text', required: false, options: [], order: 1 }]
+                })) || [{ label: '', name: '', short_description: '', field_type: 'text', required: false, options: [], order: 1 }]
             );
         }
     }, [formData, setValue]);
@@ -94,7 +95,7 @@ const DynamicFormBuilder = ({ formData }) => {
             if (formData?.id) {
                 await axios.put(`http://localhost:8000/api/forms/${formData.id}/`, submitData);
             } else {
-                await axios.post('http://localhost:8000/api/forms/', submitData);
+                await api.post('/forms/', submitData);
             }
             // navigate('/');
         } catch (error) {
@@ -104,7 +105,7 @@ const DynamicFormBuilder = ({ formData }) => {
     };
 
     const addField = () => {
-        append({ label: '', name: '', field_type: 'text', required: false, options: [], order: fields.length + 1 });
+        append({ label: '', name: '', short_description: '', field_type: 'text', required: false, options: [], order: fields.length + 1 });
     };
 
     return (
@@ -213,7 +214,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                     const fieldType = watchedFieldTypes?.[index]?.field_type;
                                     return (
                                         <div key={field.id} className="grid grid-cols-12 gap-4 mb-4">
-                                            <div className="xl:col-span-3 col-span-12">
+                                            <div className="xl:col-span-2 col-span-12">
                                                 <FormInput
                                                     name={`fields.${index}.label`}
                                                     control={control}
@@ -222,12 +223,21 @@ const DynamicFormBuilder = ({ formData }) => {
                                                     label={false}
                                                 />
                                             </div>
-                                            <div className="xl:col-span-3 col-span-12">
+                                            <div className="xl:col-span-2 col-span-12">
                                                 <FormInput
                                                     name={`fields.${index}.name`}
                                                     control={control}
                                                     errors={errors}
                                                     placeholder="Field Name"
+                                                    label={false}
+                                                />
+                                            </div>
+                                            <div className="xl:col-span-2 col-span-12">
+                                                <FormInput
+                                                    name={`fields.${index}.short_description`}
+                                                    control={control}
+                                                    errors={errors}
+                                                    placeholder="Field Short Description"
                                                     label={false}
                                                 />
                                             </div>
@@ -280,14 +290,15 @@ const DynamicFormBuilder = ({ formData }) => {
                                                 </div>
                                             )}
                                             <div className="xl:col-span-12 col-span-12">
-                                                <div className="px-4 py-2 border-t border-dashed dark:border-defaultborder sm:flex justify-end border-gray-400"></div>
+                                                <div
+                                                    className="px-4 py-2 border-t border-dashed dark:border-defaultborder sm:flex justify-end border-gray-400"></div>
                                             </div>
                                         </div>
                                     );
                                 })}
                             </div>
                             <div className="box-footer text-right">
-                                <FormButton isLoading={isSubmitting} />
+                                <FormButton isLoading={isSubmitting}/>
                             </div>
                         </div>
                     </div>
