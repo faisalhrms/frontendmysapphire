@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
-import { dynamicFormSchema } from '../schemas/dynamicFormSchema';
 import FormInput from '@components/form/FormInput.jsx';
 import FormTextarea from '@components/form/FormTextarea.jsx';
 import FormToggle from '@components/form/FormToggle.jsx';
@@ -12,6 +10,7 @@ import OptionsRepeater from '@modules/forms/components/OptionsRepeater.jsx';
 import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
 import FormCheckbox from '@components/form/FormCheckbox.jsx';
 import api from "@config/axiosConfig.js";
+import {dynamicFormSchema} from "@modules/forms/schemas/dynamicFormSchema.js";
 
 const fieldTypeOptions = [
     { value: 'text', label: 'Text' },
@@ -92,8 +91,9 @@ const DynamicFormBuilder = ({ formData }) => {
                         : [],
                 })),
             };
+
             if (formData?.id) {
-                await axios.put(`http://localhost:8000/api/forms/${formData.id}/`, submitData);
+                await api.put(`/forms/${formData.id}/`, submitData);
             } else {
                 await api.post('/forms/', submitData);
             }
