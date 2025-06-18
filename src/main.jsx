@@ -16,6 +16,7 @@ import Toast from "@components/Toast.jsx";
 import ForgotPassView from "@modules/auth/views/ForgotPassView.jsx";
 import VCardProfile from "@modules/digital-profiles/views/VCardProfile.jsx";
 import ResetPassView from "@modules/auth/views/ResetPassView.jsx";
+import PublicDynamicForm from "@modules/forms/views/PublicDynamicForm.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -69,6 +70,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="reset-old-password" element={<ResetPassView/>}/>
                             <Route path="vcard/profile/:id" element={<VCardProfile />} />
                             <Route path="resetpassword/:uidb64/:token" element={<ForgotPassView />} />
+                            <Route path="forms/:slug" element={<PublicDynamicForm />} />
                         </Route>
 
                         <Route path={`${import.meta.env.BASE_URL}/error/:code`} element={<Error/>}/>
