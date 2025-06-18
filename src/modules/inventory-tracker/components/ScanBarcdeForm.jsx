@@ -77,9 +77,12 @@ const ScanBarcdeForm = ({ setFilters, filters }) => {
                 });
             },
             (error) => {
-                console.warn(error);
+                if (typeof error !== "string" || !error.includes("NotFoundException")) {
+                    console.warn("QR scan error:", error);
+                }
             }
         );
+
     };
 
     const onSubmit = (data) => {
