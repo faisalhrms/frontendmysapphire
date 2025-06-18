@@ -18,7 +18,7 @@ export const sidebarMenu = [
             'Customer',
             1,
             'bx-laptop',
-            ''
+            CUSTOMER_ASSIST_ROUTES.READ.permission
         ),
 
 
