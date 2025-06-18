@@ -275,12 +275,12 @@ const DynamicFormBuilder = ({ formData }) => {
                                                         onClick={() => remove(index)}
                                                         className="ti-btn ti-btn-danger ti-btn-sm w-max"
                                                     >
-                                                        <i class="bi bi-trash3-fill"></i>
+                                                        <i className="bi bi-trash3-fill"></i>
                                                     </button>
                                                 )}
                                             </div>
                                             {['select', 'radio', 'checkbox'].includes(fieldType) && (
-                                                <div className="xl:col-span-12 col-span-12 border border-gray-400 mr-4 ml-4 rounded-lg mt-10">
+                                                <div className="xl:col-span-12 col-span-12 border br-4 border-gray-400 mr-4 ml-4 rounded-lg mt-2">
                                                     <OptionsRepeater
                                                         fieldIndex={index}
                                                         control={control}

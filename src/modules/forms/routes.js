@@ -5,12 +5,15 @@ import CreateDynamicForm from "@modules/forms/views/CreateDynamicForm.jsx";
 export const FORMS_ROUTES = {
     LIST: {
         path: '/module/forms',
+        permission: 'forms.view_form',
     },
     CREATE: {
         path: '/module/forms/create',
+        permission: 'forms.view_form',
     },
     EDIT: {
         path: "/module/forms/edit/:id",
+        permission: 'forms.view_form',
     },
 };
 
@@ -18,13 +21,16 @@ export const MODULE_ROUTES = [
     {
         path: FORMS_ROUTES.LIST.path,
         component: DatatableDynamicForm,
+        permission: FORMS_ROUTES.LIST.permission,
     },
     {
         path: FORMS_ROUTES.CREATE.path,
         component: CreateDynamicForm,
+        permission: FORMS_ROUTES.LIST.permission,
     },
     {
         path: FORMS_ROUTES.EDIT.path,
         component: EditDynamicForm,
+        permission: FORMS_ROUTES.LIST.permission,
     },
 ];

@@ -6,7 +6,6 @@ import {formatDate} from "@helpers/dateTime.js";
 import Avatar from "@components/Avatar.jsx";
 import QRCode from "qrcode";
 import {QRCodeCanvas} from "qrcode.react";
-import HasPermission from "@components/HasPermission.jsx";
 import {Link} from "react-router-dom";
 
 const DatatableDynamicForm = () => {
