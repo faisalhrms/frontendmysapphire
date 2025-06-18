@@ -207,7 +207,6 @@ const UserForm = ({ userData }) => {
 
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
-                                {/* Avatar Upload */}
                                 <div className="xl:col-span-12 col-span-12">
                                     <FileUpload
                                         currentValue={userData?.avatar?.id}
