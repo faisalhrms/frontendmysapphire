@@ -4,6 +4,7 @@ import { dateSchema } from '@helpers/schema.js';
 const fieldSchema = z.object({
     label: z.string().min(1, 'Field label is required'),
     name: z.string().min(1, 'Field name is required'),
+    short_description: z.string().optional().nullable(),
     field_type: z.enum([
         'text', 'textarea', 'email', 'password', 'url', 'tel', 'number', 'range',
         'select', 'checkbox', 'radio', 'date', 'datetime-local', 'time', 'month',
