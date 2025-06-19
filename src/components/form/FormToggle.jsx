@@ -8,7 +8,7 @@ const FormToggle = ({ name, label, control, errors, placeholder, toggleClasses =
         <>
             {
                 label && (
-                    <label  className="form-label">{placeholder}</label>
+                    <label className="form-label">{placeholder}</label>
                 )
             }
             <Controller
