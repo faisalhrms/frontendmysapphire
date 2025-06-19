@@ -86,136 +86,179 @@ const FormSection = ({ data, isEdit = false }) => {
     }, [data, isEdit]);
 
     return (
-        <div className="p-4 mt-4 bg-white shadow-md rounded-lg">
-            <h2 className="text-lg font-semibold mb-4">
-                {isEdit ? "Edit Remarks for Customer Case" : "Create New Customer Case"}
-            </h2>
+        <>
             <form onSubmit={handleSubmit(handleCaseSubmit)}>
-                <div className="grid grid-cols-12 gap-6">
-                    {/* Read-only fields */}
-                    <div className="col-span-4">
-                        <FormInput
-                            name="case_id"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Case ID"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="case_number"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Case Number"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="customer_name"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Customer Name"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="email"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Email"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="phone"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Phone"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="type"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Type"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="case_status"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Case Status"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="reason"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Reason"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="origin"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Origin"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="subject"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Subject"
-                        />
-                    </div>
-                    <div className="col-span-4">
-                        <FormInput
-                            name="priority"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Priority"
-                        />
-                    </div>
+                <div className="grid grid-cols-12 pt-4 gap-6">
                     <div className="col-span-12">
-                        <FormTextarea
-                            name="description"
-                            control={control}
-                            errors={errors}
-                            readOnly={true}
-                            placeholder="Description"
-                            rows={6}
-                        />
-                    </div>
-
-                    {/* Editable remarks */}
-                    <div className="col-span-12">
-                        <FormTextarea
-                            name="remarks"
-                            control={control}
-                            errors={errors}
-                            placeholder={isEdit ? "Enter your remarks here" : "Enter initial remarks here"}
-                            rows={4}
-                        />
+                        {/* Personal & Application Info */}
+                        <div className="box shadow-md rounded-lg">
+                            <div className="box-header bg-gray-100 p-4 rounded-t-lg">
+                                <div className="box-title text-lg font-semibold">Customer Info</div>
+                            </div>
+                            <div className="box-body p-6">
+                                <div className="grid grid-cols-12 gap-6">
+                                    <div className="col-span-4">
+                                        <FormInput
+                                            name="customer_name"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Customer Name"
+                                        />
+                                    </div>
+                                    <div className="col-span-4">
+                                        <FormInput
+                                            name="email"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Email"
+                                        />
+                                    </div>
+                                    <div className="col-span-4">
+                                        <FormInput
+                                            name="phone"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Phone"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex justify-end mt-6">
+                <div className="grid grid-cols-12  gap-6">
+                    <div className="col-span-12">
+                        {/* Personal & Application Info */}
+                        <div className="box shadow-md rounded-lg">
+                            <div className="box-header bg-gray-100 p-4 rounded-t-lg">
+                                <div className="box-title text-lg font-semibold">Case Details</div>
+                            </div>
+                            <div className="box-body p-6">
+                                <div className="grid grid-cols-12 gap-6">
+                                    {/* Read-only fields */}
+                                    <div className="col-span-4 hidden">
+                                        <FormInput
+                                            name="case_id"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Case ID"
+                                        />
+                                    </div>
+                                    <div className="col-span-4">
+                                        <FormInput
+                                            name="case_number"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Case Number"
+                                        />
+                                    </div>
+
+                                    <div className="col-span-4">
+                                        <FormInput
+                                            name="type"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Type"
+                                        />
+                                    </div>
+                                    <div className="col-span-4">
+                                        <FormInput
+                                            name="case_status"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Case Status"
+                                        />
+                                    </div>
+                                    <div className="col-span-3">
+                                        <FormInput
+                                            name="reason"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Reason"
+                                        />
+                                    </div>
+                                    <div className="col-span-3">
+                                        <FormInput
+                                            name="origin"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Origin"
+                                        />
+                                    </div>
+                                    <div className="col-span-3">
+                                        <FormInput
+                                            name="subject"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Subject"
+                                        />
+                                    </div>
+                                    <div className="col-span-3">
+                                        <FormInput
+                                            name="priority"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Priority"
+                                        />
+                                    </div>
+                                    <div className="col-span-12">
+                                        <FormTextarea
+                                            name="description"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder="Description"
+                                            rows={6}
+                                        />
+                                    </div>
+
+                                    {/* Editable remarks */}
+
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-12  gap-6">
+                    <div className="col-span-12">
+                        {/* Personal & Application Info */}
+                        <div className="box shadow-md rounded-lg">
+                            <div className="box-header bg-gray-100 p-4 rounded-t-lg">
+                                <div className="box-title text-lg font-semibold">Execution Details</div>
+                            </div>
+                            <div className="box-body p-6">
+                                <div className="grid grid-cols-12 gap-6">
+                                    <div className="col-span-12">
+                                        <FormTextarea
+                                            name="remarks"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder={"Remarks"}
+                                            rows={4}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex justify-end my-6">
                     <FormButton
                         isLoading={isSubmitting}
                         text={isEdit ? "Update Remarks" : "Submit Case"}
@@ -223,9 +266,12 @@ const FormSection = ({ data, isEdit = false }) => {
                         className="ti-btn ti-btn-primary ti-btn-lg"
                     />
                 </div>
+
             </form>
-        </div>
-    );
+        </>
+
+    )
+        ;
 };
 
 export default FormSection;
