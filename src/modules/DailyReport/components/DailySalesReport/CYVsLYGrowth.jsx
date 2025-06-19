@@ -37,7 +37,7 @@ const CYVsLYGrowth = ({ data , loading }) => {
         return Number(result.toFixed(2));
     };
 
-    const totals = data?data:[]?.reduce(
+    const totals = (data || []).reduce(
         (acc, row) => {
             acc.FullPriceOfflineCY += row.FullPriceOfflineCY || 0;
             acc.FullPriceOfflineLY += row.FullPriceOfflineLY || 0;
