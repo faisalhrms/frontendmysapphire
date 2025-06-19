@@ -75,7 +75,7 @@ const CustomerAssistList = ({ data,isLoading,url,isActive }) => {
             Header: "Status",
             accessor: "case_status", // or "status" if your API returns status field
             filterable: true,
-            filterType: "select",
+            filterType: "text",
             // If you know status options, you can provide filterOptions here:
             // filterOptions: [
             //   { label: "New", value: "New" },
@@ -96,21 +96,21 @@ const CustomerAssistList = ({ data,isLoading,url,isActive }) => {
             Header: "Priority",
             accessor: "priority",
             filterable: true,
-            filterType: "select",
+            filterType: "text",
             Cell: ({ row }) => <span>{toTitleCase(row.original.priority)}</span>,
         },
         {
             Header: "Origin",
             accessor: "origin",
             filterable: true,
-            filterType: "select",
+            filterType: "text",
             Cell: ({ row }) => <span>{toTitleCase(row.original.origin)}</span>,
         },
         {
             Header: "Type",
             accessor: "type",
             filterable: true,
-            filterType: "select",
+            filterType: "text",
             Cell: ({ row }) => <span>{toTitleCase(row.original.type)}</span>,
         },
         {

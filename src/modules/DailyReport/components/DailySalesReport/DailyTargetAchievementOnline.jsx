@@ -42,6 +42,7 @@ const DailyTargetAchievementOnline = ({ data , isLoading }) => {
             : <i className=""></i>;
     };
 
+
     const totals = data?data:[]?.reduce(
         (acc, row) => {
             acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
@@ -87,6 +88,8 @@ const DailyTargetAchievementOnline = ({ data , isLoading }) => {
         totalOnlineAch: calcAch(totals.totalOnlineSale, totals.totalOnlineTarget),
         totalAch: calcAch(totals.totalSale, totals.totalTarget),
     };
+
+
 
     return (
         <>
