@@ -36,8 +36,8 @@ const CYVsLYGrowth = ({ data , loading }) => {
         const result = (((CY-LY)/LY)*100);
         return Number(result.toFixed(2));
     };
-
-    const totals = (data || []).reduce(
+    const totals = data?data:[]?.reduce(
+    // const totals = (data || []).reduce(
         (acc, row) => {
             acc.FullPriceOfflineCY += row.FullPriceOfflineCY || 0;
             acc.FullPriceOfflineLY += row.FullPriceOfflineLY || 0;

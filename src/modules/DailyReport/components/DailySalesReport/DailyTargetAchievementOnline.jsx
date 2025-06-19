@@ -43,7 +43,7 @@ const DailyTargetAchievementOnline = ({ data , isLoading }) => {
     };
 
 
-    const totals = (data || []).reduce(
+    const totals = data?data:[]?.reduce(
         (acc, row) => {
             acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
             acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
