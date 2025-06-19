@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { fetchSaleCvVsLyData } from "../../services/wiseside_services.js";
-import { formatNumberWithCommas } from "@helpers/formatters.js";
+
 
 const CYVsLYGrowth = ({ data , loading }) => {
-    // const [data, setData] = useState([]);
-    // const [loading, setLoading] = useState(false);
+
     const [downloadData, setDownloadData] = useState({});
 
 
@@ -22,9 +20,9 @@ const CYVsLYGrowth = ({ data , loading }) => {
 
     const getAchColor = (achPercentage) => {
         if (achPercentage === null || achPercentage === 0) {
-            return 'text-black';  // Return black color for null or 0
+            return 'text-black';
         }
-        return achPercentage < 0 ? 'text-danger' : 'text-emerald-600'; // Return danger for negative, success for positive
+        return achPercentage < 0 ? 'text-danger' : 'text-emerald-600';
     };
 
     const getAchIcon = (achPercentage) => {
@@ -36,33 +34,93 @@ const CYVsLYGrowth = ({ data , loading }) => {
         const result = (((CY-LY)/LY)*100);
         return Number(result.toFixed(2));
     };
-    const totals = data?data:[]?.reduce(
-    // const totals = (data || []).reduce(
-        (acc, row) => {
-            acc.FullPriceOfflineCY += row.FullPriceOfflineCY || 0;
-            acc.FullPriceOfflineLY += row.FullPriceOfflineLY || 0;
+    // const totals = data?data:[]?.reduce(
+    //
+    //     (acc, row) => {
+    //         acc.FullPriceOfflineCY += row.FullPriceOfflineCY || 0;
+    //         acc.FullPriceOfflineLY += row.FullPriceOfflineLY || 0;
+    //
+    //         acc.DiscountedOfflineCY += row.DiscountedOfflineCY || 0;
+    //         acc.DiscountedOfflineLY += row.DiscountedOfflineLY || 0;
+    //
+    //         acc.TotalOfflineCY += row.TotalOfflineCY || 0;
+    //         acc.TotalOfflineLY += row.TotalOfflineLY || 0;
+    //
+    //         acc.FullPriceOnlineCY += row.FullPriceOnlineCY || 0;
+    //         acc.FullPriceOnlineLY += row.FullPriceOnlineLY || 0;
+    //
+    //         acc.DiscountedOnlineCY += row.DiscountedOnlineCY || 0;
+    //         acc.DiscountedOnlineLY += row.DiscountedOnlineLY || 0;
+    //
+    //         acc.TotalOnlineCY += row.TotalOnlineCY || 0;
+    //         acc.TotalOnlineLY += row.TotalOnlineLY || 0;
+    //
+    //         acc.TotalCY += row.TotalCY || 0;
+    //         acc.TotalLY += row.TotalLY || 0;
+    //
+    //         return acc;
+    //     },
+    //     {
+    //         FullPriceOfflineCY: 0,
+    //         FullPriceOfflineLY: 0,
+    //         DiscountedOfflineCY: 0,
+    //         DiscountedOfflineLY: 0,
+    //         TotalOfflineCY: 0,
+    //         TotalOfflineLY: 0,
+    //         FullPriceOnlineCY: 0,
+    //         FullPriceOnlineLY: 0,
+    //         DiscountedOnlineCY: 0,
+    //         DiscountedOnlineLY: 0,
+    //         TotalOnlineCY: 0,
+    //         TotalOnlineLY: 0,
+    //         TotalCY: 0,
+    //         TotalLY: 0,
+    //     }
+    // );
+    const totals = Array.isArray(data)
+        ? data.reduce(
+            (acc, row) => {
+                acc.FullPriceOfflineCY += row.FullPriceOfflineCY || 0;
+                acc.FullPriceOfflineLY += row.FullPriceOfflineLY || 0;
 
-            acc.DiscountedOfflineCY += row.DiscountedOfflineCY || 0;
-            acc.DiscountedOfflineLY += row.DiscountedOfflineLY || 0;
+                acc.DiscountedOfflineCY += row.DiscountedOfflineCY || 0;
+                acc.DiscountedOfflineLY += row.DiscountedOfflineLY || 0;
 
-            acc.TotalOfflineCY += row.TotalOfflineCY || 0;
-            acc.TotalOfflineLY += row.TotalOfflineLY || 0;
+                acc.TotalOfflineCY += row.TotalOfflineCY || 0;
+                acc.TotalOfflineLY += row.TotalOfflineLY || 0;
 
-            acc.FullPriceOnlineCY += row.FullPriceOnlineCY || 0;
-            acc.FullPriceOnlineLY += row.FullPriceOnlineLY || 0;
+                acc.FullPriceOnlineCY += row.FullPriceOnlineCY || 0;
+                acc.FullPriceOnlineLY += row.FullPriceOnlineLY || 0;
 
-            acc.DiscountedOnlineCY += row.DiscountedOnlineCY || 0;
-            acc.DiscountedOnlineLY += row.DiscountedOnlineLY || 0;
+                acc.DiscountedOnlineCY += row.DiscountedOnlineCY || 0;
+                acc.DiscountedOnlineLY += row.DiscountedOnlineLY || 0;
 
-            acc.TotalOnlineCY += row.TotalOnlineCY || 0;
-            acc.TotalOnlineLY += row.TotalOnlineLY || 0;
+                acc.TotalOnlineCY += row.TotalOnlineCY || 0;
+                acc.TotalOnlineLY += row.TotalOnlineLY || 0;
 
-            acc.TotalCY += row.TotalCY || 0;
-            acc.TotalLY += row.TotalLY || 0;
+                acc.TotalCY += row.TotalCY || 0;
+                acc.TotalLY += row.TotalLY || 0;
 
-            return acc;
-        },
-        {
+                return acc;
+            },
+            {
+                FullPriceOfflineCY: 0,
+                FullPriceOfflineLY: 0,
+                DiscountedOfflineCY: 0,
+                DiscountedOfflineLY: 0,
+                TotalOfflineCY: 0,
+                TotalOfflineLY: 0,
+                FullPriceOnlineCY: 0,
+                FullPriceOnlineLY: 0,
+                DiscountedOnlineCY: 0,
+                DiscountedOnlineLY: 0,
+                TotalOnlineCY: 0,
+                TotalOnlineLY: 0,
+                TotalCY: 0,
+                TotalLY: 0,
+            }
+        )
+        : {
             FullPriceOfflineCY: 0,
             FullPriceOfflineLY: 0,
             DiscountedOfflineCY: 0,
@@ -77,8 +135,7 @@ const CYVsLYGrowth = ({ data , loading }) => {
             TotalOnlineLY: 0,
             TotalCY: 0,
             TotalLY: 0,
-        }
-    );
+        };
 
     const totalsAch = {
         FullPriceOfflineAch: calcAch(totals.FullPriceOfflineLY, totals.FullPriceOfflineCY),

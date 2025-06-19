@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { fetchTargetSaleData } from "../../services/wiseside_services.js";
-import loadingSpinner from "@components/LoadingSpinner.jsx";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
+
 const DailyTargetAchievementOnline = ({ data , isLoading }) => {
 
     const formatApiDate = (dayNumber) => {
@@ -42,26 +40,43 @@ const DailyTargetAchievementOnline = ({ data , isLoading }) => {
             : <i className=""></i>;
     };
 
-
-    const totals = data?data:[]?.reduce(
-        (acc, row) => {
-            acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
-            acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
-            acc.discountedOfflineTarget += row.discountedOfflineTarget || 0;
-            acc.discountedOfflineSale += row.discountedOfflineSale || 0;
-            acc.totalOfflineTarget += row.totalOfflineTarget || 0;
-            acc.totalOfflineSale += row.totalOfflineSale || 0;
-            acc.fullPriceOnlineTarget += row.fullPriceOnlineTarget || 0;
-            acc.fullPriceOnlineSale += row.fullPriceOnlineSale || 0;
-            acc.discountedOnlineTarget += row.discountedOnlineTarget || 0;
-            acc.discountedOnlineSale += row.discountedOnlineSale || 0;
-            acc.totalOnlineTarget += row.totalOnlineTarget || 0;
-            acc.totalOnlineSale += row.totalOnlineSale || 0;
-            acc.totalTarget += row.totalTarget || 0;
-            acc.totalSale += row.totalSale || 0;
-            return acc;
-        },
-        {
+    const totals = Array.isArray(data)
+        ? data.reduce(
+            (acc, row) => {
+                acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
+                acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
+                acc.discountedOfflineTarget += row.discountedOfflineTarget || 0;
+                acc.discountedOfflineSale += row.discountedOfflineSale || 0;
+                acc.totalOfflineTarget += row.totalOfflineTarget || 0;
+                acc.totalOfflineSale += row.totalOfflineSale || 0;
+                acc.fullPriceOnlineTarget += row.fullPriceOnlineTarget || 0;
+                acc.fullPriceOnlineSale += row.fullPriceOnlineSale || 0;
+                acc.discountedOnlineTarget += row.discountedOnlineTarget || 0;
+                acc.discountedOnlineSale += row.discountedOnlineSale || 0;
+                acc.totalOnlineTarget += row.totalOnlineTarget || 0;
+                acc.totalOnlineSale += row.totalOnlineSale || 0;
+                acc.totalTarget += row.totalTarget || 0;
+                acc.totalSale += row.totalSale || 0;
+                return acc;
+            },
+            {
+                fullPriceOfflineTarget: 0,
+                fullPriceOfflineSale: 0,
+                discountedOfflineTarget: 0,
+                discountedOfflineSale: 0,
+                totalOfflineTarget: 0,
+                totalOfflineSale: 0,
+                fullPriceOnlineTarget: 0,
+                fullPriceOnlineSale: 0,
+                discountedOnlineTarget: 0,
+                discountedOnlineSale: 0,
+                totalOnlineTarget: 0,
+                totalOnlineSale: 0,
+                totalTarget: 0,
+                totalSale: 0,
+            }
+        )
+        : {
             fullPriceOfflineTarget: 0,
             fullPriceOfflineSale: 0,
             discountedOfflineTarget: 0,
@@ -76,8 +91,43 @@ const DailyTargetAchievementOnline = ({ data , isLoading }) => {
             totalOnlineSale: 0,
             totalTarget: 0,
             totalSale: 0,
-        }
-    );
+        };
+
+    // const totals = data?data:[]?.reduce(
+    //     (acc, row) => {
+    //         acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
+    //         acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
+    //         acc.discountedOfflineTarget += row.discountedOfflineTarget || 0;
+    //         acc.discountedOfflineSale += row.discountedOfflineSale || 0;
+    //         acc.totalOfflineTarget += row.totalOfflineTarget || 0;
+    //         acc.totalOfflineSale += row.totalOfflineSale || 0;
+    //         acc.fullPriceOnlineTarget += row.fullPriceOnlineTarget || 0;
+    //         acc.fullPriceOnlineSale += row.fullPriceOnlineSale || 0;
+    //         acc.discountedOnlineTarget += row.discountedOnlineTarget || 0;
+    //         acc.discountedOnlineSale += row.discountedOnlineSale || 0;
+    //         acc.totalOnlineTarget += row.totalOnlineTarget || 0;
+    //         acc.totalOnlineSale += row.totalOnlineSale || 0;
+    //         acc.totalTarget += row.totalTarget || 0;
+    //         acc.totalSale += row.totalSale || 0;
+    //         return acc;
+    //     },
+    //     {
+    //         fullPriceOfflineTarget: 0,
+    //         fullPriceOfflineSale: 0,
+    //         discountedOfflineTarget: 0,
+    //         discountedOfflineSale: 0,
+    //         totalOfflineTarget: 0,
+    //         totalOfflineSale: 0,
+    //         fullPriceOnlineTarget: 0,
+    //         fullPriceOnlineSale: 0,
+    //         discountedOnlineTarget: 0,
+    //         discountedOnlineSale: 0,
+    //         totalOnlineTarget: 0,
+    //         totalOnlineSale: 0,
+    //         totalTarget: 0,
+    //         totalSale: 0,
+    //     }
+    // );
 
     const totalsAch = {
         fullPriceOfflineAch: calcAch(totals.fullPriceOfflineSale, totals.fullPriceOfflineTarget),
