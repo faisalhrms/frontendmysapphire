@@ -44,7 +44,8 @@ const CustomerAssistDetail = () => {
         subject,
         priority,
         description,
-        remarks, // existing remarks, if any
+        remarks,
+        cc_resolution,// existing remarks, if any
         created_at,
         updated_at,
     } = caseData;
@@ -56,7 +57,7 @@ const CustomerAssistDetail = () => {
     return (
         <>
             <PageHeader currentpage="We Care" mainpage="Support"/>
-            <div className="p-4 mt-4 bg-white shadow-md rounded-lg">
+            <div className="p-4 my-4 bg-white shadow-md rounded-lg">
                 <h2 className="text-lg font-semibold mb-4">Customer Case Details</h2>
                 <div className="grid grid-cols-12 gap-6">
                     {/* Case ID */}
@@ -136,14 +137,24 @@ const CustomerAssistDetail = () => {
                         </div>
                     </div>
                     {/* Remarks (existing) */}
-                    {remarks != null && (
-                        <div className="col-span-12">
-                            <label className="block text-sm font-medium text-gray-700">Remarks</label>
+
+                        {remarks != null && (
+                            <div className="col-span-6">
+                                <label className="block text-sm font-medium text-gray-700">Remarks</label>
+                                <div className="mt-1 whitespace-pre-wrap text-gray-900 bg-gray-50 p-2 rounded">
+                                    {remarks}
+                                </div>
+                            </div>
+                        )}
+                        <div className="col-span-6">
+                            <label className="block text-sm font-medium text-gray-700">CC Resolution</label>
                             <div className="mt-1 whitespace-pre-wrap text-gray-900 bg-gray-50 p-2 rounded">
-                                {remarks}
+                                {cc_resolution}
                             </div>
                         </div>
-                    )}
+
+                    
+
                 </div>
             </div>
         </>
