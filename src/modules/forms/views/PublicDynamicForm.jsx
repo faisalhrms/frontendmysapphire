@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import desktopLogoWhite from "@assets/images/brand-logos/desktop-logo.svg";
 import {useParams} from "react-router-dom";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import {useGeoLocation} from "@hooks/useGeoLocation.js";
+import {getMarketingMetadata} from "@helpers/helper.js";
+import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
 
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 
@@ -30,7 +33,10 @@ const createFormSchema = (fields) => {
                     if (field.required) {
                         fieldSchema = fieldSchema.email("Invalid email address").min(1, "This field is required");
                     } else {
-                        fieldSchema = fieldSchema.email("Invalid email address").optional();
+                        fieldSchema = fieldSchema.refine(
+                            (val) => !val || z.string().email().safeParse(val).success,
+                            { message: "Invalid email address" }
+                        ).optional();
                     }
                     break;
                 case "url":
@@ -68,6 +74,8 @@ const createFormSchema = (fields) => {
             schemaObject[normalizeFieldName(field.name)] = fieldSchema;
         });
     });
+    schemaObject.latitude = z.number().nullable().optional();
+    schemaObject.longitude = z.number().nullable().optional();
     return z.object(schemaObject);
 };
 
@@ -76,19 +84,31 @@ export default function PublicDynamicForm() {
     const [formConfig, setFormConfig] = useState(null);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const { location } = useGeoLocation();
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/forms/${slug}/public`)
-            .then((response) => {
-                if (!response.ok) throw new Error("Failed to fetch form");
-                return response.json();
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/${slug}/public`)
+            .then(async (response) => {
+                const json = await response.json();
+                if (!response.ok) {
+                    const errorMessage = json?.message || 'Something went wrong';
+                    throw new Error(errorMessage);
+                }
+                return json;
             })
             .then((data) => setFormConfig(data.data))
             .catch((error) => setError(error.message));
-    }, []);
+    }, [slug]);
+
 
     const getDefaultValues = (config) => {
-        const defaults = {};
+        if (!formConfig) return {};
+
+        const defaults = {
+            latitude: location?.lat || null,
+            longitude: location?.lng || null,
+        };
         if (config) {
             config.fields.forEach((step) => {
                 step.fields.forEach((field) => {
@@ -121,9 +141,13 @@ export default function PublicDynamicForm() {
         formState: { errors },
         reset,
         trigger,
+        setValue,
     } = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: {},
+        defaultValues: {
+            latitude: location?.lat || null,
+            longitude: location?.lng || null,
+        },
         mode: "onChange",
     });
 
@@ -133,17 +157,72 @@ export default function PublicDynamicForm() {
         }
     }, [formConfig, reset]);
 
-    if (error) return <div className="text-danger text-center">Error: {error}</div>;
-    if (!formConfig) return <div className="text-center">Loading...</div>;
+    useEffect(() => {
+        if (location.lat && location.lng) {
+            setValue("latitude", location.lat, { shouldDirty: true });
+            setValue("longitude", location.lng, { shouldDirty: true });
+        }
+    }, [location, setValue]);
+
+    if (error){
+        return (
+            <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
+                <div className="max-w-2xl mx-auto">
+                    <PublicDynamicFormHeader
+                        description={error}
+                        type="danger"
+                        border="border-danger"
+                    />
+                </div>
+            </div>
+        );
+    }
+    if (!formConfig) return <LoadingSpinner />;
 
     const steps = formConfig.fields.map((step) => ({
         title: step.steps,
         fields: step.fields.map((field) => normalizeFieldName(field.name)),
     }));
 
-    const onSubmit = (data) => {
-        console.log("Form submitted:", data);
-        alert("Form submitted successfully!");
+    const onSubmit = async (formData) => {
+        try {
+            const metadata = getMarketingMetadata();
+            const { latitude, longitude, ...data } = formData;
+            const payload = new FormData();
+
+            if (latitude !== null) payload.append("latitude", latitude);
+            if (longitude !== null) payload.append("longitude", longitude);
+
+            payload.append("marketing_metadata", JSON.stringify(metadata));
+
+            formConfig.fields.flatMap((step) => step.fields).forEach((field) => {
+                const fieldName = field.name;
+                const normalizedName = normalizeFieldName(fieldName);
+                const value = data[normalizedName];
+
+                if (field.field_type === "file" && value instanceof File) {
+                    payload.append(`data[${fieldName}]`, value);
+                } else if (value !== null && value !== undefined) {
+                    payload.append(`data[${fieldName}]`, JSON.stringify(value));
+                }
+            });
+
+
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/submissions/${slug}/submit/`, {
+                method: "POST",
+                body: payload,
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                setIsSubmitted(true);
+            } else {
+                throw new Error(result.message || "Submission failed");
+            }
+        } catch (err) {
+            console.error("Submission error:", err);
+            alert("Failed to submit form: " + err.message);
+        }
     };
 
     const handleNext = async (e) => {
@@ -152,7 +231,6 @@ export default function PublicDynamicForm() {
         try {
             const currentFields = steps[currentStep].fields;
             const isValid = await trigger(currentFields);
-            console.log({ isValid, errors, currentFields }); // Debug log
             if (isValid) {
                 setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
             } else {
@@ -399,39 +477,30 @@ export default function PublicDynamicForm() {
         );
     };
 
+    if (isSubmitted) {
+        return (
+            <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
+                <div className="max-w-2xl mx-auto">
+                    <PublicDynamicFormHeader
+                        title={formConfig.title}
+                        description="Thank you for your submission! We have received your form successfully."
+                        type="success"
+                        border="border-success"
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
             <div className="max-w-2xl mx-auto">
-                <div className="bg-white rounded-lg border border-gray-200 mb-3">
-                    <div className="border-t-8 border-[#673ab7] rounded-t-lg">
-                        <div className="p-6">
-                            <div className="mb-4 flex justify-center">
-                                <img
-                                    src={desktopLogoWhite}
-                                    alt=""
-                                    className="authentication-brand desktop-logo w-[200px] h-[30px]"
-                                />
-                            </div>
-                            <h1 className="text-2xl font-normal text-gray-800 mb-2">{formConfig.title}</h1>
-                            <p className="text-sm text-gray-600">{formConfig.description}</p>
-                            <p className="text-xs text-danger mt-2">* Indicates required question</p>
-                            <div className="mt-4">
-                                <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                      <span>
-                                        Step {currentStep + 1} of {steps.length}
-                                      </span>
-                                        <span>{steps[currentStep].title}</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div
-                                        className="bg-[#673ab7] h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <PublicDynamicFormHeader
+                    title={formConfig.title}
+                    description={formConfig.description}
+                    currentStep={currentStep}
+                    steps={steps}
+                />
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                     {steps[currentStep].fields.map((fieldName) => (

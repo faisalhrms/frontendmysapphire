@@ -11,6 +11,14 @@ export const sidebarMenu = [
         '',
         [
             generateSidebarItem(
+                FORMS_ROUTES.LIST.path,
+                "link",
+                "List",
+                1,
+                "bx bx-message-square-edit",
+                FORMS_ROUTES.LIST.permission,
+            ),
+            generateSidebarItem(
                 FORMS_ROUTES.CREATE.path,
                 "link",
                 "Create",
