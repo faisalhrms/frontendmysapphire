@@ -43,7 +43,7 @@ const DynamicFormBuilder = ({ formData }) => {
             is_active: true,
             expired_at: undefined,
             notification_emails: [],
-            fields: [{ label: '', name: '', short_description: '', field_type: 'text', required: false, options: [], order: 1 }],
+            fields: [{ label: '', name: '', short_description: '', field_type: 'text', group: '', required: false, options: [], order: 1 }],
             ...formData,
         },
     });
@@ -74,7 +74,7 @@ const DynamicFormBuilder = ({ formData }) => {
                 formData.fields?.map((field) => ({
                     ...field,
                     options: field.options?.length ? field.options : ['select', 'radio', 'checkbox'].includes(field.field_type) ? [{ label: '', value: '' }] : [],
-                })) || [{ label: '', name: '', short_description: '', field_type: 'text', required: false, options: [], order: 1 }]
+                })) || [{ label: '', name: '', short_description: '', field_type: 'text', group: '', required: false, options: [], order: 1 }]
             );
         }
     }, [formData, setValue]);
@@ -105,7 +105,7 @@ const DynamicFormBuilder = ({ formData }) => {
     };
 
     const addField = () => {
-        append({ label: '', name: '', short_description: '', field_type: 'text', required: false, options: [], order: fields.length + 1 });
+        append({ label: '', name: '', short_description: '', field_type: 'text', group: '', required: false, options: [], order: fields.length + 1 });
     };
 
     return (
@@ -213,74 +213,94 @@ const DynamicFormBuilder = ({ formData }) => {
                                 {fields.map((field, index) => {
                                     const fieldType = watchedFieldTypes?.[index]?.field_type;
                                     return (
-                                        <div key={field.id} className="grid grid-cols-12 gap-4 mb-4 ">
-                                            <div className="xl:col-span-2 col-span-12">
-                                                <FormInput
-                                                    name={`fields.${index}.label`}
-                                                    control={control}
-                                                    errors={errors}
-                                                    placeholder="Field Label"
-                                                    label={false}
-                                                />
+                                        <div key={field.id} className="grid grid-cols-12 gap-4 mb-4">
+                                            <div className="col-span-10">
+                                                <div className='grid grid-cols-12 gap-4'>
+                                                    <div className="xl:col-span-2 col-span-12">
+                                                        <FormInput
+                                                            name={`fields.${index}.label`}
+                                                            control={control}
+                                                            errors={errors}
+                                                            placeholder="Field Label"
+                                                            label={false}
+                                                        />
+                                                    </div>
+                                                    <div className="xl:col-span-2 col-span-12 ">
+                                                        <FormInput
+                                                            name={`fields.${index}.name`}
+                                                            control={control}
+                                                            errors={errors}
+                                                            placeholder="Field Name"
+                                                            label={false}
+                                                        />
+                                                    </div>
+                                                    <div className="xl:col-span-2 col-span-12">
+                                                        <FormInput
+                                                            name={`fields.${index}.short_description`}
+                                                            control={control}
+                                                            errors={errors}
+                                                            placeholder="Field Description"
+                                                            label={false}
+                                                        />
+                                                    </div>
+                                                    <div className="xl:col-span-2 col-span-12">
+                                                        <FormInput
+                                                            name={`fields.${index}.group`}
+                                                            control={control}
+                                                            errors={errors}
+                                                            placeholder="Field Group"
+                                                            label={false}
+                                                        />
+                                                    </div>
+                                                    <div className="xl:col-span-2 col-span-12">
+                                                        <FormSelect
+                                                            name={`fields.${index}.field_type`}
+                                                            control={control}
+                                                            errors={errors}
+                                                            placeholder="Select Field Type"
+                                                            options={fieldTypeOptions}
+                                                            isClearable={false}
+                                                            label={false}
+                                                        />
+                                                    </div>
+                                                    <div className="xl:col-span-2 col-span-12 flex items-center space-x-2">
+                                                        <FormCheckbox
+                                                            name={`fields.${index}.required`}
+                                                            control={control}
+                                                            errors={errors}
+                                                            label="Required"
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="xl:col-span-2 col-span-12 ">
-                                                <FormInput
-                                                    name={`fields.${index}.name`}
-                                                    control={control}
-                                                    errors={errors}
-                                                    placeholder="Field Name"
-                                                    label={false}
-                                                />
-                                            </div>
-                                            <div className="xl:col-span-2 col-span-12">
-                                                <FormInput
-                                                    name={`fields.${index}.short_description`}
-                                                    control={control}
-                                                    errors={errors}
-                                                    placeholder="Field Short Description"
-                                                    label={false}
-                                                />
-                                            </div>
-                                            <div className="xl:col-span-3 col-span-12">
-                                                <FormSelect
-                                                    name={`fields.${index}.field_type`}
-                                                    control={control}
-                                                    errors={errors}
-                                                    placeholder="Select Field Type"
-                                                    options={fieldTypeOptions}
-                                                    isClearable={false}
-                                                    label={false}
-                                                />
-                                            </div>
-                                            <div className="xl:col-span-1 col-span-12">
-                                                <FormInput
-                                                    type="number"
-                                                    name={`fields.${index}.order`}
-                                                    control={control}
-                                                    errors={errors}
-                                                    placeholder="Order"
-                                                    label={false}
-                                                />
-                                            </div>
-                                            <div className="xl:col-span-2 col-span-12 flex items-center space-x-2">
-                                                <FormCheckbox
-                                                    name={`fields.${index}.required`}
-                                                    control={control}
-                                                    errors={errors}
-                                                    label="Required"
-                                                />
-                                                {index !== 0 && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => remove(index)}
-                                                        className="ti-btn ti-btn-danger ti-btn-sm w-max"
-                                                    >
-                                                        <i className="bi bi-trash3-fill"></i>
-                                                    </button>
-                                                )}
+                                            <div className="col-span-2">
+                                                <div className='grid grid-cols-3 gap-4'>
+                                                    <div className="col-span-2">
+                                                        <FormInput
+                                                            type="number"
+                                                            name={`fields.${index}.order`}
+                                                            control={control}
+                                                            errors={errors}
+                                                            placeholder="Order"
+                                                            label={false}
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-1 flex items-center space-x-2">
+                                                        {index !== 0 && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => remove(index)}
+                                                                className="ti-btn ti-btn-danger ti-btn-sm w-max"
+                                                            >
+                                                                <i className="bi bi-trash3-fill"></i>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                             {['select', 'radio', 'checkbox'].includes(fieldType) && (
-                                                <div className="xl:col-span-12 col-span-12 border br-4 border-gray-400 mr-4 ml-4 rounded-lg mt-2">
+                                                <div
+                                                    className="xl:col-span-12 col-span-12 border br-4 border-gray-400 mr-4 ml-4 rounded-lg mt-2">
                                                     <OptionsRepeater
                                                         fieldIndex={index}
                                                         control={control}

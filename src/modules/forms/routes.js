@@ -15,6 +15,8 @@ export const FORMS_ROUTES = {
         path: "/module/forms/edit/:id",
         permission: 'forms.view_form',
     },
+
+
 };
 
 export const MODULE_ROUTES = [
@@ -33,4 +35,5 @@ export const MODULE_ROUTES = [
         component: EditDynamicForm,
         permission: FORMS_ROUTES.LIST.permission,
     },
+
 ];

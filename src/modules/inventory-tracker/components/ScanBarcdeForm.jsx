@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { FaCamera } from "react-icons/fa";
 import api from "@config/axiosConfig.js";
 
-const ScanBarcodeForm = ({ setFilters, filters }) => {
+const ScanBarcodeForm = () => {
     const {
         control,
         handleSubmit,
@@ -59,7 +59,6 @@ const ScanBarcodeForm = ({ setFilters, filters }) => {
                         setValue("scan", result.getText());
                         setHasSearched(true);
                         fetchBarcodeData(result.getText());
-                        setFilters({ ...filters, barcode: result.getText() });
                         console.log("Scanned barcode:", result.getText());
                     }
                     if (err && !(err instanceof NotFoundException)) {
@@ -90,7 +89,6 @@ const ScanBarcodeForm = ({ setFilters, filters }) => {
         if (data?.scan && data.scan.trim() !== "") {
             setHasSearched(true);
             fetchBarcodeData(data.scan);
-            setFilters({ ...filters, barcode: data?.scan });
             console.log("Submitted barcode:", data.scan);
         } else {
             setHasSearched(true);
