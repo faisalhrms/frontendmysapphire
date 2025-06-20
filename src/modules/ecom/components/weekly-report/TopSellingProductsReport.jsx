@@ -12,22 +12,29 @@ const TopSellingProductsReport = ({isActive, filters }) => {
             Header: 'Sku',
             accessor: 'productid',
             Cell: ({ row }) => (
-                    <a href={row.original?.c_imageurl} target='_blank'>
-                        <div className="flex items-center">
-                            <div className="me-2">
+                <div className="flex items-center">
+                    <div className="me-2">
+                        <a href={row.original?.c_imageurl}
+                           target='_blank'>
                             <span className="avatar avatar-lg">
-                                <img src={row.original?.c_imageurl} alt={row.original?.productid}/></span>
-                            </div>
-                            <div className="font-semibold text-primary underline">{row.original?.productid}</div>
-                        </div>
+                                <img src={row.original?.c_imageurl} alt={row.original?.productid}/>
+                            </span>
+                        </a>
+                    </div>
+                    <a href={`https://pk.sapphireonline.pk/collections/three-piece-unstitched/products/${row.original?.productid}.html`} target='_blank'>
+                        <div className="font-semibold text-primary underline">{row.original?.productid}</div>
                     </a>
-            )
-        },
-        {
-            Header: 'Name',
-            accessor: 'itemtext',
-        },
-        {
+                </div>
+)
+},
+    {
+        Header: 'Name',
+            accessor
+    :
+        'itemtext',
+    }
+,
+    {
             Header: 'Ordered QTY',
             accessor: 'qtyordered',
             Cell: ({ value }) => (
