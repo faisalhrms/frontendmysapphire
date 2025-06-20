@@ -23,10 +23,12 @@ const OrdersFulfillmentSummary = ({ filters, dateFrom, dateTo }) => {
                 accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(row.value)}</span>
             })),
             {
-                label: <span className="dark:text-gray-200 dark:bg-bodybg font-bold">Reconciliation</span>,
+                label: <span className="dark:text-gray-200 dark:bg-bodybg font-bold  sticky left-0 z-20"  >Reconciliation</span>,
                 accessor: <span className="dark:text-gray-200 dark:bg-bodybg">{formatNumberWithCommas(summary.reconciliation)}</span>
             }
         ];
+
+
 
     return (
         <ExecutiveSummaryTable
@@ -34,6 +36,7 @@ const OrdersFulfillmentSummary = ({ filters, dateFrom, dateTo }) => {
             data={fulfillmentData}
             totals={[]}
             isLoading={isLoading}
+         
 
         />
     );
