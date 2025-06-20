@@ -124,6 +124,13 @@ const EquipmentList = () => {
             filterKey: 'location__name'
         },
         {
+            Header: "Remarks",
+            accessor: "remarks",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => (value ? value : "N/A"),
+        },
+        {
             Header: "Company",
             accessor: "company.name",
             filterable: false,

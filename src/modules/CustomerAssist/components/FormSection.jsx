@@ -55,6 +55,7 @@ const FormSection = ({ data, isEdit = false }) => {
                 subject: data.subject || "",
                 priority: data.priority || "",
                 description: data.description || "",
+                cc_resolution:data.cc_resolution||"",
                 // **Show existing remarks** in edit mode:
                 remarks: isEdit && data.remarks ? data.remarks : "",
             });
@@ -74,6 +75,7 @@ const FormSection = ({ data, isEdit = false }) => {
                 priority: "",
                 description: "",
                 remarks: "",
+                cc_resolution:""
             });
         }
     }, [data, isEdit, reset]);
@@ -244,12 +246,22 @@ const FormSection = ({ data, isEdit = false }) => {
                             </div>
                             <div className="box-body p-6">
                                 <div className="grid grid-cols-12 gap-6">
-                                    <div className="col-span-12">
+                                    <div className="col-span-6">
                                         <FormTextarea
                                             name="remarks"
                                             control={control}
                                             errors={errors}
                                             placeholder={"Remarks"}
+                                            rows={4}
+                                        />
+                                    </div>
+                                    <div className="col-span-6">
+                                        <FormTextarea
+                                            name="cc_resolution"
+                                            control={control}
+                                            errors={errors}
+                                            readOnly={true}
+                                            placeholder={"CC Resolution"}
                                             rows={4}
                                         />
                                     </div>

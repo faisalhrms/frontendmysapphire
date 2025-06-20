@@ -43,7 +43,7 @@ const DigitalSignatures = () => {
         }
         if (saveResponse) {
           Notify.success("Signature data saved successfully.");
-          const savedData = await getSignature(updatedData.employee_code);
+          const savedData = await getSignature(updatedData.employee_code, updatedData.company_id);
           setData(savedData);
         } else {
           Notify.error("Failed to save signature data.");
@@ -61,10 +61,10 @@ const DigitalSignatures = () => {
     }
   };
 
-  const handleSavedDataFetch = async (Code) => {
+  const handleSavedDataFetch = async (Code, companyId) => {
     try {
       setActiveTab("details");
-      const data = await getSignature(Code);
+      const data = await getSignature(Code, companyId);
       setEditData(data);
     } catch (error) {
       console.error(error);
