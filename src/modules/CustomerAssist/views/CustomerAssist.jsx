@@ -41,11 +41,13 @@ const CustomerAssist = () => {
             content: <CustomerAssistForm />,
         },
 
+
+
     ];
 
     return (
         <>
-            <PageHeader currentpage="Customer Assist" mainpage="Support" />
+            <PageHeader currentpage="We Care" mainpage="Support" />
             <IconTabs tabs={tabs} onTabChange={handleTabChange} activeTab={activeTab} />
         </>
     );

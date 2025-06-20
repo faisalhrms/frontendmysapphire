@@ -9,7 +9,7 @@ const CustomerAssistEdit = (props) => {
     const { caseData, isLoading, error } = useCase(id);
     return (
         <>
-            <PageHeader currentpage="Customer Assist" mainpage="Support" />
+            <PageHeader currentpage="We Care" mainpage="Support" />
 
             {caseData && <FormSection data={caseData} isEdit={true} />}
         </>

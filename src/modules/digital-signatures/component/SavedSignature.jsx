@@ -5,7 +5,7 @@ import ConfirmationModal from "@modules/sr-management/component/ConfirmationModa
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {
     getDownloadByEmpCode,
-    getdeleteByEmpCode,
+    getdeleteByEmpCode, handleDownloadHtml,
 } from "../services/Service";
 import Notify from "@helpers/toastNotifications.js";
 import api from "@config/axiosConfig.js";
@@ -96,6 +96,10 @@ const SavedSignature = ({onEdit, handleSavedDataFetch}) => {
                         >
                             <i className="ri-download-2-line"></i>
                         </button>
+                        <button onClick={() => handleDownloadHtml(employee_code)}
+                                className="ti-btn ti-btn-secondary ti-btn-sm">
+                            <i className="ri-file-code-line"></i>
+                        </button>
                     </div>
                 );
             },
@@ -104,49 +108,49 @@ const SavedSignature = ({onEdit, handleSavedDataFetch}) => {
 
     return (
         <div>
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-12 flex justify-between items-center">
-              <div className="flex-grow">
-                <FormAsyncSelect
-                    label={false}
-                    name="company_id"
-                    control={control}
-                    errors={errors}
-                    placeholder="Company"
-                    apiUrl="/select/companies"
-                    queryKeyBase="companies"
-                    clientSideSearch
-                    preselectedOptions={[]}
-                />
-              </div>
-              <div className="ml-4">
-                <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md bg-primary flex items-center gap-2 hover:bg-primary-dark"
-                    onClick={downloadAllScripts}
-                >
-                  <i className="bx bxs-download"></i>
-                  Download All
-                </button>
-              </div>
+            <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-12 flex justify-between items-center">
+                    <div className="flex-grow">
+                        <FormAsyncSelect
+                            label={false}
+                            name="company_id"
+                            control={control}
+                            errors={errors}
+                            placeholder="Company"
+                            apiUrl="/select/companies"
+                            queryKeyBase="companies"
+                            clientSideSearch
+                            preselectedOptions={[]}
+                        />
+                    </div>
+                    <div className="ml-4">
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md bg-primary flex items-center gap-2 hover:bg-primary-dark"
+                            onClick={downloadAllScripts}
+                        >
+                            <i className="bx bxs-download"></i>
+                            Download All
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
 
 
-          <div className="mt-1">
-            <DataTable
-                columns={columns}
-                filter={{selectedCompany}}
-                loading={loading}
-                apiUrl="/signatures/datatable/"
+            <div className="mt-1">
+                <DataTable
+                    columns={columns}
+                    filter={{selectedCompany}}
+                    loading={loading}
+                    apiUrl="/signatures/datatable/"
+                />
+            </div>
+
+            <ConfirmationModal
+                show={isModalOpen}
+                message="Are you sure you want to delete this signature?"
+                onConfirm={onConfirmDelete}
+                onCancel={onCloseModal}
             />
-          </div>
-
-          <ConfirmationModal
-              show={isModalOpen}
-              message="Are you sure you want to delete this signature?"
-              onConfirm={onConfirmDelete}
-              onCancel={onCloseModal}
-          />
         </div>
     );
 };
