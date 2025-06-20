@@ -52,9 +52,9 @@ const DatatableDynamicForm = () => {
                     <div className="flex space-x-2">
                         <button
                             onClick={() => openQRModal(rowData)}
-                            className="ti-btn ti-btn-dark ti-btn-sm"
+                            className="ti-btn ti-btn-primary-full ti-btn-sm"
                         >
-                            <i className="ri-eye-line"></i>
+                            <i class="bi bi-qr-code"></i>
                         </button>
                         <button
                             onClick={() => downloadQRCode(rowData)}
@@ -70,21 +70,33 @@ const DatatableDynamicForm = () => {
             Header: 'Actions',
             accessor: 'id',
             disableSortBy: true,
-            Cell: ({ value }) => (
+            Cell: ({ row }) => {
+                const rowData = row.original;
+                return (
                     <div className="flex space-x-2">
-                        <Link
-                            to={`/module/forms/edit/${value}`}
-                        >
+                        <Link to={`/module/forms/edit/${rowData.id}`}>
                             <button
                                 className="ti-btn ti-btn-primary ti-btn-sm"
-                                title="Edit Form"
-                            >
+                                title="Edit Form">
                                 <i className="ri-edit-line"></i>
                             </button>
                         </Link>
+                        <Link to={`/forms/${rowData.slug}`}>
+                            <button
+                                className="ti-btn ti-btn-success ti-btn-sm"
+                                title="View Public Form">
+                                <i class="bi bi-file-earmark"></i>
+                            </button>
+                        </Link>
+                        <Link to={`/module/forms/submissions/${rowData.id}`}>
+                            <button
+                                className="ti-btn ti-btn-success-gradient ti-btn-sm"
+                                title="View Form Submissions">
+                                <i class="bi bi-send-check"></i>
+                            </button>
+                        </Link>
                     </div>
-            ),
-
+            )},
         },
         {
             Header: 'Title',

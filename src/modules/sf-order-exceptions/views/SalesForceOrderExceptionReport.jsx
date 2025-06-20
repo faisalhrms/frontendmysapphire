@@ -5,8 +5,6 @@ import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import OrderExceptionFilter from "@modules/sf-order-exceptions/components/OrderExceptionFilter.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import FailureSummaryTable from "@modules/sf-order-exceptions/components/FailureSummaryTable.jsx";
-import {formatNumberWithCommas} from "@helpers/formatters.js";
 import SalesForceOrderExceptionTable from "@modules/sf-order-exceptions/components/SalesForceOrderExceptionTable.jsx";
 
 const SalesForceOrderExceptionReport = () => {

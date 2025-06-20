@@ -1,60 +1,53 @@
+
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import React from "react";
-import {formatNumberWithCommas} from "@helpers/formatters.js";
 import ReportSyncTime from "@components/reports/ReportSyncTime.jsx";
+import {formatNumberWithCommas} from "@helpers/formatters.js";
 
-const OrderDetailReport = ({data, isLoading, isActive}) => {
+const OrderDetailReport = ({ data, isLoading, isActive }) => {
     if (!isActive) {
-        return null
+        return null;
     }
+
     if (isLoading) {
         return <LoadingSpinner />;
     }
+
     return (
         <>
-            <ReportSyncTime syncType='cc_orders' />
-            <div className="p-4 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
-                <div className="mb-6 overflow-auto max-h-[600px]"
-
-                >
-                    <table className="w-full border-collapse">
-                        <thead style={{
-                            position: "sticky",
-                            top: 0,
-                            zIndex: 10,
-                            backgroundColor: "#383853"
-                        }}>
-                        <tr className="text-white ">
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Hour</th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Minutes
-                            </th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Order Count
-                            </th>
-                            <th className="bg-blue-200 border border-gray-300 p-2 text-center">Revenue Amount
-                            </th>
-
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {data && data.length > 0 &&
-                            data?.map((item, sourceIndex) => (
-                                <React.Fragment key={`source-${sourceIndex}`}>
-                                    <tr className={`dark:text-gray-200 dark:bg-bodybg text-black ${item.hour === 'Total' ? 'bg-[#949eb7] font-bold' : ''}`}>
-                                        <td className='border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-center text-black'>{item.hour}</td>
-                                        <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{item.minute_chunk}</td>
-                                        <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black'>{item.order_count}</td>
-                                        <td className='border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg text-black font-bold'>{formatNumberWithCommas(item.revenue_amount) }</td>
-
-
+            <ReportSyncTime syncType='cc_orders'/>
+            <div className="flex justify-center items-center">
+                <div className="w-full max-w-4xl p-4 bg-white rounded-lg mb-4">
+                    <div className="h-[600px] overflow-y-auto bg-white  shadow-md dark:text-gray-200 dark:bg-bodybg">
+                        <table className="w-full border-collapse">
+                            <thead className="sticky top-0 z-20">
+                            <tr className="text-white" style={{ backgroundColor: "#383853" }}>
+                                <th className="border border-gray-400 p-2 text-center">Time</th>
+                                <th className="border border-gray-300 p-2 text-center">Order Count</th>
+                                <th className="border border-gray-300 p-2 text-center">Revenue Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {data && data.length > 0 &&
+                                data.map((item, sourceIndex) => (
+                                    <tr key={`source-${sourceIndex}`}
+                                        className={`dark:text-gray-200 dark:bg-bodybg text-black ${item.hour === 'Total' ? 'bg-[#949eb7] font-bold' : ''}`}>
+                                        <td className='border border-gray-400 p-2 whitespace-nowrap text-center'>
+                                            {item.hour}:{item.minute_chunk}
+                                        </td>
+                                        <td className='border border-gray-300 p-2 text-right'>{item.order_count}</td>
+                                        <td className='border border-gray-300 p-2 text-right font-bold'>
+                                            {formatNumberWithCommas(Math.floor(item.revenue_amount))}
+                                        </td>
                                     </tr>
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    </table>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 export default OrderDetailReport;

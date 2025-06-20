@@ -7,7 +7,6 @@ import IconTabs from "@components/IconTabs.jsx";
 import LandingPagePerformanceTab from "@modules/ecom/components/weekly-report/LandingPagePerformanceTab.jsx";
 import HourTrafficRate from "@modules/ecom/components/weekly-report/HourTrafficRate.jsx";
 import OrderDetailReport from "@modules/ecom/components/weekly-report/OrderDetailReport.jsx";
-import TopSellingReport from "@modules/ecom/components/weekly-report/TopSellingReport.jsx";
 import SalesDashboardFilter from "@modules/dashboards/rd/components/SalesDashboardFilter.jsx";
 import SalesForceOrderExceptionTable from "@modules/sf-order-exceptions/components/SalesForceOrderExceptionTable.jsx";
 import SalesForceOrderStatusTable from "@modules/sf-order-exceptions/components/SalesForceOrderStatusTable.jsx";
