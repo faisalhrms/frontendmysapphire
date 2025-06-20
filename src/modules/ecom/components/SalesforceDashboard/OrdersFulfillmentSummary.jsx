@@ -36,7 +36,7 @@ const OrdersFulfillmentSummary = ({ filters, dateFrom, dateTo }) => {
             data={fulfillmentData}
             totals={[]}
             isLoading={isLoading}
-         
+
 
         />
     );
