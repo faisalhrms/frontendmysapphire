@@ -56,7 +56,8 @@ const CustomerAssistDetail = () => {
 
     return (
         <>
-            <PageHeader currentpage="We Care" mainpage="Support"/>
+            <PageHeader currentpage="Customer Assist" mainpage="Customer Assist"  activepage="We Care" />
+
             <div className="p-4 my-4 bg-white shadow-md rounded-lg">
                 <h2 className="text-lg font-semibold mb-4">Customer Case Details</h2>
                 <div className="grid grid-cols-12 gap-6">

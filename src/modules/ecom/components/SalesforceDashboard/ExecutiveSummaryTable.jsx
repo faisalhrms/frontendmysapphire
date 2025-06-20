@@ -23,7 +23,7 @@ const ExecutiveSummaryTable = ({ title, data, totals, isLoading }) => {
                         </tr>
                     ) : data.length > 0 ? (
                         data.map((row, rowIndex) => (
-                            <tr key={rowIndex} className="border-b border-gray-200  dark:text-gray-200 dark:bg-bodybg">
+                            <tr key={rowIndex} className="border-b border-gray-200 sticky  dark:text-gray-200 dark:bg-bodybg">
                                 {Object.entries(row).map(([key, cell], cellIndex) => (
                                     <td
                                         key={cellIndex}
@@ -69,7 +69,8 @@ ExecutiveSummaryTable.propTypes = {
     title: PropTypes.string.isRequired,
     data: PropTypes.array.isRequired,
     totals: PropTypes.array.isRequired,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+
 };
 
 export default ExecutiveSummaryTable;
