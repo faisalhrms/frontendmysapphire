@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import desktopLogoWhite from "@assets/images/brand-logos/desktop-logo.svg";
 import {useParams} from "react-router-dom";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import {useGeoLocation} from "@hooks/useGeoLocation.js";
+import {getMarketingMetadata} from "@helpers/helper.js";
+import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
 
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 
@@ -30,7 +33,10 @@ const createFormSchema = (fields) => {
                     if (field.required) {
                         fieldSchema = fieldSchema.email("Invalid email address").min(1, "This field is required");
                     } else {
-                        fieldSchema = fieldSchema.email("Invalid email address").nullable().optional();
+                        fieldSchema = fieldSchema.refine(
+                            (val) => !val || z.string().email().safeParse(val).success,
+                            { message: "Invalid email address" }
+                        ).optional();
                     }
                     break;
                 case "url":
@@ -68,30 +74,41 @@ const createFormSchema = (fields) => {
             schemaObject[normalizeFieldName(field.name)] = fieldSchema;
         });
     });
+    schemaObject.latitude = z.number().nullable().optional();
+    schemaObject.longitude = z.number().nullable().optional();
     return z.object(schemaObject);
 };
 
 export default function PublicDynamicForm() {
     const { slug } = useParams();
     const [formConfig, setFormConfig] = useState(null);
-    const whatsApp = formConfig?.fields?.[0]?.fields?.find((field) => field.label === "WhatsApp Marketing Consent");
-    console.log(whatsApp?.name);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
-    const [submitted, setSubmitted] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const { location } = useGeoLocation();
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/forms/${slug}/public`)
-            .then((response) => {
-                if (!response.ok) throw new Error("Failed to fetch form");
-                return response.json();
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/${slug}/public`)
+            .then(async (response) => {
+                const json = await response.json();
+                if (!response.ok) {
+                    const errorMessage = json?.message || 'Something went wrong';
+                    throw new Error(errorMessage);
+                }
+                return json;
             })
             .then((data) => setFormConfig(data.data))
             .catch((error) => setError(error.message));
-    }, []);
+    }, [slug]);
+
 
     const getDefaultValues = (config) => {
-        const defaults = {};
+        if (!formConfig) return {};
+
+        const defaults = {
+            latitude: location?.lat || null,
+            longitude: location?.lng || null,
+        };
         if (config) {
             config.fields.forEach((step) => {
                 step.fields.forEach((field) => {
@@ -124,9 +141,13 @@ export default function PublicDynamicForm() {
         formState: { errors },
         reset,
         trigger,
+        setValue,
     } = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: {},
+        defaultValues: {
+            latitude: location?.lat || null,
+            longitude: location?.lng || null,
+        },
         mode: "onChange",
     });
 
@@ -136,59 +157,72 @@ export default function PublicDynamicForm() {
         }
     }, [formConfig, reset]);
 
+    useEffect(() => {
+        if (location.lat && location.lng) {
+            setValue("latitude", location.lat, { shouldDirty: true });
+            setValue("longitude", location.lng, { shouldDirty: true });
+        }
+    }, [location, setValue]);
 
-    if (!formConfig && !error) return <div className="text-center">Loading...</div>;
-
-
-    if (error) {
+    if (error){
         return (
             <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
                 <div className="max-w-2xl mx-auto">
-                    <div className="bg-white rounded-lg border border-gray-200 mb-3">
-                        <div className="border-t-8 border-red-500 rounded-t-lg">
-                            <div className="p-6">
-                                <div className="mb-4 flex justify-center">
-                                    <img
-                                        src={desktopLogoWhite}
-                                        alt=""
-                                        className="authentication-brand desktop-logo w-[200px] h-[30px]"
-                                    />
-                                </div>
-                                <h1 className="text-2xl font-normal text-black mb-2">Form Error</h1>
-                                <div className="flex items-center mb-4">
-                                    <svg className="w-6 h-6 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                    <h2 className="text-xl font-bold text-red-600">Something went wrong!</h2>
-                                </div>
-                                <p className="text-gray-700 mb-4">{error}</p>
-                                <button
-                                    onClick={() => window.location.reload()}
-                                    className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded text-sm font-medium transition-colors"
-                                >
-                                    Try Again
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <PublicDynamicFormHeader
+                        description={error}
+                        type="danger"
+                        border="border-danger"
+                    />
                 </div>
             </div>
         );
     }
+    if (!formConfig) return <LoadingSpinner />;
 
     const steps = formConfig.fields.map((step) => ({
         title: step.steps,
         fields: step.fields.map((field) => normalizeFieldName(field.name)),
     }));
 
-    const onSubmit = (data) => {
-        console.log("Form submitted:", data);
-        setSubmitted(true);
+    const onSubmit = async (formData) => {
+        try {
+            const metadata = getMarketingMetadata();
+            const { latitude, longitude, ...data } = formData;
+            const payload = new FormData();
 
+            if (latitude !== null) payload.append("latitude", latitude);
+            if (longitude !== null) payload.append("longitude", longitude);
+
+            payload.append("marketing_metadata", JSON.stringify(metadata));
+
+            formConfig.fields.flatMap((step) => step.fields).forEach((field) => {
+                const fieldName = field.name;
+                const normalizedName = normalizeFieldName(fieldName);
+                const value = data[normalizedName];
+
+                if (field.field_type === "file" && value instanceof File) {
+                    payload.append(`data[${fieldName}]`, value);
+                } else if (value !== null && value !== undefined) {
+                    payload.append(`data[${fieldName}]`, JSON.stringify(value));
+                }
+            });
+
+
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/submissions/${slug}/submit/`, {
+                method: "POST",
+                body: payload,
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                setIsSubmitted(true);
+            } else {
+                throw new Error(result.message || "Submission failed");
+            }
+        } catch (err) {
+            console.error("Submission error:", err);
+            alert("Failed to submit form: " + err.message);
+        }
     };
 
     const handleNext = async (e) => {
@@ -197,7 +231,6 @@ export default function PublicDynamicForm() {
         try {
             const currentFields = steps[currentStep].fields;
             const isValid = await trigger(currentFields);
-            console.log({ isValid, errors, currentFields });
             if (isValid) {
                 setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
             } else {
@@ -229,6 +262,7 @@ export default function PublicDynamicForm() {
             .flatMap((step) => step.fields)
             .find((f) => normalizeFieldName(f.name) === fieldName);
         if (!field) return null;
+
         if (field.field_type === "hidden") return null;
 
         const commonInputClass = `w-full max-w-md px-0 py-2 border-0 border-b-2 ${
@@ -254,17 +288,8 @@ export default function PublicDynamicForm() {
                     errors[fieldName] ? "border-danger" : "border-gray-200"
                 } p-6`}
             >
-                <label className="block text-base font-medium text-black mb-1">
-                    {field.label === 'WhatsApp Marketing Consent'
-                        ? (
-                            <>
-                                {field?.label}
-                                <br />
-                                <span  className="inline-block px-2 py-1 mt-1 text-xs text-gray-800  " >{'(I agree to receive updates via WhatsApp)'}</span>
-                            </>
-                        )
-                        : field?.label
-                    } {field.required && <span className="text-danger">*</span>}
+                <label className="block text-sm font-normal text-gray-700 mb-1">
+                    {field.label} {field.required && <span className="text-danger">*</span>}
                 </label>
                 <Controller
                     name={fieldName}
@@ -384,8 +409,7 @@ export default function PublicDynamicForm() {
                             case "radio":
                                 return (
                                     <div className="space-y-2">
-                                        {field.options.map((option) => {
-                                            return(
+                                        {field.options.map((option) => (
                                             <div key={option.value} className="flex items-center">
                                                 <input
                                                     type="radio"
@@ -407,7 +431,7 @@ export default function PublicDynamicForm() {
                                                     {option.label}
                                                 </label>
                                             </div>
-                                        )})}
+                                        ))}
                                     </div>
                                 );
 
@@ -421,24 +445,7 @@ export default function PublicDynamicForm() {
                                         <input
                                             type="file"
                                             id={`file-upload-${fieldName}`}
-                                            // onChange={(e) => controllerField.onChange(e.target.files[0] ?? null)}
-                                            onChange={(e) => {
-                                                const file = e.target.files[0] ?? null;
-                                                if (file) {
-                                                    const validTypes = ["image/png", "image/jpeg"];
-                                                    const maxSize = 500 * 1024 * 1024;
-
-                                                    if (!validTypes.includes(file.type)) {
-                                                        controllerField.onChange(null);
-                                                        alert("Only PNG and JPG files are allowed.");
-                                                    } else if (file.size > maxSize) {
-                                                        controllerField.onChange(null);
-                                                        alert("File size must be less than 500MB.");
-                                                    } else {
-                                                        controllerField.onChange(file);
-                                                    }
-                                                }
-                                            }}
+                                            onChange={(e) => controllerField.onChange(e.target.files[0] ?? null)}
                                             className="hidden"
                                             name={normalizeFieldName(field.name)}
                                         />
@@ -470,103 +477,74 @@ export default function PublicDynamicForm() {
         );
     };
 
+    if (isSubmitted) {
+        return (
+            <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
+                <div className="max-w-2xl mx-auto">
+                    <PublicDynamicFormHeader
+                        title={formConfig.title}
+                        description="Thank you for your submission! We have received your form successfully."
+                        type="success"
+                        border="border-success"
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
             <div className="max-w-2xl mx-auto">
-                {submitted ? (
+                <PublicDynamicFormHeader
+                    title={formConfig.title}
+                    description={formConfig.description}
+                    currentStep={currentStep}
+                    steps={steps}
+                />
 
-                    <div className="bg-white rounded-lg border border-gray-200 mb-3">
-                        <div className="border-t-8 border-[#673ab7] rounded-t-lg">
-                            <div className="p-6">
-                                <div className="mb-4 flex justify-center">
-                                    <img
-                                        src={desktopLogoWhite}
-                                        alt=""
-                                        className="authentication-brand desktop-logo w-[200px] h-[30px]"
-                                    />
-                                </div>
-                                <h1 className="text-2xl font-normal text-black mb-2">{formConfig.title}</h1>
-                                <h2 className="text-2xl font-bold text-green-600 mb-2">Thank you!</h2>
-                                <p className="text-gray-700">Your response has been submitted successfully.</p>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <>
-                        <div className="bg-white rounded-lg border border-gray-200 mb-3">
-                            <div className="border-t-8 border-[#673ab7] rounded-t-lg">
-                                <div className="p-6">
-                                    <div className="mb-4 flex justify-center">
-                                        <img
-                                            src={desktopLogoWhite}
-                                            alt=""
-                                            className="authentication-brand desktop-logo w-[200px] h-[30px]"
-                                        />
-                                    </div>
-                                    <h1 className="text-2xl font-normal text-black mb-2">{formConfig.title}</h1>
-                                    <p className="text-sm text-gray-700">{formConfig.description}</p>
-                                    <p className="text-xs text-danger mt-2">* Indicates required question</p>
-                                    <div className="mt-4">
-                                        <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                            <span>Step {currentStep + 1} of {steps.length}</span>
-                                            <span>{steps[currentStep].title}</span>
-                                        </div>
-                                        <div className="w-full bg-gray-200 rounded-full h-2">
-                                            <div
-                                                className="bg-[#673ab7] h-2 rounded-full transition-all duration-300"
-                                                style={{width: `${((currentStep + 1) / steps.length) * 100}%`}}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-                            {steps[currentStep].fields.map((fieldName) => (
-                                <div key={fieldName}>{renderField(fieldName)}</div>
-                            ))}
-                            <div className="bg-white rounded-lg border border-gray-200 p-6">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex space-x-3">
-                                        {currentStep > 0 && (
-                                            <button
-                                                type="button"
-                                                onClick={handleBack}
-                                                className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors border border-[#673ab7]"
-                                            >
-                                                Back
-                                            </button>
-                                        )}
-                                        {currentStep < steps.length - 1 ? (
-                                            <button
-                                                type="button"
-                                                onClick={handleNext}
-                                                className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
-                                            >
-                                                Next
-                                            </button>
-                                        ) : (
-                                            <button
-                                                type="submit"
-                                                className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
-                                            >
-                                                Submit
-                                            </button>
-                                        )}
-                                    </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                    {steps[currentStep].fields.map((fieldName) => (
+                        <div key={fieldName}>{renderField(fieldName)}</div>
+                    ))}
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                        <div className="flex justify-between items-center">
+                            <div className="flex space-x-3">
+                                {currentStep > 0 && (
                                     <button
                                         type="button"
-                                        onClick={clearForm}
-                                        className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors"
+                                        onClick={handleBack}
+                                        className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors border border-[#673ab7]"
                                     >
-                                        Clear form
+                                        Back
                                     </button>
-                                </div>
+                                )}
+                                {currentStep < steps.length - 1 ? (
+                                    <button
+                                        type="button"
+                                        onClick={handleNext}
+                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
+                                    >
+                                        Next
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="submit"
+                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
+                                    >
+                                        Submit
+                                    </button>
+                                )}
                             </div>
-                        </form>
-                    </>
-                )}
+                            <button
+                                type="button"
+                                onClick={clearForm}
+                                className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors"
+                            >
+                                Clear form
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     );

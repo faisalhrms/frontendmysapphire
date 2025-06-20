@@ -8,20 +8,19 @@ export const sidebarMenu = [
     generateSidebarItem(
         '',
         'sub',
-        'Customer Assist',
+        'We Care',
         8,
         'bx-user-voice',
-        '',
-        [ generateSidebarItem(
-            CUSTOMER_ASSIST_ROUTES.READ.path,
-            'link',
-            'Customer',
-            1,
-            'bx-laptop',
-            CUSTOMER_ASSIST_ROUTES.READ.permission
-        ),
-
-
+        CUSTOMER_ASSIST_ROUTES.READ.permission,
+        [
+            generateSidebarItem(
+                CUSTOMER_ASSIST_ROUTES.READ.path,
+                'link',
+                'Customer Assist',
+                1,
+                'bx-user-voice',
+                CUSTOMER_ASSIST_ROUTES.READ.permission
+            )
         ]
 
 
