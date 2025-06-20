@@ -1,5 +1,6 @@
 // services/Service.js
 import api from "../../../config/axiosConfig";
+import Notify from "@helpers/toastNotifications.js";
 
 export const getAllSignatures = async () => {
   try {
@@ -49,6 +50,38 @@ export const getDownloadByEmpCode = async (employeeCode) => {
     console.error("Error downloading the executable:", error.message);
   }
 };
+
+export const handleDownloadHtml = async empCode => {
+  try {
+    const response = await api.get(`/signatures/download-htm/${empCode}/`, {
+      responseType: "blob"
+    });
+    const url = window.URL.createObjectURL(response.data);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${empCode}_Signature.htm`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    let message = "Failed to download HTML. Please try again.";
+    const { response } = error;
+    if (response?.data) {
+      const data = response.data;
+      if (data instanceof Blob) {
+        try {
+          const text = await data.text();
+          const json = JSON.parse(text);
+          if (json.error) message = json.error;
+        } catch {}
+      } else if (response.data.error) {
+        message = response.data.error;
+      }
+    }
+    Notify.error(message);
+  }
+};
+
 
 
 
