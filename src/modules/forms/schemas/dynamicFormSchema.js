@@ -10,6 +10,7 @@ const fieldSchema = z.object({
         'select', 'checkbox', 'radio', 'date', 'datetime-local', 'time', 'month',
         'week', 'file', 'color', 'hidden'
     ]),
+    group: z.string().optional().nullable(),
     required: z.boolean().default(false),
     options: z
         .array(
@@ -18,7 +19,7 @@ const fieldSchema = z.object({
                 value: z.string().min(1, 'Value is required'),
             })
         )
-        .default([]) // Default to empty array
+        .default([])
         .optional(),
     order: z.number().int().min(0),
 });
@@ -31,7 +32,7 @@ export const dynamicFormSchema = z.object({
     expired_at: dateSchema('Expired Date', true),
     notification_emails: z
         .array(z.string().email('Must be a valid email'))
-        .default([]) // Default to empty array
+        .default([])
         .optional()
         .nullable(),
     fields: z.array(fieldSchema).min(1, 'At least one field is required'),

@@ -92,6 +92,13 @@ const LaptopList = () => {
             filterKey: 'location__name'
         },
         {
+            Header: "Remarks",
+            accessor: "remarks",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => (value ? value : "N/A"),
+        },
+        {
             Header: "Laptop issued as per policy",
             accessor: "laptop_issued_as_per_policy",
             Cell: ({ value }) => value ? "Yes" : "No"
