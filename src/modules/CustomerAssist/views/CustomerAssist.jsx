@@ -29,17 +29,18 @@ const CustomerAssist = () => {
 
     const tabs = [
         {
-            id: "list",
-            label: "List",
-            icon: <i className="bi bi-list-ul"></i>,
-            content: <CustomerAssistList {...listProps} />,
-        },
-        {
             id: "form",
             label: "Search/Create",
             icon: <i className="bi bi-search"></i>,
             content: <CustomerAssistForm />,
         },
+        {
+            id: "list",
+            label: "List",
+            icon: <i className="bi bi-list-ul"></i>,
+            content: <CustomerAssistList {...listProps} />,
+        },
+
 
 
 
@@ -47,7 +48,7 @@ const CustomerAssist = () => {
 
     return (
         <>
-            <PageHeader currentpage="We Care" mainpage="Support" />
+            <PageHeader currentpage="Customer Assist" mainpage="We Care"  activepage="Customer Assist" />
             <IconTabs tabs={tabs} onTabChange={handleTabChange} activeTab={activeTab} />
         </>
     );
