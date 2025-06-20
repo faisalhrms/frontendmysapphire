@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import desktopLogoWhite from "@assets/images/brand-logos/desktop-logo.svg";
 import {useParams} from "react-router-dom";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import {useGeoLocation} from "@hooks/useGeoLocation.js";
 import {getMarketingMetadata} from "@helpers/helper.js";
+import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
 
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 
@@ -84,17 +84,23 @@ export default function PublicDynamicForm() {
     const [formConfig, setFormConfig] = useState(null);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const { location } = useGeoLocation();
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/${slug}/public`)
-            .then((response) => {
-                if (!response.ok) throw new Error("Failed to fetch form");
-                return response.json();
+            .then(async (response) => {
+                const json = await response.json();
+                if (!response.ok) {
+                    const errorMessage = json?.message || 'Something went wrong';
+                    throw new Error(errorMessage);
+                }
+                return json;
             })
             .then((data) => setFormConfig(data.data))
             .catch((error) => setError(error.message));
-    }, []);
+    }, [slug]);
+
 
     const getDefaultValues = (config) => {
         if (!formConfig) return {};
@@ -158,7 +164,19 @@ export default function PublicDynamicForm() {
         }
     }, [location, setValue]);
 
-    if (error) return <div className="text-danger text-center">Error: {error}</div>;
+    if (error){
+        return (
+            <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
+                <div className="max-w-2xl mx-auto">
+                    <PublicDynamicFormHeader
+                        description={error}
+                        type="danger"
+                        border="border-danger"
+                    />
+                </div>
+            </div>
+        );
+    }
     if (!formConfig) return <LoadingSpinner />;
 
     const steps = formConfig.fields.map((step) => ({
@@ -197,8 +215,7 @@ export default function PublicDynamicForm() {
 
             const result = await response.json();
             if (response.ok) {
-                console.log("Submission response:", result);
-                alert("Form submitted successfully!");
+                setIsSubmitted(true);
             } else {
                 throw new Error(result.message || "Submission failed");
             }
@@ -460,39 +477,30 @@ export default function PublicDynamicForm() {
         );
     };
 
+    if (isSubmitted) {
+        return (
+            <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
+                <div className="max-w-2xl mx-auto">
+                    <PublicDynamicFormHeader
+                        title={formConfig.title}
+                        description="Thank you for your submission! We have received your form successfully."
+                        type="success"
+                        border="border-success"
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
             <div className="max-w-2xl mx-auto">
-                <div className="bg-white rounded-lg border border-gray-200 mb-3">
-                    <div className="border-t-8 border-[#673ab7] rounded-t-lg">
-                        <div className="p-6">
-                            <div className="mb-4 flex justify-center">
-                                <img
-                                    src={desktopLogoWhite}
-                                    alt=""
-                                    className="authentication-brand desktop-logo w-[200px] h-[30px]"
-                                />
-                            </div>
-                            <h1 className="text-2xl font-normal text-gray-800 mb-2">{formConfig.title}</h1>
-                            <p className="text-sm text-gray-600">{formConfig.description}</p>
-                            <p className="text-xs text-danger mt-2">* Indicates required question</p>
-                            <div className="mt-4">
-                                <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                      <span>
-                                        Step {currentStep + 1} of {steps.length}
-                                      </span>
-                                        <span>{steps[currentStep].title}</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div
-                                        className="bg-[#673ab7] h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <PublicDynamicFormHeader
+                    title={formConfig.title}
+                    description={formConfig.description}
+                    currentStep={currentStep}
+                    steps={steps}
+                />
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                     {steps[currentStep].fields.map((fieldName) => (
