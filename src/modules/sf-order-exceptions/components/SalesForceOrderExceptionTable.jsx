@@ -123,6 +123,9 @@ const SalesForceOrderExceptionTable = ({ data, isLoading, isActive = true }) => 
                    <div className="p-2 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                        <div className="grid grid-cols-12 gap-x-2">
                            <div className="xl:col-span-3 col-span-12">
+                               <FailureSummaryTable title="SO Creation" data={data?.so_creation_failure_summary} />
+                           </div>
+                           <div className="xl:col-span-3 col-span-12">
                                <FailureSummaryTable title="SO Invoiced" data={data?.so_invoicing_failure_summary} />
                            </div>
                            <div className="xl:col-span-3 col-span-12">
@@ -130,9 +133,6 @@ const SalesForceOrderExceptionTable = ({ data, isLoading, isActive = true }) => 
                            </div>
                            <div className="xl:col-span-3 col-span-12">
                                <FailureSummaryTable title="RO Creation" data={data?.ro_creation_failure_summary} />
-                           </div>
-                           <div className="xl:col-span-3 col-span-12">
-                               <FailureSummaryTable title="SO Creation" data={data?.so_creation_failure_summary} />
                            </div>
                        </div>
                        <div className="grid grid-cols-12 gap-x-2 mt-8">

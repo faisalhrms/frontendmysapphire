@@ -11,50 +11,58 @@ export const getAllSignatures = async () => {
   }
 };
 
-export const saveSignature = async (data) => {
+export const saveSignature = async data => {
   try {
     const response = await api.post("/signatures/", data);
     return response;
   } catch (error) {
-    console.error("Error saving signature:", error);
-    throw error;
+    const message =
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
+      "Failed to save signature. Please try again.";
+    throw new Error(message);
   }
 };
 
-export const getSignature = async (employeeCode) => {
+export const getSignature = async (employeeCode, company_id) => {
   try {
-    const response = await api.get(`/signatures/${employeeCode}/`);
-    return response?.data;
+    const response = await api.get(`/signatures/${employeeCode}/`, {
+      params: { company_id },
+    });
+    return response.data;
   } catch (error) {
     console.error("Error fetching signature:", error);
     throw error;
   }
 };
 
-export const getDownloadByEmpCode = async (employeeCode) => {
+
+export const getDownloadByEmpCode = async (employeeCode, company_id) => {
   try {
-    const response = await api.get(`/signatures/download/${employeeCode}`, {
+    const response = await api.get(`/signatures/download/${employeeCode}/`, {
+      params: { company_id },
       responseType: "blob",
     });
-    if (!response || !response.data) {
-      throw new Error("No file data received from the server.");
-    }
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", `${employeeCode}_OutlookSignature.exe`);
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
   } catch (error) {
-    console.error("Error downloading the executable:", error.message);
+    const msg = error.response?.data?.error || error.message;
+    Notify.error(msg);
+    throw error;
   }
 };
 
-export const handleDownloadHtml = async empCode => {
+export const handleDownloadHtml = async (empCode, company_id) => {
   try {
     const response = await api.get(`/signatures/download-htm/${empCode}/`, {
-      responseType: "blob"
+      params: { company_id },
+      responseType: "blob",
     });
     const url = window.URL.createObjectURL(response.data);
     const link = document.createElement("a");
@@ -66,19 +74,17 @@ export const handleDownloadHtml = async empCode => {
   } catch (error) {
     let message = "Failed to download HTML. Please try again.";
     const { response } = error;
-    if (response?.data) {
-      const data = response.data;
-      if (data instanceof Blob) {
-        try {
-          const text = await data.text();
-          const json = JSON.parse(text);
-          if (json.error) message = json.error;
-        } catch {}
-      } else if (response.data.error) {
-        message = response.data.error;
-      }
+    if (response?.data instanceof Blob) {
+      try {
+        const text = await response.data.text();
+        const json = JSON.parse(text);
+        if (json.error) message = json.error;
+      } catch {}
+    } else if (response?.data?.error) {
+      message = response.data.error;
     }
     Notify.error(message);
+    throw error;
   }
 };
 
@@ -95,15 +101,20 @@ export const getDownloadAllS = async () => {
   }
 };
 
-export const getdeleteByEmpCode = async (employee_code) => {
+export const getdeleteByEmpCode = async (employee_code, company_id) => {
   try {
-    const response = await api.delete(`/signatures/delete/${employee_code}/`);
-    return response?.data;
+    const response = await api.delete(`/signatures/delete/${employee_code}/`, {
+      params: { company_id },
+    });
+    return response.data;
   } catch (error) {
-    console.error("Error deleting signature:", error);
+    const msg = error.response?.data?.error || error.message;
+    Notify.error(msg);
     throw error;
   }
 };
+
+
 
 export const updateSignature = async (employee_code, updateData) => {
   try {
