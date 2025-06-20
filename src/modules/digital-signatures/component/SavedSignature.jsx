@@ -1,11 +1,12 @@
 import React, {useState} from "react";
-import {useForm, Controller} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import DataTable from "@components/DataTable.jsx";
 import ConfirmationModal from "@modules/sr-management/component/ConfirmationModal.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {
     getDownloadByEmpCode,
-    getdeleteByEmpCode, handleDownloadHtml,
+    getdeleteByEmpCode,
+    handleDownloadHtml,
 } from "../services/Service";
 import Notify from "@helpers/toastNotifications.js";
 import api from "@config/axiosConfig.js";
@@ -13,57 +14,56 @@ import api from "@config/axiosConfig.js";
 const SavedSignature = ({onEdit, handleSavedDataFetch}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSignatureId, setSelectedSignatureId] = useState(null);
+    const [selectedRowCompanyId, setSelectedRowCompanyId] = useState(null);
     const [loading, setLoading] = useState(false);
-    const {control, watch, formState: {errors}} = useForm({
-        defaultValues: {}
-    });
+    const [tableKey, setTableKey] = useState(0);
+    const {control, watch, formState: {errors}} = useForm({defaultValues: {}});
 
-    const selectedCompany = watch("company_id"); // Watch the selected company
+    const selectedCompany = watch("company_id");
 
-    const onOpenModal = (empCode) => {
+    const onOpenModal = (empCode, companyId) => {
         setSelectedSignatureId(empCode);
+        setSelectedRowCompanyId(companyId);
         setIsModalOpen(true);
     };
 
     const onCloseModal = () => {
         setIsModalOpen(false);
         setSelectedSignatureId(null);
+        setSelectedRowCompanyId(null);
     };
 
     const onConfirmDelete = async () => {
         try {
-            if (!selectedSignatureId) return;
-            await getdeleteByEmpCode(selectedSignatureId);
+            if (!selectedSignatureId || !selectedRowCompanyId) return;
+            await getdeleteByEmpCode(selectedSignatureId, selectedRowCompanyId);
             Notify.success("Deleted successfully.");
+            setTableKey(prev => prev + 1);
         } catch (error) {
-            Notify.error("Error during deletion:", error.message);
+            Notify.error(error.message);
         } finally {
             onCloseModal();
         }
     };
 
-    // Function to handle "Download All" button click
     const downloadAllScripts = async () => {
         if (!selectedCompany) {
             Notify.error("Please select a company to download related data.");
             return;
         }
-
         try {
             const response = await api.get('/signatures/download-all/', {
-                params: {company_id: selectedCompany}, // Pass company_id as query param
-                responseType: 'blob', // Ensure the response is treated as a binary file
+                params: {company_id: selectedCompany},
+                responseType: 'blob',
             });
-
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `signatures_${selectedCompany}.zip`); // Dynamic filename
+            link.setAttribute('download', `signatures_${selectedCompany}.zip`);
             document.body.appendChild(link);
             link.click();
             link.remove();
-        } catch (error) {
-            console.error("Error downloading scripts:", error);
+        } catch {
             Notify.error("Failed to download scripts. Please try again.");
         }
     };
@@ -75,29 +75,31 @@ const SavedSignature = ({onEdit, handleSavedDataFetch}) => {
         {
             Header: "Action",
             Cell: ({row}) => {
-                const {employee_code} = row.original;
+                const {employee_code, company: {id: companyId}} = row.original;
                 return (
                     <div className="flex space-x-1">
                         <button
-                            onClick={() => onOpenModal(employee_code)}
+                            onClick={() => onOpenModal(employee_code, companyId)}
                             className="ti-btn ti-btn-danger ti-btn-sm"
                         >
                             <i className="ri-delete-bin-6-line"></i>
                         </button>
                         <button
-                            onClick={() => handleSavedDataFetch(employee_code)}
+                            onClick={() => handleSavedDataFetch(employee_code, companyId)}
                             className="ti-btn ti-btn-primary ti-btn-sm"
                         >
                             <i className="ri-edit-line"></i>
                         </button>
                         <button
-                            onClick={() => getDownloadByEmpCode(employee_code)}
+                            onClick={() => getDownloadByEmpCode(employee_code, companyId)}
                             className="ti-btn ti-btn-primary ti-btn-sm"
                         >
                             <i className="ri-download-2-line"></i>
                         </button>
-                        <button onClick={() => handleDownloadHtml(employee_code)}
-                                className="ti-btn ti-btn-secondary ti-btn-sm">
+                        <button
+                            onClick={() => handleDownloadHtml(employee_code, companyId)}
+                            className="ti-btn ti-btn-secondary ti-btn-sm"
+                        >
                             <i className="ri-file-code-line"></i>
                         </button>
                     </div>
@@ -135,9 +137,9 @@ const SavedSignature = ({onEdit, handleSavedDataFetch}) => {
                 </div>
             </div>
 
-
             <div className="mt-1">
                 <DataTable
+                    key={tableKey}
                     columns={columns}
                     filter={{selectedCompany}}
                     loading={loading}
