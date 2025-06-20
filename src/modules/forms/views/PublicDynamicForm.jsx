@@ -30,7 +30,7 @@ const createFormSchema = (fields) => {
                     if (field.required) {
                         fieldSchema = fieldSchema.email("Invalid email address").min(1, "This field is required");
                     } else {
-                        fieldSchema = fieldSchema.email("Invalid email address").optional();
+                        fieldSchema = fieldSchema.email("Invalid email address").nullable().optional();
                     }
                     break;
                 case "url":
