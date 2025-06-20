@@ -48,7 +48,7 @@ const CustomerAssist = () => {
 
     return (
         <>
-            <PageHeader currentpage="Customer Assist" mainpage="We Care"  activepage="Customer Assist" />
+            <PageHeader currentpage="Customer Assist" mainpage="Customer Assist"  activepage="We Care" />
             <IconTabs tabs={tabs} onTabChange={handleTabChange} activeTab={activeTab} />
         </>
     );
