@@ -3,7 +3,7 @@ import InventoryTracker from '@modules/inventory-tracker/views/ScanBarcode.jsx';
 export const INVENTORY_TRACKER_ROUTES = {
     ADD: {
         path: '/module/inventory-tracker',
-        permission: 'auth.inventory-tracker',
+        // permission: 'auth.inventory-tracker',
     },
 };
 
