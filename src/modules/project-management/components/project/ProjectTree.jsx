@@ -87,7 +87,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
   };
   return (
       <>
-        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`} style={{maxHeight:isFullscreen?'100vh':'50vh', overflowY:'auto'}}>
+        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`} style={{maxHeight:isFullscreen?'100vh':'70vh', overflowY:'auto'}}>
           <div className="box-header bg-white dark:bg-bodybg" style={{ position: 'sticky', top: '0', left: '0', width: '100%', zIndex: 10 }}>
             <div className="box-title">Milestone Detail</div>
             <div className="flex items-center space-x-2">
