@@ -74,40 +74,43 @@ const MathCaptcha = ({ onSuccess, maxNumber = 20, className = '' }) => {
                     onClick={handleRefresh}
                     className="text-sm  items-center justify-center gap-1"
                 >
-                    <i className="bi bi-arrow-clockwise" /> refresh
+                    <i className="bi bi-arrow-clockwise"/> refresh
                 </button>
             </div>
-            <div className="space-y-4">
-                <input
-                    type="number"
-                    value={userAnswer}
-                    onChange={(e) => setUserAnswer(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSubmit(e)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 text-center font-medium"
-                    placeholder="Enter your answer"
-                    disabled={isValid === true}
-                />
+            <div className="flex items-center justify-center">
+                <div className="space-y-4 w-full max-w-xs text-center">
+                    <input
+                        type="number"
+                        value={userAnswer}
+                        onChange={(e) => setUserAnswer(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSubmit(e)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 text-center font-medium"
+                        placeholder="Enter your answer"
+                        disabled={isValid === true}
+                    />
 
-                <button
-                    onClick={handleSubmit}
-                    disabled={!userAnswer || isValid === true}
-                    className="ti-btn ti-btn-primary !mb-0 items-center justify-center"
-                >
-                    {isValid === true ? 'Verified!' : 'Verify Answer'}
-                </button>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={!userAnswer || isValid === true}
+                        className="ti-btn ti-btn-primary !mb-0 w-[150px]"
+                    >
+                        {isValid === true ? 'Verified!' : 'Verify Answer'}
+                    </button>
+                </div>
             </div>
+
             {showResult && (
                 <div className={`mt-4 p-3 rounded-lg text-sm font-medium border ${
                     isValid ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'
                 }`}>
                     {isValid ? (
                         <div className="flex items-center justify-center">
-                            <i className="bi bi-check-circle mr-2" />
+                            <i className="bi bi-check-circle mr-2"/>
                             Correct! Captcha verified.
                         </div>
                     ) : (
                         <div className="flex items-center justify-center">
-                            <i className="bi bi-x-circle text-danger mr-2" />
+                            <i className="bi bi-x-circle text-danger mr-2"/>
                             Incorrect. The correct answer was {getCorrectAnswer()}.
                         </div>
                     )}
