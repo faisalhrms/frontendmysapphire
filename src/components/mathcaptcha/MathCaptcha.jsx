@@ -109,7 +109,7 @@ const MathCaptcha = ({ onSuccess, maxNumber = 20, className = '' }) => {
                             Correct! Captcha verified.
                         </div>
                     ) : (
-                        <div className="flex items-center justify-center">
+                        <div className="flex items-center text-danger justify-center">
                             <i className="bi bi-x-circle text-danger mr-2"/>
                             Incorrect. The correct answer was {getCorrectAnswer()}.
                         </div>
