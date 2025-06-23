@@ -20,7 +20,7 @@ const ScanBarcodePage = () => {
                         label: "Scan Barcode",
                         icon: <i className="bx bx-barcode"></i>,
                         content: (
-                            <ScanBarcdeForm  activeTab={activeTab} />
+                            <ScanBarcdeForm isActive={activeTab === 'scan_bar_code'} />
                         )
                     },
                     {
@@ -28,11 +28,10 @@ const ScanBarcodePage = () => {
                         label: "Product List",
                         icon: <i className="bx bx-list-ul"></i>,
                         content: (
-                            <ProductDatatableTab  />
+                            <ProductDatatableTab isActive={activeTab === 'inventory_product'} />
                         )
                     }
                 ]}
-                activeTab={activeTab}
                 onTabChange={handleTabChange}
             />
         </>

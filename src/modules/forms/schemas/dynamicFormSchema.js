@@ -29,6 +29,8 @@ export const dynamicFormSchema = z.object({
     description: z.string().optional().nullable(),
     enable_alerts: z.boolean().default(false),
     is_active: z.boolean().default(true),
+    authenticated_only: z.boolean().default(false),
+    require_captcha: z.boolean().default(false),
     expired_at: dateSchema('Expired Date', true),
     notification_emails: z
         .array(z.string().email('Must be a valid email'))

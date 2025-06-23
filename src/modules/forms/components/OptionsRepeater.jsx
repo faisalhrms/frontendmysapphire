@@ -44,7 +44,7 @@ const OptionsRepeater = ({ fieldIndex, control, setValue, errors }) => {
                             onClick={() => append({label: '', value: ''})}
                             className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] mr-2"
                         >
-                            <i class="bi bi-plus-circle-fill"></i>
+                            <i className="bi bi-plus-circle-fill"></i>
                         </button>
                         {fields.length > 1 && (
                             <button
@@ -52,7 +52,7 @@ const OptionsRepeater = ({ fieldIndex, control, setValue, errors }) => {
                                 onClick={() => remove(optionIndex)}
                                 className="ti-btn ti-btn-outline-danger !py-1 !px-2 !text-[0.75rem]"
                             >
-                                <i class="bi bi-trash3-fill"></i>
+                                <i className="bi bi-trash3-fill"></i>
                             </button>
                         )}
                     </div>

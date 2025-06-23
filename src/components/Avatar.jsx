@@ -40,4 +40,4 @@ const Avatar = ({ avatar, full_name = '', classes = '', parentClasses = '', size
     );
 };
 
-export default Avatar;
+export default React.memo(Avatar);

@@ -22,12 +22,32 @@ const defaultVisibleColumns = {
     created_by: true
 };
 
+const defaultColumnOrder = [
+    'actions',
+    'priority',
+    'name',
+    'person',
+    'teams',
+    'started_at',
+    'aging',
+    'ended_at',
+    'completed_at',
+    'status',
+    'completion_timeline',
+    'time_line_group',
+    'launch',
+    'progress',
+    'external_users',
+    'created_by'
+];
+
 const pmsSlice = createSlice({
     name: 'pms',
     initialState: {
         viewType: loadFromLocalStorage(ROOT_KEY, 'viewType', 'grid'),
         filters: loadFromLocalStorage(ROOT_KEY, 'filters', { workspaces: [], status: null, priority: null }),
         visibleColumns: loadFromLocalStorage(ROOT_KEY, 'visibleColumns', defaultVisibleColumns),
+        columnOrder: loadFromLocalStorage(ROOT_KEY, 'columnOrder', defaultColumnOrder),
     },
     reducers: {
         setViewType: (state, action) => {
@@ -50,6 +70,10 @@ const pmsSlice = createSlice({
             state.visibleColumns = defaultVisibleColumns;
             saveToLocalStorage(ROOT_KEY, 'visibleColumns', state.visibleColumns);
         },
+        setColumnOrder: (state, action) => {
+            state.columnOrder = action.payload;
+            saveToLocalStorage(ROOT_KEY, 'columnOrder', state.columnOrder);
+        },
     },
 });
 
@@ -58,6 +82,7 @@ export const {
     setFilters,
     resetFilters,
     setVisibleColumns,
-    resetVisibleColumns
+    resetVisibleColumns,
+    setColumnOrder,
 } = pmsSlice.actions;
 export default pmsSlice.reducer;
