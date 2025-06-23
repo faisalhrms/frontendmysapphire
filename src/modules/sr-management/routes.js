@@ -2,7 +2,7 @@ import Sr from '@modules/sr-management/views/Sr.jsx';
 import PendingReqTaskCreate from '@modules/sr-management/pending-req-section/views/PendingReqTaskCreate.jsx';
 import TaskGeneratedView from '@modules/sr-management/task-genrated-section/views/TaskGeneratedView.jsx';
 import TaskCompletedView from '@modules/sr-management/completed-task-section/views/TaskCompletedView.jsx';
-import TaskClosedView from '@modules/sr-management/closed-task-section/views/TaskClosedView.jsx';
+import TaskClosedView from "@modules/sr-management/closed-task-section/views/TaskClosedView.jsx";
 
 export const SRM_ROUTES = {
     READ: {
