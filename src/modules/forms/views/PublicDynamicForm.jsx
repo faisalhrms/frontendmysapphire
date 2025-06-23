@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import {useGeoLocation} from "@hooks/useGeoLocation.js";
 import {getMarketingMetadata} from "@helpers/helper.js";
 import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
+import {useIsAuthenticated} from "@modules/auth/hooks/authHooks.js";
 
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 
@@ -23,10 +24,33 @@ const createFormSchema = (fields) => {
                     }
                     break;
                 case "file":
-                    fieldSchema = z.instanceof(File).nullable();
+                    fieldSchema = z
+                        .instanceof(File)
+                        .superRefine((file, ctx) => {
+                            if (file === null) return;
+
+                            if (!file.type.startsWith("image/")) {
+                                ctx.addIssue({
+                                    code: z.ZodIssueCode.custom,
+                                    message: "Only image files are allowed",
+                                });
+                            }
+
+                            if (file.size > 5 * 1024 * 1024) {
+                                ctx.addIssue({
+                                    code: z.ZodIssueCode.custom,
+                                    message: "File size must be 5MB or less",
+                                });
+                            }
+                        })
+                        .nullable();
+
                     if (field.required) {
-                        fieldSchema = fieldSchema.refine((val) => val !== null, "File is required");
+                        fieldSchema = fieldSchema.refine((val) => val !== null, {
+                            message: "File is required",
+                        });
                     }
+
                     break;
                 case "email":
                     fieldSchema = z.string();
@@ -86,6 +110,8 @@ export default function PublicDynamicForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const { location } = useGeoLocation();
+    const isAuthenticated = useIsAuthenticated();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/${slug}/public`)
@@ -97,9 +123,20 @@ export default function PublicDynamicForm() {
                 }
                 return json;
             })
-            .then((data) => setFormConfig(data.data))
+            .then((data) => {
+                const formData = data.data;
+                if (formData.authenticated_only && !isAuthenticated) {
+                    navigate(import.meta.env.BASE_URL, {
+                        state: { redirectTo: window.location.pathname },
+                        replace: true,
+                    });
+                    return;
+                }
+
+                setFormConfig(formData);
+            })
             .catch((error) => setError(error.message));
-    }, [slug]);
+    }, [slug, isAuthenticated, navigate]);
 
 
     const getDefaultValues = (config) => {
@@ -288,13 +325,21 @@ export default function PublicDynamicForm() {
                     errors[fieldName] ? "border-danger" : "border-gray-200"
                 } p-6`}
             >
-                <label className="block text-sm font-normal text-gray-700 mb-1">
+                <label className="block text-sm font-normal text-gray-700 mb-1 line-height-1">
                     {field.label} {field.required && <span className="text-danger">*</span>}
+                    { field.short_description &&
+                        <>
+                            <br/>
+                            <span className="form-text">
+                                {field.short_description}
+                            </span>
+                        </>
+                    }
                 </label>
                 <Controller
                     name={fieldName}
                     control={control}
-                    render={({ field: controllerField }) => {
+                    render={({field: controllerField }) => {
                         const safeValue = controllerField.value ?? "";
                         switch (field.field_type) {
                             case "text":
@@ -445,6 +490,7 @@ export default function PublicDynamicForm() {
                                         <input
                                             type="file"
                                             id={`file-upload-${fieldName}`}
+                                            accept="image/*"
                                             onChange={(e) => controllerField.onChange(e.target.files[0] ?? null)}
                                             className="hidden"
                                             name={normalizeFieldName(field.name)}

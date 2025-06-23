@@ -5,6 +5,7 @@ import FormButton from "@components/form/FormButton.jsx";
 import TemplateSignature from "./TemplateSignature";
 import SRAsyncSelect from "@modules/sr-management/component/components/SRAsyncSelect.jsx";
 import FileUpload from "@components/FileUpload.jsx";
+import {formatOptions} from "@helpers/formatters.js";
 
 const SignatureForm = ({
   handleSubmitData,
@@ -102,7 +103,7 @@ const SignatureForm = ({
                     apiUrl="/select/company_details"
                     queryKeyBase="company_details"
                     clientSideSearch
-                    preselectedOptions={[]}
+                    preselectedOptions={formatOptions(editData, 'company')}
                     onOptionSelect={handleCompanyChange}
                   />
                 </div>
