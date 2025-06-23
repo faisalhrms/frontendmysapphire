@@ -1,197 +1,278 @@
-import React, { useState, useEffect, useRef } from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import api from "@config/axiosConfig.js";
+import React, {useState, useEffect, useRef} from "react"
+import {useSelector} from "react-redux"
+import {Link} from "react-router-dom"
+import PerfectScrollbar from "react-perfect-scrollbar"
+import api from "@config/axiosConfig.js"
+
+const suggestionsDefault = [
+  "Give me top exporters of Pakistan",
+  "Which product does Faisal Spinning Mills export most?",
+  "Exports of Faisal Spinning Mills",
+  "Exports of Faisal Spinning Mills to Europe",
+  "Show me the imports of diamond brand",
+  "sapphire textile ke total export kitni hai?"
+]
+
+const markdownToHtml = md => {
+  md = md.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+  const lines = md.split("\n")
+  let html = ""
+  for (let i = 0; i < lines.length;) {
+    if (/\|.*\|/.test(lines[i])) {
+      const header = lines[i].trim().split("|").filter(Boolean)
+      html += "<table><thead><tr>"
+      header.forEach(h => (html += `<th>${h.trim()}</th>`))
+      html += "</tr></thead><tbody>"
+      i += 2
+      while (i < lines.length && /\|.*\|/.test(lines[i])) {
+        const row = lines[i].trim().split("|").filter(Boolean)
+        html += "<tr>"
+        row.forEach(cell => (html += `<td>${cell.trim()}</td>`))
+        html += "</tr>"
+        i++
+      }
+      html += "</tbody></table>"
+    } else {
+      html += `<p>${lines[i]}</p>`
+      i++
+    }
+  }
+  return html
+}
+
+const speak = text => {
+  const synth = window.speechSynthesis
+  const utter = new SpeechSynthesisUtterance(text)
+  synth.speak(utter)
+}
 
 const ChatBot = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [listening, setListening] = useState(false);
-  const recognitionRef = useRef(null);
-  const chatContainerRef = useRef(null);
+  const currentUser = useSelector(state => state.auth.user)
+  const [messages, setMessages] = useState([])
+  const [input, setInput] = useState("")
+  const [suggestions, setSuggestions] = useState(suggestionsDefault)
+  const [listening, setListening] = useState(false)
+  const [isThinking, setIsThinking] = useState(false)
+  const recognitionRef = useRef(null)
 
-  const suggestions = [
-    "Give me top exporters of Pakistan",
-    "What's total export of sapphire textiles mills",
-    "Which product does Faisal Spinning Mills export most?",
-    "Exports of Faisal Spinning Mills",
-    "Exports of Faisal Spinning Mills to Europe",
-    "Show me the imports of diamond brand"
-  ];
+  const handleInit = () => {
+    setMessages(p => [
+      ...p,
+      {type: "bot", html: markdownToHtml("How can I assist you with the export data?"), time: new Date()}
+    ])
+    speak("How can I assist you with the export data?")
+    setSuggestions(suggestionsDefault)
+  }
 
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = "en-US";
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.onresult = async (event) => {
-        const transcript = event.results[0][0].transcript;
-        setMessages((prev) => [...prev, { type: "user", text: transcript }]);
-        setInput("");
-        setListening(false);
-        await sendQuery(transcript);
-      };
-      recognition.onerror = () => {
-        setListening(false);
-      };
-      recognitionRef.current = recognition;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const extractVowels = (text) => {
-    return text.replace(/[^aeiouAEIOU]/g, "");
-  };
-
-  const speakAnswer = (text) => {
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  const sendQuery = async (message) => {
-    const vowels = extractVowels(message);
+  const sendQuery = async msg => {
+    setIsThinking(true)
+    setMessages(p => [...p, {type: "user", text: msg, time: new Date()}])
     try {
-      const response = await api.post("chat/query/", { query: message, vowels });
-      if (response.status === 200) {
-        const respData = response.data.response;
-        let botMessage;
-        if (Array.isArray(respData)) {
-          botMessage = { type: "bot", data: respData };
-          speakAnswer("Here are the results.");
-        } else if (typeof respData === "object" && respData !== null) {
-          botMessage = { type: "bot", text: JSON.stringify(respData) };
-          speakAnswer(JSON.stringify(respData));
-        } else {
-          botMessage = { type: "bot", text: respData };
-          speakAnswer(respData);
-        }
-        setMessages((prev) => [...prev, botMessage]);
+      const res = await api.post("chat/query/", {query: msg})
+      const d = res.data.response
+      const now = new Date()
+      if (Array.isArray(d)) {
+        setMessages(p => [...p, {type: "bot", table: d, time: now}])
+      } else if (d && typeof d === "object" && d.answer) {
+        setMessages(p => [...p, {type: "bot", html: d.answer, time: now}])
       } else {
-        setMessages((prev) => [...prev, { type: "bot", text: "Error processing query" }]);
-        speakAnswer("Error processing query");
+        setMessages(p => [...p, {type: "bot", html: markdownToHtml(String(d)), time: now}])
       }
-    } catch (error) {
-      setMessages((prev) => [...prev, { type: "bot", text: "Network error" }]);
-      speakAnswer("Network error");
+    } catch {
+      setMessages(p => [...p, {type: "bot", text: "Network error", time: new Date()}])
+    } finally {
+      setIsThinking(false)
     }
-  };
+  }
 
-  const handleSend = async () => {
-    if (input.trim() !== "") {
-      const userMessage = input.trim();
-      setMessages((prev) => [...prev, { type: "user", text: userMessage }]);
-      setInput("");
-      await sendQuery(userMessage);
+  const handleSend = () => {
+    const msg = input.trim()
+    if (!msg) return
+    setInput("")
+    sendQuery(msg)
+  }
+
+const startVoice = () => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+  if (!recognitionRef.current && SR) {
+    const rec = new SR()
+    rec.lang = "en-US"
+    rec.continuous = false
+    rec.interimResults = true
+    rec.onresult = e => {
+      let transcript = ""
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        transcript += e.results[i][0].transcript
+      }
+      setInput(transcript)
+      if (e.results[e.results.length - 1].isFinal) {
+        sendQuery(transcript)
+        setInput("")
+      }
     }
-  };
+    rec.onerror = () => setListening(false)
+    rec.onend = () => setListening(false)
+    recognitionRef.current = rec
+  }
+  if (recognitionRef.current && !listening) {
+    recognitionRef.current.start()
+    setListening(true)
+  }
+}
 
-  const handleSuggestion = async (suggestion) => {
-    setMessages((prev) => [...prev, { type: "user", text: suggestion }]);
-    await sendQuery(suggestion);
-  };
 
-  const startVoice = () => {
-    if (recognitionRef.current) {
-      setListening(true);
-      recognitionRef.current.start();
+  useEffect(() => {
+    handleInit()
+    return () => {
+      if (recognitionRef.current) recognitionRef.current.stop()
     }
-  };
+  }, [])
 
   return (
-    <>
-      <div className="flex justify-center items-start p-8 bg-gradient-to-br from-[#f5f7fa] to-[#c3cfe2] min-h-[calc(100vh-60px)]">
-        <div className="flex-1 max-w-[800px] bg-white rounded-xl shadow-lg p-5 mr-5">
-          <div
-            ref={chatContainerRef}
-            className="h-[400px] overflow-y-auto rounded-md p-4 mb-4 bg-gray-100 space-y-4"
-          >
-            {messages.map((msg, index) => (
-              <div key={index} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[70%] p-3 rounded-lg ${msg.type === "user" ? "bg-green-100 text-right" : "bg-gray-200 text-left"}`}>
-                  {msg.type === "bot" && msg.data ? (
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full border-collapse">
-                        <thead>
-                          <tr>
-                            <th className="border px-2 py-1">#</th>
-                            <th className="border px-2 py-1">Company</th>
-                            <th className="border px-2 py-1">Value</th>
-                            <th className="border px-2 py-1">Country</th>
-                            <th className="border px-2 py-1">Product</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {msg.data.map((item, idx) => (
-                            <tr key={idx}>
-                              <td className="border px-2 py-1">{idx + 1}</td>
-                              <td className="border px-2 py-1">{item.Company}</td>
-                              <td className="border px-2 py-1">{item.VALUE_PKR || item.USD}</td>
-                              <td className="border px-2 py-1">{item.Country}</td>
-                              <td className="border px-2 py-1">{item.Product}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    msg.text
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">Suggestions</h3>
-            <div className="flex flex-wrap gap-2">
-              {suggestions.map((suggestion, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSuggestion(suggestion)}
-                  className="px-3 py-1 bg-gray-300 rounded-full text-sm hover:bg-gray-400"
+    <div className="main-chart-wrapper p-2 gap-4 lg:flex">
+      <div className="main-chat-area border dark:border-defaultborder/10 ml-6">
+        <div className="sm:flex items-center p-2 border-b dark:border-defaultborder/10">
+          <div className="flex items-center leading-none ml-4">
+            <div className="flex-grow">
+              <p className="mb-1 font-semibold text-[.875rem]">
+                <Link
+                  to="#"
+                  className="chatnameperson responsive-userinfo-open !text-defaulttextcolor dark:text-defaulttextcolor/70"
                 >
-                  {suggestion}
-                </button>
-              ))}
+                  Sapphira AI Assistant
+                </Link>
+              </p>
+              <p className="text-[#8c9097] dark:text-white/50 mb-0 chatpersonstatus !text-defaultsize">
+                online
+              </p>
             </div>
           </div>
-          <div className="flex items-center">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 p-3 rounded-md border border-gray-300 text-lg"
-            />
-            <button onClick={handleSend} className="p-3 ml-2 rounded-md bg-green-600 text-white cursor-pointer ti-btn-success-full text-lg flex items-center">
-              <i className="ri-send-plane-fill mr-2 font-semibold align-middle"></i>
-            </button>
-            <button onClick={startVoice} className="p-3 ml-2 rounded-md bg-blue-600 text-white cursor-pointer ti-btn-primary-full text-lg flex items-center">
-              <i className="ri-voiceprint-fill font-semibold align-middle"></i>
-              {listening ? "Listening..." : ""}
+          <div className="flex ms-auto">
+            <button
+              type="button"
+              onClick={() => setMessages([])}
+              className="ti-btn ti-btn-icon ti-btn-outline-light dark:border-defaultborder/10 !text-[0.95rem] !ms-2 font-semibold"
+            >
+              <i className="ri-refresh-line dark:text-defaulttextcolor/70"></i>
             </button>
           </div>
         </div>
-        <div className="w-64 text-center bg-white rounded-xl shadow-lg p-5">
-          <img
-            src="https://robohash.org/ComicCharacter?set=set3"
-            alt="AI Bot"
-            className="w-36 h-36 mx-auto rounded-full border-2 border-gray-300"
+        <PerfectScrollbar className="chat-content" id="main-chat-content">
+          <ul className="list-none p-2">
+            {messages.map((m, i) =>
+              m.type === "bot" ? (
+                <li className="chat-item-start mb-2" key={i}>
+                  <div className="chat-list-inner flex items-start">
+                    <div className="ms-3">
+                      <span className="chatting-user-info flex items-center mb-1">
+                        <span className="chatnameperson">Sapphira</span>
+                        <span className="msg-sent-time ms-2 text-xs text-gray-500">
+                          {m.time.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
+                        </span>
+                      </span>
+                      <div className="main-chat-msg">
+                        {m.table && (
+                          <div className="overflow-x-auto">
+                            <table className="min-w-full border-collapse">
+                              <thead>
+                                <tr>
+                                  <th className="border px-2 py-1">#</th>
+                                  {Object.keys(m.table[0]).map(h => (
+                                    <th key={h} className="border px-2 py-1">{h}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {m.table.map((row, idx) => (
+                                  <tr key={idx}>
+                                    <td className="border px-2 py-1">{idx + 1}</td>
+                                    {Object.keys(row).map(k => (
+                                      <td key={k} className="border px-2 py-1">{row[k]}</td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                        {m.html && <div dangerouslySetInnerHTML={{__html: m.html}} />}
+                        {m.text && <p className="mb-0">{m.text}</p>}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ) : (
+                <li className="chat-item-end mb-2 flex justify-end" key={i}>
+                  <div className="chat-list-inner flex items-end">
+                    <div className="me-3 text-right">
+                      <span className="chatting-user-info block mb-1">
+                        <span className="msg-sent-time inline-flex items-center text-xs text-gray-500">
+                          <i className="ri-check-double-line mr-1"></i>
+                          {m.time.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
+                        </span> You
+                      </span>
+                      <div className="main-chat-msg">
+                        <p className="mb-0">{m.text}</p>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              )
+            )}
+            {isThinking && (
+              <li className="chat-item-start mb-2">
+                <div className="chat-list-inner flex items-start">
+                  <div className="ms-3">
+                    <span className="chatting-user-info flex items-center mb-1">
+                      <span className="chatnameperson">Sapphira</span>
+                      <span className="msg-sent-time ms-2 text-xs text-gray-500">
+                        {new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
+                      </span>
+                    </span>
+                    <div className="main-chat-msg">
+                      <span className="text-gray-500 animate-pulse">Thinking...</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            )}
+          </ul>
+        </PerfectScrollbar>
+        <div className="chat-footer flex items-center p-2 border-t dark:border-defaultborder/10">
+          <input
+            className="form-control w-full !rounded-md"
+            placeholder="Type your message here..."
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleSend()}
           />
-          <h2 className="mt-4 text-2xl text-gray-800">Chatbot</h2>
-          <p className="text-gray-600">Your friendly AI assistant</p>
-          {listening && <p className="text-blue-600 font-bold">Listening...</p>}
+          <button onClick={startVoice} className="ti-btn ti-btn-icon !mx-2 ti-btn-success">
+            <i className="ri-voiceprint-fill"></i>
+          </button>
+          <button onClick={handleSend} className="ti-btn bg-primary text-white ti-btn-icon ti-btn-send">
+            <i className="ri-send-plane-2-line"></i>
+          </button>
         </div>
       </div>
-    </>
-  );
-};
+      <div className="bg-white dark:bg-bodybg border dark:border-defaultborder/10 rounded-md">
+        <h4 className="text-center font-semibold text-sm py-2 border-b dark:border-defaultborder/10">
+          Suggested
+        </h4>
+        <div className="p-3 flex flex-col gap-2">
+          {suggestions.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => sendQuery(s)}
+              className="px-3 py-2 bg-gray-100 dark:bg-gray-800 text-xs rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-left"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
-export default ChatBot;
+export default ChatBot
