@@ -1,0 +1,133 @@
+import React, { useState, useEffect } from 'react';
+
+const MathCaptcha = ({ onSuccess, maxNumber = 20, className = '' }) => {
+    const [num1, setNum1] = useState(0);
+    const [num2, setNum2] = useState(0);
+    const [operator, setOperator] = useState('+');
+    const [userAnswer, setUserAnswer] = useState('');
+    const [isValid, setIsValid] = useState(null);
+    const [attempts, setAttempts] = useState(0);
+    const [showResult, setShowResult] = useState(false);
+
+    const operators = ['+', '-', '×'];
+
+    const generateCaptcha = () => {
+        const newNum1 = Math.floor(Math.random() * maxNumber) + 1;
+        const newNum2 = Math.floor(Math.random() * maxNumber) + 1;
+        const newOperator = operators[Math.floor(Math.random() * operators.length)];
+
+        setNum1(newNum1);
+        setNum2(newNum2);
+        setOperator(newOperator);
+        setUserAnswer('');
+        setIsValid(null);
+        setShowResult(false);
+    };
+
+    const getCorrectAnswer = () => {
+        switch (operator) {
+            case '+': return num1 + num2;
+            case '-': return num1 - num2;
+            case '×': return num1 * num2;
+            default: return 0;
+        }
+    };
+
+    const handleSubmit = (e) => {
+        if (e) e.preventDefault();
+        if (!userAnswer) return;
+
+        const correctAnswer = getCorrectAnswer();
+        const userNum = parseInt(userAnswer);
+
+        if (userNum === correctAnswer) {
+            setIsValid(true);
+            setShowResult(true);
+            onSuccess && onSuccess(); 
+        } else {
+            setIsValid(false);
+            setAttempts(prev => prev + 1);
+            setShowResult(true);
+            setTimeout(generateCaptcha, 2000);
+        }
+    };
+
+    const handleRefresh = () => {
+        generateCaptcha();
+        setAttempts(0);
+    };
+
+    useEffect(() => {
+        generateCaptcha();
+    }, []);
+
+    return (
+        <div className={`bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md ${className}`}>
+            <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-3">
+                    <i className="bi bi-calculator-fill text-white text-lg"></i>
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">Captcha</h2>
+                <p className="text-gray-600 text-sm">Solve to continue</p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-5 border border-gray-200 text-center">
+                <div className="text-3xl font-mono font-bold text-gray-800 mb-2">
+                    {num1} {operator} {num2} = ?
+                </div>
+                <button
+                    onClick={handleRefresh}
+                    className="text-sm text-blue-600 hover:underline flex items-center justify-center gap-1"
+                >
+                    <i className="bi bi-arrow-clockwise" /> New Question
+                </button>
+            </div>
+
+            <div className="space-y-4">
+                <input
+                    type="number"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSubmit(e)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 text-center font-medium"
+                    placeholder="Enter your answer"
+                    disabled={isValid === true}
+                />
+
+                <button
+                    onClick={handleSubmit}
+                    disabled={!userAnswer || isValid === true}
+                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50"
+                >
+                    {isValid === true ? 'Verified!' : 'Verify Answer'}
+                </button>
+            </div>
+
+            {showResult && (
+                <div className={`mt-4 p-3 rounded-lg text-sm font-medium border ${
+                    isValid ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'
+                }`}>
+                    {isValid ? (
+                        <div className="flex items-center justify-center">
+                            <i className="bi bi-check-circle mr-2" />
+                            Correct! Captcha verified.
+                        </div>
+                    ) : (
+                        <div className="flex items-center justify-center">
+                            <i className="bi bi-x-circle mr-2" />
+                            Incorrect. The correct answer was {getCorrectAnswer()}.
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {attempts > 0 && (
+                <div className="mt-3 text-center text-xs text-gray-500">
+                    Attempts: {attempts}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default MathCaptcha;
