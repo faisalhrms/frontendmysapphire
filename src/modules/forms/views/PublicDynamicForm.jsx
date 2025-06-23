@@ -112,7 +112,7 @@ export default function PublicDynamicForm() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
-    const pendingFormData = useRef(null); // Store form data when captcha is triggered
+    const pendingFormData = useRef(null);
 
     const { location } = useGeoLocation();
     const isAuthenticated = useIsAuthenticated();
