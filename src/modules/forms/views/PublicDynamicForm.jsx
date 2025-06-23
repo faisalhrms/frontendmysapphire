@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {useGeoLocation} from "@hooks/useGeoLocation.js";
-import {getMarketingMetadata} from "@helpers/helper.js";
+import { useGeoLocation } from "@hooks/useGeoLocation.js";
+import { getMarketingMetadata } from "@helpers/helper.js";
 import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
-import {useIsAuthenticated} from "@modules/auth/hooks/authHooks.js";
+import { useIsAuthenticated } from "@modules/auth/hooks/authHooks.js";
+import MathCaptcha from "@components/mathcaptcha/MathCaptcha.jsx";
 
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 
@@ -106,11 +107,16 @@ const createFormSchema = (fields) => {
 export default function PublicDynamicForm() {
     const { slug } = useParams();
     const [formConfig, setFormConfig] = useState(null);
+    const [captchaVerified, setCaptchaVerified] = useState(false);
+    const [isCaptchaTriggered, setIsCaptchaTriggered] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const pendingFormData = useRef(null); // Store form data when captcha is triggered
+
     const { location } = useGeoLocation();
     const isAuthenticated = useIsAuthenticated();
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -137,7 +143,6 @@ export default function PublicDynamicForm() {
             })
             .catch((error) => setError(error.message));
     }, [slug, isAuthenticated, navigate]);
-
 
     const getDefaultValues = (config) => {
         if (!formConfig) return {};
@@ -175,7 +180,7 @@ export default function PublicDynamicForm() {
     const {
         control,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
         reset,
         trigger,
         setValue,
@@ -201,7 +206,7 @@ export default function PublicDynamicForm() {
         }
     }, [location, setValue]);
 
-    if (error){
+    if (error) {
         return (
             <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
                 <div className="max-w-2xl mx-auto">
@@ -244,7 +249,6 @@ export default function PublicDynamicForm() {
                 }
             });
 
-
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/submissions/${slug}/submit/`, {
                 method: "POST",
                 body: payload,
@@ -285,6 +289,38 @@ export default function PublicDynamicForm() {
         }
     };
 
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+
+
+        handleSubmit((data) => {
+            if (formConfig?.require_captcha && !captchaVerified) {
+
+                pendingFormData.current = data;
+                setIsCaptchaTriggered(true);
+                return;
+            }
+
+
+            onSubmit(data);
+        })();
+    };
+
+    const handleCaptchaSuccess = () => {
+        setIsCaptchaTriggered(false);
+        setCaptchaVerified(true);
+
+        if (pendingFormData.current) {
+            onSubmit(pendingFormData.current);
+            pendingFormData.current = null;
+        }
+    };
+
+    const handleCaptchaClose = () => {
+        setIsCaptchaTriggered(false);
+        // Form data remains stored in pendingFormData
+    };
+
     const handleBack = () => {
         setCurrentStep((prev) => Math.max(prev - 1, 0));
     };
@@ -292,6 +328,8 @@ export default function PublicDynamicForm() {
     const clearForm = () => {
         reset(getDefaultValues(formConfig));
         setCurrentStep(0);
+        setCaptchaVerified(false);
+        pendingFormData.current = null;
     };
 
     const renderField = (fieldName) => {
@@ -327,19 +365,19 @@ export default function PublicDynamicForm() {
             >
                 <label className="block text-sm font-normal text-gray-700 mb-1 line-height-1">
                     {field.label} {field.required && <span className="text-danger">*</span>}
-                    { field.short_description &&
+                    {field.short_description &&
                         <>
-                            <br/>
+                            <br />
                             <span className="form-text">
-                                {field.short_description}
-                            </span>
+                {field.short_description}
+              </span>
                         </>
                     }
                 </label>
                 <Controller
                     name={fieldName}
                     control={control}
-                    render={({field: controllerField }) => {
+                    render={({ field: controllerField }) => {
                         const safeValue = controllerField.value ?? "";
                         switch (field.field_type) {
                             case "text":
@@ -575,9 +613,11 @@ export default function PublicDynamicForm() {
                                 ) : (
                                     <button
                                         type="submit"
-                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
+                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                                        disabled={isSubmitting}
+                                        onClick={handleFormSubmit}
                                     >
-                                        Submit
+                                        {isSubmitting ? 'Submitting...' : 'Submit'}
                                     </button>
                                 )}
                             </div>
@@ -592,6 +632,36 @@ export default function PublicDynamicForm() {
                     </div>
                 </form>
             </div>
+            {formConfig?.require_captcha && isCaptchaTriggered && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl p-6 max-w-sm w-full relative">
+                        <button
+                            className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+                            onClick={handleCaptchaClose}
+                            aria-label="Close captcha"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                        <MathCaptcha
+                            onSuccess={handleCaptchaSuccess}
+                            className="w-full"
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
