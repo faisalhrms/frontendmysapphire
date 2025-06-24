@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import {useGeoLocation} from "@hooks/useGeoLocation.js";
-import {getMarketingMetadata} from "@helpers/helper.js";
+import { useGeoLocation } from "@hooks/useGeoLocation.js";
+import { getMarketingMetadata } from "@helpers/helper.js";
 import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
+import { useIsAuthenticated } from "@modules/auth/hooks/authHooks.js";
+import MathCaptcha from "@components/mathcaptcha/MathCaptcha.jsx";
 
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 
@@ -23,10 +25,33 @@ const createFormSchema = (fields) => {
                     }
                     break;
                 case "file":
-                    fieldSchema = z.instanceof(File).nullable();
+                    fieldSchema = z
+                        .instanceof(File)
+                        .superRefine((file, ctx) => {
+                            if (file === null) return;
+
+                            if (!file.type.startsWith("image/")) {
+                                ctx.addIssue({
+                                    code: z.ZodIssueCode.custom,
+                                    message: "Only image files are allowed",
+                                });
+                            }
+
+                            if (file.size > 5 * 1024 * 1024) {
+                                ctx.addIssue({
+                                    code: z.ZodIssueCode.custom,
+                                    message: "File size must be 5MB or less",
+                                });
+                            }
+                        })
+                        .nullable();
+
                     if (field.required) {
-                        fieldSchema = fieldSchema.refine((val) => val !== null, "File is required");
+                        fieldSchema = fieldSchema.refine((val) => val !== null, {
+                            message: "File is required",
+                        });
                     }
+
                     break;
                 case "email":
                     fieldSchema = z.string();
@@ -82,10 +107,17 @@ const createFormSchema = (fields) => {
 export default function PublicDynamicForm() {
     const { slug } = useParams();
     const [formConfig, setFormConfig] = useState(null);
+    const [captchaVerified, setCaptchaVerified] = useState(false);
+    const [isCaptchaTriggered, setIsCaptchaTriggered] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const pendingFormData = useRef(null);
+
     const { location } = useGeoLocation();
+    const isAuthenticated = useIsAuthenticated();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/${slug}/public`)
@@ -97,10 +129,20 @@ export default function PublicDynamicForm() {
                 }
                 return json;
             })
-            .then((data) => setFormConfig(data.data))
-            .catch((error) => setError(error.message));
-    }, [slug]);
+            .then((data) => {
+                const formData = data.data;
+                if (formData.authenticated_only && !isAuthenticated) {
+                    navigate(import.meta.env.BASE_URL, {
+                        state: { redirectTo: window.location.pathname },
+                        replace: true,
+                    });
+                    return;
+                }
 
+                setFormConfig(formData);
+            })
+            .catch((error) => setError(error.message));
+    }, [slug, isAuthenticated, navigate]);
 
     const getDefaultValues = (config) => {
         if (!formConfig) return {};
@@ -138,7 +180,7 @@ export default function PublicDynamicForm() {
     const {
         control,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
         reset,
         trigger,
         setValue,
@@ -164,7 +206,7 @@ export default function PublicDynamicForm() {
         }
     }, [location, setValue]);
 
-    if (error){
+    if (error) {
         return (
             <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
                 <div className="max-w-2xl mx-auto">
@@ -207,7 +249,6 @@ export default function PublicDynamicForm() {
                 }
             });
 
-
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/submissions/${slug}/submit/`, {
                 method: "POST",
                 body: payload,
@@ -248,6 +289,38 @@ export default function PublicDynamicForm() {
         }
     };
 
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+
+
+        handleSubmit((data) => {
+            if (formConfig?.require_captcha && !captchaVerified) {
+
+                pendingFormData.current = data;
+                setIsCaptchaTriggered(true);
+                return;
+            }
+
+
+            onSubmit(data);
+        })();
+    };
+
+    const handleCaptchaSuccess = () => {
+        setIsCaptchaTriggered(false);
+        setCaptchaVerified(true);
+
+        if (pendingFormData.current) {
+            onSubmit(pendingFormData.current);
+            pendingFormData.current = null;
+        }
+    };
+
+    const handleCaptchaClose = () => {
+        setIsCaptchaTriggered(false);
+        // Form data remains stored in pendingFormData
+    };
+
     const handleBack = () => {
         setCurrentStep((prev) => Math.max(prev - 1, 0));
     };
@@ -255,6 +328,8 @@ export default function PublicDynamicForm() {
     const clearForm = () => {
         reset(getDefaultValues(formConfig));
         setCurrentStep(0);
+        setCaptchaVerified(false);
+        pendingFormData.current = null;
     };
 
     const renderField = (fieldName) => {
@@ -288,8 +363,16 @@ export default function PublicDynamicForm() {
                     errors[fieldName] ? "border-danger" : "border-gray-200"
                 } p-6`}
             >
-                <label className="block text-sm font-normal text-gray-700 mb-1">
+                <label className="block text-sm font-normal text-gray-700 mb-1 line-height-1">
                     {field.label} {field.required && <span className="text-danger">*</span>}
+                    {field.short_description &&
+                        <>
+                            <br />
+                            <span className="form-text">
+                {field.short_description}
+              </span>
+                        </>
+                    }
                 </label>
                 <Controller
                     name={fieldName}
@@ -445,6 +528,7 @@ export default function PublicDynamicForm() {
                                         <input
                                             type="file"
                                             id={`file-upload-${fieldName}`}
+                                            accept="image/*"
                                             onChange={(e) => controllerField.onChange(e.target.files[0] ?? null)}
                                             className="hidden"
                                             name={normalizeFieldName(field.name)}
@@ -529,9 +613,11 @@ export default function PublicDynamicForm() {
                                 ) : (
                                     <button
                                         type="submit"
-                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
+                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                                        disabled={isSubmitting}
+                                        onClick={handleFormSubmit}
                                     >
-                                        Submit
+                                        {isSubmitting ? 'Submitting...' : 'Submit'}
                                     </button>
                                 )}
                             </div>
@@ -546,6 +632,17 @@ export default function PublicDynamicForm() {
                     </div>
                 </form>
             </div>
+            {formConfig?.require_captcha && isCaptchaTriggered && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl p-6 max-w-sm w-full relative">
+
+                        <MathCaptcha
+                            onSuccess={handleCaptchaSuccess}
+                            className="w-full"
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

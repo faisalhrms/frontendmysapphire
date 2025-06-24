@@ -41,6 +41,8 @@ const DynamicFormBuilder = ({ formData }) => {
             description: '',
             enable_alerts: false,
             is_active: true,
+            authenticated_only: false,
+            require_captcha: false,
             expired_at: undefined,
             notification_emails: [],
             fields: [{ label: '', name: '', short_description: '', field_type: 'text', group: '', required: false, options: [], order: 1 }],
@@ -67,6 +69,8 @@ const DynamicFormBuilder = ({ formData }) => {
             setValue('description', formData.description || '');
             setValue('enable_alerts', formData.enable_alerts || false);
             setValue('is_active', formData.is_active || true);
+            setValue('authenticated_only', formData.authenticated_only || false);
+            setValue('require_captcha', formData.require_captcha || false);
             setValue('expired_at', formData.expired_at || undefined);
             setValue('notification_emails', formData.notification_emails?.split(',').filter(Boolean) || []);
             setValue(
@@ -143,7 +147,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                             control={control}
                                             errors={errors}
                                             placeholder="Form Description"
-                                            rows={4}
+                                            rows={14}
                                         />
                                     </div>
                                 </div>
@@ -158,6 +162,32 @@ const DynamicFormBuilder = ({ formData }) => {
                             <div className="box-body">
                                 <FormToggle
                                     name="is_active"
+                                    control={control}
+                                    errors={errors}
+                                    toggleClasses="text-center"
+                                />
+                            </div>
+                        </div>
+                        <div className="box">
+                            <div className="box-header">
+                                <div className="box-title">For Authenticated User</div>
+                            </div>
+                            <div className="box-body">
+                                <FormToggle
+                                    name="authenticated_only"
+                                    control={control}
+                                    errors={errors}
+                                    toggleClasses="text-center"
+                                />
+                            </div>
+                        </div>
+                        <div className="box">
+                            <div className="box-header">
+                                <div className="box-title">Require Captcha</div>
+                            </div>
+                            <div className="box-body">
+                                <FormToggle
+                                    name="require_captcha"
                                     control={control}
                                     errors={errors}
                                     toggleClasses="text-center"
@@ -189,7 +219,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                             preselectedOptions={formData?.notification_emails
                                                 ?.split(',')
                                                 .filter(Boolean)
-                                                .map((e) => ({ label: e, value: e })) || []}
+                                                .map((e) => ({label: e, value: e})) || []}
                                         />
                                     </div>
                                 )}
@@ -205,7 +235,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                     onClick={addField}
                                     className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
                                 >
-                                    <i className="ri-add-line font-semibold align-middle"></i>
+                                <i className="ri-add-line font-semibold align-middle"></i>
                                     Add Field
                                 </button>
                             </div>

@@ -3,7 +3,10 @@ import React, {useCallback, useMemo, useState} from 'react';
 import DataTable from "@components/DataTable.jsx";
 import {formatNumberWithCommas} from "@helpers/formatters.js";
 
-const ProductDatatableTab = () => {
+const ProductDatatableTab = ({isActive}) => {
+    if (!isActive) {
+        return null;
+    }
 
     const columns = [
         {

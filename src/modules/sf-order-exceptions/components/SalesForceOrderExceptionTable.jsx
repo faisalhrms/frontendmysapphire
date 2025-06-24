@@ -29,10 +29,12 @@ const SalesForceOrderExceptionTable = ({ data, isLoading, isActive = true }) => 
                                </tr>
                                <tr className="text-white">
                                    <th className="bg-blue-300 border border-gray-400 p-2 text-center">Month</th>
-                                   <th className="bg-blue-300 border border-gray-400 p-2 text-center">Activated</th>
                                    <th className="bg-blue-300 border border-gray-400 p-2 text-center">Created</th>
+                                   <th className="bg-blue-300 border border-gray-400 p-2 text-center">Activated</th>
                                    <th className="bg-blue-300 border border-gray-400 p-2 text-center">On Hold</th>
-                                   <th className="bg-blue-300 border border-gray-400 p-2 text-center">Order With Exception</th>
+                                   <th className="bg-blue-300 border border-gray-400 p-2 text-center">Order With
+                                       Exception
+                                   </th>
                                    <th className="bg-blue-300 border border-gray-400 p-2 text-center">Grand Total</th>
                                </tr>
                                </thead>
@@ -46,11 +48,12 @@ const SalesForceOrderExceptionTable = ({ data, isLoading, isActive = true }) => 
                                            {row?.month}
                                        </td>
                                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
-                                           {formatNumberWithCommas(row?.activated)}
-                                       </td>
-                                       <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
                                            {formatNumberWithCommas(row?.created)}
                                        </td>
+                                       <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
+                                           {formatNumberWithCommas(row?.activated)}
+                                       </td>
+
                                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
                                            {formatNumberWithCommas(row?.on_hold)}
                                        </td>

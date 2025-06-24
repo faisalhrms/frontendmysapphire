@@ -19,7 +19,6 @@ const Login = () => {
   const isEmployee = useHasGroup('employee');
   useEffect(() => {
     if (isAuthenticated) {
-      // Check for redirect path from state or use default
       const redirectPath = location.state?.from?.pathname ||
           (isEmployee
               ? SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path

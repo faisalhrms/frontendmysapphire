@@ -82,8 +82,6 @@ const ProjectDetail = () => {
                                     refetch={refetch}
                                     handleUploadModal={handleUploadModal}
                                 />
-
-
                               <Discussion
                                   title="Project Discussions"
                                   storeEndPoint={`/pms/projects/${id}/discussion/`}
