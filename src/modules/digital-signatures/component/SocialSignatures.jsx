@@ -13,9 +13,9 @@ const SignatureForm = ({ handleSubmitData, isEditMode = false,tempStep, editData
     watch,
   } = useForm({
     defaultValues: {
-      facebook: editData.facebook || "",
-      instagram: editData.instagram || "",
-      linkedin: editData.linkedin || "",
+      facebook: editData.facebook_url || "",
+      instagram: editData.instagram_url || "",
+      linkedin: editData.linkedin_url || "",
       twitter: editData.twitter || "",
       tiktok: editData.tiktok || "",
     },
