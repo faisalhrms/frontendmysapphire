@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import SearchSection from "@modules/CustomerAssist/components/SearchSection.jsx";
-import FormSection from "@modules/CustomerAssist/components/FormSection.jsx";
+import FormSection from "@modules/CustomerAssist/components/CustomerAssistMainList.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx"; // adjust path if needed
 import { getCustomerCase } from "@modules/CustomerAssist/services/customerAssistService.js";
 
