@@ -54,6 +54,8 @@ const TaskTableHeader = ({
                             <span>{header.label}</span>
                             <div className="flex items-center gap-1">
                                 {isFilterable && (
+                                    header.key !== 'person' || (header.key === 'person' && projectUsers?.length > 0)
+                                ) && (
                                     <TaskHeaderFilter
                                         header={header}
                                         filters={filters}
