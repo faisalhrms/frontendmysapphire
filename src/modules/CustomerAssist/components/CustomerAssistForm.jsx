@@ -6,7 +6,10 @@ import FormSection from "@modules/CustomerAssist/components/CustomerAssistMainLi
 import LoadingSpinner from "@components/LoadingSpinner.jsx"; // adjust path if needed
 import { getCustomerCase } from "@modules/CustomerAssist/services/customerAssistService.js";
 
-const CustomerAssistForm = () => {
+const CustomerAssistForm = ({isActive}) => {
+    if (!isActive) {
+        return null;
+    }
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);

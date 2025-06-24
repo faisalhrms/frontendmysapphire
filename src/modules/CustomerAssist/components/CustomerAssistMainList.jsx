@@ -310,8 +310,8 @@ const CustomerAssistMainList = ({ data }) => {
                                 </div>
                             </div>
                             {!data?.exist_in_our_db && (
-                                <div className="box-footer p-4 bg-gray-50 rounded-b-lg">
-                                    <div className="flex justify-end">
+                                <div className="box-footer p-4  rounded-b-lg">
+                                    <div className="flex justify-center">
                                         <FormButton
                                             isLoading={isSubmitting}
                                             text="Update Remarks"
