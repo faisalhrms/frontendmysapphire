@@ -14,16 +14,18 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus, showFoot
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const processEmailContent = (html, attachments) => {
-        if (!html || !attachments) return html;
-        let updatedHtml = html;
-        attachments.forEach((att) => {
-            if (att.cid && att.file) {
-                const regex = new RegExp(`cid:${att.cid}`, "g");
-                updatedHtml = updatedHtml.replace(regex, att.file);
-            }
-        });
-        return updatedHtml;
-    };
+      if (!html) return ''
+      let updatedHtml = html
+      if (attachments?.length) {
+        attachments.forEach(({ cid, file }) => {
+          if (cid && file) updatedHtml = updatedHtml.replace(new RegExp(`cid:${cid}`, 'g'), file)
+        })
+      }
+      const doc = new DOMParser().parseFromString(updatedHtml, 'text/html')
+      doc.querySelectorAll('script').forEach(el => el.remove())
+      doc.querySelectorAll('a').forEach(el => el.replaceWith(document.createTextNode(el.textContent)))
+      return doc.body.innerHTML
+    }
 
     const processedDescription = useMemo(() => {
         return processEmailContent(

@@ -15,12 +15,14 @@ import ProjectSummaryStats from "@modules/project-management/components/project/
 import ProjectUserSummaryStats from "@modules/project-management/components/project/ProjectUserSummaryStats.jsx";
 import IconTabs from "@components/IconTabs.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import ProjectActivityLog from "@modules/project-management/components/project/ProjectActivityLog.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const { projectData } = useProject(id);
   const { milestones, isLoading, refetch } = useProjectMilestonesWithTasks(id);
   const { statistics, statsFetching, statsRefetch, statsError } = useProjectStatistics(id, 6, { enabled: false });
+  const [activeTab, setActiveTab] = useState('summary');
   const [importType, setImportType] = useState("M");
   const {
     openUploadModal,
@@ -39,6 +41,7 @@ const ProjectDetail = () => {
   };
 
   const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
     if (tabId === "overview") {
       statsRefetch();
     }
@@ -66,18 +69,19 @@ const ProjectDetail = () => {
                                   project={projectData}
                                   handleUploadModal={handleUploadModal}
                               />
-                              <ProjectTree
-                                  projectId={projectData.id}
-                                  projectStatus={projectData.status}
-                                  approval={projectData.requires_approval}
-                                  startedAt={projectData.started_at}
-                                  endedAt={projectData.ended_at}
-                                  projectUsers={projectData.users}
-                                  milestones={milestones}
-                                  isLoading={isLoading}
-                                  refetch={refetch}
-                                  handleUploadModal={handleUploadModal}
-                              />
+
+                                <ProjectTree
+                                    projectId={projectData.id}
+                                    projectStatus={projectData.status}
+                                    approval={projectData.requires_approval}
+                                    startedAt={projectData.started_at}
+                                    endedAt={projectData.ended_at}
+                                    projectUsers={projectData.users}
+                                    milestones={milestones}
+                                    isLoading={isLoading}
+                                    refetch={refetch}
+                                    handleUploadModal={handleUploadModal}
+                                />
                               <Discussion
                                   title="Project Discussions"
                                   storeEndPoint={`/pms/projects/${id}/discussion/`}
@@ -88,14 +92,14 @@ const ProjectDetail = () => {
 
                             <div className="xl:col-span-3 sm:col-span-3  col-span-12 sticky top-0 self-start">
                               <div className="rounded-lg">
-                                <ProjectAdditionalDetail project={projectData} />
+                                <ProjectAdditionalDetail project={projectData}/>
                               </div>
                               <div className="rounded-lg">
-                                <ProjectTeam users={projectData.users} />
+                                <ProjectTeam users={projectData.users}/>
                               </div>
                               {projectData.attachments.length > 0 && (
                                   <div className="rounded-lg">
-                                    <ProjectAttachment attachments={projectData.attachments} />
+                                    <ProjectAttachment attachments={projectData.attachments}/>
                                   </div>
                               )}
                             </div>
@@ -146,6 +150,20 @@ const ProjectDetail = () => {
                                   </div>
                                 </>
                             ) : null}
+                          </>
+                      ),
+                    },
+                    {
+                      id: "activities",
+                      label: "Activities",
+                      icon: <i className="ri-history-line"></i>,
+                      content: (
+                          <>
+                            {
+                                activeTab !== 'activities'
+                                ? null :
+                                    <ProjectActivityLog id={projectData.id} activeTab={activeTab} projectName={projectData.name} />
+                            }
                           </>
                       ),
                     },

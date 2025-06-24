@@ -4,6 +4,7 @@ import PendingRequestsTable from "@modules/sr-management/pending-req-section/vie
 import TaskGeneratedTable from "@modules/sr-management/task-genrated-section/views/TaskGeneratedTable.jsx";
 import CompletedTasksTable from "@modules/sr-management/completed-task-section/views/CompletedTasksTable.jsx";
 import TaskClosedTable from "@modules/sr-management/closed-task-section/views/TaskClosedTable.jsx";
+import AllTaskTable from "@modules/sr-management/all-task-sectoion/views/AllTaskTable.jsx";
 import { getUnreadCounts } from "@modules/sr-management/services/Pending.js";
 
 const SrManagement = () => {
@@ -46,7 +47,9 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
-              Task Pending
+              <i className="ri-user-unfollow-line me-1"></i>
+
+               Pending Task
               {badge(counts.pending)}
             </button>
             <button
@@ -57,7 +60,8 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
-              Task Generated
+              <i className="ri-run-line me-1"></i>
+               Generated Task
               {badge(counts.generated)}
             </button>
             <button
@@ -68,7 +72,8 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
-              Task Completed
+              <i className="ri-checkbox-circle-line me-1"></i>
+               Completed Task
               {badge(counts.completed)}
             </button>
             <button
@@ -79,17 +84,28 @@ const SrManagement = () => {
                   : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
               }`}
             >
-              Task Closed
+              <i className="ri-lock-line me-1"></i>
+               Closed Task
               {badge(counts.closed)}
+            </button>
+            <button
+              onClick={() => setSearchParams({ status: "all-task" })}
+              className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.75rem] font-medium rounded-md ${
+                activeStatus === "all-task"
+                  ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
+                  : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
+              }`}
+            >
+              <i className="ri-list-check-2 me-1"></i>
+               All Tasks
             </button>
           </nav>
         </div>
-        <div className="box-content bg-white">
           {activeStatus === "pending-task" && <PendingRequestsTable />}
           {activeStatus === "generated-task" && <TaskGeneratedTable />}
           {activeStatus === "completed-task" && <CompletedTasksTable />}
           {activeStatus === "closed-task" && <TaskClosedTable />}
-        </div>
+          {activeStatus === "all-task" && <AllTaskTable />}
       </div>
     </div>
   );

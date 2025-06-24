@@ -41,7 +41,7 @@ const OfflineStorePerformFilter = ({ control, errors, clearFilter,filters }) => 
                                     name="date"
                                     control={control}
                                     errors={errors}
-                                    defaultValue={today} // show current date by default
+                                    defaultValue={today}
                                 />
                             </div>
                             <FilterButton/>
@@ -49,11 +49,14 @@ const OfflineStorePerformFilter = ({ control, errors, clearFilter,filters }) => 
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-success !mb-0"
-                                onClick={() => downloadPDF()}
+                                onClick={downloadPDF}
                                 disabled={isDownloading}
-
                             >
-                                <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""} text-lg`}></i>
+                                <i
+                                    className={`bi bi-file-earmark-pdf ${
+                                        isDownloading ? "spin" : ""
+                                    } `}
+                                ></i>
                                 {isDownloading ? "" : ""}
                             </button>
 

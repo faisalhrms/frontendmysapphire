@@ -6,7 +6,7 @@ import Notify from "@helpers/toastNotifications.js";
 import styles from "@css/custom/alert-modal.module.css";
 
 const DeleteModal = () => {
-    const {isVisible, apiEndpoint, itemName, refetch} = useSelector((state) => state.delModal);
+    const {isVisible, apiEndpoint, itemName='', refetch, params = {}} = useSelector((state) => state.delModal);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
 
@@ -14,7 +14,9 @@ const DeleteModal = () => {
         if (!apiEndpoint) return;
         setLoading(true);
         try {
-            const response = await api.delete(apiEndpoint);
+            const response = await api.delete(apiEndpoint, {
+                data:params
+            });
             Notify.success(response.data.message);
             closeModal();
             if (refetch){

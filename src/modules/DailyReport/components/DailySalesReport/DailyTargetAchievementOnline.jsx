@@ -1,15 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { fetchTargetSaleData } from "../../services/wiseside_services.js";
 
-const DailyTargetAchievementOnline = ({ data , loading }) => {
-    // const [data, setData] = useState([]);
-    // const [loading, setLoading] = useState(false);
-
-    console.log(data)
+const DailyTargetAchievementOnline = ({ data , isLoading }) => {
 
     const formatApiDate = (dayNumber) => {
-        const day = dayNumber.toString();
+        const day = dayNumber?.toString();
         return `${day}`;
     };
 
@@ -45,25 +40,43 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
             : <i className=""></i>;
     };
 
-    const totals = data.reduce(
-        (acc, row) => {
-            acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
-            acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
-            acc.discountedOfflineTarget += row.discountedOfflineTarget || 0;
-            acc.discountedOfflineSale += row.discountedOfflineSale || 0;
-            acc.totalOfflineTarget += row.totalOfflineTarget || 0;
-            acc.totalOfflineSale += row.totalOfflineSale || 0;
-            acc.fullPriceOnlineTarget += row.fullPriceOnlineTarget || 0;
-            acc.fullPriceOnlineSale += row.fullPriceOnlineSale || 0;
-            acc.discountedOnlineTarget += row.discountedOnlineTarget || 0;
-            acc.discountedOnlineSale += row.discountedOnlineSale || 0;
-            acc.totalOnlineTarget += row.totalOnlineTarget || 0;
-            acc.totalOnlineSale += row.totalOnlineSale || 0;
-            acc.totalTarget += row.totalTarget || 0;
-            acc.totalSale += row.totalSale || 0;
-            return acc;
-        },
-        {
+    const totals = Array.isArray(data)
+        ? data.reduce(
+            (acc, row) => {
+                acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
+                acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
+                acc.discountedOfflineTarget += row.discountedOfflineTarget || 0;
+                acc.discountedOfflineSale += row.discountedOfflineSale || 0;
+                acc.totalOfflineTarget += row.totalOfflineTarget || 0;
+                acc.totalOfflineSale += row.totalOfflineSale || 0;
+                acc.fullPriceOnlineTarget += row.fullPriceOnlineTarget || 0;
+                acc.fullPriceOnlineSale += row.fullPriceOnlineSale || 0;
+                acc.discountedOnlineTarget += row.discountedOnlineTarget || 0;
+                acc.discountedOnlineSale += row.discountedOnlineSale || 0;
+                acc.totalOnlineTarget += row.totalOnlineTarget || 0;
+                acc.totalOnlineSale += row.totalOnlineSale || 0;
+                acc.totalTarget += row.totalTarget || 0;
+                acc.totalSale += row.totalSale || 0;
+                return acc;
+            },
+            {
+                fullPriceOfflineTarget: 0,
+                fullPriceOfflineSale: 0,
+                discountedOfflineTarget: 0,
+                discountedOfflineSale: 0,
+                totalOfflineTarget: 0,
+                totalOfflineSale: 0,
+                fullPriceOnlineTarget: 0,
+                fullPriceOnlineSale: 0,
+                discountedOnlineTarget: 0,
+                discountedOnlineSale: 0,
+                totalOnlineTarget: 0,
+                totalOnlineSale: 0,
+                totalTarget: 0,
+                totalSale: 0,
+            }
+        )
+        : {
             fullPriceOfflineTarget: 0,
             fullPriceOfflineSale: 0,
             discountedOfflineTarget: 0,
@@ -78,8 +91,43 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
             totalOnlineSale: 0,
             totalTarget: 0,
             totalSale: 0,
-        }
-    );
+        };
+
+    // const totals = data?data:[]?.reduce(
+    //     (acc, row) => {
+    //         acc.fullPriceOfflineTarget += row.fullPriceOfflineTarget || 0;
+    //         acc.fullPriceOfflineSale += row.fullPriceOfflineSale || 0;
+    //         acc.discountedOfflineTarget += row.discountedOfflineTarget || 0;
+    //         acc.discountedOfflineSale += row.discountedOfflineSale || 0;
+    //         acc.totalOfflineTarget += row.totalOfflineTarget || 0;
+    //         acc.totalOfflineSale += row.totalOfflineSale || 0;
+    //         acc.fullPriceOnlineTarget += row.fullPriceOnlineTarget || 0;
+    //         acc.fullPriceOnlineSale += row.fullPriceOnlineSale || 0;
+    //         acc.discountedOnlineTarget += row.discountedOnlineTarget || 0;
+    //         acc.discountedOnlineSale += row.discountedOnlineSale || 0;
+    //         acc.totalOnlineTarget += row.totalOnlineTarget || 0;
+    //         acc.totalOnlineSale += row.totalOnlineSale || 0;
+    //         acc.totalTarget += row.totalTarget || 0;
+    //         acc.totalSale += row.totalSale || 0;
+    //         return acc;
+    //     },
+    //     {
+    //         fullPriceOfflineTarget: 0,
+    //         fullPriceOfflineSale: 0,
+    //         discountedOfflineTarget: 0,
+    //         discountedOfflineSale: 0,
+    //         totalOfflineTarget: 0,
+    //         totalOfflineSale: 0,
+    //         fullPriceOnlineTarget: 0,
+    //         fullPriceOnlineSale: 0,
+    //         discountedOnlineTarget: 0,
+    //         discountedOnlineSale: 0,
+    //         totalOnlineTarget: 0,
+    //         totalOnlineSale: 0,
+    //         totalTarget: 0,
+    //         totalSale: 0,
+    //     }
+    // );
 
     const totalsAch = {
         fullPriceOfflineAch: calcAch(totals.fullPriceOfflineSale, totals.fullPriceOfflineTarget),
@@ -91,12 +139,18 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
         totalAch: calcAch(totals.totalSale, totals.totalTarget),
     };
 
+
+
     return (
-        <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-4">
-            {loading ? (
-                <div className="text-center py-4">Loading...</div>
-            ) : (
-                <div className="relative overflow-x-auto">
+        <>
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
+    <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-4">
+
+        <div className="relative overflow-x-auto">
 
                     <div className="w-full border-collapse border border-gray-400 table-auto">
                         <table className="w-full border-collapse border border-gray-400">
@@ -206,7 +260,7 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                             </thead>
 
                             <tbody>
-                            {data.map((row, index) => (
+                            {data?.length > 0 && (data?.map((row, index) => (
                                 <tr key={index}>
 
                                     <td className="sticky left-0 z-20 py-1 px-2 sm:py-2 sm:px-4 border border-gray-400 text-center font-bold bg-white dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm whitespace-nowrap">
@@ -279,9 +333,9 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                                         {getAchIcon(row.totalAch)} {row.totalAch}%
                                     </td>
                                 </tr>
-                            ))}
+                            )))}
 
-                            {data.length > 0 && (
+                            {data?.length > 0 && (
                                 <tr className="font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]">
                                     <td className="sticky left-0 z-20 py-1 px-1 sm:py-2 sm:px-2 border border-gray-400 text-center font-bold dark:text-gray-200 dark:bg-bodybg text-xs sm:text-sm bg-[#949eb7]">
                                     </td>
@@ -357,11 +411,12 @@ const DailyTargetAchievementOnline = ({ data , loading }) => {
                         </table>
                     </div>
                 </div>
-            )}
+
             <div className="mt-4 text-xs text-red-600 text-left ml-4 font-bold">
                 <p>*Omni Added in E-Store and Excluded from B&M.</p>
             </div>
         </div>
+        </>
     );
 };
 

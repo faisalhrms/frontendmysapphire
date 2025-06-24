@@ -7,20 +7,26 @@ import LoginForm from '../components/LoginForm';
 import LoginSlider from "../components/LoginSlider.jsx";
 import React, {useEffect} from "react";
 import {useHasGroup, useIsAuthenticated} from "@modules/auth/hooks/authHooks.js";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
 import {landing_ROUTES} from "@modules/landing-page/routes.js";
 
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isAuthenticated = useIsAuthenticated();
   const isEmployee = useHasGroup('employee');
   useEffect(() => {
     if (isAuthenticated) {
-      isEmployee ? navigate(SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path) : navigate(landing_ROUTES.ABOUT_US.path);
+      const redirectPath = location.state?.from?.pathname ||
+          (isEmployee
+              ? SELF_SERVICES_ROUTES.SERVICES.WORK_DESK.path
+              : landing_ROUTES.ABOUT_US.path);
+
+      navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, isEmployee]);
+  }, [isAuthenticated, isEmployee, location.state, navigate]);
 
   return (
     <>

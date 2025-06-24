@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import { fetchData } from "@services/dataTableService.js";
 
-export const useDataTable = (apiUrl, pageSize, filter = null) => {
+export const useDataTable = (apiUrl, pageSize, filter = null, enableAdvancedFilters = false) => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(pageSize);
     const [search, setSearch] = useState('');
@@ -12,14 +12,22 @@ export const useDataTable = (apiUrl, pageSize, filter = null) => {
     const [sortField, setSortField] = useState(null);
     const [sortDirection, setSortDirection] = useState(null);
 
-    // Query
+    // For advanced filters
+    const [advancedFilters, setAdvancedFilters] = useState({});
+
+    // Combine all filters
+    const combinedFilters = {
+        ...filter,
+        ...advancedFilters,
+    };
+
+    // Query - now includes advancedFilters in the queryKey
     const { data, isLoading, error, refetch } = useQuery({
-        // Note: We add sortField & sortDirection to queryKey
-        queryKey: [apiUrl, page, size, search, filter, sortField, sortDirection],
+        queryKey: [apiUrl, page, size, search, combinedFilters, sortField, sortDirection, enableAdvancedFilters],
         queryFn: fetchData,
-        keepPreviousData: false,
+        keepPreviousData: true,
         staleTime: 0,
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
         refetchOnReconnect: false,
     });
 
@@ -29,6 +37,15 @@ export const useDataTable = (apiUrl, pageSize, filter = null) => {
             setSearch(value);
             setPage(1);
         }, 200),
+        []
+    );
+
+    // Debounce advanced filters to avoid spamming requests
+    const debouncedFilterChange = useCallback(
+        debounce((filters) => {
+            setAdvancedFilters(filters);
+            setPage(1); // Reset to first page when filters change
+        }, 300),
         []
     );
 
@@ -45,11 +62,22 @@ export const useDataTable = (apiUrl, pageSize, filter = null) => {
         setPage(1);
     }, []);
 
-    // New: handle sort changes from DataTable
+    // Handle sort changes from DataTable
     const handleSortChange = useCallback((field, direction) => {
         setSortField(field);
         setSortDirection(direction);
-        setPage(1); // usually we reset to first page on new sort
+        setPage(1); // Reset to first page on new sort
+    }, []);
+
+    // Handle advanced filter changes
+    const handleFilterChange = useCallback((filters) => {
+        debouncedFilterChange(filters);
+    }, [debouncedFilterChange]);
+
+    // Clear all advanced filters
+    const clearAdvancedFilters = useCallback(() => {
+        setAdvancedFilters({});
+        setPage(1);
     }, []);
 
     return {
@@ -60,10 +88,12 @@ export const useDataTable = (apiUrl, pageSize, filter = null) => {
         page,
         setPage,
         size,
+        search,
+        advancedFilters,
         handleSearch,
         handleSizeChange,
-
-        // Expose the new function to DataTable
         handleSortChange,
+        handleFilterChange,
+        clearAdvancedFilters,
     };
 };

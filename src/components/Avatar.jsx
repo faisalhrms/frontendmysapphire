@@ -1,20 +1,15 @@
-// import placeholder from "@assets/images/faces/avatar.webp";
-//
-// const Avatar = ({ avatar, classes = '', parentClasses ='',  size='sm', shape='rounded' }) => {
-//     return (
-//         <span className={`avatar avatar-${shape} avatar-${size} ${parentClasses}`}>
-//             <img
-//                 className={classes}
-//                 src={avatar ? avatar.small_url : placeholder}
-//                 alt={avatar ?avatar.file_name : 'Image'}
-//             />
-//         </span>
-//     );
-// };
-// export default Avatar;
-import placeholder from "@assets/images/faces/avatar.webp";
+import React from "react";
 
 const Avatar = ({ avatar, full_name = '', classes = '', parentClasses = '', size = 'sm', shape = 'rounded' }) => {
+
+    const bgColors = ['ti-btn-primary','ti-btn-success','ti-btn-warning' , 'ti-btn-danger','ti-btn-info'];
+
+    const getRandomColor = (colorArray) => {
+        const randomIndex = Math.floor(Math.random() * colorArray.length);
+        return colorArray[randomIndex];
+    };
+
+    const randomBgColor = getRandomColor(bgColors);
 
     const getInitials = (name) => {
         if (!name) return '';
@@ -30,15 +25,19 @@ const Avatar = ({ avatar, full_name = '', classes = '', parentClasses = '', size
                     className={classes}
                     src={avatar.small_url}
                     alt={avatar.file_name || 'Image'}
+                    data-tooltip-id={full_name}
+                    data-tooltip-content={full_name}
                 />
             ) : (
-                <span className={`flex border border-100 text-black  rounded-lg  items-center justify-center w-full h-full dark:text-gray-200 dark:bg-bodybg ${classes}`}>
+                <span
+                    data-tooltip-id={full_name}
+                    data-tooltip-content={full_name}
+                    className={`flex cursor-pointer ${randomBgColor} hover:bg-none rounded-full items-center justify-center w-full h-full `}>
                     {getInitials(full_name)}
-
                 </span>
             )}
         </span>
     );
 };
 
-export default Avatar;
+export default React.memo(Avatar);

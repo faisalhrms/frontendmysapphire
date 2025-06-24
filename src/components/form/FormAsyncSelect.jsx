@@ -30,6 +30,7 @@ const FormAsyncSelect = ({
                              allowSaveNewOption = false,
                              onSelectChange,
                              needObject = false,
+                             isClearable = true,
                              ...rest
                          }) => {
     const [search, setSearch] = useState('');
@@ -219,7 +220,7 @@ const FormAsyncSelect = ({
                             onMenuClose={() => setMenuIsOpen(false)}
                             onInputChange={handleInputChange}
                             value={selectValue}
-                            isClearable
+                            isClearable={isClearable}
                             isSearchable
                             loadingMessage={() => 'Loading data...'}
                             noOptionsMessage={() => 'No data found.'}

@@ -73,7 +73,32 @@ export const sidebarMenu = [
                 8,
                 '',
                DASHBOARD_ROUTES.CEO.permission,
+            ),
+                generateSidebarItem(
+                    DASHBOARD_ROUTES.URP.path,
+                    'link',
+                    'URP Dashboard',
+                    9,
+                    '',
+                    DASHBOARD_ROUTES.URP.permission
+                ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.BeirholmBI.path,
+                'link',
+                'Export Data Analysis',
+                9,
+                '',
+               DASHBOARD_ROUTES.BeirholmBI.permission,
+            ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.SALES_DASHBOARD.path,
+                'link',
+                'Sales Dashboard',
+                10,
+                '',
+                DASHBOARD_ROUTES.SALES_DASHBOARD.permission,
             )
+
         ]
     ),
 ];

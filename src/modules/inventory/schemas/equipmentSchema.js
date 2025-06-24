@@ -38,9 +38,13 @@ const equipmentSchema = z.object({
     purchase_date: dateSchema('Purchase Date',true).optional(),
     handover_date: dateSchema('HandOver Date',true).optional(),
     maturity_date: dateSchema('Maturity Date',true).optional(),
+    warranty_expire: dateSchema('warranty expire Date',true).optional(),
     antivirus: z.boolean().optional(),
     store_comm_ready: z.boolean().optional(),
     description: z.string().max(1000, "Description can be at most 1000 characters"),
+    remarks: z.string().max(200, "remarks can be at most 1000 200").optional(),
+    maintenance_history: z.string().max(500, "maintenance history can be at most 500 characters").optional(),
+
     specs: z.string().max(500, "Specs can be at most 500 characters"),
     attachment_ids: z.array(z.number()).nullable().optional(),
     laptop_issued_as_per_policy: z.boolean().default(true),

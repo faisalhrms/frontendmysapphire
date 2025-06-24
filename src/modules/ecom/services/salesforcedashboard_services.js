@@ -13,7 +13,7 @@ export const fetchExecutiveSummary = async () => {
 };
 export const fetchPendingOrders = async () => {
     try {
-        const response = await api.post("/salesforce/fetch_pending_orders/", {
+        const response = await api.get("/salesforce/fetch_pending_orders/", {
 
         });
 
@@ -162,4 +162,18 @@ export const fetchDataAPIOMSSS = async (dateFrom, dateTo, filters) => {
 };
 
 
+export const downloadsaleforce = async (filters) => {
 
+    try {
+        const response = await api.get("/salesforce/download/salesforce-dashboard-report/", {
+            params: {
+                date_from: filters.date_from,
+                date_to: filters.date_to,
+            },
+            responseType: 'blob',
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

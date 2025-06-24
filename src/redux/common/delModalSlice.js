@@ -5,6 +5,7 @@ const initialState = {
     apiEndpoint: '',
     itemName: '',
     refetch: null,
+    params: {},
 };
 
 const delModalSlice = createSlice({
@@ -16,6 +17,7 @@ const delModalSlice = createSlice({
             state.apiEndpoint = action.payload.endpoint;
             state.itemName = action.payload.itemName;
             state.refetch = action.payload.refetch;
+            state.params = action.payload.params || {};
             setTimeout(() => {
                 const modal = document.getElementById("delete-modal");
                 if (modal) {

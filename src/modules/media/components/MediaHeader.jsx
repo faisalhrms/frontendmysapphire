@@ -1,4 +1,7 @@
-const MediaHeader = ({ handleSearchChange, totalFiles, onFileChange, selectedFilesCount, needSelectedValue, handleSubmit }) => {
+import React from "react";
+import {useDelete} from "@hooks/useDelete.js";
+const MediaHeader = ({ handleSearchChange, totalFiles, onFileChange, selectedFilesCount, needSelectedValue, handleSubmit, refetch, selectedFiles=null }) => {
+    const { handleDeleteClick } = useDelete();
     return (
         <div className="flex p-4 items-center justify-between border-b dark:border-defaultborder/10">
             <div className="flex items-center gap-6 flex-grow">
@@ -60,6 +63,15 @@ const MediaHeader = ({ handleSearchChange, totalFiles, onFileChange, selectedFil
                         Save Selected File
                     </button>
                 )}
+
+                {selectedFilesCount > 0 && (
+                        <button
+                            onClick={() => handleDeleteClick(`/media/bulk-delete/`,selectedFilesCount + ' files', refetch,{ids:selectedFiles})}
+                            className='ti-btn ti-btn-danger ti-btn-sm w-max'>
+                            <i className="ri-delete-bin-2-line align-middle"></i>
+                        </button>
+                    )}
+
 
                 <label htmlFor="uploadFile1"
                        className="flex  bg-primary hover:bg-primary/70 text-white text-base font-medium px-4 py-2.5 outline-none rounded w-max cursor-pointer mx-auto">

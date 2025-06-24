@@ -7,8 +7,9 @@ import Tooltip from '@components/Tooltip.jsx';
 import Avatar from "@components/Avatar.jsx";
 import HasProjectPermission from "@modules/project-management/components/project/HasProjectPermission.jsx";
 import {useDelete} from "@hooks/useDelete.js";
+import {useSelector} from "react-redux";
 
-const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, viewOnly = false , setShow , setViewData }) => {
+const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMilestoneModal, openTaskModal, handleUploadModal, refetch, openTaskOverdueModal, openTaskDetailModal, visibleColumns = useSelector((state) => state.pms.visibleColumns), viewOnly = false }) => {
 
     const [activeMilestoneId, setActiveMilestoneId] = useState(null);
 
@@ -36,8 +37,10 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
     return (
         <>
             <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
-                <div className="hs-accordion-group">
-                {Array.isArray(milestones) && milestones.map((milestone) => (<div
+                <div className="hs-accordion-group ">
+
+                {Array.isArray(milestones) && milestones.map((milestone) => (
+                    <div
                     className={`hs-accordion accordion-item mb-4 ${milestone.priority === 'low' ? 'custom-accordion-primary' : (milestone.priority === 'medium' ? 'custom-accordion-secondary' : 'custom-accordion-danger')}`}
                     key={milestone.id}>
                     <button
@@ -100,7 +103,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Priority</p>
                                         <span className={getBadgeClasses(milestone.priority)}>{toTitleCase(milestone.priority)}</span>
-                                        
+
                                     </div>
                                     <div className="flex flex-col items-start">
                                         <p className="font-semibold mb-[1.4px] text-[0.813rem]">Started At</p>
@@ -111,18 +114,32 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                         <p className="text-[#8c9097] dark:text-white/50 text-[0.75rem]">{formatDate(milestone.ended_at)}</p>
                                     </div>
                                     <div className="flex flex-col items-start">
-                                        <p className="font-semibold mb-[1.4px] text-[0.813rem]">Created By</p>
+                                        <p className="font-semibold mb-[1.4px] text-[0.813rem] whitespace-nowrap overflow-hidden text-ellipsis">Created By</p>
                                         <div className="flex items-center flex-wrap">
-                                            <div className="me-2 leading-none">
-                                                <Avatar avatar={milestone?.created_by?.avatar} size='xs'/>
+                                            <div className="me-2 leading-none  flex items-center">
+                                                <Avatar avatar={milestone?.created_by?.avatar}
+                                                        full_name={(milestone?.created_by?.full_name || 'N/A' ) }
+
+                                                />
+                                                <Tooltip
+                                                    id={`/module/projects/detail/${milestone.id}`}
+                                                    tooltipContent={milestone?.created_by?.full_name || 'N/A'}
+                                                >
+                                                    <div className="ms-2">
+                                                        <p className="text-[#8c9097] dark:text-white/50 text-[0.65rem]">
+                                                            {getExcerptFromText(milestone?.created_by?.full_name || 'N/A', 9)}
+                                                        </p>
+                                                    </div>
+                                                </Tooltip>
+
                                             </div>
                                         </div>
                                     </div>
                                     {
                                         !viewOnly &&
-                                            <div className="flex flex-col items-center">
-                                                <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
-                                                <div className="flex space-x-2">
+                                        <div className="flex flex-col items-center">
+                                            <p className="font-semibold mb-[1.4px] text-[0.813rem]">Actions</p>
+                                            <div className="flex space-x-2">
                                                     <HasProjectPermission globalPermission='pms.change_project' users={projectUsers}>
                                                         <Tooltip
                                                             id={`edit-milestone-tooltip-${milestone.id}`}
@@ -192,6 +209,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                 openTaskOverdueModal={openTaskOverdueModal}
                                 viewOnly={viewOnly}
                                 openTaskDetailModal={openTaskDetailModal}
+                                visibleColumns={visibleColumns}
                             />
 
 

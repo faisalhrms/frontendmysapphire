@@ -15,6 +15,87 @@ export const formatOptions = (data, key, valueKey = 'id', labelKey = 'name') => 
     }];
 };
 
+// helpers/formatters.js
+export const formatOptionsForApplicant = (data, key, valueKey = 'id', labelKey = 'name') => {
+    if (!data) return [];
+
+    // If key is provided, extract that property
+    const target = key ? data[key] : data;
+
+    if (!target) return [];
+
+    if (Array.isArray(target)) {
+        return target.map(item => ({
+            value: item[valueKey],
+            label: item[labelKey],
+        }));
+    }
+
+    // Handle single object
+    if (typeof target === 'object') {
+        return [{
+            value: target[valueKey],
+            label: target[labelKey],
+        }];
+    }
+
+    return [];
+};
+
+// helpers/formatters.js
+// helpers/formatters.js
+export const formatNestedOptions = (data, key, valueKey = 'id', labelKey = 'name') => {
+    if (!data) return [];
+
+    let target = data;
+
+    // If key is provided, try to access it
+    if (key) {
+        // Handle dot notation for nested keys (e.g., 'location.name')
+        if (key.includes('.')) {
+            const keys = key.split('.');
+            target = keys.reduce((obj, k) => (obj && obj[k]) ? obj[k] : null, data);
+        } else {
+            target = data[key];
+        }
+    }
+
+    // Handle array data
+    if (Array.isArray(target)) {
+        return target.map(item => {
+            // If item is an object
+            if (item && typeof item === 'object') {
+                return {
+                    value: item[valueKey],
+                    label: item[labelKey] || `Item ${item[valueKey]}`
+                };
+            }
+            // If item is a primitive
+            return {
+                value: item,
+                label: `${key} ${item}`
+            };
+        });
+    }
+
+    // Handle single object
+    if (target && typeof target === 'object') {
+        return [{
+            value: target[valueKey],
+            label: target[labelKey] || `Item ${target[valueKey]}`
+        }];
+    }
+
+    // Handle primitive values
+    if (target !== undefined && target !== null) {
+        return [{
+            value: target,
+            label: `${key} ${target}`
+        }];
+    }
+
+    return [];
+};
 export const formatOptionsWithConcatenation = (data, key, valueKey = 'id', labelKeys = ['name']) => {
     if (!data || !data[key]) return [];
 
@@ -138,4 +219,18 @@ export function formatNumberWithCommas(number) {
 export function formatLabel(label) {
     if (!label || label.toLowerCase() === 'total') return null;
     return label.toLowerCase().replace(/\s+/g, '_');
+}
+
+export function getPositiveNegativeColor(value){
+    if (value === null || value === undefined) return;
+
+    if (typeof value === 'string') {
+        const cleaned = value.replace(/,/g, '').trim();
+        if (cleaned === '' || cleaned === '-' || isNaN(Number(cleaned))) {
+            return;
+        }
+        value = Number(cleaned);
+    }
+
+    return value < 0 ? 'text-red' : 'text-emerald-600';
 }

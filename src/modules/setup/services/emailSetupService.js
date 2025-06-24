@@ -2,10 +2,9 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const emailSetupTypes = [
-    { value: 'user_management', label: 'User management' },
-    { value: 'abcd_management', label: 'Abcd management' },
-    { value: 'maintenance_reminder', label: 'Maintenance Reminder' },
-    { value: 'pending', label: 'Pending' },
+    { value: 'offline_store_performance_report', label: 'Offline Store Performance' },
+    { value: 'daily_sales_report', label: 'Daily Sales Report' },
+    { value: 'comparative_sales_report', label: 'Comparative Sales Report' },
     // Add more as needed
 ];
 

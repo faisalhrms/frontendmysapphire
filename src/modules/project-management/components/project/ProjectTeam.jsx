@@ -55,7 +55,7 @@ const ProjectTeam = ({ users }) => {
                   <div className="flex items-center">
                     <div className="me-2">
                       <Avatar avatar={user.avatar}
-                              full_name={user.avatar?.full_name || 'N/A'}/>
+                              full_name={user?.full_name || 'P'}/>
                     </div>
                     <div className="flex-grow">
                       <span className="font-semibold">

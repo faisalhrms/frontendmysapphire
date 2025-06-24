@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { fetchStoreWiseSaleData } from "@modules/DailyReport/services/wiseside_services.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const StoreWise = ({ filters , newData , error , loading , expand  }) => {
+const StoreWise = ({ filters , newData , error , isLoading , expand  }) => {
 
     const tableContainerRef = useRef(null);
     const [tableData, setTableData] = useState([]);
@@ -12,9 +12,8 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
         return num.toLocaleString();
     };
 
-
     const toggleSection = (id) => {
-        console.log(id);
+
         setExpandedSections(prev => ({
             ...prev,
             [id]: !prev[id]
@@ -27,36 +26,33 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
 
 
     useEffect(() => {
-        if (Object.keys(newData).length > 0) {
+        if (Object?.keys(newData)?.length > 0) {
             const data = prepareDataForTable(newData);
             setTableData(data);
 
-            // Initial expanded sections
+
             const initialExpanded = {};
 
-            // Find "FOL" section and expand it by default
+
             const folRow = data.find(row => row.type === "FOL");
             if (folRow) {
                 initialExpanded[folRow.id] = true;
 
-                // Find sub-sections under "FOL" and expand them
                 const folSubSections = data.filter(row => row.parentId === folRow.id && row.type === "FOL");
                 folSubSections.forEach(subSection => {
-                    initialExpanded[subSection.id] = true;  // Expand all sub-sections under "FOL"
+                    initialExpanded[subSection.id] = true;
                 });
             }
 
-            // Find "Offline" section and expand it by default
+
             const offlineRow = data.find(row => row.type === "Offline");
             if (offlineRow) {
                 initialExpanded[offlineRow.id] = true;
 
-                // Find "A-Class" under "Offline" and expand it by default
                 const aClassRow = data.find(row => row.parentId === offlineRow.id && row.type === "A-Class");
                 if (aClassRow) {
                     initialExpanded[aClassRow.id] = true;
 
-                    // Expand "Center", "North", and "South" regions under "A-Class"
                     const centerRow = data.find(row => row.parentId === aClassRow.id && (row.type === "Center" || row.type === "Central"));
                     const northRow = data.find(row => row.parentId === aClassRow.id && row.type === "North");
                     const southRow = data.find(row => row.parentId === aClassRow.id && row.type === "South");
@@ -83,7 +79,7 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
             .filter((dateKey) => dateKey !== "Total")
             .map((dateKey) => {
                 const [year, month, day] = dateKey.split("-");
-                return `${day.padStart(2, "0")}-${getMonthName(month)}-${year}`;
+                return `${day?.padStart(2, "0")}-${getMonthName(month)}-${year}`;
             });
     };
 
@@ -229,11 +225,6 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
 
         return tableData;
     };
-
-
-
-
-
     const isVisible = (row) => {
         if (row.parentId === null) {
             return true;
@@ -250,13 +241,11 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
 
         return true;
     };
-
     const formatNumber = (num) => {
         if (typeof num !== "number") return num;
         return num.toLocaleString();
 
     };
-
     const getRowStyle = (row) => {
         if (row.isHeader) return " font-bold dark:text-gray-200 dark:bg-bodybg bg-[#949eb7]";
         if (row.isSubHeader) return "bg-gray-200 font-medium";
@@ -264,15 +253,17 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
 
 
     };
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-
     const dateHeaders = generateDatesArray(newData);
 
     return (
+        <>
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
         <div className="bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg p-0 ">
-            <div className="p-2 sm:p-4 bg-white rounded-lg dark:text-gray-200 dark:bg-bodybg">
+        <div className="p-2 sm:p-4 bg-white rounded-lg dark:text-gray-200 dark:bg-bodybg">
                 <div className="relative" ref={tableContainerRef} style={{height: "70vh"}}>
                     <div className="overflow-auto h-full" style={{maxHeight: "calc(100% - 0px)"}}>
                         <table className="w-full border-collapse text-sm dark:text-gray-200 dark:bg-bodybg min-w-max">
@@ -296,58 +287,65 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
                             </tr>
                             </thead>
                             <tbody>
-                            {tableData.map((row, rowIndex) => {
-                                if (!isVisible(row)) return null;
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan="5" className="text-center py-4">
+                                        <LoadingSpinner />
+                                    </td>
+                                </tr>
+                            ) : (
+                                tableData.map((row, rowIndex) => {
+                                    if (!isVisible(row)) return null;
 
-                                const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
-                                let leftColBgColor = "bg-white";
+                                    const rowTotal = row.values.reduce((acc, val) => acc + val, 0);
+                                    let leftColBgColor = "bg-white";
 
-                                if (row.isHeader) {
-                                    leftColBgColor = " bg-[#949eb7]";
-                                } else if (row.isSubHeader) {
-                                    leftColBgColor = row.indent === 0 ? "bg-gray-200" :
-                                        row.indent === 1 ? "bg-gray-200" :
-                                            row.indent === 2 ? "bg-gray-200" : "bg-gray-200";
-                                }
+                                    if (row.isHeader) {
+                                        leftColBgColor = "bg-[#949eb7]";
+                                    } else if (row.isSubHeader) {
+                                        leftColBgColor = "bg-gray-200";
+                                    }
 
-                                return (
-                                    <tr key={rowIndex} className={getRowStyle(row)}>
-                                        <td
-                                            className={`border border-gray-300 p-2 sticky left-0 z-20 dark:text-gray-200 dark:bg-bodybg ${leftColBgColor} ${
-                                                row.isHeader ? "font-bold" : row.isSubHeader ? "font-bold" : ""
-                                            } ${row.hasChildren ? "cursor-pointer" : ""}`}
-                                            style={{
-                                                paddingLeft: row.indent ? `${row.indent}rem` : "0.5rem",
-                                            }}
-                                            onClick={() => row.hasChildren && toggleSection(row.id)}
-                                        >
-                                            {row.hasChildren && (
-                                                <span className="mr-2">
-                                                        {expandedSections[row.id] ? "▼" : "►"}
-                                                    </span>
-                                            )}
-                                            {row.type}
-                                            {row.fmStatus === 'Flagship' && (
-                                                <i className="ri-vip-crown-2-fill ml-1" style={{color: "#F28B00"}}></i>
-                                            )}
-                                        </td>
-
-                                        {row.values.map((value, valueIndex) => (
+                                    return (
+                                        <tr key={rowIndex} className={getRowStyle(row)}>
                                             <td
-                                                key={valueIndex}
-                                                className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"
+                                                className={`border border-gray-300 p-2 sticky left-0 z-20 dark:text-gray-200 dark:bg-bodybg ${leftColBgColor} ${
+                                                    row.isHeader || row.isSubHeader ? "font-bold" : ""
+                                                } ${row.hasChildren ? "cursor-pointer" : ""}`}
+                                                style={{ paddingLeft: row.indent ? `${row.indent}rem` : "0.5rem" }}
+                                                onClick={() => row.hasChildren && toggleSection(row.id)}
                                             >
-                                                {formatNumberWithCommas(value)}
+                                                {row.hasChildren && (
+                                                    <span className="mr-2">{expandedSections[row.id] ? "▼" : "►"}</span>
+                                                )}
+                                                {row.type}
+                                                {row.fmStatus === "Flagship" && (
+                                                    <i
+                                                        className="ri-vip-crown-2-fill ml-1"
+                                                        style={{ color: "#F28B00" }}
+                                                    />
+                                                )}
                                             </td>
-                                        ))}
 
-                                        <td className="border border-gray-300 p-2 text-right font-bold dark:text-gray-200 dark:bg-bodybg "
-                                            style={{backgroundColor: "rgb(77, 88, 117)", color: "white"}}>
-                                            {formatNumberWithCommas(rowTotal)}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                            {row.values.map((value, valueIndex) => (
+                                                <td
+                                                    key={valueIndex}
+                                                    className="border border-gray-300 p-2 text-right dark:text-gray-200 dark:bg-bodybg"
+                                                >
+                                                    {formatNumberWithCommas(value)}
+                                                </td>
+                                            ))}
+
+                                            <td
+                                                className="border border-gray-300 p-2 text-right font-bold dark:text-gray-200 dark:bg-bodybg"
+                                                style={{ backgroundColor: "rgb(77, 88, 117)", color: "white" }}
+                                            >
+                                                {formatNumberWithCommas(rowTotal)}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            )}
                             </tbody>
                         </table>
                     </div>
@@ -357,6 +355,7 @@ const StoreWise = ({ filters , newData , error , loading , expand  }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

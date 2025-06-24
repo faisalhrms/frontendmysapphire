@@ -1,0 +1,89 @@
+import React, { useMemo } from "react";
+import FormInput from "@components/form/FormInput.jsx";
+import FormSelect from "@components/form/FormSelect.jsx";
+import FilterButton from "@components/form/FilterButton.jsx";
+
+const WeeklyReportFilter = ({ control, errors, activeTab }) => {
+    const maxDate = useMemo(() => {
+        return new Date().toISOString().split("T")[0];
+    }, []);
+
+    const hourOptions = useMemo(() => {
+        return Array.from({ length: 24 }, (_, i) => ({
+            label: i.toString(),
+            value: i.toString(),
+        }));
+    }, []);
+
+
+    return (
+        <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-12">
+                <div className="box custom-box">
+                    <div className="box-body p-4">
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4 flex-1">
+                                {activeTab !== "top_selling_products" && (
+                                <div className="flex-1">
+                                        <FormInput
+                                            type="date"
+                                            placeholder="From Current Period"
+                                            name="date"
+                                            max={maxDate}
+                                            control={control}
+                                            errors={errors}
+                                            label={false}
+                                        />
+                                </div>
+                                )}
+                                {(activeTab === "landing_page_performance" || activeTab === "order_detail_from_cc" || activeTab === "top_selling_article" || activeTab === "hour_traffic_rate") && (
+                                    <div className="flex-1">
+                                        <FormSelect
+                                            name="hour"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Hour"
+                                            options={hourOptions}
+                                            label={false}
+                                        />
+                                    </div>
+                                )}
+                                {activeTab === "top_selling_products" && (
+                                    <>
+                                        <div className="flex-1">
+                                            <FormInput
+                                                control={control}
+                                                errors={errors}
+                                                type="date"
+                                                name="date_from"
+                                                placeholder="From Date"
+                                                label={false}
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <FormInput
+                                                control={control}
+                                                errors={errors}
+                                                type="date"
+                                                name="date_to"
+                                                placeholder="To Date"
+                                                label={false}
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
+
+                            </div>
+                            <div className="flex items-center gap-4 flex-2">
+                                <FilterButton/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default React.memo(WeeklyReportFilter);

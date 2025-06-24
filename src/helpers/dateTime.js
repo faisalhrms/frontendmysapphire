@@ -134,3 +134,202 @@ export const getPastDate = (days = 1) => {
     today.setDate(today.getDate() - days);
     return today.toISOString().slice(0, 10);
 };
+
+export const getPastDateTime = (days = 0) => {
+    const today = new Date();
+    today.setDate(today.getDate() - days);
+
+    const startOfToday = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        0, 0, 0, 0
+    );
+
+    return {
+        startOfToday: startOfToday.toISOString(),
+        now: today.toISOString()
+    };
+};
+
+export const getDateRangeFromTimePeriod = (timePeriod) => {
+    const today = new Date();
+    let startDate, endDate;
+
+    const getFiscalYearStart = (date) => new Date(date.getFullYear() - (date.getMonth() < 6 ? 1 : 0), 6, 1);
+    const getFiscalQuarterStart = (date) => {
+        const month = date.getMonth();
+        let fiscalQuarterStartMonth;
+        if (month >= 6 && month <= 8) fiscalQuarterStartMonth = 6;
+        else if (month >= 9 && month <= 11) fiscalQuarterStartMonth = 9;
+        else if (month >= 0 && month <= 2) fiscalQuarterStartMonth = 0;
+        else fiscalQuarterStartMonth = 3;
+        const fiscalYear = month < 6 ? date.getFullYear() - 1 : date.getFullYear();
+        return new Date(fiscalYear, fiscalQuarterStartMonth, 1);
+    };
+
+    switch (timePeriod) {
+        // Day
+        case 'today':
+            startDate = endDate = today;
+            break;
+        case 'yesterday':
+            startDate = endDate = new Date(today.setDate(today.getDate() - 1));
+            break;
+        case 'tomorrow':
+            startDate = endDate = new Date(today.setDate(today.getDate() + 1));
+            break;
+
+        // Week
+        case 'this_week':
+            startDate = new Date(today.setDate(today.getDate() - today.getDay()));
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 6);
+            break;
+        case 'previous_week':
+            startDate = new Date(today.setDate(today.getDate() - today.getDay() - 7));
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 6);
+            break;
+        case 'next_week':
+            startDate = new Date(today.setDate(today.getDate() + (7 - today.getDay())));
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 6);
+            break;
+        case 'previous_two_weeks':
+            startDate = new Date(today.setDate(today.getDate() - today.getDay() - 14));
+            endDate = new Date(today.setDate(today.getDate() - today.getDay() - 1));
+            break;
+        case 'next_two_weeks':
+            startDate = new Date(today.setDate(today.getDate() + (7 - today.getDay())));
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 13);
+            break;
+
+        // Month
+        case 'this_month':
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            break;
+        case 'previous_month':
+            startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+            break;
+        case 'next_month':
+            startDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+            break;
+        case 'previous_two_months':
+            startDate = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+            break;
+        case 'next_two_months':
+            startDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth() + 3, 0);
+            break;
+
+        // Quarter
+        case 'this_quarter':
+            const qStartMonth = Math.floor(today.getMonth() / 3) * 3;
+            startDate = new Date(today.getFullYear(), qStartMonth, 1);
+            endDate = new Date(today.getFullYear(), qStartMonth + 3, 0);
+            break;
+        case 'previous_quarter':
+            const pStartMonth = Math.floor((today.getMonth() - 3) / 3) * 3;
+            const pYear = today.getMonth() < 3 ? today.getFullYear() - 1 : today.getFullYear();
+            startDate = new Date(pYear, pStartMonth, 1);
+            endDate = new Date(pYear, pStartMonth + 3, 0);
+            break;
+        case 'next_quarter':
+            const nStartMonth = Math.floor((today.getMonth() + 3) / 3) * 3;
+            const nYear = nStartMonth > 11 ? today.getFullYear() + 1 : today.getFullYear();
+            startDate = new Date(nYear, nStartMonth % 12, 1);
+            endDate = new Date(nYear, (nStartMonth % 12) + 3, 0);
+            break;
+
+        // Year
+        case 'this_year':
+            startDate = new Date(today.getFullYear(), 0, 1);
+            endDate = new Date(today.getFullYear(), 11, 31);
+            break;
+        case 'previous_year':
+            startDate = new Date(today.getFullYear() - 1, 0, 1);
+            endDate = new Date(today.getFullYear() - 1, 11, 31);
+            break;
+        case 'next_year':
+            startDate = new Date(today.getFullYear() + 1, 0, 1);
+            endDate = new Date(today.getFullYear() + 1, 11, 31);
+            break;
+
+        // Fiscal
+        case 'current_fiscal_year':
+            startDate = getFiscalYearStart(today);
+            endDate = new Date(startDate.getFullYear() + 1, 6, 0);
+            break;
+        case 'previous_fiscal_year':
+            startDate = getFiscalYearStart(new Date(today.getFullYear() - 1, 6, 1));
+            endDate = new Date(startDate.getFullYear() + 1, 6, 0);
+            break;
+        case 'current_fiscal_quarter':
+            startDate = getFiscalQuarterStart(today);
+            endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 3, 0);
+            break;
+        case 'previous_fiscal_quarter':
+            startDate = getFiscalQuarterStart(new Date(today.setMonth(today.getMonth() - 3)));
+            endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 3, 0);
+            break;
+
+        // Rolling
+        case 'last_7_days':
+            startDate = new Date(today.setDate(today.getDate() - 6));
+            endDate = new Date();
+            break;
+        case 'last_30_days':
+            startDate = new Date(today.setDate(today.getDate() - 29));
+            endDate = new Date();
+            break;
+        case 'last_90_days':
+            startDate = new Date(today.setDate(today.getDate() - 89));
+            endDate = new Date();
+            break;
+        case 'last_365_days':
+            startDate = new Date(today.setDate(today.getDate() - 364));
+            endDate = new Date();
+            break;
+        case 'next_7_days':
+            startDate = new Date();
+            endDate = new Date(today.setDate(today.getDate() + 6));
+            break;
+        case 'next_30_days':
+            startDate = new Date();
+            endDate = new Date(today.setDate(today.getDate() + 29));
+            break;
+
+        // To Date options
+        case 'mtd':
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            endDate = new Date();
+            break;
+        case 'qtd':
+            const qtdStartMonth = Math.floor(today.getMonth() / 3) * 3;
+            startDate = new Date(today.getFullYear(), qtdStartMonth, 1);
+            endDate = new Date();
+            break;
+        case 'ytd':
+            startDate = new Date(today.getFullYear(), 0, 1);
+            endDate = new Date();
+            break;
+        case 'fytd':
+            startDate = getFiscalYearStart(today);
+            endDate = new Date();
+            break;
+
+        default:
+            return null;
+    }
+
+    return {
+        start: startDate.toISOString(),
+        end: endDate.toISOString()
+    };
+};

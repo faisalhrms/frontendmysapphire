@@ -1,22 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { fetchSaleMtdLdDataLD, fetchSaleMtdLdDataMT } from "../../services/wiseside_services.js";
-import { formatNumberWithCommas } from "@helpers/formatters.js";
+import {getPastDate} from "@helpers/dateTime.js";
+import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
 
-const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , filters }) => {
-    // const [lastDayData, setLastDayData] = useState([]);
-    // const [mtdData, setMtdData] = useState([]);
-    // const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState(null);
-
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = date.toLocaleString('en-GB', { month: 'short' });
-        const year = date.getFullYear();
-
-        return `${day}-${month}-${year}`;
-    };
+const SalesDataTable = ({ lastDayData , loading , expand , filters,activeTab }) => {
 
     const [openRowsLastDay, setOpenRowsLastDay] = useState({
         "A-Class": true,
@@ -37,23 +23,6 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
     const formatNumberWithCommas = (num) => {
         if (num === 0 || num == null) return "-";
         return num.toLocaleString();
-    };
-
-    const getRowBgColor = (type, isHeader) => {
-        if (isHeader) {
-            switch (type) {
-                case "A-Class":
-                case "North":
-                case "South":
-                case "Online":
-                    return "bg-blue-100";
-                case "Total":
-                    return "bg-blue-200";
-                default:
-                    return "bg-white";
-            }
-        }
-        return "bg-white";
     };
 
     const getTextStyle = (isHeader) => {
@@ -116,7 +85,12 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
     },[expand])
 
 
+    const { data, isLoading } = useFetchWithFilters(
+        activeTab === "DailySales"? '/reporting/fetch_sale_mtd_ld_data/':'',
 
+
+        filters
+    )
     const renderTable = (data, title, tableType) => {
         const openRows = tableType === "lastDay" ? openRowsLastDay : openRowsMTD;
         return (
@@ -235,15 +209,22 @@ const SalesDataTable = ({ lastDayData , mtdData , loading , error , expand , fil
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
 
     return (
-        <div className="w-full px-2 sm:px-4 py-4 dark:text-gray-200 dark:bg-bodybg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 dark:text-gray-200 dark:bg-bodybg">
-                {renderTable(lastDayData, `Last Day (${formatDate(filters?.date_from)})`, "lastDay")}
-                {renderTable(mtdData, "MTD", "mtd")}
+        <>
+
+            <div className="text-primary p-2 rounded-lg text-right text-black">
+                <p>Amount in Rs</p>
+
+            </div>
+
+    <div className="w-full px-2 sm:px-4 py-1 dark:text-gray-200 dark:bg-bodybg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 dark:text-gray-200 dark:bg-bodybg">
+                {renderTable(lastDayData, `Last Day (${getPastDate()})`, "lastDay")}
+                {renderTable(data, "MTD", "mtd")}
             </div>
         </div>
+        </>
 
 
     );

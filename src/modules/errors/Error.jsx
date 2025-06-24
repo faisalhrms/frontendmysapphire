@@ -2,9 +2,12 @@ import { useParams } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { useState,useEffect } from "react";
 import {DASHBOARD_ROUTES} from "@modules/dashboards/routes.js";
+import {useHasGroup} from "@modules/auth/hooks/authHooks.js";
+import {landing_ROUTES} from "@modules/landing-page/routes.js";
 const Error = () => {
     const { code } = useParams();
     const [state, setState] = useState({});
+    const isEmployee = useHasGroup('employee');
     useEffect(() => {
         switch (code) {
           case '403':
@@ -16,7 +19,6 @@ const Error = () => {
          
         }
       }, [code]);
-console.log(code)
   return (
     <div className="page error-bg dark:!bg-bodybg" id="particles-js">
       <div className="error-page">
@@ -38,7 +40,7 @@ console.log(code)
                 </div>
                
                   <Link
-                    to={DASHBOARD_ROUTES.PROJECT.path}
+                    to={isEmployee ? DASHBOARD_ROUTES.PROJECT.path : landing_ROUTES.ABOUT_US.path}
                     className="ti-btn bg-primary text-white font-semibold dark:border-defaultborder/10"
                   >
                     <i className="ri-arrow-left-line align-middle inline-block"></i> BACK TO HOME

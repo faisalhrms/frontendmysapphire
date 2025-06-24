@@ -1,140 +1,208 @@
-import React, { useEffect, useState } from "react";
-import { fetchdigitalspent } from "../../services/digitalspent_services.js";
+import React from "react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import * as styles from "@helpers/staticDataTableStyles.js";
 
 
-const ObjectiveWiseSpentSummary = ({ filters }) => {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
+const ObjectiveWiseSpentSummary = ({ filters, data = {}, loading }) => {
+  const formattedDate = filters?.till_date
+    ? new Date(filters.till_date).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "N/A";
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const apiResponse = await fetchdigitalspent(filters);
-
-                const formattedData = Object.keys(apiResponse).map((region) => {
-                    const entries = apiResponse[region];
-
-                    const categoryTotals = {
-                        lastDay: {
-                            googleAds: entries.reduce((acc, cur) => acc + Number(cur.ld_googleads), 0),
-                            metaAds: entries.reduce((acc, cur) => acc + Number(cur.ld_metaads), 0),
-                            total: entries.reduce((acc, cur) => acc + Number(cur.ld_total), 0),
-                        },
-                        mtd: {
-                            googleAds: entries.reduce((acc, cur) => acc + Number(cur.mtd_googleads), 0),
-                            metaAds: entries.reduce((acc, cur) => acc + Number(cur.mtd_metaads), 0),
-                            total: entries.reduce((acc, cur) => acc + Number(cur.mtd_total), 0),
-                        },
-                    };
-
-                    return {
-                        name: region.charAt(0).toUpperCase() + region.slice(1),
-                        subCategories: entries.map((entry) => ({
-                            objective: entry.origin,
-                            lastDay: {
-                                googleAds: Number(entry.ld_googleads),
-                                metaAds: Number(entry.ld_metaads),
-                                total: Number(entry.ld_total),
-                            },
-                            mtd: {
-                                googleAds: Number(entry.mtd_googleads),
-                                metaAds: Number(entry.mtd_metaads),
-                                total: Number(entry.mtd_total),
-                            },
-                        })),
-                        totalRow: categoryTotals,
-                    };
-                });
-
-                setData(formattedData);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (filters?.date_from && filters?.date_to) {
-            fetchData();
-        }
-    }, [filters]);
-
-    return (
-        <div className="overflow-x-auto p-4 bg-white mt-4 mb-4 rounded-lg shadow-md dark:text-gray-200 dark:bg-bodybg">
-            {loading ? (
-                <div className="flex justify-center items-center h-64">
-                    <LoadingSpinner />
-                </div>
-            ) : (
-                <table className="min-w-full border border-gray-300 shadow-md text-sm">
-                    <thead>
-                    <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }} className="bg-gray-200 text-gray-900 text-sm">
-                        <th rowSpan="2" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Origin</th>
-                        <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Last Day</th>
-                        <th colSpan="3" className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">MTD</th>
-                    </tr>
-                    <tr style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }} className="bg-gray-200 text-gray-900 text-sm">
-                        <th className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">GoogleAds</th>
-                        <th className="ppy-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">MetaAds</th>
-                        <th className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Total</th>
-                        <th className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">GoogleAds</th>
-                        <th className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">MetaAds</th>
-                        <th className="py-2 px-4 border border-gray-400 p-2 dark:border-gray-700 text-center dark:text-gray-200 dark:bg-bodybg">Total</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {data.map((region, idx) => (
-                        <React.Fragment key={idx}>
-                            <tr className="bg-gray-200 font-bold p-2 border text-gray-900 border-gray-400 dark:border-gray-700 dark:text-gray-200 dark:bg-bodybg">
-                                <td className="px-4 py-2 border text-sm"> {region.name}</td>
-                                <td className="px-4 py-2 border text-sm text-right">{region.totalRow.lastDay.googleAds.toLocaleString()}</td>
-                                <td className="px-4 py-2 border text-sm text-right">{region.totalRow.lastDay.metaAds.toLocaleString()}</td>
-                                <td className="px-4 py-2 border text-sm text-right">{region.totalRow.lastDay.total.toLocaleString()}</td>
-                                <td className="px-4 py-2 border text-sm text-right">{region.totalRow.mtd.googleAds.toLocaleString()}</td>
-                                <td className="px-4 py-2 border text-sm text-right">{region.totalRow.mtd.metaAds.toLocaleString()}</td>
-                                <td className="px-4 py-2 border text-sm text-right">{region.totalRow.mtd.total.toLocaleString()}</td>
-                            </tr>
-                            {region.subCategories.map((sub, subIdx) => (
-                                <tr key={subIdx} className="">
-                                    <td className="px-4 py-2 border">{sub.objective}</td>
-                                    <td className="px-4 py-2 border text-right">{sub.lastDay.googleAds.toLocaleString()}</td>
-                                    <td className="px-4 py-2 border text-right">{sub.lastDay.metaAds.toLocaleString()}</td>
-                                    <td className="px-4 py-2 border text-right">{sub.lastDay.total.toLocaleString()}</td>
-                                    <td className="px-4 py-2 border text-right">{sub.mtd.googleAds.toLocaleString()}</td>
-                                    <td className="px-4 py-2 border text-right">{sub.mtd.metaAds.toLocaleString()}</td>
-                                    <td className="px-4 py-2 border text-right">{sub.mtd.total.toLocaleString()}</td>
-                                </tr>
-                            ))}
-                        </React.Fragment>
-                    ))}
-                    <tr className="bg-gray-200 text-gray-900 font-bold dark:text-gray-200 dark:bg-bodybg">
-                        <td className="py-2 px-4 border border-gray-400">Total</td>
-                        <td className="py-2 px-4 border border-gray-400 text-right">
-                            {data.reduce((acc, cur) => acc + cur.totalRow.lastDay.googleAds, 0).toLocaleString()}
-                        </td>
-                        <td className="py-2 px-4 border border-gray-400 text-right">
-                            {data.reduce((acc, cur) => acc + cur.totalRow.lastDay.metaAds, 0).toLocaleString()}
-                        </td>
-                        <td className="py-2 px-4 border border-gray-400 text-right">
-                            {data.reduce((acc, cur) => acc + cur.totalRow.lastDay.total, 0).toLocaleString()}
-                        </td>
-                        <td className="py-2 px-4 border border-gray-400 text-right">
-                            {data.reduce((acc, cur) => acc + cur.totalRow.mtd.googleAds, 0).toLocaleString()}
-                        </td>
-                        <td className="py-2 px-4 border border-gray-400 text-right">
-                            {data.reduce((acc, cur) => acc + cur.totalRow.mtd.metaAds, 0).toLocaleString()}
-                        </td>
-                        <td className="py-2 px-4 border border-gray-400 text-right">
-                            {data.reduce((acc, cur) => acc + cur.totalRow.mtd.total, 0).toLocaleString()}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            )}
-        </div>
+  const calcTotals = (entries) =>
+    entries.reduce(
+      (acc, cur) => {
+        acc.ld_googleads += Number(cur.ld_googleads);
+        acc.ld_metaads += Number(cur.ld_metaads);
+        acc.ld_total += Number(cur.ld_total);
+        acc.mtd_googleads += Number(cur.mtd_googleads);
+        acc.mtd_metaads += Number(cur.mtd_metaads);
+        acc.mtd_total += Number(cur.mtd_total);
+        return acc;
+      },
+      {
+        ld_googleads: 0,
+        ld_metaads: 0,
+        ld_total: 0,
+        mtd_googleads: 0,
+        mtd_metaads: 0,
+        mtd_total: 0,
+      }
     );
+
+  const regions = Object.keys(data);
+
+  const grandTotals = regions.reduce(
+    (acc, regionKey) => {
+      const totals = calcTotals(data[regionKey]);
+      acc.ld_googleads += totals.ld_googleads;
+      acc.ld_metaads += totals.ld_metaads;
+      acc.ld_total += totals.ld_total;
+      acc.mtd_googleads += totals.mtd_googleads;
+      acc.mtd_metaads += totals.mtd_metaads;
+      acc.mtd_total += totals.mtd_total;
+      return acc;
+    },
+    {
+      ld_googleads: 0,
+      ld_metaads: 0,
+      ld_total: 0,
+      mtd_googleads: 0,
+      mtd_metaads: 0,
+      mtd_total: 0,
+    }
+  );
+
+  return (
+    <>
+      <p className="text-primary p-2 rounded-lg text-right text-black">
+        As of {formattedDate}
+      </p>
+      <div className={styles.wrapper}>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <table className={styles.table}>
+            <thead className={styles.thead}>
+              <tr>
+                <th rowSpan="2" className={styles.headerCell}>
+                  Origin
+                </th>
+                <th colSpan="3" className={styles.headerCell}>
+                  Last Day
+                </th>
+                <th colSpan="3" className={styles.headerCell}>
+                  MTD
+                </th>
+              </tr>
+              <tr className={styles.subHeaderRow}>
+                <th className={styles.headerCell}>GoogleAds</th>
+                <th className={styles.headerCell}>MetaAds</th>
+                <th className={styles.headerCell}>Total</th>
+                <th className={styles.headerCell}>GoogleAds</th>
+                <th className={styles.headerCell}>MetaAds</th>
+                <th className={styles.headerCell}>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {regions.length === 0 && (
+                <tr>
+                  <td colSpan={7} className={styles.tdCenter}>
+                    No data available.
+                  </td>
+                </tr>
+              )}
+              {regions.map((regionKey) => {
+                const entries = data[regionKey];
+                const totals = calcTotals(entries);
+                return (
+                  <React.Fragment key={regionKey}>
+                    <tr className={styles.rowSpecial}>
+                      <td className={`${styles.tdCell} ${styles.stickyCell}`}>
+                        {regionKey.charAt(0).toUpperCase() +
+                          regionKey.slice(1)}
+                      </td>
+                      <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                        {totals.ld_googleads.toLocaleString()}
+                      </td>
+                      <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                        {totals.ld_metaads.toLocaleString()}
+                      </td>
+                      <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                        {totals.ld_total.toLocaleString()}
+                      </td>
+                      <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                        {totals.mtd_googleads.toLocaleString()}
+                      </td>
+                      <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                        {totals.mtd_metaads.toLocaleString()}
+                      </td>
+                      <td className={`${styles.rowTotal} ${styles.tdCenter} w-36 p-2`}>
+                        {totals.mtd_total.toLocaleString()}
+                      </td>
+                    </tr>
+                    {entries.map((entry, idx) => {
+                      const bgClass =
+                        idx % 2 === 0 ? styles.rowEven : styles.rowOdd;
+                      return (
+                        <tr key={idx} className={bgClass}>
+                          <td
+                            className={`${styles.tdCell} ${styles.stickyCell} ${bgClass}`}
+                          >
+                            {entry.origin}
+                          </td>
+                          <td
+                            className={`${styles.tdCell} ${styles.tdRight} ${bgClass}`}
+                          >
+                            {Number(entry.ld_googleads).toLocaleString()}
+                          </td>
+                          <td
+                            className={`${styles.tdCell} ${styles.tdRight} ${bgClass}`}
+                          >
+                            {Number(entry.ld_metaads).toLocaleString()}
+                          </td>
+                          <td
+                            className={`${styles.tdCell} ${styles.tdRight} ${bgClass}`}
+                          >
+                            {Number(entry.ld_total).toLocaleString()}
+                          </td>
+                          <td
+                            className={`${styles.tdCell} ${styles.tdRight} ${bgClass}`}
+                          >
+                            {Number(entry.mtd_googleads).toLocaleString()}
+                          </td>
+                          <td
+                            className={`${styles.tdCell} ${styles.tdRight} ${bgClass}`}
+                          >
+                            {Number(entry.mtd_metaads).toLocaleString()}
+                          </td>
+                          <td
+                            className={`${styles.rowTotal} ${styles.tdCenter} ${bgClass} w-36 p-2`}
+                          >
+                            {Number(entry.mtd_total).toLocaleString()}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              })}
+              {regions.length > 0 && (
+                <tr className={styles.rowTotal}>
+                  <td className={`${styles.tdCell} ${styles.stickyCell}`}>
+                    Total
+                  </td>
+                  <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                    {grandTotals.ld_googleads.toLocaleString()}
+                  </td>
+                  <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                    {grandTotals.ld_metaads.toLocaleString()}
+                  </td>
+                  <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                    {grandTotals.ld_total.toLocaleString()}
+                  </td>
+                  <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                    {grandTotals.mtd_googleads.toLocaleString()}
+                  </td>
+                  <td className={`${styles.tdCell} ${styles.tdRight}`}>
+                    {grandTotals.mtd_metaads.toLocaleString()}
+                  </td>
+                  <td className={`${styles.tdCell} ${styles.tdCenter}`}>
+                    {grandTotals.mtd_total.toLocaleString()}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
 };
 
 export default ObjectiveWiseSpentSummary;

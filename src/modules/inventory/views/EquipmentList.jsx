@@ -1,63 +1,28 @@
-import React, { useCallback, useMemo, useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import React from "react";
+import {Link, useLocation} from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
-import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
-import { toTitleCase } from "@helpers/formatters.js";
-import { getBadgeClasses } from "@helpers/badges.js";
-import EquipmentListFilter from "@modules/inventory/components/EquipmentListFilter.jsx";
-import useFilters from "@hooks/useFilters.js";
-import {useSelector} from "react-redux";
+import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
+import {toTitleCase} from "@helpers/formatters.js";
+import {getBadgeClasses} from "@helpers/badges.js";
+import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 
 const EquipmentList = () => {
-    const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const { search } = useLocation();
     const params = new URLSearchParams(search);
-    const statusFilter = params.get('status') || '';
+    const queryParams = {};
+    [
+        'status',
+        'company_id',
+        'department_id',
+        'location_id',
+        'equipment_site_id',
+        'equipment_type_id',
+        'custodian_id'
+    ].forEach(param => {
+        if (params.get(param)) queryParams[param] = params.get(param);
+    });
 
-    const {
-        control,
-        handleSubmit,
-        errors,
-        getFilters,
-        resetFilters,
-    } = useFilters(
-        useMemo(
-            () => ({
-                initialFilters: [
-                    { name: 'company_id', defaultValue: companyId},
-                    { name: "department_id" },
-                    { name: "equipment_site_id" },
-                    { name: "location_id" },
-                    { name: "equipment_type_id" },
-                    { name: "status" },
-                    { name: "custodian_id" },
-                ],
-            }),
-            []
-        )
-    );
-
-    const [filters, setFilters] = useState(getFilters);
-
-    // Apply status filter from the URL
-    useEffect(() => {
-        if (statusFilter) {
-            setFilters((prevFilters) => ({
-                ...prevFilters,
-                status: statusFilter,
-            }));
-        }
-    }, [statusFilter]);
-
-    const onSubmit = useCallback((formData) => {
-        setFilters(formData);
-    }, []);
-
-    const onClear = useCallback(() => {
-        resetFilters();
-        setFilters(getFilters());
-    }, [resetFilters, getFilters]);
 
     const columns = [
         {
@@ -79,14 +44,22 @@ const EquipmentList = () => {
                 </div>
             ),
         },
-        { Header: "Code", accessor: "code" },
-        {
-            Header:"Asset Code",accessor: "asset_code"
+        { Header: "Code",
+            accessor: "code",
+            filterable: true,
+            filterType: "number",
         },
-        { Header: "Serial No", accessor: "serial_no" },
+        {
+            Header:"Asset Code",accessor: "asset_code",  filterable: true,
+            filterType: "text",
+        },
+        { Header: "Serial No", accessor: "serial_no", filterable: true,
+            filterType: "text", },
         {
             Header: "Description",
             accessor: "description",
+            filterable: true,
+            filterType: "text",
             Cell: ({ row }) => (
                 <span>
                 {row.original.description?.length > 50
@@ -98,6 +71,8 @@ const EquipmentList = () => {
         {
             Header: "Specification",
             accessor: "specs",
+            filterable: true,
+            filterType: "text",
             Cell: ({ row }) => (
                 <span>
                 {row.original.specs?.length > 40
@@ -109,17 +84,59 @@ const EquipmentList = () => {
         {
             Header: "Status",
             accessor: "status",
+            filterType: 'select',
+            filterable: true,
+            filterOptions: equipmentStatuses,
             Cell: ({ row }) => (
                 <span className={getBadgeClasses(row.original.status)}>
                     {toTitleCase(row.original.status)}
                 </span>
             ),
         },
-        { Header: "Custodian", accessor: "custodian" },
-        { Header: "Department", accessor: "department" },
-        { Header: "Asset Site", accessor: "equipment_site" },
-        { Header: "Asset Type", accessor: "equipment_type" },
-        { Header: "Location", accessor: "location" },
+        { Header: "Purchase Price", accessor: "purchase_price" , filterType: 'text',
+            filterable: true,},
+        {
+            Header: "Custodian",
+            accessor: "custodian",
+            filterable: true,
+            filterType: "text",
+            filterKey: 'custodian__full_name',
+        },
+
+        { Header: "Department", accessor: "department",
+            filterable: true,
+            filterType: "text",
+            filterKey: 'department__name'
+        },
+
+        { Header: "Asset Site", accessor: "equipment_site",
+            filterable: true,
+            filterType: "text",
+            filterKey: 'equipment_site__name'},
+        { Header: "Asset Type", accessor: "equipment_type",
+            filterable: true,
+            filterType: "text",
+            filterKey: 'equipment_type__name'
+        },
+        { Header: "Location", accessor: "location",
+            filterable: true,
+            filterType: "text",
+            filterKey: 'location__name'
+        },
+        {
+            Header: "Remarks",
+            accessor: "remarks",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => (value ? value : "N/A"),
+        },
+        {
+            Header: "Company",
+            accessor: "company.name",
+            filterable: false,
+            Cell: ({ row }) => <span>{row.original.company?.name || "-"}</span>,
+        },
+
     ];
 
     const buttons = (
@@ -136,15 +153,13 @@ const EquipmentList = () => {
     return (
         <>
             <PageHeader currentpage="Assets" mainpage="Assets" />
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <EquipmentListFilter control={control} errors={errors} onClear={onClear} />
-            </form>
+
             <DataTable
                 columns={columns}
                 title="Assets"
-                apiUrl={`/equipments/datatable/?status=${statusFilter}`}
+                apiUrl={`/equipments/datatable/?${new URLSearchParams(queryParams).toString()}`}
                 buttons={buttons}
-                filter={filters}
+                enableAdvancedFilters={true}
             />
         </>
     );
