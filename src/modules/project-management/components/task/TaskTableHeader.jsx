@@ -32,7 +32,8 @@ const TaskTableHeader = ({
                              handleMoveColumn,
                              setFilters,
                              projectUsers,
-                             milestoneLaunch
+                             milestoneLaunch,
+                             heightFilter
                          }) => {
     const orderedVisibleHeaders = columnOrder
         .map(key => columnHeaders.find(h => h.key === key))
@@ -60,6 +61,7 @@ const TaskTableHeader = ({
                                         setFilters={setFilters}
                                         projectUsers={projectUsers}
                                         milestoneLaunch={milestoneLaunch}
+                                        heightFilter={heightFilter}
                                     />
                                 )}
                                     <TaskHeaderSort
