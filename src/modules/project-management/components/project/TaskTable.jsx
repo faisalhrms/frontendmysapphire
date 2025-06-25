@@ -23,10 +23,13 @@ const TaskTable = ({
                    }) => {
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({})
+
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const dispatch = useDispatch();
     const columnOrder = useSelector((state) => state.pms.columnOrder);
     const visibleColumns = useSelector((state) => state.pms.visibleColumns);
+    const [height,setHeight] = React.useState(false);
 
     const { handleDeleteClick } = useDelete();
     const {
@@ -119,9 +122,17 @@ const TaskTable = ({
         }
     };
 
+
+const heightFilter = (val)=>{
+    setHeight(val);
+}
+
     return (
         <>
-            <div className="table-responsive task-table">
+
+            <div className={`table-responsive task-table overflow-hidden transition-all duration-300 ${
+                height ? 'min-h-[600px]' : 'min-h-[100px]'
+            }`}>
                 <table className="table whitespace-nowrap table-bordered min-w-full">
                     <thead>
                     <tr className="border-b border-defaultborder">
@@ -137,6 +148,8 @@ const TaskTable = ({
                             setFilters={setFilters}
                             projectUsers={projectUsers}
                             milestoneLaunch={milestoneLaunch}
+                            setIsFilterOpen={setIsFilterOpen}
+                            heightFilter={heightFilter}
                         />
                     </tr>
                     </thead>

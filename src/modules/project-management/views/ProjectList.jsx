@@ -1,6 +1,6 @@
 import React, { useState ,useEffect} from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import { Link } from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {useProjectFilter, useProjects, useUploadProjectModal} from "@modules/project-management/hooks/projectHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import Pagination from "@components/Pagination.jsx";
@@ -21,8 +21,12 @@ import ProjectListItems from "@modules/project-management/components/ProjectList
 import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
 import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
 import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
+import queryString from "query-string";
 
 const ProjectList = () => {
+    const location = useLocation();
+    const query = queryString.parse(location.search);
+
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
     const { filterControl,
         filterSubmit,
@@ -39,7 +43,6 @@ const ProjectList = () => {
     const filters = useSelector((state) => state.pms.filters);
     const [startedAt, setStartedAt] = useState(null);
     const [endedAt, setEndedAt] = useState(null);
-    const [isPeopleFilterOpen, setIsPeopleFilterOpen] = useState(false);
     const [selectedWorkspaces, setSelectedWorkspaces] = useState(filters.workspaces);
     const totalPages = Math.ceil(data?.total / 8) || 0;
     const {

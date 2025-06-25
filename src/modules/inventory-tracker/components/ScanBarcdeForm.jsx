@@ -227,12 +227,18 @@ const ScanBarcodeForm = ({ isActive }) => {
                 <div className="max-w-4xl mx-auto bg-white font-sans mb-4 p-4 sm:p-6">
                     {/* Current warehouse info */}
                     <div className="border-2 border-black mb-1">
-                        <div className="flex items-center px-4 py-3 bg-white">
-              <span className="text-sm text-black font-semibold">
-                Current: {currentWarehouse.warehousename} (Qty: {currentWarehouse.onhand_qty})
-              </span>
+                        <div className="flex items-center justify-between px-4 py-3 bg-white">
+        <span className="text-sm text-black font-semibold">
+            Current: {currentWarehouse.warehousename} (Qty: {currentWarehouse.onhand_qty})
+        </span>
+
+                            <div className="flex items-center gap-2">
+                                <span className="text-base font-bold text-black">Price:</span>
+                                <span className="text-sm text-gray-700">{currentWarehouse.salesprice}</span>
+                            </div>
                         </div>
                     </div>
+
 
                     {/* Details grid */}
                     <div className="border-2 border-black mb-1">
@@ -250,8 +256,8 @@ const ScanBarcodeForm = ({ isActive }) => {
                                 </div>
                                 <div className="space-y-3">
                                     <div>
-                                        <span className="text-base font-bold text-black">Price: </span>
-                                        <span className="text-sm text-gray-700">{currentWarehouse.salesprice}</span>
+                                        <span className="text-base font-bold text-black">Combos: </span>
+                                        <span className="text-sm text-gray-700">{currentWarehouse.combos}</span>
                                     </div>
                                     <div>
                                         <span className="text-base font-bold text-black">Disc: </span>
@@ -263,7 +269,8 @@ const ScanBarcodeForm = ({ isActive }) => {
                     </div>
 
                     {/* Accordion for Other Locations */}
-                    <div className="accordion accordion-border-primary accordions-items-seperate mb-6 w-full" id="accordion-other-locations">
+                    <div className="accordion accordion-border-primary accordions-items-seperate mb-6 w-full"
+                         id="accordion-other-locations">
                         <div className="hs-accordion-group">
                             <div className="hs-accordion accordion-item" id={accordionHeadingId}>
                                 <button
@@ -313,7 +320,7 @@ const ScanBarcodeForm = ({ isActive }) => {
                                     aria-labelledby={accordionHeadingId}
                                 >
                                     <div className="pl-4 pt-2 pb-4">
-                                        <OtherStoreInventoryTable rows={otherLocations} />
+                                        <OtherStoreInventoryTable rows={otherLocations}/>
                                     </div>
                                 </div>
                             </div>

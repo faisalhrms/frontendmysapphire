@@ -310,35 +310,35 @@ const SrDashboard = () => {
                         label: 'Unassigned',
                         icon: 'ri-user-unfollow-line text-primary',
                         trend: serviceRequest?.trends?.unassigned || '0.0%',
-                        bg: '!bg-primary/10'
+                        bg: '!bg-primary/5'
                     },
                     {
                         status: 'Not-Started',
                         label: 'Not Started',
-                        icon: 'ri-timer-line text-danger',
+                        icon: 'ri-timer-line text-blue',
                         trend: serviceRequest?.trends?.notStarted || '0.0%',
-                        bg: '!bg-danger/10'
+                        bg: '!bg-danger/5'
                     },
                     {
                         status: 'In-Progress',
-                        label: 'In Process',
-                        icon: 'ri-run-line text-warning',
+                        label: 'In Progress',
+                        icon: 'ri-run-line text-info',
                         trend: serviceRequest?.trends?.inProgress || '0.0%',
-                        bg: '!bg-warning/10'
+                        bg: '!bg-warning/5'
                     },
                     {
                         status: 'Completed',
                         label: 'Completed',
                         icon: 'ri-checkbox-circle-line text-success',
                         trend: serviceRequest?.trends?.completed || '0.0%',
-                        bg: '!bg-success/10'
+                        bg: '!bg-success/5'
                     },
                     {
                         status: 'Overdue',
                         label: 'Overdue',
-                        icon: 'ri-alarm-warning-line text-info',
+                        icon: 'ri-alarm-warning-line text-danger',
                         trend: serviceRequest?.trends?.overdue || '0.0%',
-                        bg: '!bg-info/10'
+                        bg: '!bg-info/5'
                     }
                 ].map((it, i) => {
                     const {changeClass, arrowIconClass, ariaLabel} = getChangeStyles(it.trend)
@@ -370,7 +370,7 @@ const SrDashboard = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 auto-rows-fr gap-4 mt-6 flex-1">
                 <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                    <div className="box-header !bg-warning/10">
+                    <div className="box-header !bg-info/10">
                         <div className="box-title">Waiting For</div>
                     </div>
                     <div className="box-body !p-0 h-full">
@@ -387,21 +387,21 @@ const SrDashboard = () => {
                                     },
                                     {
                                         statusKey: 'Waiting for Approval',
-                                        icon: 'ri-loader-2-line text-secondary',
+                                        icon: 'ri-loader-2-line text-orange',
                                         label: 'Approval',
                                         count: serviceRequest?.['Waiting for Approval'] ?? 0,
                                         trend: serviceRequest?.trends?.waitingApproval || '0.0%'
                                     },
                                     {
                                         statusKey: 'Waiting for Acknowledgement',
-                                        icon: 'ri-user-voice-line text-secondary',
+                                        icon: 'ri-user-voice-line text-success',
                                         label: 'Acknowledgement',
                                         count: serviceRequest?.['Waiting for Acknowledgement'] ?? 0,
                                         trend: serviceRequest?.trends?.waitingAcknowledgement || '0.0%'
                                     },
                                     {
                                         statusKey: 'Waiting for Budget',
-                                        icon: 'ri-money-dollar-box-line text-secondary',
+                                        icon: 'ri-money-dollar-box-line text-blue',
                                         label: 'Budget',
                                         count: serviceRequest?.['Waiting for Budget'] ?? 0,
                                         trend: serviceRequest?.trends?.waitingBudget || '0.0%'
@@ -415,7 +415,7 @@ const SrDashboard = () => {
                                     },
                                     {
                                         statusKey: 'Waiting for Purchase',
-                                        icon: 'ri-shopping-cart-2-line text-secondary',
+                                        icon: 'ri-shopping-cart-2-line text-pink',
                                         label: 'Purchase',
                                         count: serviceRequest?.['Waiting for Purchase'] ?? 0,
                                         trend: serviceRequest?.trends?.waitingPurchase || '0.0%'
@@ -470,7 +470,7 @@ const SrDashboard = () => {
                             icon: 'ri-truck-line text-danger',
                             count: serviceRequest?.Delivered ?? 0,
                             trend: serviceRequest?.trends?.delivered || '0.0%',
-                            bg: '!bg-secondary/10'
+                            bg: '!bg-pink/5'
                         },
                         {
                             status: 'On-Hold',
@@ -478,7 +478,7 @@ const SrDashboard = () => {
                             icon: 'ri-pause-circle-line text-warning',
                             count: serviceRequest?.['On-Hold'] ?? 0,
                             trend: serviceRequest?.trends?.onHold || '0.0%',
-                            bg: '!bg-indigo/10'
+                            bg: '!bg-indigo/5',
                         },
                         {
                             status: 'Closed',
@@ -486,7 +486,7 @@ const SrDashboard = () => {
                             icon: 'ri-lock-line text-secondary',
                             count: serviceRequest?.Closed ?? 0,
                             trend: serviceRequest?.trends?.closed || '0.0%',
-                            bg: '!bg-indigo/10'
+                            bg: '!bg-orange/5',
                         },
                         {
                             status: 'Cancelled',
@@ -494,7 +494,7 @@ const SrDashboard = () => {
                             icon: 'ri-close-circle-line text-danger',
                             count: serviceRequest?.Cancelled ?? 0,
                             trend: serviceRequest?.trends?.cancelled || '0.0%',
-                            bg: '!bg-secondary/10'
+                            bg: '!bg-secondary/5'
                         }
                     ].map((item, idx) => {
                         const {changeClass, arrowIconClass, ariaLabel} = getChangeStyles(item.trend)
@@ -527,7 +527,7 @@ const SrDashboard = () => {
                 </div>
 
                 <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                    <div className="box-header !bg-info/25">
+                    <div className="box-header !bg-info/15">
                         <div className="box-title">Service Request Statistics <span
                             className="text-gray-500 font-normal">(Last 6 months):</span></div>
                     </div>
@@ -546,7 +546,7 @@ const SrDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 auto-rows-fr gap-4 mt-6 flex-1">
 
                 <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                    <div className="box-header !bg-danger/20">
+                    <div className="box-header !bg-danger/15">
                         <div className="box-title">Payments</div>
                     </div>
                     <div className="box-body !p-0 h-full">
@@ -556,7 +556,7 @@ const SrDashboard = () => {
                                 {[
                                     {
                                         statusKey: 'PO Created',
-                                        icon: 'ri-file-list-2-line text-secondary',
+                                        icon: 'ri-file-list-2-line text-warning',
                                         label: 'PO Created',
                                         count: serviceRequest?.['PO Created'] ?? 0,
                                         trend: serviceRequest?.trends?.poCreated || '0.0%'
@@ -570,7 +570,7 @@ const SrDashboard = () => {
                                     },
                                     {
                                         statusKey: 'Payment Proceed',
-                                        icon: 'ri-money-dollar-circle-line text-secondary',
+                                        icon: 'ri-money-dollar-circle-line text-blue',
                                         label: 'Payment Proceed',
                                         count: serviceRequest?.['Payment Proceed'] ?? 0,
                                         trend: serviceRequest?.trends?.paymentProceed || '0.0%'
@@ -614,7 +614,7 @@ const SrDashboard = () => {
                 </div>
 
                 <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                    <div className="box-header !bg-cyan/20">
+                    <div className="box-header !bg-warning/20">
                         <div className="box-title">Service Request Ratings</div>
                     </div>
                     <div className="box-body !p-3 h-full">
@@ -628,7 +628,7 @@ const SrDashboard = () => {
                             <div
                                 key={idx}
                                 onClick={() => handleCardClick(`rating-${item.rating}`)}
-                                className="flex items-center justify-between mb-3 p-1 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer"
+                                className="flex items-center justify-between mb-3 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer"
                             >
                                 <div className="flex items-center">
                                     <span className="text-sm mr-2">{item.label}</span>
@@ -647,7 +647,7 @@ const SrDashboard = () => {
                 </div>
 
                 <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                    <div className="box-header !bg-green/20">
+                    <div className="box-header !bg-green/15">
                         <div className="box-title">SLA Performance</div>
                     </div>
                     <div className="box-body h-full">

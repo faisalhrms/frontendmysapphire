@@ -608,7 +608,7 @@ const Sidebar = () => {
                       <i className={`side-menu__icon bx ${levelone.icon}`}></i>
                       <span className="side-menu__label">
                           {levelone.title}
-                        {levelone.badgetxt ? (<span className={levelone.class}>
+                        {levelone.badgetxt ? (<span className={levelone.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
                               {levelone.badgetxt}
                             </span>) : ("")}
                         </span>
@@ -618,7 +618,7 @@ const Sidebar = () => {
                       <i className={`side-menu__icon bx ${levelone.icon}`}></i>
                       <span className="">
                           {levelone.title}
-                        {levelone.badgetxt ? (<span className={levelone.class}>
+                        {levelone.badgetxt ? (<span className={levelone.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
                               {levelone.badgetxt}
                             </span>) : ("")}
                         </span>

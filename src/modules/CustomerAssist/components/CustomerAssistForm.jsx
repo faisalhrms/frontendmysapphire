@@ -2,11 +2,14 @@
 
 import React, { useState } from "react";
 import SearchSection from "@modules/CustomerAssist/components/SearchSection.jsx";
-import FormSection from "@modules/CustomerAssist/components/FormSection.jsx";
+import FormSection from "@modules/CustomerAssist/components/CustomerAssistMainList.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx"; // adjust path if needed
 import { getCustomerCase } from "@modules/CustomerAssist/services/customerAssistService.js";
 
-const CustomerAssistForm = () => {
+const CustomerAssistForm = ({isActive}) => {
+    if (!isActive) {
+        return null;
+    }
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -33,10 +36,11 @@ const CustomerAssistForm = () => {
 
             {/* Show error if any */}
             {error && (
-                <div className="mt-2 text-red-600">
+                <div className="mt-2 text-rose-600 text-center font-medium bg-rose-50 border border-rose-200 p-2 rounded-md">
                     {error}
                 </div>
             )}
+
 
             {/* Show loading spinner while fetching */}
             {isLoading && (

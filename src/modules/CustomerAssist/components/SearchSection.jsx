@@ -1,61 +1,51 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import FormInput from "@components/form/FormInput.jsx";
-import FormButton from "@components/form/FormButton.jsx";
+import React, { useState } from "react";
 
 const SearchSection = ({ onSearch }) => {
-    const {
-        handleSubmit,
-        control,
-        formState: { errors, isSubmitting }
-    } = useForm({
-        defaultValues: {
-            phone: "",
-            case_number: ""
-        }
-    });
+    const [caseNumber, setCaseNumber] = useState("");
+    const [phone, setPhone] = useState("");
 
-    const handleSearch = async (data) => {
-        const { phone, case_number } = data;
-        if (case_number.trim()) {
-            onSearch("case_number", case_number);
+    const handleSearch = () => {
+        if (caseNumber.trim()) {
+            onSearch("case_number", caseNumber);
         } else if (phone.trim()) {
             onSearch("phone", phone);
         } else {
-            alert("Please enter a value to search");
+            alert("Please enter Case Number or Phone Number to search");
         }
     };
 
     return (
-        <form
-            onSubmit={handleSubmit(handleSearch)}
-            className="flex gap-4 p-4 bg-gray-100 rounded-lg items-end"
-        >
-            <div className="flex-grow">
-                <FormInput
-                    name="case_number"
-                    control={control}
-                    errors={errors}
-                    placeholder="Case Number"
-                />
-            </div>
+        <div className="flex justify-center p-4">
+            <div className="grid grid-cols-12 items-center w-full max-w-3xl">
+                <div className="col-span-12">
+                    <div className="inline-flex w-full companies-search-input">
+                        <input
+                            type="text"
+                            className="form-control !rounded-e-none !border-e-0"
+                            placeholder="Case Number"
+                            value={caseNumber}
+                            onChange={(e) => setCaseNumber(e.target.value)}
+                        />
 
-            <div className="flex-grow">
-                <FormInput
-                    name="phone"
-                    control={control}
-                    errors={errors}
-                    placeholder="Phone"
-                />
-            </div>
+                        <input
+                            type="text"
+                            className="form-control !rounded-none !border-s-0"
+                            placeholder="Phone Number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                        />
 
-            <FormButton
-                isLoading={isSubmitting}
-                text="Search"
-                submitTxt="Searching..."
-                className="!h-[42px] !px-6"
-            />
-        </form>
+                        <button
+                            type="button"
+                            className="ti-btn !mb-0 ti-btn-primary-full !rounded-s-none"
+                            onClick={handleSearch}
+                        >
+                            <i className="ri-search-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

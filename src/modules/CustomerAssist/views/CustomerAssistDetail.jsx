@@ -5,16 +5,22 @@ import { useParams } from "react-router-dom";
 import { useCase } from "@modules/CustomerAssist/hooks/customerAssistHook.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import { toTitleCase } from "@helpers/formatters.js";
+import {
+    getStatusTextClass,
+    getStatusBadgeClass,
+    getStatusOutlinedClass
+} from "@modules/CustomerAssist/helpers/CustomerAssistHelper.js";
+import {format} from "date-fns";
 
 const CustomerAssistDetail = () => {
-    const { id } = useParams();  // assumes route like "/customer-assist/detail/:id"
+    const { id } = useParams();
     const { caseData, isLoading, error } = useCase(id);
 
     if (isLoading) {
-        return (
-          <LoadingSpinner/>
-        );
+        return <LoadingSpinner />;
     }
+
     if (error) {
         return (
             <div className="p-4">
@@ -22,6 +28,7 @@ const CustomerAssistDetail = () => {
             </div>
         );
     }
+
     if (!caseData) {
         return (
             <div className="p-4">
@@ -30,7 +37,6 @@ const CustomerAssistDetail = () => {
         );
     }
 
-    // Destructure fields from caseData. Adjust field names if needed.
     const {
         case_id,
         case_number,
@@ -45,121 +51,226 @@ const CustomerAssistDetail = () => {
         priority,
         description,
         remarks,
-        cc_resolution,// existing remarks, if any
+        cc_resolution,
         created_at,
         updated_at,
     } = caseData;
 
-    // Format dates if desired; you can import a helper, e.g.:
-    // import { formatDate } from "@helpers/dateTime.js";
-    // const formattedCreated = formatDate(created_at, "MMM dd, yyyy - HH:mm");
+    // Compute status/priority values and classes
+    const statusValue = case_status || "";
+    const statusText = toTitleCase(statusValue);
+    const statusBadgeClass = getStatusBadgeClass(statusValue, { includeBorder: true, size: "sm" });
+    const priorityValue = priority || "";
+    const priorityText = toTitleCase(priorityValue);
+    const priorityBadgeClass = getStatusBadgeClass(priorityValue, { includeBorder: true, size: "sm" });
 
     return (
         <>
-            <PageHeader currentpage="Customer Assist" mainpage="Customer Assist"  activepage="We Care" />
+            <PageHeader
+                currentpage="Customer Assist"
+                mainpage="Customer Assist"
+                activepage="We Care"
+                title="Case Details"
+            />
 
-            <div className="p-4 my-4 bg-white shadow-md rounded-lg">
-                <h2 className="text-lg font-semibold mb-4">Customer Case Details</h2>
-                <div className="grid grid-cols-12 gap-6">
-                    {/* Case ID */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Case ID</label>
-                        <div className="mt-1 text-gray-900">{case_id}</div>
-                    </div>
-                    {/* Case Number */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Case Number</label>
-                        <div className="mt-1 text-gray-900">{case_number}</div>
-                    </div>
-                    {/* Customer Name */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Customer Name</label>
-                        <div className="mt-1 text-gray-900">{customer_name}</div>
-                    </div>
-                    {/* Email */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                        <div className="mt-1 text-gray-900">{email}</div>
-                    </div>
-                    {/* Phone */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Phone</label>
-                        <div className="mt-1 text-gray-900">{phone}</div>
-                    </div>
-                    {/* Type */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Type</label>
-                        <div className="mt-1 text-gray-900">{type}</div>
-                    </div>
-                    {/* Case Status */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Case Status</label>
-                        <div className="mt-1 text-gray-900">{case_status}</div>
-                    </div>
-                    {/* Reason */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Reason</label>
-                        <div className="mt-1 text-gray-900">{reason}</div>
-                    </div>
-                    {/* Origin */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Origin</label>
-                        <div className="mt-1 text-gray-900">{origin}</div>
-                    </div>
-                    {/* Subject */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Subject</label>
-                        <div className="mt-1 text-gray-900">{subject}</div>
-                    </div>
-                    {/* Priority */}
-                    <div className="col-span-4">
-                        <label className="block text-sm font-medium text-gray-700">Priority</label>
-                        <div className="mt-1 text-gray-900">{priority}</div>
-                    </div>
-                    {/* Created At */}
-                    {created_at && (
-                        <div className="col-span-4">
-                            <label className="block text-sm font-medium text-gray-700">Created At</label>
-                            <div className="mt-1 text-gray-900">{created_at}</div>
+            <div className="grid grid-cols-12 gap-6">
+                {/* Left Column (9) */}
+                <div className="xl:col-span-9 col-span-12">
+                    {/* Customer Info */}
+                    <div className="box shadow-md rounded-lg mb-6">
+                        <div className="box-header bg-white p-4 rounded-t-lg">
+                            <div className="box-title text-lg font-semibold">Customer Info</div>
                         </div>
-                    )}
-                    {/* Updated At */}
-                    {updated_at && (
-                        <div className="col-span-4">
-                            <label className="block text-sm font-medium text-gray-700">Updated At</label>
-                            <div className="mt-1 text-gray-900">{updated_at}</div>
-                        </div>
-                    )}
-                    {/* Description */}
-                    <div className="col-span-12">
-                        <label className="block text-sm font-medium text-gray-700">Description</label>
-                        <div className="mt-1 whitespace-pre-wrap text-gray-900 bg-gray-50 p-2 rounded">
-                            {description}
-                        </div>
-                    </div>
-                    {/* Remarks (existing) */}
-
-                        {remarks != null && (
-                            <div className="col-span-6">
-                                <label className="block text-sm font-medium text-gray-700">Remarks</label>
-                                <div className="mt-1 whitespace-pre-wrap text-gray-900 bg-gray-50 p-2 rounded">
-                                    {remarks}
+                        <div className="box-body p-6">
+                            <div className="flex items-center mb-6">
+                                <div className="bg-gray-100 border-2 border-dashed border-emerald-300 rounded-full w-16 h-16 flex items-center justify-center mr-4">
+                                    <i className="ri-user-3-line text-2xl text-gray-500"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-800">{customer_name}</h3>
+                                    <div className="text-gray-600">{email}</div>
                                 </div>
                             </div>
-                        )}
-                        <div className="col-span-6">
-                            <label className="block text-sm font-medium text-gray-700">CC Resolution</label>
-                            <div className="mt-1 whitespace-pre-wrap text-gray-900 bg-gray-50 p-2 rounded">
-                                {cc_resolution}
+
+                            <div className="grid grid-cols-12 gap-4">
+                                <div className="col-span-4">
+                                    <div className="flex items-center">
+                                        <i className="ri-phone-line text-sky-500 text-lg mr-2"></i>
+                                        <div>
+                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:</div>
+                                            <div className="text-base inline-block">{phone}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-span-4">
+                                    <div className="flex items-center">
+                                        <i className="ri-file-list-3-line text-rose-500 text-lg mr-2"></i>
+                                        <div>
+                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Case:</div>
+                                            <div className="text-base inline-block">{case_number}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-span-4">
+                                    <div className="flex items-center">
+                                        <i className="ri-calendar-line text-amber-500 text-lg mr-2"></i>
+                                        <div>
+                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Created:</div>
+                                            <div className="text-base inline-block"> {format(new Date(created_at), "MMM d, yyyy, h:mm a")}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                    
+                    {/* Case Details */}
+                    <div className="box shadow-md rounded-lg mb-6">
+                        <div className="box-header bg-white p-4 rounded-t-lg">
+                            <div className="box-title text-lg font-semibold">Case Details</div>
+                        </div>
+                        <div className="box-body p-6">
+                            <div className="grid grid-cols-12 gap-6">
+                                <div className="col-span-4">
+                                    <div className="text-sm font-medium text-gray-500">Case ID</div>
+                                    <div className="text-base mt-1">{case_id}</div>
+                                </div>
+                                <div className="col-span-4">
+                                    <div className="text-sm font-medium text-gray-500">Type</div>
+                                    <div className="text-base mt-1">{toTitleCase(type)}</div>
+                                </div>
+                                <div className="col-span-4">
+                                    <div className="text-sm font-medium text-gray-500">Status</div>
+                                    <div className="text-base mt-1">
+                                        <span className={statusBadgeClass}>{statusText}</span>
+                                    </div>
+                                </div>
+                                <div className="col-span-4">
+                                    <div className="text-sm font-medium text-gray-500">Reason</div>
+                                    <div className="text-base mt-1">{toTitleCase(reason)}</div>
+                                </div>
+                                <div className="col-span-4">
+                                    <div className="text-sm font-medium text-gray-500">Origin</div>
+                                    <div className="text-base mt-1">{toTitleCase(origin)}</div>
+                                </div>
+                                <div className="col-span-4">
+                                    <div className="text-sm font-medium text-gray-500">Priority</div>
+                                    <div className="text-base mt-1">
+                                        <span className={priorityBadgeClass}>{priorityText}</span>
+                                    </div>
+                                </div>
+                                <div className="col-span-12">
+                                    <div className="text-sm font-medium text-gray-500">Subject</div>
+                                    <div className="text-base mt-1">{subject}</div>
+                                </div>
+                                <div className="col-span-12">
+                                    <div className="text-sm font-medium text-gray-500">Description</div>
+                                    <div className="text-base mt-1 whitespace-pre-line bg-gray-50 p-3 rounded">
+                                        {description}
+                                    </div>
+                                </div>
+                                {updated_at && (
+                                    <div className="col-span-6">
+                                        <div className="text-sm font-medium text-gray-500">Last Updated</div>
+                                        <div className="text-base mt-1">{updated_at}</div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                {/* Right Column (3) */}
+                <div className="xl:col-span-3 col-span-12 space-y-6">
+                    {/* Case Additional Details */}
+                    <div className="box">
+                        <div className="box-header justify-between">
+                            <div className="box-title">Case Summary</div>
+                        </div>
+                        <div className="box-body !p-0">
+                            <div className="table-responsive">
+                                <table className="table whitespace-nowrap min-w-full">
+                                    <tbody>
+                                    <tr className="border-b border-defaultborder">
+                                        <td className="py-3 px-4">
+                                            <span className="font-semibold">Case Number:</span>
+                                        </td>
+                                        <td className="py-3 px-4">{case_number}</td>
+                                    </tr>
+                                    <tr className="border-b border-defaultborder">
+                                        <td className="py-3 px-4">
+                                            <span className="font-semibold">Created:</span>
+                                        </td>
+                                        <td className="py-3 px-4">{format(new Date(created_at), "MMM d, yyyy, h:mm a")}</td>
+                                    </tr>
+                                    {updated_at && (
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Updated:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{updated_at}</td>
+                                        </tr>
+                                    )}
+                                    <tr className="border-b border-defaultborder">
+                                        <td className="py-3 px-4">
+                                            <span className="font-semibold">Type:</span>
+                                        </td>
+                                        <td className="py-3 px-4">{toTitleCase(type)}</td>
+                                    </tr>
+                                    <tr className="border-b border-defaultborder">
+                                        <td className="py-3 px-4">
+                                            <span className="font-semibold">Origin:</span>
+                                        </td>
+                                        <td className="py-3 px-4">{toTitleCase(origin)}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* CC Resolution */}
+                    <div className="box shadow-md rounded-lg">
+                        <div className="box-header bg-white p-4 rounded-t-lg">
+                            <div className="box-title text-lg font-semibold">CC Resolution</div>
+                        </div>
+                        <div className="box-body p-6">
+                            {cc_resolution ? (
+                                <div className="bg-blue-50 rounded-lg p-4">
+                                    <div className="text-gray-700 whitespace-pre-line">{cc_resolution}</div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-gray-500">
+                                    <i className="ri-information-line text-2xl mb-2"></i>
+                                    <p>No resolution provided</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Remarks */}
+                    <div className="box shadow-md rounded-lg">
+                        <div className="box-header bg-white p-4 rounded-t-lg">
+                            <div className="box-title text-lg font-semibold">Remarks</div>
+                        </div>
+                        <div className="box-body p-6">
+                            {remarks ? (
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <div className="text-gray-700 whitespace-pre-line">{remarks}</div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-gray-500">
+                                    <i className="ri-information-line text-2xl mb-2"></i>
+                                    <p>No remarks added</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
-
     );
 };
 

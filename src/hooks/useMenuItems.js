@@ -13,6 +13,9 @@ const useMenuItems = () => {
 
             for (const path in sidebarFiles) {
                 const module = await sidebarFiles[path]();
+                if (typeof module.initializeSidebar === 'function') {
+                    await module.initializeSidebar();
+                }
                 if (module.sidebarMenu) {
                     items.push(...module.sidebarMenu);
                 }
