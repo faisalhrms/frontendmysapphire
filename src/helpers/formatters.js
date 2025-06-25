@@ -162,7 +162,7 @@ export const toTitleCase = (str) => {
         .join(' ');
 };
 
-export const generateSidebarItem = (path = '', type = '', title = '', position = 0, icon = '', permission = '', children = []) => {
+export const generateSidebarItem = (path = '', type = '', title = '', position = 0, icon = '', permission = '', children = [], badgetxt = '') => {
     return {
         icon,
         path,
@@ -174,6 +174,7 @@ export const generateSidebarItem = (path = '', type = '', title = '', position =
         position,
         permission,
         children,
+        badgetxt,
     };
 };
 
