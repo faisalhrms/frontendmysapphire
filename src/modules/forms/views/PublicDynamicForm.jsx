@@ -9,6 +9,7 @@ import { getMarketingMetadata } from "@helpers/helper.js";
 import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
 import { useIsAuthenticated } from "@modules/auth/hooks/authHooks.js";
 import MathCaptcha from "@components/mathcaptcha/MathCaptcha.jsx";
+import {getDynamicButtonStyle, hexToRgb} from "@helpers/styles.js";
 
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 
@@ -113,9 +114,11 @@ export default function PublicDynamicForm() {
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
     const pendingFormData = useRef(null);
-
+    const [primaryColor, setPrimaryColor] = useState('#');
+    const [hexPrimaryColor, setHexPrimaryColor] = useState(null);
     const { location } = useGeoLocation();
     const isAuthenticated = useIsAuthenticated();
+    const { defaultStyle, hoverStyle } = getDynamicButtonStyle(primaryColor, true);
 
     const navigate = useNavigate();
 
@@ -140,6 +143,9 @@ export default function PublicDynamicForm() {
                 }
 
                 setFormConfig(formData);
+                console.log(formData.primary_color)
+                setPrimaryColor(formData?.primary_color)
+                setHexPrimaryColor(hexToRgb(formData?.primary_color))
             })
             .catch((error) => setError(error.message));
     }, [slug, isAuthenticated, navigate]);
@@ -213,7 +219,7 @@ export default function PublicDynamicForm() {
                     <PublicDynamicFormHeader
                         description={error}
                         type="danger"
-                        border="border-danger"
+                        color="#e6533c"
                     />
                 </div>
             </div>
@@ -341,7 +347,7 @@ export default function PublicDynamicForm() {
         if (field.field_type === "hidden") return null;
 
         const commonInputClass = `w-full max-w-md px-0 py-2 border-0 border-b-2 ${
-            errors[fieldName] ? "border-danger focus:border-danger" : "border-gray-300 focus:border-[#673ab7]"
+            errors[fieldName] ? "border-danger focus:border-danger" : "border-gray-300 focus:border-[var(--primary)]"
         } focus:outline-none bg-transparent text-sm placeholder-gray-400 transition-colors duration-200`;
 
         const errorMessage = errors[fieldName] && (
@@ -362,6 +368,12 @@ export default function PublicDynamicForm() {
                 className={`bg-white rounded-lg border ${
                     errors[fieldName] ? "border-danger" : "border-gray-200"
                 } p-6`}
+                style={{
+                    "--primary": hexPrimaryColor,
+                    "--tw-ring-color": primaryColor,
+                    "--secondary": primaryColor,
+                    ...(errors[fieldName] ? {} : { "--default-border": hexPrimaryColor }),
+                }}
             >
                 <label className="block text-sm font-normal text-gray-700 mb-1 line-height-1">
                     {field.label} {field.required && <span className="text-danger">*</span>}
@@ -411,7 +423,7 @@ export default function PublicDynamicForm() {
                                         placeholder="Your answer"
                                         rows={3}
                                         className={`w-full px-0 py-2 border-0 border-b-2 ${
-                                            errors[fieldName] ? "border-danger focus:border-danger" : "border-gray-300 focus:border-[#673ab7]"
+                                            errors[fieldName] ? "border-danger focus:border-danger" : `border-gray-300 focus:border-[var(--primary)]`
                                         } focus:outline-none bg-transparent text-sm placeholder-gray-400 resize-none transition-colors duration-200`}
                                         name={normalizeFieldName(field.name)}
                                     />
@@ -429,7 +441,7 @@ export default function PublicDynamicForm() {
                                             value={controllerField.value ?? "50"}
                                             className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                                             style={{
-                                                background: `linear-gradient(to right, #673ab7 0%, #673ab7 ${controllerField.value ?? 50}%, #e5e7eb ${controllerField.value ?? 50}%, #e5e7eb 100%)`,
+                                                background: `linear-gradient(to right, var(--primary) 0%, ar(--primary) ${controllerField.value ?? 50}%, #e5e7eb ${controllerField.value ?? 50}%, #e5e7eb 100%)`,
                                             }}
                                             name={normalizeFieldName(field.name)}
                                         />
@@ -474,7 +486,7 @@ export default function PublicDynamicForm() {
                                                     className={`w-4 h-4 ${
                                                         errors[fieldName]
                                                             ? "text-danger border-danger focus:ring-danger"
-                                                            : "text-[#673ab7] border-gray-300 focus:ring-[#673ab7]"
+                                                            : `text-[var(--secondary)] border-gray-300 focus:ring-[var(--secondary)]`
                                                     } bg-gray-100 rounded focus:ring-2`}
                                                     name={`${normalizeFieldName(field.name)}[]`}
                                                 />
@@ -503,7 +515,7 @@ export default function PublicDynamicForm() {
                                                     className={`w-4 h-4 ${
                                                         errors[fieldName]
                                                             ? "text-danger border-danger focus:ring-danger"
-                                                            : "text-[#673ab7] border-gray-300 focus:ring-[#673ab7]"
+                                                            : `text-[var(--primary)] border-gray-300 focus:ring-[var(--primary)]`
                                                     } bg-gray-100 focus:ring-2`}
                                                     name={normalizeFieldName(field.name)}
                                                 />
@@ -522,7 +534,7 @@ export default function PublicDynamicForm() {
                                 return (
                                     <div
                                         className={`border-2 border-dashed ${
-                                            errors[fieldName] ? "border-danger" : "border-gray-300 hover:border-[#673ab7]"
+                                            errors[fieldName] ? "border-danger" : `border-gray-300 hover:border-[var(--secondary)]`
                                         } rounded-lg p-6 text-center transition-colors`}
                                     >
                                         <input
@@ -569,7 +581,7 @@ export default function PublicDynamicForm() {
                         title={formConfig.title}
                         description="Thank you for your submission! We have received your form successfully."
                         type="success"
-                        border="border-success"
+                        color="#26bf94"
                     />
                 </div>
             </div>
@@ -584,38 +596,48 @@ export default function PublicDynamicForm() {
                     description={formConfig.description}
                     currentStep={currentStep}
                     steps={steps}
+                    color={primaryColor}
                 />
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                     {steps[currentStep].fields.map((fieldName) => (
                         <div key={fieldName}>{renderField(fieldName)}</div>
                     ))}
-                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+
+                    <div className="bg-white rounded-lg border border-gray-200 p-6"
+                         style={{
+                             "--primary": primaryColor,
+                         }}
+                    >
                         <div className="flex justify-between items-center">
                             <div className="flex space-x-3">
                                 {currentStep > 0 && (
                                     <button
                                         type="button"
                                         onClick={handleBack}
-                                        className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors border border-[#673ab7]"
+                                        className="px-4 py-2 rounded text-sm font-medium transition-colors border"
+                                        style={defaultStyle}
+                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
+                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
                                     >
                                         Back
                                     </button>
                                 )}
+
                                 {currentStep < steps.length - 1 ? (
                                     <button
                                         type="button"
                                         onClick={handleNext}
-                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
+                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors bg-[var(--primary)]"
                                     >
                                         Next
                                     </button>
                                 ) : (
                                     <button
                                         type="submit"
-                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
                                         disabled={isSubmitting}
                                         onClick={handleFormSubmit}
+                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)]"
                                     >
                                         {isSubmitting ? 'Submitting...' : 'Submit'}
                                     </button>
@@ -624,7 +646,10 @@ export default function PublicDynamicForm() {
                             <button
                                 type="button"
                                 onClick={clearForm}
-                                className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors"
+                                className="px-4 py-2 rounded text-sm font-medium transition-colors"
+                                style={defaultStyle}
+                                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
+                                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
                             >
                                 Clear form
                             </button>

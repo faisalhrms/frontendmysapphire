@@ -163,3 +163,51 @@ export const colorPalette = {
         badge: "bg-primary",
     },
 };
+
+export const getDynamicButtonStyle = (primaryColor, withBorder = false) => {
+    const hexToRGBA = (hex, opacity = 1) => {
+        let r = 0, g = 0, b = 0;
+
+        if (hex.length === 4) {
+            r = parseInt(hex[1] + hex[1], 16);
+            g = parseInt(hex[2] + hex[2], 16);
+            b = parseInt(hex[3] + hex[3], 16);
+        } else if (hex.length === 7) {
+            r = parseInt(hex.slice(1, 3), 16);
+            g = parseInt(hex.slice(3, 5), 16);
+            b = parseInt(hex.slice(5, 7), 16);
+        }
+
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    };
+
+    return {
+        defaultStyle: {
+            color: primaryColor,
+            backgroundColor: 'transparent',
+            ...(withBorder && { borderColor: primaryColor }),
+        },
+        hoverStyle: {
+            backgroundColor: hexToRGBA(primaryColor, 0.1),
+        }
+    };
+};
+
+export const hexToRgb = (hex) => {
+    hex = hex.replace(/^#/, '');
+
+    if (hex.length === 3) {
+        hex = hex.split('').map((char) => char + char).join('');
+    }
+
+    if (hex.length !== 6) {
+        throw new Error("Invalid hex color format");
+    }
+
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+
+    return `${r} ${g} ${b}`;
+}

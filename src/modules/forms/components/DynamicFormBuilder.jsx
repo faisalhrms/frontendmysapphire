@@ -39,6 +39,7 @@ const DynamicFormBuilder = ({ formData }) => {
         defaultValues: {
             title: '',
             description: '',
+            primary_color: '#673ab7',
             enable_alerts: false,
             is_active: true,
             authenticated_only: false,
@@ -67,6 +68,7 @@ const DynamicFormBuilder = ({ formData }) => {
         if (formData) {
             setValue('title', formData.title || '');
             setValue('description', formData.description || '');
+            setValue('primary_color', formData.primary_color || '#673ab7');
             setValue('enable_alerts', formData.enable_alerts || false);
             setValue('is_active', formData.is_active || true);
             setValue('authenticated_only', formData.authenticated_only || false);
@@ -123,13 +125,24 @@ const DynamicFormBuilder = ({ formData }) => {
                             </div>
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
-                                    <div className="xl:col-span-6 col-span-12">
+                                    <div className="xl:col-span-12 col-span-12">
                                         <FormInput
                                             name="title"
                                             control={control}
                                             errors={errors}
                                             placeholder="Form Title"
                                             is_required={true}
+                                        />
+                                    </div>
+                                    <div className="xl:col-span-6 col-span-12">
+                                        <FormInput
+                                            type="color"
+                                            name="primary_color"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Form Primary Color"
+                                            is_required={true}
+                                            className='form-control-color !border-0 block'
                                         />
                                     </div>
                                     <div className="xl:col-span-6 col-span-12">
@@ -160,7 +173,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                 <div className="box-title">Is Active</div>
                             </div>
                             <div className="box-body">
-                                <FormToggle
+                            <FormToggle
                                     name="is_active"
                                     control={control}
                                     errors={errors}
