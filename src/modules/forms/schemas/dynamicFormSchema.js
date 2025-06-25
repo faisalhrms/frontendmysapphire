@@ -26,6 +26,7 @@ const fieldSchema = z.object({
 
 export const dynamicFormSchema = z.object({
     title: z.string().min(1, 'Title is required'),
+    primary_color: z.string().min(1, 'Primary color is required').default('#673ab7'),
     description: z.string().optional().nullable(),
     enable_alerts: z.boolean().default(false),
     is_active: z.boolean().default(true),
