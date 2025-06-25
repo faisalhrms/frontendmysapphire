@@ -35,6 +35,14 @@ export const sidebarMenu = [
                 ECOM_ROUTES.SFD.permission,
             ),
             generateSidebarItem(
+                ECOM_ROUTES.PL.path,
+                'link',
+                'Pending Liabilities',
+                3,
+                '',
+                ECOM_ROUTES.PL.permission,
+            ),
+            generateSidebarItem(
                 ECOM_ROUTES.OS.path,
                 'link',
                 'Digital Spent',
