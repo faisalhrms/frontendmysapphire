@@ -111,6 +111,7 @@ export default function PublicDynamicForm() {
     const [captchaVerified, setCaptchaVerified] = useState(false);
     const [isCaptchaTriggered, setIsCaptchaTriggered] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
     const pendingFormData = useRef(null);
@@ -186,7 +187,7 @@ export default function PublicDynamicForm() {
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors },
         reset,
         trigger,
         setValue,
@@ -198,7 +199,7 @@ export default function PublicDynamicForm() {
         },
         mode: "onChange",
     });
-
+    console.log(isSubmitting)
     useEffect(() => {
         if (formConfig) {
             reset(getDefaultValues(formConfig));
@@ -234,6 +235,7 @@ export default function PublicDynamicForm() {
 
     const onSubmit = async (formData) => {
         try {
+            setIsSubmitting(true);
             const metadata = getMarketingMetadata();
             const { latitude, longitude, ...data } = formData;
             const payload = new FormData();
@@ -269,6 +271,9 @@ export default function PublicDynamicForm() {
         } catch (err) {
             console.error("Submission error:", err);
             alert("Failed to submit form: " + err.message);
+        }
+        finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -637,10 +642,14 @@ export default function PublicDynamicForm() {
                                         type="submit"
                                         disabled={isSubmitting}
                                         onClick={handleFormSubmit}
-                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)]"
+                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)] flex items-center gap-2"
                                     >
+                                        {isSubmitting && (
+                                            <i className="bi bi-arrow-repeat animate-spin text-base"></i>
+                                        )}
                                         {isSubmitting ? 'Submitting...' : 'Submit'}
                                     </button>
+
                                 )}
                             </div>
                             <button
