@@ -36,10 +36,11 @@ const CustomerAssistForm = ({isActive}) => {
 
             {/* Show error if any */}
             {error && (
-                <div className="mt-2 text-red-600">
+                <div className="mt-2 text-rose-600 text-center font-medium bg-rose-50 border border-rose-200 p-2 rounded-md">
                     {error}
                 </div>
             )}
+
 
             {/* Show loading spinner while fetching */}
             {isLoading && (
