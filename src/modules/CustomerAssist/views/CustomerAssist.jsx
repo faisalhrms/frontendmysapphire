@@ -7,38 +7,27 @@ import CustomerAssistList from "@modules/CustomerAssist/views/CustomerAssistList
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 
 const CustomerAssist = () => {
-    const [activeTab, setActiveTab] = useState("list");
+    const [activeTab, setActiveTab] = useState("form");
 
 
-    const listApiUrl = activeTab === "list" ? "/customer-assist/datatable/" : null;
-
-    const { data, isLoading, refetch } = useFetchWithFilters(listApiUrl);
 
     const handleTabChange = (tabId) => {
         setActiveTab(tabId);
     };
 
-    const listProps = {};
-    if (activeTab === "list") {
-        listProps.data = data;
-        listProps.isLoading = isLoading;
-        listProps.url = listApiUrl;
-        listProps.refetch = refetch; // if your list component can use refetch
-    }
-    listProps.isActive = activeTab === "list";
 
     const tabs = [
         {
             id: "form",
-            label: "Search/Create",
+            label: "Search",
             icon: <i className="bi bi-search"></i>,
-            content: <CustomerAssistForm />,
+            content: <CustomerAssistForm isActive={activeTab === 'form'}/>,
         },
         {
             id: "list",
             label: "List",
             icon: <i className="bi bi-list-ul"></i>,
-            content: <CustomerAssistList {...listProps} />,
+            content: <CustomerAssistList  url={`/customer-assist/datatable/`} isActive={activeTab === 'list'} />,
         },
 
 
