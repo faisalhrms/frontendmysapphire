@@ -10,7 +10,8 @@ const equipmentStatus = z.enum([
     'lost',
     'sold_to_employee',
     'write_off',
-    'temporary_allocation'
+    'temporary_allocation',
+    'available_in_inventory'
 ]);
 const subEquipmentSchema = z.object({
     type_id: z.number().min(1, "Type is required"),
