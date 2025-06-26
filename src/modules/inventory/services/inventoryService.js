@@ -83,3 +83,15 @@ export const reAssignEquipment = async (payload) => {
         throw error;
     }
 };
+
+// Add to inventoryService.js
+export const verifyEquipmentItem = async (id, payload) => {
+    try {
+        const response = await api.patch(`/equipments/${id}/verify/`, payload);
+        Notify.success(response.data.message);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Verification failed");
+        throw error;
+    }
+};

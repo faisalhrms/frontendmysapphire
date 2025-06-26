@@ -90,7 +90,8 @@ const CustomerAssistMainList = ({ data }) => {
                         </div>
                         <div className="box-body p-6">
                             <div className="flex items-center mb-6">
-                                <div className="bg-gray-100 border-2 border-dashed border-emerald-300 rounded-full w-16 h-16 flex items-center justify-center mr-4">
+                                <div
+                                    className="bg-gray-100 border-2 border-dashed border-emerald-300 rounded-full w-16 h-16 flex items-center justify-center mr-4">
                                     <i className="ri-user-3-line text-2xl text-gray-500"></i>
                                 </div>
                                 <div>
@@ -104,7 +105,9 @@ const CustomerAssistMainList = ({ data }) => {
                                     <div className="flex items-center">
                                         <i className="ri-phone-line text-sky-500 text-lg mr-2"></i>
                                         <div>
-                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:</div>
+                                            <div
+                                                className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:
+                                            </div>
                                             <div className="text-base inline-block">{data.phone}</div>
                                         </div>
                                     </div>
@@ -114,7 +117,8 @@ const CustomerAssistMainList = ({ data }) => {
                                     <div className="flex items-center">
                                         <i className="ri-file-list-3-line text-rose-500 text-lg mr-2"></i>
                                         <div>
-                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Case:</div>
+                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Case:
+                                            </div>
                                             <div className="text-base inline-block">{data.case_number}</div>
                                         </div>
                                     </div>
@@ -124,7 +128,9 @@ const CustomerAssistMainList = ({ data }) => {
                                     <div className="flex items-center">
                                         <i className="ri-information-line text-amber-500 text-lg mr-2"></i>
                                         <div>
-                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Status:</div>
+                                            <div
+                                                className="text-sm font-medium text-gray-500 inline-block mr-1">Status:
+                                            </div>
                                             <div className="text-base inline-block">
                                                 {/* Choose variant: text-only, badge, etc. */}
                                                 <span className={statusTextClass}>{statusText}</span>
@@ -186,6 +192,41 @@ const CustomerAssistMainList = ({ data }) => {
                             </div>
                         </div>
                     </div>
+                    <div className="box shadow-md rounded-lg mb-6">
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <div className="box shadow-md rounded-lg">
+                                <div className="box-header p-4 rounded-t-lg">
+                                    <div className="box-title text-lg font-semibold">Execution Details</div>
+                                </div>
+                                <div className="box-body p-6">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div>
+                                            <FormTextarea
+                                                name="remarks"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Remarks"
+                                                rows={4}
+                                                disabled={data?.exist_in_our_db}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                {!data?.exist_in_our_db && (
+                                    <div className="box-footer p-4  rounded-b-lg">
+                                        <div className="flex justify-end">
+                                            <FormButton
+                                                isLoading={isSubmitting}
+                                                text="Update Remarks"
+                                                submitTxt="Updating..."
+                                                className="ti-btn ti-btn-primary ti-btn-md"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 {/* Right Column (3) */}
@@ -221,112 +262,81 @@ const CustomerAssistMainList = ({ data }) => {
                         <div
                             id="case-additional-detail-collapse-heading"
                             className="hs-collapse w-full overflow-hidden transition-[height] duration-300"
-                            aria-labelledby="case-additional-detail-collapse"
-                        >
-                            <div className="box-body !p-0">
-                                <div className="table-responsive">
-                                    <table className="table whitespace-nowrap min-w-full">
-                                        <tbody>
-                                        <tr className="border-b border-defaultborder">
-                                            <td className="py-3 px-4">
-                                                <span className="font-semibold">Case ID:</span>
-                                            </td>
-                                            <td className="py-3 px-4">{data.case_id}</td>
-                                        </tr>
-                                        <tr className="border-b border-defaultborder">
-                                            <td className="py-3 px-4">
-                                                <span className="font-semibold">Status:</span>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                {/* Full badge */}
-                                                <span className={statusBadgeClass}>{statusText}</span>
-                                            </td>
-                                        </tr>
-                                        <tr className="border-b border-defaultborder">
-                                            <td className="py-3 px-4">
-                                                <span className="font-semibold">Type:</span>
-                                            </td>
-                                            <td className="py-3 px-4">{toTitleCase(data.type)}</td>
-                                        </tr>
-                                        <tr className="border-b border-defaultborder">
-                                            <td className="py-3 px-4">
-                                                <span className="font-semibold">Priority:</span>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                {/* Badge */}
-                                                <span className={priorityBadgeClass}>{priorityText}</span>
-                                            </td>
-                                        </tr>
-                                        <tr className="border-b border-defaultborder">
-                                            <td className="py-3 px-4">
-                                                <span className="font-semibold">Origin:</span>
-                                            </td>
-                                            <td className="py-3 px-4">{toTitleCase(data.origin)}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* CC Resolution */}
-                    <div className="box shadow-md rounded-lg">
-                        <div className="box-header p-4 rounded-t-lg">
-                            <div className="box-title text-lg font-semibold">CC Resolution</div>
-                        </div>
-                        <div className="box-body p-6">
-                            {data.cc_resolution ? (
-                                <div className="bg-blue-50 rounded-lg p-4">
-                                    <div className="text-gray-700 whitespace-pre-line">{data.cc_resolution}</div>
-                                </div>
-                            ) : (
-                                <div className="text-center py-8 text-gray-500">
-                                    <i className="ri-information-line text-2xl mb-2"></i>
-                                    <p>No resolution provided</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Execution Details (Form) */}
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="box shadow-md rounded-lg">
-                            <div className="box-header p-4 rounded-t-lg">
-                                <div className="box-title text-lg font-semibold">Execution Details</div>
-                            </div>
-                            <div className="box-body p-6">
-                                <div className="grid grid-cols-1 gap-4">
-                                    <div>
-                                        <FormTextarea
-                                            name="remarks"
-                                            control={control}
-                                            errors={errors}
-                                            placeholder="Remarks"
-                                            rows={4}
-                                            disabled={data?.exist_in_our_db}
-                                        />
+                                        aria-labelledby="case-additional-detail-collapse"
+                                    >
+                                        <div className="box-body !p-0">
+                                            <div className="table-responsive">
+                                                <table className="table whitespace-nowrap min-w-full">
+                                                    <tbody>
+                                                    <tr className="border-b border-defaultborder">
+                                                        <td className="py-3 px-4">
+                                                            <span className="font-semibold">Case ID:</span>
+                                                        </td>
+                                                        <td className="py-3 px-4">{data.case_id}</td>
+                                                    </tr>
+                                                    <tr className="border-b border-defaultborder">
+                                                        <td className="py-3 px-4">
+                                                            <span className="font-semibold">Status:</span>
+                                                        </td>
+                                                        <td className="py-3 px-4">
+                                                            {/* Full badge */}
+                                                            <span className={statusBadgeClass}>{statusText}</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr className="border-b border-defaultborder">
+                                                        <td className="py-3 px-4">
+                                                            <span className="font-semibold">Type:</span>
+                                                        </td>
+                                                        <td className="py-3 px-4">{toTitleCase(data.type)}</td>
+                                                    </tr>
+                                                    <tr className="border-b border-defaultborder">
+                                                        <td className="py-3 px-4">
+                                                            <span className="font-semibold">Priority:</span>
+                                                        </td>
+                                                        <td className="py-3 px-4">
+                                                            {/* Badge */}
+                                                            <span className={priorityBadgeClass}>{priorityText}</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr className="border-b border-defaultborder">
+                                                        <td className="py-3 px-4">
+                                                            <span className="font-semibold">Origin:</span>
+                                                        </td>
+                                                        <td className="py-3 px-4">{toTitleCase(data.origin)}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            {!data?.exist_in_our_db && (
-                                <div className="box-footer p-4  rounded-b-lg">
-                                    <div className="flex justify-center">
-                                        <FormButton
-                                            isLoading={isSubmitting}
-                                            text="Update Remarks"
-                                            submitTxt="Updating..."
-                                            className="ti-btn ti-btn-primary ti-btn-md"
-                                        />
+
+                                {/* CC Resolution */}
+                                <div className="box shadow-md rounded-lg">
+                                    <div className="box-header p-4 rounded-t-lg">
+                                        <div className="box-title text-lg font-semibold">CC Resolution</div>
+                                    </div>
+                                    <div className="box-body p-6">
+                                        {data.cc_resolution ? (
+                                            <div className="bg-blue-50 rounded-lg p-4">
+                                                <div
+                                                    className="text-gray-700 whitespace-pre-line">{data.cc_resolution}</div>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-8 text-gray-500">
+                                                <i className="ri-information-line text-2xl mb-2"></i>
+                                                <p>No resolution provided</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            )}
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </>
-    );
-};
 
-export default CustomerAssistMainList;
+                                {/* Execution Details (Form) */}
+
+                            </div>
+                        </div>
+                    </>
+                    );
+                    };
+
+                    export default CustomerAssistMainList;
