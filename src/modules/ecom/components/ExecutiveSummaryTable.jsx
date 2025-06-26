@@ -21,7 +21,7 @@ const ExecutiveSummaryTable = ({ type = 'rco', title, filters, rows = 4 }) => {
                     ) : (
                         <tbody>
                         {data?.map((row, index) => (
-                            <tr key={index} className="dark:text-gray-200 dark:bg-bodybg text-black">
+                            <tr key={index} className={`dark:text-gray-200 dark:bg-bodybg text-black ${row?.classes}`}>
                                 <td className="border border-gray-400 p-2 whitespace-nowrap">
                                     {row?.label}
                                 </td>
