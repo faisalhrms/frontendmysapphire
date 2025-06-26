@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
-import { toTitleCase } from "@helpers/formatters.js";
+import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
 import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js"; // Assuming route constants
@@ -121,8 +121,14 @@ const LaptopList = () => {
             filterable: true, },
         { Header: "Maturity Date", accessor: "maturity_date", filterType: 'date',
             filterable: true, },
-        { Header: "Purchase Price", accessor: "purchase_price" , filterType: 'text',
-            filterable: true,},
+        {
+            Header: "Purchase Price",
+            accessor: "purchase_price",
+            filterable: true,
+            filterType: 'text',
+            Cell: ({ value }) =>
+                value === null ? "Nill" : formatAmountWithCommas(value),
+        },
         { Header: "Accessories", accessor: "accessories" },
         { Header: "Employee Status", accessor: "emp_status" },
     ];

@@ -40,10 +40,11 @@ const equipmentSchema = z.object({
     maturity_date: dateSchema('Maturity Date',true).optional(),
     warranty_expire: dateSchema('warranty expire Date',true).optional(),
     antivirus: z.boolean().optional(),
+    asset_tag_available: z.boolean().optional(),
     store_comm_ready: z.boolean().optional(),
     description: z.string().max(1000, "Description can be at most 1000 characters"),
-    remarks: z.string().max(200, "remarks can be at most 1000 200").optional(),
-    maintenance_history: z.string().max(500, "maintenance history can be at most 500 characters").optional(),
+    remarks: z.string().max(200, "remarks can be at most 1000 200").nullable().optional(),
+    maintenance_history: z.string().max(500, "maintenance history can be at most 500 characters").nullable().optional(),
 
     specs: z.string().max(500, "Specs can be at most 500 characters"),
     attachment_ids: z.array(z.number()).nullable().optional(),
@@ -57,7 +58,18 @@ const equipmentSchema = z.object({
     screen_size: z.string().max(250).nullable().optional(),
     mouse: z.string().max(250).nullable().optional(),
     accessories: z.string().max(250).nullable().optional(),
+    pos_id: z.string().max(250).nullable().optional(),
+    mac: z.string().max(250).nullable().optional(),
+    ip: z.string().max(250).nullable().optional(),
+    // verified: z.boolean().optional(),
+    // verified_on: z.date().nullable().optional(),
+    // verified_by: z.object({
+    //     id: z.number(),
+    //     full_name: z.string(),
+    //     email: z.string().email(),
+    // }).nullable().optional(),
     sub_equipments: z.array(subEquipmentSchema).optional(),
+
     quantity: z.number().min(1, "Quantity must be at least 1").default(1), // Default to 1
     price_paid_by_employee: z.number().nullable().optional(),
 });

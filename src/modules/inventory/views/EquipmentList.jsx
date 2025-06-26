@@ -3,7 +3,7 @@ import {Link, useLocation} from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
-import {toTitleCase} from "@helpers/formatters.js";
+import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses} from "@helpers/badges.js";
 import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 
@@ -44,17 +44,48 @@ const EquipmentList = () => {
                 </div>
             ),
         },
-        { Header: "Code",
+        {
+            Header: "Code",
             accessor: "code",
             filterable: true,
             filterType: "number",
         },
         {
-            Header:"Asset Code",accessor: "asset_code",  filterable: true,
+            Header:"Asset Code",
+            accessor: "asset_code",
+            filterable: true,
             filterType: "text",
         },
-        { Header: "Serial No", accessor: "serial_no", filterable: true,
-            filterType: "text", },
+        // POS ID column
+        {
+            Header: "POS ID",
+            accessor: "pos_id",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => value || "N/A",
+        },
+        {
+            Header: "Serial No",
+            accessor: "serial_no",
+            filterable: true,
+            filterType: "text",
+        },
+        // MAC Address column
+        {
+            Header: "MAC Address",
+            accessor: "mac",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => value || "N/A",
+        },
+        // IP Address column
+        {
+            Header: "IP Address",
+            accessor: "ip",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => value || "N/A",
+        },
         {
             Header: "Description",
             accessor: "description",
@@ -89,12 +120,30 @@ const EquipmentList = () => {
             filterOptions: equipmentStatuses,
             Cell: ({ row }) => (
                 <span className={getBadgeClasses(row.original.status)}>
-                    {toTitleCase(row.original.status)}
-                </span>
+                {toTitleCase(row.original.status)}
+            </span>
             ),
         },
-        { Header: "Purchase Price", accessor: "purchase_price" , filterType: 'text',
-            filterable: true,},
+        // Asset Tag Available column
+        {
+            Header: "Asset Tag",
+            accessor: "asset_tag_available",
+            filterable: true,
+            filterType: 'boolean',
+            Cell: ({ value }) => (
+                <span className={value ? "badge bg-success/20 text-success rounded-sm py-1" : "badge bg-danger/20 text-danger rounded-sm py-1"}>
+                {value ? "Available" : "Not Available"}
+            </span>
+            ),
+        },
+        {
+            Header: "Purchase Price",
+            accessor: "purchase_price",
+            filterable: true,
+            filterType: 'text',
+            Cell: ({ value }) =>
+                value === null ? "Nill" : formatAmountWithCommas(value),
+        },
         {
             Header: "Custodian",
             accessor: "custodian",
@@ -102,23 +151,30 @@ const EquipmentList = () => {
             filterType: "text",
             filterKey: 'custodian__full_name',
         },
-
-        { Header: "Department", accessor: "department",
+        {
+            Header: "Department",
+            accessor: "department",
             filterable: true,
             filterType: "text",
             filterKey: 'department__name'
         },
-
-        { Header: "Asset Site", accessor: "equipment_site",
+        {
+            Header: "Asset Site",
+            accessor: "equipment_site",
             filterable: true,
             filterType: "text",
-            filterKey: 'equipment_site__name'},
-        { Header: "Asset Type", accessor: "equipment_type",
+            filterKey: 'equipment_site__name'
+        },
+        {
+            Header: "Asset Type",
+            accessor: "equipment_type",
             filterable: true,
             filterType: "text",
             filterKey: 'equipment_type__name'
         },
-        { Header: "Location", accessor: "location",
+        {
+            Header: "Location",
+            accessor: "location",
             filterable: true,
             filterType: "text",
             filterKey: 'location__name'
@@ -130,13 +186,28 @@ const EquipmentList = () => {
             filterType: "text",
             Cell: ({ value }) => (value ? value : "N/A"),
         },
+        // Verified By column
+        {
+            Header: "Verified By",
+            accessor: "verified_by",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => value || "Not Verified",
+        },
+        // Verified On column
+        {
+            Header: "Verified On",
+            accessor: "verified_on",
+            filterable: true,
+            filterType: "date",
+            Cell: ({ value }) => value ? new Date(value).toLocaleDateString() : "N/A",
+        },
         {
             Header: "Company",
             accessor: "company.name",
             filterable: false,
             Cell: ({ row }) => <span>{row.original.company?.name || "-"}</span>,
         },
-
     ];
 
     const buttons = (
