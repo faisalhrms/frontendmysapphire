@@ -6,7 +6,8 @@ const TaskHeaderFilter = ({
                               filters,
                               setFilters,
                               projectUsers,
-                              milestoneLaunch
+                              milestoneLaunch,
+                              heightFilter
                           }) => {
     const [tempDateFilter, setTempDateFilter] = useState({});
     const [caseSensitive, setCaseSensitive] = useState(false);
@@ -23,6 +24,10 @@ const TaskHeaderFilter = ({
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    useEffect(()=>{
+        heightFilter(isOpen)
+    },[isOpen]);
 
     const handleFilterChange = (key, value, type = 'value') => {
         setFilters(prev => {

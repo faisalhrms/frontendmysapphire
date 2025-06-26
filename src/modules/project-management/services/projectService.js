@@ -62,6 +62,15 @@ export const getProjectById = async (id) => {
     }
 };
 
+export const getWorkspaces = async () => {
+    try {
+        const response = await api.get(`/select/pms/workspaces/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
 export const editProjectById = async (id) => {
     try {
         const response = await api.get(`/pms/projects/${id}/edit/`);
