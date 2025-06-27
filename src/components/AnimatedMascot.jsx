@@ -7,6 +7,11 @@ import parrot from "@assets/jsons/parrot.json";
 import penguin from "@assets/jsons/penguin.json";
 import pigeon from "@assets/jsons/pigeon.json";
 import owl from "@assets/jsons/owl.json";
+import fox from "@assets/jsons/fox.json";
+import monkey from "@assets/jsons/monkey.json";
+import fish from "@assets/jsons/fish.json";
+import fishes from "@assets/jsons/fishes.json";
+import mouse from "@assets/jsons/mouse.json";
 
 const mascots = [
     {
@@ -15,6 +20,7 @@ const mascots = [
         topOffset: "-137px",
         width: 150,
         speed: 0.2,
+        classes: 'right-0'
     },
     {
         name: "cat",
@@ -22,6 +28,7 @@ const mascots = [
         topOffset: "-257px",
         width: 150,
         speed: 0.5,
+        classes: 'right-0'
     },
     {
         name: "parrot",
@@ -29,6 +36,7 @@ const mascots = [
         topOffset: "-115px",
         width: 200,
         speed: 0.8,
+        classes: 'right-0'
     },
     {
         name: "penguin",
@@ -36,6 +44,7 @@ const mascots = [
         topOffset: "-180px",
         width: 230,
         speed: 0.8,
+        classes: 'right-0'
     },
     {
         name: "pigeon",
@@ -43,6 +52,7 @@ const mascots = [
         topOffset: "-110px",
         width: 130,
         speed: 0.8,
+        classes: 'right-0'
     },
     {
         name: "owl",
@@ -50,6 +60,47 @@ const mascots = [
         topOffset: "-107px",
         width: 145,
         speed: 0.8,
+        classes: 'right-0'
+    },
+    {
+        name: "fox",
+        animation: fox,
+        topOffset: "-126px",
+        width: 150,
+        speed: 0.8,
+        classes: 'right-0'
+    },
+    {
+        name: "monkey",
+        animation: monkey,
+        topOffset: "44px",
+        width: 150,
+        speed: 0.8,
+        classes: 'right-0'
+    },
+    {
+        name: "fish",
+        animation: fish,
+        topOffset: "-100px",
+        width: 170,
+        speed: 0.8,
+        classes: 'right-0'
+    },
+    {
+        name: "fishes",
+        animation: fishes,
+        topOffset: "-157px",
+        width: 170,
+        speed: 0.8,
+        classes: 'right-0'
+    },
+    {
+        name: "mouse",
+        animation: mouse,
+        topOffset: "-165px",
+        width: 170,
+        speed: 0.8,
+        classes: 'left-0'
     },
 ];
 
@@ -67,7 +118,7 @@ const AnimatedMascot = () => {
 
     return (
         <div
-            className="absolute right-0 z-20 pointer-events-none"
+            className={`absolute z-20 pointer-events-none ${mascot.current.classes}`}
             style={{
                 top: mascot.current.topOffset,
                 width: mascot.current.width,
