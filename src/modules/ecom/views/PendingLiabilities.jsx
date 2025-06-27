@@ -5,6 +5,7 @@ import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import IconTabs from "@components/IconTabs.jsx";
 import PendingLiabilitiesFilter from "@modules/ecom/components/PendingLiabilitiesFilter.jsx";
 import ExecutiveSummaryTab from "@modules/ecom/components/ExecutiveSummaryTab.jsx";
+import AgingForPendingLiabilitiesTab from "@modules/ecom/components/AgingForPendingLiabilitiesTab.jsx";
 
 const PendingLiabilities = () => {
     const [activeTab, setActiveTab] = useState("executive_summary");
@@ -41,12 +42,15 @@ const PendingLiabilities = () => {
     return (
         <>
             <PageHeader currentpage="Pending Liabilities Report" activepage="Ecom" mainpage="Pending Liabilities"/>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <PendingLiabilitiesFilter
-                    control={control}
-                    errors={errors}
-                />
-            </form>
+            {
+                activeTab === 'executive_summary' &&
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <PendingLiabilitiesFilter
+                        control={control}
+                        errors={errors}
+                    />
+                </form>
+            }
             <>
 
                 <IconTabs
@@ -59,6 +63,16 @@ const PendingLiabilities = () => {
                                 <ExecutiveSummaryTab
                                     filters={filters}
                                     isActive={'executive_summary' === activeTab}/>
+                            ),
+                        },
+                        {
+                            id: "pending_liabilities",
+                            label: "Aging's for Pending Liabilities",
+                            icon: <i className="bi bi-graph-up"></i>,
+                            content: (
+                                <AgingForPendingLiabilitiesTab
+                                    filters={filters}
+                                    isActive={'pending_liabilities' === activeTab}/>
                             ),
                         },
                     ]}
