@@ -10,7 +10,6 @@ const suggestionsDefault = [
   "Exports of Faisal Spinning Mills",
   "Exports of Faisal Spinning Mills to Europe",
   "Show me the imports of diamond brand",
-  "sapphire textile ke total export kitni hai?"
 ]
 
 const markdownToHtml = md => {
@@ -164,7 +163,7 @@ const startVoice = () => {
                   <div className="chat-list-inner flex items-start">
                     <div className="ms-3">
                       <span className="chatting-user-info flex items-center mb-1">
-                        <span className="chatnameperson">Sapp Sense</span>
+                        <span className="chatnameperson">SappSense</span>
                         <span className="msg-sent-time ms-2 text-xs text-gray-500">
                           {m.time.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
                         </span>
@@ -223,7 +222,7 @@ const startVoice = () => {
                 <div className="chat-list-inner flex items-start">
                   <div className="ms-3">
                     <span className="chatting-user-info flex items-center mb-1">
-                      <span className="chatnameperson">Sapp Sense</span>
+                      <span className="chatnameperson">SappSense</span>
                       <span className="msg-sent-time ms-2 text-xs text-gray-500">
                         {new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
                       </span>
