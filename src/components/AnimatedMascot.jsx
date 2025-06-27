@@ -12,6 +12,8 @@ import monkey from "@assets/jsons/monkey.json";
 import fish from "@assets/jsons/fish.json";
 import fishes from "@assets/jsons/fishes.json";
 import mouse from "@assets/jsons/mouse.json";
+import pandaFlying from "@assets/jsons/pandaFlying.json";
+import aunt from "@assets/jsons/aunt.json";
 
 const mascots = [
     {
@@ -101,6 +103,22 @@ const mascots = [
         width: 170,
         speed: 0.8,
         classes: 'left-0'
+    },
+    {
+        name: "pandaFlying",
+        animation: pandaFlying,
+        topOffset: "-131px",
+        width: 170,
+        speed: 0.8,
+        classes: 'left-0'
+    },
+    {
+        name: "aunt",
+        animation: aunt,
+        topOffset: "44px",
+        width: 250,
+        speed: 0.8,
+        classes: 'right-0'
     },
 ];
 
