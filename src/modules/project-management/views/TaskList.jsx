@@ -135,6 +135,8 @@ const TaskList = () => {
             Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
             filterType: 'datetime',
             filterable: true,
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
         },
         {
             Header: "Deadline",
@@ -142,6 +144,8 @@ const TaskList = () => {
             Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
             filterType: 'datetime',
             filterable: true,
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
         },
         {
             Header: "Status",
@@ -172,9 +176,11 @@ const TaskList = () => {
             Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
             filterType: 'datetime',
             filterable: true,
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
         },
-        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, filterable: false},
-        { Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false},
+        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, filterable: false, excelColumnType:'number'},
+        { Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType:'number'},
         { Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, filterable: false},
         {
             Header: "Launch/Milestone Deadline",
@@ -183,6 +189,8 @@ const TaskList = () => {
             filterType: 'date',
             filterable: true,
             filterKey: 'milestone__ended_at',
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
             Cell: ({value}) => (
                 formatDate(value, "MMM dd, yyyy")
             )
@@ -198,6 +206,7 @@ const TaskList = () => {
             accessor: 'progress',
             disableSortBy: true,
             filterable: false,
+            excelColumnType:'number',
             Cell: ({ row }) => {
                 return (
                     <ProgressBar

@@ -5,6 +5,7 @@ import ExcelJS from 'exceljs';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
 import {useDataTable} from "@hooks/dataTableHooks.js";
+import {formatDate} from "@helpers/dateTime.js";
 
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
@@ -585,6 +586,63 @@ const DataTable = React.memo(({
         const headerRow = worksheet.getRow(1);
         headerRow.height = 30;
 
+        const formatForExcel = (rowObj, col) => {
+            let val;
+
+            // 1. Get value via accessor
+            if (typeof col.accessor === 'string') {
+                val = getNestedValue(rowObj, col.accessor);
+            } else if (typeof col.accessor === 'function') {
+                val = col.accessor(rowObj);
+            }
+
+            if (val == null) return '';
+
+            // 2. Flatten array values
+            if (Array.isArray(val)) {
+                val = val.map(item =>
+                    item && typeof item === 'object'
+                        ? (item.name ?? item.full_name ?? JSON.stringify(item))
+                        : String(item)
+                ).join(', ');
+            }
+
+            // 3. Format based on column type
+            const type = col.excelColumnType;
+            const format = col.excelFormat;
+
+            try {
+                if (type === 'date') {
+                    return !val ? '' : formatDate(val, col?.excelFormat || 'yyyy-MM-dd');
+                }
+
+                if (type === 'datetime') {
+                    return !val ? '' : formatDate(val, col?.excelFormat || 'MMM dd, yyyy - HH:mm');
+                }
+
+                if (type === 'boolean') {
+                    return val ? 'Yes' : 'No';
+                }
+
+                if (type === 'number') {
+                    return Number(val);
+                }
+
+                if (type === 'string') {
+                    return String(val);
+                }
+
+                if (typeof format === 'function') {
+                    return format(val);
+                }
+
+                return String(val);
+            } catch {
+                return String(val);
+            }
+        };
+
+
         headerRow.eachCell((cell) => {
             cell.fill = {
                 type: 'pattern',
@@ -614,32 +672,14 @@ const DataTable = React.memo(({
 
         memoizedData.forEach((rowObj, index) => {
             const row = worksheet.addRow(
-                visibleCols.map(col => {
-                    let val;
-                    if (typeof col.accessor === 'string') {
-                        val = getNestedValue(rowObj, col.accessor);
-                    } else if (typeof col.accessor === 'function') {
-                        val = col.accessor(rowObj);
-                    }
-                    if (val == null) val = '';
-
-                    if (Array.isArray(val)) {
-                        val = val.map(item =>
-                            item && typeof item === 'object'
-                                ? (item.name ?? item.full_name ?? JSON.stringify(item))
-                                : String(item)
-                        ).join(', ');
-                    }
-
-                    return val;
-                })
+                visibleCols.map(col => formatForExcel(rowObj, col))
             );
 
             row.height = 25;
             const isEvenRow = index % 2 === 0;
 
             row.eachCell((cell, colIndex) => {
-                const col = visibleCols[colIndex - 1]; // 1-based index
+                const col = visibleCols[colIndex - 1];
                 const rawValue = row.values[colIndex] ?? '';
 
                 const styleMap = col.excelStyleMap || {};
