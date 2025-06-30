@@ -156,6 +156,8 @@ Background Image
   --github:	51 51 51;
   --google:	207 78 67;
   --youtube:	255 0 0;
+  --whatsapp: 37 211 102;
+  --telegram: 0 136 204;
 }
 
 /* dark mode */
@@ -9543,6 +9545,50 @@ input.gridjs-input {
 .ti-btn-youtube:hover, .ti-btn-youtube:focus, .ti-btn-youtube:active {
   @apply bg-youtube text-white border border-solid border-youtube !important;
 }
+
+
+.ti-btn-whatsapp {
+  @apply text-white border border-solid;
+  background-color: rgb(var(--whatsapp));
+  border-color: rgb(var(--whatsapp));
+}
+
+.ti-btn-whatsapp:hover,
+.ti-btn-whatsapp:focus,
+.ti-btn-whatsapp:active {
+  background-color: rgb(var(--whatsapp)) !important;
+  border-color: rgb(var(--whatsapp)) !important;
+  color: white !important;
+}
+
+.ti-btn-telegram {
+  @apply text-white border border-solid;
+  background-color: rgb(var(--telegram));
+  border-color: rgb(var(--telegram));
+}
+
+.ti-btn-telegram:hover,
+.ti-btn-telegram:focus,
+.ti-btn-telegram:active {
+  background-color: rgb(var(--telegram)) !important;
+  border-color: rgb(var(--telegram)) !important;
+  color: white !important;
+}
+
+.ti-btn-website {
+  @apply text-white border border-solid;
+  background-color: rgb(var(--gray));
+  border-color: rgb(var(--gray));
+}
+
+.ti-btn-website:hover,
+.ti-btn-website:focus,
+.ti-btn-website:active {
+  background-color: rgb(var(--gray)) !important;
+  border-color: rgb(var(--gray)) !important;
+  color: white !important;
+}
+
 
 .ti-btn-instagram {
   @apply bg-[#f09433] text-white border border-solid border-transparent;

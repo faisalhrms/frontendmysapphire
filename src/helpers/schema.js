@@ -1,21 +1,20 @@
 import {z} from "zod";
 
-// Function to create a dynamic date validation schema
 export const dateSchema = (fieldName, isOptional = false) => {
-    let schema = z
+    const base = z
         .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, `${fieldName} date must be in YYYY-MM-DD format`);
+        .regex(/^\d{4}-\d{2}-\d{2}$/, `${fieldName} must be in YYYY-MM-DD format`);
 
-    // If the field is not optional, ensure it's present with a custom required message
-    if (!isOptional) {
-        schema = schema.or(z.null()).refine(val => val !== null, {
-            message: `${fieldName} date is required`,
-        });
+    if (isOptional) {
+        return z.union([base, z.string().length(0), z.null(), z.undefined()])
+            .transform(val => val === '' ? null : val);
     }
 
-    // Make it optional if specified
-    return isOptional ? schema.optional().or(z.null()) : schema;
+    return base.refine(val => !!val, {
+        message: `${fieldName} is required`,
+    });
 };
+
 
 export const dateTimeSchema = (fieldName, isOptional = false) => {
     let schema = z

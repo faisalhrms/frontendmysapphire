@@ -31,6 +31,17 @@ const validatePhoneNumber = (value, field) => {
     }
     return true;
 };
+const loadFontFamily = (fontFamily) => {
+    const fontName = fontFamily.split(',')[0].trim().replace(/['"]/g, '');
+    const googleFontName = fontName.replace(/\s+/g, '+');
+
+    if (!document.querySelector(`link[href*="${googleFontName}"]`)) {
+        const link = document.createElement('link');
+        link.href = `https://fonts.googleapis.com/css2?family=${googleFontName}&display=swap`;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+    }
+};
 const createFormSchema = (fields) => {
     const schemaObject = {};
     fields.forEach((step) => {
@@ -140,6 +151,7 @@ export default function PublicDynamicForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const pendingFormData = useRef(null);
     const [primaryColor, setPrimaryColor] = useState('#');
+    const [fontFamily, setFontFamily] = useState(null);
     const [hexPrimaryColor, setHexPrimaryColor] = useState(null);
     const { location } = useGeoLocation();
     const isAuthenticated = useIsAuthenticated();
@@ -168,12 +180,19 @@ export default function PublicDynamicForm() {
                 }
 
                 setFormConfig(formData);
-                console.log(formData.primary_color)
                 setPrimaryColor(formData?.primary_color)
                 setHexPrimaryColor(hexToRgb(formData?.primary_color))
+                setFontFamily(formData?.font_family)
             })
             .catch((error) => setError(error.message));
     }, [slug, isAuthenticated, navigate]);
+
+    useEffect(() => {
+        if (formConfig?.font_family) {
+            loadFontFamily(formConfig.font_family);
+        }
+    }, [formConfig?.font_family]);
+
 
     const getDefaultValues = (config) => {
         if (!formConfig) return {};
@@ -223,7 +242,6 @@ export default function PublicDynamicForm() {
         },
         mode: "onChange",
     });
-    console.log(isSubmitting)
     useEffect(() => {
         if (formConfig) {
             reset(getDefaultValues(formConfig));
@@ -245,6 +263,7 @@ export default function PublicDynamicForm() {
                         description={error}
                         type="danger"
                         color="#e6533c"
+                        fontFamily={fontFamily}
                     />
                 </div>
             </div>
@@ -350,11 +369,6 @@ export default function PublicDynamicForm() {
             onSubmit(pendingFormData.current);
             pendingFormData.current = null;
         }
-    };
-
-    const handleCaptchaClose = () => {
-        setIsCaptchaTriggered(false);
-        // Form data remains stored in pendingFormData
     };
 
     const handleBack = () => {
@@ -616,9 +630,11 @@ export default function PublicDynamicForm() {
                 <div className="max-w-2xl mx-auto">
                     <PublicDynamicFormHeader
                         title={formConfig.title}
-                        description="Thank you for your submission! We have received your form successfully."
+                        description={`${formConfig.success_message || 'Thank you for your submission! We have received your form successfully.'}`}
                         type="success"
                         color="#26bf94"
+                        socialLinks={formConfig.social_links}
+                        fontFamily={fontFamily}
                     />
                 </div>
             </div>
@@ -626,14 +642,16 @@ export default function PublicDynamicForm() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
-            <div className="max-w-2xl mx-auto">
+        <div className="min-h-screen bg-[#f0f2ff] py-8 px-4"
+             style={{ fontFamily }}>
+        <div className="max-w-2xl mx-auto">
                 <PublicDynamicFormHeader
                     title={formConfig.title}
                     description={formConfig.description}
                     currentStep={currentStep}
                     steps={steps}
                     color={primaryColor}
+                    fontFamily={fontFamily}
                 />
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
