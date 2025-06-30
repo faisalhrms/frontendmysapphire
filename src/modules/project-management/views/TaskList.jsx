@@ -31,7 +31,8 @@ const TaskList = () => {
             },
             filterType: 'text',
             filterable: true,
-            filterKey: 'milestone__project__workspace__name'
+            filterKey: 'milestone__project__workspace__name',
+            excelAlignment: 'left',
         },
         {
             Header: "Project",
@@ -40,6 +41,7 @@ const TaskList = () => {
             filterType: 'text',
             filterable: true,
             filterKey: 'milestone__project__name',
+            excelAlignment: 'left',
             Cell: ({row}) => {
                 const project = row.original.project;
                 return (
@@ -64,6 +66,7 @@ const TaskList = () => {
             filterType: 'text',
             filterable: true,
             filterKey: 'milestone__name',
+            excelAlignment: 'left',
             Cell: ({value}) => (
                 <p className=''>{value.length>20?value.slice(0,20)+"...":value}</p>
             )
@@ -73,6 +76,7 @@ const TaskList = () => {
             accessor: "name",
             filterType: 'text',
             filterable: true,
+            excelAlignment: 'left',
             Cell: ({row}) => {
                 const task = row.original;
                 return (
@@ -126,11 +130,22 @@ const TaskList = () => {
             },
         },
         {
+            Header: "Assigned Date",
+            accessor: "started_at",
+            Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
+            filterType: 'datetime',
+            filterable: true,
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
+        },
+        {
             Header: "Deadline",
             accessor: "ended_at",
             Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
             filterType: 'datetime',
             filterable: true,
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
         },
         {
             Header: "Status",
@@ -138,6 +153,17 @@ const TaskList = () => {
             filterType: 'select',
             filterable: true,
             filterOptions: taskStatuses,
+            excelStyleMap: {
+                open:           { label: 'OPEN',            bgColor: '#1976D2', textColor: '#FFFFFF' }, // blue
+                not_started:    { label: 'NOT STARTED',     bgColor: '#F57C00', textColor: '#FFFFFF' }, // orange
+                in_progress:    { label: 'IN PROGRESS',     bgColor: '#9E9E9E', textColor: '#FFFFFF' }, // gray
+                half_completed: { label: 'HALF COMPLETED',  bgColor: '#388E3C', textColor: '#FFFFFF' }, // dark green
+                near_completion:{ label: 'NEAR COMPLETION', bgColor: '#0097A7', textColor: '#FFFFFF' }, // cyan-ish
+                completed:      { label: 'COMPLETED',       bgColor: '#2E7D32', textColor: '#FFFFFF' }, // green
+                reopened:       { label: 'REOPENED',        bgColor: '#7B1FA2', textColor: '#FFFFFF' }, // purple
+                on_hold:        { label: 'ON HOLD',         bgColor: '#C2185B', textColor: '#FFFFFF' }, // pink
+                cancelled:      { label: 'CANCELLED',       bgColor: '#D32F2F', textColor: '#FFFFFF' }, // red
+            },
             Cell: ({ row }) => (
                 <span className={getStatusClasses(row.original.status)}>
                 {toTitleCase(row.original.status)}
@@ -150,8 +176,11 @@ const TaskList = () => {
             Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
             filterType: 'datetime',
             filterable: true,
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
         },
-        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, filterable: false},
+        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, filterable: false, excelColumnType:'number'},
+        { Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType:'number'},
         { Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, filterable: false},
         {
             Header: "Launch/Milestone Deadline",
@@ -160,6 +189,8 @@ const TaskList = () => {
             filterType: 'date',
             filterable: true,
             filterKey: 'milestone__ended_at',
+            excelColumnType: 'date',
+            excelFormat: "MMM dd, yyyy",
             Cell: ({value}) => (
                 formatDate(value, "MMM dd, yyyy")
             )
@@ -175,6 +206,7 @@ const TaskList = () => {
             accessor: 'progress',
             disableSortBy: true,
             filterable: false,
+            excelColumnType:'number',
             Cell: ({ row }) => {
                 return (
                     <ProgressBar
