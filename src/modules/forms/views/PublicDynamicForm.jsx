@@ -10,15 +10,39 @@ import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicForm
 import { useIsAuthenticated } from "@modules/auth/hooks/authHooks.js";
 import MathCaptcha from "@components/mathcaptcha/MathCaptcha.jsx";
 import {getDynamicButtonStyle, hexToRgb} from "@helpers/styles.js";
-
+import PhoneInputForDynamicForm, { COUNTRIES } from "@modules/forms/components/PhoneInputForDynamicForm.jsx";
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
-
+const validatePhoneNumber = (value, field) => {
+    if (!value) {
+        return field.required ? "Phone number is required" : true;
+    }
+    const parts = value.split(' ');
+    if (parts.length < 2) {
+        return "Invalid phone number format";
+    }
+    const dialCode = parts[0];
+    const number = parts.slice(1).join('').replace(/\D/g, '');
+    const country = COUNTRIES.find(c => c.dialCode === dialCode);
+    if (!country) {
+        return "Invalid country code";
+    }
+    if (!country.pattern.test(number) || number.length > country.maxLength) {
+        return `Invalid phone number for ${country.name}`;
+    }
+    return true;
+};
 const createFormSchema = (fields) => {
     const schemaObject = {};
     fields.forEach((step) => {
         step.fields.forEach((field) => {
             let fieldSchema;
             switch (field.field_type) {
+                case "tel":
+                    fieldSchema = z.string().refine(
+                        (value) => validatePhoneNumber(value, field) === true,
+                        (value) => ({ message: validatePhoneNumber(value, field) })
+                    );
+                    break;
                 case "checkbox":
                     fieldSchema = z.array(z.string());
                     if (field.required) {
@@ -253,7 +277,8 @@ export default function PublicDynamicForm() {
                 if (field.field_type === "file" && value instanceof File) {
                     payload.append(`data[${fieldName}]`, value);
                 } else if (value !== null && value !== undefined) {
-                    payload.append(`data[${fieldName}]`, JSON.stringify(value));
+                    const cleanedValue = field.field_type === "tel" ? value.replace(/\s+/g, '') : value;
+                    payload.append(`data[${fieldName}]`, JSON.stringify(cleanedValue));
                 }
             });
 
@@ -397,11 +422,18 @@ export default function PublicDynamicForm() {
                     render={({ field: controllerField }) => {
                         const safeValue = controllerField.value ?? "";
                         switch (field.field_type) {
+                            case "tel":
+                                return (
+                                    <PhoneInputForDynamicForm
+                                        value={safeValue}
+                                        onChange={controllerField.onChange}
+                                        hasError={!!errors[fieldName]}
+                                    />
+                                );
                             case "text":
                             case "email":
                             case "password":
                             case "url":
-                            case "tel":
                             case "number":
                             case "date":
                             case "datetime-local":
@@ -668,11 +700,15 @@ export default function PublicDynamicForm() {
             </div>
             {formConfig?.require_captcha && isCaptchaTriggered && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl p-6 max-w-sm w-full relative">
-
+                    <div className="bg-white rounded-xl p-6 max-w-sm w-full relative"
+                         style={{
+                             "--primary": primaryColor,
+                         }}
+                    >
                         <MathCaptcha
                             onSuccess={handleCaptchaSuccess}
                             className="w-full"
+                            btnClasses="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)]"
                         />
                     </div>
                 </div>
