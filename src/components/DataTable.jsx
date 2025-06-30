@@ -1,8 +1,11 @@
-import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { useTable, usePagination, useSortBy } from 'react-table';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {usePagination, useSortBy, useTable} from 'react-table';
+import ExcelJS from 'exceljs';
+
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
-import { useDataTable } from "@hooks/dataTableHooks.js";
+import {useDataTable} from "@hooks/dataTableHooks.js";
+import {formatDate} from "@helpers/dateTime.js";
 
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
@@ -562,7 +565,8 @@ const DataTable = React.memo(({
     /**
      * Download CSV with current filters applied
      */
-    const handleDownloadCSV = () => {
+
+    const handleDownloadExcel = async () => {
         const visibleCols = memoizedColumns.filter(
             (col) => !hiddenCols.includes(col.id || col.accessor)
         );
@@ -571,15 +575,165 @@ const DataTable = React.memo(({
             return;
         }
 
-        // 1) Header
-        const headerRow = visibleCols.map((col) =>
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sheet1');
+
+        const headers = visibleCols.map(col =>
             typeof col.Header === 'string' ? col.Header : col.id || ''
         );
-        const csvRows = [headerRow.join(',')];
+        worksheet.addRow(headers);
 
-        // 2) Data rows
-        memoizedData.forEach((rowObj) => {
-            const rowArray = visibleCols.map((col) => {
+        const headerRow = worksheet.getRow(1);
+        headerRow.height = 30;
+
+        const formatForExcel = (rowObj, col) => {
+            let val;
+
+            // 1. Get value via accessor
+            if (typeof col.accessor === 'string') {
+                val = getNestedValue(rowObj, col.accessor);
+            } else if (typeof col.accessor === 'function') {
+                val = col.accessor(rowObj);
+            }
+
+            if (val == null) return '';
+
+            // 2. Flatten array values
+            if (Array.isArray(val)) {
+                val = val.map(item =>
+                    item && typeof item === 'object'
+                        ? (item.name ?? item.full_name ?? JSON.stringify(item))
+                        : String(item)
+                ).join(', ');
+            }
+
+            // 3. Format based on column type
+            const type = col.excelColumnType;
+            const format = col.excelFormat;
+
+            try {
+                if (type === 'date') {
+                    return !val ? '' : formatDate(val, col?.excelFormat || 'yyyy-MM-dd');
+                }
+
+                if (type === 'datetime') {
+                    return !val ? '' : formatDate(val, col?.excelFormat || 'MMM dd, yyyy - HH:mm');
+                }
+
+                if (type === 'boolean') {
+                    return val ? 'Yes' : 'No';
+                }
+
+                if (type === 'number') {
+                    return Number(val);
+                }
+
+                if (type === 'string') {
+                    return String(val);
+                }
+
+                if (typeof format === 'function') {
+                    return format(val);
+                }
+
+                return String(val);
+            } catch {
+                return String(val);
+            }
+        };
+
+
+        headerRow.eachCell((cell) => {
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF1F4E79' }
+            };
+            cell.font = {
+                name: 'Calibri',
+                size: 12,
+                bold: true,
+                color: { argb: 'FFFFFFFF' }
+            };
+            cell.alignment = {
+                horizontal: 'center',
+                vertical: 'middle',
+                wrapText: false
+            };
+            cell.border = {
+                top: { style: 'medium', color: { argb: 'FF1F4E79' } },
+                bottom: { style: 'medium', color: { argb: 'FF1F4E79' } },
+                left: { style: 'thin', color: { argb: 'FF4472C4' } },
+                right: { style: 'thin', color: { argb: 'FF4472C4' } }
+            };
+        });
+
+        worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+        memoizedData.forEach((rowObj, index) => {
+            const row = worksheet.addRow(
+                visibleCols.map(col => formatForExcel(rowObj, col))
+            );
+
+            row.height = 25;
+            const isEvenRow = index % 2 === 0;
+
+            row.eachCell((cell, colIndex) => {
+                const col = visibleCols[colIndex - 1];
+                const rawValue = row.values[colIndex] ?? '';
+
+                const styleMap = col.excelStyleMap || {};
+                const style = styleMap[rawValue];
+
+                if (style) {
+                    cell.value = style.label || rawValue;
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: (style.bgColor || '#FFFFFF').replace('#', 'FF') }
+                    };
+                    cell.font = {
+                        name: 'Calibri',
+                        size: 10,
+                        bold: true,
+                        color: { argb: (style.textColor || '#000000').replace('#', 'FF') }
+                    };
+                    cell.alignment = {
+                        horizontal: 'center',
+                        vertical: 'middle',
+                        wrapText: false
+                    };
+                } else {
+                    cell.font = {
+                        name: 'Calibri',
+                        size: 10,
+                        color: { argb: 'FF333333' }
+                    };
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: isEvenRow ? 'FFFFFFFF' : 'FFF2F2F2' }
+                    };
+                    cell.alignment = {
+                        horizontal: col?.excelAlignment || 'center',
+                        vertical: 'middle',
+                        wrapText: false
+                    };
+                }
+
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FFD0D0D0' } },
+                    bottom: { style: 'thin', color: { argb: 'FFD0D0D0' } },
+                    left: { style: 'thin', color: { argb: 'FFD0D0D0' } },
+                    right: { style: 'thin', color: { argb: 'FFD0D0D0' } }
+                };
+            });
+        });
+
+        visibleCols.forEach((col, colIndex) => {
+            let maxLength = headers[colIndex]?.length || 0;
+
+            memoizedData.forEach((rowObj) => {
                 let val;
                 if (typeof col.accessor === 'string') {
                     val = getNestedValue(rowObj, col.accessor);
@@ -588,47 +742,82 @@ const DataTable = React.memo(({
                 }
                 if (val == null) val = '';
 
-                // If val is an array, try to handle array-of-objects or array-of-strings
                 if (Array.isArray(val)) {
-                    // For array of objects with "name"
-                    if (val.every((item) => item && typeof item === 'object' && (item.name ?? item.full_name))) {
-                        val = val.map((item) => item.name ?? item.full_name).join(', ');
-                    } else {
-                        // generic fallback for arrays
-                        val = val.map((item) =>
-                            typeof item === 'object'
-                                ? JSON.stringify(item)
-                                : String(item)
-                        ).join(', ');
-                    }
+                    val = val.map(item =>
+                        item && typeof item === 'object'
+                            ? (item.name ?? item.full_name ?? JSON.stringify(item))
+                            : String(item)
+                    ).join(', ');
                 }
 
-                // Convert to string, escaping quotes
-                val = String(val).replace(/"/g, '""');
-                // Wrap in quotes for CSV
-                return `"${val}"`;
+                const lines = String(val).split('\n');
+                const longestLine = Math.max(...lines.map(line => line.length));
+                maxLength = Math.max(maxLength, longestLine);
             });
-            csvRows.push(rowArray.join(','));
+
+            const minWidth = 10;
+            const maxWidth = 50;
+            worksheet.getColumn(colIndex + 1).width = Math.min(maxWidth, Math.max(minWidth, maxLength + 3));
         });
 
-        // 3) Blob + Download
-        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        workbook.creator = 'Professional Report System';
+        workbook.lastModifiedBy = 'Professional Report System';
+        workbook.created = new Date();
+        workbook.modified = new Date();
+        workbook.company = 'Report Generator';
+        workbook.description = 'Professional data export with enhanced formatting';
 
-        // Get current date and time for the filename
-        const currentDate = new Date();
-        const options = { month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(currentDate);
-        const fileName = `${title || 'Data'} Report ${formattedDate}.csv`;
+        worksheet.pageSetup = {
+            paperSize: 9,
+            orientation: 'landscape',
+            fitToPage: true,
+            fitToWidth: 1,
+            fitToHeight: 0,
+            margins: {
+                left: 0.5,
+                right: 0.5,
+                top: 0.75,
+                bottom: 0.75,
+                header: 0.3,
+                footer: 0.3
+            },
+            printTitlesRow: '1:1'
+        };
 
-        const url = URL.createObjectURL(blob);
+        worksheet.headerFooter.oddHeader = `&C&"Calibri,Bold"&16${title || 'Professional Data Report'}`;
+        worksheet.headerFooter.oddFooter = '&L&"Calibri"&10Generated: &D &T&C&"Calibri,Bold"&12Confidential&R&"Calibri"&10Page &P of &N';
+
+        const lastRow = memoizedData.length + 1;
+        const lastCol = visibleCols.length;
+        worksheet.pageSetup.printArea = `A1:${String.fromCharCode(64 + lastCol)}${lastRow}`;
+
+        worksheet.properties.showGridLines = true;
+        worksheet.properties.showRowColHeaders = true;
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10);
+        const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '');
+        const fileName = `${title || 'Professional_Report'}_${dateStr}_${timeStr}.xlsx`;
+
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;
+        link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+
+        setTimeout(() => {
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }, 100);
     };
+
 
     // Pagination
     const totalPages = Math.ceil(total / size);
@@ -794,7 +983,7 @@ const DataTable = React.memo(({
                         <button
                             type="button"
                             className="px-2 py-1 border rounded text-sm"
-                            onClick={handleDownloadCSV}
+                            onClick={handleDownloadExcel}
                         >
                             <i className="ri-download-2-line"></i>
                         </button>
