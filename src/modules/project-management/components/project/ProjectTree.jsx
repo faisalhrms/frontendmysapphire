@@ -14,6 +14,7 @@ import {Link} from "react-router-dom";
 import TaskOverdueModal from "@modules/project-management/components/model/TaskOverdueModal.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {resetVisibleColumns, setVisibleColumns} from "@modules/project-management/redux/pmsSlice.js";
+import AnimatedMascot from "@components/AnimatedMascot.jsx";
 
 const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, projectUsers, milestones = [], isLoading, refetch, handleUploadModal }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -87,7 +88,8 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
   };
   return (
       <>
-        <div className={`box ${isFullscreen ? 'box-fullscreen' : ''}`} style={{maxHeight:isFullscreen?'100vh':'70vh', overflowY:'auto'}}>
+        <div className={`box relative ${isFullscreen ? 'box-fullscreen' : ''}`} style={{maxHeight:isFullscreen?'100vh':'70vh', overflowY:isLoading ? '' : 'auto'}}>
+          {isLoading && <AnimatedMascot />}
           <div className="box-header bg-white dark:bg-bodybg" style={{ position: 'sticky', top: '0', left: '0', width: '100%', zIndex: 10 }}>
             <div className="box-title">Milestone Detail</div>
             <div className="flex items-center space-x-2">

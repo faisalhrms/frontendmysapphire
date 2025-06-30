@@ -10,7 +10,6 @@ const suggestionsDefault = [
   "Exports of Faisal Spinning Mills",
   "Exports of Faisal Spinning Mills to Europe",
   "Show me the imports of diamond brand",
-  "sapphire textile ke total export kitni hai?"
 ]
 
 const markdownToHtml = md => {
@@ -94,31 +93,30 @@ const ChatBot = () => {
 
 const startVoice = () => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition
-  if (!recognitionRef.current && SR) {
+  if (!SR) return
+  if (!recognitionRef.current) {
     const rec = new SR()
     rec.lang = "en-US"
-    rec.continuous = false
+    rec.continuous = true
     rec.interimResults = true
     rec.onresult = e => {
-      let transcript = ""
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        transcript += e.results[i][0].transcript
-      }
+      const transcript = Array.from(e.results).map(r => r[0].transcript).join("")
       setInput(transcript)
       if (e.results[e.results.length - 1].isFinal) {
-        sendQuery(transcript)
-        setInput("")
+        sendQuery(transcript.trim())
+        recognitionRef.current.stop()
       }
     }
     rec.onerror = () => setListening(false)
     rec.onend = () => setListening(false)
     recognitionRef.current = rec
   }
-  if (recognitionRef.current && !listening) {
+  if (!listening) {
     recognitionRef.current.start()
     setListening(true)
   }
 }
+
 
 
   useEffect(() => {
@@ -139,7 +137,7 @@ const startVoice = () => {
                   to="#"
                   className="chatnameperson responsive-userinfo-open !text-defaulttextcolor dark:text-defaulttextcolor/70"
                 >
-                  Sapphira AI Assistant
+                  Sapphire Sense AI Assistant
                 </Link>
               </p>
               <p className="text-[#8c9097] dark:text-white/50 mb-0 chatpersonstatus !text-defaultsize">
@@ -165,7 +163,7 @@ const startVoice = () => {
                   <div className="chat-list-inner flex items-start">
                     <div className="ms-3">
                       <span className="chatting-user-info flex items-center mb-1">
-                        <span className="chatnameperson">Sapphira</span>
+                        <span className="chatnameperson">SappSense</span>
                         <span className="msg-sent-time ms-2 text-xs text-gray-500">
                           {m.time.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
                         </span>
@@ -224,13 +222,13 @@ const startVoice = () => {
                 <div className="chat-list-inner flex items-start">
                   <div className="ms-3">
                     <span className="chatting-user-info flex items-center mb-1">
-                      <span className="chatnameperson">Sapphira</span>
+                      <span className="chatnameperson">SappSense</span>
                       <span className="msg-sent-time ms-2 text-xs text-gray-500">
                         {new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}
                       </span>
                     </span>
                     <div className="main-chat-msg">
-                      <span className="text-gray-500 animate-pulse">Thinking...</span>
+                      <span className="text-gray-500 animate-pulse">Analyzing...</span>
                     </div>
                   </div>
                 </div>

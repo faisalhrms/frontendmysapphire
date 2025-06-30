@@ -63,6 +63,11 @@ export const MODULE_ROUTES = [
         permission: ECOM_ROUTES.OS.permission,
     },
     {
+        path: ECOM_ROUTES.WR.path,
+        component: EcomWeeklyReport,
+        permission: ECOM_ROUTES.WR.permission,
+    },
+    {
         path: ECOM_ROUTES.PL.path,
         component: PendingLiabilities,
         permission: ECOM_ROUTES.PL.permission,

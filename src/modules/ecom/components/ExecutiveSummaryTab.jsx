@@ -12,15 +12,6 @@ const ExecutiveSummaryTab = ({ isActive, filters }) => {
             <div className="grid grid-cols-12 gap-x-4">
                 <div className="xl:col-span-6 col-span-12">
                     <ExecutiveSummaryTable
-                        type='ofs'
-                        title='Orders Fulfillment Summary'
-                        filters={filters}
-                        rows={12}
-                    />
-                </div>
-
-                <div className="xl:col-span-6 col-span-12">
-                    <ExecutiveSummaryTable
                         type='rco'
                         title='Reconciliation CC vs OMS'
                         filters={filters}
@@ -30,6 +21,14 @@ const ExecutiveSummaryTab = ({ isActive, filters }) => {
                         title="Breakup of Orders into FO's"
                         filters={filters}
                         type='fo'
+                    />
+                </div>
+                <div className="xl:col-span-6 col-span-12">
+                    <ExecutiveSummaryTable
+                        type='ofs'
+                        title='Orders Fulfillment Summary'
+                        filters={filters}
+                        rows={12}
                     />
                 </div>
             </div>
