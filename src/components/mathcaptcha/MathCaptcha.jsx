@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const MathCaptcha = ({ onSuccess, className = '' }) => {
+const MathCaptcha = ({ onSuccess, className = '',btnClasses }) => {
     const [num1, setNum1] = useState(0);
     const [num2, setNum2] = useState(0);
     const [userAnswer, setUserAnswer] = useState('');
@@ -83,7 +83,7 @@ const MathCaptcha = ({ onSuccess, className = '' }) => {
                     <button
                         onClick={handleSubmit}
                         disabled={!userAnswer || isValid === true}
-                        className="ti-btn ti-btn-primary !mb-0"
+                        className={btnClasses}
                     >
                         {isValid === true ? 'Verified!' : 'Verify Answer'}
                     </button>

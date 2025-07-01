@@ -262,81 +262,83 @@ const CustomerAssistMainList = ({ data }) => {
                         <div
                             id="case-additional-detail-collapse-heading"
                             className="hs-collapse w-full overflow-hidden transition-[height] duration-300"
-                                        aria-labelledby="case-additional-detail-collapse"
-                                    >
-                                        <div className="box-body !p-0">
-                                            <div className="table-responsive">
-                                                <table className="table whitespace-nowrap min-w-full">
-                                                    <tbody>
-                                                    <tr className="border-b border-defaultborder">
-                                                        <td className="py-3 px-4">
-                                                            <span className="font-semibold">Case ID:</span>
-                                                        </td>
-                                                        <td className="py-3 px-4">{data.case_id}</td>
-                                                    </tr>
-                                                    <tr className="border-b border-defaultborder">
-                                                        <td className="py-3 px-4">
-                                                            <span className="font-semibold">Status:</span>
-                                                        </td>
-                                                        <td className="py-3 px-4">
-                                                            {/* Full badge */}
-                                                            <span className={statusBadgeClass}>{statusText}</span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="border-b border-defaultborder">
-                                                        <td className="py-3 px-4">
-                                                            <span className="font-semibold">Type:</span>
-                                                        </td>
-                                                        <td className="py-3 px-4">{toTitleCase(data.type)}</td>
-                                                    </tr>
-                                                    <tr className="border-b border-defaultborder">
-                                                        <td className="py-3 px-4">
-                                                            <span className="font-semibold">Priority:</span>
-                                                        </td>
-                                                        <td className="py-3 px-4">
-                                                            {/* Badge */}
-                                                            <span className={priorityBadgeClass}>{priorityText}</span>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="border-b border-defaultborder">
-                                                        <td className="py-3 px-4">
-                                                            <span className="font-semibold">Origin:</span>
-                                                        </td>
-                                                        <td className="py-3 px-4">{toTitleCase(data.origin)}</td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+                            aria-labelledby="case-additional-detail-collapse"
+                        >
+                            <div className="box-body !p-0">
+                                <div className="table-responsive">
+                                    <table className="table whitespace-nowrap min-w-full">
+                                        <tbody>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Case ID:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{data.case_id}</td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Status:</span>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                {/* Full badge */}
+                                                <span className={statusBadgeClass}>{statusText}</span>
+                                            </td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Type:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{toTitleCase(data.type)}</td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Priority:</span>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                {/* Badge */}
+                                                <span className={priorityBadgeClass}>{priorityText}</span>
+                                            </td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Origin:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{toTitleCase(data.origin)}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-
-                                {/* CC Resolution */}
-                                <div className="box shadow-md rounded-lg">
-                                    <div className="box-header p-4 rounded-t-lg">
-                                        <div className="box-title text-lg font-semibold">CC Resolution</div>
-                                    </div>
-                                    <div className="box-body p-6">
-                                        {data.cc_resolution ? (
-                                            <div className="bg-blue-50 rounded-lg p-4">
-                                                <div
-                                                    className="text-gray-700 whitespace-pre-line">{data.cc_resolution}</div>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center py-8 text-gray-500">
-                                                <i className="ri-information-line text-2xl mb-2"></i>
-                                                <p>No resolution provided</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Execution Details (Form) */}
-
                             </div>
                         </div>
-                    </>
-                    );
-                    };
+                    </div>
 
-                    export default CustomerAssistMainList;
+                    <div className="box shadow-md  rounded-lg mb-6">
+                        <div className="box-header p-4 rounded-t-lg">
+                            <div className="box-title text-lg font-semibold">CC Resolution</div>
+                        </div>
+                        <div className="box-body p-6">
+                            {data.cc_resolution ? (
+                                <div className="bg-blue-50 rounded-lg p-4">
+                                    <div
+                                        className="text-gray-800 font-semibold text-base md:text-md leading-relaxed italic">
+                                        ❝ {data.cc_resolution} ❞
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-gray-500">
+                                    <i className="ri-information-line text-2xl mb-2"></i>
+                                    <p>No resolution provided</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+
+                    {/* Execution Details (Form) */}
+
+                </div>
+            </div>
+        </>
+    );
+};
+
+export default CustomerAssistMainList;

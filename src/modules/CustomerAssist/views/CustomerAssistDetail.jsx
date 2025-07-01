@@ -83,7 +83,8 @@ const CustomerAssistDetail = () => {
                         </div>
                         <div className="box-body p-6">
                             <div className="flex items-center mb-6">
-                                <div className="bg-gray-100 border-2 border-dashed border-emerald-300 rounded-full w-16 h-16 flex items-center justify-center mr-4">
+                                <div
+                                    className="bg-gray-100 border-2 border-dashed border-emerald-300 rounded-full w-16 h-16 flex items-center justify-center mr-4">
                                     <i className="ri-user-3-line text-2xl text-gray-500"></i>
                                 </div>
                                 <div>
@@ -97,7 +98,9 @@ const CustomerAssistDetail = () => {
                                     <div className="flex items-center">
                                         <i className="ri-phone-line text-sky-500 text-lg mr-2"></i>
                                         <div>
-                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:</div>
+                                            <div
+                                                className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:
+                                            </div>
                                             <div className="text-base inline-block">{phone}</div>
                                         </div>
                                     </div>
@@ -107,7 +110,8 @@ const CustomerAssistDetail = () => {
                                     <div className="flex items-center">
                                         <i className="ri-file-list-3-line text-rose-500 text-lg mr-2"></i>
                                         <div>
-                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Case:</div>
+                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Case:
+                                            </div>
                                             <div className="text-base inline-block">{case_number}</div>
                                         </div>
                                     </div>
@@ -117,8 +121,11 @@ const CustomerAssistDetail = () => {
                                     <div className="flex items-center">
                                         <i className="ri-calendar-line text-amber-500 text-lg mr-2"></i>
                                         <div>
-                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Created:</div>
-                                            <div className="text-base inline-block"> {format(new Date(created_at), "MMM d, yyyy, h:mm a")}</div>
+                                            <div
+                                                className="text-sm font-medium text-gray-500 inline-block mr-1">Created:
+                                            </div>
+                                            <div
+                                                className="text-base inline-block"> {format(new Date(created_at), "MMM d, yyyy, h:mm a")}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -167,7 +174,7 @@ const CustomerAssistDetail = () => {
                                 </div>
                                 <div className="col-span-12">
                                     <div className="text-sm font-medium text-gray-500">Description</div>
-                                    <div className="text-base mt-1 whitespace-pre-line bg-gray-50 p-3 rounded">
+                                    <div className="text-base mt-1 whitespace-pre-line p-3 rounded">
                                         {description}
                                     </div>
                                 </div>
@@ -175,6 +182,27 @@ const CustomerAssistDetail = () => {
                                     <div className="col-span-6">
                                         <div className="text-sm font-medium text-gray-500">Last Updated</div>
                                         <div className="text-base mt-1">{updated_at}</div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/*{Remarks}*/}
+                    <div className="box shadow-md rounded-lg mb-6">
+                        <div className="box shadow-md rounded-lg">
+                            <div className="box-header p-4 rounded-t-lg">
+                                <div className="box-title text-lg font-semibold">Execution Details</div>
+                            </div>
+                            <div className="box-body p-6">
+                                {remarks ? (
+                                    <div className=" rounded-lg p-4">
+                                        <div className="text-gray-700 whitespace-pre-line">{remarks}</div>
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 text-gray-500">
+                                        <i className="ri-information-line text-2xl mb-2"></i>
+                                        <p>No remarks added</p>
                                     </div>
                                 )}
                             </div>
@@ -192,86 +220,70 @@ const CustomerAssistDetail = () => {
                         <div className="box-body !p-0">
                             <div className="table-responsive">
                                 <table className="table whitespace-nowrap min-w-full">
-                                    <tbody>
-                                    <tr className="border-b border-defaultborder">
-                                        <td className="py-3 px-4">
-                                            <span className="font-semibold">Case Number:</span>
-                                        </td>
-                                        <td className="py-3 px-4">{case_number}</td>
-                                    </tr>
-                                    <tr className="border-b border-defaultborder">
-                                        <td className="py-3 px-4">
-                                            <span className="font-semibold">Created:</span>
-                                        </td>
-                                        <td className="py-3 px-4">{format(new Date(created_at), "MMM d, yyyy, h:mm a")}</td>
-                                    </tr>
-                                    {updated_at && (
-                                        <tr className="border-b border-defaultborder">
-                                            <td className="py-3 px-4">
-                                                <span className="font-semibold">Updated:</span>
-                                            </td>
-                                            <td className="py-3 px-4">{updated_at}</td>
-                                        </tr>
-                                    )}
-                                    <tr className="border-b border-defaultborder">
-                                        <td className="py-3 px-4">
-                                            <span className="font-semibold">Type:</span>
-                                        </td>
-                                        <td className="py-3 px-4">{toTitleCase(type)}</td>
-                                    </tr>
-                                    <tr className="border-b border-defaultborder">
-                                        <td className="py-3 px-4">
-                                            <span className="font-semibold">Origin:</span>
-                                        </td>
-                                        <td className="py-3 px-4">{toTitleCase(origin)}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <tbody>
+                                                <tr className="border-b border-defaultborder">
+                                                    <td className="py-3 px-4">
+                                                        <span className="font-semibold">Case Number:</span>
+                                                    </td>
+                                                    <td className="py-3 px-4">{case_number}</td>
+                                                </tr>
+                                                <tr className="border-b border-defaultborder">
+                                                    <td className="py-3 px-4">
+                                                        <span className="font-semibold">Created:</span>
+                                                    </td>
+                                                    <td className="py-3 px-4">{format(new Date(created_at), "MMM d, yyyy, h:mm a")}</td>
+                                                </tr>
+                                                {updated_at && (
+                                                    <tr className="border-b border-defaultborder">
+                                                        <td className="py-3 px-4">
+                                                            <span className="font-semibold">Updated:</span>
+                                                        </td>
+                                                        <td className="py-3 px-4"> {format(new Date(updated_at), "MMM d, yyyy, h:mm a")}</td>
+                                                    </tr>
+                                                )}
+                                                <tr className="border-b border-defaultborder">
+                                                    <td className="py-3 px-4">
+                                                        <span className="font-semibold">Type:</span>
+                                                    </td>
+                                                    <td className="py-3 px-4">{toTitleCase(type)}</td>
+                                                </tr>
+                                                <tr className="border-b border-defaultborder">
+                                                    <td className="py-3 px-4">
+                                                        <span className="font-semibold">Origin:</span>
+                                                    </td>
+                                                    <td className="py-3 px-4">{toTitleCase(origin)}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* CC Resolution */}
+                                <div className="box shadow-md  rounded-lg mb-6">
+                                    <div className="box-header p-4 rounded-t-lg">
+                                        <div className="box-title text-lg font-semibold">CC Resolution</div>
+                                    </div>
+                                    <div className="box-body p-6">
+                                        {cc_resolution ? (
+                                            <div className="bg-blue-50 rounded-lg p-4">
+                                                <div
+                                                    className="text-gray-800 font-semibold text-base md:text-md leading-relaxed italic">
+                                                    ❝ {cc_resolution} ❞
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-8 text-gray-500">
+                                                <i className="ri-information-line text-2xl mb-2"></i>
+                                                <p>No resolution provided</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </>
+                    );
+                    };
 
-                    {/* CC Resolution */}
-                    <div className="box shadow-md rounded-lg">
-                        <div className="box-header bg-white p-4 rounded-t-lg">
-                            <div className="box-title text-lg font-semibold">CC Resolution</div>
-                        </div>
-                        <div className="box-body p-6">
-                            {cc_resolution ? (
-                                <div className="bg-blue-50 rounded-lg p-4">
-                                    <div className="text-gray-700 whitespace-pre-line">{cc_resolution}</div>
-                                </div>
-                            ) : (
-                                <div className="text-center py-8 text-gray-500">
-                                    <i className="ri-information-line text-2xl mb-2"></i>
-                                    <p>No resolution provided</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Remarks */}
-                    <div className="box shadow-md rounded-lg">
-                        <div className="box-header bg-white p-4 rounded-t-lg">
-                            <div className="box-title text-lg font-semibold">Remarks</div>
-                        </div>
-                        <div className="box-body p-6">
-                            {remarks ? (
-                                <div className="bg-gray-50 rounded-lg p-4">
-                                    <div className="text-gray-700 whitespace-pre-line">{remarks}</div>
-                                </div>
-                            ) : (
-                                <div className="text-center py-8 text-gray-500">
-                                    <i className="ri-information-line text-2xl mb-2"></i>
-                                    <p>No remarks added</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
-};
-
-export default CustomerAssistDetail;
+                    export default CustomerAssistDetail;
