@@ -38,7 +38,6 @@ const ScanBarcodeForm = ({ isActive }) => {
 
             const result = response.data?.data;
             setData(result);
-            // Note: no manual expand here; accordion will be visible but collapsed initially.
         } catch (err) {
             setError(err.message);
             setData(null);
@@ -228,10 +227,9 @@ const ScanBarcodeForm = ({ isActive }) => {
                     {/* Current warehouse info */}
                     <div className="border-2 border-black mb-1">
                         <div className="flex items-center justify-between px-4 py-3 bg-white">
-        <span className="text-sm text-black font-semibold">
-            Current: {currentWarehouse.warehousename} (Qty: {currentWarehouse.onhand_qty})
-        </span>
-
+                            <span className="text-sm text-black font-semibold">
+                                Current: {currentWarehouse.warehousename} (Qty: {currentWarehouse.product_size} {currentWarehouse.onhand_qty})
+                            </span>
                             <div className="flex items-center gap-2">
                                 <span className="text-base font-bold text-black">Price:</span>
                                 <span className="text-sm text-gray-700">{currentWarehouse.salesprice}</span>

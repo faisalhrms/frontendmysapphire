@@ -15,9 +15,9 @@ export const submitCase = async (caseData) => {
 
 
 
-export const getCustomerCase = async (type, value) => {
+export const getCustomerCase = async (value) => {
     try {
-        const response = await api.get(`/customer-assist/customer-case/${value}?type=${type}`);
+        const response = await api.get(`/customer-assist/search/?s=${value}`);
         if (response.data.status) {
             return response.data.data;
         } else {
