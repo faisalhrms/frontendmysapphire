@@ -11,6 +11,7 @@ import ExchangeRateList from "@modules/beirholm-bi/views/ExchangeRateList.jsx";
 import ExchangeRateForm from "@modules/beirholm-bi/components/ExchangeRateForm.jsx";
 import DataMappingRuleList from "@modules/beirholm-bi/views/DataMappingRuleList.jsx";
 import DataMappingRuleForm from "@modules/beirholm-bi/components/DataMappingRuleForm.jsx";
+import RoadMap from "@modules/beirholm-bi/views/RoadMap.jsx";
 
 
 export const BEIRHOLM_BI_ROUTES = {
@@ -71,6 +72,11 @@ export const BEIRHOLM_BI_ROUTES = {
     DATA_MAPPING_RULE_CREATE: {
         path: '/module/beirholm/bi/mapping-rule/add',
         permission: 'beirholm_bi.add_data_mapping_rule'
+    },
+    ROAD_MAP_RULE_CREATE: {
+        path: '/module/beirholm/bi/road-map',
+        permission: 'beirholm_bi.view_road-map',
+
     }
 };
 
@@ -142,5 +148,10 @@ export const MODULE_ROUTES = [
         path: BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_CREATE.path,
         component: DataMappingRuleForm,
         permission: BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_CREATE.permission
+    },
+    {
+        path: BEIRHOLM_BI_ROUTES.ROAD_MAP_RULE_CREATE.path,
+        component: RoadMap,
+        permission: BEIRHOLM_BI_ROUTES.ROAD_MAP_RULE_CREATE.permission
     },
 ];
