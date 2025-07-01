@@ -1,30 +1,25 @@
-// src/modules/CustomerAssist/components/CustomerAssistForm.jsx
-
 import React, { useState } from "react";
-import SearchSection from "@modules/CustomerAssist/components/SearchSection.jsx";
-import FormSection from "@modules/CustomerAssist/components/CustomerAssistMainList.jsx";
-import LoadingSpinner from "@components/LoadingSpinner.jsx"; // adjust path if needed
 import { getCustomerCase } from "@modules/CustomerAssist/services/customerAssistService.js";
+import CustomerAssistTabs from "@modules/CustomerAssist/components/CustomerAssistTabs.jsx";
 
-const CustomerAssistForm = ({isActive}) => {
-    if (!isActive) {
-        return null;
-    }
+const CustomerAssistForm = ({ isActive }) => {
+    if (!isActive) return null;
+    const [searchValue, setSearchValue] = useState("");
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleSearch = async (type, value) => {
+    const handleSearch = async () => {
+        if (!searchValue.trim()) return;
         setIsLoading(true);
         setError(null);
-        setData(null); // optionally clear previous data while loading
+        setData(null);
         try {
-            const result = await getCustomerCase(type, value);
+            const result = await getCustomerCase(searchValue);
             setData(result);
         } catch (err) {
             console.error("Search failed:", err);
             setError(err.message || "Failed to fetch case data");
-            setData(null);
         } finally {
             setIsLoading(false);
         }
@@ -32,27 +27,30 @@ const CustomerAssistForm = ({isActive}) => {
 
     return (
         <div className="p-4">
-            <SearchSection onSearch={handleSearch} />
-
-            {/* Show error if any */}
-            {error && (
-                <div className="mt-2 text-rose-600 text-center font-medium bg-rose-50 border border-rose-200 p-2 rounded-md">
-                    {error}
+            <div className="mb-4 custom-form-group">
+                <input
+                    type="text"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    className="form-control !py-4 !px-6 w-full !rounded-md form-control-lg shadow-sm"
+                    placeholder="Case id, number, email, phone or Customer name.."
+                    aria-label="Search input"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSearch();
+                        }
+                    }}
+                />
+                <div className="custom-form-btn">
+                    <button
+                        className="ti-btn bg-primary text-white !font-medium !border dark:border-defaultborder/10-0"
+                        type="button"
+                        onClick={handleSearch}>
+                        <i className="bi bi-search me-2"></i> Search
+                    </button>
                 </div>
-            )}
-
-
-            {/* Show loading spinner while fetching */}
-            {isLoading && (
-                <div className="flex justify-center mt-4">
-                    <LoadingSpinner />
-                </div>
-            )}
-
-            {/* Once loaded (and not loading), show form if data */}
-            {!isLoading && data && (
-                <FormSection data={data} />
-            )}
+            </div>
+            <CustomerAssistTabs error={error} isLoading={isLoading} data={data} />
         </div>
     );
 };

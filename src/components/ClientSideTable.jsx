@@ -9,7 +9,6 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
     const { headers } = config;
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredData, setFilteredData] = useState(data);
-    console.log(isLoading)
     const { isFullscreen, handleFullscreenClick } = useFullScreen();
     const containerHeight = isFullscreen ? "calc(100vh - 100px)" : height;
 
@@ -26,7 +25,11 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
     return (
         <div className={`box custom-card ${isFullscreen ? 'box-fullscreen' : ''}`}>
             <div className="box-header justify-between">
-                <div className="box-title">{title}</div>
+                {title ? (
+                    <div className="box-title">{title}</div>
+                ) : (
+                    <div className="flex-grow"></div>
+                )}
                 <div className="flex items-center gap-2">
                     {headerComponents.map((Component, index) => (
                         <React.Fragment key={index}>
