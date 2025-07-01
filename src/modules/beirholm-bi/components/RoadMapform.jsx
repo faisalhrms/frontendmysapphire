@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaUsers, FaCalendarAlt, FaLightbulb, FaBullseye, FaCogs, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaSearch, FaUsers, FaCalendarAlt, FaLightbulb, FaBullseye, FaCogs, FaMapMarkerAlt, FaRocket, FaChartLine, FaTrophy, FaGlobe } from 'react-icons/fa';
 
 const RoadmapUI = () => {
     const [steps, setSteps] = useState([
@@ -9,54 +9,87 @@ const RoadmapUI = () => {
         { id: 4, title: "STEP 04", icon: <FaCalendarAlt className="w-5 h-5" />, description: "Create detailed project timelines and milestone tracking systems for execution." },
         { id: 5, title: "STEP 05", icon: <FaLightbulb className="w-5 h-5" />, description: "Implement innovative solutions and optimize processes for maximum efficiency." },
         { id: 6, title: "STEP 06", icon: <FaBullseye className="w-5 h-5" />, description: "Achieve project goals and establish metrics for continuous improvement and growth." },
+        { id: 7, title: "STEP 07", icon: <FaRocket className="w-5 h-5" />, description: "Launch and scale solutions while monitoring performance and gathering user feedback." },
+        { id: 8, title: "STEP 08", icon: <FaChartLine className="w-5 h-5" />, description: "Analyze performance data and optimize strategies for sustained growth and success." },
+        { id: 9, title: "STEP 09", icon: <FaTrophy className="w-5 h-5" />, description: "Celebrate achievements and establish long-term sustainability frameworks." },
+        { id: 10, title: "STEP 10", icon: <FaGlobe className="w-5 h-5" />, description: "Expand globally and share knowledge to create positive industry impact." }
     ]);
 
-    // Dynamic calculations
     const cardWidth = 280;
-    const minPadding = 350;
-    const stepSpacing = 400;
-    const containerWidth = Math.max(1600, (steps.length * stepSpacing) + (minPadding * 2));
-    const viewBoxWidth = containerWidth;
+    const cardHeight = 180;
+    const leftMargin = 120;
+    const minPadding = 200;
+    const rightMargin = 200;
+    const stepSpacing = 350;
+    const roadCenterY = 400;
+    const cardGap = 120;
+    const containerWidth = Math.max(1600, (steps.length * stepSpacing) + leftMargin + rightMargin);
 
-    // Generate dynamic road path
+    const containerHeight = 1000;
+    const viewBoxWidth = containerWidth;
+    const viewBoxHeight = containerHeight;
+
+    const addNewCard = () => {
+        const icons = [FaLightbulb, FaMapMarkerAlt, FaRocket, FaChartLine, FaTrophy, FaGlobe];
+        const newId = Math.max(...steps.map(s => s.id)) + 1;
+        const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+        const newStep = {
+            id: newId,
+            title: `STEP ${newId.toString().padStart(2, '0')}`,
+            icon: React.createElement(randomIcon, { className: "w-5 h-5" }),
+            description: `Execute phase ${newId} of the roadmap with focus on deliverables and measurable outcomes for project success.`
+        };
+
+        setSteps([...steps, newStep]);
+    };
+
+    const removeCard = () => {
+        if (steps.length > 1) {
+            setSteps(steps.slice(0, -1));
+        }
+    };
+
     const generateRoadPath = () => {
         if (steps.length === 0) return "";
 
-        let path = "M 150 400";
-        const totalWidth = viewBoxWidth - 300;
+        let path = "M 100 400";
+        const totalWidth = viewBoxWidth - 200;
         const segmentWidth = totalWidth / Math.max(1, steps.length - 1);
 
         for (let i = 0; i < steps.length; i++) {
-            const x = 150 + i * segmentWidth;
+            const x = 100 + i * segmentWidth;
             const isEven = i % 2 === 0;
+            const currentY = isEven ? 350 : 450;
 
             if (i === 0) {
-                path += ` L ${x + segmentWidth * 0.3} 400`;
+                path += ` L ${x + segmentWidth * 0.2} ${currentY}`;
             } else if (i === steps.length - 1) {
                 const prevIsEven = (i - 1) % 2 === 0;
-                const startY = prevIsEven ? 400 : 600;
-                const endY = 400;
-
-                if (startY !== endY) {
-                    path += ` Q ${x - segmentWidth * 0.3} ${startY} ${x - segmentWidth * 0.3} ${(startY + endY) / 2}`;
-                    path += ` Q ${x - segmentWidth * 0.3} ${endY} ${x} ${endY}`;
-                }
-                path += ` L ${x + segmentWidth * 0.2} ${endY}`;
-            } else {
-                const prevIsEven = (i - 1) % 2 === 0;
-                const currentY = isEven ? 400 : 600;
-                const prevY = prevIsEven ? 400 : 600;
+                const prevY = prevIsEven ? 350 : 450;
 
                 if (prevY !== currentY) {
-                    const midX = x - segmentWidth * 0.3;
-                    path += ` Q ${midX} ${prevY} ${midX} ${(prevY + currentY) / 2}`;
-                    path += ` Q ${midX} ${currentY} ${x} ${currentY}`;
+                    const controlX = x - segmentWidth * 0.4;
+                    path += ` Q ${controlX} ${prevY} ${controlX} ${(prevY + currentY) / 2}`;
+                    path += ` Q ${controlX} ${currentY} ${x} ${currentY}`;
+                } else {
+                    path += ` L ${x} ${currentY}`;
+                }
+                path += ` L ${x + 50} ${currentY}`;
+            } else {
+                const prevIsEven = (i - 1) % 2 === 0;
+                const prevY = prevIsEven ? 350 : 450;
+
+                if (prevY !== currentY) {
+                    const controlX = x - segmentWidth * 0.3;
+                    path += ` Q ${controlX} ${prevY} ${controlX} ${(prevY + currentY) / 2}`;
+                    path += ` Q ${controlX} ${currentY} ${x} ${currentY}`;
                 } else {
                     path += ` L ${x} ${currentY}`;
                 }
 
                 if (i < steps.length - 1) {
-                    path += ` L ${x + segmentWidth * 0.4} ${currentY}`;
+                    path += ` L ${x + segmentWidth * 0.3} ${currentY}`;
                 }
             }
         }
@@ -65,32 +98,29 @@ const RoadmapUI = () => {
     };
 
     const getLocationPinPosition = (index) => {
-        const totalWidth = viewBoxWidth - 300;
+        const totalWidth = viewBoxWidth - 200;
         const segmentWidth = totalWidth / Math.max(1, steps.length - 1);
-        const x = 150 + index * segmentWidth;
-        const y = index % 2 === 0 ? 400 : 600;
+        const x = 100 + index * segmentWidth;
+        const isEven = index % 2 === 0;
+        const y = isEven ? 350 : 450;
         return { x, y };
     };
 
-    const getCardYPosition = (index) => {
-        const isEven = index % 2 === 0;
-        const baseTopPercent = isEven ? 30 : 70;
-
-        if (index === 1 || index === 3) {
-            return isEven ? '10%' : '90%';
-        }
-
-        return `${baseTopPercent}%`;
-    };
-
-    const getCardSVGY = (index) => {
+    const getCardPosition = (index) => {
+        const totalWidth = viewBoxWidth - 200;
+        const segmentWidth = totalWidth / Math.max(1, steps.length - 1);
+        const x = 100 + index * segmentWidth;
         const isEven = index % 2 === 0;
 
-        if (index === 1 || index === 3) {
-            return isEven ? 80 : 720;
-        }
+        const roadY = isEven ? 350 : 450;
+        const cardY = isEven ? roadY - cardGap - (cardHeight / 2) : roadY + cardGap + (cardHeight / 2);
 
-        return isEven ? 240 : 560;
+        return {
+            x: x,
+            y: cardY,
+            leftPercent: (x / viewBoxWidth) * 100,
+            topPercent: (cardY / viewBoxHeight) * 100
+        };
     };
 
     return (
@@ -98,9 +128,9 @@ const RoadmapUI = () => {
 
 
             <div className="overflow-x-auto relative z-10">
-                <div className="relative" style={{ width: `${containerWidth}px`, height: '900px' }}>
+                <div className="relative" style={{ width: `${containerWidth}px`, height: `${containerHeight}px` }}>
                     <svg
-                        viewBox={`0 0 ${viewBoxWidth} 800`}
+                        viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
                         className="absolute top-0 left-0 w-full h-full z-30"
                         style={{ minWidth: '100%' }}
                     >
@@ -129,7 +159,7 @@ const RoadmapUI = () => {
                                             opacity: 1;
                                         }
                                         50% {
-                                            transform: scale(1.1);
+                                            transform: scale(1.15);
                                             opacity: 0.8;
                                         }
                                         100% {
@@ -139,16 +169,32 @@ const RoadmapUI = () => {
                                     }
                                 `}
                             </style>
+
+                            {/* Gradients */}
+                            <linearGradient id="pinGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#EF4444" />
+                                <stop offset="100%" stopColor="#DC2626" />
+                            </linearGradient>
+                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="#EF4444" />
+                                <stop offset="100%" stopColor="#F97316" />
+                            </linearGradient>
+                            <radialGradient id="dotGradient" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stopColor="#EF4444" />
+                                <stop offset="100%" stopColor="#DC2626" />
+                            </radialGradient>
                         </defs>
 
                         <path
                             d={generateRoadPath()}
                             stroke="#374151"
-                            strokeWidth="50"
+                            strokeWidth="60"
                             fill="none"
-
+                            // strokeLinecap="round"
+                            strokeLinejoin="round"
                         />
 
+                        {/* Road Center Line */}
                         <path
                             d={generateRoadPath()}
                             stroke="#FFFFFF"
@@ -164,17 +210,15 @@ const RoadmapUI = () => {
                         />
 
                         {steps.map((step, index) => {
-                            if (index === 5) return null;
-
                             const { x, y } = getLocationPinPosition(index);
                             return (
                                 <g key={`pin-${step.id}`}>
                                     <ellipse
                                         cx={x}
                                         cy={y + 35}
-                                        rx="8"
-                                        ry="3"
-                                        fill="rgba(0,0,0,0.2)"
+                                        rx="12"
+                                        ry="4"
+                                        fill="rgba(0,0,0,0.3)"
                                         style={{
                                             animation: `pinPulse 2s ease-in-out infinite ${index * 0.3}s`
                                         }}
@@ -185,64 +229,69 @@ const RoadmapUI = () => {
                                         transformOrigin: `${x}px ${y + 30}px`
                                     }}>
                                         <path
-                                            d={`M ${x} ${y - 20} 
-                                                C ${x - 12} ${y - 20} ${x - 22} ${y - 10} ${x - 22} ${y + 2}
-                                                C ${x - 22} ${y + 14} ${x} ${y + 30} ${x} ${y + 30}
-                                                C ${x} ${y + 30} ${x + 22} ${y + 14} ${x + 22} ${y + 2}
-                                                C ${x + 22} ${y - 10} ${x + 12} ${y - 20} ${x} ${y - 20} Z`}
+                                            d={`M ${x} ${y - 25}
+                                                C ${x - 15} ${y - 25} ${x - 25} ${y - 15} ${x - 25} ${y}
+                                                C ${x - 25} ${y + 15} ${x} ${y + 35} ${x} ${y + 35}
+                                                C ${x} ${y + 35} ${x + 25} ${y + 15} ${x + 25} ${y}
+                                                C ${x + 25} ${y - 15} ${x + 15} ${y - 25} ${x} ${y - 25} Z`}
                                             fill="url(#pinGradient)"
                                             stroke="#fff"
-                                            strokeWidth="2"
+                                            strokeWidth="3"
                                         />
 
                                         <circle
                                             cx={x}
-                                            cy={y - 5}
-                                            r="8"
+                                            cy={y - 8}
+                                            r="10"
                                             fill="white"
                                         />
 
                                         <circle
                                             cx={x}
-                                            cy={y - 5}
-                                            r="4"
+                                            cy={y - 8}
+                                            r="5"
                                             fill="#EF4444"
                                         />
+
+                                        <text
+                                            x={x}
+                                            y={y - 5}
+                                            textAnchor="middle"
+                                            className="text-xs font-bold fill-white"
+                                            style={{ fontSize: '8px' }}
+                                        >
+                                            {index + 1}
+                                        </text>
                                     </g>
                                 </g>
                             );
                         })}
 
                         {steps.map((step, index) => {
-                            if (index === 5) return null;
-
-                            const { x, y } = getLocationPinPosition(index);
-                            const totalWidth = viewBoxWidth - 300;
-                            const segmentWidth = totalWidth / Math.max(1, steps.length - 1);
-                            const cardX = 150 + index * segmentWidth;
-                            const cardY = getCardSVGY(index);
+                            const pinPos = getLocationPinPosition(index);
+                            const cardPos = getCardPosition(index);
 
                             return (
-                                <g key={`line-${step.id}`}>
+                                <g key={`connector-${step.id}`}>
                                     {/*<line*/}
-                                    {/*    x1={x}*/}
-                                    {/*    y1={y - 20}*/}
-                                    {/*    x2={cardX}*/}
-                                    {/*    y2={cardY}*/}
+                                    {/*    x1={pinPos.x}*/}
+                                    {/*    y1={pinPos.y - 25}*/}
+                                    {/*    x2={cardPos.x}*/}
+                                    {/*    y2={cardPos.y}*/}
                                     {/*    stroke="url(#lineGradient)"*/}
-                                    {/*    */}
-                                    {/*    strokeWidth="3"*/}
-                                    {/*    strokeDasharray="6,4"*/}
-                                    {/*    opacity="0.6"*/}
+                                    {/*    strokeWidth="2"*/}
+                                    {/*    strokeDasharray="8,4"*/}
+                                    {/*    opacity="0.7"*/}
                                     {/*    style={{*/}
                                     {/*        animation: `dash 3s linear infinite ${index * 0.2}s`*/}
                                     {/*    }}*/}
                                     {/*/>*/}
 
+                                    {/* Connection Dot at Card */}
                                     {/*<circle*/}
-                                    {/*    cx={cardX}*/}
-                                    {/*    cy={cardY}*/}
-                                    {/*    r="6"*/}
+                                    {/*    cx={cardPos.x}*/}
+                                    {/*    cy={cardPos.y}*/}
+                                    {/*    r="4"*/}
                                     {/*    fill="url(#dotGradient)"*/}
                                     {/*    stroke="white"*/}
                                     {/*    strokeWidth="2"*/}
@@ -253,48 +302,34 @@ const RoadmapUI = () => {
                                 </g>
                             );
                         })}
-
-                        <defs>
-                            <linearGradient id="pinGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#EF4444" />
-                                <stop offset="100%" stopColor="#DC2626" />
-                            </linearGradient>
-                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stopColor="#EF4444" />
-                                <stop offset="100%" stopColor="#F97316" />
-                            </linearGradient>
-                            <radialGradient id="dotGradient" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stopColor="#EF4444" />
-                                <stop offset="100%" stopColor="#DC2626" />
-                            </radialGradient>
-                        </defs>
                     </svg>
 
-                    {/* Step Cards */}
                     {steps.map((step, index) => {
-                        const totalWidth = viewBoxWidth - 300;
-                        const segmentWidth = totalWidth / Math.max(1, steps.length - 1);
-                        const xPosition = 150 + index * segmentWidth;
-                        const leftPercent = (xPosition / viewBoxWidth) * 100;
-                        const topPercent = getCardYPosition(index);
+                        const cardPos = getCardPosition(index);
 
                         return (
                             <div
                                 key={step.id}
                                 className="absolute transform -translate-x-1/2 -translate-y-1/2 z-20"
                                 style={{
-                                    left: `${leftPercent}%`,
-                                    top: topPercent
+                                    left: `${cardPos.leftPercent}%`,
+                                    top: `${cardPos.topPercent}%`,
+                                    marginLeft: index === 0 ? '100px' : '0'
                                 }}
                             >
-                                <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border border-white/30 w-72 hover:scale-105 hover:shadow-3xl transition-all duration-500 group">
+                                <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl border border-white/30 w-72 hover:scale-110 hover:shadow-3xl transition-all duration-500 group hover:bg-white">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl text-gray-700 group-hover:from-pink-100 group-hover:to-orange-100 transition-all duration-300">
+                                        <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl text-gray-700 group-hover:from-pink-100 group-hover:to-orange-100 group-hover:scale-110 transition-all duration-300">
                                             {step.icon}
                                         </div>
-                                        <h3 className="text-xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
-                                            {step.title}
-                                        </h3>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
+                                                {step.title}
+                                            </h3>
+                                            <div className="text-xs text-gray-500 font-medium">
+                                                Position {index + 1} of {steps.length}
+                                            </div>
+                                        </div>
                                     </div>
                                     <p className="text-gray-600 leading-relaxed text-sm group-hover:text-gray-700 transition-colors">
                                         {step.description}
