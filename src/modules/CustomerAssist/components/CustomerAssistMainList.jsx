@@ -80,52 +80,52 @@ const CustomerAssistMainList = ({ data }) => {
             <div className="grid grid-cols-12 gap-6">
                 {/* Left Column (9) */}
                 <div className="xl:col-span-9 col-span-12">
-                    {/* Customer Info */}
-                    <div className="box shadow-md rounded-lg mb-6">
-                        <div className="box-header bg-white p-4 rounded-t-lg">
-                            <div className="box-title text-lg font-semibold">Customer Info</div>
-                        </div>
-                        <div className="box-body p-6">
+                    {/*/!* Customer Info *!/*/}
+                    {/*<div className="box shadow-md rounded-lg mb-6">*/}
+                    {/*    <div className="box-header bg-white p-4 rounded-t-lg">*/}
+                    {/*        <div className="box-title text-lg font-semibold">Customer Info</div>*/}
+                    {/*    </div>*/}
+                    {/*    <div className="box-body p-6">*/}
 
-                            <div className="grid grid-cols-12 gap-4">
-                                <div className="col-span-4">
-                                    <div className="flex items-center">
-                                        <i className="ri-user-line text-rose-500 text-lg mr-2"></i>
-                                        <div className="flex items-center text-sm max-w-[230px] truncate cursor-pointer"
-                                             title={data.customer_name}>
-                                            <span className="font-medium text-gray-500 mr-1">Name:</span>
-                                            <span className="truncate">{data.customer_name}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                    {/*        <div className="grid grid-cols-12 gap-4">*/}
+                    {/*            <div className="col-span-4">*/}
+                    {/*                <div className="flex items-center">*/}
+                    {/*                    <i className="ri-user-line text-rose-500 text-lg mr-2"></i>*/}
+                    {/*                    <div className="flex items-center text-sm max-w-[230px] truncate cursor-pointer"*/}
+                    {/*                         title={data.customer_name}>*/}
+                    {/*                        <span className="font-medium text-gray-500 mr-1">Name:</span>*/}
+                    {/*                        <span className="truncate">{data.customer_name}</span>*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            </div>*/}
 
-                                <div className="col-span-4">
-                                    <div className="flex items-center">
-                                        <i className="ri-mail-line text-amber-500 text-lg mr-2"></i>
-                                        <div className="flex items-center text-sm max-w-[230px] truncate cursor-pointer"
-                                             title={data.email}>
-                                            <span className="font-medium text-gray-500 mr-1">Email:</span>
-                                            <span className="truncate">{data.email}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                    {/*            <div className="col-span-4">*/}
+                    {/*                <div className="flex items-center">*/}
+                    {/*                    <i className="ri-mail-line text-amber-500 text-lg mr-2"></i>*/}
+                    {/*                    <div className="flex items-center text-sm max-w-[230px] truncate cursor-pointer"*/}
+                    {/*                         title={data.email}>*/}
+                    {/*                        <span className="font-medium text-gray-500 mr-1">Email:</span>*/}
+                    {/*                        <span className="truncate">{data.email}</span>*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            </div>*/}
 
-                                <div className="col-span-4">
-                                    <div className="flex items-center">
-                                        <i className="ri-phone-line text-sky-500 text-lg mr-2"></i>
-                                        <div>
-                                            <div
-                                                className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:
-                                            </div>
-                                            <div className="text-sm inline-block">{data.phone}</div>
-                                        </div>
-                                    </div>
-                                </div>
+                    {/*            <div className="col-span-4">*/}
+                    {/*                <div className="flex items-center">*/}
+                    {/*                    <i className="ri-phone-line text-sky-500 text-lg mr-2"></i>*/}
+                    {/*                    <div>*/}
+                    {/*                        <div*/}
+                    {/*                            className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:*/}
+                    {/*                        </div>*/}
+                    {/*                        <div className="text-sm inline-block">{data.phone}</div>*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            </div>*/}
 
 
-                            </div>
-                        </div>
-                    </div>
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
 
                     {/* Case Details */}
                     <div className="box shadow-md rounded-lg mb-6">
@@ -135,12 +135,12 @@ const CustomerAssistMainList = ({ data }) => {
                         <div className="box-body p-6">
                             <div className="grid grid-cols-12 gap-6">
                                 <div className="col-span-12">
-                                    <div className="text-sm font-medium text-gray-500">Subject</div>
-                                    <div className="text-base mt-1">{data.subject}</div>
+                                    <div className="text-[.9375rem] font-semibold mb-2">Subject</div>
+                                    <div className="text-[#8c9097] dark:text-white/50 task-description">{data.subject}</div>
                                 </div>
                                 <div className="col-span-12">
-                                    <div className="text-sm font-medium text-gray-500">Description</div>
-                                    <div className="text-base mt-1 whitespace-pre-line">{data.description}</div>
+                                    <div className="text-[.9375rem] font-semibold mb-2">Description</div>
+                                    <div className="text-[#8c9097] dark:text-white/50 whitespace-pre-line">{data.description}</div>
                                 </div>
                             </div>
                         </div>
@@ -170,8 +170,8 @@ const CustomerAssistMainList = ({ data }) => {
                                         <div className="flex justify-end">
                                             <FormButton
                                                 isLoading={isSubmitting}
-                                                text="Update Remarks"
-                                                submitTxt="Updating..."
+                                                text="Submit"
+                                                submitTxt="Submitting..."
                                                 className="ti-btn ti-btn-primary ti-btn-md"
                                             />
                                         </div>
@@ -184,7 +184,68 @@ const CustomerAssistMainList = ({ data }) => {
 
                 {/* Right Column (3) */}
                 <div className="xl:col-span-3 col-span-12 space-y-6">
+                    <div className="box">
+                        <div className="box-header justify-between">
+                            <div className="box-title">Customer Info</div>
+                            <Link
+                                aria-label="anchor"
+                                className="hs-collapse-toggle inline-flex items-center gap-x-2"
+                                to="#"
+                                id="case-additional-detail-collapse"
+                                data-hs-collapse="#case-additional-detail-collapse-heading"
+                            >
+                                <svg
+                                    className="hs-collapse-open:rotate-180 w-2.5 h-2.5"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M2 5L8.16086 10.6869C8.35239 10.8637 8.64761 10.8637 8.83914 10.6869L15 5"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                            </Link>
+                        </div>
+                        <div
+                            id="case-additional-detail-collapse-heading"
+                            className="hs-collapse w-full overflow-hidden transition-[height] duration-300"
+                            aria-labelledby="case-additional-detail-collapse"
+                        >
+                            <div className="box-body !p-0">
+                                <div className="table-responsive">
+                                    <table className="table whitespace-nowrap min-w-full">
+                                        <tbody>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Customer Name:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{data.customer_name}</td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Email:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{data.email}</td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Phone:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{data.phone}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {/* Case Additional Details */}
+
                     <div className="box">
                         <div className="box-header justify-between">
                             <div className="box-title">Case Additional Details</div>
