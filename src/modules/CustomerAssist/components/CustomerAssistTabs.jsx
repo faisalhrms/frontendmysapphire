@@ -29,7 +29,7 @@ const CustomerAssistTabs = ({ error, isLoading, data }) => {
                                         activeTab === "complain_at_store" ? "bg-primary/10 text-primary" : ""
                                     }`}
                                 >
-                                    Complain At Store
+                                    Complain at Store
                                 </button>
                                 <button
                                     onClick={() => setActiveTab("complain_online_dynamics")}
@@ -37,7 +37,7 @@ const CustomerAssistTabs = ({ error, isLoading, data }) => {
                                         activeTab === "complain_online_dynamics" ? "bg-primary/10 text-primary" : ""
                                     }`}
                                 >
-                                    Complain Online Dynamics
+                                    Retail Customer
                                 </button>
                             </nav>
                         </div>

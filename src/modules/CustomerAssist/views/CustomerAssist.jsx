@@ -6,6 +6,7 @@ import CustomerAssistForm from "@modules/CustomerAssist/components/CustomerAssis
 import CustomerAssistList from "@modules/CustomerAssist/views/CustomerAssistList.jsx";
 import CustomerAssistCasesDatatable from "@modules/CustomerAssist/views/CustomerAssistCasesDatatable.jsx";
 import CustomerAssistPendingCasesDatatable from "@modules/CustomerAssist/views/CustomerAssistPendingCasesDatatable.jsx";
+import InfoAlert from "../../../InfoAlert.jsx";
 
 const CustomerAssist = () => {
     const [activeTab, setActiveTab] = useState("form");
@@ -23,16 +24,16 @@ const CustomerAssist = () => {
             content: <CustomerAssistForm isActive={activeTab === 'form'} />,
         },
         {
-            id: "resolved",
-            label: "Resolved Cases",
-            icon: <i className="bi bi-check2-circle text-success"></i>,
-            content: <CustomerAssistList url={`/customer-assist/datatable/`} isActive={activeTab === 'resolved'} />,
-        },
-        {
             id: "pending",
             label: "Pending Cases",
             icon: <i className="bi bi-hourglass-split text-warning"></i>,
             content: <CustomerAssistPendingCasesDatatable isActive={activeTab === 'pending'} />,
+        },
+        {
+            id: "resolved",
+            label: "Resolved Cases",
+            icon: <i className="bi bi-check2-circle text-success"></i>,
+            content: <CustomerAssistList url={`/customer-assist/datatable/`} isActive={activeTab === 'resolved'} />,
         },
         {
             id: "all_cases",
@@ -46,6 +47,7 @@ const CustomerAssist = () => {
     return (
         <>
         <PageHeader currentpage="Customer Assist" mainpage="Customer Assist"  activepage="We Care" />
+            <InfoAlert/>
             <IconTabs tabs={tabs} onTabChange={handleTabChange} activeTab={activeTab} />
         </>
     );

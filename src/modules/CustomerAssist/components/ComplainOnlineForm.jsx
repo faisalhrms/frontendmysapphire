@@ -62,7 +62,7 @@ const ComplainOnlineForm = () => {
                         control={control}
                         errors={errors}
                         placeholder="Enter description"
-                        label="Description"
+                        labelText="Description"
                         rows={4}
                         className="w-full"
                     />
