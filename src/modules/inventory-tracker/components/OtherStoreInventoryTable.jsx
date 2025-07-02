@@ -12,7 +12,7 @@ const OtherStoreInventoryTable = ({ rows }) => {
         onhand_qty: item.onhand_qty,
         combos: item.combos,
         sizes: item.sizes,
-        order: <i className="bi bi-bag-check text-success font-medium font-bold"></i>,
+        order: <i className="bi bi-bag-check text-success font-bold"></i>,
     }));
 
     const tableConfig = {
@@ -26,7 +26,7 @@ const OtherStoreInventoryTable = ({ rows }) => {
         ],
     };
     return (
-        <ClientSideTable config={tableConfig} data={tableData} />
+        <ClientSideTable config={tableConfig} data={tableData} title={null} />
     )
 }
 export default React.memo(OtherStoreInventoryTable)

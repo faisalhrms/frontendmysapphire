@@ -1,13 +1,10 @@
-// src/modules/CustomerAssist/components/CustomerAssistMainList.jsx
 
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import { useCaseForm } from "@modules/CustomerAssist/hooks/customerAssistHook.js";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import { Link } from "react-router-dom";
 
@@ -18,7 +15,7 @@ import {
     getStatusBgClass,
     getStatusBadgeClass,
     getStatusOutlinedClass,
-} from "@modules/CustomerAssist/helpers/CustomerAssistHelper.js"; // adjust path if needed
+} from "@modules/CustomerAssist/helpers/CustomerAssistHelper.js";
 
 const CustomerAssistMainList = ({ data }) => {
     const {
