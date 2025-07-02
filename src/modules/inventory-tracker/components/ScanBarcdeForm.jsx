@@ -38,8 +38,8 @@ const ScanBarcodeForm = ({ isActive }) => {
 
             const result = response.data?.data;
             setData(result);
-        } catch (err) {
-            setError(err.message);
+        } catch (error) {
+            setError(error.response?.data?.message || 'Something goes wrong!');
             setData(null);
         } finally {
             setIsLoading(false);
@@ -206,7 +206,7 @@ const ScanBarcodeForm = ({ isActive }) => {
                 <div className="max-w-4xl mx-auto bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
                     <div className="flex items-center">
                         <svg
-                            className="w-5 h-5 text-red-500 mr-2"
+                            className="w-5 h-5 text-danger mr-2"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                         >
@@ -216,7 +216,7 @@ const ScanBarcodeForm = ({ isActive }) => {
                                 clipRule="evenodd"
                             />
                         </svg>
-                        <span className="text-red-700 font-medium">Error: {error}</span>
+                        <span className="text-danger font-medium">Error: {error}</span>
                     </div>
                 </div>
             )}
