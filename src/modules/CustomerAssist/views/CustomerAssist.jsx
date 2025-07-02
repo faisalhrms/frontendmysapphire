@@ -5,6 +5,7 @@ import IconTabs from "@components/IconTabs.jsx";
 import CustomerAssistForm from "@modules/CustomerAssist/components/CustomerAssistForm.jsx";
 import CustomerAssistList from "@modules/CustomerAssist/views/CustomerAssistList.jsx";
 import CustomerAssistCasesDatatable from "@modules/CustomerAssist/views/CustomerAssistCasesDatatable.jsx";
+import InfoAlert from "../../../InfoAlert.jsx";
 
 const CustomerAssist = () => {
     const [activeTab, setActiveTab] = useState("form");
@@ -39,6 +40,7 @@ const CustomerAssist = () => {
     return (
         <>
         <PageHeader currentpage="Customer Assist" mainpage="Customer Assist"  activepage="We Care" />
+            <InfoAlert/>
             <IconTabs tabs={tabs} onTabChange={handleTabChange} activeTab={activeTab} />
         </>
     );

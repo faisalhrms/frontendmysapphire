@@ -16,6 +16,7 @@ import {
     getStatusBadgeClass,
     getStatusOutlinedClass,
 } from "@modules/CustomerAssist/helpers/CustomerAssistHelper.js";
+import InfoAlert from "../../../InfoAlert.jsx";
 
 const CustomerAssistMainList = ({ data }) => {
     const {
@@ -76,7 +77,6 @@ const CustomerAssistMainList = ({ data }) => {
         <>
             {/* Example PageHeader usage if desired */}
             {/* <PageHeader title="Customer Assist Details" /> */}
-
             <div className="grid grid-cols-12 gap-6">
                 {/* Left Column (9) */}
                 <div className="xl:col-span-9 col-span-12">
@@ -86,18 +86,30 @@ const CustomerAssistMainList = ({ data }) => {
                             <div className="box-title text-lg font-semibold">Customer Info</div>
                         </div>
                         <div className="box-body p-6">
-                            <div className="flex items-center mb-6">
-                                <div
-                                    className="bg-gray-100 border-2 border-dashed border-emerald-300 rounded-full w-16 h-16 flex items-center justify-center mr-4">
-                                    <i className="ri-user-3-line text-2xl text-gray-500"></i>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800">{data.customer_name}</h3>
-                                    <div className="text-gray-600">{data.email}</div>
-                                </div>
-                            </div>
 
                             <div className="grid grid-cols-12 gap-4">
+                                <div className="col-span-4">
+                                    <div className="flex items-center">
+                                        <i className="ri-user-line text-rose-500 text-lg mr-2"></i>
+                                        <div className="flex items-center text-sm max-w-[230px] truncate cursor-pointer"
+                                             title={data.customer_name}>
+                                            <span className="font-medium text-gray-500 mr-1">Name:</span>
+                                            <span className="truncate">{data.customer_name}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-span-4">
+                                    <div className="flex items-center">
+                                        <i className="ri-mail-line text-amber-500 text-lg mr-2"></i>
+                                        <div className="flex items-center text-sm max-w-[230px] truncate cursor-pointer"
+                                             title={data.email}>
+                                            <span className="font-medium text-gray-500 mr-1">Email:</span>
+                                            <span className="truncate">{data.email}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className="col-span-4">
                                     <div className="flex items-center">
                                         <i className="ri-phone-line text-sky-500 text-lg mr-2"></i>
@@ -105,37 +117,12 @@ const CustomerAssistMainList = ({ data }) => {
                                             <div
                                                 className="text-sm font-medium text-gray-500 inline-block mr-1">Phone:
                                             </div>
-                                            <div className="text-base inline-block">{data.phone}</div>
+                                            <div className="text-sm inline-block">{data.phone}</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="col-span-4">
-                                    <div className="flex items-center">
-                                        <i className="ri-file-list-3-line text-rose-500 text-lg mr-2"></i>
-                                        <div>
-                                            <div className="text-sm font-medium text-gray-500 inline-block mr-1">Case:
-                                            </div>
-                                            <div className="text-base inline-block">{data.case_number}</div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="col-span-4">
-                                    <div className="flex items-center">
-                                        <i className="ri-information-line text-amber-500 text-lg mr-2"></i>
-                                        <div>
-                                            <div
-                                                className="text-sm font-medium text-gray-500 inline-block mr-1">Status:
-                                            </div>
-                                            <div className="text-base inline-block">
-                                                {/* Choose variant: text-only, badge, etc. */}
-                                                <span className={statusTextClass}>{statusText}</span>
-                                                {/* Or: <span className={statusBadgeClass}>{statusText}</span> */}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -147,37 +134,6 @@ const CustomerAssistMainList = ({ data }) => {
                         </div>
                         <div className="box-body p-6">
                             <div className="grid grid-cols-12 gap-6">
-                                <div className="col-span-4">
-                                    <div className="text-sm font-medium text-gray-500">Case Number</div>
-                                    <div className="text-base mt-1">{data.case_number}</div>
-                                </div>
-                                <div className="col-span-4">
-                                    <div className="text-sm font-medium text-gray-500">Type</div>
-                                    <div className="text-base mt-1">{data.type}</div>
-                                </div>
-                                <div className="col-span-4">
-                                    <div className="text-sm font-medium text-gray-500">Status</div>
-                                    <div className="text-base mt-1">
-                                        {/* Background + text */}
-                                        <span className={statusBgOnlyClass}>{statusText}</span>
-                                    </div>
-                                </div>
-                                <div className="col-span-4">
-                                    <div className="text-sm font-medium text-gray-500">Reason</div>
-                                    <div className="text-base mt-1">{data.reason}</div>
-                                </div>
-                                <div className="col-span-4">
-                                    <div className="text-sm font-medium text-gray-500">Origin</div>
-                                    <div className="text-base mt-1">{data.origin}</div>
-                                </div>
-                                <div className="col-span-4">
-                                    <div className="text-sm font-medium text-gray-500">Priority</div>
-                                    <div className="text-base mt-1">
-                                        {/* Outlined pill or badge */}
-                                        <span className={priorityOutlinedClass}>{priorityText}</span>
-                                        {/* Or: <span className={priorityBadgeClass}>{priorityText}</span> */}
-                                    </div>
-                                </div>
                                 <div className="col-span-12">
                                     <div className="text-sm font-medium text-gray-500">Subject</div>
                                     <div className="text-base mt-1">{data.subject}</div>
@@ -267,9 +223,21 @@ const CustomerAssistMainList = ({ data }) => {
                                         <tbody>
                                         <tr className="border-b border-defaultborder">
                                             <td className="py-3 px-4">
-                                                <span className="font-semibold">Case ID:</span>
+                                                <span className="font-semibold">Case Number:</span>
                                             </td>
-                                            <td className="py-3 px-4">{data.case_id}</td>
+                                            <td className="py-3 px-4">{data.case_number}</td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Order Number:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{data.order_number}</td>
+                                        </tr>
+                                        <tr className="border-b border-defaultborder">
+                                            <td className="py-3 px-4">
+                                                <span className="font-semibold">Reason:</span>
+                                            </td>
+                                            <td className="py-3 px-4">{data.reason}</td>
                                         </tr>
                                         <tr className="border-b border-defaultborder">
                                             <td className="py-3 px-4">
