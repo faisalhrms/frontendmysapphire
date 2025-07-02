@@ -6,6 +6,7 @@ import FormTextarea from '@components/form/FormTextarea.jsx';
 import FormButton from '@components/form/FormButton.jsx';
 import complaintSchema from "@modules/CustomerAssist/schema/complaintSchema.js";
 import { useStoreComplaintForm } from "@modules/CustomerAssist/hooks/complaintHook.js";
+import GalleryUpload from "@components/GalleryUpload.jsx";
 
 const ComplainAtStoreForm = () => {
     const {
@@ -26,52 +27,77 @@ const ComplainAtStoreForm = () => {
     return (
         <div className="max-w-md mx-auto p-4 bg-white border border-gray-200 rounded-lg shadow-md">
             <form onSubmit={handleSubmit(handleComplaintSubmit)}>
-                <div className="grid grid-cols-1 gap-4">
-                    <FormInput
-                        name="caseEmail"
-                        control={control}
-                        errors={errors}
-                        placeholder="Enter Customer email"
-                        labelText="Customer Email"
-                        separateLabel={true}
-                        is_required={true}
-                        className="w-full"
-                    />
-                    <FormInput
-                        name="subject"
-                        control={control}
-                        errors={errors}
-                        placeholder="Enter subject"
-                        labelText="Subject"
-                        separateLabel={true}
-                        is_required={true}
-                        className="w-full"
-                    />
-                    <FormInput
-                        name="orderNo"
-                        control={control}
-                        errors={errors}
-                        placeholder="Enter Order No"
-                        labelText="Order No"
-                        separateLabel={true}
-                        is_required={true}
-                        className="w-full"
-                    />
-                    <FormTextarea
-                        name="description"
-                        control={control}
-                        errors={errors}
-                        placeholder="Enter description"
-                        labelText="Description"
-                        rows={4}
-                        className="w-full"
-                    />
+                <div className="grid grid-cols-12 gap-4">
+                    <div className='col-span-12'>
+                        <FormInput
+                            name="caseEmail"
+                            control={control}
+                            errors={errors}
+                            placeholder="Enter customer email"
+                            labelText="Customer Email"
+                            separateLabel={true}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className='col-span-12'>
+                        <FormInput
+                            name="phone"
+                            control={control}
+                            errors={errors}
+                            placeholder="Enter customer phone"
+                            labelText="Customer Phone"
+                            separateLabel={true}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className='col-span-12'>
+                        <FormInput
+                            name="subject"
+                            control={control}
+                            errors={errors}
+                            placeholder="Enter subject"
+                            labelText="Subject"
+                            separateLabel={true}
+                            is_required={true}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className='col-span-12'>
+                        <FormInput
+                            name="orderNo"
+                            control={control}
+                            errors={errors}
+                            placeholder="Enter Order No"
+                            labelText="Order No"
+                            separateLabel={true}
+                            is_required={true}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className='col-span-12'>
+                        <FormTextarea
+                            name="description"
+                            control={control}
+                            errors={errors}
+                            placeholder="Enter description"
+                            labelText="Description"
+                            rows={4}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className='col-span-12'>
+                        <GalleryUpload
+                            inputName="attachment_ids"
+                            placeholder="Attachments"
+                            control={control}
+                            errors={errors}
+                        />
+                    </div>
                 </div>
-                <div className="mt-4 flex justify-center">
+                <div className="mt-6 flex justify-center">
                     <FormButton
                         isLoading={isSubmitting}
-                        text="SUBMIT"
-                        className="px-6 py-2 bg-black text-white font-bold rounded-md"
+                        text="Submit"
                     />
                 </div>
             </form>
