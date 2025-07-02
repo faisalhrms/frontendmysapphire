@@ -31,8 +31,8 @@ const ComplainAtStoreForm = () => {
                         name="caseEmail"
                         control={control}
                         errors={errors}
-                        placeholder="Enter Case email"
-                        labelText="Case Email"
+                        placeholder="Enter Customer email"
+                        labelText="Customer Email"
                         separateLabel={true}
                         is_required={true}
                         className="w-full"
@@ -43,6 +43,16 @@ const ComplainAtStoreForm = () => {
                         errors={errors}
                         placeholder="Enter subject"
                         labelText="Subject"
+                        separateLabel={true}
+                        is_required={true}
+                        className="w-full"
+                    />
+                    <FormInput
+                        name="orderNo"
+                        control={control}
+                        errors={errors}
+                        placeholder="Enter Order No"
+                        labelText="Order No"
                         separateLabel={true}
                         is_required={true}
                         className="w-full"
