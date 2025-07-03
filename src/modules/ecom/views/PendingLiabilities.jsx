@@ -18,7 +18,7 @@ const PendingLiabilities = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    { name: 'date_from',defaultValue: '2025-01-21'},
+                    { name: 'date_from',defaultValue: getPastDate(1)},
                     { name: 'date_to',defaultValue: getPastDate(1)},
                 ],
             }),
@@ -48,6 +48,7 @@ const PendingLiabilities = () => {
                     <PendingLiabilitiesFilter
                         control={control}
                         errors={errors}
+                        filters={filters}
                     />
                 </form>
             }

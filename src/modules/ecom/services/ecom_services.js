@@ -43,3 +43,17 @@ export const fetchAnalysisForm = async (data) => {
     }
 };
 
+export const downloadPendingLiabilitiesReport = async (filters) => {
+    try {
+        const response = await api.get("/ecom/pending-liabilities/download/pdf/", {
+            params: {
+                ...filters
+            },
+            responseType: 'blob',
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
