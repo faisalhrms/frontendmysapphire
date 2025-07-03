@@ -466,3 +466,333 @@ const RoadmapUI = () => {
 };
 
 export default RoadmapUI;
+// import React, { useState } from 'react';
+// import { FaMapMarkerAlt } from 'react-icons/fa';
+// const ManufacturingFlowDiagram = () => {
+//     const [hoveredNode, setHoveredNode] = useState(null);
+//
+//     // Process nodes with exact positioning matching your image
+//     const processes = [
+//         // Top row
+//         { id: 'spinning', name: 'Spinning', icon: '⚙️', x: 320, y: 160, type: 'inhouse', station: 'STM - 5' },
+//         { id: 'yarn-dyeing', name: 'Yarn Dyeing', icon: '🎨', x: 600, y: 220, type: 'inhouse', station: 'STM - 10' },
+//         { id: 'weaving', name: 'Weaving', icon: '🏗️', x: 880, y: 220, type: 'inhouse', station: 'STM - 6' },
+//
+//         // Left side inputs
+//         { id: 'fiber', name: 'Fiber', icon: '🧵', x: 120, y: 280, type: 'outsource' },
+//         { id: 'bci-cotton', name: 'BCI Cotton', icon: '🌱', x: 120, y: 380, type: 'outsource' },
+//
+//         // Middle row
+//         { id: 'accessories', name: 'Accessories', icon: '🏷️', x: 600, y: 520, type: 'outsource' },
+//         { id: 'packaging', name: 'Packaging', icon: '📦', x: 320, y: 640, type: 'outsource' },
+//
+//         // Bottom row
+//         { id: 'stitching', name: 'Stitching', icon: '✂️', x: 760, y: 720, type: 'inhouse', station: 'STM - 7' },
+//         { id: 'wadding', name: 'Wadding', icon: '🧽', x: 1040, y: 720, type: 'inhouse' },
+//
+//         // Right side
+//         { id: 'processing', name: 'Processing', icon: '⚡', x: 1200, y: 380, type: 'inhouse', station: 'STM - 9' }
+//     ];
+//
+//     // Sub-processes
+//     const subProcesses = [
+//         { id: 'labels', name: 'Labels', parent: 'accessories', x: 600, y: 580 },
+//         { id: 'sewing-threads', name: 'Sewing Threads', parent: 'accessories', x: 600, y: 640 },
+//         { id: 'carton', name: 'Carton', parent: 'packaging', x: 320, y: 700 },
+//         { id: 'carton-tape', name: 'Carton Tape', parent: 'packaging', x: 320, y: 760 },
+//         { id: 'poly-bags', name: 'Rec Poly Bags', parent: 'packaging', x: 320, y: 820 }
+//     ];
+//
+//     // Flow connections with curves
+//     const flowPaths = [
+//         { path: "M 140 300 Q 220 300 300 300 Q 310 290 310 280 Q 310 190 310 180 Q 315 175 320 180", type: "road" },
+//         { path: "M 340 180 Q 460 180 580 180 Q 590 200 590 220 Q 590 235 595 240 Q 597 240 600 240", type: "road" },
+//         { path: "M 620 240 Q 750 240 860 240 Q 870 240 880 240", type: "road" },
+//         { path: "M 900 240 Q 1040 240 1180 240 Q 1190 300 1190 350 Q 1195 355 1200 360", type: "road" },
+//         { path: "M 580 540 Q 660 540 740 540 Q 750 620 750 680 Q 755 695 760 700", type: "road" },
+//         { path: "M 340 660 Q 540 660 740 660 Q 750 690 750 710 Q 755 715 760 720", type: "road" },
+//         { path: "M 780 720 Q 900 720 1020 720 Q 1030 720 1040 720", type: "road" },
+//         { path: "M 1060 720 Q 1120 720 1180 720 Q 1190 560 1190 420 Q 1195 405 1200 400", type: "road" }
+//     ];
+//
+//     const getLocationIconColor = (type) => {
+//         return type === 'outsource' ? 'text-red' : 'text-blue';
+//     };
+//
+//     const CardWithTail = ({ children, x, y, isStation = false, tailDirection = 'bottom' }) => {
+//         const cardStyle = {
+//             left: x,
+//             top: y,
+//             transform: 'translate(-50%, -50%)'
+//         };
+//
+//         return (
+//             <div className="absolute" style={cardStyle}>
+//                 <div className={`relative ${isStation ? 'bg-gray-100 border-gray-300' : 'bg-white border-gray-200'} border rounded-lg px-3 py-2 shadow-md`}>
+//                     {children}
+//                     <div className={`absolute w-0 h-0 ${
+//                         tailDirection === 'bottom'
+//                             ? 'left-1/2 top-full transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white'
+//                             : tailDirection === 'top'
+//                                 ? 'left-1/2 bottom-full transform -translate-x-1/2 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-white'
+//                                 : tailDirection === 'left'
+//                                     ? 'right-full top-1/2 transform -translate-y-1/2 border-t-4 border-b-4 border-r-4 border-t-transparent border-b-transparent border-r-white'
+//                                     : 'left-full top-1/2 transform -translate-y-1/2 border-t-4 border-b-4 border-l-4 border-t-transparent border-b-transparent border-l-white'
+//                     }`}></div>
+//                     <div className={`absolute w-0 h-0 ${
+//                         tailDirection === 'bottom'
+//                             ? 'left-1/2 top-full transform -translate-x-1/2 translate-y-px border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-200'
+//                             : tailDirection === 'top'
+//                                 ? 'left-1/2 bottom-full transform -translate-x-1/2 -translate-y-px border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-gray-200'
+//                                 : tailDirection === 'left'
+//                                     ? 'right-full top-1/2 transform -translate-y-1/2 -translate-x-px border-t-4 border-b-4 border-r-4 border-t-transparent border-b-transparent border-r-gray-200'
+//                                     : 'left-full top-1/2 transform -translate-y-1/2 translate-x-px border-t-4 border-b-4 border-l-4 border-t-transparent border-b-transparent border-l-gray-200'
+//                     }`} style={{ zIndex: -1 }}></div>
+//                 </div>
+//             </div>
+//         );
+//     };
+//
+//     return (
+//         <div className="w-full h-screen  p-4 overflow-auto">
+//             <div className="relative w-full h-full min-w-[1400px] min-h-[900px]">
+//
+//                 {/* Road/Path Network */}
+//                 <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+//                     {flowPaths.map((road, index) => (
+//                         <g key={index}>
+//                             {/* Road shadow */}
+//                             <path
+//                                 d={road.path}
+//                                 stroke="#1f2937"
+//                                 strokeWidth="44"
+//                                 fill="none"
+//                                 strokeLinecap="round"
+//                                 strokeLinejoin="round"
+//                                 opacity="0.3"
+//                                 transform="translate(2, 2)"
+//                             />
+//                             <path
+//                                 d={road.path}
+//                                 stroke="#374151"
+//                                 strokeWidth="40"
+//                                 fill="none"
+//                                 strokeLinecap="round"
+//                                 strokeLinejoin="round"
+//                             />
+//                             {/* Road inner surface */}
+//                             <path
+//                                 d={road.path}
+//                                 stroke="#4b5563"
+//                                 strokeWidth="36"
+//                                 fill="none"
+//                                 strokeLinecap="round"
+//                                 strokeLinejoin="round"
+//                             />
+//                             {/* Road center line */}
+//                             <path
+//                                 d={road.path}
+//                                 stroke="white"
+//                                 strokeWidth="2"
+//                                 fill="none"
+//                                 strokeDasharray="10,10"
+//                                 strokeLinecap="round"
+//                                 className="animate-pulse"
+//                             />
+//                         </g>
+//                     ))}
+//                 </svg>
+//
+//                 {/* Process Location Pins */}
+//                 {processes.map((process) => (
+//                     <div
+//                         key={process.id}
+//                         className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+//                         style={{ left: process.x, top: process.y, zIndex: 10 }}
+//                         onMouseEnter={() => setHoveredNode(process.id)}
+//                         onMouseLeave={() => setHoveredNode(null)}
+//                     >
+//                         {/* Location Pin Icon */}
+//                         <div className={`relative transition-all duration-300 ${hoveredNode === process.id ? 'scale-200' : 'scale-100'}`}>
+//                             <FaMapMarkerAlt
+//                                 size={48}
+//                                 className={`${getLocationIconColor(process.type)} drop-shadow-lg`}
+//                                 fill="currentColor"
+//                             />
+//
+//                         </div>
+//                     </div>
+//                 ))}
+//
+//                 {processes.map((process) => {
+//                     let cardX, cardY, tailDirection;
+//
+//                     switch(process.id) {
+//                         case 'spinning':
+//                             cardX = process.x;
+//                             cardY = process.y - 80;
+//                             tailDirection = 'bottom';
+//                             break;
+//                         case 'yarn-dyeing':
+//                             cardX = process.x;
+//                             cardY = process.y - 80;
+//                             tailDirection = 'bottom';
+//                             break;
+//                         case 'weaving':
+//                             cardX = process.x;
+//                             cardY = process.y - 80;
+//                             tailDirection = 'bottom';
+//                             break;
+//                         case 'fiber':
+//                             cardX = process.x - 80;
+//                             cardY = process.y - 40;
+//                             tailDirection = 'right';
+//                             break;
+//                         case 'bci-cotton':
+//                             cardX = process.x - 80;
+//                             cardY = process.y + 40;
+//                             tailDirection = 'right';
+//                             break;
+//                         case 'accessories':
+//                             cardX = process.x - 100;
+//                             cardY = process.y;
+//                             tailDirection = 'right';
+//                             break;
+//                         case 'packaging':
+//                             cardX = process.x - 100;
+//                             cardY = process.y;
+//                             tailDirection = 'right';
+//                             break;
+//                         case 'stitching':
+//                             cardX = process.x;
+//                             cardY = process.y + 80;
+//                             tailDirection = 'top';
+//                             break;
+//                         case 'wadding':
+//                             cardX = process.x;
+//                             cardY = process.y + 80;
+//                             tailDirection = 'top';
+//                             break;
+//                         case 'processing':
+//                             cardX = process.x + 80;
+//                             cardY = process.y;
+//                             tailDirection = 'left';
+//                             break;
+//                         default:
+//                             cardX = process.x;
+//                             cardY = process.y > 400 ? process.y - 60 : process.y + 60;
+//                             tailDirection = process.y > 600 ? 'bottom' : 'top';
+//                     }
+//
+//                     return (
+//                         <CardWithTail
+//                             key={`card-${process.id}`}
+//                             x={cardX}
+//                             y={cardY}
+//                             tailDirection={tailDirection}
+//                         >
+//                             <div className="text-sm font-medium text-gray-800 whitespace-nowrap flex items-center">
+//                                 <span className="mr-2">{process.icon}</span>
+//                                 {process.name}
+//                             </div>
+//                         </CardWithTail>
+//                     );
+//                 })}
+//
+//                 {/* Station Cards */}
+//                 {processes.filter(p => p.station).map((process) => {
+//                     let stationX, stationY, tailDirection;
+//
+//                     // Custom positioning for station cards to avoid overlaps
+//                     switch(process.id) {
+//                         case 'spinning':
+//                             stationX = process.x;
+//                             stationY = process.y - 120;
+//                             tailDirection = 'bottom';
+//                             break;
+//                         case 'yarn-dyeing':
+//                             stationX = process.x;
+//                             stationY = process.y - 120;
+//                             tailDirection = 'bottom';
+//                             break;
+//                         case 'weaving':
+//                             stationX = process.x;
+//                             stationY = process.y - 120;
+//                             tailDirection = 'bottom';
+//                             break;
+//                         case 'stitching':
+//                             stationX = process.x;
+//                             stationY = process.y + 120;
+//                             tailDirection = 'top';
+//                             break;
+//                         case 'processing':
+//                             stationX = process.x + 120;
+//                             stationY = process.y;
+//                             tailDirection = 'left';
+//                             break;
+//                         default:
+//                             stationX = process.x;
+//                             stationY = process.y > 400 ? process.y - 100 : process.y + 100;
+//                             tailDirection = process.y > 600 ? 'bottom' : 'top';
+//                     }
+//
+//                     return (
+//                         <CardWithTail
+//                             key={`station-${process.id}`}
+//                             x={stationX}
+//                             y={stationY}
+//                             isStation={true}
+//                             tailDirection={tailDirection}
+//                         >
+//                             <div className="text-xs font-medium text-gray-700 whitespace-nowrap">
+//                                 {process.station}
+//                             </div>
+//                         </CardWithTail>
+//                     );
+//                 })}
+//
+//                 {/* Sub-process Cards */}
+//                 {subProcesses.map((subProcess) => (
+//                     <CardWithTail
+//                         key={subProcess.id}
+//                         x={subProcess.x}
+//                         y={subProcess.y}
+//                         tailDirection="top"
+//                     >
+//                         <div className="text-sm text-gray-600 whitespace-nowrap text-center">
+//                             {subProcess.name}
+//                             <div className="text-gray-400 text-xs mt-1">+</div>
+//                         </div>
+//                     </CardWithTail>
+//                 ))}
+//
+//                 {/* Process Info Panel */}
+//                 {hoveredNode && (
+//                     <div className="absolute top-4 left-4 bg-white p-4 rounded-lg shadow-lg border max-w-xs" style={{ zIndex: 20 }}>
+//                         <div className="flex items-center mb-2">
+//                             <FaMapMarkerAlt
+//                                 size={24}
+//                                 className={`${getLocationIconColor(processes.find(p => p.id === hoveredNode)?.type)} mr-2`}
+//                                 fill="currentColor"
+//                             />
+//                             <h4 className="font-bold text-gray-800">
+//                                 {processes.find(p => p.id === hoveredNode)?.name}
+//                             </h4>
+//                         </div>
+//                         <p className="text-sm text-gray-600 mb-1">
+//                             <span className="font-medium">Type:</span> {processes.find(p => p.id === hoveredNode)?.type === 'outsource' ? 'Outsourced' : 'In-house'}
+//                         </p>
+//                         {processes.find(p => p.id === hoveredNode)?.station && (
+//                             <p className="text-sm text-gray-600">
+//                                 <span className="font-medium">Station:</span> {processes.find(p => p.id === hoveredNode)?.station}
+//                             </p>
+//                         )}
+//                     </div>
+//                 )}
+//
+//             </div>
+//         </div>
+//     );
+// };
+//
+// export default ManufacturingFlowDiagram;
