@@ -1,8 +1,24 @@
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
-import React from "react";
+import React, {useState} from "react";
+import {downloadPendingLiabilitiesReport} from "@modules/ecom/services/ecom_services.js";
 
-const PendingLiabilitiesFilter = ({ control, errors }) => {
+const PendingLiabilitiesFilter = ({ control, errors, filters }) => {
+    const [isDownloading, setIsDownloading] = useState(false);
+    const downloadPDF = async () => {
+        setIsDownloading(true)
+        try {
+            const pdfData = await downloadPendingLiabilitiesReport(filters)
+            const blob = new Blob([pdfData], { type: "application/pdf" })
+            const link = document.createElement("a")
+            link.href = URL.createObjectURL(blob)
+            link.download = "Pending Liabilities Report.pdf"
+            link.click()
+        } finally {
+            setIsDownloading(false)
+        }
+    }
+
     return (
         <div className="grid grid-cols-12 gap-6">
             <div className="col-span-12">
@@ -30,6 +46,15 @@ const PendingLiabilitiesFilter = ({ control, errors }) => {
                                 < />
                             }
                             <FilterButton/>
+                            <button
+                                type="button"
+                                className="ti-btn ti-btn-success !mb-0"
+                                onClick={downloadPDF}
+                                disabled={isDownloading}
+                            >
+                                <i className={`bi bi-file-earmark-pdf ${isDownloading ? "animate-spin inline-block" : ""}`}></i>
+                                {isDownloading ? "" : ""}
+                            </button>
                         </div>
                     </div>
                 </div>
