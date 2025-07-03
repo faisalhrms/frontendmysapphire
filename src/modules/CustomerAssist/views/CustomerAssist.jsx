@@ -5,6 +5,8 @@ import IconTabs from "@components/IconTabs.jsx";
 import CustomerAssistForm from "@modules/CustomerAssist/components/CustomerAssistForm.jsx";
 import CustomerAssistList from "@modules/CustomerAssist/views/CustomerAssistList.jsx";
 import CustomerAssistCasesDatatable from "@modules/CustomerAssist/views/CustomerAssistCasesDatatable.jsx";
+import CustomerAssistPendingCasesDatatable from "@modules/CustomerAssist/views/CustomerAssistPendingCasesDatatable.jsx";
+import InfoAlert from "../../../InfoAlert.jsx";
 
 const CustomerAssist = () => {
     const [activeTab, setActiveTab] = useState("form");
@@ -17,21 +19,27 @@ const CustomerAssist = () => {
     const tabs = [
         {
             id: "form",
-            label: "Search",
-            icon: <i className="bi bi-ui-checks-grid"></i>,
-            content: <CustomerAssistForm isActive={activeTab === 'form'}/>,
+            label: "Search Case",
+            icon: <i className="bi bi-ui-checks-grid text-info"></i>,
+            content: <CustomerAssistForm isActive={activeTab === 'form'} />,
         },
         {
-            id: "list",
-            label: "List",
-            icon: <i className="bi bi-card-list"></i>,
-            content: <CustomerAssistList url={`/customer-assist/datatable/`} isActive={activeTab === 'list'}/>,
+            id: "pending",
+            label: "Pending Cases",
+            icon: <i className="bi bi-hourglass-split text-warning"></i>,
+            content: <CustomerAssistPendingCasesDatatable isActive={activeTab === 'pending'} />,
+        },
+        {
+            id: "resolved",
+            label: "Resolved Cases",
+            icon: <i className="bi bi-check2-circle text-success"></i>,
+            content: <CustomerAssistList url={`/customer-assist/datatable/`} isActive={activeTab === 'resolved'} />,
         },
         {
             id: "all_cases",
             label: "All Cases",
-            icon: <i className="bi bi-collection"></i>,
-            content: <CustomerAssistCasesDatatable isActive={activeTab === 'all_cases'}/>,
+            icon: <i className="bi bi-collection text-primary"></i>,
+            content: <CustomerAssistCasesDatatable isActive={activeTab === 'all_cases'} />,
         },
 
     ];
@@ -39,6 +47,7 @@ const CustomerAssist = () => {
     return (
         <>
         <PageHeader currentpage="Customer Assist" mainpage="Customer Assist"  activepage="We Care" />
+            <InfoAlert/>
             <IconTabs tabs={tabs} onTabChange={handleTabChange} activeTab={activeTab} />
         </>
     );
