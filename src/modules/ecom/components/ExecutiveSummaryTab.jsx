@@ -34,6 +34,7 @@ const ExecutiveSummaryTab = ({ isActive, filters }) => {
                         filters={filters}
                         rows={12}
                         downloadEndpoint='/ecom/pending-liabilities/download/csv/3/'
+                        otherDownloadEndpoint='/ecom/pending-liabilities/download/csv/4/'
                         reportName="Orders Fulfillment Summary Export Report"
                     />
                 </div>
