@@ -15,20 +15,26 @@ const ExecutiveSummaryTab = ({ isActive, filters }) => {
                         type='rco'
                         title='Reconciliation CC vs OMS'
                         filters={filters}
+                        downloadEndpoint='/ecom/pending-liabilities/download/csv/1/'
+                        reportName="Reconciliation CC vs OMS/Breakup of Orders into FO's Export Report"
                     />
 
                     <ExecutiveSummaryTable
                         title="Breakup of Orders into FO's"
                         filters={filters}
                         type='fo'
+                        downloadEndpoint='/ecom/pending-liabilities/download/csv/1/'
+                        reportName="Reconciliation CC vs OMS/Breakup of Orders into FO's Export Report"
                     />
                 </div>
                 <div className="xl:col-span-6 col-span-12">
                     <ExecutiveSummaryTable
                         type='ofs'
-                        title='Orders Fulfillment Summary'
+                        title='Orders Fulfillment Summary '
                         filters={filters}
                         rows={12}
+                        downloadEndpoint='/ecom/pending-liabilities/download/csv/3/'
+                        reportName="Orders Fulfillment Summary Export Report"
                     />
                 </div>
             </div>
