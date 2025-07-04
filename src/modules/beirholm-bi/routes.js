@@ -75,7 +75,7 @@ export const BEIRHOLM_BI_ROUTES = {
     },
     ROAD_MAP_RULE_CREATE: {
         path: '/module/beirholm/bi/road-map',
-        permission: 'beirholm_bi.view_road-map',
+        permission: 'auth.road-map',
 
     }
 };
