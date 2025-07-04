@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 
 const InteractiveMap = () => {
@@ -21,7 +20,7 @@ const InteractiveMap = () => {
     const mapPoints1 = [
         {
             id: "fiber",
-            x: 120,
+            x: 100,
             y: 220,
             title: "Fiber",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622582/fiber_svg_zawcar.svg" alt="Fiber" className="w-6 h-6" />,            color: "blue",
@@ -29,7 +28,7 @@ const InteractiveMap = () => {
         },
         {
             id: "bci-cotton",
-            x: 120,
+            x: 100,
             y: 280,
             title: "BCI Cotton",
             subtitle: "+",
@@ -42,8 +41,8 @@ const InteractiveMap = () => {
         },
         {
             id: "spinning",
-            x: 310,
-            y: 64,
+            x: 350,
+            y: 60,
             title: "Spinning",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622649/spinning_svg_ctprca.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
@@ -51,16 +50,16 @@ const InteractiveMap = () => {
         },
         {
             id: "stm5",
-            x: 310,
-            y: 99,
+            x: 350,
+            y: 93,
             title: "STM - 5",
             color: "blue",
             flowPosition: 0.25,
         },
         {
             id: "yarn-dyeing",
-            x: 620,
-            y: 65,
+            x: 640,
+            y: 139,
             title: "Yarn Dyeing",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751624020/yarn_dyeing_svg_hcjmi8.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
@@ -68,8 +67,8 @@ const InteractiveMap = () => {
         },
         {
             id: "stm10",
-            x: 620,
-            y: 100,
+            x: 640,
+            y: 180,
             title: "STM - 10",
             color: "blue",
             flowPosition: 0.4,
@@ -77,42 +76,41 @@ const InteractiveMap = () => {
         {
             id: "weaving",
             x: 878,
-            y: 65,
+            y: 139,
             title: "Weaving",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622978/processing_svg_ctwovk.svg
-" alt="Fiber" className="w-8 h-4" />,            color: "blue",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623481/weaving_svg_bwdrg1.svg" alt="Fiber" className="w-10 h-8" />,
+
 
             flowPosition: 0.5,
         },
         {
             id: "stm6",
             x: 878,
-            y: 100,
+            y: 180,
             title: "STM - 6",
             color: "blue",
             flowPosition: 0.55,
         },
         {
             id: "processing",
-            x: 989,
-            y: 300,
+            x: 1120,
+            y: 260,
             title: "Processing",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623481/weaving_svg_bwdrg1.svg" alt="Fiber" className="w-6 h-6" />,
-            color: "blue",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622978/processing_svg_ctwovk.svg" alt="Fiber" className="w-10 h-8" />,            color: "blue",
             flowPosition: 0.65,
         },
         {
             id: "stm9",
-            x: 989,
-            y: 330,
+            x: 1120,
+            y: 300,
             title: "STM - 9",
             color: "blue",
             flowPosition: 0.7,
         },
         {
             id: "wadding",
-            x: 889,
-            y: 520,
+            x: 1000,
+            y: 590,
             title: "wadding",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623012/wadding_svg_yvu1q1.svg" alt="Fiber" className="w-6 h-6" />,
             color: "red",
@@ -120,8 +118,8 @@ const InteractiveMap = () => {
         },
         {
             id: "stitching",
-            x: 650,
-            y: 639,
+            x: 830,
+            y: 589,
             title: "Stitching",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623689/stitching_svg_b4zb8r.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
@@ -129,15 +127,15 @@ const InteractiveMap = () => {
         },
         {
             id: "stm7",
-            x: 650,
-            y: 680,
+            x: 830,
+            y: 630,
             title: "STM - 9",
             flowPosition: 0.85,
         },
         {
             id: "accessories",
-            x: 420,
-            y: 640,
+            x: 556,
+            y: 579,
             title: "Accessories",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622705/accessories_svg_p011ii.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
@@ -145,8 +143,8 @@ const InteractiveMap = () => {
         },
         {
             id: "labels",
-            x: 420,
-            y: 690,
+            x: 556,
+            y: 638,
             title: "Labels",
             subtitle: "+",
             flowPosition: 0.9,
@@ -160,8 +158,8 @@ const InteractiveMap = () => {
         },
         {
             id: "sewing-thread",
-            x: 420,
-            y: 752,
+            x: 556,
+            y: 699,
             title: "Sewing Thread",
             subtitle: "+",
             flowPosition: 0.92,
@@ -173,8 +171,8 @@ const InteractiveMap = () => {
         },
         {
             id: "packaging",
-            x: 150,
-            y: 575,
+            x: 300,
+            y: 585,
             title: "Packaging",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622788/packaging_svg_iegi0r.svg" alt="Fiber" className="w-6 h-6" />,
             color: "red",
@@ -182,8 +180,8 @@ const InteractiveMap = () => {
         },
         {
             id: "carton",
-            x: 150,
-            y: 630,
+            x: 300,
+            y: 646,
             title: "Carton",
             subtitle: "+",
             color: "red",
@@ -196,8 +194,8 @@ const InteractiveMap = () => {
         },
         {
             id: "carton-tape",
-            x: 150,
-            y: 685,
+            x: 300,
+            y: 701,
             title: "Carton Tape",
             subtitle: "+",
             color: "red",
@@ -210,8 +208,8 @@ const InteractiveMap = () => {
         },
         {
             id: "poly-bags",
-            x: 150,
-            y: 745,
+            x: 300,
+            y: 755,
             title: "Rec Poly Bags",
             subtitle: "+",
             color: "red",
@@ -285,16 +283,17 @@ const InteractiveMap = () => {
                 <div
                     className="relative"
                     style={{
-                        width: "1100px",
+                        width: "1400px",
                         height: "720px",
                         transform: `translate(${mapPosition.x}px, ${mapPosition.y}px) scale(${mapScale})`,
                         transformOrigin: "0 0",
                     }}
                 >
                     <svg className="absolute inset-0 w-full h-full" width="1100" height="700" viewBox="0 0 800 600">
+                        {/* Shadow path */}
                         <path
-                            d="M  -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
-                            // stroke="#1a202c"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -100 400"
+
                             strokeWidth="32"
                             fill="none"
                             strokeLinejoin="round"
@@ -302,16 +301,18 @@ const InteractiveMap = () => {
                             transform="translate(3, 3)"
                         />
 
+                        {/* Main road path */}
                         <path
-                            d="M -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -100 400"
                             stroke="url(#roadGradient)"
                             strokeWidth="45"
                             fill="none"
                             strokeLinejoin="round"
                         />
 
+                        {/* Dashed center line */}
                         <path
-                            d="M  -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -100 400"
                             stroke="white"
                             strokeWidth="1"
                             fill="none"
@@ -319,6 +320,7 @@ const InteractiveMap = () => {
                             strokeDashoffset={-animationOffset}
                             strokeLinecap="round"
                         />
+
 
                         <g>
                             {[...Array(15)].map((_, i) => (
@@ -331,16 +333,16 @@ const InteractiveMap = () => {
                         </g>
 
                         <g filter="url(#glowFilter)">
-                            <use href="#blueMarker" x="50" y="300"/>
-                            <use href="#blueMarker" x="210" y="89"/>
-                            <use href="#blueMarker" x="450" y="180"/>
-                            <use href="#blueMarker" x="650" y="170"/>
+                            <use href="#redMarker" x="-10" y="170"/>
+                            <use href="#blueMarker" x="110" y="89"/>
+                            <use href="#blueMarker" x="350" y="180"/>
+                            <use href="#blueMarker" x="550" y="180"/>
                             <use href="#blueMarker" x="650" y="220"/>
-                            <use href="#redBlueMarker" x="299" y="450"/>
+                            <use href="#redBlueMarker" x="270" y="399"/>
 
-                            <use href="#redMarker" x="650" y="350"/>
-                            <use href="#redMarker" x="488" y="459"/>
-                            <use href="#redMarker" x="100" y="400"/>
+                            <use href="#blueMarker" x="640" y="409"/>
+                            <use href="#blueMarker" x="488" y="410"/>
+                            <use href="#redMarker" x="49" y="410"/>
                         </g>
 
                         <defs>
@@ -415,7 +417,7 @@ const InteractiveMap = () => {
                                     }`}
                                     onClick={() => handlePinClick(point.id)}
                                 >
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-1">
                                         <div className="text-2xl flex-shrink-0 p-2 rounded-lg bg-gray-50">
                                             {point.icon}
                                         </div>
@@ -425,7 +427,7 @@ const InteractiveMap = () => {
                                             </div>
                                             {point.subtitle && (
                                                 <div
-                                                    className="text-xs text-green ml-4 mt-1 font-semibold cursor-pointer hover:text-blue-800">
+                                                    className="text-xs text-green ml-6 mt-1 font-semibold cursor-pointer hover:text-blue-800">
                                                     {expandedSubItems[point.id] ? "+" : "+"}
                                                 </div>
                                             )}
@@ -455,16 +457,13 @@ const InteractiveMap = () => {
                                         <div
                                             key={idx}
                                             onClick={() => handleSubItemClick(point.id, idx)}
-                                            className="bg-white/95 backdrop-blur-sm border-2 border-gray-300 rounded-xl shadow-lg p-1 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-200"
+                                            className="bg-white border-2 border-gray-300 rounded-xl shadow-lg px-4 py-3 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-200"
                                         >
-                                            <div className="font-semibold text-sm text-gray-800 mb-1">
-                                                {subItem.title}
-                                            </div>
-                                            {subItem.description && (
-                                                <div className="text-xs text-gray-600">
+                                            <div className="text-center">
+                                                <div className="font-semibold text-sm text-gray-800">
                                                     {subItem.description}
                                                 </div>
-                                            )}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
