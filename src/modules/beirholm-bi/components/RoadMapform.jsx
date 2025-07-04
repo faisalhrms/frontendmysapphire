@@ -1,5 +1,5 @@
+
 import { useState, useEffect } from "react"
-import { FaSpinner, FaTint, FaIndustry, FaCog, FaBox, FaTag, FaSeedling, FaCut, FaLayerGroup } from "react-icons/fa"
 
 const InteractiveMap = () => {
     const [selectedPin, setSelectedPin] = useState(null)
@@ -24,8 +24,7 @@ const InteractiveMap = () => {
             x: 120,
             y: 220,
             title: "Fiber",
-            icon: <FaSeedling className="text-green" />,
-            color: "blue",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622582/fiber_svg_zawcar.svg" alt="Fiber" className="w-6 h-6" />,            color: "blue",
             flowPosition: 0.05,
         },
         {
@@ -34,28 +33,26 @@ const InteractiveMap = () => {
             y: 280,
             title: "BCI Cotton",
             subtitle: "+",
-
             color: "blue",
             flowPosition: 0.1,
             subItems: [
                 { description: "South Asian Sourcing Pvt Ltd" },
-
             ],
             expanded: false,
         },
         {
             id: "spinning",
             x: 310,
-            y: 80,
+            y: 64,
             title: "Spinning",
-            icon: <FaSpinner className="text-amber-600" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622649/spinning_svg_ctprca.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
             flowPosition: 0.2,
         },
         {
             id: "stm5",
             x: 310,
-            y: 120,
+            y: 99,
             title: "STM - 5",
             color: "blue",
             flowPosition: 0.25,
@@ -65,7 +62,7 @@ const InteractiveMap = () => {
             x: 620,
             y: 65,
             title: "Yarn Dyeing",
-            icon: <FaTint className="text-orange" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751624020/yarn_dyeing_svg_hcjmi8.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
             flowPosition: 0.35,
         },
@@ -82,8 +79,9 @@ const InteractiveMap = () => {
             x: 878,
             y: 65,
             title: "Weaving",
-            icon: <FaIndustry className="text-blue" />,
-            color: "blue",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622978/processing_svg_ctwovk.svg
+" alt="Fiber" className="w-8 h-4" />,            color: "blue",
+
             flowPosition: 0.5,
         },
         {
@@ -97,16 +95,16 @@ const InteractiveMap = () => {
         {
             id: "processing",
             x: 989,
-            y: 268,
+            y: 300,
             title: "Processing",
-            icon: <FaCog className="text-red" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623481/weaving_svg_bwdrg1.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
             flowPosition: 0.65,
         },
         {
             id: "stm9",
             x: 989,
-            y: 309,
+            y: 330,
             title: "STM - 9",
             color: "blue",
             flowPosition: 0.7,
@@ -116,7 +114,7 @@ const InteractiveMap = () => {
             x: 889,
             y: 520,
             title: "wadding",
-            icon: <FaLayerGroup className="text-orange" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623012/wadding_svg_yvu1q1.svg" alt="Fiber" className="w-6 h-6" />,
             color: "red",
             flowPosition: 0.75,
         },
@@ -125,7 +123,7 @@ const InteractiveMap = () => {
             x: 650,
             y: 639,
             title: "Stitching",
-            icon: <FaCut className="text-red" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623689/stitching_svg_b4zb8r.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
             flowPosition: 0.82,
         },
@@ -139,9 +137,9 @@ const InteractiveMap = () => {
         {
             id: "accessories",
             x: 420,
-            y: 630,
+            y: 640,
             title: "Accessories",
-            icon: <FaLayerGroup  className="text-green" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622705/accessories_svg_p011ii.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
             flowPosition: 0.88,
         },
@@ -155,8 +153,8 @@ const InteractiveMap = () => {
             hasSubItems: true,
             subItems: [
                 { description: "High quality woven" },
-                {  description: "Cost effective" },
-                {  description: "Washing instructions" },
+                { description: "Cost effective" },
+                { description: "Washing instructions" },
             ],
             expanded: false,
         },
@@ -168,8 +166,8 @@ const InteractiveMap = () => {
             subtitle: "+",
             flowPosition: 0.92,
             subItems: [
-                {description: "Strong and durable" },
-                {description: "Natural fiber" },
+                { description: "Strong and durable" },
+                { description: "Natural fiber" },
             ],
             expanded: false,
         },
@@ -178,7 +176,7 @@ const InteractiveMap = () => {
             x: 150,
             y: 575,
             title: "Packaging",
-            icon: <FaBox className="text-red" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622788/packaging_svg_iegi0r.svg" alt="Fiber" className="w-6 h-6" />,
             color: "red",
             flowPosition: 0.92,
         },
@@ -206,7 +204,7 @@ const InteractiveMap = () => {
             flowPosition: 0.96,
             subItems: [
                 { description: "Strong seal" },
-                {  description: "Eco-friendly" },
+                { description: "Eco-friendly" },
             ],
             expanded: false,
         },
@@ -219,8 +217,7 @@ const InteractiveMap = () => {
             color: "red",
             flowPosition: 0.98,
             subItems: [
-                {  description: "South Asian Sourcing Pvt Ltd" },
-
+                { description: "South Asian Sourcing Pvt Ltd" },
             ],
             expanded: false,
         },
@@ -283,10 +280,7 @@ const InteractiveMap = () => {
     }
 
     return (
-        <div
-            className="w-full h-screen mt-8  overflow-hidden relative"
-
-        >
+        <div className="w-full h-screen mt-8 overflow-hidden relative">
             <div className="w-full h-full cursor-grab active:cursor-grabbing">
                 <div
                     className="relative"
@@ -297,10 +291,10 @@ const InteractiveMap = () => {
                         transformOrigin: "0 0",
                     }}
                 >
-                    <svg className="absolute inset-0 w-full h-full" width="800" height="600" viewBox="0 0 800 600">
+                    <svg className="absolute inset-0 w-full h-full" width="1100" height="700" viewBox="0 0 800 600">
                         <path
-                            d="M 50 300 L 150 300 L 150 150 L 350 150 L 350 100 L 650 100 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
-                            stroke="#1a202c"
+                            d="M  -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
+                            // stroke="#1a202c"
                             strokeWidth="32"
                             fill="none"
                             strokeLinejoin="round"
@@ -309,15 +303,15 @@ const InteractiveMap = () => {
                         />
 
                         <path
-                            d="M 50 300 L 150 300 L 150 150 L 350 150 L 350 100 L 650 100 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
+                            d="M -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
                             stroke="url(#roadGradient)"
-                            strokeWidth="30"
+                            strokeWidth="45"
                             fill="none"
                             strokeLinejoin="round"
                         />
 
                         <path
-                            d="M 50 300 L 150 300 L 150 150 L 350 150 L 350 100 L 650 100 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
+                            d="M  -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
                             stroke="white"
                             strokeWidth="1"
                             fill="none"
@@ -338,11 +332,11 @@ const InteractiveMap = () => {
 
                         <g filter="url(#glowFilter)">
                             <use href="#blueMarker" x="50" y="300"/>
-                            <use href="#blueMarker" x="210" y="139"/>
-                            <use href="#blueMarker" x="450" y="100"/>
-                            <use href="#blueMarker" x="650" y="100"/>
-                            <use href="#blueMarker" x="650" y="210"/>
-                            <use href="#blueMarker" x="299" y="450"/>
+                            <use href="#blueMarker" x="210" y="89"/>
+                            <use href="#blueMarker" x="450" y="180"/>
+                            <use href="#blueMarker" x="650" y="170"/>
+                            <use href="#blueMarker" x="650" y="220"/>
+                            <use href="#redBlueMarker" x="299" y="450"/>
 
                             <use href="#redMarker" x="650" y="350"/>
                             <use href="#redMarker" x="488" y="459"/>
@@ -355,7 +349,6 @@ const InteractiveMap = () => {
                                 <stop offset="50%" stopColor="#1f2937"/>
                                 <stop offset="100%" stopColor="#111827"/>
                             </linearGradient>
-
 
                             <filter id="glowFilter" x="-50%" y="-50%" width="200%" height="200%">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -371,20 +364,32 @@ const InteractiveMap = () => {
                             />
 
                             <g id="blueMarker" transform="translate(-12, -24)">
-                                <path
-                                    d="M12 0C5.373 0 0 5.373 0 12c0 7.732 12 20 12 20s12-12.268 12-20c0-6.627-5.373-12-12-12zm0 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"
-                                    fill="#2563eb"
-                                    stroke="white"
-                                    strokeWidth="1.5"
+                                <image
+                                    href="https://res.cloudinary.com/dtsguaevl/image/upload/v1751621408/blue_location_icon_svg_itujxr.svg"
+                                    x="0"
+                                    y="0"
+                                    width="34"
+                                    height="32"
                                 />
                             </g>
 
                             <g id="redMarker" transform="translate(-12, -24)">
-                                <path
-                                    d="M12 0C5.373 0 0 5.373 0 12c0 7.732 12 20 12 20s12-12.268 12-20c0-6.627-5.373-12-12-12zm0 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"
-                                    fill="#dc2626"
-                                    stroke="white"
-                                    strokeWidth="1.5"
+                                <image
+                                    href="https://res.cloudinary.com/dtsguaevl/image/upload/v1751621545/red_location_icon_svg_hfnkfi.svg"
+                                    x="0"
+                                    y="0"
+                                    width="34"
+                                    height="32"
+                                />
+                            </g>
+
+                            <g id="redBlueMarker" transform="translate(-12, -24)">
+                                <image
+                                    href="https://res.cloudinary.com/dtsguaevl/image/upload/v1751621505/red_blue_location_icon_svg_ddoicg.svg"
+                                    x="0"
+                                    y="0"
+                                    width="50"
+                                    height="50"
                                 />
                             </g>
                         </defs>
