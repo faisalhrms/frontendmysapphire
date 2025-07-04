@@ -9,6 +9,7 @@ const InteractiveMap = () => {
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
     const [animationOffset, setAnimationOffset] = useState(0)
     const [showLabelsCard, setShowLabelsCard] = useState(false)
+    const [expandedSubItems, setExpandedSubItems] = useState({})
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -17,11 +18,11 @@ const InteractiveMap = () => {
         return () => clearInterval(interval)
     }, [])
 
-    const mapPoints = [
+    const mapPoints1 = [
         {
             id: "fiber",
-            x: 169,
-            y: 314,
+            x: 120,
+            y: 220,
             title: "Fiber",
             icon: <FaSeedling className="text-green" />,
             color: "blue",
@@ -29,18 +30,23 @@ const InteractiveMap = () => {
         },
         {
             id: "bci-cotton",
-            x: 169,
-            y: 380,
+            x: 120,
+            y: 280,
             title: "BCI Cotton",
             subtitle: "+",
-            icon: <FaSeedling className="text-green" />,
+
             color: "blue",
             flowPosition: 0.1,
+            subItems: [
+                { description: "South Asian Sourcing Pvt Ltd" },
+
+            ],
+            expanded: false,
         },
         {
             id: "spinning",
-            x: 420,
-            y: 76,
+            x: 310,
+            y: 80,
             title: "Spinning",
             icon: <FaSpinner className="text-amber-600" />,
             color: "blue",
@@ -48,17 +54,16 @@ const InteractiveMap = () => {
         },
         {
             id: "stm5",
-            x: 420,
-            y: 122,
+            x: 310,
+            y: 120,
             title: "STM - 5",
-
             color: "blue",
             flowPosition: 0.25,
         },
         {
             id: "yarn-dyeing",
-            x: 780,
-            y: 75,
+            x: 620,
+            y: 65,
             title: "Yarn Dyeing",
             icon: <FaTint className="text-orange" />,
             color: "blue",
@@ -66,17 +71,16 @@ const InteractiveMap = () => {
         },
         {
             id: "stm10",
-            x: 780,
-            y: 122,
+            x: 620,
+            y: 100,
             title: "STM - 10",
-
             color: "blue",
             flowPosition: 0.4,
         },
         {
             id: "weaving",
-            x: 1059,
-            y: 75,
+            x: 878,
+            y: 65,
             title: "Weaving",
             icon: <FaIndustry className="text-blue" />,
             color: "blue",
@@ -84,35 +88,33 @@ const InteractiveMap = () => {
         },
         {
             id: "stm6",
-            x: 1059,
-            y: 120,
+            x: 878,
+            y: 100,
             title: "STM - 6",
-
             color: "blue",
             flowPosition: 0.55,
         },
         {
             id: "processing",
-            x: 1240,
-            y: 338,
+            x: 989,
+            y: 268,
             title: "Processing",
-            icon: <FaCog className="text-blue" />,
+            icon: <FaCog className="text-red" />,
             color: "blue",
             flowPosition: 0.65,
         },
         {
             id: "stm9",
-            x: 1240,
-            y: 379,
+            x: 989,
+            y: 309,
             title: "STM - 9",
-
             color: "blue",
             flowPosition: 0.7,
         },
         {
             id: "wadding",
-            x: 1085,
-            y: 650,
+            x: 889,
+            y: 520,
             title: "wadding",
             icon: <FaLayerGroup className="text-orange" />,
             color: "red",
@@ -120,56 +122,61 @@ const InteractiveMap = () => {
         },
         {
             id: "stitching",
-            x: 820,
-            y: 800,
+            x: 650,
+            y: 639,
             title: "Stitching",
-            icon: <FaCut className="text-primary" />,
+            icon: <FaCut className="text-red" />,
             color: "blue",
             flowPosition: 0.82,
         },
         {
-            id: "wadding-blue",
-            x: 820,
-            y: 870,
-            title: "Wadding",
-            icon: <FaTag className="text-red" />,
-
+            id: "stm7",
+            x: 650,
+            y: 680,
+            title: "STM - 9",
             flowPosition: 0.85,
         },
         {
             id: "accessories",
             x: 420,
-            y: 795,
+            y: 630,
             title: "Accessories",
-            icon: <FaCog className="text-success" />,
+            icon: <FaLayerGroup  className="text-green" />,
             color: "blue",
             flowPosition: 0.88,
         },
         {
             id: "labels",
             x: 420,
-            y: 860,
+            y: 690,
             title: "Labels",
             subtitle: "+",
-            icon: <FaCut className="text-danger" />,
-            color: "red",
             flowPosition: 0.9,
             hasSubItems: true,
+            subItems: [
+                { description: "High quality woven" },
+                {  description: "Cost effective" },
+                {  description: "Washing instructions" },
+            ],
+            expanded: false,
         },
         {
             id: "sewing-thread",
             x: 420,
-            y: 940,
+            y: 752,
             title: "Sewing Thread",
             subtitle: "+",
-            icon: <FaCut className="text-pink" />,
-            color: "red",
             flowPosition: 0.92,
+            subItems: [
+                {description: "Strong and durable" },
+                {description: "Natural fiber" },
+            ],
+            expanded: false,
         },
         {
             id: "packaging",
-            x: 130,
-            y: 660,
+            x: 150,
+            y: 575,
             title: "Packaging",
             icon: <FaBox className="text-red" />,
             color: "red",
@@ -177,35 +184,49 @@ const InteractiveMap = () => {
         },
         {
             id: "carton",
-            x: 130,
-            y: 720,
+            x: 150,
+            y: 630,
             title: "Carton",
             subtitle: "+",
-            icon: <FaBox className="text-green" />,
             color: "red",
             flowPosition: 0.94,
+            subItems: [
+                { description: "Carton Tape" },
+                { description: "Sundus Packages" },
+            ],
+            expanded: false,
         },
         {
             id: "carton-tape",
-            x: 130,
-            y: 790,
+            x: 150,
+            y: 685,
             title: "Carton Tape",
             subtitle: "+",
-            icon: <FaBox className="text-red"  />,
             color: "red",
             flowPosition: 0.96,
+            subItems: [
+                { description: "Strong seal" },
+                {  description: "Eco-friendly" },
+            ],
+            expanded: false,
         },
         {
             id: "poly-bags",
-            x: 130,
-            y: 850,
+            x: 150,
+            y: 745,
             title: "Rec Poly Bags",
             subtitle: "+",
-            icon: <FaBox  className="text-red"  />,
             color: "red",
             flowPosition: 0.98,
+            subItems: [
+                {  description: "South Asian Sourcing Pvt Ltd" },
+
+            ],
+            expanded: false,
         },
     ]
+
+    const [mapPoints, setMapPoints] = useState(mapPoints1)
 
     const labelCompanies = [
         { name: "Sitara Labels", color: "bg-red" },
@@ -237,31 +258,41 @@ const InteractiveMap = () => {
         setMapScale((prev) => Math.max(0.5, Math.min(3, prev * delta)))
     }
 
-    const handlePinClick = (pinId) => {
-        if (pinId === "labels") {
-            setShowLabelsCard(true)
-            setSelectedPin(pinId)
-        } else {
-            setSelectedPin(selectedPin === pinId ? null : pinId)
-            setShowLabelsCard(false)
-        }
-    }
-
     const handleCloseLabelsCard = () => {
         setShowLabelsCard(false)
         setSelectedPin(null)
     }
 
+    const handlePinClick = (pinId) => {
+        console.log(pinId)
+
+        const clickedPoint = mapPoints.find(point => point.id === pinId)
+
+        if (clickedPoint && clickedPoint.subItems && clickedPoint.subItems.length > 0) {
+            setExpandedSubItems(prev => ({
+                ...prev,
+                [pinId]: !prev[pinId]
+            }))
+        }
+
+        setSelectedPin(selectedPin === pinId ? null : pinId)
+    }
+
+    const handleSubItemClick = (parentId, subItemIndex) => {
+        console.log(`Clicked sub-item ${subItemIndex} of ${parentId}`)
+    }
+
     return (
-        <div className="w-full h-screen mt-8 overflow-hidden relative">
-            <div
-                className="w-full h-full cursor-grab active:cursor-grabbing"
-            >
+        <div
+            className="w-full h-screen mt-8  overflow-hidden relative"
+
+        >
+            <div className="w-full h-full cursor-grab active:cursor-grabbing">
                 <div
                     className="relative"
                     style={{
-                        width: "1400px",
-                        height: "900px",
+                        width: "1100px",
+                        height: "720px",
                         transform: `translate(${mapPosition.x}px, ${mapPosition.y}px) scale(${mapScale})`,
                         transformOrigin: "0 0",
                     }}
@@ -270,9 +301,8 @@ const InteractiveMap = () => {
                         <path
                             d="M 50 300 L 150 300 L 150 150 L 350 150 L 350 100 L 650 100 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
                             stroke="#1a202c"
-                            strokeWidth="42"
+                            strokeWidth="32"
                             fill="none"
-                            strokeLinecap="round"
                             strokeLinejoin="round"
                             opacity="0.3"
                             transform="translate(3, 3)"
@@ -281,9 +311,8 @@ const InteractiveMap = () => {
                         <path
                             d="M 50 300 L 150 300 L 150 150 L 350 150 L 350 100 L 650 100 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
                             stroke="url(#roadGradient)"
-                            strokeWidth="40"
+                            strokeWidth="30"
                             fill="none"
-                            strokeLinecap="round"
                             strokeLinejoin="round"
                         />
 
@@ -309,11 +338,11 @@ const InteractiveMap = () => {
 
                         <g filter="url(#glowFilter)">
                             <use href="#blueMarker" x="50" y="300"/>
-                            <use href="#blueMarker" x="210" y="125"/>
+                            <use href="#blueMarker" x="210" y="139"/>
                             <use href="#blueMarker" x="450" y="100"/>
                             <use href="#blueMarker" x="650" y="100"/>
                             <use href="#blueMarker" x="650" y="210"/>
-                            <use href="#blueMarker" x="199" y="430"/>
+                            <use href="#blueMarker" x="299" y="450"/>
 
                             <use href="#redMarker" x="650" y="350"/>
                             <use href="#redMarker" x="488" y="459"/>
@@ -359,9 +388,9 @@ const InteractiveMap = () => {
                                 />
                             </g>
                         </defs>
-
                     </svg>
-                    {mapPoints.map((point) => (
+
+                    {mapPoints?.map((point) => (
                         <div
                             key={point.id}
                             className="absolute"
@@ -374,56 +403,69 @@ const InteractiveMap = () => {
                         >
                             {!showLabelsCard && (
                                 <div
-                                    className={`absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[160px] transition-all duration-300 ${
+                                    className={`absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[150px] transition-all duration-300 cursor-pointer ${
                                         selectedPin === point.id
                                             ? "scale-110 shadow-2xl border-blue-400 bg-white"
                                             : "hover:scale-105 hover:shadow-lg"
                                     }`}
+                                    onClick={() => handlePinClick(point.id)}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div
-                                            className="text-2xl flex-shrink-0 p-2 rounded-lg bg-gray-50">{point.icon}</div>
-                                        <div className="flex-1">
-                                            <div
-                                                className="font-bold text-sm text-gray-800 leading-tight">{point.title}</div>
-                                            {point.subtitle &&
-                                                <div className="text-xs text-gray-500 mt-1 ml-4">{point.subtitle}</div>}
+                                        <div className="text-2xl flex-shrink-0 p-2 rounded-lg bg-gray-50">
+                                            {point.icon}
                                         </div>
-                                    </div>
-
-                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2">
-                                        <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-transparent border-t-gray-200"></div>
-                                        <div className="absolute -top-[8px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-transparent border-t-white"></div>
+                                        <div className="flex-1">
+                                            <div className="font-bold text-sm text-gray-800 leading-tight">
+                                                {point.title}
+                                            </div>
+                                            {point.subtitle && (
+                                                <div
+                                                    className="text-xs text-green ml-4 mt-1 font-semibold cursor-pointer hover:text-blue-800">
+                                                    {expandedSubItems[point.id] ? "+" : "+"}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
-
-                            <button
-                                onClick={() => handlePinClick(point.id)}
-                                className={`relative z-10 w-14 h-18 transition-all duration-300 hover:scale-110 ${
-                                    selectedPin === point.id ? "scale-125" : ""
-                                }`}
-                                style={{
-                                    clipPath: "polygon(50% 100%, 0% 40%, 0% 0%, 100% 0%, 100% 40%)",
-                                    filter: selectedPin === point.id ? "drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))" : "none",
-                                }}
-                            >
-                                <div
-                                    className={`w-full h-full ${
-                                        point.color === "blue"
-                                            ? " bg-blue hover:bg-blue"
-                                            : " bg-red hover:bg-red"
-                                    } shadow-lg`}
-                                ></div>
-                                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-inner">
-                                    <div className="w-5 h-5  bg-gray-100 to-gray-200 rounded-full"></div>
-                                </div>
-                                {selectedPin === point.id && (
-                                    <div className="absolute -inset-3 border-2 border-blue-400 rounded-full animate-ping opacity-75"></div>
-                                )}
-                            </button>
                         </div>
                     ))}
+
+                    {mapPoints?.map((point) => {
+                        if (!expandedSubItems[point.id] || !point.subItems) return null
+
+                        return (
+                            <div
+                                key={`${point.id}-subitems`}
+                                className="absolute"
+                                style={{
+                                    left: `${point.x}px`,
+                                    top: `${point.y + -10}px`,
+                                    transform: "translate(-50%, 0)",
+                                    zIndex: 999,
+                                }}
+                            >
+                                <div className="space-y-2 min-w-[200px]">
+                                    {point.subItems.map((subItem, idx) => (
+                                        <div
+                                            key={idx}
+                                            onClick={() => handleSubItemClick(point.id, idx)}
+                                            className="bg-white/95 backdrop-blur-sm border-2 border-gray-300 rounded-xl shadow-lg p-1 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-200"
+                                        >
+                                            <div className="font-semibold text-sm text-gray-800 mb-1">
+                                                {subItem.title}
+                                            </div>
+                                            {subItem.description && (
+                                                <div className="text-xs text-gray-600">
+                                                    {subItem.description}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )
+                    })}
 
                     {showLabelsCard && (
                         <div
