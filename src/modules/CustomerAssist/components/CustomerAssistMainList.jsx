@@ -135,12 +135,12 @@ const CustomerAssistMainList = ({ data }) => {
                         <div className="box-body p-6">
                             <div className="grid grid-cols-12 gap-6">
                                 <div className="col-span-12">
-                                    <div className="text-sm font-medium text-gray-500">Subject</div>
-                                    <div className="text-base mt-1">{data.subject}</div>
+                                    <div className="text-[.9375rem] font-semibold mb-2">Subject</div>
+                                    <div className="text-[#8c9097] dark:text-white/50 task-description">{data.subject}</div>
                                 </div>
                                 <div className="col-span-12">
-                                    <div className="text-sm font-medium text-gray-500">Description</div>
-                                    <div className="text-base mt-1 whitespace-pre-line">{data.description}</div>
+                                    <div className="text-[.9375rem] font-semibold mb-2">Description</div>
+                                    <div className="text-[#8c9097] dark:text-white/50 whitespace-pre-line">{data.description}</div>
                                 </div>
                             </div>
                         </div>
@@ -170,8 +170,8 @@ const CustomerAssistMainList = ({ data }) => {
                                         <div className="flex justify-end">
                                             <FormButton
                                                 isLoading={isSubmitting}
-                                                text="Update Remarks"
-                                                submitTxt="Updating..."
+                                                text="Submit"
+                                                submitTxt="Submitting..."
                                                 className="ti-btn ti-btn-primary ti-btn-md"
                                             />
                                         </div>

@@ -1,13 +1,83 @@
-import React from 'react';
-import {formatNumberWithCommas} from "@helpers/formatters.js";
-import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import React, { useState } from 'react';
+import { formatNumberWithCommas } from "@helpers/formatters.js";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import TbodyShimmer from "@components/TbodyShimmer.jsx";
 import AnimatedMascot from "@components/AnimatedMascot.jsx";
+import api from "@config/axiosConfig.js";
 
-const ExecutiveSummaryTable = ({ type = 'rco', title, filters, rows = 4 }) => {
+const ExecutiveSummaryTable = ({
+                                   type = 'rco',
+                                   title,
+                                   filters,
+                                   rows = 4,
+                                   downloadEndpoint,
+                                   otherDownloadEndpoint,
+                                   reportName
+                               }) => {
     const { data, isLoading } = useFetchWithFilters(
-        `/ecom/pending-liabilities/executive-summary/${type}/`, filters, {refetchOnWindowFocus: false}
-    )
+        `/ecom/pending-liabilities/executive-summary/${type}/`,
+        filters,
+        { refetchOnWindowFocus: false }
+    );
+
+    const [downloadingState, setDownloadingState] = useState({
+        main: false,
+        return: false,
+    });
+
+    const downloadFile = async (key, endpoint, filenamePrefix = '') => {
+        try {
+            setDownloadingState(prev => ({ ...prev, [key]: true }));
+
+            const response = await api.get(endpoint, {
+                params: { ...filters },
+                responseType: 'blob',
+            });
+
+            const contentDisposition = response.headers['content-disposition'];
+            let filename = `${filenamePrefix || reportName}.csv`;
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (match?.[1]) filename = match[1];
+            }
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download error:", error);
+            alert("Failed to download file.");
+        } finally {
+            setDownloadingState(prev => ({ ...prev, [key]: false }));
+        }
+    };
+
+    const downloadButtons = [
+        {
+            key: 'main',
+            show: !!downloadEndpoint,
+            endpoint: downloadEndpoint,
+            iconClass: "bi bi-filetype-csv text-warning",
+            title: "Download CSV",
+            filenamePrefix: reportName,
+            offsetClass: "right-2"
+        },
+        {
+            key: 'return',
+            show: type === 'ofs' && !!otherDownloadEndpoint,
+            endpoint: otherDownloadEndpoint,
+            iconClass: "bi bi-file-arrow-down text-danger",
+            title: "Download Return CSV",
+            filenamePrefix: `Returns ${reportName}`,
+            offsetClass: "right-10"
+        }
+    ];
+
     return (
         <div className="p-2 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg relative">
             {isLoading && <AnimatedMascot />}
@@ -15,7 +85,33 @@ const ExecutiveSummaryTable = ({ type = 'rco', title, filters, rows = 4 }) => {
                 <table className="w-full border-collapse">
                     <thead>
                     <tr className="text-white bg-[#383853]">
-                        <th colSpan="2" className="bg-blue-300 border border-gray-400 p-2 text-center font-normal">{title}</th>
+                        <th
+                            colSpan="2"
+                            className="bg-blue-300 border border-gray-400 p-2 text-center font-normal relative"
+                        >
+                            {title}
+                            {downloadButtons.map(
+                                ({ key, show, endpoint, iconClass, title, filenamePrefix, offsetClass }) =>
+                                    show && (
+                                        <button
+                                            key={key}
+                                            type="button"
+                                            onClick={() => downloadFile(key, endpoint, filenamePrefix)}
+                                            disabled={downloadingState[key]}
+                                            className={`absolute top-1 ${offsetClass} text-black hover:text-blue-700 ${
+                                                downloadingState[key] ? "cursor-not-allowed opacity-50" : ""
+                                            }`}
+                                            title={downloadingState[key] ? "Downloading..." : title}
+                                        >
+                                            {downloadingState[key] ? (
+                                                <i className="ri-loader-4-line animate-spin text-lg text-success" />
+                                            ) : (
+                                                <i className={`${iconClass} text-lg`} />
+                                            )}
+                                        </button>
+                                    )
+                            )}
+                        </th>
                     </tr>
                     </thead>
                     {isLoading ? (
@@ -23,10 +119,11 @@ const ExecutiveSummaryTable = ({ type = 'rco', title, filters, rows = 4 }) => {
                     ) : (
                         <tbody>
                         {data?.map((row, index) => (
-                            <tr key={index} className={`dark:text-gray-200 dark:bg-bodybg text-black ${row?.classes}`}>
-                                <td className="border border-gray-400 p-2 whitespace-nowrap">
-                                    {row?.label}
-                                </td>
+                            <tr
+                                key={index}
+                                className={`dark:text-gray-200 dark:bg-bodybg text-black ${row?.classes}`}
+                            >
+                                <td className="border border-gray-400 p-2 whitespace-nowrap">{row?.label}</td>
                                 <td className="border border-gray-400 p-2 whitespace-nowrap text-right font-bold">
                                     {formatNumberWithCommas(row?.value)}
                                 </td>

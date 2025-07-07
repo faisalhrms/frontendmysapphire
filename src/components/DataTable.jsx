@@ -476,10 +476,17 @@ const DataTable = React.memo(({
     // States for column filtering
     const [hiddenCols, setHiddenCols] = useState([]);
     const [showColFilter, setShowColFilter] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Memoize columns/data
     const memoizedColumns = useMemo(() => columns, [columns]);
     const memoizedData = useMemo(() => items, [items]);
+
+    const filteredColumns = memoizedColumns.filter(col => {
+        const colId = col.id || col.accessor;
+        const label = typeof col.Header === 'string' ? col.Header : colId;
+        return label.toLowerCase().includes(searchTerm.toLowerCase());
+    });
 
     // Initialize React Table
     const {
@@ -970,14 +977,164 @@ const DataTable = React.memo(({
                     {/* RIGHT side => Filter Icon, CSV Download, Search */}
                     <div className="flex items-center gap-2">
                         {/* Column Filter toggle button */}
-                        <button
-                            type="button"
-                            className="px-2 py-1 border rounded text-sm"
-                            onClick={() => setShowColFilter((prev) => !prev)}
-                        >
-                            {showColFilter ? <i className="ri-filter-line"></i> :
-                                <i className="ri-filter-off-line"></i>}
-                        </button>
+                        <div className='relative'>
+                            <button
+                                type="button"
+                                className="inline-flex items-center gap-2 px-2 py-1.5 border rounded text-sm"
+                                onClick={() => setShowColFilter((prev) => !prev)}
+                            >
+                                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                                </svg>
+                                <span>Columns</span>
+                                <svg
+                                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showColFilter ? 'rotate-180' : ''}`}
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            {/* Column visibility dropdown */}
+                            {showColFilter && (
+                                <div
+                                    className="absolute z-50 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-lg top-full right-0 overflow-hidden">
+                                    {/* Header */}
+                                    <div
+                                        className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                        <h3 className="text-sm font-medium text-gray-900">Column visibility</h3>
+                                        <button
+                                            onClick={() => setShowColFilter(false)}
+                                            className="p-1 hover:bg-gray-200 rounded transition-colors"
+                                        >
+                                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600" fill="none"
+                                                 stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                      d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    {/* Search */}
+                                    <div className="p-3 border-b border-gray-200">
+                                        <div className="relative">
+                                            <svg
+                                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                            </svg>
+                                            <input
+                                                type="text"
+                                                placeholder="Search columns..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Column list */}
+                                    <div className="max-h-60 overflow-y-auto">
+                                        {filteredColumns.length > 0 ? (
+                                            <div className="p-2">
+                                                {filteredColumns.map((col) => {
+                                                    const colId = col.id || col.accessor;
+                                                    if (!colId) return null;
+                                                    const isHidden = hiddenCols.includes(colId);
+                                                    const label = typeof col.Header === 'string' ? col.Header : colId;
+
+                                                    return (
+                                                        <div
+                                                            key={colId}
+                                                            className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-md cursor-pointer transition-colors"
+                                                            onClick={() => handleToggleColumn(colId)}
+                                                        >
+                                                            <div className="relative flex-shrink-0">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={!isHidden}
+                                                                    onChange={() => {
+                                                                    }}
+                                                                    className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                                />
+                                                            </div>
+
+                                                            <div className="flex-1 min-w-0">
+                                                                    <span className={`text-sm font-normal ${
+                                                                        !isHidden ? 'text-gray-900' : 'text-gray-500'
+                                                                    }`}>
+                                                                        {label}
+                                                                    </span>
+                                                            </div>
+
+                                                            <div className="flex-shrink-0">
+                                                                    <span
+                                                                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                                            !isHidden
+                                                                                ? 'badge !rounded-full bg-success text-white'
+                                                                                : 'badge !rounded-full bg-warning text-white'
+                                                                        }`}>
+                                                                        {!isHidden ? 'Visible' : 'Hidden'}
+                                                                    </span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="px-4 py-8 text-center">
+                                                <svg className="mx-auto w-8 h-8 text-gray-300 mb-2" fill="none"
+                                                     stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <p className="text-sm text-gray-500">No columns found</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Footer */}
+                                    <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                                        <div className="flex items-center justify-between">
+                                                <span className="text-xs text-gray-500">
+                                                    {memoizedColumns.length - hiddenCols.length} of {memoizedColumns.length} visible
+                                                </span>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => {
+                                                        memoizedColumns.forEach(col => {
+                                                            const colId = col.id || col.accessor;
+                                                            if (colId && hiddenCols.includes(colId)) {
+                                                                handleToggleColumn(colId);
+                                                            }
+                                                        });
+                                                    }}
+                                                    className="px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+                                                >
+                                                    Show all
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        memoizedColumns.slice(1).forEach(col => {
+                                                            const colId = col.id || col.accessor;
+                                                            if (colId && !hiddenCols.includes(colId)) {
+                                                                handleToggleColumn(colId);
+                                                            }
+                                                        });
+                                                    }}
+                                                    className="px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
+                                                >
+                                                    Hide all
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {/* CSV Download button */}
                         <button
@@ -987,28 +1144,6 @@ const DataTable = React.memo(({
                         >
                             <i className="ri-download-2-line"></i>
                         </button>
-
-                        {/* Column visibility dropdown */}
-                        {showColFilter && (
-                            <div className="absolute z-10 bg-white border shadow-md p-2 top-12 right-0">
-                                {memoizedColumns.map((col) => {
-                                    const colId = col.id || col.accessor;
-                                    if (!colId) return null;
-                                    const isHidden = hiddenCols.includes(colId);
-                                    const label = typeof col.Header === 'string' ? col.Header : colId;
-                                    return (
-                                        <label key={colId} className="flex items-center gap-2 text-sm my-1">
-                                            <input
-                                                type="checkbox"
-                                                checked={!isHidden}
-                                                onChange={() => handleToggleColumn(colId)}
-                                            />
-                                            {label}
-                                        </label>
-                                    );
-                                })}
-                            </div>
-                        )}
 
                         {/* Search */}
                         <input
@@ -1022,7 +1157,7 @@ const DataTable = React.memo(({
 
                 {/* Main Table */}
                 {isLoading ? (
-                    <LoadingSpinner />
+                    <LoadingSpinner/>
                 ) : (
                     <div className="table-responsive">
                         <table
@@ -1031,7 +1166,7 @@ const DataTable = React.memo(({
                         >
                             <thead>
                             {headerGroups.map((headerGroup) => {
-                                const { key: headerGroupKey, ...headerGroupProps } =
+                                const {key: headerGroupKey, ...headerGroupProps} =
                                     headerGroup.getHeaderGroupProps();
                                 return (
                                     <tr
@@ -1040,7 +1175,7 @@ const DataTable = React.memo(({
                                         className="border-b border-defaultborder"
                                     >
                                         {headerGroup.headers.map((column) => {
-                                            const { key: columnKey, ...columnProps } = column.getHeaderProps(
+                                            const {key: columnKey, ...columnProps} = column.getHeaderProps(
                                                 column.getSortByToggleProps
                                                     ? column.getSortByToggleProps()
                                                     : undefined
@@ -1057,7 +1192,8 @@ const DataTable = React.memo(({
                                                         <span>{column.render('Header')}</span>
                                                         {/* Sort arrows if sortable */}
                                                         {column.canSort && (
-                                                            <span className="flex flex-col items-center justify-center ml-2 leading-none">
+                                                            <span
+                                                                className="flex flex-col items-center justify-center ml-2 leading-none">
                                                                     <span
                                                                         className={
                                                                             (column.isSorted && !column.isSortedDesc
@@ -1089,7 +1225,7 @@ const DataTable = React.memo(({
                             <tbody {...getTableBodyProps()}>
                             {tablePage.map((row) => {
                                 prepareRow(row);
-                                const { key: rowKey, ...rowProps } = row.getRowProps();
+                                const {key: rowKey, ...rowProps} = row.getRowProps();
                                 return (
                                     <tr
                                         key={rowKey}
@@ -1097,7 +1233,7 @@ const DataTable = React.memo(({
                                         className="border-b border-defaultborder text-[0.6875rem]"
                                     >
                                         {row.cells.map((cell) => {
-                                            const { key: cellKey, ...cellProps } = cell.getCellProps();
+                                            const {key: cellKey, ...cellProps} = cell.getCellProps();
                                             return (
                                                 <td key={cellKey} {...cellProps}>
                                                     {cell.render('Cell')}

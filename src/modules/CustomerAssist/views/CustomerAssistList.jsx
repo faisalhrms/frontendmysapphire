@@ -128,10 +128,9 @@ const CustomerAssistList = ({ isLoading,url,isActive }) => {
         <>
             <DataTable
                 columns={columns}
-                title="Customer Assist Cases"
+                title="Customer Assist Resolved Cases"
                 apiUrl={url}
                 enableAdvancedFilters={true}
-                // If DataTable accepts a refetch prop, you can pass refetch from parent.
             />
         </>
     );
