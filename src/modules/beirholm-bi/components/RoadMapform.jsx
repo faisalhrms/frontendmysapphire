@@ -20,7 +20,7 @@ const InteractiveMap = () => {
     const mapPoints1 = [
         {
             id: "fiber",
-            x: 100,
+            x: 89,
             y: 220,
             title: "Fiber",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622582/fiber_svg_zawcar.svg" alt="Fiber" className="w-6 h-6" />,            color: "blue",
@@ -28,7 +28,7 @@ const InteractiveMap = () => {
         },
         {
             id: "bci-cotton",
-            x: 100,
+            x: 89,
             y: 280,
             title: "BCI Cotton",
             subtitle: "+",
@@ -74,8 +74,8 @@ const InteractiveMap = () => {
             flowPosition: 0.4,
         },
         {
-            id: "weaving",
-            x: 878,
+            id: "Weaving",
+            x: 899,
             y: 139,
             title: "Weaving",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623481/weaving_svg_bwdrg1.svg" alt="Fiber" className="w-10 h-8" />,
@@ -85,33 +85,33 @@ const InteractiveMap = () => {
         },
         {
             id: "stm6",
-            x: 878,
+            x: 899,
             y: 180,
             title: "STM - 6",
             color: "blue",
             flowPosition: 0.55,
         },
         {
-            id: "processing",
-            x: 1120,
-            y: 260,
+            id: "Processing",
+            x: 1140,
+            y: 330,
             title: "Processing",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622978/processing_svg_ctwovk.svg" alt="Fiber" className="w-10 h-8" />,            color: "blue",
             flowPosition: 0.65,
         },
         {
             id: "stm9",
-            x: 1120,
-            y: 300,
+            x: 1140,
+            y: 374,
             title: "STM - 9",
             color: "blue",
             flowPosition: 0.7,
         },
         {
             id: "wadding",
-            x: 1000,
+            x: 1009,
             y: 590,
-            title: "wadding",
+            title: "Wadding",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623012/wadding_svg_yvu1q1.svg" alt="Fiber" className="w-6 h-6" />,
             color: "red",
             flowPosition: 0.75,
@@ -144,7 +144,7 @@ const InteractiveMap = () => {
         {
             id: "labels",
             x: 556,
-            y: 638,
+            y: 643,
             title: "Labels",
             subtitle: "+",
             flowPosition: 0.9,
@@ -159,7 +159,7 @@ const InteractiveMap = () => {
         {
             id: "sewing-thread",
             x: 556,
-            y: 699,
+            y: 710,
             title: "Sewing Thread",
             subtitle: "+",
             flowPosition: 0.92,
@@ -181,7 +181,7 @@ const InteractiveMap = () => {
         {
             id: "carton",
             x: 300,
-            y: 646,
+            y: 649,
             title: "Carton",
             subtitle: "+",
             color: "red",
@@ -195,7 +195,7 @@ const InteractiveMap = () => {
         {
             id: "carton-tape",
             x: 300,
-            y: 701,
+            y: 710,
             title: "Carton Tape",
             subtitle: "+",
             color: "red",
@@ -209,7 +209,7 @@ const InteractiveMap = () => {
         {
             id: "poly-bags",
             x: 300,
-            y: 755,
+            y: 770,
             title: "Rec Poly Bags",
             subtitle: "+",
             color: "red",
@@ -290,9 +290,8 @@ const InteractiveMap = () => {
                     }}
                 >
                     <svg className="absolute inset-0 w-full h-full" width="1100" height="700" viewBox="0 0 800 600">
-                        {/* Shadow path */}
                         <path
-                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -100 400"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -190 400"
 
                             strokeWidth="32"
                             fill="none"
@@ -301,18 +300,18 @@ const InteractiveMap = () => {
                             transform="translate(3, 3)"
                         />
 
-                        {/* Main road path */}
+
                         <path
-                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -100 400"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -190 400"
                             stroke="url(#roadGradient)"
                             strokeWidth="45"
                             fill="none"
                             strokeLinejoin="round"
                         />
 
-                        {/* Dashed center line */}
+
                         <path
-                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -100 400"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -190 400"
                             stroke="white"
                             strokeWidth="1"
                             fill="none"
@@ -335,9 +334,9 @@ const InteractiveMap = () => {
                         <g filter="url(#glowFilter)">
                             <use href="#redMarker" x="-10" y="170"/>
                             <use href="#blueMarker" x="110" y="89"/>
-                            <use href="#blueMarker" x="350" y="180"/>
-                            <use href="#blueMarker" x="550" y="180"/>
-                            <use href="#blueMarker" x="650" y="220"/>
+                            <use href="#blueMarker" x="350" y="185"/>
+                            <use href="#blueMarker" x="569" y="185"/>
+                            <use href="#blueMarker" x="650" y="270"/>
                             <use href="#redBlueMarker" x="270" y="399"/>
 
                             <use href="#blueMarker" x="640" y="409"/>
@@ -410,15 +409,15 @@ const InteractiveMap = () => {
                         >
                             {!showLabelsCard && (
                                 <div
-                                    className={`absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[150px] transition-all duration-300 cursor-pointer ${
+                                    className={`absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[166px] transition-all duration-300 cursor-pointer ${
                                         selectedPin === point.id
                                             ? "scale-110 shadow-2xl border-blue-400 bg-white"
                                             : "hover:scale-105 hover:shadow-lg"
                                     }`}
                                     onClick={() => handlePinClick(point.id)}
                                 >
-                                    <div className="flex items-center gap-1">
-                                        <div className="text-2xl flex-shrink-0 p-2 rounded-lg bg-gray-50">
+                                    <div className="flex items-center gap-6">
+                                        <div className="text-2xl flex-shrink-0 p-1 rounded-lg bg-gray-50">
                                             {point.icon}
                                         </div>
                                         <div className="flex-1">
@@ -428,10 +427,17 @@ const InteractiveMap = () => {
                                             {point.subtitle && (
                                                 <div
                                                     className="text-xs text-green ml-6 mt-1 font-semibold cursor-pointer hover:text-blue-800">
-                                                    {expandedSubItems[point.id] ? "+" : "+"}
+                                                    {expandedSubItems[point.id] ? "-" : "+"}
                                                 </div>
                                             )}
                                         </div>
+
+                                    </div>
+                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                                        <div
+                                            className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-transparent border-t-gray-200"></div>
+                                        <div
+                                            className="absolute -top-[8px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-transparent border-t-white"></div>
                                     </div>
                                 </div>
                             )}
@@ -513,3 +519,8 @@ const InteractiveMap = () => {
 }
 
 export default InteractiveMap
+
+
+
+
+
