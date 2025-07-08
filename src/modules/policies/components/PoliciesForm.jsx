@@ -106,10 +106,12 @@ const PoliciesForm = ({ policyData = {}, isEditMode = false }) => {
                                 </div>
                                 <div className="xl:col-span-4 col-span-12">
                                     <FormSelect
+
                                         name="is_public"
                                         control={control}
                                         errors={errors}
                                         placeholder="Policy Visibility"
+                                        isClearable={false}
                                         options={isPublicOptions}
                                     />
                                 </div>

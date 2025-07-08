@@ -7,7 +7,7 @@ export const sidebarMenu = [
         'link',
         'Policies',
         3,
-        'bx-credit-card',
+        'bx-book-bookmark',
         POLICIES_ROUTES.READ.permission
     )
 ]
