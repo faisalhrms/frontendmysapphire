@@ -6,8 +6,7 @@ import {getBadgeClasses} from "@helpers/badges.js";
 const OtherStoreInventoryTable = ({ rows }) => {
 
     const tableData = (rows || []).map((item) => ({
-        warehousename: <span><i
-            className="bi bi-shop align-middle me-2 text-[#8c9097] dark:text-white/50"></i> {item.warehousename}</span>,
+        warehousename: <span><i className="bi bi-shop align-middle me-2 text-[#8c9097] dark:text-white/50"></i> {item.warehousename}</span>,
         warehousename_text: item.warehousename,
         onhand_qty: item.onhand_qty,
         combos: item.combos,
@@ -20,7 +19,7 @@ const OtherStoreInventoryTable = ({ rows }) => {
             {label: "Store", accessor: "warehousename", align: "text-left"},
             { label: "Quantity", accessor: "onhand_qty" },
             { label: "Sizes", accessor: "sizes" },
-            { label: "Combos", accessor: "combos" },
+            { label: "Matching Separate (MS)", accessor: "combos" },
             { label: "Order On Behalf", accessor: "order" },
 
         ],
