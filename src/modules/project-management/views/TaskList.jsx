@@ -168,7 +168,7 @@ const TaskList = () => {
             Cell: ({ row }) => (
                 <div className={`min-w-[200px]`}>
                     {(() => {
-                        return (row.original.status !== 'under_approval' && row.original.status !== 'completed') ? (
+                        return (row.original.status !== 'under_approval') ? (
                             <TaskStatusDropdown status={row.original.status} taskId={row.original.id} />
                         ) : (
                             <p className={getStatusClasses(row.original.status)}>{toTitleCase(row.original.status)}</p>
