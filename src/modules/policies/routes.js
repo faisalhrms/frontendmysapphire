@@ -15,7 +15,8 @@ export const POLICIES_ROUTES = {
     EDIT:{
         path:'/policies/edit/:id',
         permission:'policies.change_policy'
-    }
+    },
+
 
 }
 

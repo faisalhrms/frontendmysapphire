@@ -1,11 +1,16 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import DataTable from "@components/DataTable.jsx";
-import { POLICIES_ROUTES } from "@modules/policies/routes.js";
+import React, { useState } from "react";
+import { useSelfPolicies } from "../hooks/policyHooks.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import InfoAlert from "../../../InfoAlert.jsx";
+import PdfModalViewer from "../components/PdfModalViewer.jsx";
 
 const SelfPolicies = () => {
+    const { data: policies, loading } = useSelfPolicies();
+    const [pdfModal, setPdfModal] = useState({
+        open: false,
+        fileUrl: "",
+        fileName: ""
+    });
 
     const renderIcon = (attachment) => {
         const { file_type } = attachment;
@@ -15,57 +20,62 @@ const SelfPolicies = () => {
         return <i className="ti ti-file-text" />;
     };
 
-    const columns = [
-        {
-            Header: "Title",
-            accessor: "title",
-            filterable: true,
-            filterType: "text",
-            Cell: ({ value }) => value || "N/A",
-        },
-        {
-            Header: "Description",
-            accessor: "description",
-            filterable: true,
-            filterType: "text",
-            Cell: ({ value }) => value || "N/A",
-        },
-        {
-            Header: "Attachments",
-            accessor: "attachments",
-            disableSortBy: true,
-            Cell: ({ row }) => {
-                const attachments = row.original.attachments || [];
-                if (attachments.length === 0) return "N/A";
-                return (
-                    <div className="flex space-x-2">
-                        {attachments.map((att, idx) => (
-                            <Link
-                                key={idx}
-                                to={att.file_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={`${att.file_name}.${att.file_extension}`}
-                                className="text-xl hover:text-primary"
-                            >
-                                {renderIcon(att)}
-                            </Link>
-                        ))}
-                    </div>
-                );
-            },
-        },
-    ];
-
     return (
         <>
             <PageHeader currentpage="My Policies" mainpage="Policies" activepage="My Policies" />
             <InfoAlert />
-            <DataTable
-                columns={columns}
-                title="My Policies"
-                apiUrl="/policies/ess/datatable/"
-                enableAdvancedFilters={true}
+            <div className="overflow-x-auto p-2">
+                {loading ? (
+                    <p>Loading...</p>
+                ) : (
+                    <table className="min-w-full text-sm text-left border">
+                        <thead>
+                        <tr className="bg-gray-100">
+                            <th className="p-2 border">Title</th>
+                            <th className="p-2 border">Description</th>
+                            <th className="p-2 border">Attachments</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {policies.map((policy) => (
+                            <tr key={policy.id} className="hover:bg-gray-50">
+                                <td className="p-2 border">{policy.title}</td>
+                                <td className="p-2 border">{policy.description}</td>
+                                <td className="p-2 border">
+                                    {policy.attachments.length > 0 ? (
+                                        <div className="flex space-x-2">
+                                            {policy.attachments.map((att, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() =>
+                                                        setPdfModal({
+                                                            open: true,
+                                                            fileUrl: att.file_url,
+                                                            fileName: `${att.file_name}.${att.file_extension}`,
+                                                        })
+                                                    }
+                                                    title={`${att.file_name}.${att.file_extension}`}
+                                                    className="text-xl hover:text-primary"
+                                                >
+                                                    {renderIcon(att)}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        "N/A"
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
+            <PdfModalViewer
+                isOpen={pdfModal.open}
+                fileUrl={pdfModal.fileUrl}
+                fileName={pdfModal.fileName}
+                onClose={() => setPdfModal({ open: false, fileUrl: "", fileName: "" })}
             />
         </>
     );
