@@ -44,9 +44,6 @@ const ProjectUserSummaryStats = ({summary, statsFetching, height = 315}) => {
 
     return (
         <div className={`box custom-card ${isFullscreen ? 'box-fullscreen' : ''}`} >
-            {/*<div className="box-header justify-between">*/}
-            {/*    <div className="box-title">Resource Planning Summary</div>*/}
-            {/*</div>*/}
             <div className="box-header justify-between">
                 <div className="box-title">Resource Planning Summary</div>
                 <div className="flex items-center gap-2">
