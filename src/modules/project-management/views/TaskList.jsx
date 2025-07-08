@@ -11,6 +11,7 @@ import Tooltip from "@components/Tooltip.jsx";
 import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js";
 import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 import {taskStatuses} from "@modules/project-management/services/taskService.js";
+import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 
 const TaskList = () => {
     const {
@@ -165,23 +166,35 @@ const TaskList = () => {
                 cancelled:      { label: 'CANCELLED',       bgColor: '#D32F2F', textColor: '#FFFFFF' }, // red
             },
             Cell: ({ row }) => (
-                <span className={getStatusClasses(row.original.status)}>
-                {toTitleCase(row.original.status)}
-            </span>
+                <div className={`min-w-[200px]`}>
+                    {(() => {
+                        return (row.original.status !== 'under_approval' && row.original.status !== 'completed') ? (
+                            <TaskStatusDropdown status={row.original.status} taskId={row.original.id} />
+                        ) : (
+                            <p className={getStatusClasses(row.original.status)}>{toTitleCase(row.original.status)}</p>
+                        );
+                    })()}
+                </div>
             ),
         },
         {
             Header: "Completion Date",
             accessor: "completed_at",
-            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
+            Cell: ({value}) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
             filterType: 'datetime',
             filterable: true,
             excelColumnType: 'date',
             excelFormat: "MMM dd, yyyy",
         },
-        { Header: "Completion Timeline", accessor: "completion_timeline", disableSortBy: true, filterable: false, excelColumnType:'number'},
-        { Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType:'number'},
-        { Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, filterable: false},
+        {
+            Header: "Completion Timeline",
+            accessor: "completion_timeline",
+            disableSortBy: true,
+            filterable: false,
+            excelColumnType: 'number'
+        },
+        {Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType: 'number'},
+        {Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, filterable: false},
         {
             Header: "Launch/Milestone Deadline",
             accessor: "milestone.ended_at",
