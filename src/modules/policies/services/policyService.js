@@ -1,12 +1,5 @@
-// src/modules/policies/services/policyService.js
 import api from "@config/axiosConfig.js";
 import Notify from '@helpers/toastNotifications.js';
-import CryptoJS from "crypto-js";
-
-
-
-const SECRET_KEY = import.meta.env.VITE_ENCRYPTION_SECRET;
-const key = CryptoJS.enc.Hex.parse(SECRET_KEY);  // Must be 32 chars (256 bits)
 
 export const createPolicy = async (payload) => {
     try {
@@ -47,17 +40,6 @@ export const fetchSelfPolicies = async () => {
 
         const encrypted = response.data?.data;
         if (!encrypted) throw new Error("No encrypted data found in response.");
-
-        const bytes = CryptoJS.AES.decrypt(encrypted, key, {
-            mode: CryptoJS.mode.ECB,
-            padding: CryptoJS.pad.Pkcs7
-        });
-
-        const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-        if (!decryptedText) throw new Error("Decryption failed — bad key or format.");
-
-        const decryptedData = JSON.parse(decryptedText);
-        return decryptedData;
 
     } catch (error) {
         console.error("Decryption failed:", error);
