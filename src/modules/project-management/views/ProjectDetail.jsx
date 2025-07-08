@@ -9,13 +9,9 @@ import { useProject, useProjectMilestonesWithTasks, useProjectStatistics, useUpl
 import ProjectTeam from "@modules/project-management/components/project/ProjectTeam.jsx";
 import Discussion from "@components/Discussion.jsx";
 import UploadModal from "@modules/project-management/components/model/UploadModal.jsx";
-import ProjectTaskStatusStats from "../components/project/ProjectTaskStatusStats.jsx";
-import ProjectTaskMonthlyStats from "../components/project/ProjectTaskMonthlyStats.jsx";
-import ProjectSummaryStats from "@modules/project-management/components/project/ProjectSummaryStats.jsx";
-import ProjectUserSummaryStats from "@modules/project-management/components/project/ProjectUserSummaryStats.jsx";
 import IconTabs from "@components/IconTabs.jsx";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import ProjectActivityLog from "@modules/project-management/components/project/ProjectActivityLog.jsx";
+import ProjectOverviewTab from "@modules/project-management/components/project/ProjectOverviewTab.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -111,46 +107,7 @@ const ProjectDetail = () => {
                       label: "Overview",
                       icon: <i className="bx bx-bar-chart"></i>,
                       content: (
-                          <>
-                            {statsFetching ? (
-                                <LoadingSpinner />
-                            ) : statistics?.month_over_month ? (
-                                <>
-                                  <div className="grid grid-cols-12 gap-6">
-                                    <div className="xl:col-span-9 sm:col-span-9 2xl:col-span-8 col-span-12">
-                                      <ProjectUserSummaryStats
-                                          summary={statistics.user_summary}
-                                          statsFetching={statsFetching}
-                                          height={450}
-                                      />
-                                      <ProjectSummaryStats
-                                          summary={statistics.task_summary}
-                                          statsFetching={statsFetching}
-                                          height={385}
-                                      />
-                                    </div>
-
-                                    <div className="xl:col-span-3 sm:col-span-3 2xl:col-span-4 col-span-12">
-                                      <div className="bg-white shadow-md rounded-lg mb-4">
-                                        <ProjectTaskStatusStats
-                                            monthOverMonth={statistics?.month_over_month}
-                                            statsFetching={statsFetching}
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <div className="grid grid-cols-12 gap-6">
-                                    <div className="col-span-12">
-                                      <ProjectTaskMonthlyStats
-                                          months={statistics.n_months}
-                                          statsFetching={statsFetching}
-                                      />
-                                    </div>
-                                  </div>
-                                </>
-                            ) : null}
-                          </>
+                          <ProjectOverviewTab statistics={statistics} statsFetching={statsFetching} />
                       ),
                     },
                     {

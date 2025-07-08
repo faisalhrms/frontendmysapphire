@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 
 const InteractiveMap = () => {
@@ -18,19 +17,38 @@ const InteractiveMap = () => {
         return () => clearInterval(interval)
     }, [])
 
+    const calculateCardPosition = (point, index) => {
+        let yOffset = 0
+
+        for (let i = 0; i < index; i++) {
+            const prevPoint = mapPoints[i]
+            if (expandedSubItems[prevPoint.id] && prevPoint.subItems) {
+
+                if (Math.abs(prevPoint.x - point.x) < 200 && prevPoint.y < point.y) {
+                    yOffset += prevPoint.subItems.length * 70
+                }
+            }
+        }
+
+        return {
+            x: point.x,
+            y: point.y + yOffset
+        }
+    }
     const mapPoints1 = [
         {
             id: "fiber",
-            x: 120,
-            y: 220,
+            x: 100,
+            y: 170,
             title: "Fiber",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622582/fiber_svg_zawcar.svg" alt="Fiber" className="w-6 h-6" />,            color: "blue",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622582/fiber_svg_zawcar.svg" alt="Fiber" className="w-10 h-10" />,            color: "blue",
             flowPosition: 0.05,
+            highlighted: true,
         },
         {
             id: "bci-cotton",
-            x: 120,
-            y: 280,
+            x: 100,
+            y: 235,
             title: "BCI Cotton",
             subtitle: "+",
             color: "blue",
@@ -42,111 +60,116 @@ const InteractiveMap = () => {
         },
         {
             id: "spinning",
-            x: 310,
-            y: 64,
+            x: 350,
+            y: 15,
             title: "Spinning",
             icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622649/spinning_svg_ctprca.svg" alt="Fiber" className="w-6 h-6" />,
             color: "blue",
             flowPosition: 0.2,
+            highlighted: true,
         },
         {
             id: "stm5",
-            x: 310,
-            y: 99,
+            x: 350,
+            y: 50,
             title: "STM - 5",
             color: "blue",
             flowPosition: 0.25,
         },
         {
             id: "yarn-dyeing",
-            x: 620,
-            y: 65,
+            x: 640,
+            y: 70,
             title: "Yarn Dyeing",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751624020/yarn_dyeing_svg_hcjmi8.svg" alt="Fiber" className="w-6 h-6" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751624020/yarn_dyeing_svg_hcjmi8.svg" alt="Fiber" className="w-10 h-10" />,
             color: "blue",
             flowPosition: 0.35,
+            highlighted: true,
         },
         {
             id: "stm10",
-            x: 620,
-            y: 100,
+            x: 640,
+            y: 128,
             title: "STM - 10",
             color: "blue",
             flowPosition: 0.4,
         },
         {
-            id: "weaving",
-            x: 878,
-            y: 65,
+            id: "Weaving",
+            x: 899,
+            y: 70,
             title: "Weaving",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622978/processing_svg_ctwovk.svg
-" alt="Fiber" className="w-8 h-4" />,            color: "blue",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623481/weaving_svg_bwdrg1.svg" alt="Fiber" className="w-10 h-10" />,
 
+            highlighted: true,
             flowPosition: 0.5,
         },
         {
             id: "stm6",
-            x: 878,
-            y: 100,
+            x: 899,
+            y: 128,
             title: "STM - 6",
             color: "blue",
             flowPosition: 0.55,
         },
         {
-            id: "processing",
-            x: 989,
-            y: 300,
+            id: "Processing",
+            x: 1140,
+            y: 305,
             title: "Processing",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623481/weaving_svg_bwdrg1.svg" alt="Fiber" className="w-6 h-6" />,
-            color: "blue",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622978/processing_svg_ctwovk.svg" alt="Fiber" className="w-10 h-10" />,            color: "blue",
             flowPosition: 0.65,
+            highlighted: true,
         },
         {
             id: "stm9",
-            x: 989,
-            y: 330,
+            x: 1140,
+            y: 364,
             title: "STM - 9",
             color: "blue",
             flowPosition: 0.7,
         },
         {
             id: "wadding",
-            x: 889,
-            y: 520,
-            title: "wadding",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623012/wadding_svg_yvu1q1.svg" alt="Fiber" className="w-6 h-6" />,
+            x: 1009,
+            y: 540,
+            title: "Wadding",
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623012/wadding_svg_yvu1q1.svg" alt="Fiber" className="w-10 h-10" />,
             color: "red",
             flowPosition: 0.75,
+            highlighted: true,
         },
         {
             id: "stitching",
-            x: 650,
-            y: 639,
+            x: 830,
+            y: 540,
             title: "Stitching",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623689/stitching_svg_b4zb8r.svg" alt="Fiber" className="w-6 h-6" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751623689/stitching_svg_b4zb8r.svg" alt="Fiber" className="w-10 h-10" />,
             color: "blue",
             flowPosition: 0.82,
+            highlighted: true,
         },
         {
             id: "stm7",
-            x: 650,
-            y: 680,
+            x: 830,
+            y: 597,
             title: "STM - 9",
             flowPosition: 0.85,
         },
         {
             id: "accessories",
-            x: 420,
-            y: 640,
+            x: 556,
+            y: 540,
             title: "Accessories",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622705/accessories_svg_p011ii.svg" alt="Fiber" className="w-6 h-6" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622705/accessories_svg_p011ii.svg" alt="Fiber" className="w-10 h-10" />,
             color: "blue",
             flowPosition: 0.88,
+            highlighted: true,
         },
         {
             id: "labels",
-            x: 420,
-            y: 690,
+            x: 556,
+            y: 610,
             title: "Labels",
             subtitle: "+",
             flowPosition: 0.9,
@@ -160,8 +183,8 @@ const InteractiveMap = () => {
         },
         {
             id: "sewing-thread",
-            x: 420,
-            y: 752,
+            x: 556,
+            y: 680,
             title: "Sewing Thread",
             subtitle: "+",
             flowPosition: 0.92,
@@ -173,17 +196,18 @@ const InteractiveMap = () => {
         },
         {
             id: "packaging",
-            x: 150,
-            y: 575,
+            x: 300,
+            y: 550,
             title: "Packaging",
-            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622788/packaging_svg_iegi0r.svg" alt="Fiber" className="w-6 h-6" />,
+            icon: <img src="https://res.cloudinary.com/dtsguaevl/image/upload/v1751622788/packaging_svg_iegi0r.svg" alt="Fiber" className="w-10 h-10" />,
             color: "red",
             flowPosition: 0.92,
+            highlighted: true,
         },
         {
             id: "carton",
-            x: 150,
-            y: 630,
+            x: 300,
+            y: 620,
             title: "Carton",
             subtitle: "+",
             color: "red",
@@ -196,8 +220,8 @@ const InteractiveMap = () => {
         },
         {
             id: "carton-tape",
-            x: 150,
-            y: 685,
+            x: 300,
+            y: 684,
             title: "Carton Tape",
             subtitle: "+",
             color: "red",
@@ -210,8 +234,8 @@ const InteractiveMap = () => {
         },
         {
             id: "poly-bags",
-            x: 150,
-            y: 745,
+            x: 300,
+            y: 754,
             title: "Rec Poly Bags",
             subtitle: "+",
             color: "red",
@@ -280,21 +304,21 @@ const InteractiveMap = () => {
     }
 
     return (
-        <div className="w-full h-screen mt-8 overflow-hidden relative">
+        <div className="w-full h-screen mt-8 overflow-auto relative">
             <div className="w-full h-full cursor-grab active:cursor-grabbing">
                 <div
                     className="relative"
                     style={{
-                        width: "1100px",
+                        width: "1400px",
                         height: "720px",
                         transform: `translate(${mapPosition.x}px, ${mapPosition.y}px) scale(${mapScale})`,
                         transformOrigin: "0 0",
                     }}
                 >
-                    <svg className="absolute inset-0 w-full h-full" width="1100" height="700" viewBox="0 0 800 600">
+                    <svg className="absolute inset-0 ml-4 w-full h-full" width="1100" height="700" viewBox="0 0 800 600">
                         <path
-                            d="M  -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
-                            // stroke="#1a202c"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -190 400"
+
                             strokeWidth="32"
                             fill="none"
                             strokeLinejoin="round"
@@ -302,16 +326,18 @@ const InteractiveMap = () => {
                             transform="translate(3, 3)"
                         />
 
+
                         <path
-                            d="M -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -190 400"
                             stroke="url(#roadGradient)"
                             strokeWidth="45"
                             fill="none"
                             strokeLinejoin="round"
                         />
 
+
                         <path
-                            d="M  -50 300 L 150 300 L 150 80 L 350 80 L 350 180 L 650 180 L 650 350 L 500 350 L 500 450 L 200 450 L 200 400 L 100 400"
+                            d="M  -500 300 L -5 300 L -5 80 L 220 80 L 220 180 L 650 180 L 650 399 L 450 399 L 450 320 L 310 320 L 310 400 L -190 400"
                             stroke="white"
                             strokeWidth="1"
                             fill="none"
@@ -319,6 +345,7 @@ const InteractiveMap = () => {
                             strokeDashoffset={-animationOffset}
                             strokeLinecap="round"
                         />
+
 
                         <g>
                             {[...Array(15)].map((_, i) => (
@@ -331,16 +358,16 @@ const InteractiveMap = () => {
                         </g>
 
                         <g filter="url(#glowFilter)">
-                            <use href="#blueMarker" x="50" y="300"/>
-                            <use href="#blueMarker" x="210" y="89"/>
-                            <use href="#blueMarker" x="450" y="180"/>
-                            <use href="#blueMarker" x="650" y="170"/>
-                            <use href="#blueMarker" x="650" y="220"/>
-                            <use href="#redBlueMarker" x="299" y="450"/>
+                            <use href="#redMarker" x="-10" y="170"/>
+                            <use href="#blueMarker" x="110" y="89"/>
+                            <use href="#blueMarker" x="350" y="185"/>
+                            <use href="#blueMarker" x="569" y="185"/>
+                            <use href="#blueMarker" x="650" y="270"/>
+                            <use href="#redBlueMarker" x="270" y="399"/>
 
-                            <use href="#redMarker" x="650" y="350"/>
-                            <use href="#redMarker" x="488" y="459"/>
-                            <use href="#redMarker" x="100" y="400"/>
+                            <use href="#blueMarker" x="640" y="409"/>
+                            <use href="#blueMarker" x="488" y="410"/>
+                            <use href="#redMarker" x="49" y="410"/>
                         </g>
 
                         <defs>
@@ -394,81 +421,103 @@ const InteractiveMap = () => {
                             </g>
                         </defs>
                     </svg>
-
-                    {mapPoints?.map((point) => (
-                        <div
-                            key={point.id}
-                            className="absolute"
-                            style={{
-                                left: `${point.x}px`,
-                                top: `${point.y}px`,
-                                transform: "translate(-50%, -50%)",
-                                zIndex: selectedPin === point.id ? 1000 : 100,
-                            }}
-                        >
-                            {!showLabelsCard && (
-                                <div
-                                    className={`absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[150px] transition-all duration-300 cursor-pointer ${
-                                        selectedPin === point.id
-                                            ? "scale-110 shadow-2xl border-blue-400 bg-white"
-                                            : "hover:scale-105 hover:shadow-lg"
-                                    }`}
-                                    onClick={() => handlePinClick(point.id)}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="text-2xl flex-shrink-0 p-2 rounded-lg bg-gray-50">
-                                            {point.icon}
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="font-bold text-sm text-gray-800 leading-tight">
-                                                {point.title}
-                                            </div>
-                                            {point.subtitle && (
-                                                <div
-                                                    className="text-xs text-green ml-4 mt-1 font-semibold cursor-pointer hover:text-blue-800">
-                                                    {expandedSubItems[point.id] ? "+" : "+"}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-
-                    {mapPoints?.map((point) => {
-                        if (!expandedSubItems[point.id] || !point.subItems) return null
+                    {mapPoints?.map((point, index) => {
+                        const position = calculateCardPosition(point, index)
+                        const isExpanded = expandedSubItems[point.id]
 
                         return (
-                            <div
-                                key={`${point.id}-subitems`}
-                                className="absolute"
-                                style={{
-                                    left: `${point.x}px`,
-                                    top: `${point.y + -10}px`,
-                                    transform: "translate(-50%, 0)",
-                                    zIndex: 999,
-                                }}
-                            >
-                                <div className="space-y-2 min-w-[200px]">
-                                    {point.subItems.map((subItem, idx) => (
+                            <div key={point.id}>
+
+                                <div
+                                    className="absolute transition-all duration-300 ease-in-out"
+                                    style={{
+                                        left: `${position.x}px`,
+                                        top: `${position.y}px`,
+                                        transform: "translate(-50%, -50%)",
+                                        zIndex: selectedPin === point.id ? 1000 : 100,
+                                    }}
+                                >
+                                    {!showLabelsCard && (
                                         <div
-                                            key={idx}
-                                            onClick={() => handleSubItemClick(point.id, idx)}
-                                            className="bg-white/95 backdrop-blur-sm border-2 border-gray-300 rounded-xl shadow-lg p-1 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-200"
+                                            className={`backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[166px] ${
+                                                selectedPin === point.id
+                                                    ? "scale-110 shadow-2xl border-blue-400 bg-white"
+                                                    : point.highlighted
+                                                        ? "bg-success/5"
+                                                        : "bg-white/95 hover:shadow-lg"
+                                            }`}
+                                            onClick={() => handlePinClick(point.id)}
                                         >
-                                            <div className="font-semibold text-sm text-gray-800 mb-1">
-                                                {subItem.title}
-                                            </div>
-                                            {subItem.description && (
-                                                <div className="text-xs text-gray-600">
-                                                    {subItem.description}
+                                            {point.icon ? (
+                                                <div className="flex items-center gap-2">
+                                                    <div className="text-2xl flex-shrink-0 p-1 rounded-lg bg-gray-50">
+                                                        {point.icon}
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="font-bold text-sm text-gray-800 leading-tight">
+                                                            {point.title}
+                                                        </div>
+                                                        {point.subtitle && (
+                                                            <div
+                                                                className="text-xs text-green ml-14 mt-1 font-semibold cursor-pointer hover:text-blue-800"
+                                                            >
+                                                                {isExpanded ? "−" : "+"}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-center ">
+                                                    <div className="text-center">
+                                                        <div className="font-bold text-sm text-gray-800 leading-tight">
+                                                            {point.title}
+                                                        </div>
+                                                        {point.subtitle && (
+                                                            <div
+                                                                className="text-xs text-green mt-1 font-semibold cursor-pointer hover:text-blue-800"
+                                                            >
+                                                                {isExpanded ? "−" : "+"}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
+                                            <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                                                <div
+                                                    className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-transparent border-t-gray-200"></div>
+                                            </div>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
+                                {isExpanded && point.subItems && (
+                                    <div
+                                        className="absolute transition-all duration-300 ease-in-out"
+                                        style={{
+                                            left: `${position.x}px`,
+                                            top: `${position.y + 40}px`,
+                                            transform: "translate(-50%, 0)",
+                                            zIndex: 1001,
+                                        }}
+                                    >
+                                        <div className="space-y-4 min-w-[200px]">
+                                            {point.subItems.map((subItem, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => handleSubItemClick(point.id, idx)}
+                                                    className="bg-white border-2 border-gray-300 rounded-xl shadow-lg px-1 py-3 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-200"
+                                                >
+                                                    <div className="text-center">
+                                                        <div className="font-semibold text-sm text-gray-800">
+                                                            {subItem.description}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+
                         )
                     })}
 
@@ -482,7 +531,8 @@ const InteractiveMap = () => {
                                 zIndex: 2000,
                             }}
                         >
-                            <div className="bg-white/95 backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-2xl p-4 min-w-[200px] max-w-[250px] animate-in fade-in duration-300">
+                            <div
+                                className="bg-white/95 backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-2xl p-2 min-w-[200px] max-w-[250px] animate-in fade-in duration-300">
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className="font-bold text-lg text-gray-800">Labels</h3>
                                     <button
@@ -498,7 +548,8 @@ const InteractiveMap = () => {
                                             key={index}
                                             className="flex items-center justify-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
                                         >
-                                            <div className={`w-full text-center px-4 py-2 rounded-full text-white font-medium ${company.color}`}>
+                                            <div
+                                                className={`w-full text-center px-4 py-2 rounded-full text-white font-medium ${company.color}`}>
                                                 {company.name}
                                             </div>
                                         </div>
@@ -507,6 +558,7 @@ const InteractiveMap = () => {
                             </div>
                         </div>
                     )}
+
                 </div>
             </div>
         </div>
