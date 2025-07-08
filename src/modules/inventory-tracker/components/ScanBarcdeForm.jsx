@@ -254,7 +254,7 @@ const ScanBarcodeForm = ({ isActive }) => {
                                 </div>
                                 <div className="space-y-3">
                                     <div>
-                                        <span className="text-base font-bold text-black">Combos: </span>
+                                        <span className="text-base font-bold text-black">Matching Separate (MS): </span>
                                         <span className="text-sm text-gray-700">{currentWarehouse.combos}</span>
                                     </div>
                                     <div>
