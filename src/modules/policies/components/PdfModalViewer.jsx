@@ -2,9 +2,14 @@
 import React from "react";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import { useSecureMedia } from "@modules/policies/hooks/policyHooks.js";
 
-const PdfModalViewer = ({ isOpen, onClose, fileUrl, fileName }) => {
+const PdfModalViewer = ({ isOpen, fileId, onClose }) => {
+    const { blobUrl, mimeType, loading } = useSecureMedia(fileId, isOpen);
+
     if (!isOpen) return null;
+
+    const isImage = mimeType.startsWith("image/");
 
     return (
         <div
@@ -13,17 +18,29 @@ const PdfModalViewer = ({ isOpen, onClose, fileUrl, fileName }) => {
         >
             <div className="bg-white rounded-lg shadow-lg w-[90%] h-[90%] relative">
                 <div className="flex justify-between items-center p-4 border-b">
-                    <span className="font-bold">{fileName}</span>
-                    <button
-                        className="text-red-600 text-lg"
-                        onClick={onClose}
-                    >
+                    <span className="font-bold">Attachment</span>
+                    <button className="text-red-600 text-lg" onClick={onClose}>
                         ✖
                     </button>
                 </div>
-                <div className="p-2 h-[90%] overflow-hidden">
-                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">                        <Viewer fileUrl={fileUrl} />
-                    </Worker>
+                <div className="p-2 h-[90%] overflow-auto flex justify-center items-center">
+                    {loading ? (
+                        <p>Loading…</p>
+                    ) : blobUrl ? (
+                        isImage ? (
+                            <img
+                                src={blobUrl}
+                                alt="attachment"
+                                className="max-w-full max-h-full"
+                            />
+                        ) : (
+                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                                <Viewer fileUrl={blobUrl} />
+                            </Worker>
+                        )
+                    ) : (
+                        <p>Error loading file.</p>
+                    )}
                 </div>
             </div>
         </div>
