@@ -57,7 +57,7 @@ const ProductDatatableTab = ({isActive}) => {
             Cell: ({ value }) => <span>{value || 'N/A'}</span>
         },
         {
-            Header: 'Combos',
+            Header: 'Matching Separate (MS)',
             accessor: 'combos',
             Cell: ({ value }) => <span>{value || 'N/A'}</span>
         },
