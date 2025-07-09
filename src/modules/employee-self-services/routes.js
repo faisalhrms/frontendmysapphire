@@ -5,6 +5,7 @@ import ServiceRequestDetail from '@modules/employee-self-services/service-reques
 import WorkDesk from '@modules/employee-self-services/work-desk/views/WorkDesk.jsx';
 import DiscountCard from '@modules/employee-self-services/discount-card/views/DiscountCard.jsx';
 import DigitalProfile from '@modules/employee-self-services/my-digital-profile/views/DigitalProfile.jsx';
+import SelfPolicies from "@modules/policies/views/SelfPolicies.jsx";
 export const SELF_SERVICES_ROUTES = {
     SERVICES: {
         READ: {
@@ -32,6 +33,10 @@ export const SELF_SERVICES_ROUTES = {
             path: '/module/ess/my/digital/profile',
             permission: 'user.view_ess_modules',
         },
+        POLICIES:{
+            path: '/module/ess/my/policies',
+            permission:'policies.view_policy'
+        }
 
     }
 };
@@ -69,4 +74,9 @@ export const MODULE_ROUTES = [
         component: DigitalProfile,
         permission:SELF_SERVICES_ROUTES.SERVICES.DIGITAL_PROFILE.permission,
     },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.POLICIES.path,
+        component:SelfPolicies,
+        permission: SELF_SERVICES_ROUTES.SERVICES.POLICIES.permission
+    }
 ];
