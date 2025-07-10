@@ -1,5 +1,6 @@
 import api from "@config/axiosConfig.js";
 import Notify from '@helpers/toastNotifications.js';
+import {decryptData} from "@helpers/encryption.js";
 
 export const createPolicy = async (payload) => {
     try {
@@ -40,6 +41,8 @@ export const fetchSelfPolicies = async () => {
 
         const encrypted = response.data?.data;
         if (!encrypted) throw new Error("No encrypted data found in response.");
+      return  decryptData(encrypted)
+
 
     } catch (error) {
         console.error("Decryption failed:", error);

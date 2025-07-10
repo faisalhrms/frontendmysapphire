@@ -6,34 +6,34 @@ import PdfModalViewer from "../components/PdfModalViewer.jsx";
 
 const SelfPolicies = () => {
     const { data: policies, loading } = useSelfPolicies();
-    const [pdfModal, setPdfModal] = useState({
-        open: false,
-        fileUrl: "",
-        fileName: ""
+    const [modal, setModal] = useState({
+        open:   false,
+        fileId: null,
     });
 
-    const renderIcon = (attachment) => {
-        const { file_type } = attachment;
-        if (file_type.startsWith("image")) return <i className="ri-image-line" />;
-        if (file_type.startsWith("video")) return <i className="ri-video-line" />;
-        if (file_type.startsWith("audio")) return <i className="ri-user-voice-line" />;
-        return <i className="ti ti-file-text" />;
+    const openModal = (id) => {
+        setModal({ open: true, fileId: id });
     };
 
     return (
         <>
-            <PageHeader currentpage="My Policies" mainpage="Policies" activepage="My Policies" />
+            <PageHeader
+                currentpage="My Policies"
+                mainpage="Policies"
+                activepage="My Policies"
+            />
             <InfoAlert />
-            <div className="overflow-x-auto p-2">
+
+            <div className="bg-white rounded-lg overflow-x-auto p-2">
                 {loading ? (
                     <p>Loading...</p>
                 ) : (
                     <table className="min-w-full text-sm text-left border">
                         <thead>
                         <tr className="bg-gray-100">
-                            <th className="p-2 border">Title</th>
-                            <th className="p-2 border">Description</th>
-                            <th className="p-2 border">Attachments</th>
+                            <th className="p-4 border">Title</th>
+                            <th className="p-4 border">Description</th>
+                            <th className="p-4 border">Attachments</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -42,22 +42,16 @@ const SelfPolicies = () => {
                                 <td className="p-2 border">{policy.title}</td>
                                 <td className="p-2 border">{policy.description}</td>
                                 <td className="p-2 border">
-                                    {policy.attachments.length > 0 ? (
+                                    {policy.attachment_ids.length > 0 ? (
                                         <div className="flex space-x-2">
-                                            {policy.attachments.map((att, idx) => (
+                                            {policy.attachment_ids.map((id) => (
                                                 <button
-                                                    key={idx}
-                                                    onClick={() =>
-                                                        setPdfModal({
-                                                            open: true,
-                                                            fileUrl: att.file_url,
-                                                            fileName: `${att.file_name}.${att.file_extension}`,
-                                                        })
-                                                    }
-                                                    title={`${att.file_name}.${att.file_extension}`}
-                                                    className="text-xl hover:text-primary"
+                                                    key={id}
+                                                    onClick={() => openModal(id)}
+                                                    title="View attachment"
+                                                    className="ti-btn ti-btn-success ti-btn-sm text-xl hover:text-primary"
                                                 >
-                                                    {renderIcon(att)}
+                                                    <i className="ti ti-file-text" />
                                                 </button>
                                             ))}
                                         </div>
@@ -71,11 +65,12 @@ const SelfPolicies = () => {
                     </table>
                 )}
             </div>
+
             <PdfModalViewer
-                isOpen={pdfModal.open}
-                fileUrl={pdfModal.fileUrl}
-                fileName={pdfModal.fileName}
-                onClose={() => setPdfModal({ open: false, fileUrl: "", fileName: "" })}
+                isOpen={modal.open}
+                // we'll handle POSTing fileId inside the modal later
+                fileId={modal.fileId}
+                onClose={() => setModal({ open: false, fileId: null })}
             />
         </>
     );

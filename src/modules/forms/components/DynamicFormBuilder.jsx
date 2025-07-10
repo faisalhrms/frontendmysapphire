@@ -12,6 +12,7 @@ import FormCheckbox from '@components/form/FormCheckbox.jsx';
 import api from "@config/axiosConfig.js";
 import {dynamicFormSchema} from "@modules/forms/schemas/dynamicFormSchema.js";
 import Notify from "@helpers/toastNotifications.js";
+import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 
 const fieldTypeOptions = [
     { value: 'text', label: 'Text' },
@@ -187,6 +188,9 @@ const DynamicFormBuilder = ({ formData }) => {
                     url: ''
                 }
             ],
+            send_email_to_submitter: false,
+            email_subject: '',
+            email_content: '',
             ...formData,
         },
     });
@@ -195,6 +199,7 @@ const DynamicFormBuilder = ({ formData }) => {
 
     const watchedFieldTypes = useWatch({ control, name: 'fields' });
     const watchedAlertField = useWatch({ control, name: 'enable_alerts' });
+    const watchedSendEmailToSubmitter = useWatch({ control, name: 'send_email_to_submitter' });
 
     useEffect(() => {
         watchedFieldTypes?.forEach((field, index) => {
@@ -356,7 +361,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                             control={control}
                                             errors={errors}
                                             placeholder="Form Success Message"
-                                            rows={3}
+                                            rows={9}
                                         />
                                     </div>
                                 </div>
@@ -434,31 +439,85 @@ const DynamicFormBuilder = ({ formData }) => {
                                 )}
                             </div>
                         </div>
+                        <div className="box">
+                            <div className="box-header">
+                                <div className="box-title">Send Email to Submitter</div>
+                            </div>
+                            <div className="box-body">
+                                <FormToggle
+                                    name="send_email_to_submitter"
+                                    control={control}
+                                    errors={errors}
+                                    toggleClasses="text-center"
+                                />
+                            </div>
+                        </div>
+
                     </div>
-                            <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
-                                <div className="box">
-                                    <div className="box-header flex justify-between items-center">
-                                        <div className="box-title">Form Social Links</div>
-                                        <button
-                                            type="button"
-                                            onClick={addSocialLink}
-                                            className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                    {watchedSendEmailToSubmitter && (
+                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
+                            <div className="box">
+                                <div className="box-header">
+                                    <div className="box-title">Email Details</div>
+                                </div>
+                                <div className="box-body space-y-4">
+                                    {/* Subject Field */}
+                                    <FormInput
+                                        name="email_subject"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Email Subject"
+                                        is_required={true}
+                                    />
+
+                                    {/* Rich Text Field */}
+                                    <FormRichTextarea
+                                        name="email_content"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Email Content"
+                                        is_required={true}
+                                        editorOptions={{
+                                            height: 200,
+                                            buttonList: [
+                                                ["undo", "redo"],
+                                                ["bold", "italic", "underline", "strike"],
+                                                ["list", "align", "fontColor", "hiliteColor"],
+                                                ["link"],
+                                                ["removeFormat"]
+                                            ]
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )
+
+                    }
+                    <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
+                        <div className="box">
+                            <div className="box-header flex justify-between items-center">
+                                <div className="box-title">Form Social Links</div>
+                                <button
+                                    type="button"
+                                    onClick={addSocialLink}
+                                    className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                                >
+                                    <i className="ri-add-line font-semibold align-middle"></i>
+                                    Add Social Link
+                                </button>
+                            </div>
+                            <div className="box-body">
+                                <div className="xl:col-span-12 col-span-12">
+                                    {socialLinkFields.map((field, index) => (
+                                        <div
+                                            key={field.id}
+                                            className="grid grid-cols-12 gap-4 mb-2"
                                         >
-                                            <i className="ri-add-line font-semibold align-middle"></i>
-                                            Add Social Link
-                                        </button>
-                                    </div>
-                                    <div className="box-body">
-                                        <div className="xl:col-span-12 col-span-12">
-                                            {socialLinkFields.map((field, index) => (
-                                                <div
-                                                    key={field.id}
-                                                    className="grid grid-cols-12 gap-4 mb-2"
-                                                >
-                                                    <div className="col-span-3">
-                                                        <FormSelect
-                                                            name={`social_links.${index}.platform`}
-                                                            control={control}
+                                            <div className="col-span-3">
+                                                <FormSelect
+                                                    name={`social_links.${index}.platform`}
+                                                    control={control}
                                                             options={platformOptions}
                                                             errors={errors}
                                                             placeholder="Platform"
