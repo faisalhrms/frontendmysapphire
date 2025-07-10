@@ -41,7 +41,15 @@ export const sidebarMenu = [
                 "bx bx-message-square-edit",
                 4,
                 SELF_SERVICES_ROUTES.SERVICES.DIGITAL_PROFILE.permission,
-            )
+            ),
+            // generateSidebarItem(
+            //     SELF_SERVICES_ROUTES.SERVICES.POLICIES.path,
+            //     'link',
+            //     'Policies',
+            //     "bx-book-bookmark",
+            //     5,
+            //      SELF_SERVICES_ROUTES.SERVICES.POLICIES.permission,
+            // )
             ]
     )
 ]

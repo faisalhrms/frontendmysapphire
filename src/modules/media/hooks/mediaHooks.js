@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import {getMediaFileById, getMediaFiles, uploadMediaFiles} from "@modules/media/services/MediaService.js";
-
+import api from "@config/axiosConfig.js";
 export const useMediaFiles = (page = 1, size = 8, search, type) => {
     return useQuery({
         queryKey: ['mediaFiles', page, size, search, type],
@@ -51,4 +51,47 @@ export const useMediaFileUpload = () => {
         uploadFiles,
         uploading,
     };
+};
+
+export const useSecureMedia = (fileId, isOpen) => {
+    const [blobUrl, setBlobUrl] = useState(null);
+    const [mimeType, setMimeType] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!isOpen || !fileId) return;
+
+        let isMounted = true;
+        setLoading(true);
+        api.post(
+            "/media/stream/",
+            { id: fileId },
+            { responseType: "blob" }
+        )
+            .then((response) => {
+                if (!isMounted) return;
+
+                const mimeType = response.headers["content-type"];
+                const url = URL.createObjectURL(response.data);
+                setBlobUrl(url);
+                setMimeType(mimeType);
+            })
+            .catch((err) => {
+                console.error("Failed to stream media:", err);
+            })
+            .finally(() => {
+                if (isMounted) setLoading(false);
+            });
+
+        return () => {
+            isMounted = false;
+            if (blobUrl) {
+                URL.revokeObjectURL(blobUrl);
+                setBlobUrl(null);
+                setMimeType("");
+            }
+        };
+    }, [fileId, isOpen]);
+
+    return { blobUrl, mimeType, loading };
 };

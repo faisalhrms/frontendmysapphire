@@ -76,7 +76,11 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
                                             filteredData.length > 0 && headers.length > 0 ? (
                                                     filteredData.map((rowData, rowIndex) => (
                                                         <tr key={rowIndex}
-                                                            onClick={(e) => onRowClick(rowData, e.target.cellIndex, headers)}
+                                                            onClick={(e) => {
+                                                                if (onRowClick && typeof onRowClick === 'function') {
+                                                                    onRowClick(rowData, e.target.cellIndex, headers);
+                                                                }
+                                                            }}
                                                             className="border border-inherit border-solid dark:text-gray-200 dark:bg-bodybg !text-center hover:bg-gray-100">
                                                             {headers.map((header, colIndex) => (
                                                                 <td key={colIndex}

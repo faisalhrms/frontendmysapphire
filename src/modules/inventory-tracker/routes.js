@@ -1,4 +1,4 @@
-import InventoryTracker from '@modules/inventory-tracker/views/ScanBarcode.jsx';
+import InventoryTracker from '@modules/inventory-tracker/views/InventoryTracker.jsx';
 
 export const INVENTORY_TRACKER_ROUTES = {
     ADD: {
