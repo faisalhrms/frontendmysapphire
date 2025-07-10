@@ -10,12 +10,13 @@ const CustomerAssistForm = ({ isActive }) => {
     const [error, setError] = useState(null);
 
     const handleSearch = async () => {
-        if (!searchValue.trim()) return;
+        const trimmedValue = searchValue.trim();
+        if (!trimmedValue) return;
         setIsLoading(true);
         setError(null);
         setData(null);
         try {
-            const result = await getCustomerCase(searchValue);
+            const result = await getCustomerCase(trimmedValue);
             setData(result);
         } catch (err) {
             console.error("Search failed:", err);
