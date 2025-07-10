@@ -1,8 +1,8 @@
-import React, {useState, useEffect, useRef, useCallback} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useGeoLocation } from "@hooks/useGeoLocation.js";
 import { getMarketingMetadata } from "@helpers/helper.js";
@@ -141,7 +141,6 @@ const createFormSchema = (fields) => {
 };
 
 export default function PublicDynamicForm() {
-    const [agreed, setAgreed] = useState(false);
     const { slug } = useParams();
     const [formConfig, setFormConfig] = useState(null);
     const [captchaVerified, setCaptchaVerified] = useState(false);
@@ -154,7 +153,6 @@ export default function PublicDynamicForm() {
     const [primaryColor, setPrimaryColor] = useState('#');
     const [fontFamily, setFontFamily] = useState(null);
     const [hexPrimaryColor, setHexPrimaryColor] = useState(null);
-    const [emptyClick,setEmptyClick] = useState(false)
     const { location } = useGeoLocation();
     const isAuthenticated = useIsAuthenticated();
     const { defaultStyle, hoverStyle } = getDynamicButtonStyle(primaryColor, true);
@@ -257,10 +255,9 @@ export default function PublicDynamicForm() {
         }
     }, [location, setValue]);
 
-
     if (error) {
         return (
-            <div className="min-h-screen bg-[#f0f2ff] py-8 px-4 ">
+            <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
                 <div className="max-w-2xl mx-auto">
                     <PublicDynamicFormHeader
                         description={error}
@@ -347,14 +344,9 @@ export default function PublicDynamicForm() {
         }
     };
 
-
     const handleFormSubmit = (e) => {
         e.preventDefault();
 
-        if(!agreed){
-            setEmptyClick(true);
-            return;
-        }
 
         handleSubmit((data) => {
             if (formConfig?.require_captcha && !captchaVerified) {
@@ -366,7 +358,6 @@ export default function PublicDynamicForm() {
 
 
             onSubmit(data);
-            setEmptyClick(false);
         })();
     };
 
@@ -653,7 +644,7 @@ export default function PublicDynamicForm() {
     return (
         <div className="min-h-screen bg-[#f0f2ff] py-8 px-4"
              style={{ fontFamily }}>
-        <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto">
                 <PublicDynamicFormHeader
                     title={formConfig.title}
                     description={formConfig.description}
@@ -663,137 +654,68 @@ export default function PublicDynamicForm() {
                     fontFamily={fontFamily}
                 />
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-                {steps[currentStep].fields.map((fieldName) => (
-                    <div key={fieldName}>{renderField(fieldName)}</div>
-                ))}
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                    {steps[currentStep].fields.map((fieldName) => (
+                        <div key={fieldName}>{renderField(fieldName)}</div>
+                    ))}
 
-                <div className="bg-white rounded-lg border border-gray-200 p-6"
-                     style={{
-                         "--primary": primaryColor,
-                     }}
-                >
-                    <div className="flex justify-between items-center">
-                        <div className="flex space-x-3">
-                            {currentStep > 0 && (
-                                <button
-                                    type="button"
-                                    onClick={handleBack}
-                                    className="px-4 py-2 rounded text-sm font-medium transition-colors border"
-                                    style={defaultStyle}
-                                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
-                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
-                                >
-                                    Back
-                                </button>
-                            )}
-                            <div className="flex flex-col gap-4" style={{"--secondary": primaryColor}}>
-                                    <div className="flex items-center gap-3">
-                                        <div className="relative">
-                                            <input type="checkbox" id="privacy-policy" checked={agreed}
-                                                   onChange={(e) => setAgreed(e.target.checked)}
-                                                   className="absolute opacity-0 w-4 h-4 cursor-pointer"/>
-                                            <div
-                                                className={`w-4 h-4 border-2 rounded cursor-pointer transition-all duration-200 flex items-center justify-center ${agreed ? 'bg-[var(--secondary)] border-[var(--secondary)]' : 'bg-white border-gray-300 hover:border-gray-400'}`}
-                                                onClick={() => setAgreed(!agreed)}>
-                                                {agreed && <svg className="w-3 h-3 text-white" fill="none"
-                                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                                          strokeWidth={3} d="M5 13l4 4L19 7"/>
-                                                </svg>}
-                                            </div>
-                                        </div>
-                                        <label
-                                            htmlFor="privacy-policy"
-                                            className="text-gray-700 cursor-pointer select-none"
-                                            onClick={() => setAgreed(!agreed)}
-                                        >
-                                            I agree with the {" "}
-                                            <span
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    window.open("/privacy-policy", "_blank");
-                                                }}
-                                                className="ml-2 font-semibold text-gray-900  underline cursor-pointer"> Privacy policy</span>
-                                        </label>
-                                    </div>
+                    <div className="bg-white rounded-lg border border-gray-200 p-6"
+                         style={{
+                             "--primary": primaryColor,
+                         }}
+                    >
+                        <div className="flex justify-between items-center">
+                            <div className="flex space-x-3">
+                                {currentStep > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={handleBack}
+                                        className="px-4 py-2 rounded text-sm font-medium transition-colors border"
+                                        style={defaultStyle}
+                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
+                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
+                                    >
+                                        Back
+                                    </button>
+                                )}
 
-                                    {emptyClick && !agreed &&
-                                        <div className="text-danger" style={{fontWeight: 'lighter', fontSize: '12px'}}>*
-                                            Please check this field.</div>}
-                                </div>
+                                {currentStep < steps.length - 1 ? (
+                                    <button
+                                        type="button"
+                                        onClick={handleNext}
+                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors bg-[var(--primary)]"
+                                    >
+                                        Next
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        onClick={handleFormSubmit}
+                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)] flex items-center gap-2"
+                                    >
+                                        {isSubmitting && (
+                                            <i className="bi bi-arrow-repeat animate-spin text-base"></i>
+                                        )}
+                                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                                    </button>
 
-
+                                )}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={clearForm}
+                                className="px-4 py-2 rounded text-sm font-medium transition-colors"
+                                style={defaultStyle}
+                                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
+                                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
+                            >
+                                Clear form
+                            </button>
                         </div>
                     </div>
-                </div>
-
-
-                <div className="bg-white rounded-lg border border-gray-200 p-6"
-                     style={{
-                         "--primary": primaryColor,
-                     }}
-                >
-                    <div className="flex justify-between items-center">
-                        <div className="flex space-x-3">
-                            {currentStep > 0 && (
-                                <button
-                                    type="button"
-                                    onClick={handleBack}
-                                    className="px-4 py-2 rounded text-sm font-medium transition-colors border"
-                                    style={defaultStyle}
-                                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
-                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
-                                >
-                                    Back
-                                </button>
-                            )}
-
-                            {currentStep < steps.length - 1 ? (
-                                <button
-                                    type="button"
-                                    onClick={handleNext}
-                                    className="text-white px-6 py-2 rounded text-sm font-medium transition-colors bg-[var(--primary)]"
-                                >
-                                    Next
-                                </button>
-                            ) : (
-
-                                <div className="flex flex-col gap-4" style={{"--secondary": primaryColor}}>
-
-                                    <div>
-                                        <button
-                                            type="submit"
-                                            disabled={ isSubmitting}
-                                            onClick={handleFormSubmit}
-                                            className="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)] flex items-center gap-2"
-                                        >
-                                            {isSubmitting && (
-                                                <i className="bi bi-arrow-repeat animate-spin text-base"></i>
-                                            )}
-                                            {isSubmitting ? 'Submitting...' : 'Submit'}
-                                        </button>
-                                    </div>
-                                </div>
-
-                            )}
-                        </div>
-                        <button
-                            type="button"
-                            onClick={clearForm}
-                            className="px-4 py-2 rounded text-sm font-medium transition-colors"
-                            style={defaultStyle}
-                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
-                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
-                        >
-                            Clear form
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-
+                </form>
+            </div>
             {formConfig?.require_captcha && isCaptchaTriggered && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl p-6 max-w-sm w-full relative"
