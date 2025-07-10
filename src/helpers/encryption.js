@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 
-const secretKey = import.meta.env.VITE_ENCRYPTION_SECRET
+const secretKey = '1234567890abcdef1234567890abcdef'
 if (!secretKey) {
     throw new Error("REACT_APP_SECRET_KEY_CRYPTO is not defined in the environment.");
 }
