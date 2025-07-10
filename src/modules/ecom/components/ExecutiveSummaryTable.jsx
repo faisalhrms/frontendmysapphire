@@ -80,7 +80,7 @@ const ExecutiveSummaryTable = ({
 
     return (
         <div className="p-2 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg relative">
-            {isLoading && <AnimatedMascot />}
+            {/*{isLoading && <AnimatedMascot />}*/}
             <div className="overflow-auto">
                 <table className="w-full border-collapse">
                     <thead>

@@ -1,7 +1,5 @@
 import React from "react";
 import ClientSideTable from "@components/ClientSideTable.jsx";
-import ProgressBar from "@components/ProgressBar.jsx";
-import {getBadgeClasses} from "@helpers/badges.js";
 
 const OtherStoreInventoryTable = ({ rows }) => {
 
@@ -10,16 +8,20 @@ const OtherStoreInventoryTable = ({ rows }) => {
         warehousename_text: item.warehousename,
         onhand_qty: item.onhand_qty,
         combos: item.combos,
+        size_set: item.size_set,
         sizes: item.sizes,
-        order: <i className="bi bi-bag-check text-success font-bold"></i>,
+        order: <a href={`https://pk.sapphireonline.pk/collections/three-piece-unstitched/products/${item.barcode}.html`} target='_blank'>
+            <i className="bi bi-bag-check text-success font-bold"></i>
+        </a>,
     }));
 
-    const tableConfig = {
-        headers: [
+            const tableConfig = {
+                headers: [
             {label: "Store", accessor: "warehousename", align: "text-left"},
             { label: "Quantity", accessor: "onhand_qty" },
             { label: "Sizes", accessor: "sizes" },
             { label: "Matching Separate (MS)", accessor: "combos" },
+            { label: "(MS) Size", accessor: "size_set" },
             { label: "Order On Behalf", accessor: "order" },
 
         ],

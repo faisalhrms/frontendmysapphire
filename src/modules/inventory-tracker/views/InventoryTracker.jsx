@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState } from "react";
 import IconTabs from "@components/IconTabs.jsx";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import ScanBarcdeForm from "@modules/inventory-tracker/components/ScanBarcdeForm.jsx";
+import ScanBarcode from "@modules/inventory-tracker/components/ScanBarcode.jsx";
 import ProductDatatableTab from "@modules/inventory-tracker/components/ProductList.jsx";
 
-const ScanBarcodePage = () => {
+const InventoryTracker = () => {
     const [activeTab, setActiveTab] = useState("scan_bar_code");
     const handleTabChange = (tabId) => {
         setActiveTab(tabId);
@@ -17,10 +17,10 @@ const ScanBarcodePage = () => {
                 tabs={[
                     {
                         id: "scan_bar_code",
-                        label: "Scan Barcode",
+                        label: "Search Barcode",
                         icon: <i className="bx bx-barcode"></i>,
                         content: (
-                            <ScanBarcdeForm isActive={activeTab === 'scan_bar_code'} />
+                            <ScanBarcode isActive={activeTab === 'scan_bar_code'} />
                         )
                     },
                     {
@@ -38,4 +38,4 @@ const ScanBarcodePage = () => {
     );
 };
 
-export default ScanBarcodePage;
+export default InventoryTracker;
