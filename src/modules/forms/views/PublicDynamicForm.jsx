@@ -11,6 +11,7 @@ import { useIsAuthenticated } from "@modules/auth/hooks/authHooks.js";
 import MathCaptcha from "@components/mathcaptcha/MathCaptcha.jsx";
 import {getDynamicButtonStyle, hexToRgb} from "@helpers/styles.js";
 import PhoneInputForDynamicForm, { COUNTRIES } from "@modules/forms/components/PhoneInputForDynamicForm.jsx";
+import PrivacyPolicyPopup from "@components/PrivacyPolicyPopup.jsx";
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 const validatePhoneNumber = (value, field) => {
     if (!value) {
@@ -731,6 +732,15 @@ export default function PublicDynamicForm() {
                     </div>
                 </div>
             )}
+            <div
+                style={{
+                "--primary": primaryColor,
+                    fontFamily
+            }}>
+                <PrivacyPolicyPopup
+                    primaryColor={primaryColor}
+                />
+            </div>
         </div>
     );
 }
