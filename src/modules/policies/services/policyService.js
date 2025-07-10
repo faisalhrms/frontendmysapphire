@@ -50,18 +50,3 @@ export const fetchSelfPolicies = async () => {
         return [];
     }
 };
-
-export const secureStreamMedia = async (fileId) => {
-    try {
-        const response = await api.post(
-            "/media/stream/",
-            { id: fileId },
-            { responseType: "blob" }
-        );
-        const mimeType = response.headers["content-type"];
-        return { blob: response.data, mimeType };
-    } catch (error) {
-        console.error("secureStreamMedia error:", error);
-        throw error;
-    }
-};

@@ -23,14 +23,17 @@ export const POLICIES_ROUTES = {
 export const MODULE_ROUTES = [
     {
         path:POLICIES_ROUTES.READ.path,
-        component:PoliciesList
+        component:PoliciesList,
+        permission:'policies.view_policy'
     },
     {
         path:POLICIES_ROUTES.ADD.path,
-        component:PoliciesAdd
+        component:PoliciesAdd,
+        permission:'policies.add_policy'
     },
     {
         path:POLICIES_ROUTES.EDIT.path,
-        component:PoliciesEdit
+        component:PoliciesEdit,
+        permission:'policies.change_policy'
     }
     ]
