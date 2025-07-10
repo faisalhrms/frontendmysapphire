@@ -1,5 +1,6 @@
 import api from "@config/axiosConfig.js";
 import Notify from '@helpers/toastNotifications.js';
+import {decryptData} from "@helpers/encryption.js";
 
 export const createPolicy = async (payload) => {
     try {
@@ -40,10 +41,27 @@ export const fetchSelfPolicies = async () => {
 
         const encrypted = response.data?.data;
         if (!encrypted) throw new Error("No encrypted data found in response.");
+      return  decryptData(encrypted)
+
 
     } catch (error) {
         console.error("Decryption failed:", error);
         Notify.error("Failed to load policies");
         return [];
+    }
+};
+
+export const secureStreamMedia = async (fileId) => {
+    try {
+        const response = await api.post(
+            "/media/stream/",
+            { id: fileId },
+            { responseType: "blob" }
+        );
+        const mimeType = response.headers["content-type"];
+        return { blob: response.data, mimeType };
+    } catch (error) {
+        console.error("secureStreamMedia error:", error);
+        throw error;
     }
 };

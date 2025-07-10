@@ -439,7 +439,7 @@ const InteractiveMap = () => {
                                 >
                                     {!showLabelsCard && (
                                         <div
-                                            className={`backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[166px] ${
+                                            className={`backdrop-blur-sm border-2 border-gray-200 rounded-xl shadow-xl p-1 min-w-[166px] dark:text-gray-200 dark:bg-bodybg ${
                                                 selectedPin === point.id
                                                     ? "scale-110 shadow-2xl border-blue-400 bg-white"
                                                     : point.highlighted
@@ -454,7 +454,7 @@ const InteractiveMap = () => {
                                                         {point.icon}
                                                     </div>
                                                     <div className="flex-1">
-                                                        <div className="font-bold text-sm text-gray-800 leading-tight">
+                                                        <div className="font-bold text-sm text-gray-800 leading-tight ">
                                                             {point.title}
                                                         </div>
                                                         {point.subtitle && (
