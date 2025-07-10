@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {getDynamicButtonStyle} from "@helpers/styles.js";
 import { X, MapPin, Shield, ExternalLink, Eye, Database, Wifi } from 'lucide-react';
+import {Link} from 'react-router-dom';
 
 
 export default function PrivacyPolicyPopup({primaryColor}) {
@@ -141,9 +142,9 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                     <div className="fixed inset-0 bg-black bg-opacity-20 z-40 backdrop-blur-sm"/>
 
                     {/* Popup */}
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none overflow-y-auto">
-                        <div className="w-full max-w-4xl pointer-events-auto my-8 sm:my-0">
-                            <div className="rounded-lg bg-white shadow-2xl transform transition-all duration-500 ease-out animate-slide-up max-h-[90vh] flex flex-col">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 pointer-events-none">
+                        <div className="w-full max-w-4xl pointer-events-auto h-full sm:h-auto max-h-[95vh] sm:max-h-[90vh] flex flex-col">
+                            <div className="rounded-lg bg-white shadow-2xl transform transition-all duration-500 ease-out animate-slide-up h-full sm:h-auto sm:max-h-[90vh] flex flex-col mt-4 mb-4 sm:mt-0 sm:mb-0">
                                 {/* Header */}
                                 <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 flex-shrink-0">
                                     <div className="flex items-center space-x-3">
@@ -165,7 +166,7 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                                 </div>
 
                                 {/* Content */}
-                                <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
+                                <div className="p-4 sm:p-6 flex-1 overflow-y-auto min-h-0">
                                     {!showDetails ? (
                                         <div className="space-y-6">
                                             <div className="flex items-start gap-4">
@@ -197,13 +198,15 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                                             <div className="bg-gray-50 rounded-lg p-4">
                                                 <p className="text-sm text-gray-600">
                                                     Your privacy is important to us. Read our{' '}
-                                                    <a
-                                                        href="#privacy-policy"
+                                                    <Link
+                                                        to="/privacy-policy"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
                                                         className="text-[var(--primary)] underline inline-flex items-center gap-1 transition-colors font-medium"
                                                     >
                                                         Privacy Policy
                                                         <ExternalLink className="h-3 w-3"/>
-                                                    </a>
+                                                    </Link>
                                                     {' '}to learn more about how we protect your data.
                                                 </p>
                                             </div>
@@ -276,8 +279,8 @@ export default function PrivacyPolicyPopup({primaryColor}) {
             }
 
             .animate-slide-up {
-                    animation: slide-up 0.5s ease-out;
-                }
+                animation: slide-up 0.5s ease-out;
+            }
           `,
                 }}
             />
