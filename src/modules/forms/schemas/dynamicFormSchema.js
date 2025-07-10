@@ -68,8 +68,8 @@ export const dynamicFormSchema = z.object({
     social_links: z.array(socialLinkSchema).optional().default([]),
     send_email_to_submitter: z.boolean().default(false),
 
-    email_subject: z.string().optional(),
-    email_content: z.string().optional(),
+    email_subject: z.string().optional().nullable(),
+    email_content: z.string().optional().nullable(),
 
 }).superRefine((data, ctx) => {
     if (data.send_email_to_submitter) {
