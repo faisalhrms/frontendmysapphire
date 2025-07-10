@@ -5,7 +5,7 @@ export const sidebarMenu = [
     generateSidebarItem(
         '',
         'sub',
-        'Forms',
+        'Dynamic Forms',
         12,
         'bi bi-file-text',
         '',
