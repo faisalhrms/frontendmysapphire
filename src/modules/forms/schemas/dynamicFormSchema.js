@@ -66,4 +66,26 @@ export const dynamicFormSchema = z.object({
         .nullable(),
     fields: z.array(fieldSchema).min(1, 'At least one field is required'),
     social_links: z.array(socialLinkSchema).optional().default([]),
+    send_email_to_submitter: z.boolean().default(false),
+
+    email_subject: z.string().optional(),
+    email_content: z.string().optional(),
+
+}).superRefine((data, ctx) => {
+    if (data.send_email_to_submitter) {
+        if (!data.email_subject || data.email_subject.trim() === '') {
+            ctx.addIssue({
+                path: ['email_subject'],
+                code: z.ZodIssueCode.custom,
+                message: 'Subject is required when email is enabled for submitter',
+            });
+        }
+        if (!data.email_content || data.email_content.trim() === '') {
+            ctx.addIssue({
+                path: ['email_content'],
+                code: z.ZodIssueCode.custom,
+                message: 'Content is required when email is enabled for submitter',
+            });
+        }
+    }
 });
