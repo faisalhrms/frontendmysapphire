@@ -56,36 +56,14 @@ const EquipmentList = () => {
             filterable: true,
             filterType: "text",
         },
-        // POS ID column
-        {
-            Header: "POS ID",
-            accessor: "pos_id",
-            filterable: true,
-            filterType: "text",
-            Cell: ({ value }) => value || "N/A",
-        },
+
         {
             Header: "Serial No",
             accessor: "serial_no",
             filterable: true,
             filterType: "text",
         },
-        // MAC Address column
-        {
-            Header: "MAC Address",
-            accessor: "mac",
-            filterable: true,
-            filterType: "text",
-            Cell: ({ value }) => value || "N/A",
-        },
-        // IP Address column
-        {
-            Header: "IP Address",
-            accessor: "ip",
-            filterable: true,
-            filterType: "text",
-            Cell: ({ value }) => value || "N/A",
-        },
+
         {
             Header: "Description",
             accessor: "description",
@@ -185,6 +163,30 @@ const EquipmentList = () => {
             filterable: true,
             filterType: "text",
             Cell: ({ value }) => (value ? value : "N/A"),
+        },
+        // POS ID column
+        {
+            Header: "POS ID",
+            accessor: "pos_id",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => value || "N/A",
+        },
+        // MAC Address column
+        {
+            Header: "MAC Address",
+            accessor: "mac",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => value || "N/A",
+        },
+        // IP Address column
+        {
+            Header: "IP Address",
+            accessor: "ip",
+            filterable: true,
+            filterType: "text",
+            Cell: ({ value }) => value || "N/A",
         },
         // Verified By column
         {
