@@ -27,7 +27,7 @@ const OtherStoreInventoryTable = ({ rows }) => {
         ],
     };
     return (
-        <ClientSideTable config={tableConfig} data={tableData} title={null} />
+        <ClientSideTable config={tableConfig} data={tableData} title={null} tHeadClasses='bg-slate-50 border-b border-slate-200 py-4 px-6 text-sm font-semibold text-slate-700 uppercase tracking-wider' />
     )
 }
 export default React.memo(OtherStoreInventoryTable)
