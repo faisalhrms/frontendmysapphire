@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import OtherStoreInventoryTable from "@modules/inventory-tracker/components/OtherStoreInventoryTable.jsx";
 import api from "@config/axiosConfig.js";
-import srs from "@assets/files/inventory_tracker_srs.pdf";
-import dfd from "@assets/files/inventory_tracker_dfd.pdf";
+import { Search, Package, MapPin, Percent, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote } from "lucide-react";
 
 const ScanBarcode = ({ isActive }) => {
     const [searchValue, setSearchValue] = useState("");
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    const accordionHeadingId = "other-locations-heading";
-    const accordionCollapseId = "other-locations-collapse";
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
     const handleSearch = async () => {
         const cleanValue = searchValue.replace(/\s+/g, '');
@@ -34,7 +31,7 @@ const ScanBarcode = ({ isActive }) => {
         }
     };
 
-    const currentWarehouse = data?.item || {};
+    const currentWarehouse = data?.item || null;
     const otherLocations = data?.other_stocks || [];
 
     return (
@@ -42,194 +39,206 @@ const ScanBarcode = ({ isActive }) => {
             <div className="grid grid-cols-12 gap-x-4 min-h-screen">
                 <div className="col-span-2"></div>
                 <div className="xxl:col-span-8 xl:col-span-8 lg:col-span-8 sm:col-span-8 col-span-12">
-                    <div className="custom-form-group mb-4">
-                        <input
-                            type="search"
-                            autoComplete="on"
-                            name='barcode_search'
-                            value={searchValue}
-                            onChange={(e) => setSearchValue(e.target.value)}
-                            className="form-control !py-4 !px-6 w-full !rounded-md form-control-lg shadow-sm"
-                            placeholder="Search by barcode.."
-                            aria-label="Search input"
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    handleSearch();
-                                }
-                            }}
-                        />
-                        <div className="custom-form-btn">
-                            <button
-                                className="ti-btn bg-primary text-white !font-medium !border dark:border-defaultborder/10-0"
-                                type="button"
-                                onClick={handleSearch}>
-                                <i className="bi bi-search me-2"></i> Search
-                            </button>
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-8 mt-8">
+                        <div className="p-6 border-b border-slate-200">
+                            <h2 className="text-lg font-semibold text-slate-900 mb-1">Product Search</h2>
+                            <p className="text-sm text-slate-600">Enter a barcode to retrieve comprehensive product
+                                information</p>
+                        </div>
+                        <div className="p-6">
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Hash className="h-5 w-5 text-slate-400"/>
+                                </div>
+                                <input
+                                    type="text"
+                                    autoComplete="on"
+                                    name="barcode_search"
+                                    value={searchValue}
+                                    onChange={(e) => setSearchValue(e.target.value)}
+                                    className="block w-full pl-12 pr-32 py-4 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400 transition-all"
+                                    placeholder="Enter barcode number (e.g., 1234567890123)"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSearch();
+                                        }
+                                    }}
+                                />
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                    <button
+                                        onClick={handleSearch}
+                                        disabled={isLoading || !searchValue.trim()}
+                                        className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        {isLoading ? (
+                                            <>
+                                                <div
+                                                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"/>
+                                                Searching...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Search className="w-4 h-4 mr-2"/>
+                                                Search Product
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    {!data && !isLoading && !error && (
+                        <div className="text-center py-12">
+                            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">No Results</h3>
+                            <p className="text-gray-600">Enter a barcode to search for product information</p>
+                        </div>
+                    )}
+                    {data && (
+                        <div className="space-y-6">
+                            {currentWarehouse && (
+                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                    <div className="bg-slate-800 px-6 py-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center">
+                                                <Building2 className="w-5 h-5 text-slate-300 mr-3"/>
+                                                <h3 className="text-lg font-semibold text-white">{currentWarehouse.warehousename}</h3>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xl font-bold text-white">{currentWarehouse.onhand_qty} units</p>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div className="p-6 bg-slate-50 border-b border-slate-200">
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                            <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="flex">
+                                                    <Banknote className="w-5 h-5 text-success mr-2"/>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-slate-600">Unit Price</p>
+                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.salesprice}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="flex">
+                                                    <Percent className="w-5 h-5 text-orange mr-2"/>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-slate-600">Discount
+                                                            Rate</p>
+                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.discount_per}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="flex">
+                                                    <Layers className="w-5 h-5 text-info mr-2"/>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-slate-600">Product
+                                                            Size</p>
+                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.product_size}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="flex">
+                                                    <MapPin className="w-5 h-5 text-primary mr-2"/>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-slate-600">Rack
+                                                            Location</p>
+                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.rack_location || ""}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6">
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                            <div>
+                                                <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Product
+                                                    Information</h4>
+                                                <div className="space-y-3">
+                                                    <div
+                                                        className="flex justify-between py-2 border-b border-slate-100">
+                                                        <span className="text-sm text-slate-600">Barcode Number</span>
+                                                        <span
+                                                            className="text-sm font-medium text-slate-900 font-mono">{currentWarehouse.barcode}</span>
+                                                    </div>
+                                                    <div
+                                                        className="flex justify-between py-2 border-b border-slate-100">
+                                                        <span className="text-sm text-slate-600">Available Sizes</span>
+                                                        <span
+                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.sizes}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Product
+                                                    Sets & Combinations</h4>
+                                                <div className="space-y-3">
+                                                    <div
+                                                        className="flex justify-between py-2 border-b border-slate-100">
+                                                    <span
+                                                        className="text-sm text-slate-600">Matching Separate (MS)</span>
+                                                        <span
+                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
+                                                    </div>
+                                                    <div className="flex justify-between py-2">
+                                                        <span className="text-sm text-slate-600">Matching Separate (MS) Size</span>
+                                                        <span
+                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.size_set}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {otherLocations.length > 0 && (
+                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                    <button
+                                        onClick={() => setIsAccordionOpen(!isAccordionOpen)}
+                                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors border-b border-slate-200"
+                                    >
+                                        <div className="flex items-center">
+                                            <Building2 className="w-5 h-5 text-slate-600 mr-3"/>
+                                            <h3 className="text-lg font-semibold text-slate-900">
+                                                Additional Warehouse Locations
+                                            </h3>
+                                            <span
+                                                className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                            {otherLocations.length} locations
+                                    </span>
+                                        </div>
+                                        {isAccordionOpen ? (
+                                            <ChevronUp className="w-5 h-5 text-slate-500"/>
+                                        ) : (
+                                            <ChevronDown className="w-5 h-5 text-slate-500"/>
+                                        )}
+                                    </button>
+
+                                    {isAccordionOpen && (
+                                        <div className="border-t border-slate-200">
+                                            <OtherStoreInventoryTable rows={otherLocations}/>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
                     {error && !data && !isLoading && (
-                        <div className="max-w-4xl mx-auto bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                            <div className="flex items-center">
-                                <svg
-                                    className="w-5 h-5 text-danger mr-2"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                                <span className="text-danger font-medium">Error: {error}</span>
-                            </div>
-                        </div>
-                    )}
-
-                    {data && data.item && (
-                        <div className="max-w-4xl mx-auto bg-white font-sans mb-4 p-4 sm:p-6">
-                            {/* Current warehouse info */}
-                            <div className="border-2 border-black mb-1">
-                                <div className="flex items-center justify-between px-4 py-3 bg-white">
-                            <span className="text-sm text-black font-semibold">
-                                Current: {currentWarehouse.warehousename} (Qty: {currentWarehouse.product_size} {currentWarehouse.onhand_qty})
-                            </span>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-base font-bold text-black">Price:</span>
-                                        <span className="text-sm text-gray-700">{currentWarehouse.salesprice}</span>
-                                        <span className="text-base font-bold text-black">- Disc: </span>
-                                        <span className="text-sm text-gray-700">{currentWarehouse.discount_per}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="border-2 border-black mb-1">
-                                <div className="px-4 py-6 bg-white">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="space-y-3">
-                                            <div>
-                                                <span className="text-base font-bold text-black">Barcode: </span>
-                                                <span
-                                                    className="text-base text-gray-800">{currentWarehouse.barcode}</span>
-                                            </div>
-                                            <div>
-                                                <span
-                                                    className="text-base font-bold text-black">Matching Separate (MS): </span>
-                                                <span className="text-sm text-gray-700">{currentWarehouse.combos}</span>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-3">
-                                            <div>
-                                                <span className="text-base font-bold text-black">Size: </span>
-                                                <span className="text-sm text-gray-700">{currentWarehouse.sizes}</span>
-                                            </div>
-                                            <div>
-                                                <span className="text-base font-bold text-black">(MS) Size: </span>
-                                                <span
-                                                    className="text-sm text-gray-700">{currentWarehouse.size_set}</span>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-3">
-                                            <div>
-                                                <span className="text-base font-bold text-black">Rack Location: </span>
-                                                <span className="text-sm text-gray-700">Not Available</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                className="accordion accordion-border-primary accordions-items-seperate mb-6 w-full"
-                                id="accordion-other-locations">
-                                <div className="hs-accordion-group">
-                                    <div className="hs-accordion accordion-item" id={accordionHeadingId}>
-                                        <button
-                                            className="hs-accordion-toggle accordion-button hs-accordion-active:pb-3 group py-3 inline-flex items-center justify-between gap-x-3 w-full font-semibold text-left transition bg-white"
-                                            type="button"
-                                            aria-controls={accordionCollapseId}
-                                        >
-                                            Other Locations ({otherLocations.length})
-                                            <span className="flex-shrink-0">
-                    <svg
-                        className="hs-accordion-active:hidden block w-3 h-3 text-primary"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                          d="M2 5L8.16086 10.6869C8.35239 10.8637 8.64761 10.8637 8.83914 10.6869L15 5"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                      />
-                    </svg>
-                    <svg
-                        className="hs-accordion-active:block hidden w-3 h-3 text-primary"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                          d="M2 11L8.16086 5.31305C8.35239 5.13625 8.64761 5.13625 8.83914 5.31305L15 11"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                                        </button>
-                                        <div
-                                            id={accordionCollapseId}
-                                            className="hs-accordion-content accordion-collapse w-full hidden transition-[height] duration-300 bg-white"
-                                            aria-labelledby={accordionHeadingId}
-                                        >
-                                            <div className="pl-4 pt-2 pb-4">
-                                                <OtherStoreInventoryTable rows={otherLocations}/>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div className="alert alert-danger flex items-center">
+                            <div className="flex items-start">
+                                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0"/>
+                                <div>
+                                    <p className="text-sm text-red-700 mt-1">{error}</p>
                                 </div>
                             </div>
                         </div>
                     )}
-                </div>
-                <div className="col-span-2 text-center">
-                    <div className="hs-dropdown ti-dropdown">
-                        <a aria-label="anchor" href="#"
-                           className="flex items-center text-primary justify-center w-[1.75rem] h-[1.75rem] !text-[0.8rem] !py-1 !px-2 rounded-sm bg-primary/10 border-primary shadow-none !font-medium"
-                           aria-expanded="false">
-                            <i className="fe fe-more-vertical"></i>
-                        </a>
-
-                        <ul className="hs-dropdown-menu ti-dropdown-menu hidden">
-                            <li>
-                                <a
-                                    href={srs}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex"
-                                >
-                                    <i className="ri-file-pdf-line me-1 align-middle"></i>View SRS
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href={dfd}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium !inline-flex"
-                                >
-                                    <i className="ri-file-pdf-line me-1 align-middle"></i>View DFD
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </>
