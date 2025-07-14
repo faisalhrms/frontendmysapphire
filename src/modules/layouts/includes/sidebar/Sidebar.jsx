@@ -13,12 +13,12 @@ import MenuLoop from "@modules/layouts/includes/sidebar/components/MenuLoop.jsx"
 import useMenuItems from "@hooks/useMenuItems.js";
 import {DASHBOARD_ROUTES} from "@modules/dashboards/routes.js";
 
-
 const Sidebar = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme);
   const initialMenuItems = useMenuItems();
   const [menuItems, setMenuItems] = useState(initialMenuItems);
+
 
   useEffect(() => {
     setMenuItems(initialMenuItems);
@@ -50,8 +50,8 @@ const Sidebar = () => {
     window.addEventListener('resize', menuResizeFn);
   }, []);
 
-  const location = useLocation();
 
+  const location = useLocation();
 
   function Onhover() {
     if ((theme.toggled === 'icon-overlay-close' || theme.toggled === 'detached-close') && theme.iconOverlay !== 'open') {
@@ -77,7 +77,6 @@ const Sidebar = () => {
     }
     const overlayElement = document.querySelector("#responsive-overlay");
     if (overlayElement) {
-
       overlayElement.classList.remove("active");
     }
     if (theme.dataNavLayout === 'horizontal' || theme.dataNavStyle === 'menu-click' || theme.dataNavStyle === 'icon-click') {
@@ -90,37 +89,30 @@ const Sidebar = () => {
         }))
       }
     }
-
   }
 
   const WindowPreSize = [window.innerWidth]
 
   function menuResizeFn() {
-
     WindowPreSize.push(window.innerWidth);
     if (WindowPreSize.length > 2) {
       WindowPreSize.shift()
     }
     if (WindowPreSize.length > 1) {
       if ((WindowPreSize[WindowPreSize.length - 1] < 992) && (WindowPreSize[WindowPreSize.length - 2] >= 992)) {
-        // less than 992;
         dispatch(setTheme({
           "toggled": "close"
         }))
       }
 
       if ((WindowPreSize[WindowPreSize.length - 1] >= 992) && (WindowPreSize[WindowPreSize.length - 2] < 992)) {
-        // greater than 992
         dispatch(setTheme({
           "toggled": theme.dataVerticalStyle === "doublemenu" ? "double-menu-open" : ""
         }))
       }
     }
   }
-
   function switcherArrowFn() {
-
-    // Used to remove is-expanded class and remove class on clicking arrow buttons
     function slideClick() {
       const slide = document.querySelectorAll(".slide");
       const slideMenu = document.querySelectorAll(".slide-menu");
@@ -153,7 +145,7 @@ const Sidebar = () => {
       let mainContainer1Width = mainContainer1.offsetWidth;
 
       if (menuNav.scrollWidth > mainContainer1.offsetWidth) {
-        if (!(theme.dataVerticalStyle.dir === "rtl")) {
+        if (!(theme.dataVerticalStyle?.dir === "rtl")) {
           if (Math.abs(check) > Math.abs(marginLeftValue)) {
             menuNav.style.marginInlineEnd = "0";
 
@@ -167,9 +159,9 @@ const Sidebar = () => {
 
             menuNav.style.marginInlineStart = (Number(menuNav.style.marginInlineStart.split("px")[0]) - Math.abs(mainContainer1Width)) + "px";
 
-            const slideRightButton = document.querySelector("#slide-right");
-            if (slideRightButton) {
-              slideRightButton.classList.remove("hidden");
+            const slideLeftButton = document.querySelector("#slide-left");
+            if (slideLeftButton) {
+              slideLeftButton.classList.remove("hidden");
             }
           }
         } else {
@@ -218,9 +210,19 @@ const Sidebar = () => {
       let mainContainer1Width = mainContainer1.offsetWidth;
 
       if (menuNav.scrollWidth > mainContainer1.offsetWidth) {
-        if (!(theme.dataVerticalStyle.dir === "rtl")) {
+        if (!(theme.dataVerticalStyle?.dir === "rtl")) {
           if (Math.abs(check) <= Math.abs(marginLeftValue)) {
             menuNav.style.marginInlineStart = "0px";
+            const slideLeftButton = document.querySelector("#slide-left");
+            if (slideLeftButton) {
+              slideLeftButton.classList.add("hidden");
+            }
+          } else {
+            menuNav.style.marginInlineStart = (Number(menuNav.style.marginInlineStart.split("px")[0]) + Math.abs(mainContainer1Width)) + "px";
+            const slideRightButton = document.querySelector("#slide-right");
+            if (slideRightButton) {
+              slideRightButton.classList.remove("hidden");
+            }
           }
         } else {
           if (Math.abs(check) > Math.abs(marginRightValue)) {
@@ -257,7 +259,6 @@ const Sidebar = () => {
     switcherArrowFn();
   }
 
-
   const Topup = () => {
     if (window.scrollY > 30 && document.querySelector(".app-sidebar")) {
       const Scolls = document.querySelectorAll(".app-sidebar");
@@ -271,7 +272,13 @@ const Sidebar = () => {
       });
     }
   };
-  window.addEventListener("scroll", Topup);
+
+  useEffect(() => {
+    window.addEventListener("scroll", Topup);
+    return () => {
+      window.removeEventListener("scroll", Topup);
+    };
+  }, []);
 
   const level = 0
   let hasParent = false
@@ -295,10 +302,8 @@ const Sidebar = () => {
             setSubmenu(event, targetObject, item.children);
           }
         }
-
       }
     }
-
     setMenuItems((arr) => [...arr]);
   }
 
@@ -306,7 +311,7 @@ const Sidebar = () => {
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         if (typeof obj[key] === 'object' && JSON.stringify(obj[key]) === JSON.stringify(childObject)) {
-          return obj; // Return the parent object
+          return obj;
         }
         if (typeof obj[key] === 'object') {
           const parentObject = getParentObject(obj[key], childObject);
@@ -316,7 +321,7 @@ const Sidebar = () => {
         }
       }
     }
-    return null; // Object not found
+    return null;
   }
 
   function setMenuAncestorsActive(targetObject) {
@@ -345,9 +350,10 @@ const Sidebar = () => {
           val.active = false;
           val.selected = false;
         }
+      } else {
+        item.active = false;
+        item.selected = false;
       }
-      item.active = false;
-      item.selected = false;
 
       if (item.children && item.children.length > 0) {
         removeActiveOtherMenus(item.children);
@@ -402,78 +408,69 @@ const Sidebar = () => {
     }
   }
 
-  //
-  function toggleSidemenu(event, targetObject, items = menuItems) {
-    let element = event.target;
+  const toggleSidemenu = (event, clickedItem) => {
+    event.preventDefault();
 
-    if ((theme.dataNavStyle !== "icon-hover" && theme.dataNavStyle !== "menu-hover") || (window.innerWidth < 992) || (theme.dataNavLayout !== "horizontal") && (theme.toggled !== "icon-hover-closed" || theme.toggled !== "menu-hover-closed")) {
-      for (const item of items) {
-        if (item === targetObject) {
-          if (theme.dataVerticalStyle === 'doublemenu' && item.active) {
-            return
-          }
-          item.active = !item.active;
-
-          if (item.active) {
-            closeOtherMenus(items, item);
-          } else {
-            if (theme.dataVerticalStyle === 'doublemenu') {
-              dispatch(setTheme({
-                "toggled": "double-menu-close"
-              }))
-            }
-          }
-          setAncestorsActive(items, item);
-
-        } else if (!item.active) {
-          if (theme.dataVerticalStyle !== 'doublemenu') {
-            item.active = false; //
-          }
-        }
-        if (item.children && item.children.length > 0) {
-          toggleSidemenu(event, targetObject, item.children);
-        }
+    menuItems.forEach(item => {
+      if (item !== clickedItem) {
+        item.active = false;
+        item.selected = false;
       }
-      if (targetObject?.children && targetObject.active) {
-        if (theme.dataVerticalStyle === 'doublemenu' && theme.toggled !== 'double-menu-open') {
-          dispatch(setTheme({
-            "toggled": "double-menu-open"
-          }))
-        }
-      }
-      if (element && theme.dataNavLayout === 'horizontal' && (theme.dataNavStyle === 'menu-click' || theme.dataNavStyle === 'icon-click')) {
-        const listItem = element.closest("li");
-        if (listItem) {
-          // Find the first sibling <ul> element
-          const siblingUL = listItem.querySelector("ul");
-          let outterUlWidth = 0;
-          let listItemUL = listItem.closest('ul:not(.main-menu)');
-          while (listItemUL) {
-            listItemUL = listItemUL.parentElement.closest('ul:not(.main-menu)');
-            if (listItemUL) {
-              outterUlWidth += listItemUL.clientWidth;
-            }
-          }
-          if (siblingUL) {
-            // You've found the sibling <ul> element
-            let siblingULRect = listItem.getBoundingClientRect();
-            if (theme.dir === 'rtl') {
-              targetObject.dirchange = (siblingULRect.left - siblingULRect.width - outterUlWidth + 150 < 0 && outterUlWidth < window.innerWidth) && (outterUlWidth + siblingULRect.width + siblingULRect.width < window.innerWidth);
-            } else {
-              targetObject.dirchange = (outterUlWidth + siblingULRect.right + siblingULRect.width + 50 > window.innerWidth && siblingULRect.right >= 0) && (outterUlWidth + siblingULRect.width + siblingULRect.width < window.innerWidth);
-            }
-          }
-          setTimeout(() => {
-            let computedValue = siblingUL.getBoundingClientRect();
-            if ((computedValue.bottom) > window.innerHeight) {
-              siblingUL.style.height = (window.innerHeight - computedValue.top - 8) + 'px';
-              siblingUL.style.overflow = 'auto';
-            }
-          }, 100);
-        }
+    });
+
+    clickedItem.active = !clickedItem.active;
+    clickedItem.selected = !clickedItem.selected;
+
+    if (!clickedItem.active && clickedItem.children) {
+      clickedItem.children.forEach(child => {
+        child.active = false;
+        child.selected = false;
+      });
+    }
+
+    setMenuItems([...menuItems]);
+  };
+
+
+  function closeOtherMenusAtSameLevel(items, targetItem) {
+    for (const item of items) {
+      if (item !== targetItem && item.children && item.children.length > 0) {
+        item.active = false;
+        closeAllChildMenus(item.children);
       }
     }
-    setMenuItems((arr) => [...arr]);
+  }
+
+  function closeAllChildMenus(items) {
+    for (const item of items) {
+      item.active = false;
+      if (item.children && item.children.length > 0) {
+        closeAllChildMenus(item.children);
+      }
+    }
+  }
+
+  function setAncestorsActiveInArray(items, targetItem) {
+    const setActiveRecursively = (menuItems, target) => {
+      for (const item of menuItems) {
+        if (item.children && item.children.length > 0) {
+          for (const child of item.children) {
+            if (child === target || (child.path && child.path === target.path) || (child.id && child.id === target.id)) {
+              item.active = true;
+              setActiveRecursively(items, item);
+              return true;
+            }
+            if (setActiveRecursively(item.children, target)) {
+              item.active = true;
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    };
+
+    setActiveRecursively(items, targetItem);
   }
 
   function setAncestorsActive(menuItems, targetObject) {
@@ -485,7 +482,6 @@ const Sidebar = () => {
           "toggled": "double-menu-open"
         }))
       }
-
       setAncestorsActive(menuItems, parent);
     } else {
       if (theme.dataVerticalStyle === "doublemenu") {
@@ -513,7 +509,7 @@ const Sidebar = () => {
         return item;
       }
       if (item.children && item.children.length > 0) {
-        const parent = findParent(menuItems = item.children, targetObject);
+        const parent = findParent(item.children, targetObject);
         if (parent) {
           return parent;
         }
@@ -527,7 +523,6 @@ const Sidebar = () => {
     if (element && theme.dataNavLayout === "horizontal" && (theme.dataNavStyle === "menu-hover" || theme.dataNavStyle === "icon-hover")) {
       const listItem = element.closest("li");
       if (listItem) {
-        // Find the first sibling <ul> element
         const siblingUL = listItem.querySelector("ul");
         let outterUlWidth = 0;
         let listItemUL = listItem.closest("ul:not(.main-menu)");
@@ -538,7 +533,6 @@ const Sidebar = () => {
           }
         }
         if (siblingUL) {
-          // You've found the sibling <ul> element
           let siblingULRect = listItem.getBoundingClientRect();
           if (theme.dir === "rtl") {
             item.dirchange = (siblingULRect.left - siblingULRect.width - outterUlWidth + 150 < 0 && outterUlWidth < window.innerWidth) && (outterUlWidth + siblingULRect.width + siblingULRect.width < window.innerWidth);
@@ -550,99 +544,221 @@ const Sidebar = () => {
     }
   }
 
-  const Sideclick = () => {
+  const Sideclick = (event) => {
+    if (event.target.closest('.side-menu__item') ||
+        event.target.closest('.slide') ||
+        event.target.closest('[data-bs-toggle]')) {
+      return;
+    }
+
     if (window.innerWidth > 992) {
       let html = document.documentElement;
       if (html.getAttribute('data-icon-overlay') !== 'open') {
         html.setAttribute('data-icon-overlay', 'open');
       }
-
     }
   }
 
   const handleClick = (event) => {
-    // Your logic here
-    event.preventDefault(); // Prevents the default anchor behavior (navigation)
-    // ... other logic you want to perform on click
+    event.preventDefault();
+    event.stopPropagation();
   };
-  return (<>
-    <div id="responsive-overlay"
-         onClick={() => {
-           menuClose()
-         }}
-    ></div>
-    <aside className="app-sidebar" id="sidebar" onMouseEnter={() => Onhover()}
-           onMouseLeave={() => Outhover()}>
 
-      <div className="main-sidebar-header">
-        <a href={DASHBOARD_ROUTES.PROJECT.path} className="header-logo">
-          <img src={logo1} alt="logo" className="desktop-logo"/>
-          <img src={logo2} alt="logo" className="toggle-logo"/>
-          <img src={logo3} alt="logo" className="desktop-dark"/>
-          <img src={logo4} alt="logo" className="toggle-dark"/>
-          <img src={logo5} alt="logo" className="desktop-white"/>
-          <img src={logo6} alt="logo" className="toggle-white"/>
-        </a>
-      </div>
-      <SimpleBar className="main-sidebar" id="sidebar-scroll">
+  const handleMenuItemClick = (event, item) => {
+    event.stopPropagation();
 
-        <nav className="main-menu-container nav nav-pills flex-column sub-open">
-          <div className="slide-left" id="slide-left" onClick={() => {
-            slideLeft();
-          }}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24"
-                 height="24" viewBox="0 0 24 24">
-              <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path>
-            </svg>
+    if (item.type === 'link') {
+      setMenuItems((prevItems) => {
+        const newItems = JSON.parse(JSON.stringify(prevItems));
+
+        const clearSelected = (items) => {
+          items.forEach(menuItem => {
+            menuItem.selected = false;
+            if (menuItem.children) {
+              clearSelected(menuItem.children);
+            }
+          });
+        };
+
+        const setSelected = (items) => {
+          items.forEach(menuItem => {
+            if (menuItem.path === item.path || menuItem.id === item.id) {
+              menuItem.selected = true;
+              setAncestorsActiveInArray(newItems, menuItem);
+            }
+            if (menuItem.children) {
+              setSelected(menuItem.children);
+            }
+          });
+        };
+
+        clearSelected(newItems);
+        setSelected(newItems);
+
+        return newItems;
+      });
+
+      return;
+    }
+
+    if (item.type === 'sub') {
+      event.preventDefault();
+      toggleSidemenu(event, item);
+      return;
+    }
+
+    if (item.type === 'empty') {
+      event.preventDefault();
+      return;
+    }
+  };
+
+  const handleSubmenuLinkClick = (event, item) => {
+    event.stopPropagation();
+
+    setMenuItems((prevItems) => {
+      const newItems = JSON.parse(JSON.stringify(prevItems));
+
+      const clearSelected = (items) => {
+        items.forEach(menuItem => {
+          menuItem.selected = false;
+          if (menuItem.children) {
+            clearSelected(menuItem.children);
+          }
+        });
+      };
+
+      const setSelected = (items) => {
+        items.forEach(menuItem => {
+          if (menuItem.path === item.path || menuItem.id === item.id) {
+            menuItem.selected = true;
+            setAncestorsActiveInArray(newItems, menuItem);
+          }
+          if (menuItem.children) {
+            setSelected(menuItem.children);
+          }
+        });
+      };
+
+      clearSelected(newItems);
+      setSelected(newItems);
+
+      return newItems;
+    });
+  };
+
+  return (
+      <>
+        <div
+            id="responsive-overlay"
+            onClick={() => {
+              menuClose()
+            }}
+        ></div>
+        <aside
+            className="app-sidebar"
+            id="sidebar"
+            onMouseEnter={() => Onhover()}
+            onMouseLeave={() => Outhover()}
+        >
+          <div className="main-sidebar-header">
+            <Link to={DASHBOARD_ROUTES.PROJECT.path} className="header-logo">
+              <img src={logo1} alt="logo" className="desktop-logo"/>
+              <img src={logo2} alt="logo" className="toggle-logo"/>
+              <img src={logo3} alt="logo" className="desktop-dark"/>
+              <img src={logo4} alt="logo" className="toggle-dark"/>
+              <img src={logo5} alt="logo" className="desktop-white"/>
+              <img src={logo6} alt="logo" className="toggle-white"/>
+            </Link>
           </div>
+          <SimpleBar className="main-sidebar" id="sidebar-scroll">
+            <nav className="main-menu-container nav nav-pills flex-column sub-open">
+              <div className="slide-left" id="slide-left" onClick={() => {
+                slideLeft();
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24"
+                     height="24" viewBox="0 0 24 24">
+                  <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path>
+                </svg>
+              </div>
 
-          <ul className="main-menu" onClick={() => Sideclick()}>
-            {menuItems.map((levelone) => (
-              <li key={Math.random()} className={`${levelone.menutitle ? 'slide__category' : ''} ${levelone.type === 'link' ? 'slide' : ''}
-                       ${levelone.type === 'sub' ? 'slide has-sub' : ''} ${levelone?.active ? 'open' : ''} ${levelone?.selected ? 'active' : ''}`}>
-                {levelone.menutitle ? <span className='category-name'>
-                        {levelone.menutitle}
-                      </span> : ""}
-                {levelone.type === "link" ?
-                    <Link to={levelone.path} className={`side-menu__item ${levelone.selected ? 'active' : ''}`}>
-                      <i className={`side-menu__icon bx ${levelone.icon}`}></i>
-                      <span className="side-menu__label">
-                          {levelone.title}
-                        {levelone.badgetxt ? (<span className={levelone.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
-                              {levelone.badgetxt}
-                            </span>) : ("")}
-                        </span>
-                    </Link> : ""}
-                {levelone.type === "empty" ?
-                    <Link to="#" className='side-menu__item' onClick={handleClick}>
-                      <i className={`side-menu__icon bx ${levelone.icon}`}></i>
-                      <span className="">
-                          {levelone.title}
-                        {levelone.badgetxt ? (<span className={levelone.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
-                              {levelone.badgetxt}
-                            </span>) : ("")}
-                        </span>
-                    </Link> : ""}
-                {levelone.type === "sub" ? <MenuLoop items={levelone} level={level + 1} toggleSidemenu={toggleSidemenu} HoverToggleInnerMenuFn={HoverToggleInnerMenuFn}/> : ''}
-              </li>
-            ))}
-          </ul>
-          <div className="slide-right" id="slide-right" onClick={() => {
-            slideRight();
-          }}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24"
-                 height="24" viewBox="0 0 24 24">
-              <path
-                  d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path>
-            </svg>
-          </div>
-        </nav>
+              <ul className="main-menu" onClick={(e) => Sideclick(e)}>
+                {menuItems.map((levelone, index) => (
+                    <li
+                        key={levelone.id || levelone.path || index}
+                        className={`${levelone.menutitle ? 'slide__category' : ''} ${levelone.type === 'link' ? 'slide' : ''}
+                           ${levelone.type === 'sub' ? 'slide has-sub' : ''} ${levelone?.active ? 'open' : ''} ${levelone?.selected ? 'active' : ''}`}
+                    >
+                      {levelone.menutitle ?
+                          <span className='category-name'>
+                      {levelone.menutitle}
+                    </span> : ""
+                      }
 
-      </SimpleBar>
+                      {levelone.type === "link" ?
+                          <Link
+                              to={levelone.path}
+                              className={`side-menu__item ${levelone.selected ? 'active' : ''}`}
+                              // onClick={(e) => handleMenuItemClick(e, levelone)}
+                          >
+                            <i className={`side-menu__icon bx ${levelone.icon}`}></i>
+                            <span className="side-menu__label">
+                        {levelone.title}
+                              {levelone.badgetxt ? (
+                                  <span className={levelone.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
+                            {levelone.badgetxt}
+                          </span>
+                              ) : ""}
+                      </span>
+                          </Link> : ""
+                      }
 
-    </aside>
-  </>);
+                      {levelone.type === "empty" ?
+                          <Link
+                              to="#"
+                              className='side-menu__item'
+                              onClick={(e) => {
+                                handleClick(e);
+                                handleMenuItemClick(e, levelone);
+                              }}
+                          >
+                            <i className={`side-menu__icon bx ${levelone.icon}`}></i>
+                            <span className="">
+                        {levelone.title}
+                              {levelone.badgetxt ? (
+                                  <span className={levelone.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
+                            {levelone.badgetxt}
+                          </span>
+                              ) : ""}
+                      </span>
+                          </Link> : ""
+                      }
+
+                      {levelone.type === "sub" ?
+                          <MenuLoop
+                              items={levelone}
+                              level={level + 1}
+                              toggleSidemenu={toggleSidemenu}
+                              HoverToggleInnerMenuFn={HoverToggleInnerMenuFn}
+                          /> : ''
+                      }
+                    </li>
+                ))}
+              </ul>
+
+              <div className="slide-right" id="slide-right" onClick={() => {
+                slideRight();
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24"
+                     height="24" viewBox="0 0 24 24">
+                  <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path>
+                </svg>
+              </div>
+            </nav>
+          </SimpleBar>
+        </aside>
+      </>
+  );
 }
 
 export default Sidebar;
-
