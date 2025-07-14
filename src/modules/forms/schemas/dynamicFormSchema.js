@@ -67,10 +67,18 @@ export const dynamicFormSchema = z.object({
     fields: z.array(fieldSchema).min(1, 'At least one field is required'),
     social_links: z.array(socialLinkSchema).optional().default([]),
     send_email_to_submitter: z.boolean().default(false),
-
-    email_subject: z.string().optional(),
-    email_content: z.string().optional(),
-
+    email_subject: z.string().optional().nullable(),
+    email_content: z.string().optional().nullable(),
+    enable_birthday_gift: z.boolean().default(false),
+    birthday_coupon_type: z.enum(['fixed', 'percentage_threshold', 'percentage']).optional().nullable(),
+    birthday_discount_amount: z.number().optional().nullable(),
+    birthday_min_order_value: z.number().optional().nullable(),
+    birthday_coupon_valid_days: z.coerce.number().int().positive().default(7),
+    enable_anniversary_voucher: z.boolean().default(false),
+    anniversary_coupon_type: z.enum(['fixed', 'percentage_threshold', 'percentage']).optional().nullable(),
+    anniversary_discount_amount: z.number().optional().nullable(),
+    anniversary_min_order_value: z.number().optional().nullable(),
+    anniversary_coupon_valid_days: z.coerce.number().int().positive().default(7),
 }).superRefine((data, ctx) => {
     if (data.send_email_to_submitter) {
         if (!data.email_subject || data.email_subject.trim() === '') {
@@ -88,4 +96,52 @@ export const dynamicFormSchema = z.object({
             });
         }
     }
-});
+
+    if (data.enable_birthday_gift) {
+        if (!data.birthday_coupon_type) {
+            ctx.addIssue({
+                path: ['birthday_coupon_type'],
+                code: z.ZodIssueCode.custom,
+                message: 'Birthday coupon type is required',
+            });
+        }
+        if (!data.birthday_discount_amount) {
+            ctx.addIssue({
+                path: ['birthday_discount_amount'],
+                code: z.ZodIssueCode.custom,
+                message: 'Birthday discount amount is required',
+            });
+        }
+        if (data.birthday_coupon_type === 'percentage_threshold' && !data.birthday_min_order_value) {
+            ctx.addIssue({
+                path: ['birthday_min_order_value'],
+                code: z.ZodIssueCode.custom,
+                message: 'Minimum order value is required for threshold-based birthday discount',
+            });
+        }
+    }
+
+    if (data.enable_anniversary_voucher) {
+        if (!data.anniversary_coupon_type) {
+            ctx.addIssue({
+                path: ['anniversary_coupon_type'],
+                code: z.ZodIssueCode.custom,
+                message: 'Anniversary coupon type is required',
+            });
+        }
+        if (!data.anniversary_discount_amount) {
+            ctx.addIssue({
+                path: ['anniversary_discount_amount'],
+                code: z.ZodIssueCode.custom,
+                message: 'Anniversary discount amount is required',
+            });
+        }
+        if (data.anniversary_coupon_type === 'percentage_threshold' && !data.anniversary_min_order_value) {
+            ctx.addIssue({
+                path: ['anniversary_min_order_value'],
+                code: z.ZodIssueCode.custom,
+                message: 'Minimum order value is required for threshold-based anniversary discount',
+            });
+        }
+    }
+})
