@@ -65,10 +65,7 @@ const PoliciesForm = ({ policyData = {}, isEditMode = false }) => {
     const deptApiUrl = companyQuery
         ? `/select/departments-for-policies/?${companyQuery}`
         : '/select/departments-for-policies/';
-    const userApiUrl =
-        (companyQuery || deptQuery)
-            ? `/select/users-for-policies/?${[companyQuery, deptQuery].filter(Boolean).join('&')}`
-            : '/select/users-for-policies/';
+    const userApiUrl = `/select/users-for-policies/`;
 
     const isPublicOptions = [
         { label: "Public", value: true },
@@ -128,7 +125,7 @@ const PoliciesForm = ({ policyData = {}, isEditMode = false }) => {
                                                 placeholder="Select Companies"
                                                 apiUrl="/select/companies/"
                                                 queryKeyBase="companies"
-                                                clientSideSearch
+                                                clientSideSearch={false}
                                                 preselectedOptions={formatOptions(policyData, 'companies')}
                                             />
                                         </div>
@@ -142,7 +139,7 @@ const PoliciesForm = ({ policyData = {}, isEditMode = false }) => {
                                                 placeholder="Select Departments"
                                                 apiUrl={deptApiUrl}
                                                 queryKeyBase={`departments_${companyIds.join('_')}`}
-                                                clientSideSearch
+                                                clientSideSearch={false}
                                                 preselectedOptions={formatOptions(policyData, 'departments')}
                                             />
                                         </div>
@@ -156,7 +153,7 @@ const PoliciesForm = ({ policyData = {}, isEditMode = false }) => {
                                                 placeholder="Select Users"
                                                 apiUrl={userApiUrl}
                                                 queryKeyBase={`users_${[...companyIds, ...departmentIds].join('_')}`}
-                                                clientSideSearch
+                                                clientSideSearch={false}
                                                 preselectedOptions={formatOptions(policyData, 'users')}
                                             />
                                         </div>

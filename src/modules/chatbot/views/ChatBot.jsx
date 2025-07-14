@@ -5,11 +5,11 @@ import PerfectScrollbar from "react-perfect-scrollbar"
 import api from "@config/axiosConfig.js"
 
 const suggestionsDefault = [
-  "Give me top exporters of Pakistan",
-  "Which product does Faisal Spinning Mills export most?",
-  "Exports of Faisal Spinning Mills",
-  "Exports of Faisal Spinning Mills to Europe",
-  "Show me the imports of diamond brand",
+  "What are the total exports of bed linen in the last twelve months?",
+  "What are the total exports of bed linen to Europe in the institutional segment in the last twelve months?",
+  "Who are the top importers of Faisal Spinning Mills in Europe in the last twelve months? ",
+  "Who are the top ten exporters of bed linen in the last twelve months? ",
+  "What is the product-wise split of exports of bed linen to Europe in the last twelve months?",
 ]
 
 const markdownToHtml = md => {
