@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import ProfileCard from "@modules/employee-self-services/my-digital-profile/components/ProfileCard.jsx";
-import fetchDiscountData from "@modules/employee-self-services/services/discount-card/DiscountCard.js";
 import Notify from "@helpers/toastNotifications.js";
 import {fetchProfileData} from "@modules/employee-self-services/services/my-digital-profile/myDigitalProfile.js";
+import { User } from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const DigitalProfile = () => {
     const user = useSelector((state) => state.auth.user);
@@ -48,11 +48,11 @@ const DigitalProfile = () => {
     }, [user?.email]);
 
     return (
-        <React.Fragment>
-            <PageHeader
-                currentpage="My Digital Profile"
-                activepage="My Digital Profile"
-                mainpage="My Digital Profile"
+        <>
+            <IconPageHeader
+                heading="My Digital Profile"
+                description="Your professional profile with contact details and a QR code for easy sharing."
+                icon={User}
             />
             <ProfileCard
                 isLoading={isLoading}
@@ -60,7 +60,7 @@ const DigitalProfile = () => {
                 filteredData={filteredData}
 
             />
-        </React.Fragment>
+        </>
     );
 };
 

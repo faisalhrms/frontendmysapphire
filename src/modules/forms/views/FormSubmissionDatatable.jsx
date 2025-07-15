@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import {toTitleCase} from "@helpers/formatters.js";
 import {useParams} from "react-router-dom";
 import {useDynamicFormColumns} from "@modules/forms/hooks/dynamicFormHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import {Inbox} from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const FormSubmissionDatatable = () => {
     const {id} = useParams();
@@ -121,17 +122,19 @@ const FormSubmissionDatatable = () => {
     }, [data]);
     if (isLoading) return <LoadingSpinner/>;
 
-    return (<>
-            <PageHeader
-                currentpage={`${toTitleCase(title)} Form (Submissions)`}
-                activepage="Dynamic Form"
-                mainpage="Submissions"
+    return (
+        <>
+            <IconPageHeader
+                heading={`${toTitleCase(title)} Form (Submissions)`}
+                description="Browse all submitted entries for the selected form."
+                icon={Inbox}
             />
             <DataTable
                 columns={columns}
                 title={`${toTitleCase(title)}`}
                 apiUrl={`/forms/submissions/${id}/datatable/`}
                 enableAdvancedFilters={true}
+                needHeader={false}
             />
         </>);
 };
