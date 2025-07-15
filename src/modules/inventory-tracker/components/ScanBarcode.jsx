@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import OtherStoreInventoryTable from "@modules/inventory-tracker/components/OtherStoreInventoryTable.jsx";
 import api from "@config/axiosConfig.js";
-import { Search, Package, MapPin, Percent, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote } from "lucide-react";
+import { Search, Package, Percent, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote, Truck, Globe, Boxes, Ruler, Grid3x3, Layers3} from "lucide-react";
 import EmptyState from "@components/EmptyState.jsx";
 
 const ScanBarcode = ({ isActive }) => {
@@ -10,6 +10,7 @@ const ScanBarcode = ({ isActive }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+    const [isOnlineStocksOpen, setIsOnlineStocksOpen] = useState(false);
 
     const handleSearch = async () => {
         const cleanValue = searchValue.replace(/\s+/g, '');
@@ -34,10 +35,11 @@ const ScanBarcode = ({ isActive }) => {
 
     const currentWarehouse = data?.item || null;
     const otherLocations = data?.other_stocks || [];
+    const onlineStocks = data?.online_stocks || null;
 
     return (
         <>
-            <div className="grid grid-cols-12 gap-x-4 min-h-screen">
+            <div className="grid grid-cols-12 gap-x-4 mb-8">
                 <div className="col-span-2"></div>
                 <div className="xxl:col-span-8 xl:col-span-8 lg:col-span-8 sm:col-span-8 col-span-12">
                     <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-8 mt-8">
@@ -110,7 +112,6 @@ const ScanBarcode = ({ isActive }) => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="p-6 bg-slate-50 border-b border-slate-200">
                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                             <div className="bg-white p-4 rounded-lg border border-slate-200">
@@ -126,9 +127,8 @@ const ScanBarcode = ({ isActive }) => {
                                                 <div className="flex">
                                                     <Percent className="w-5 h-5 text-orange mr-2"/>
                                                     <div>
-                                                        <p className="text-sm font-medium text-slate-600">Discount
-                                                            Rate</p>
-                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.discount_per}</p>
+                                                        <p className="text-sm font-medium text-slate-600">Discount</p>
+                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.discount_price}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -144,17 +144,15 @@ const ScanBarcode = ({ isActive }) => {
                                             </div>
                                             <div className="bg-white p-4 rounded-lg border border-slate-200">
                                                 <div className="flex">
-                                                    <MapPin className="w-5 h-5 text-primary mr-2"/>
+                                                    <Truck className="w-5 h-5 text-danger mr-2"/>
                                                     <div>
-                                                        <p className="text-sm font-medium text-slate-600">Rack
-                                                            Location</p>
-                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.rack_location || ""}</p>
+                                                        <p className="text-sm font-medium text-slate-600">In Transit</p>
+                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.intransit_qty || ""}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="p-6">
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                             <div>
@@ -173,6 +171,11 @@ const ScanBarcode = ({ isActive }) => {
                                                         <span
                                                             className="text-sm font-medium text-slate-900">{currentWarehouse.sizes}</span>
                                                     </div>
+                                                    <div className="flex justify-between py-2 border-b border-slate-100">
+                                                        <span className="text-sm text-slate-600">Rack Location</span>
+                                                        <span
+                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.rack_location || ""}</span>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -180,17 +183,17 @@ const ScanBarcode = ({ isActive }) => {
                                                 <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Product
                                                     Sets & Combinations</h4>
                                                 <div className="space-y-3">
-                                                    <div
-                                                        className="flex justify-between py-2 border-b border-slate-100">
-                                                    <span
-                                                        className="text-sm text-slate-600">Matching Separate (MS)</span>
-                                                        <span
-                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
+                                                    <div className="flex justify-between py-2 border-b border-slate-100">
+                                                    <span className="text-sm text-slate-600">Matching Separate (MS)</span>
+                                                        <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
                                                     </div>
-                                                    <div className="flex justify-between py-2">
-                                                        <span className="text-sm text-slate-600">Matching Separate (MS) Size</span>
-                                                        <span
-                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.size_set}</span>
+                                                    <div className="flex justify-between py-2 border-b border-slate-100">
+                                                        <span className="text-sm text-slate-600">Shirt</span>
+                                                        <span className="text-sm font-medium text-slate-900">{currentWarehouse.shirt}</span>
+                                                    </div>
+                                                    <div className="flex justify-between py-2 ">
+                                                        <span className="text-sm text-slate-600">Trouser</span>
+                                                        <span className="text-sm font-medium text-slate-900">{currentWarehouse.trouser}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -224,6 +227,75 @@ const ScanBarcode = ({ isActive }) => {
                                     {isAccordionOpen && (
                                         <div className="border-t border-slate-200">
                                             <OtherStoreInventoryTable rows={otherLocations}/>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {onlineStocks && (
+                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                    <button
+                                        onClick={() => setIsOnlineStocksOpen(!isOnlineStocksOpen)}
+                                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors border-b border-slate-200"
+                                    >
+                                        <div className="flex items-center">
+                                            <Globe className="w-5 h-5 text-blue-600 mr-3"/>
+                                            <h3 className="text-lg font-semibold text-slate-900">
+                                                Online Stock Information
+                                            </h3>
+                                            <span className={`ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${onlineStocks.onhand_qty > 0 ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
+                                                {onlineStocks.onhand_qty > 0 ? ' In stock' : 'Out of stock'}
+                                            </span>
+                                        </div>
+                                        {isOnlineStocksOpen ? (
+                                            <ChevronUp className="w-5 h-5 text-slate-500"/>
+                                        ) : (
+                                            <ChevronDown className="w-5 h-5 text-slate-500"/>
+                                        )}
+                                    </button>
+
+                                    {isOnlineStocksOpen && (
+                                        <div className="p-6 bg-slate-50">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                    <div className="flex items-center">
+                                                        <Boxes className="w-5 h-5 text-info mr-2"/>
+                                                        <div>
+                                                            <p className="text-sm font-medium text-slate-600">On Hand Quantity</p>
+                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.onhand_qty}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                    <div className="flex items-center">
+                                                        <Ruler className="w-5 h-5 text-success mr-2"/>
+                                                        <div>
+                                                            <p className="text-sm font-medium text-slate-600">Available Sizes</p>
+                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.sizes || 'N/A'}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                    <div className="flex items-center">
+                                                        <Grid3x3 className="w-5 h-5 text-primary mr-2"/>
+                                                        <div>
+                                                            <p className="text-sm font-medium text-slate-600">(MS)</p>
+                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.combos || 'N/A'}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                    <div className="flex items-center">
+                                                        <Layers3 className="w-5 h-5 text-orange mr-2"/>
+                                                        <div>
+                                                            <p className="text-sm font-medium text-slate-600">(MS) Size</p>
+                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.size_set || 'N/A'}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
