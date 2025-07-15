@@ -61,7 +61,7 @@ const ApplicantsList = ({ refetch }) => {
             ],
             Cell: ({ row }) => {
                 // Get permission status
-                const canChangeStatus = useHasPermission("auth.change_applicant_status");
+                const canChangeStatus = useHasPermission("recruitment.change_status_applicant");
 
                 return canChangeStatus ? (
                     <ApplicantStatusDropDown

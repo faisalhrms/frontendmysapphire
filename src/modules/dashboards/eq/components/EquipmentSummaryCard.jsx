@@ -1,0 +1,116 @@
+import React, { useMemo } from "react";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+import { mapSeriesToColors, statusColorMapping } from "@helpers/statusStyles.js";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import ApexChart from "@components/charts/ApexChart.jsx";
+import PieEquipmentChart from "@modules/dashboards/eq/components/PieEquipmentChart.jsx";
+
+const EquipmentSummaryCard = ({ filters }) => {
+    const { data: rawData, isLoading } = useFetchWithFilters('/dashboard/equipment/summary/', filters);
+
+    const data = useMemo(() => (rawData && typeof rawData === 'object' ? rawData : {}), [rawData]);
+
+    const { labels, values } = useMemo(() => {
+        const { total_equipments, ...statusCounts } = data;
+        const filteredEntries = Object.entries(statusCounts || {}).filter(([_, value]) => value > 0);
+
+        const labels = filteredEntries.map(([key]) =>
+            key === "no_status"
+                ? "N/A"
+                : key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+        );
+
+        const values = filteredEntries.map(([_, value]) => value);
+
+        return { labels, values };
+    }, [data]);
+
+    const colors = useMemo(() => {
+        return mapSeriesToColors(labels, statusColorMapping);
+    }, [labels]);
+
+    if (isLoading) return <LoadingSpinner />;
+    if (!labels.length || !values.length) {
+        return (
+            <div className="box p-4">
+                <div className="box-header mb-1">
+                    <div className="box-title text-base font-semibold">Status Distribution</div>
+                </div>
+                <div className="text-center py-10 text-gray-500">No equipment status data available</div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-2">
+            {/* Bar Chart - spans 2 columns */}
+            <div className="xl:col-span-2 col-span-1 box p-3">
+                <div className="box-header mb-1">
+                    <div className="box-title text-base font-semibold">Status Distribution (Bar)</div>
+                </div>
+                <div className="box-body !p-0">
+                    <div className="p-2">
+                        <ApexChart
+                            columnWidth="80%"
+                            chartWidth={530}
+                            additionalOptions={{
+                                legend: { position: 'top' },
+                                dataLabels: {
+                                    enabled: true,
+                                    formatter: val => val > 0.1 ? `${val.toLocaleString()}` : '',
+                                    offsetY: -20,
+                                    style: {
+                                        fontSize: '11px',
+                                        colors: ['#000']
+                                    },
+                                },
+                                plotOptions: {
+                                    bar: {
+                                        dataLabels: {
+                                            position: 'top',
+                                            hideOverflowingLabels: false
+                                        },
+                                        minHeight: 20
+                                    }
+                                },
+                                chart: {
+                                    toolbar: {
+                                        show: false
+                                    }
+                                }
+                            }}
+                            labels={labels}
+                            height={330}
+                            series={[{
+                                name: "Equipments",
+                                data: values
+                            }]}
+                            colors={colors}
+                            baseWidthPerCategory={2}
+                            chartType="bar"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Pie Chart */}
+            <div className="box p-3 flex items-center justify-center">
+                <div className="w-full">
+                    <div className="box-header mb-1">
+                        <div className="box-title text-base font-semibold">Status Distribution (Pie)</div>
+                    </div>
+                    <div className="box-body p-0">
+                        <PieEquipmentChart
+                            labels={labels}
+                            series={values}
+                            colors={colors}
+                            height={320}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default EquipmentSummaryCard;
