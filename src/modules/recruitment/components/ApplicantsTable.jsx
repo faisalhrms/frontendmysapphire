@@ -57,7 +57,7 @@ const ApplicantsTable = ({ apiUrl, title }) => {
                 { label: "Submitted", value: "submitted" },
             ],
             Cell: ({ row }) => {
-                const canChangeStatus = useHasPermission("auth.change_applicant_status");
+                const canChangeStatus = useHasPermission("recruitment.change_status_applicant");
                 return canChangeStatus ? (
                     <ApplicantStatusDropDown
                         status={row.original.status}
