@@ -3,25 +3,28 @@ import ApexChart from "@components/charts/ApexChart.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 
-const EquipmentSiteStats = ({ filters }) => {
-    const { data: items, isLoading } = useFetchWithFilters("/dashboard/equipment/site-stats/", filters);
+const EquipmentValueStats = ({ filters }) => {
+    const { data: rawData, isLoading } = useFetchWithFilters("/dashboard/equipment/value-stats/", filters);
 
-    const siteLabels = useMemo(() => {
-        if (!Array.isArray(items)) return [];
-        return items.map(item => item.equipment_site?.name || 'No Site');
+    // ✅ Ensure safe array usage
+    const items = useMemo(() => {
+        return Array.isArray(rawData) ? rawData : [];
+    }, [rawData]);
+
+    const typeLabels = useMemo(() => {
+        return items.map(item => item.equipment_type?.name || 'No Type');
     }, [items]);
 
-    const siteCounts = useMemo(() => {
-        if (!Array.isArray(items)) return [];
-        return items.map(item => item.count);
+    const values = useMemo(() => {
+        return items.map(item => item.total_value);
     }, [items]);
 
     if (isLoading) return <LoadingSpinner />;
-    if (!Array.isArray(items) || !items.length) return<div className="box p-4">
+    if (!items.length) return  <div className="box p-4">
         <div className="box-header mb-1">
-            <div className="box-title text-base font-semibold">Assets by Site</div>
+            <div className="box-title text-base font-semibold">Total Value by Equipment Type</div>
         </div>
-        <div className="text-center py-10 text-gray-500">No site data available</div>
+        <div className="text-center py-10 text-gray-500">No value data available</div>
     </div>
 
 
@@ -29,18 +32,18 @@ const EquipmentSiteStats = ({ filters }) => {
         <div className="col-span-6">
             <div className="box p-3">
                 <div className="box-header mb-1">
-                    <div className="box-title text-base font-semibold">Assets by Site</div>
+                    <div className="box-title text-base font-semibold">Total Value by Equipment Type</div>
                 </div>
                 <div className="box-body !p-0">
-                <div className="p-2 min-w-[600px] overflow-x-auto">
+                    <div className="p-2 min-w-[600px] overflow-x-auto">
                         <ApexChart
                             columnWidth="30%"
-                            chartWidth={Math.max(600, siteLabels.length * 160)}
+                            chartWidth={Math.max(600, typeLabels.length * 160)}
                             additionalOptions={{
                                 legend: { position: 'top' },
                                 dataLabels: {
                                     enabled: true,
-                                    formatter: val => val > 0 ? `${val.toLocaleString()}` : '',
+                                    formatter: val => `₨ ${val.toLocaleString()}`,
                                     offsetY: -20,
                                     style: {
                                         fontSize: '11px',
@@ -52,20 +55,19 @@ const EquipmentSiteStats = ({ filters }) => {
                                         horizontal: false,
                                         columnWidth: '30%',
                                         borderRadius: 4,
-                                        dataLabels: {
-                                            position: 'top',
-                                            hideOverflowingLabels: false
-                                        }
+                                        dataLabels: { position: 'top' }
                                     }
                                 },
                                 xaxis: {
-                                    categories: siteLabels,
-                                    title: { text: 'Sites' },
+                                    categories: typeLabels,
+                                    title: { text: 'Equipment Type' },
                                     labels: { rotate: -45, style: { fontSize: '12px' } }
                                 },
                                 yaxis: {
-                                    title: { text: 'Number of Equipments' },
-                                    tickAmount: 6
+                                    title: { text: 'Total Value (PKR)' },
+                                    labels: {
+                                        formatter: val => `₨${(val / 1_000_000).toFixed(1)}M`
+                                    }
                                 },
                                 chart: { toolbar: { show: false } },
                                 grid: {
@@ -73,13 +75,13 @@ const EquipmentSiteStats = ({ filters }) => {
                                     strokeDashArray: 4
                                 }
                             }}
-                            labels={siteLabels}
+                            labels={typeLabels}
                             height={400}
                             series={[{
-                                name: 'Assets',
-                                data: siteCounts
+                                name: 'Total Value',
+                                data: values
                             }]}
-                            colors={['#FACC15']}
+                            colors={['#10B981']} // Green
                             baseWidthPerCategory={2}
                             chartType="bar"
                         />
@@ -90,4 +92,4 @@ const EquipmentSiteStats = ({ filters }) => {
     );
 };
 
-export default EquipmentSiteStats;
+export default EquipmentValueStats;

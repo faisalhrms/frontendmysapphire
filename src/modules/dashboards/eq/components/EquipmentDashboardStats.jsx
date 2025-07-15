@@ -1,5 +1,3 @@
-// src/modules/dashboards/equipment/components/EquipmentDashboardStats.jsx
-
 import React from "react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import EquipmentStatusCard from "@modules/dashboards/eq/components/EquipmentStatusCard.jsx";
@@ -10,11 +8,15 @@ import EquipmentDepartmentStats from "@modules/dashboards/eq/components/Equipmen
 import EquipmentTableCard from "@modules/dashboards/eq/components/EquipmentTableCard.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import EquipmentSiteStats from "@modules/dashboards/eq/components/EquipmentSiteStats.jsx";
+import EquipmentSummaryCard from "@modules/dashboards/eq/components/EquipmentSummaryCard.jsx";
+import EquipmentTypeChart from "@modules/dashboards/eq/components/EquipmentTypeChart.jsx";
+import EquipmentValueStats from "@modules/dashboards/eq/components/EquipmentValueStats.jsx";
 
 const EquipmentDashboardStats = ({ filters }) => {
-    const { data, isLoading } = useFetchWithFilters('/dashboard/equipment/statistics/', filters);
+    const { data: mainData, isLoading: mainLoading } = useFetchWithFilters('/dashboard/equipment/statistics/', filters);
+    const { data: statusData, isLoading: statusLoading } = useFetchWithFilters('/dashboard/equipment/status-stats/', filters);
 
-    if (isLoading) {
+    if (mainLoading || statusLoading) {
         return <LoadingSpinner />;
     }
 
@@ -22,39 +24,39 @@ const EquipmentDashboardStats = ({ filters }) => {
         <>
             {/* Status Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
-                {data?.statuses?.map((item, index) => (
+                {Array.isArray(statusData) && statusData.map((item, index) => (
                     <EquipmentStatusCard
                         key={index}
                         item={item}
-                        currentFilters={filters}  // Pass current filters
+                        currentFilters={filters}
                     />
                 ))}
             </div>
 
-
             {/* Analysis, Recent Equipments, and Summary */}
             <div className="grid grid-cols-12 gap-x-6 mt-4">
-                <EquipmentAnalysisCard
-                    data={data.monthly_acquisitions}
-                />
-
-                <div className="xl:col-span-4 col-span-12">
-                    <EquipmentSummaryStats summary={data.summary}/>
+                <div className="xl:col-span-12 col-span-12">
+                    <EquipmentSummaryCard filters={filters} />
                 </div>
                 <div className="xl:col-span-12 col-span-12">
-                    <EquipmentDepartmentStats equipmentsByDepartment={data.equipments_by_department}/>
+                    <EquipmentTypeChart filters={filters} />
                 </div>
-                {/* Add the new EquipmentSiteStats component */}
-                <div className="xl:col-span-12 col-span-12">
-                    <EquipmentSiteStats
-                        equipmentsBySite={data.equipments_by_site} // Ensure this exists in the API response
-                        statsFetching={!data.equipments_by_site} // Adjust fetching logic as needed
-                    />
+                <div className="xl:col-span-6 col-span-12">
+                    <EquipmentAnalysisCard filters={filters} />
                 </div>
-
+                <div className="xl:col-span-6 col-span-12">
+                    <EquipmentDepartmentStats filters={filters} />
+                </div>
+                <div className="xl:col-span-6 col-span-12">
+                    <EquipmentSiteStats filters={filters} />
+                </div>
+                <div className="xl:col-span-6 col-span-12">
+                    <EquipmentValueStats filters={filters} />
+                </div>
             </div>
         </>
-    )
-}
+    );
+};
+
 
 export default React.memo(EquipmentDashboardStats);
