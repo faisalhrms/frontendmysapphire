@@ -71,13 +71,13 @@ export const dynamicFormSchema = z.object({
     email_content: z.string().optional().nullable(),
     enable_birthday_gift: z.boolean().default(false),
     birthday_coupon_type: z.enum(['fixed', 'percentage_threshold', 'percentage']).optional().nullable(),
-    birthday_discount_amount: z.number().optional().nullable(),
-    birthday_min_order_value: z.number().optional().nullable(),
+    birthday_discount_amount: z.coerce.number().optional().nullable(),
+    birthday_min_order_value: z.coerce.number().optional().nullable(),
     birthday_coupon_valid_days: z.coerce.number().int().positive().default(7),
     enable_anniversary_voucher: z.boolean().default(false),
     anniversary_coupon_type: z.enum(['fixed', 'percentage_threshold', 'percentage']).optional().nullable(),
-    anniversary_discount_amount: z.number().optional().nullable(),
-    anniversary_min_order_value: z.number().optional().nullable(),
+    anniversary_discount_amount: z.coerce.number().optional().nullable(),
+    anniversary_min_order_value: z.coerce.number().optional().nullable(),
     anniversary_coupon_valid_days: z.coerce.number().int().positive().default(7),
 }).superRefine((data, ctx) => {
     if (data.send_email_to_submitter) {
