@@ -16,7 +16,7 @@ const tabDefinitions = [
                 title="All Applicants"
             />
         ),
-        permission: "recruitment.change_applicant_status_applicant", // only show if user has this
+        permission: "recruitment.change_applicant", // only show if user has this
     },
     {
         id: "locationBased",
