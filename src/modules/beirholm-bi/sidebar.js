@@ -68,14 +68,6 @@ export const sidebarMenu = [
                 '',
                 BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission
             ),
-            generateSidebarItem(
-                BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.path,
-                'link',
-                'ChatBot',
-                8,
-                '',
-                BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.permission
-            ),
                 generateSidebarItem(
                     BEIRHOLM_BI_ROUTES.ROAD_MAP_RULE_CREATE.path,
                     'link',

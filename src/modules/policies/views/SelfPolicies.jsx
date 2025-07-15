@@ -18,9 +18,9 @@ const SelfPolicies = () => {
     return (
         <>
             <PageHeader
-                currentpage="My Policies"
+                currentpage="Policies"
                 mainpage="Policies"
-                activepage="My Policies"
+                activepage="Policies"
             />
             <InfoAlert />
 

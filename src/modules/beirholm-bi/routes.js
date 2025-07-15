@@ -3,7 +3,6 @@ import FieldDefinitionForm from "@modules/beirholm-bi/components/FieldDefinition
 import CorrectionRulesList from "@modules/beirholm-bi/views/CorrectionRulesList.jsx";
 import CorrectionRulesForm from "@modules/beirholm-bi/components/CorrectionRulesForm.jsx";
 import DataSanitizationList from "@modules/beirholm-bi/views/DataSanitizationList.jsx";
-import ChatBot from "@modules/beirholm-bi/views/ChatBot.jsx";
 import CompetitorAnalysis from "@modules/beirholm-bi/views/CompetitorAnalysis.jsx";
 import CorrectionPatternsList from "@modules/beirholm-bi/views/CorrectionPatternsList.jsx";
 import CorrectionPatternsForm from "@modules/beirholm-bi/components/CorrectionPatternsForm.jsx";
@@ -46,11 +45,6 @@ export const BEIRHOLM_BI_ROUTES = {
         path: '/module/data/sanitization',
         permission: 'beirholm_bi.view_data_sanitization',
     },
-
-    CHAT_BOT_READ: {
-        path: '/module/chat/bot',
-        permission: 'auth.view_chat_bot',
-    },
     COMPETITOR_ANALYSIS: {
         path: '/module/competitor/analysis',
         permission: 'auth.view_competitor_analysis',
@@ -75,7 +69,7 @@ export const BEIRHOLM_BI_ROUTES = {
     },
     ROAD_MAP_RULE_CREATE: {
         path: '/module/beirholm/bi/road-map',
-        permission: 'auth.road-map',
+        permission: 'beirholm_bi.add_data_mapping_rule',
 
     }
 };
@@ -118,11 +112,6 @@ export const MODULE_ROUTES = [
         path: BEIRHOLM_BI_ROUTES.DATA_SANITIZATION_READ.path,
         component: DataSanitizationList,
         permission: BEIRHOLM_BI_ROUTES.DATA_SANITIZATION_READ.permission,
-    },
-    {
-        path: BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.path,
-        component: ChatBot,
-        permission: BEIRHOLM_BI_ROUTES.CHAT_BOT_READ.permission,
     },
     {
         path: BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,

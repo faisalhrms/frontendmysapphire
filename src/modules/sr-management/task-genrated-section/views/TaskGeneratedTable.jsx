@@ -1,7 +1,7 @@
 import React from "react";
 import DataTable from "@components/DataTable.jsx";
 import {format} from "date-fns";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses} from "@helpers/badges.js";
 import Tooltip from "@components/Tooltip.jsx";
@@ -14,61 +14,47 @@ const TaskGeneratedTable = () => {
             accessor: "id",
             Cell: ({row}) => (
                 <div className="flex space-x-2">
-                <Link
-                    to={`/module/srm/taskgeneratedform/${row.original.id}`}
-                    className="ti-btn ti-btn-info ti-btn-sm inline-flex items-center justify-center"
-                >
-                    <i className="ri-eye-line"></i>
-                </Link>
+                    <Link
+                        to={`/module/srm/taskgeneratedform/${row.original.id}`}
+                        className="ti-btn ti-btn-info ti-btn-sm inline-flex items-center justify-center"
+                    >
+                        <i className="ri-eye-line"></i>
+                    </Link>
                 </div>
             ),
         },
         {
-            Header: "SR #",
-            accessor: "sr_number",
-            Cell: ({value, row}) => (
-                <HighlightCell highlight={!row.original.is_read}>
-                    {value}
-                </HighlightCell>
-            ),
+          Header: "SR #",
+          accessor: "sr_number",
+          Cell: ({ value, row }) => (
+            <div className="flex items-center space-x-1">
+              <span className={row.original.is_read ? "" : "font-semibold"}>
+                {value}
+              </span>
+              {!row.original.is_read && <i className="ri-message-2-line text-danger" />}
+            </div>
+          ),
         },
         {
             Header: "Task Type",
             accessor: "sr_type.name",
-            Cell: ({value, row}) => (
-                <HighlightCell highlight={!row.original.is_read}>
-                    {value || "N/A"}
-                </HighlightCell>
-            ),
+            Cell: ({value}) => value || "N/A",
         },
         {
             Header: "Requester Location",
             accessor: "location.name",
-            Cell: ({value, row}) =>
-                value ? (
-                    <HighlightCell highlight={!row.original.is_read}>
-                        {value}
-                    </HighlightCell>
-                ) : (
-                    "N/A"
-                ),
+            Cell: ({value}) => value || "N/A",
         },
         {
             Header: "Request Title",
             accessor: "request_title",
             Cell: ({value, row}) =>
                 value ? (
-                    <div>
-                        <Tooltip
-                            id={`request-tooltip-${row.index}`}
-                            text={value}
-                            tooltipContent={value}
-                        >
-                            <HighlightCell highlight={!row.original.is_read}>
-                                {value.length > 25 ? `${value.slice(0, 25)}...` : value}
-                            </HighlightCell>
-                        </Tooltip>
-                    </div>
+                    <Tooltip id={`request-tooltip-${row.index}`} text={value} tooltipContent={value}>
+                        <HighlightCell highlight={!row.original.is_read}>
+                            {value.length > 25 ? `${value.slice(0, 25)}...` : value}
+                        </HighlightCell>
+                    </Tooltip>
                 ) : (
                     "-"
                 ),
@@ -88,15 +74,14 @@ const TaskGeneratedTable = () => {
         {
             Header: "Requester",
             accessor: "reporter",
-            Cell: ({value}) => (
+            Cell: ({value}) =>
                 value ? (
                     <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
-                {value}
-            </span>
+            {value}
+          </span>
                 ) : (
                     <span className="text-gray-500">N/A</span>
-                )
-            ),
+                ),
         },
         {
             Header: "Priority",
@@ -120,18 +105,16 @@ const TaskGeneratedTable = () => {
         {
             Header: "Assignee",
             accessor: "sr_tasks",
-            Cell: ({value, row}) => {
+            Cell: ({value}) => {
                 if (Array.isArray(value) && value.length > 0) {
                     const allAssignees = value.flatMap(task => task.assignees.map(a => a.name));
                     const uniqueAssignees = [...new Set(allAssignees)];
                     return (
                         <div className="flex flex-wrap gap-1">
                             {uniqueAssignees.map((assignee, index) => (
-                                <HighlightCell key={index} highlight={!row.original.is_read}>
-                  <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
-                    {assignee}
-                  </span>
-                                </HighlightCell>
+                                <span key={index} className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                  {assignee}
+                </span>
                             ))}
                         </div>
                     );
@@ -145,7 +128,7 @@ const TaskGeneratedTable = () => {
             Cell: ({row}) => {
                 const {sr_tasks} = row.original;
                 if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
-                    return sr_tasks.map((task) => task.status).join(", ");
+                    return sr_tasks.map(task => task.status).join(", ");
                 }
                 return "No Tasks";
             },
