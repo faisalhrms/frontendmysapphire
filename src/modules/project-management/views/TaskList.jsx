@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import {getStatusClasses} from "@helpers/badges.js";
@@ -12,6 +11,8 @@ import {useTaskDetailModal} from "@modules/project-management/hooks/taskHooks.js
 import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 import {taskStatuses} from "@modules/project-management/services/taskService.js";
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
+import {ListTodo} from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const TaskList = () => {
     const {
@@ -251,7 +252,12 @@ const TaskList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Task List" activepage="Task" mainpage="Task List"/>
+
+            <IconPageHeader
+                heading="Task List"
+                description="View and manage all project tasks in a tabular view"
+                icon={ListTodo}
+            />
             <DataTable
                 columns={columns}
                 title="Tasks"

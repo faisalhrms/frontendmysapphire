@@ -37,15 +37,12 @@ export const updatePolicy = async (id, payload) => {
 export const fetchSelfPolicies = async () => {
     try {
         const response = await api.get("/policies/ess/datatable/");
-        console.log("Encrypted API response:", response.data);
-
         const encrypted = response.data?.data;
         if (!encrypted) throw new Error("No encrypted data found in response.");
-      return  decryptData(encrypted)
+      return decryptData(encrypted)
 
 
     } catch (error) {
-        console.error("Decryption failed:", error);
         Notify.error("Failed to load policies");
         return [];
     }
