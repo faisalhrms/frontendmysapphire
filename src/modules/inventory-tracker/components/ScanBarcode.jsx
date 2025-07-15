@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import OtherStoreInventoryTable from "@modules/inventory-tracker/components/OtherStoreInventoryTable.jsx";
 import api from "@config/axiosConfig.js";
 import { Search, Package, MapPin, Percent, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote } from "lucide-react";
+import EmptyState from "@components/EmptyState.jsx";
 
 const ScanBarcode = ({ isActive }) => {
     const [searchValue, setSearchValue] = useState("");
@@ -88,11 +89,11 @@ const ScanBarcode = ({ isActive }) => {
                         </div>
                     </div>
                     {!data && !isLoading && !error && (
-                        <div className="text-center py-12">
-                            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">No Results</h3>
-                            <p className="text-gray-600">Enter a barcode to search for product information</p>
-                        </div>
+                        <EmptyState
+                            icon={Package}
+                            heading="No Results"
+                            description="Enter a barcode to search for product information"
+                        />
                     )}
                     {data && (
                         <div className="space-y-6">

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import DiscountForm from "../components/DiscountForm";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import { useSelector } from "react-redux";
 import fetchDiscountData from "../../services/discount-card/DiscountCard";
 import Notify from "@helpers/toastNotifications.js";
+import { CreditCard } from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const DiscountCard = () => {
   const [selectedOption, setSelectedOption] = useState("email");
@@ -68,10 +69,10 @@ const DiscountCard = () => {
 
   return (
       <>
-        <PageHeader
-            currentpage="Detail Discount Card"
-            activepage="Discount Card"
-            mainpage="Discount Card"
+        <IconPageHeader
+            heading="Discount Card"
+            description="Track your monthly discount card usage, available balance, and discount percentage."
+            icon={CreditCard}
         />
         <DiscountForm
             selectedOption={selectedOption}
