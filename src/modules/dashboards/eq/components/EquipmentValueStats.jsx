@@ -37,10 +37,20 @@ const EquipmentValueStats = ({ filters }) => {
                 <div className="box-body !p-0">
                     <div className="p-2 min-w-[600px] overflow-x-auto">
                         <ApexChart
-                            columnWidth="30%"
-                            chartWidth={Math.max(600, typeLabels.length * 160)}
+                            chartType="bar"
+                            height={400}
+                            columnWidth="35%" // ✅ wider spacing
+                            baseWidthPerCategory={160} // ✅ consistent spacing
+                            chartWidth={Math.max(600, typeLabels.length * 160)} // ✅ dynamic width
+                            labels={typeLabels}
+                            categories={typeLabels}
+                            colors={['#10B981']} // green
+                            series={[{
+                                name: 'Total Value',
+                                data: values
+                            }]}
                             additionalOptions={{
-                                legend: { position: 'top' },
+                                legend: {position: 'top'},
                                 dataLabels: {
                                     enabled: true,
                                     formatter: val => `₨ ${val.toLocaleString()}`,
@@ -53,41 +63,46 @@ const EquipmentValueStats = ({ filters }) => {
                                 plotOptions: {
                                     bar: {
                                         horizontal: false,
-                                        columnWidth: '30%',
+                                        columnWidth: '35%', // ✅ match gap
                                         borderRadius: 4,
-                                        dataLabels: { position: 'top' }
+                                        dataLabels: {
+                                            position: 'top',
+                                            hideOverflowingLabels: false
+                                        }
                                     }
                                 },
                                 xaxis: {
                                     categories: typeLabels,
-                                    title: { text: 'Equipment Type' },
-                                    labels: { rotate: -45, style: { fontSize: '12px' } }
+                                    title: {text: 'Equipment Type'},
+                                    labels: {
+                                        rotate: 0, // ✅ straight
+                                        trim: false,
+                                        style: {
+                                            fontSize: '12px',
+                                            whiteSpace: 'normal',
+                                            wordBreak: 'break-word',
+                                            lineHeight: '1.1rem',
+                                            maxWidth: 120 // ✅ prevent truncation
+                                        }
+                                    }
                                 },
                                 yaxis: {
-                                    title: { text: 'Total Value (PKR)' },
+                                    title: {text: 'Total Value (PKR)'},
                                     labels: {
                                         formatter: val => `₨${(val / 1_000_000).toFixed(1)}M`
                                     }
                                 },
-                                chart: { toolbar: { show: false } },
+                                chart: {toolbar: {show: false}},
                                 grid: {
                                     borderColor: '#f1f1f1',
                                     strokeDashArray: 4
                                 }
                             }}
-                            labels={typeLabels}
-                            height={400}
-                            series={[{
-                                name: 'Total Value',
-                                data: values
-                            }]}
-                            colors={['#10B981']} // Green
-                            baseWidthPerCategory={2}
-                            chartType="bar"
                         />
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };
