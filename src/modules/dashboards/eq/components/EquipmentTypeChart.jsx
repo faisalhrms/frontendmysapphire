@@ -42,18 +42,18 @@ const EquipmentTypeChart = ({ filters }) => {
                     <ApexChart
                         chartType="bar"
                         height={330}
-                        columnWidth="50%" // Matched from first version
-                        baseWidthPerCategory={2}
+                        columnWidth="35%"
+                        baseWidthPerCategory={160}
+                        chartWidth={600}
                         labels={labels}
+                        categories={labels}
                         colors={colors}
-                        series={[
-                            {
-                                name: "Equipments",
-                                data: values,
-                            }
-                        ]}
+                        series={[{
+                            name: "Equipments",
+                            data: values,
+                        }]}
                         additionalOptions={{
-                            legend: {position: 'top'},
+                            legend: { position: 'top' },
                             dataLabels: {
                                 enabled: true,
                                 formatter: val => val > 0.1 ? `${val.toLocaleString()}` : '',
@@ -65,7 +65,6 @@ const EquipmentTypeChart = ({ filters }) => {
                             },
                             plotOptions: {
                                 bar: {
-                                    columnWidth: "50%", // Match this
                                     dataLabels: {
                                         position: 'top',
                                         hideOverflowingLabels: false
@@ -76,16 +75,27 @@ const EquipmentTypeChart = ({ filters }) => {
                             xaxis: {
                                 categories: labels,
                                 labels: {
-                                    rotate: -45,
-                                    style: {fontSize: '12px'}
+                                    rotate: 0, // ✅ no tilt
+                                    trim: false,
+                                    style: {
+                                        fontSize: '10px',
+                                        whiteSpace: 'normal', // ✅ allow multiline
+                                        wordBreak: 'break-word',
+                                        lineHeight: '1.1rem',
+                                        maxWidth: 120 // ✅ wrap within 120px
+                                    }
                                 }
                             },
                             yaxis: {
-                                title: {text: 'Number of Equipments'},
+                                title: {
+                                    text: 'Number of Equipments'
+                                },
                                 tickAmount: 6
                             },
                             chart: {
-                                toolbar: {show: false}
+                                toolbar: {
+                                    show: false
+                                }
                             },
                             grid: {
                                 borderColor: '#f1f1f1',
@@ -93,6 +103,7 @@ const EquipmentTypeChart = ({ filters }) => {
                             }
                         }}
                     />
+
                 </div>
             </div>
 

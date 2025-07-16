@@ -3,7 +3,7 @@ import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import { mapSeriesToColors, statusColorMapping } from "@helpers/statusStyles.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import ApexChart from "@components/charts/ApexChart.jsx";
-import PieEquipmentChart from "@modules/dashboards/eq/components/PieEquipmentChart.jsx";
+import DonutEquipmentChart from "@modules/dashboards/eq/components/DonutEquipmentChart.jsx";
 
 const EquipmentSummaryCard = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters('/dashboard/equipment/summary/', filters);
@@ -44,6 +44,7 @@ const EquipmentSummaryCard = ({ filters }) => {
     return (
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-2">
             {/* Bar Chart - spans 2 columns */}
+            {/* Bar Chart - spans 2 columns */}
             <div className="xl:col-span-2 col-span-1 box p-3">
                 <div className="box-header mb-1">
                     <div className="box-title text-base font-semibold">Status Distribution (Bar)</div>
@@ -51,8 +52,18 @@ const EquipmentSummaryCard = ({ filters }) => {
                 <div className="box-body !p-0">
                     <div className="p-2">
                         <ApexChart
-                            columnWidth="80%"
-                            chartWidth={530}
+                            chartType="bar"
+                            height={330}
+                            columnWidth="35%"               // 🔧 increased gap between bars
+                            baseWidthPerCategory={160}      // 🔧 enables scroll if needed
+                            chartWidth={600}                // 🔧 maintain same visual width
+                            labels={labels}
+                            categories={labels}
+                            colors={colors}
+                            series={[{
+                                name: "Equipments",
+                                data: values
+                            }]}
                             additionalOptions={{
                                 legend: { position: 'top' },
                                 dataLabels: {
@@ -70,28 +81,44 @@ const EquipmentSummaryCard = ({ filters }) => {
                                             position: 'top',
                                             hideOverflowingLabels: false
                                         },
-                                        minHeight: 20
+                                        borderRadius: 4              // ✅ consistent rounded bars
                                     }
+                                },
+                                xaxis: {
+                                    categories: labels,
+                                    labels: {
+                                        rotate: 0,                   // ✅ no tilt
+                                        trim: false,
+                                        style: {
+                                            fontSize: '10px',
+                                            whiteSpace: 'normal',     // ✅ wrap text
+                                            wordBreak: 'break-word',
+                                            lineHeight: '1.1rem',
+                                            maxWidth: 120             // ✅ label constraint
+                                        }
+                                    }
+                                },
+                                yaxis: {
+                                    title: {
+                                        text: 'Number of Equipments'
+                                    },
+                                    tickAmount: 6
                                 },
                                 chart: {
                                     toolbar: {
                                         show: false
                                     }
+                                },
+                                grid: {
+                                    borderColor: '#f1f1f1',
+                                    strokeDashArray: 4
                                 }
                             }}
-                            labels={labels}
-                            height={330}
-                            series={[{
-                                name: "Equipments",
-                                data: values
-                            }]}
-                            colors={colors}
-                            baseWidthPerCategory={2}
-                            chartType="bar"
                         />
                     </div>
                 </div>
             </div>
+
 
             {/* Pie Chart */}
             <div className="box p-3 flex items-center justify-center">
@@ -100,7 +127,7 @@ const EquipmentSummaryCard = ({ filters }) => {
                         <div className="box-title text-base font-semibold">Status Distribution (Pie)</div>
                     </div>
                     <div className="box-body p-0">
-                        <PieEquipmentChart
+                        <DonutEquipmentChart
                             labels={labels}
                             series={values}
                             colors={colors}
