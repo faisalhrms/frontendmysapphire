@@ -7,11 +7,17 @@ import ProjectUserSummaryStats from "@modules/project-management/components/proj
 import ProjectTableCard from "@modules/dashboards/pms/components/ProjectTableCard.jsx";
 import React from "react";
 import RiskAnalysisChart from "@modules/dashboards/pms/components/RiskManagementChart.jsx";
+import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
+import ProjectSummary from "@modules/dashboards/pms/components/ProjectSummary.jsx";
+import ProjectUserSummary from "@modules/dashboards/pms/components/ProjectUserSummary.jsx";
 
-const ProjectDashboardStats = ({data, isLoading, isActive, filters}) => {
+const ProjectDashboardStats = ({isActive, filters}) => {
     if (!isActive){
         return null
     }
+    const { data: statuses, isLoading } = useFetchWithFilters(
+        '/dashboard/pms/statistics/statuses/', filters
+    );
     if (isLoading) {
         return <LoadingSpinner/>;
     }
@@ -19,24 +25,22 @@ const ProjectDashboardStats = ({data, isLoading, isActive, filters}) => {
             <>
                 <div
                     className="grid grid-cols-3 gap-4">
-                    {data.statuses.map((item, index) => (
+                    {statuses.map((item, index) => (
                         <ProjectStatusCard
                             key={index}
                             item={item}
                         />))}
                 </div>
                 <div className="grid grid-cols-12 gap-x-6 mt-6">
-                    <ProjectAnalysisCard data={data.monthly_series} />
-                    <RecentProjectCard
-                        projects={data.recent_projects}
-                    />
+                    <ProjectAnalysisCard filters={filters} />
+                    <RecentProjectCard filters={filters} />
                     <div className="xl:col-span-5 col-span-12">
-                        <ProjectSummaryStats summary={data.project_summary} statsFetching={isLoading} heading='Project Summary'/>
+                        <ProjectSummary />
                     </div>
                     <div className="xl:col-span-7 col-span-12">
-                        <ProjectUserSummaryStats summary={data.user_summary} statsFetching={isLoading}/>
+                        <ProjectUserSummary filters={filters} />
                     </div>
-                        <RiskAnalysisChart data={data.project_risk_summary}/>
+                        <RiskAnalysisChart filters={filters} />
                         <ProjectTableCard filters={filters} />
                     </div>
                 </>

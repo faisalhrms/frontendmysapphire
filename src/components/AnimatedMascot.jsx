@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import Lottie from "lottie-react";
 import panda from "@assets/jsons/panda.json";
 import catEyes from "@assets/jsons/cat-eyes.json";
-import frog from "@assets/jsons/frog.json";
 import parrot from "@assets/jsons/parrot.json";
 import penguin from "@assets/jsons/penguin.json";
 import pigeon from "@assets/jsons/pigeon.json";
