@@ -25,8 +25,8 @@ const DynamicFormBuilder = ({ formData }) => {
     const steps = [
         { title: 'Basic Info', icon: <FiInfo /> },
         { title: 'Settings', icon: <FiSettings /> },
-        { title: 'Social Links', icon: <FiLink /> },
         { title: 'Form Fields', icon: <FiEdit /> },
+        { title: 'Social Links', icon: <FiLink /> },
     ];
 
     const { control, handleSubmit, watch, formState: { errors, isSubmitting }, setValue, trigger } = useForm({
@@ -55,12 +55,7 @@ const DynamicFormBuilder = ({ formData }) => {
                     order: 1,
                 },
             ],
-            social_links: [
-                {
-                    platform: 'facebook',
-                    url: '',
-                },
-            ],
+            social_links: [],
             send_email_to_submitter: false,
             email_subject: '',
             email_content: '',
@@ -138,9 +133,7 @@ const DynamicFormBuilder = ({ formData }) => {
             );
             setValue(
                 'social_links',
-                formData.social_links?.length
-                    ? formData.social_links
-                    : [{ platform: 'facebook', url: '' }]
+                formData.social_links?.length ? formData.social_links : []
             );
         }
     }, [formData, setValue]);
@@ -176,7 +169,7 @@ const DynamicFormBuilder = ({ formData }) => {
     };
 
     const addSocialLink = () => {
-        appendLink({ platform: '', url: '' });
+        appendLink({ platform: 'facebook', url: '' });
     };
 
     const validateCurrentStep = async () => {
@@ -216,7 +209,8 @@ const DynamicFormBuilder = ({ formData }) => {
                     ]
                     : []),
             ],
-            2: ['social_links'],
+            2: ['fields'],
+            3: ['social_links'],
         };
 
         const fieldsToValidate = stepFields[currentStep] || [];
@@ -761,61 +755,6 @@ const DynamicFormBuilder = ({ formData }) => {
                                         <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
                                             <div className="box">
                                                 <div className="box-body border">
-                                                    <div className="xl:col-span-12 col-span-12">
-                                                        {socialLinkFields.map((field, index) => (
-                                                            <div key={field.id} className="grid grid-cols-12 gap-4 mt-4 mb-2">
-                                                                <div className="col-span-3">
-                                                                    <FormSelect
-                                                                        name={`social_links.${index}.platform`}
-                                                                        control={control}
-                                                                        options={platformOptions}
-                                                                        errors={errors}
-                                                                        placeholder="Platform"
-                                                                        label={false}
-                                                                    />
-                                                                </div>
-                                                                <div className="col-span-8">
-                                                                    <FormInput
-                                                                        name={`social_links.${index}.url`}
-                                                                        control={control}
-                                                                        errors={errors}
-                                                                        placeholder="Platform URL"
-                                                                        label={false}
-                                                                    />
-                                                                </div>
-                                                                <div className="col-span-1 flex items-center space-x-2">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => removeLink(index)}
-                                                                        className="ti-btn ti-btn-danger ti-btn-sm w-max"
-                                                                    >
-                                                                        <i className="bi bi-trash3-fill"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                        <div className="mt-12">
-                                                            <button
-                                                                type="button"
-                                                                onClick={addSocialLink}
-                                                                className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                                                            >
-                                                                <i className="ri-add-line font-semibold align-middle"></i>
-                                                                Add Social Link
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {currentStep === 3 && (
-                                    <div className="space-y-4">
-                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
-                                            <div className="box">
-                                                <div className="box-body border">
                                                     {fields.map((field, index) => {
                                                         const fieldType = watchedFieldTypes?.[index]?.field_type;
                                                         return (
@@ -870,7 +809,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                                                                     label={false}
                                                                                 />
                                                                             </div>
-                                                                            <div className="xl:col-span-2 col-span-12 flex items-center space-x-2">
+                                                                            <div className="xl:col-span-2 col-span-12 flex items-center space-x-4 ml-4">
                                                                                 <FormCheckbox
                                                                                     name={`fields.${index}.required`}
                                                                                     control={control}
@@ -928,6 +867,80 @@ const DynamicFormBuilder = ({ formData }) => {
                                                             <i className="ri-add-line font-semibold align-middle"></i>
                                                             Add Field
                                                         </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {currentStep === 3 && (
+                                    <div className="space-y-4">
+                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
+                                            <div className="box">
+                                                <div className="box-body border">
+                                                    <div className="xl:col-span-12 col-span-12">
+                                                        {socialLinkFields.length === 0 ? (
+                                                            <div className="text-center py-8">
+                                                                <FiLink className="mx-auto text-4xl text-gray-400 mb-4" />
+                                                                <p className="text-gray-500 mb-4">
+                                                                    No social links added yet
+                                                                </p>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={addSocialLink}
+                                                                    className="ti-btn ti-btn-primary-full"
+                                                                >
+                                                                    <i className="ri-add-line font-semibold align-middle me-1"></i>
+                                                                    Add Social Link
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                {socialLinkFields.map((field, index) => (
+                                                                    <div key={field.id} className="grid grid-cols-12 gap-4 mt-4 mb-2">
+                                                                        <div className="col-span-3">
+                                                                            <FormSelect
+                                                                                name={`social_links.${index}.platform`}
+                                                                                control={control}
+                                                                                options={platformOptions}
+                                                                                errors={errors}
+                                                                                placeholder="Platform"
+                                                                                label={false}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="col-span-8">
+                                                                            <FormInput
+                                                                                name={`social_links.${index}.url`}
+                                                                                control={control}
+                                                                                errors={errors}
+                                                                                placeholder="Platform URL"
+                                                                                label={false}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="col-span-1 flex items-center space-x-2">
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => removeLink(index)}
+                                                                                className="ti-btn ti-btn-danger ti-btn-sm w-max"
+                                                                            >
+                                                                                <i className="bi bi-trash3-fill"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                                <div className="mt-12">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={addSocialLink}
+                                                                        className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                                                                    >
+                                                                        <i className="ri-add-line font-semibold align-middle"></i>
+                                                                        Add Another Link
+                                                                    </button>
+                                                                </div>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

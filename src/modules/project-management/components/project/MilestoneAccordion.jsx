@@ -37,7 +37,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
     return (
         <>
             <div className="accordion customized-accordion accordions-items-separate" id="customizedAccordion">
-                <div className="hs-accordion-group ">
+                <div className="hs-accordion-group">
 
                 {Array.isArray(milestones) && milestones.map((milestone) => (
                     <div

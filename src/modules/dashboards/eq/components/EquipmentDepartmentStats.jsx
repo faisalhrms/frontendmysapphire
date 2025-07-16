@@ -39,10 +39,20 @@ const EquipmentDepartmentStats = ({ filters }) => {
                 <div className="box-body !p-0">
                     <div className="p-2 min-w-[600px] overflow-x-auto">
                         <ApexChart
-                            columnWidth="30%"
-                            chartWidth={categories.length * 160}
+                            chartType="bar"
+                            height={370}
+                            columnWidth="35%"                             // ✅ Wider spacing
+                            baseWidthPerCategory={160}                    // ✅ For scrollable width
+                            chartWidth={categories.length * 160}          // ✅ Dynamic chart width
+                            labels={categories}
+                            categories={categories}
+                            colors={['#3B82F6']}
+                            series={[{
+                                name: 'Assets',
+                                data: values
+                            }]}
                             additionalOptions={{
-                                legend: { position: 'top' },
+                                legend: {position: 'top'},
                                 dataLabels: {
                                     enabled: true,
                                     formatter: val => (val > 0.1 ? `${val.toLocaleString()}` : ''),
@@ -55,7 +65,7 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                 plotOptions: {
                                     bar: {
                                         horizontal: false,
-                                        columnWidth: '30%',
+                                        columnWidth: '35%',              // ✅ Consistent spacing
                                         borderRadius: 4,
                                         dataLabels: {
                                             position: 'top',
@@ -65,14 +75,21 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                 },
                                 xaxis: {
                                     categories,
-                                    title: { text: 'Department' },
+                                    title: {text: 'Department'},
                                     labels: {
-                                        rotate: -45,
-                                        style: { fontSize: '12px' }
+                                        rotate: 0,
+                                        trim: false,
+                                        style: {
+                                            fontSize: '12px',
+                                            whiteSpace: 'normal',         // ✅ Multiline support
+                                            wordBreak: 'break-word',
+                                            lineHeight: '1.1rem',
+                                            maxWidth: 120                 // ✅ Keeps labels contained
+                                        }
                                     }
                                 },
                                 yaxis: {
-                                    title: { text: 'Number of Equipments' },
+                                    title: {text: 'Number of Equipments'},
                                     tickAmount: 5
                                 },
                                 chart: {
@@ -85,19 +102,11 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                     strokeDashArray: 4
                                 }
                             }}
-                            labels={categories}
-                            height={370}
-                            series={[{
-                                name: 'Assets',
-                                data: values
-                            }]}
-                            colors={['#3B82F6']} // blue
-                            baseWidthPerCategory={2}
-                            chartType="bar"
                         />
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };
