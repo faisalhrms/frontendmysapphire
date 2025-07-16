@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import OtherStoreInventoryTable from "@modules/inventory-tracker/components/OtherStoreInventoryTable.jsx";
 import api from "@config/axiosConfig.js";
-import { Search, Package, Percent, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote, Truck, Globe, Boxes, Ruler, Grid3x3, Layers3} from "lucide-react";
+import { Search, Package, Percent, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote, Truck, Globe, Boxes, Ruler, Grid3x3, Layers3, ExternalLink} from "lucide-react";
 import EmptyState from "@components/EmptyState.jsx";
 
 const ScanBarcode = ({ isActive }) => {
@@ -33,6 +33,7 @@ const ScanBarcode = ({ isActive }) => {
         }
     };
 
+    const syncTime = data?.sync_time || null;
     const currentWarehouse = data?.item || null;
     const otherLocations = data?.other_stocks || [];
     const onlineStocks = data?.online_stocks || null;
@@ -45,12 +46,11 @@ const ScanBarcode = ({ isActive }) => {
                     <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-8 mt-8">
                         <div className="p-6 border-b border-slate-200">
                             <h2 className="text-lg font-semibold text-slate-900 mb-1">Product Search</h2>
-                            <p className="text-sm text-slate-600">Enter a barcode to retrieve comprehensive product
-                                information</p>
+                            <p className="text-sm text-slate-600">Enter a barcode to retrieve comprehensive product information</p>
                         </div>
                         <div className="p-6">
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <Hash className="h-5 w-5 text-slate-400"/>
                                 </div>
                                 <input
@@ -97,6 +97,10 @@ const ScanBarcode = ({ isActive }) => {
                             description="Enter a barcode to search for product information"
                         />
                     )}
+                    {
+                        syncTime &&
+                        <p className="text-sm text-primary text-right mb-2">Last Sync Time : {syncTime}</p>
+                    }
                     {data && (
                         <div className="space-y-6">
                             {currentWarehouse && (
@@ -180,11 +184,10 @@ const ScanBarcode = ({ isActive }) => {
                                             </div>
 
                                             <div>
-                                                <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Product
-                                                    Sets & Combinations</h4>
+                                                <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Matching Separate</h4>
                                                 <div className="space-y-3">
                                                     <div className="flex justify-between py-2 border-b border-slate-100">
-                                                    <span className="text-sm text-slate-600">Matching Separate (MS)</span>
+                                                    <span className="text-sm text-slate-600">Quantity</span>
                                                         <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
                                                     </div>
                                                     <div className="flex justify-between py-2 border-b border-slate-100">
@@ -242,9 +245,32 @@ const ScanBarcode = ({ isActive }) => {
                                             <h3 className="text-lg font-semibold text-slate-900">
                                                 Online Stock Information
                                             </h3>
-                                            <span className={`ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${onlineStocks.onhand_qty > 0 ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
-                                                {onlineStocks.onhand_qty > 0 ? ' In stock' : 'Out of stock'}
+                                            <span
+                                                className={`ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                    onlineStocks.is_online === 'No'
+                                                        ? 'bg-gray-100 text-gray-500'
+                                                        : onlineStocks.onhand_qty > 0
+                                                            ? 'bg-success/10 text-success'
+                                                            : 'bg-danger/10 text-danger'
+                                                }`}
+                                            >
+                                                {onlineStocks.is_online === 'No'
+                                                    ? 'Not available'
+                                                    : onlineStocks.onhand_qty > 0
+                                                        ? 'In stock'
+                                                        : 'Out of stock'}
                                             </span>
+                                            {onlineStocks.is_online !== 'No' && (
+                                                <a
+                                                    href={`https://pk.sapphireonline.pk/collections/three-piece-unstitched/products/${onlineStocks.barcode}.html`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="ml-2 text-info hover:text-info/10"
+                                                    title="View Product"
+                                                >
+                                                    <ExternalLink className="h-3.5 w-3.5" />
+                                                </a>
+                                            )}
                                         </div>
                                         {isOnlineStocksOpen ? (
                                             <ChevronUp className="w-5 h-5 text-slate-500"/>
@@ -271,7 +297,7 @@ const ScanBarcode = ({ isActive }) => {
                                                         <Ruler className="w-5 h-5 text-success mr-2"/>
                                                         <div>
                                                             <p className="text-sm font-medium text-slate-600">Available Sizes</p>
-                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.sizes || 'N/A'}</p>
+                                                            <p className="text-xs font-medium text-gray-600">{onlineStocks.sizes || 'N/A'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -281,7 +307,7 @@ const ScanBarcode = ({ isActive }) => {
                                                         <Grid3x3 className="w-5 h-5 text-primary mr-2"/>
                                                         <div>
                                                             <p className="text-sm font-medium text-slate-600">(MS)</p>
-                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.combos || 'N/A'}</p>
+                                                            <p className="text-xs font-medium text-gray-600">{onlineStocks.combos || 'N/A'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -291,7 +317,7 @@ const ScanBarcode = ({ isActive }) => {
                                                         <Layers3 className="w-5 h-5 text-orange mr-2"/>
                                                         <div>
                                                             <p className="text-sm font-medium text-slate-600">(MS) Size</p>
-                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.size_set || 'N/A'}</p>
+                                                            <p className="text-xs font-medium text-gray-600">{onlineStocks.size_set || 'N/A'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
