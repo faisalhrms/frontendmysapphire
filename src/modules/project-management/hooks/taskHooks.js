@@ -411,3 +411,34 @@ export const useTaskActivityLog = (id) => {
 
   return { data, isLoading };
 };
+
+export default function useSetActiveUserModal({ task, refetch }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  const getCurrentActiveUserId = useCallback(() => {
+    if (!task?.users) return null;
+    const activeUser = task.users.find((user) => user.is_active);
+    return activeUser?.id ?? null;
+  }, [task]);
+
+  const handleUpdate = useCallback(() => {
+    if (refetch) refetch();
+    setIsOpen(false);
+  }, [refetch]);
+
+  return {
+    isOpen,
+    openModal,
+    closeModal,
+    getCurrentActiveUserId,
+    handleUpdate,
+  };
+}
