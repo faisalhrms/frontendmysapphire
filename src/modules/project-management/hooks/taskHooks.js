@@ -13,6 +13,7 @@ import {useQuery} from "@tanstack/react-query";
 import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
+import useBodyScrollLock from "@hooks/useBodyScrollLock.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -414,6 +415,7 @@ export const useTaskActivityLog = (id) => {
 
 export default function useSetActiveUserModal({ task, refetch }) {
   const [isOpen, setIsOpen] = useState(false);
+  useBodyScrollLock(isOpen);
 
   const openModal = useCallback(() => {
     setIsOpen(true);
@@ -423,10 +425,11 @@ export default function useSetActiveUserModal({ task, refetch }) {
     setIsOpen(false);
   }, []);
 
-  const getCurrentActiveUserId = useCallback(() => {
-    if (!task?.users) return null;
-    const activeUser = task.users.find((user) => user.is_active);
-    return activeUser?.id ?? null;
+  const getCurrentActiveUserIds = useCallback(() => {
+    if (!task?.users) return [];
+    return task.users
+        .filter((user) => user.is_active)
+        .map((user) => user.id);
   }, [task]);
 
   const handleUpdate = useCallback(() => {
@@ -438,7 +441,7 @@ export default function useSetActiveUserModal({ task, refetch }) {
     isOpen,
     openModal,
     closeModal,
-    getCurrentActiveUserId,
+    getCurrentActiveUserIds,
     handleUpdate,
   };
 }

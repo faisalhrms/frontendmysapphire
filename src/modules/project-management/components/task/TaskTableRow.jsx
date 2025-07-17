@@ -44,7 +44,7 @@ const TaskTableRow = ({
         isOpen,
         openModal,
         closeModal,
-        getCurrentActiveUserId,
+        getCurrentActiveUserIds,
         handleUpdate,
     } = useSetActiveUserModal({ task, refetch });
 
@@ -129,7 +129,7 @@ const TaskTableRow = ({
               </Tooltip>
           )}
 
-            {task.users && task.users.length > 0 && !projectUser?.can_view_only && (
+            {task.users && task.users.length > 1 && !projectUser?.can_view_only && (
                 <HasProjectPermission globalPermission='pms.change_task' users={projectUsers}>
                     <Tooltip id={`set-active-user-tooltip-${task.id}`} tooltipContent={`Set Active User for (${task.name})`}>
                         <button
@@ -252,7 +252,7 @@ const TaskTableRow = ({
                 isOpen={isOpen}
                 onClose={closeModal}
                 task={task}
-                currentActiveUserId={getCurrentActiveUserId}
+                currentActiveUserIds={getCurrentActiveUserIds}
                 onUpdate={handleUpdate}
             />
         </>
