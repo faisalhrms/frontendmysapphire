@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import SetActiveUserModal from "@modules/project-management/components/task/SetActiveUserModal.jsx";
 import React from "react";
 
-const SetActiveUserModalPortal = ({ isOpen, onClose, task, currentActiveUserId, onUpdate }) => {
+const SetActiveUserModalPortal = ({ isOpen, onClose, task, currentActiveUserIds, onUpdate }) => {
     return ReactDOM.createPortal(
         <SetActiveUserModal
             isOpen={isOpen}
@@ -10,7 +10,7 @@ const SetActiveUserModalPortal = ({ isOpen, onClose, task, currentActiveUserId, 
             taskId={task.id}
             taskName={task.name}
             users={task.users || []}
-            currentActiveUserId={currentActiveUserId()}
+            currentActiveUserIds={currentActiveUserIds()}
             onUpdate={onUpdate}
         />,
         document.getElementById('modal-root')
