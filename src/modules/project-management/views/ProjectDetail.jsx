@@ -95,7 +95,11 @@ const ProjectDetail = () => {
                               </div>
                               {projectData.attachments.length > 0 && (
                                   <div className="rounded-lg">
-                                    <ProjectAttachment attachments={projectData.attachments}/>
+                                    <ProjectAttachment
+                                        attachments={projectData.attachments}
+                                        Id={projectData.id}
+                                        projectUsers={projectData.users}
+                                    />
                                   </div>
                               )}
                             </div>

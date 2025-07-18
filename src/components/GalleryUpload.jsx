@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import MediaModal from "@components/MediaModal.jsx";
 import "@assets/css/custom/gallery.css";
 import HiddenFormInput from "@components/form/HiddenFormInput.jsx";
 import { useFileModal } from "@hooks/useFileModal";
 import AttachmentsList from "@components/AttachmentsList";
+import ReactDOM from "react-dom";
 
 const GalleryUpload = ({
                            btnTxt = 'Choose Attachments',
@@ -13,7 +14,9 @@ const GalleryUpload = ({
                            currentValue = [],
                            files = [],
                            control,
-                           errors
+                           errors,
+                           portal = false,
+                           clearFiles = false
                        }) => {
     const {
         isModalOpen,
@@ -22,16 +25,27 @@ const GalleryUpload = ({
         selectedIds,
         attachments,
         handleSelectedFiles,
-        handleDeleteAttachment
+        handleDeleteAttachment,
+        mediaType,
+        clearAttachments
     } = useFileModal(modalId, true, currentValue, files);
+
+    useEffect(() => {
+        if (clearFiles) {
+            clearAttachments()
+        }
+    }, [clearFiles]);
 
     return (
         <>
             <div className="grid grid-cols-12 gap-4">
                 <div className="xl:col-span-12 col-span-12">
-                    <div>
-                        <label htmlFor={inputName} className="form-label">{placeholder}</label>
-                    </div>
+                    {
+                        placeholder &&
+                        <div>
+                            <label htmlFor={inputName} className="form-label">{placeholder}</label>
+                        </div>
+                    }
                     <button
                         onClick={openModal}
                         className={`ti-btn !py-1 !px-2 !text-[0.75rem] ${errors[inputName] ? 'ti-btn-danger-full' : 'ti-btn-primary-full'}`}
@@ -50,8 +64,12 @@ const GalleryUpload = ({
                 <AttachmentsList attachments={attachments} onDelete={handleDeleteAttachment}/>
             </div>
             {isModalOpen && (
-                <MediaModal modalId={modalId} multiple={true} onClose={closeModal}
-                            selectedFiles={handleSelectedFiles}/>
+                 portal ?
+                     ReactDOM.createPortal(
+                         <MediaModal modalId={modalId} multiple={true} onClose={closeModal} selectedFiles={handleSelectedFiles}/>,
+                         document.getElementById('modal-root'))
+                     :
+                     <MediaModal modalId={modalId} multiple={true} onClose={closeModal} selectedFiles={handleSelectedFiles}/>
             )}
         </>
     );
