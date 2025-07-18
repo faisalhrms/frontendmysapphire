@@ -1,13 +1,17 @@
-import React, { useMemo } from "react";
+import React, {useMemo, useState} from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import { mapSeriesToColors, statusColorMapping } from "@helpers/statusStyles.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import ApexChart from "@components/charts/ApexChart.jsx";
 import DonutEquipmentChart from "@modules/dashboards/eq/components/DonutEquipmentChart.jsx";
+import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
+import {equipmentColumns} from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+
 
 const EquipmentSummaryCard = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters('/dashboard/equipment/summary/', filters);
-
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalParams, setModalParams] = useState({});
     const data = useMemo(() => (rawData && typeof rawData === 'object' ? rawData : {}), [rawData]);
 
     const { labels, values } = useMemo(() => {
@@ -29,6 +33,13 @@ const EquipmentSummaryCard = ({ filters }) => {
         return mapSeriesToColors(labels, statusColorMapping);
     }, [labels]);
 
+    const handleBarClick = (e, chartCtx, cfg) => {
+        const idx = cfg.dataPointIndex;
+        const statusKey = Object.keys(data).filter(k => k!=="total_equipments")[idx];
+        // open modal: filter by status
+        setModalParams({ status: statusKey });
+        setModalOpen(true);
+    };
     if (isLoading) return <LoadingSpinner />;
     if (!labels.length || !values.length) {
         return (
@@ -59,6 +70,7 @@ const EquipmentSummaryCard = ({ filters }) => {
                             chartWidth={600}                // 🔧 maintain same visual width
                             labels={labels}
                             categories={labels}
+                            onPointClick={handleBarClick}
                             colors={colors}
                             series={[{
                                 name: "Equipments",
@@ -136,6 +148,15 @@ const EquipmentSummaryCard = ({ filters }) => {
                     </div>
                 </div>
             </div>
+            <GraphDataModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                title={`Equipments: ${modalParams.status}`}
+                apiEndpoint="/equipments/datatable/"
+                queryParams={modalParams}
+                columns={equipmentColumns}
+                addButton={null}
+            />
         </div>
     );
 };
