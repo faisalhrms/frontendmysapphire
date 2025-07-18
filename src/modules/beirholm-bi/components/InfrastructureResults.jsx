@@ -1,36 +1,22 @@
-import React from "react";
-
+import React from "react"
 const InfrastructureResults = ({ analysis }) => {
-  const tableHeaders = analysis.headers;
-  const tableData = analysis.data;
-
+  if (!analysis) return null
+  const { headers, data } = analysis
   return (
     <div className="w-full bg-white rounded-lg shadow-lg overflow-hidden mb-6">
-      <div className="p-3 text-lg font-semibold text-gray-900 border-b bg-gray-100 text-left">
-        {/*{analysis.title}*/}
-      </div>
       <div className="w-full flex justify-center items-center">
         <table className="w-full table-fixed border-collapse">
           <thead style={{ backgroundColor: "rgba(30, 58, 138, 0.85)", color: "white" }}>
-            <tr className="custom-table-header">
-              {tableHeaders.map((header, headerIndex) => (
-                <th key={headerIndex} className="p-2 border border-gray-400 text-center">{header}</th>
-              ))}
-            </tr>
+            <tr>{headers.map((h, i) => <th key={i} className="p-2 border border-gray-400 text-center">{h}</th>)}</tr>
           </thead>
           <tbody className="text-gray-800">
-            {tableData.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((cell, cellIndex) => (
-                  <td key={cellIndex} className="p-2 border border-gray-400 text-center">{cell}</td>
-                ))}
-              </tr>
+            {data.map((r, ri) => (
+              <tr key={ri}>{r.map((c, ci) => <td key={ci} className="p-2 border border-gray-400 text-center">{c}</td>)}</tr>
             ))}
           </tbody>
         </table>
       </div>
     </div>
-  );
-};
-
-export default InfrastructureResults;
+  )
+}
+export default InfrastructureResults
