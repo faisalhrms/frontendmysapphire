@@ -41,7 +41,7 @@ export const usePolicy = (id) => {
 
 export const useSelfPolicies = () => {
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchPolicies = async () => {
@@ -57,5 +57,5 @@ export const useSelfPolicies = () => {
         fetchPolicies();
     }, []);
 
-    return { data, loading };
+    return { data, isLoading };
 };
