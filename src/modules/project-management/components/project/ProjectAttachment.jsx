@@ -35,8 +35,11 @@ const ProjectAttachment = ({ attachments: initialAttachments, Id = null, project
             setClearFiles(true);
             reset({ attachment_ids: [] });
             Notify.success("Attachments linked successfully");
-            const newAttachments = response.data.data;
-            setAttachments((prev) => [...prev, ...newAttachments]);
+            let newAttachments = response.data.data;
+            if (Array.isArray(newAttachments)) {
+                setAttachments((prev) => [...prev, ...newAttachments]);
+            }
+
         } catch (error) {
             Notify.error("Failed to attach files");
         } finally {
@@ -108,7 +111,7 @@ const ProjectAttachment = ({ attachments: initialAttachments, Id = null, project
                             portal={true}
                             clearFiles={clearFiles}
                         />
-                        {attachmentIds.length > 1 && (
+                        {attachmentIds.length > 0 && (
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <button
                                     type="submit"

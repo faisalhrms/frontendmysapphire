@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom';
 import TaskDetailModal from "@modules/project-management/components/model/TaskDetailModal.jsx";
 
-const TaskDetailModalPortal = ({ task, isLoading, closeModal }) => {
+const TaskDetailModalPortal = ({ task, isLoading, closeModal, viewOnly = true }) => {
     return ReactDOM.createPortal(
-        <TaskDetailModal task={task} isLoading={isLoading} closeModal={closeModal} />,
+        <TaskDetailModal task={task} isLoading={isLoading} closeModal={closeModal} viewOnly={viewOnly} />,
         document.getElementById('modal-root')
     );
 };

@@ -193,6 +193,7 @@ const heightFilter = (val)=>{
                     task={modalTaskData}
                     isLoading={isTaskDetailLoading}
                     closeModal={closeTaskDetailModal}
+                    viewOnly={viewOnly}
                 />
             )}
         </>

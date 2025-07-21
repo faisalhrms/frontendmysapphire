@@ -16,6 +16,7 @@ import SubEquipmentTable from "./SubEquipmentTable.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
 import {useSelector} from "react-redux";
+import EquipmentRepairFormList from "@modules/inventory/views/EquipmentRepairFormList.jsx";
 
 const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
     const companyId = useSelector((state) => state.auth.user.employee.company.id);
@@ -458,6 +459,8 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                         )
                     }
 
+
+
                 </div>
 
                 {/* ====================== RIGHT SECTION (Dates & Checkboxes) ====================== */}
@@ -629,6 +632,12 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                 </div>
 
             </div>
+            {
+                isEditMode===true&&(
+                    <EquipmentRepairFormList control={control} errors={errors} />
+
+                )
+            }
         </form>
     );
 };

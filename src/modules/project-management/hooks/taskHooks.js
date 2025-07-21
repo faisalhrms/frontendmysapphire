@@ -345,7 +345,7 @@ export function useKanbanBoard({ filterPriority, searchQuery }) {
 export const useTaskDetailModal = () => {
   const [id, setId] = useState(null);
   const [isTaskDetailModalOpen, setIsTaskDetailModalOpen] = useState(false);
-
+  useBodyScrollLock(isTaskDetailModalOpen);
   const openTaskDetailModal = (id) => {
     setId(id);
     setIsTaskDetailModalOpen(true);

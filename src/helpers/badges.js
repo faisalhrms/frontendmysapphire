@@ -51,6 +51,7 @@ const badgeStyles = {
     open: info,
     not_started: info,
     on_hold: warning,
+    closed: danger,
 };
 
 const statusStyles = {
@@ -60,6 +61,7 @@ const statusStyles = {
     under_approval: txtSecondary,
     half_completed: txtPrimary,
     open: txtSecondary,
+    closed:txtDanger,
     not_started: txtSecondary,
     on_hold: txtDanger,
     completed: txtSuccess,

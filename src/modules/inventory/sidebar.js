@@ -13,7 +13,7 @@ export const sidebarMenu = [
         '',
         [
             generateSidebarItem(
-                INVENTORY_ROUTES.READ.path,
+                INVENTORY_ROUTES.HOME.path,
                 'link',
                 'Assets List',
                 1,
