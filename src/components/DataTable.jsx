@@ -5,8 +5,6 @@ import ExcelJS from 'exceljs';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
 import {useDataTable} from "@hooks/dataTableHooks.js";
-import {formatDate} from "@helpers/dateTime.js";
-
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
  * If any segment is missing/undefined, returns undefined.
@@ -512,6 +510,7 @@ const DataTable = React.memo(({
                 hiddenColumns: hiddenCols,
             },
             autoResetHiddenColumns: false,
+            getCellProps: (cell) => cell.column.getCellProps?.(cell) || {},
         },
         useSortBy,
         usePagination
@@ -620,11 +619,13 @@ const DataTable = React.memo(({
 
             try {
                 if (type === 'date') {
-                    return !val ? '' : formatDate(val, col?.excelFormat || 'yyyy-MM-dd');
+                    if (!val) return null;
+                    const [year, month, day] = val.split('T')[0].split('-').map(Number);
+                    return new Date(Date.UTC(year, month - 1, day));
                 }
 
                 if (type === 'datetime') {
-                    return !val ? '' : formatDate(val, col?.excelFormat || 'MMM dd, yyyy - HH:mm');
+                    return val ? new Date(val) : null;
                 }
 
                 if (type === 'boolean') {
@@ -1186,7 +1187,7 @@ const DataTable = React.memo(({
                                                     key={columnKey}
                                                     {...columnProps}
                                                     scope="col"
-                                                    className="text-start cursor-pointer select-none align-middle"
+                                                    className={`text-start cursor-pointer select-none align-middle ${column.headerClassName || ''}`}
                                                 >
                                                     <div className="inline-flex items-center">
                                                         <span>{column.render('Header')}</span>
@@ -1225,7 +1226,9 @@ const DataTable = React.memo(({
                             <tbody {...getTableBodyProps()}>
                             {tablePage.map((row) => {
                                 prepareRow(row);
+
                                 const {key: rowKey, ...rowProps} = row.getRowProps();
+
                                 return (
                                     <tr
                                         key={rowKey}
@@ -1233,9 +1236,18 @@ const DataTable = React.memo(({
                                         className="border-b border-defaultborder text-[0.6875rem]"
                                     >
                                         {row.cells.map((cell) => {
-                                            const {key: cellKey, ...cellProps} = cell.getCellProps();
+                                            const {key: cellKey, ...baseProps} = cell.getCellProps();
+
+                                            const customProps = cell.column.getCellProps
+                                                ? cell.column.getCellProps(cell)
+                                                : {};
+
                                             return (
-                                                <td key={cellKey} {...cellProps}>
+                                                <td
+                                                    key={cellKey}
+                                                    {...baseProps}
+                                                    {...customProps}
+                                                >
                                                     {cell.render('Cell')}
                                                 </td>
                                             );
@@ -1244,6 +1256,7 @@ const DataTable = React.memo(({
                                 );
                             })}
                             </tbody>
+
                         </table>
                     </div>
                 )}

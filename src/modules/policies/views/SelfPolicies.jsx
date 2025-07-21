@@ -5,9 +5,10 @@ import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import {FileText, Eye, Search, Calendar, User, Shield, Package} from "lucide-react";
 import {formatDate} from "@helpers/dateTime.js";
 import EmptyState from "@components/EmptyState.jsx";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const SelfPolicies = () => {
-    const { data: policies, loading } = useSelfPolicies();
+    const { data: policies, isLoading } = useSelfPolicies();
     const [modal, setModal] = useState({
         open:   false,
         fileId: null,
@@ -46,81 +47,85 @@ const SelfPolicies = () => {
                                 </div>
                             </div>
                         </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {filteredPolicies.map((policy) => (
-                                <div key={policy.id}
-                                     className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-                                    <div className="p-6">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex items-center space-x-3">
-                                                <div
-                                                    className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-lg">
-                                                    <FileText className="h-5 w-5 text-primary"/>
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-lg font-semibold text-gray-900">{policy.title}</h3>
-                                                    <p className="text-sm text-gray-500">
-                                                        {policy.attachment_ids?.length > 0 ? `${policy.attachment_ids.length} document${policy.attachment_ids.length !== 1 ? 's' : ''}` : 'No attachments'}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <p className="text-gray-600 text-sm mb-4">{policy.description}</p>
-
-                                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                                            <div className="flex items-center space-x-4">
-                                                {
-                                                    policy.updated_at &&
-                                                    <div className="flex items-center">
-                                                        <Calendar className="h-4 w-4 mr-1"/>
-                                                        <span>Updated {formatDate(policy.updated_at)}</span>
+                        {
+                            isLoading ?
+                            <LoadingSpinner /> :
+                                <>
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        {filteredPolicies.map((policy) => (
+                                            <div key={policy.id}
+                                                 className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                                                <div className="p-6">
+                                                    <div className="flex items-start justify-between mb-4">
+                                                        <div className="flex items-center space-x-3">
+                                                            <div
+                                                                className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-lg">
+                                                                <FileText className="h-5 w-5 text-primary"/>
+                                                            </div>
+                                                            <div>
+                                                                <h3 className="text-lg font-semibold text-gray-900">{policy.title}</h3>
+                                                                <p className="text-sm text-gray-500">
+                                                                    {policy.attachment_ids?.length > 0 ? `${policy.attachment_ids.length} document${policy.attachment_ids.length !== 1 ? 's' : ''}` : 'No attachments'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                }
-                                                <div className="flex items-center">
-                                                    <User className="h-4 w-4 mr-1"/>
-                                                    <span>Created {formatDate(policy.created_at)}</span>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-2">
+                                                    <p className="text-gray-600 text-sm mb-4">{policy.description}</p>
+
+                                                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                                                        <div className="flex items-center space-x-4">
+                                                            {
+                                                                policy.updated_at &&
+                                                                <div className="flex items-center">
+                                                                    <Calendar className="h-4 w-4 mr-1"/>
+                                                                    <span>Updated {formatDate(policy.updated_at)}</span>
+                                                                </div>
+                                                            }
+                                                            <div className="flex items-center">
+                                                                <User className="h-4 w-4 mr-1"/>
+                                                                <span>Created {formatDate(policy.created_at)}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center space-x-2">
                                         <span className="text-sm text-gray-500">
                                             {policy.attachment_ids?.length || 0} attachment{policy.attachment_ids?.length !== 1 ? 's' : ''}
                                         </span>
-                                            </div>
+                                                        </div>
 
-                                            <div className="flex space-x-2">
-                                                {policy.attachment_ids?.length > 0 && (
-                                                    <>
-                                                        {policy.attachment_ids.map((id) => (
-                                                            <button
-                                                                key={id}
-                                                                onClick={() => openModal(id)}
-                                                                className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                                            >
-                                                                <Eye className="h-3 w-3 mr-1"/>
-                                                                View
-                                                            </button>
-                                                        ))}
-                                                    </>
-                                                )}
+                                                        <div className="flex space-x-2">
+                                                            {policy.attachment_ids?.length > 0 && (
+                                                                <>
+                                                                    {policy.attachment_ids.map((id) => (
+                                                                        <button
+                                                                            key={id}
+                                                                            onClick={() => openModal(id)}
+                                                                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                                                        >
+                                                                            <Eye className="h-3 w-3 mr-1"/>
+                                                                            View
+                                                                        </button>
+                                                                    ))}
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {filteredPolicies.length === 0 && (
-                            <EmptyState
-                                icon={Shield}
-                                heading="No policies available"
-                                description="Try adjusting your search or filter criteria."
-                            />
-                        )}
+                                    {filteredPolicies.length === 0 && (
+                                        <EmptyState
+                                            icon={Shield}
+                                            heading="No policies available"
+                                            description="Try adjusting your search or filter criteria."
+                                        />
+                                    )}
+                                </>
+                        }
                     </div>
                 </div>
                     <PdfModalViewer
