@@ -443,29 +443,37 @@ const AdvancedFilters = ({ columns, filters, onFiltersChange, onApplyFilters, on
         </div>
     );
 };
-const DataTable = React.memo(({
-                                  columns,
-                                  apiUrl,
-                                  title = null,
-                                  buttons,
-                                  filter,
-                                  needHeader = true,
-                                  enableAdvancedFilters = false
-                              }) => {
+const DataTable = React.memo(React.forwardRef(({
+                                                   columns,
+                                                   apiUrl,
+                                                   title = null,
+                                                   buttons,
+                                                   filter,
+                                                   needHeader = true,
+                                                   enableAdvancedFilters = false,
+                                                   tableParentClass = '',
+                                                   tableClass = '',
+                                                   rowClassName = ''
+                                               }, ref) => {
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
     const {
         data,
         isLoading,
+        refetch,
         page,
         setPage,
         size,
         handleSearch,
         handleSizeChange,
         handleSortChange,
-        handleFilterChange, // Assuming this exists in your hook
+        handleFilterChange,
     } = useDataTable(apiUrl, 10, { ...filter, ...advancedFilters }, enableAdvancedFilters);
+
+    React.useImperativeHandle(ref, () => ({
+        refetch,
+    }));
 
     // Table rows and total count from server response
     const items = Array.isArray(data?.data?.rows) ? data.data?.rows : [];
@@ -1160,10 +1168,10 @@ const DataTable = React.memo(({
                 {isLoading ? (
                     <LoadingSpinner/>
                 ) : (
-                    <div className="table-responsive">
+                    <div className={`table-responsive ${tableParentClass}`}>
                         <table
                             {...getTableProps()}
-                            className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover"
+                            className={`table whitespace-nowrap table-hover min-w-full ti-custom-table-hover ${tableClass}`}
                         >
                             <thead>
                             {headerGroups.map((headerGroup) => {
@@ -1173,7 +1181,7 @@ const DataTable = React.memo(({
                                     <tr
                                         key={headerGroupKey}
                                         {...headerGroupProps}
-                                        className="border-b border-defaultborder"
+                                        className={`border-b border-defaultborder ${rowClassName || ''}`}
                                     >
                                         {headerGroup.headers.map((column) => {
                                             const {key: columnKey, ...columnProps} = column.getHeaderProps(
@@ -1273,7 +1281,7 @@ const DataTable = React.memo(({
             </div>
         </div>
     );
-});
+}));
 
 DataTable.propTypes = {
     columns: PropTypes.array.isRequired,

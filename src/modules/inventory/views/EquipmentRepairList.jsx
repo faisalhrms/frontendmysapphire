@@ -4,7 +4,8 @@ import { formatAmountWithCommas, toTitleCase } from "@helpers/formatters.js";
 import EquipmentRepairFormWrapper from "@modules/inventory/models/components/EquipmentRepairFormWrapper.jsx";
 import {getBadgeClasses} from "@helpers/badges.js"; // ✅ Import wrapper
 
-const EquipmentRepairList = () => {
+const EquipmentRepairList = ({ isActive }) => {
+    if (!isActive) return null;
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedRepairId, setSelectedRepairId] = useState(null);
 

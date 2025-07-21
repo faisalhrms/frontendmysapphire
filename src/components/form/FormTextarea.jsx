@@ -2,16 +2,19 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import ErrorMessage from '@components/form/ErrorMessage.jsx';
 
-const FormTextarea = ({ name, control, errors, placeholder, labelText = placeholder, rows = 2, className = "", is_required=false, ...rest }) => {
+const FormTextarea = ({ name, control, errors, placeholder, labelText = placeholder, rows = 2, className = "", is_required=false, needLabel = true, ...rest }) => {
     return (
         <>
-            <label htmlFor={name} className="form-label">{labelText}
-                {is_required && <span className="text-rose-500 pl-1"> *</span>}
-            </label>
+            {
+                needLabel &&
+                <label htmlFor={name} className="form-label">{labelText}
+                    {is_required && <span className="text-rose-500 pl-1"> *</span>}
+                </label>
+            }
             <Controller
                 name={name}
                 control={control}
-                render={({ field }) => (
+                render={({field}) => (
                     <textarea
                         {...field}
                         value={field.value ?? ''}

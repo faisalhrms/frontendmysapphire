@@ -12,7 +12,8 @@ import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 import { HardDrive, Wrench } from "lucide-react";
 
-const EquipmentList = () => {
+const EquipmentList = ({ isActive }) => {
+    if (!isActive) return null;
     const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
     const [showRepairForm, setShowRepairForm] = useState(false);
     const [showRepairList, setShowRepairList] = useState(false);
