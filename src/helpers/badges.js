@@ -107,4 +107,11 @@ export const getStatusClasses = (text) => {
     return `  ${style}`.trim();
 }
 
+export const getTdClasses = (text, extraClasses = '') => {
+    if (!text) return extraClasses.trim();
+    const normalizedText = text.toLowerCase();
+    const style = badgeStyles[normalizedText] || notFound;
+    return `${extraClasses} ${style}`.trim();
+};
+
 

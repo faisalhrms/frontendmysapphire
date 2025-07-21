@@ -252,7 +252,6 @@ const TaskList = () => {
 
     return (
         <>
-
             <IconPageHeader
                 heading="Task List"
                 description="View and manage all project tasks in a tabular view"
@@ -272,6 +271,7 @@ const TaskList = () => {
                     task={task}
                     isLoading={isTaskDetailLoading}
                     closeModal={closeTaskDetailModal}
+                    viewOnly={false}
                 />
             }
             <div id="modal-root"></div>

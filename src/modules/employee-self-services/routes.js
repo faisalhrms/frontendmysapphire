@@ -35,7 +35,7 @@ export const SELF_SERVICES_ROUTES = {
         },
         POLICIES:{
             path: '/module/ess/policies',
-            permission: 'user.view_ess_modules',
+            permission:'auth.view_public_policies'
         }
 
     }

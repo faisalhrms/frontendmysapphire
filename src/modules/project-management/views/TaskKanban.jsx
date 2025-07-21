@@ -59,7 +59,7 @@ const TaskKanban = () => {
             </div>
             {isLoading ? (
                 <div className="text-center mt-4">
-                    <LoadingSpinner />
+                    <LoadingSpinner/>
                 </div>
             ) : (
                 <div className="ynex-kanban-board text-defaulttextcolor dark:text-defaulttextcolor/70 text-defaultsize">
@@ -80,6 +80,7 @@ const TaskKanban = () => {
                     </div>
                 </div>
             )}
+            <div id="modal-root"></div>
         </>
     );
 };

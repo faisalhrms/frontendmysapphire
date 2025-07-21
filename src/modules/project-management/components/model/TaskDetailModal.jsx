@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {getExcerptFromText, toTitleCase} from "@helpers/formatters.js";
 import {formatDate} from "@helpers/dateTime.js";
 import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
@@ -11,19 +11,10 @@ import {Link} from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import Tooltip from "@components/Tooltip.jsx";
-import {generateFile} from "@helpers/media.js";
 import TaskActivityLog from "@modules/project-management/components/task/TaskActivityLog.jsx";
+import TaskDetailAttachments from "@modules/project-management/components/task/TaskDetailAttachments.jsx";
 
-const TaskDetailModal = ({ task, isLoading, closeModal }) => {
-    const formatFileSize = (bytes) => {
-        if (!bytes) return '0 Bytes';
-
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };
+const TaskDetailModal = ({ task, isLoading, closeModal, viewOnly = true }) => {
     return (
         <div
             id="taskDetailModal"
@@ -197,7 +188,7 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     to="#" id="attachment-item" data-hs-tab="#attachment"
                                                     aria-controls="attachment">
                                                     <i className="ri-attachment-2 text-lg"></i>
-                                                    Attachments
+                                                    Attachments ({task.attachments?.length || 0})
                                                 </Link>
                                                 <Link
                                                     className="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary"
@@ -217,80 +208,19 @@ const TaskDetailModal = ({ task, isLoading, closeModal }) => {
                                                     storeEndPoint={`/pms/tasks/${task?.id}/discussion/`}
                                                     getEndPoint={`/pms/tasks/${task?.id}/discussions/`}
                                                     users={task?.users}
-                                                    maxHeight='max-h-[calc(100vh-35rem)] '
+                                                    maxHeight='max-h-[calc(100vh-35rem)]'
                                                 />
                                             </div>
-                                            <div id="attachment" className="hidden" role="tabpanel"
-                                                 aria-labelledby="attachment-item">
-                                                <div
-                                                    className="h-full rounded-lg overflow-hidden dark:text-gray-200 dark:bg-bodybg">
-                                                    {task.attachments.length === 0 ? (
-                                                        <div
-                                                            className="flex flex-col items-center justify-center h-[calc(100%-60px)] rounded-lg overflow-hidden p-8">
-                                                            <img
-                                                                src="https://cdn.monday.com/images/files-gallery/empty-state-v2.svg"
-                                                                alt="No files"
-                                                                className="w-48 h-auto mb-6"
-                                                            />
-                                                            <p className="font-bold text-gray-700">There is No File
-                                                                Available</p>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="p-4">
-
-                                                            <div className="space-y-3">
-                                                                <PerfectScrollbar
-                                                                    className='max-h-[calc(100vh-15rem)] ps--active-y'
-                                                                >
-                                                                    {task.attachments.map((attachment) => (
-                                                                        <div
-                                                                            key={attachment.id}
-                                                                            className="flex items-center bg-white rounded-lg border border-gray-200 shadow-sm p-4 hover:shadow-md transition-all mb-4 dark:text-gray-200 dark:bg-bodybg"
-                                                                        >
-                                                                            <div className="flex-shrink-0">
-                                                                                <div
-                                                                                    className="w-12 h-12 flex items-center justify-center"
-                                                                                    dangerouslySetInnerHTML={{__html: generateFile(attachment)}}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="flex-1 min-w-0 px-4">
-                                                                                <p className="text-sm font-medium text-gray-900 truncate">
-                                                                                    {attachment.file_name}
-                                                                                    {attachment.file_extension && `.${attachment.file_extension}`}
-                                                                                </p>
-                                                                                <div
-                                                                                    className="text-xs text-gray-400 mt-1">
-                                                                                    <span>{formatFileSize(attachment.file_size)}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div
-                                                                                className="flex items-center space-x-2">
-                                                                                <a
-                                                                                    href={attachment.file_url}
-                                                                                    target="_blank"
-                                                                                    rel="noopener noreferrer"
-                                                                                    className="ti-btn ti-btn-info ti-btn-sm"
-                                                                                    title="View / Download"
-                                                                                >
-                                                                                    <i className="ri-eye-line"/>
-                                                                                </a>
-                                                                            </div>
-                                                                        </div>
-                                                                    ))}
-
-                                                                </PerfectScrollbar>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                            <div id="attachment" className="hidden" role="tabpanel" aria-labelledby="attachment-item">
+                                                <TaskDetailAttachments task={task} viewOnly={viewOnly} />
                                             </div>
                                             <div id="activitiy" className="hidden" role="tabpanel" aria-labelledby="activity-item">
-                                                        <div className="p-4">
-                                                            <div className="space-y-3">
-                                                                <PerfectScrollbar className='max-h-[calc(100vh-15rem)] ps--active-y'>
-                                                                    <TaskActivityLog id={task.id} />
-                                                                </PerfectScrollbar>
-                                                        </div>
+                                                <div className="p-4">
+                                                    <div className="space-y-3">
+                                                        <PerfectScrollbar className='max-h-[calc(100vh-15rem)] ps--active-y'>
+                                                            <TaskActivityLog id={task.id} />
+                                                        </PerfectScrollbar>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

@@ -1,10 +1,8 @@
-// TaskKanbanList.jsx
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import TaskKanbanCard from '@modules/project-management/components/task/TaskKanbanCard.jsx';
 import mediaSvg from '@assets/images/media/media-83.svg';
 import { toTitleCase } from '@helpers/formatters.js';
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 
 const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoading, hasMoreTasks }) => {
@@ -47,6 +45,7 @@ const TaskKanbanList = ({ status, tasks, loadMore, totalCount, refetch, isLoadin
                 </div>
             )}
         </div>
+
     );
 };
 
