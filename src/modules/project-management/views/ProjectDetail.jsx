@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import ProjectSummary from "@modules/project-management/components/project/ProjectSummary.jsx";
 import ProjectAdditionalDetail from "@modules/project-management/components/project/ProjectAdditionalDetail.jsx";
 import ProjectAttachment from "@modules/project-management/components/project/ProjectAttachment.jsx";
@@ -12,6 +11,8 @@ import UploadModal from "@modules/project-management/components/model/UploadModa
 import IconTabs from "@components/IconTabs.jsx";
 import ProjectActivityLog from "@modules/project-management/components/project/ProjectActivityLog.jsx";
 import ProjectOverviewTab from "@modules/project-management/components/project/ProjectOverviewTab.jsx";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import { FolderKanban } from "lucide-react";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -45,10 +46,10 @@ const ProjectDetail = () => {
 
   return (
       <>
-        <PageHeader
-            currentpage={`Project Detail`}
-            activepage="Projects"
-            mainpage={projectData ? projectData.project_no : "PRJ - 00000000"}
+        <IconPageHeader
+            heading={projectData ? projectData.name : "Loading Project..."}
+            description="Overview of the project details, milestones, and tasks."
+            icon={FolderKanban}
         />
         {projectData && (
             <div className="col-span-12 lg:col-span-9 xl:col-span-9 sm:col-span-9 2xl:col-span-8 min-h-screen">
@@ -93,7 +94,6 @@ const ProjectDetail = () => {
                               <div className="rounded-lg">
                                 <ProjectTeam users={projectData.users}/>
                               </div>
-                              {projectData.attachments.length > 0 && (
                                   <div className="rounded-lg">
                                     <ProjectAttachment
                                         attachments={projectData.attachments}
@@ -101,7 +101,6 @@ const ProjectDetail = () => {
                                         projectUsers={projectData.users}
                                     />
                                   </div>
-                              )}
                             </div>
                           </div>
                       ),
