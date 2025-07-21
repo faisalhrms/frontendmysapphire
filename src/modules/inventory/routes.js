@@ -7,8 +7,13 @@ import EquipmentReportList from '@modules/inventory/views/EquipmentReportList.js
 import EquipmentSiteWiseReport from '@modules/inventory/views/EquipmentSiteWiseReport.jsx';
 import ReAssignEquipment from '@modules/inventory/views/ReAssignEquipment.jsx';
 import EquipmentHistory from '@modules/inventory/views/EquipmentHistory.jsx';
+import Equipment from "@modules/inventory/views/Equipment.jsx";
 
 export const INVENTORY_ROUTES = {
+    HOME: {
+        path: '/module/asset/home',
+        permission: 'inventory.view_equipment',
+    },
     READ: {
         path: '/module/asset',
         permission: 'inventory.view_equipment',
@@ -51,6 +56,11 @@ export const INVENTORY_ROUTES = {
 };
 
 export const MODULE_ROUTES = [
+    {
+        path: INVENTORY_ROUTES.HOME.path,
+        component: Equipment,
+        permission: INVENTORY_ROUTES.HOME.permission,
+    },
     {
         path: INVENTORY_ROUTES.READ.path,
         component: EquipmentList,

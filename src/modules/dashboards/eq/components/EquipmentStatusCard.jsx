@@ -49,7 +49,7 @@ const EquipmentStatusCard = ({ item, currentFilters }) => {
             if (value && key !== 'status') params.set(key, value);
         });
 
-        navigate(`/module/asset?${params.toString()}`);
+        navigate(`/module/asset/home?${params.toString()}`);
     };
 
     return (
