@@ -67,12 +67,18 @@ const RoadmapFilter = ({ control, errors = {}, selectedBU, labelCerts = [] }) =>
             {labelCerts.length > 0 && (
               <div className="flex items-center space-x-2 ml-8 flex-none">
                 {labelCerts.map(cert => (
-                  <span key={cert.id} className="avatar avatar-rounded avatar-lg transition-transform duration-150 hover:scale-110">
-                    <img src={cert.media.medium_url} alt={cert.name} title={cert.name} />
+                  <span key={cert.id} className="flex-shrink-0 transition-transform duration-150 hover:scale-110">
+                    <img
+                      src={cert.media.medium_url}
+                      alt={cert.name}
+                      title={cert.name}
+                      className="h-12 w-auto object-contain"
+                    />
                   </span>
                 ))}
               </div>
             )}
+
           </div>
         </div>
       </div>
