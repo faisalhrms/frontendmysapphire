@@ -44,6 +44,11 @@ const TaskList = () => {
             filterable: true,
             filterKey: 'milestone__project__name',
             excelAlignment: 'left',
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `!text-left`,
+                }
+            },
             Cell: ({row}) => {
                 const project = row.original.project;
                 return (
@@ -71,7 +76,12 @@ const TaskList = () => {
             excelAlignment: 'left',
             Cell: ({value}) => (
                 <p className=''>{value.length>20?value.slice(0,20)+"...":value}</p>
-            )
+            ),
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `!text-left`,
+                }
+            },
         },
         {
             Header: "Task",
@@ -88,12 +98,17 @@ const TaskList = () => {
                     >
                         <Link
                             onClick={() => {openTaskDetailModal(task.id)}}
-                            to="#">
+                            to="#" className='font-semibold'>
 
                             {task.name.length>20?task.name.slice(0, 20) + "...":task.name}
                         </Link>
                     </Tooltip>
                 )
+            },
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `!text-left`,
+                }
             },
         },
         {
