@@ -3,6 +3,7 @@ import ExecutiveTabs from "@modules/ecom/views/ExecutiveTabs.jsx";
 import DigitalSpent from "@modules/ecom/views/DigitalSpent.jsx";
 import InventoryRecon from "@modules/ecom/views/InventoryRecon.jsx";
 import EcomWeeklyReport from "@modules/ecom/views/EcomWeeklyReport.jsx";
+import PendingLiabilities from "@modules/ecom/views/PendingLiabilities.jsx";
 
 export const ECOM_ROUTES = {
     // READ: {
@@ -28,6 +29,10 @@ export const ECOM_ROUTES = {
     WR:{
         path: '/module/ecom/weekly-report',
         permission: 'auth.ecom_weekly_report',
+    },
+    PL:{
+        path: '/module/ecom/pending-liabilities',
+        permission: 'auth.ecom_salesforce_dashboard',
     }
 };
 
@@ -61,6 +66,11 @@ export const MODULE_ROUTES = [
         path: ECOM_ROUTES.WR.path,
         component: EcomWeeklyReport,
         permission: ECOM_ROUTES.WR.permission,
+    },
+    {
+        path: ECOM_ROUTES.PL.path,
+        component: PendingLiabilities,
+        permission: ECOM_ROUTES.PL.permission,
     }
 
 ];

@@ -7,6 +7,8 @@ import Avatar from "@components/Avatar.jsx";
 import QRCode from "qrcode";
 import {QRCodeCanvas} from "qrcode.react";
 import {Link} from "react-router-dom";
+import { FilePlus } from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const DatatableDynamicForm = () => {
 
@@ -189,12 +191,17 @@ const DatatableDynamicForm = () => {
 
     return (
         <>
-            <PageHeader currentpage="Dynamic Form List" activepage="Dynamic Form" mainpage="List"/>
+            <IconPageHeader
+                heading="Dynamic Form List"
+                description="View and manage dynamically generated forms"
+                icon={FilePlus}
+            />
             <DataTable
                 columns={columns}
                 title="Forms"
                 apiUrl="/forms/datatable/"
                 enableAdvancedFilters={true}
+                needHeader={false}
             />
             {qrModalOpen && modalData && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

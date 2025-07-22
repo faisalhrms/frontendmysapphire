@@ -43,6 +43,7 @@ const badgeStyles = {
     completion: success,
     overdue: danger,
     in_progress: info,
+    available_in_inventory:success,
     reopened: danger,
     near_completion: warning,
     under_approval: secondary,
@@ -50,6 +51,7 @@ const badgeStyles = {
     open: info,
     not_started: info,
     on_hold: warning,
+    closed: danger,
 };
 
 const statusStyles = {
@@ -59,6 +61,7 @@ const statusStyles = {
     under_approval: txtSecondary,
     half_completed: txtPrimary,
     open: txtSecondary,
+    closed:txtDanger,
     not_started: txtSecondary,
     on_hold: txtDanger,
     completed: txtSuccess,
@@ -82,6 +85,7 @@ const statusStyles = {
     sold_to_employee: txtSuccess,
     write_off: txtDanger,
     temporary_allocation:  warning,
+    available_in_inventory:txtSuccess,
     high: txtDanger,
     low: txtSuccess,
     medium: txtWarning,
@@ -102,5 +106,12 @@ export const getStatusClasses = (text) => {
     const style = statusStyles[normalizedText] || notFound;
     return `  ${style}`.trim();
 }
+
+export const getTdClasses = (text, extraClasses = '') => {
+    if (!text) return extraClasses.trim();
+    const normalizedText = text.toLowerCase();
+    const style = badgeStyles[normalizedText] || notFound;
+    return `${extraClasses} ${style}`.trim();
+};
 
 

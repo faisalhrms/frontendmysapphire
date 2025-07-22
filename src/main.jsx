@@ -17,6 +17,7 @@ import ForgotPassView from "@modules/auth/views/ForgotPassView.jsx";
 import VCardProfile from "@modules/digital-profiles/views/VCardProfile.jsx";
 import ResetPassView from "@modules/auth/views/ResetPassView.jsx";
 import PublicDynamicForm from "@modules/forms/views/PublicDynamicForm.jsx";
+import PrivacyPolicy from "@modules/forms/views/PrivacyPolicy.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -71,6 +72,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="vcard/profile/:id" element={<VCardProfile />} />
                             <Route path="resetpassword/:uidb64/:token" element={<ForgotPassView />} />
                             <Route path="forms/:slug" element={<PublicDynamicForm />} />
+                            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
                         </Route>
 
                         <Route path={`${import.meta.env.BASE_URL}/error/:code`} element={<Error/>}/>

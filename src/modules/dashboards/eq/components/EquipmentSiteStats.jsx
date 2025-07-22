@@ -1,115 +1,104 @@
-// src/modules/dashboards/equipment/components/EquipmentSiteStats.jsx
-
 import React, { useMemo } from "react";
 import ApexChart from "@components/charts/ApexChart.jsx";
-import { getFormattedColor } from "@helpers/styles.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 
-const EquipmentSiteStats = ({ equipmentsBySite, statsFetching }) => {
-    const validData = useMemo(() =>
-            equipmentsBySite.filter(item => item.count > 0),
-        [equipmentsBySite]
-    );
+const EquipmentSiteStats = ({ filters }) => {
+    const { data: items, isLoading } = useFetchWithFilters("/dashboard/equipment/site-stats/", filters);
 
-    // Extract site names and equipment counts
-    const categories = useMemo(
-        () => validData.map(item => item.equipment_site?.name || 'No Site'),
-        [validData]
-    );
+    const siteLabels = useMemo(() => {
+        if (!Array.isArray(items)) return [];
+        return items.map(item => item.equipment_site?.name || 'No Site');
+    }, [items]);
 
-    const series = useMemo(
-        () => [
-            {
-                name: 'Assets',
-                data: validData.map(item => item.count)
-            }
-        ],
-        [validData]
-    );
+    const siteCounts = useMemo(() => {
+        if (!Array.isArray(items)) return [];
+        return items.map(item => item.count);
+    }, [items]);
 
-    // Define an array of existing colorPalette keys to cycle through
-    const colorKeys = ["primary", "secondary", "success", "danger", "warning", "info", "gray", "purple", "orange"];
+    if (isLoading) return <LoadingSpinner />;
+    if (!Array.isArray(items) || !items.length) return<div className="box p-4">
+        <div className="box-header mb-1">
+            <div className="box-title text-base font-semibold">Assets by Site</div>
+        </div>
+        <div className="text-center py-10 text-gray-500">No site data available</div>
+    </div>
 
-    // Assign colors based on the index, cycling through colorKeys
-    const colors = useMemo(() => {
-        return categories.map((_, index) => {
-            const colorKey = colorKeys[index % colorKeys.length];
-            return getFormattedColor(colorKey);
-        });
-    }, [categories, colorKeys]);
-
-    // Configure chart options
-    const chartOptions = useMemo(() => ({
-        chart: {
-            type: 'bar',
-            height: 355,
-            toolbar: { show: false },
-        },
-        xaxis: {
-            categories: categories,
-            title: {
-                text: 'Site',
-            },
-            labels: {
-                rotate: -45, // Rotate labels for better readability
-                style: {
-                    fontSize: '12px',
-                },
-            },
-        },
-        yaxis: {
-            title: {
-                text: 'Number of Equipments',
-            },
-        },
-        colors: colors,
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '80%',
-            },
-        },
-        dataLabels: {
-            enabled: false,
-        },
-        grid: {
-            show: true,
-            borderColor: '#f2f5f7',
-        },
-        legend: {
-            position: 'top'
-        },
-        tooltip: {
-            y: {
-                formatter: function (val) {
-                    return val;
-                }
-            }
-        }
-    }), [categories, colors]);
 
     return (
-        <div className="box">
-            <div className="box-header justify-between">
-                <div className="box-title">Assets by Site</div>
-            </div>
-            <div className="box-body">
-                {statsFetching ? (
-                    <LoadingSpinner />
-                ) : (
-                    <div className="p-6 pb-2">
+        <div className="col-span-6">
+            <div className="box p-3">
+                <div className="box-header mb-1">
+                    <div className="box-title text-base font-semibold">Assets by Site</div>
+                </div>
+                <div className="box-body !p-0">
+                    <div className="p-2 min-w-[600px] overflow-x-auto">
                         <ApexChart
-                            categories={categories}
-                            options={chartOptions}
-                            series={series}
-                            type="bar"
-                            height={355}
-                            baseWidthPerCategory={190}
+                            chartType="bar"
+                            height={400}
+                            columnWidth="35%" // ✅ wider spacing
+                            baseWidthPerCategory={160} // ✅ enables scroll for long lists
+                            chartWidth={Math.max(600, siteLabels.length * 160)} // ✅ dynamic chart width
+                            labels={siteLabels}
+                            categories={siteLabels}
+                            colors={['#FACC15']} // yellow
+                            series={[{
+                                name: 'Assets',
+                                data: siteCounts
+                            }]}
+                            additionalOptions={{
+                                legend: {position: 'top'},
+                                dataLabels: {
+                                    enabled: true,
+                                    formatter: val => val > 0 ? `${val.toLocaleString()}` : '',
+                                    offsetY: -20,
+                                    style: {
+                                        fontSize: '11px',
+                                        colors: ['#000']
+                                    }
+                                },
+                                plotOptions: {
+                                    bar: {
+                                        horizontal: false,
+                                        columnWidth: '35%', // ✅ match gap
+                                        borderRadius: 4,
+                                        dataLabels: {
+                                            position: 'top',
+                                            hideOverflowingLabels: false
+                                        }
+                                    }
+                                },
+                                xaxis: {
+                                    categories: siteLabels,
+                                    title: {text: 'Sites'},
+                                    labels: {
+                                        rotate: 0, // ✅ straight, no angle
+                                        trim: false,
+                                        style: {
+                                            fontSize: '12px',
+                                            whiteSpace: 'normal',
+                                            wordBreak: 'break-word',
+                                            lineHeight: '1.1rem',
+                                            maxWidth: 120 // ✅ wrap properly
+                                        }
+                                    }
+                                },
+                                yaxis: {
+                                    title: {text: 'Number of Equipments'},
+                                    tickAmount: 6
+                                },
+                                chart: {toolbar: {show: false}},
+                                grid: {
+                                    borderColor: '#f1f1f1',
+                                    strokeDashArray: 4
+                                }
+                            }}
                         />
                     </div>
-                )}
+                </div>
             </div>
         </div>
+
     );
 };
 

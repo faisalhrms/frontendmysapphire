@@ -11,7 +11,7 @@ import { formatDate } from "@helpers/dateTime.js";
 import { useHasPermission } from "@modules/auth/hooks/authHooks.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-const CustomerAssistList = ({ data,isLoading,url,isActive }) => {
+const CustomerAssistList = ({ isLoading,url,isActive }) => {
     if (!isActive) {
         return null
     }
@@ -128,10 +128,9 @@ const CustomerAssistList = ({ data,isLoading,url,isActive }) => {
         <>
             <DataTable
                 columns={columns}
-                title="Customer Assist Cases"
+                title="Customer Assist Resolved Cases"
                 apiUrl={url}
                 enableAdvancedFilters={true}
-                // If DataTable accepts a refetch prop, you can pass refetch from parent.
             />
         </>
     );

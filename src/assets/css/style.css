@@ -156,6 +156,8 @@ Background Image
   --github:	51 51 51;
   --google:	207 78 67;
   --youtube:	255 0 0;
+  --whatsapp: 37 211 102;
+  --telegram: 0 136 204;
 }
 
 /* dark mode */
@@ -9544,6 +9546,50 @@ input.gridjs-input {
   @apply bg-youtube text-white border border-solid border-youtube !important;
 }
 
+
+.ti-btn-whatsapp {
+  @apply text-white border border-solid;
+  background-color: rgb(var(--whatsapp));
+  border-color: rgb(var(--whatsapp));
+}
+
+.ti-btn-whatsapp:hover,
+.ti-btn-whatsapp:focus,
+.ti-btn-whatsapp:active {
+  background-color: rgb(var(--whatsapp)) !important;
+  border-color: rgb(var(--whatsapp)) !important;
+  color: white !important;
+}
+
+.ti-btn-telegram {
+  @apply text-white border border-solid;
+  background-color: rgb(var(--telegram));
+  border-color: rgb(var(--telegram));
+}
+
+.ti-btn-telegram:hover,
+.ti-btn-telegram:focus,
+.ti-btn-telegram:active {
+  background-color: rgb(var(--telegram)) !important;
+  border-color: rgb(var(--telegram)) !important;
+  color: white !important;
+}
+
+.ti-btn-website {
+  @apply text-white border border-solid;
+  background-color: rgb(var(--gray));
+  border-color: rgb(var(--gray));
+}
+
+.ti-btn-website:hover,
+.ti-btn-website:focus,
+.ti-btn-website:active {
+  background-color: rgb(var(--gray)) !important;
+  border-color: rgb(var(--gray)) !important;
+  color: white !important;
+}
+
+
 .ti-btn-instagram {
   @apply bg-[#f09433] text-white border border-solid border-transparent;
   background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
@@ -13863,3 +13909,21 @@ input[type=color i]::-webkit-color-swatch {
   background-color: rgb(17 28 67 / var(--tw-bg-opacity, 1));
   color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.57);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+

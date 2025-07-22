@@ -37,7 +37,7 @@ const OnlineDate = ({control, errors, clearFilter, filters , activeTab , expand 
 
                                 <FormInput
                                     type="date"
-                                    name="date_to"
+                                    name="p_date"
                                     control={control}
                                     errors={errors}
                                     defaultValue={filters.date_to}

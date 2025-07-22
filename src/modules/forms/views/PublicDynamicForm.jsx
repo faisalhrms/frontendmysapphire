@@ -9,15 +9,52 @@ import { getMarketingMetadata } from "@helpers/helper.js";
 import PublicDynamicFormHeader from "@modules/forms/components/PublicDynamicFormHeader.jsx";
 import { useIsAuthenticated } from "@modules/auth/hooks/authHooks.js";
 import MathCaptcha from "@components/mathcaptcha/MathCaptcha.jsx";
-
+import {getDynamicButtonStyle, hexToRgb} from "@helpers/styles.js";
+import PhoneInputForDynamicForm, { COUNTRIES } from "@modules/forms/components/PhoneInputForDynamicForm.jsx";
+import PrivacyPolicyPopup from "@components/PrivacyPolicyPopup.jsx";
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
+const validatePhoneNumber = (value, field) => {
+    if (!value) {
+        return field.required ? "Phone number is required" : true;
+    }
+    const parts = value.split(' ');
+    if (parts.length < 2) {
+        return "Invalid phone number format";
+    }
+    const dialCode = parts[0];
+    const number = parts.slice(1).join('').replace(/\D/g, '');
+    const country = COUNTRIES.find(c => c.dialCode === dialCode);
+    if (!country) {
+        return "Invalid country code";
+    }
+    if (!country.pattern.test(number) || number.length > country.maxLength) {
+        return `Invalid phone number for ${country.name}`;
+    }
+    return true;
+};
+const loadFontFamily = (fontFamily) => {
+    const fontName = fontFamily.split(',')[0].trim().replace(/['"]/g, '');
+    const googleFontName = fontName.replace(/\s+/g, '+');
 
+    if (!document.querySelector(`link[href*="${googleFontName}"]`)) {
+        const link = document.createElement('link');
+        link.href = `https://fonts.googleapis.com/css2?family=${googleFontName}&display=swap`;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+    }
+};
 const createFormSchema = (fields) => {
     const schemaObject = {};
     fields.forEach((step) => {
         step.fields.forEach((field) => {
             let fieldSchema;
             switch (field.field_type) {
+                case "tel":
+                    fieldSchema = z.string().refine(
+                        (value) => validatePhoneNumber(value, field) === true,
+                        (value) => ({ message: validatePhoneNumber(value, field) })
+                    );
+                    break;
                 case "checkbox":
                     fieldSchema = z.array(z.string());
                     if (field.required) {
@@ -110,12 +147,16 @@ export default function PublicDynamicForm() {
     const [captchaVerified, setCaptchaVerified] = useState(false);
     const [isCaptchaTriggered, setIsCaptchaTriggered] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
     const pendingFormData = useRef(null);
-
+    const [primaryColor, setPrimaryColor] = useState('#');
+    const [fontFamily, setFontFamily] = useState(null);
+    const [hexPrimaryColor, setHexPrimaryColor] = useState(null);
     const { location } = useGeoLocation();
     const isAuthenticated = useIsAuthenticated();
+    const { defaultStyle, hoverStyle } = getDynamicButtonStyle(primaryColor, true);
 
     const navigate = useNavigate();
 
@@ -140,9 +181,19 @@ export default function PublicDynamicForm() {
                 }
 
                 setFormConfig(formData);
+                setPrimaryColor(formData?.primary_color)
+                setHexPrimaryColor(hexToRgb(formData?.primary_color))
+                setFontFamily(formData?.font_family)
             })
             .catch((error) => setError(error.message));
     }, [slug, isAuthenticated, navigate]);
+
+    useEffect(() => {
+        if (formConfig?.font_family) {
+            loadFontFamily(formConfig.font_family);
+        }
+    }, [formConfig?.font_family]);
+
 
     const getDefaultValues = (config) => {
         if (!formConfig) return {};
@@ -180,7 +231,7 @@ export default function PublicDynamicForm() {
     const {
         control,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors },
         reset,
         trigger,
         setValue,
@@ -192,7 +243,6 @@ export default function PublicDynamicForm() {
         },
         mode: "onChange",
     });
-
     useEffect(() => {
         if (formConfig) {
             reset(getDefaultValues(formConfig));
@@ -213,7 +263,8 @@ export default function PublicDynamicForm() {
                     <PublicDynamicFormHeader
                         description={error}
                         type="danger"
-                        border="border-danger"
+                        color="#e6533c"
+                        fontFamily={fontFamily}
                     />
                 </div>
             </div>
@@ -228,6 +279,7 @@ export default function PublicDynamicForm() {
 
     const onSubmit = async (formData) => {
         try {
+            setIsSubmitting(true);
             const metadata = getMarketingMetadata();
             const { latitude, longitude, ...data } = formData;
             const payload = new FormData();
@@ -245,7 +297,8 @@ export default function PublicDynamicForm() {
                 if (field.field_type === "file" && value instanceof File) {
                     payload.append(`data[${fieldName}]`, value);
                 } else if (value !== null && value !== undefined) {
-                    payload.append(`data[${fieldName}]`, JSON.stringify(value));
+                    const cleanedValue = field.field_type === "tel" ? value.replace(/\s+/g, '') : value;
+                    payload.append(`data[${fieldName}]`, JSON.stringify(cleanedValue));
                 }
             });
 
@@ -263,6 +316,9 @@ export default function PublicDynamicForm() {
         } catch (err) {
             console.error("Submission error:", err);
             alert("Failed to submit form: " + err.message);
+        }
+        finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -316,11 +372,6 @@ export default function PublicDynamicForm() {
         }
     };
 
-    const handleCaptchaClose = () => {
-        setIsCaptchaTriggered(false);
-        // Form data remains stored in pendingFormData
-    };
-
     const handleBack = () => {
         setCurrentStep((prev) => Math.max(prev - 1, 0));
     };
@@ -341,7 +392,7 @@ export default function PublicDynamicForm() {
         if (field.field_type === "hidden") return null;
 
         const commonInputClass = `w-full max-w-md px-0 py-2 border-0 border-b-2 ${
-            errors[fieldName] ? "border-danger focus:border-danger" : "border-gray-300 focus:border-[#673ab7]"
+            errors[fieldName] ? "border-danger focus:border-danger" : "border-gray-300 focus:border-[var(--primary)]"
         } focus:outline-none bg-transparent text-sm placeholder-gray-400 transition-colors duration-200`;
 
         const errorMessage = errors[fieldName] && (
@@ -362,6 +413,12 @@ export default function PublicDynamicForm() {
                 className={`bg-white rounded-lg border ${
                     errors[fieldName] ? "border-danger" : "border-gray-200"
                 } p-6`}
+                style={{
+                    "--primary": hexPrimaryColor,
+                    "--tw-ring-color": primaryColor,
+                    "--secondary": primaryColor,
+                    ...(errors[fieldName] ? {} : { "--default-border": hexPrimaryColor }),
+                }}
             >
                 <label className="block text-sm font-normal text-gray-700 mb-1 line-height-1">
                     {field.label} {field.required && <span className="text-danger">*</span>}
@@ -380,11 +437,18 @@ export default function PublicDynamicForm() {
                     render={({ field: controllerField }) => {
                         const safeValue = controllerField.value ?? "";
                         switch (field.field_type) {
+                            case "tel":
+                                return (
+                                    <PhoneInputForDynamicForm
+                                        value={safeValue}
+                                        onChange={controllerField.onChange}
+                                        hasError={!!errors[fieldName]}
+                                    />
+                                );
                             case "text":
                             case "email":
                             case "password":
                             case "url":
-                            case "tel":
                             case "number":
                             case "date":
                             case "datetime-local":
@@ -411,7 +475,7 @@ export default function PublicDynamicForm() {
                                         placeholder="Your answer"
                                         rows={3}
                                         className={`w-full px-0 py-2 border-0 border-b-2 ${
-                                            errors[fieldName] ? "border-danger focus:border-danger" : "border-gray-300 focus:border-[#673ab7]"
+                                            errors[fieldName] ? "border-danger focus:border-danger" : `border-gray-300 focus:border-[var(--primary)]`
                                         } focus:outline-none bg-transparent text-sm placeholder-gray-400 resize-none transition-colors duration-200`}
                                         name={normalizeFieldName(field.name)}
                                     />
@@ -429,7 +493,7 @@ export default function PublicDynamicForm() {
                                             value={controllerField.value ?? "50"}
                                             className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                                             style={{
-                                                background: `linear-gradient(to right, #673ab7 0%, #673ab7 ${controllerField.value ?? 50}%, #e5e7eb ${controllerField.value ?? 50}%, #e5e7eb 100%)`,
+                                                background: `linear-gradient(to right, var(--primary) 0%, ar(--primary) ${controllerField.value ?? 50}%, #e5e7eb ${controllerField.value ?? 50}%, #e5e7eb 100%)`,
                                             }}
                                             name={normalizeFieldName(field.name)}
                                         />
@@ -474,7 +538,7 @@ export default function PublicDynamicForm() {
                                                     className={`w-4 h-4 ${
                                                         errors[fieldName]
                                                             ? "text-danger border-danger focus:ring-danger"
-                                                            : "text-[#673ab7] border-gray-300 focus:ring-[#673ab7]"
+                                                            : `text-[var(--secondary)] border-gray-300 focus:ring-[var(--secondary)]`
                                                     } bg-gray-100 rounded focus:ring-2`}
                                                     name={`${normalizeFieldName(field.name)}[]`}
                                                 />
@@ -503,7 +567,7 @@ export default function PublicDynamicForm() {
                                                     className={`w-4 h-4 ${
                                                         errors[fieldName]
                                                             ? "text-danger border-danger focus:ring-danger"
-                                                            : "text-[#673ab7] border-gray-300 focus:ring-[#673ab7]"
+                                                            : `text-[var(--primary)] border-gray-300 focus:ring-[var(--primary)]`
                                                     } bg-gray-100 focus:ring-2`}
                                                     name={normalizeFieldName(field.name)}
                                                 />
@@ -522,7 +586,7 @@ export default function PublicDynamicForm() {
                                 return (
                                     <div
                                         className={`border-2 border-dashed ${
-                                            errors[fieldName] ? "border-danger" : "border-gray-300 hover:border-[#673ab7]"
+                                            errors[fieldName] ? "border-danger" : `border-gray-300 hover:border-[var(--secondary)]`
                                         } rounded-lg p-6 text-center transition-colors`}
                                     >
                                         <input
@@ -567,9 +631,11 @@ export default function PublicDynamicForm() {
                 <div className="max-w-2xl mx-auto">
                     <PublicDynamicFormHeader
                         title={formConfig.title}
-                        description="Thank you for your submission! We have received your form successfully."
+                        description={`${formConfig.success_message || 'Thank you for your submission! We have received your form successfully.'}`}
                         type="success"
-                        border="border-success"
+                        color="#26bf94"
+                        socialLinks={formConfig.social_links}
+                        fontFamily={fontFamily}
                     />
                 </div>
             </div>
@@ -577,54 +643,73 @@ export default function PublicDynamicForm() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
+        <div className="min-h-screen bg-[#f0f2ff] py-8 px-4"
+             style={{ fontFamily }}>
             <div className="max-w-2xl mx-auto">
                 <PublicDynamicFormHeader
                     title={formConfig.title}
                     description={formConfig.description}
                     currentStep={currentStep}
                     steps={steps}
+                    color={primaryColor}
+                    fontFamily={fontFamily}
                 />
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                     {steps[currentStep].fields.map((fieldName) => (
                         <div key={fieldName}>{renderField(fieldName)}</div>
                     ))}
-                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+
+                    <div className="bg-white rounded-lg border border-gray-200 p-6"
+                         style={{
+                             "--primary": primaryColor,
+                         }}
+                    >
                         <div className="flex justify-between items-center">
                             <div className="flex space-x-3">
                                 {currentStep > 0 && (
                                     <button
                                         type="button"
                                         onClick={handleBack}
-                                        className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors border border-[#673ab7]"
+                                        className="px-4 py-2 rounded text-sm font-medium transition-colors border"
+                                        style={defaultStyle}
+                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
+                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
                                     >
                                         Back
                                     </button>
                                 )}
+
                                 {currentStep < steps.length - 1 ? (
                                     <button
                                         type="button"
                                         onClick={handleNext}
-                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors"
+                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors bg-[var(--primary)]"
                                     >
                                         Next
                                     </button>
                                 ) : (
                                     <button
                                         type="submit"
-                                        className="bg-[#673ab7] hover:bg-[#5e35b1] text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
                                         disabled={isSubmitting}
                                         onClick={handleFormSubmit}
+                                        className="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)] flex items-center gap-2"
                                     >
+                                        {isSubmitting && (
+                                            <i className="bi bi-arrow-repeat animate-spin text-base"></i>
+                                        )}
                                         {isSubmitting ? 'Submitting...' : 'Submit'}
                                     </button>
+
                                 )}
                             </div>
                             <button
                                 type="button"
                                 onClick={clearForm}
-                                className="text-[#673ab7] hover:bg-[#f3e5f5] px-4 py-2 rounded text-sm font-medium transition-colors"
+                                className="px-4 py-2 rounded text-sm font-medium transition-colors"
+                                style={defaultStyle}
+                                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = hoverStyle.backgroundColor)}
+                                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = defaultStyle.backgroundColor)}
                             >
                                 Clear form
                             </button>
@@ -634,15 +719,28 @@ export default function PublicDynamicForm() {
             </div>
             {formConfig?.require_captcha && isCaptchaTriggered && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl p-6 max-w-sm w-full relative">
-
+                    <div className="bg-white rounded-xl p-6 max-w-sm w-full relative"
+                         style={{
+                             "--primary": primaryColor,
+                         }}
+                    >
                         <MathCaptcha
                             onSuccess={handleCaptchaSuccess}
                             className="w-full"
+                            btnClasses="text-white px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary)]"
                         />
                     </div>
                 </div>
             )}
+            <div
+                style={{
+                "--primary": primaryColor,
+                    fontFamily
+            }}>
+                <PrivacyPolicyPopup
+                    primaryColor={primaryColor}
+                />
+            </div>
         </div>
     );
 }

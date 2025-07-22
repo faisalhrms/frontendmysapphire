@@ -1,12 +1,12 @@
 import React, {useCallback, useMemo, useState} from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
+import { CheckSquare } from "lucide-react";import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import MilestoneAccordion from "@modules/project-management/components/project/MilestoneAccordion.jsx";
 import ProjectsMilestonesTasksFilter from "@modules/project-management/components/project/ProjectsMilestonesTasksFilter.jsx";
 import useFilters from "@hooks/useFilters.js";
 import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
 import {Link} from "react-router-dom";
 import {PMS_ROUTES} from "@modules/project-management/routes.js";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const ProjectsMilestonesTasksList = () => {
 
@@ -45,7 +45,11 @@ const ProjectsMilestonesTasksList = () => {
 
     return (
         <>
-            <PageHeader currentpage="E-com Deliverables" activepage="Projects" mainpage="Tasks"/>
+            <IconPageHeader
+                heading="E-commerce Deliverables"
+                description="Track and manage deliverable tasks"
+                icon={CheckSquare}
+            />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <ProjectsMilestonesTasksFilter control={control} errors={errors} clearFilter={onClear}/>
             </form>

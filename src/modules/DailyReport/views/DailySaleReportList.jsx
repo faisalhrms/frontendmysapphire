@@ -14,16 +14,34 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 
 const DailySaleReportList = () => {
-
+    const getTodayDate = () => new Date().toISOString().slice(0, 10);
+    const getYesterdayDate = () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        return yesterday.toISOString().slice(0, 10);
+    };
     const {
         control, handleSubmit, errors, getFilters, setValue,
     } = useFilters(useMemo(() => ({
         initialFilters: [{name: 'p_date', defaultValue: getPastDate()}, {
             name: 'date_from',
-            defaultValue: getPastDate()
-        }, {name: 'date_to', defaultValue: getPastDate()}, {name: 'p_type', defaultValue: 'last_day'},],
+            defaultValue: getYesterdayDate()
+        }, {name: 'date_to', defaultValue: getTodayDate()}, {name: 'p_type', defaultValue: 'last_day'},],
 
     }), []));
+
+    // const { control, handleSubmit, errors, getFilters } = useFilters(
+    //     useMemo(
+    //         () => ({
+    //             initialFilters: [
+    //                 { name: "date_from", defaultValue: getYesterdayDate() },
+    //                 { name: "date_to", defaultValue: getTodayDate() },
+    //             ],
+    //         }),
+    //         []
+    //     )
+    // );
+
 
     const [activeTab, setActiveTab] = useState("DailySaleReportList");
     const [expand, setExpand] = useState(true);

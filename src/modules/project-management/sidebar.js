@@ -1,14 +1,15 @@
-import {PMS_ROUTES} from "@modules/project-management/routes.js";
-import {generateSidebarItem} from "@helpers/formatters.js";
+import { PMS_ROUTES } from "@modules/project-management/routes.js";
+import {generateSidebarItem, getExcerptFromText} from "@helpers/formatters.js";
+import { getWorkspaces } from "@modules/project-management/services/projectService.js";
 
-export const sidebarMenu = [
+export let sidebarMenu = [
     generateSidebarItem(
-        '',
-        'sub',
-        'PMS',
+        "",
+        "sub",
+        "PMS",
         2,
-        'bx-bulb',
-        '',
+        "bx-bulb",
+        "",
         [
             generateSidebarItem(
                 PMS_ROUTES.PROJECT.READ.path,
@@ -16,23 +17,31 @@ export const sidebarMenu = [
                 "Projects",
                 1,
                 "bx bx-message-square-edit",
-                PMS_ROUTES.PROJECT.READ.permission,
+                PMS_ROUTES.PROJECT.READ.permission
             ),
+            // generateSidebarItem(
+            //     "",
+            //     "sub",
+            //     "Workspaces",
+            //     2,
+            //     "",
+            //     ""
+            // ),
             generateSidebarItem(
                 PMS_ROUTES.TASK.READ.path,
                 "link",
                 "Task List",
                 2,
                 "bx bx-message-square-edit",
-                PMS_ROUTES.TASK.READ.permission,
+                PMS_ROUTES.TASK.READ.permission
             ),
             generateSidebarItem(
                 PMS_ROUTES.TASK.KANBAN.path,
                 "link",
-                "Task kanban Board",
+                "Task Kanban Board",
                 3,
                 "bx bx-message-square-edit",
-                PMS_ROUTES.TASK.READ.permission,
+                PMS_ROUTES.TASK.READ.permission
             ),
             generateSidebarItem(
                 PMS_ROUTES.TASK.ECOM.path,
@@ -40,8 +49,39 @@ export const sidebarMenu = [
                 "E-com Deliverables",
                 4,
                 "bx bx-message-square-edit",
-                PMS_ROUTES.TASK.ECOM.permission,
+                PMS_ROUTES.TASK.ECOM.permission
             ),
         ]
-    )
+    ),
 ];
+
+// export const initializeSidebar = async () => {
+//     try {
+//         const workspaces = await getWorkspaces();
+//         const sortedWorkspaces = workspaces.sort((a, b) => a.label.localeCompare(b.label));
+//
+//         const workspaceItems = sortedWorkspaces.map((workspace, index) => {
+//             const projectPath = `${PMS_ROUTES.PROJECT.READ.path}?workspace=${workspace.value}&workspace_name=${encodeURIComponent(workspace.label)}`;
+//             return generateSidebarItem(
+//                 projectPath,
+//                 "link",
+//                 getExcerptFromText(workspace.label, 13),
+//                 index + 2,
+//                 "bx bx-message-square-edit",
+//                 PMS_ROUTES.PROJECT.READ.permission
+//             );
+//         });
+//
+//         const pmsMenu = sidebarMenu.find((item) => item.title === "PMS");
+//         const workspaceSub = pmsMenu?.children?.find((item) => item.title === "Workspaces");
+//
+//         if (workspaceSub) {
+//             workspaceSub.children = [
+//                 ...workspaceSub.children,
+//                 ...workspaceItems,
+//             ];
+//         }
+//     } catch (error) {
+//         console.error("Failed to load dynamic project sidebar items:", error);
+//     }
+// };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { PMS_ROUTES } from "@modules/project-management/routes.js";
 import { getExcerptFromText, toTitleCase } from "@helpers/formatters.js";
@@ -12,6 +12,8 @@ import HasProjectPermission from "@modules/project-management/components/project
 import ProgressBar from "@components/ProgressBar.jsx";
 import TaskDeadLineItem from "@modules/project-management/components/task/TaskDeadLineItem.jsx";
 import TaskTable from "@modules/project-management/components/project/TaskTable.jsx";
+import SetActiveUserModalPortal from "@modules/project-management/components/task/SetActiveUserModalPortal.jsx";
+import useSetActiveUserModal from "@modules/project-management/hooks/taskHooks.js";
 
 const TaskTableRow = ({
                           task,
@@ -38,6 +40,15 @@ const TaskTableRow = ({
         setActiveTaskId(prevId => (prevId === taskId ? null : taskId));
     };
 
+    const {
+        isOpen,
+        openModal,
+        closeModal,
+        getCurrentActiveUserIds,
+        handleUpdate,
+    } = useSetActiveUserModal({ task, refetch });
+
+
     const renderCell = (columnKey) => {
         switch (columnKey) {
             case 'actions':
@@ -47,7 +58,7 @@ const TaskTableRow = ({
             case 'name':
                 return renderNameCell();
             case 'person':
-                return <td className='text-center'><AvatarList users={task.users} max={4} /></td>;
+                return <td className='text-center'><AvatarList users={task.users} max={5} /></td>;
             case 'teams':
                 return <td>{task.teams?.map(team => toTitleCase(team.name)).join(', ')}</td>;
             case 'started_at':
@@ -117,6 +128,20 @@ const TaskTableRow = ({
                   </button>
               </Tooltip>
           )}
+
+            {task.users && task.users.length > 1 && !projectUser?.can_view_only &&  task.status !== 'completed' && (
+                <HasProjectPermission globalPermission='pms.change_task' users={projectUsers}>
+                    <Tooltip id={`set-active-user-tooltip-${task.id}`} tooltipContent={`Set Active User for (${task.name})`}>
+                        <button
+                            onClick={openModal}
+                            className='ti-btn ti-btn-warning ti-btn-sm'
+                        >
+                            <i className="ri-user-star-line align-middle"></i>
+                        </button>
+                    </Tooltip>
+                </HasProjectPermission>
+            )}
+
             <HasProjectPermission globalPermission='pms.add_task' users={projectUsers} needIcon={true}>
             {milestoneStatus === 'active' && task.status !== 'under_approval' && (
                 <Tooltip id={`add-tooltip-${task.id}-add`} tooltipContent={`Add Sub Task To (${task.name})`}>
@@ -222,6 +247,14 @@ const TaskTableRow = ({
                     </td>
                 </tr>
             )}
+
+            <SetActiveUserModalPortal
+                isOpen={isOpen}
+                onClose={closeModal}
+                task={task}
+                currentActiveUserIds={getCurrentActiveUserIds}
+                onUpdate={handleUpdate}
+            />
         </>
     );
 };

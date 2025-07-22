@@ -1,36 +1,27 @@
 import React, { useState, useEffect } from 'react';
 
-const MathCaptcha = ({ onSuccess, maxNumber = 20, className = '' }) => {
+const MathCaptcha = ({ onSuccess, className = '',btnClasses }) => {
     const [num1, setNum1] = useState(0);
     const [num2, setNum2] = useState(0);
-    const [operator, setOperator] = useState('+');
     const [userAnswer, setUserAnswer] = useState('');
     const [isValid, setIsValid] = useState(null);
     const [attempts, setAttempts] = useState(0);
     const [showResult, setShowResult] = useState(false);
 
-    const operators = ['+', '-', '×'];
-
     const generateCaptcha = () => {
-        const newNum1 = Math.floor(Math.random() * maxNumber) + 1;
-        const newNum2 = Math.floor(Math.random() * maxNumber) + 1;
-        const newOperator = operators[Math.floor(Math.random() * operators.length)];
+
+        const newNum1 = Math.floor(Math.random() * 9) + 1;
+        const newNum2 = Math.floor(Math.random() * 9) + 1;
 
         setNum1(newNum1);
         setNum2(newNum2);
-        setOperator(newOperator);
         setUserAnswer('');
         setIsValid(null);
         setShowResult(false);
     };
 
     const getCorrectAnswer = () => {
-        switch (operator) {
-            case '+': return num1 + num2;
-            case '-': return num1 - num2;
-            case '×': return num1 * num2;
-            default: return 0;
-        }
+        return num1 + num2;
     };
 
     const handleSubmit = (e) => {
@@ -62,19 +53,19 @@ const MathCaptcha = ({ onSuccess, maxNumber = 20, className = '' }) => {
     }, []);
 
     return (
-        <div className={` rounded-2xl  w-full max-w-md ${className}`}>
+        <div className={`rounded-2xl w-full max-w-md ${className}`}>
             <div className="text-center mb-6">
                 <h2 className="text-xl font-bold text-gray-800">Captcha</h2>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 mb-5 border border-gray-200 text-center">
                 <div className="text-3xl font-mono font-bold text-gray-800 mb-2">
-                    {num1} {operator} {num2} = ?
+                    {num1} + {num2} = ?
                 </div>
                 <button
                     onClick={handleRefresh}
-                    className="text-sm  items-center justify-center gap-1"
+                    className="text-sm items-center justify-center gap-1 text-blue-600 hover:text-blue-800"
                 >
-                    <i className="bi bi-arrow-clockwise"/> refresh
+                    🔄 refresh
                 </button>
             </div>
             <div className="flex items-center justify-center">
@@ -92,7 +83,7 @@ const MathCaptcha = ({ onSuccess, maxNumber = 20, className = '' }) => {
                     <button
                         onClick={handleSubmit}
                         disabled={!userAnswer || isValid === true}
-                        className="ti-btn ti-btn-primary !mb-0 w-[150px]"
+                        className={btnClasses}
                     >
                         {isValid === true ? 'Verified!' : 'Verify Answer'}
                     </button>
@@ -104,14 +95,12 @@ const MathCaptcha = ({ onSuccess, maxNumber = 20, className = '' }) => {
                     isValid ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'
                 }`}>
                     {isValid ? (
-                        <div className="flex items-center justify-center">
-                            <i className="bi bi-check-circle mr-2"/>
-                            Correct! Captcha verified.
+                        <div className="flex items-center text-emerald-600 justify-center">
+                            ✅ Correct! Captcha verified.
                         </div>
                     ) : (
-                        <div className="flex items-center text-danger justify-center">
-                            <i className="bi bi-x-circle text-danger mr-2"/>
-                            Incorrect. The correct answer was {getCorrectAnswer()}.
+                        <div className="flex items-center  text-danger justify-center">
+                            ❌ Incorrect. The correct answer was {getCorrectAnswer()}.
                         </div>
                     )}
                 </div>

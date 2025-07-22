@@ -8,7 +8,7 @@ export const sidebarMenu = [
         "sub",
         "Inventory Tracker",
         11,
-        "bi bi-collection",
+        "bi bi-upc-scan",
         "",
         [
             generateSidebarItem(

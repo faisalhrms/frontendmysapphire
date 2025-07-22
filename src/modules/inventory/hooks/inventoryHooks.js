@@ -7,10 +7,11 @@ import {
     updateEquipment,
     equipmentStatuses,
     toggleFavouriteEquipment,
-    reAssignEquipment
+    reAssignEquipment, verifyEquipmentItem
 } from "@modules/inventory/services/inventoryService.js"; // Assuming services exist here
 import { useNavigate } from "react-router-dom";
 import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
+import {useSelector} from "react-redux";
 
 // Hook to fetch equipment list with pagination and search
 export const useEquipments = (page = 1, size = 8, search) => {
@@ -140,4 +141,32 @@ export const useReAssignEquipment = (id) => {
     };
 
     return { handleReAssign };
+};
+
+// Add to inventoryHooks.js
+// inventoryHooks.js
+export const useVerifyEquipment = () => {
+    const [isVerifying, setIsVerifying] = useState(false);
+    const employee = useSelector((state) => state.auth.user.employee);
+
+    const verifyEquipment = useCallback(
+        async (id) => {
+            setIsVerifying(true);
+            try {
+                const payload = {
+                    verified: true,
+                    verified_on: new Date().toISOString().split("T")[0],
+                    verified_by: employee.id,
+                };
+                return await verifyEquipmentItem(id, payload);
+            } catch (error) {
+                throw error;
+            } finally {
+                setIsVerifying(false);
+            }
+        },
+        [employee]
+    );
+
+    return { verifyEquipment, isVerifying };
 };

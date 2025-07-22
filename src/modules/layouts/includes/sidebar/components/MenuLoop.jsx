@@ -11,11 +11,14 @@ function MenuLoop({ items, toggleSidemenu, HoverToggleInnerMenuFn, level}) {
                 event.preventDefault();
                 toggleSidemenu(event, items);
             }} onMouseEnter={(event) => HoverToggleInnerMenuFn(event, items)}>
-                <i className={`side-menu__icon bx ${items.icon}`}></i>
+                {
+                    level < 2 &&
+                    <i className={`side-menu__icon bx ${items.icon}`}></i>
+                }
                 <span className={`${level === 1 ? "side-menu__label" : ""}`}>
                     {items.title}
                     {items.badgetxt ? (
-                        <span className={items.class}>
+                        <span className={items.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
                             {items.badgetxt}
                         </span>
                     ) : (
@@ -40,7 +43,7 @@ function MenuLoop({ items, toggleSidemenu, HoverToggleInnerMenuFn, level}) {
                                 <span className="">
                             {firstLevel.title}
                                     {firstLevel.badgetxt ? (
-                                        <span className={firstLevel.class}>
+                                        <span className={firstLevel.class || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
                                 {firstLevel.badgetxt}
                               </span>
                                     ) : (
@@ -55,7 +58,7 @@ function MenuLoop({ items, toggleSidemenu, HoverToggleInnerMenuFn, level}) {
                                 <span className="">
                             {firstLevel.title}
                                     {firstLevel.badgetxt ? (
-                                        <span className={firstLevel.class}>
+                                        <span className={firstLevel.class  || 'badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2'}>
                                 {firstLevel.badgetxt}
                               </span>
                                     ) : (

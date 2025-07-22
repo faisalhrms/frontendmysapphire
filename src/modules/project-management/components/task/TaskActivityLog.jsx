@@ -2,6 +2,8 @@ import React from "react";
 import moment from 'moment';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import {useTaskActivityLog} from "@modules/project-management/hooks/taskHooks.js";
+import EmptyState from "@components/EmptyState.jsx";
+import { History } from "lucide-react";
 
 const TaskActivityLog = ({ id = null }) => {
     const { data, isLoading } = useTaskActivityLog(id);
@@ -68,10 +70,13 @@ const TaskActivityLog = ({ id = null }) => {
 
     if (!data || (typeof data === 'object' && Object.keys(data).length === 0)){
         return (
-            <div className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">
-                No activity logs found.
-            </div>
-        );
+        <EmptyState
+            icon={History}
+            heading="No Task Activity Found"
+            description="All updates and changes to tasks will appear here."
+        />
+
+    );
     }
 
     return (

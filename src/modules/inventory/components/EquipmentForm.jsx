@@ -10,16 +10,19 @@ import GalleryUpload from "@components/GalleryUpload.jsx";
 import { formatOptions } from "@helpers/formatters.js";
 import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
 import equipmentSchema from "@modules/inventory/schemas/equipmentSchema.js";
-import { useEquipmentForm } from "@modules/inventory/hooks/inventoryHooks.js";
+import {useEquipmentForm, useVerifyEquipment} from "@modules/inventory/hooks/inventoryHooks.js";
 
 import SubEquipmentTable from "./SubEquipmentTable.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
 import {useSelector} from "react-redux";
+import EquipmentRepairFormList from "@modules/inventory/views/EquipmentRepairFormList.jsx";
 
 const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
     const companyId = useSelector((state) => state.auth.user.employee.company.id);
-    const {
+    const { employee } = useSelector((state) => state.auth.user);
+    const { verifyEquipment, isVerifying } = useVerifyEquipment();
+      const {
         control,
         handleSubmit,
         formState: { errors, isSubmitting },
@@ -32,8 +35,14 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
             laptop_issued_as_per_policy: equipmentData?.laptop_issued_as_per_policy ?? true,
             sub_equipments: equipmentData?.sub_equipments || [],
             quantity: equipmentData?.quantity || 1,
+            verified: equipmentData?.verified || false,
+            verified_on: equipmentData?.verified_on || null,
+            verified_by: equipmentData?.verified_by || null,
         },
     });
+    const verified = useWatch({ control, name: "verified" });
+    const verified_on = useWatch({ control, name: "verified_on" });
+    const verified_by = useWatch({ control, name: "verified_by" });
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -53,6 +62,18 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
         }
     }, [equipmentData, setValue]);
 
+    const handleVerify = async () => {
+        if (!equipmentData?.id) return;
+        try {
+            const updatedEquipment = await verifyEquipment(equipmentData.id);
+            // Update form values with new verification data
+            setValue("verified", updatedEquipment.verified);
+            setValue("verified_on", updatedEquipment.verified_on);
+            setValue("verified_by", updatedEquipment.verified_by);
+        } catch (error) {
+            console.error("Verification failed:", error);
+        }
+    };
     return (
         <form onSubmit={handleSubmit(handleEquipmentSubmit)}>
             <div className="grid grid-cols-12 gap-x-6">
@@ -337,6 +358,30 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         placeholder="Accessories"
                                     />
                                 </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        name="pos_id"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Pos ID"
+                                    />
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        name="mac"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="MAC Address"
+                                    />
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        name="ip"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="IP Address"
+                                    />
+                                </div>
 
                                 {/* ---------- Description ---------- */}
                                 <div className="xl:col-span-6 col-span-12">
@@ -349,7 +394,6 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         rows={5}
                                     />
                                 </div>
-
 
 
                                 {/* ---------- Specs ---------- */}
@@ -414,6 +458,8 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                             />
                         )
                     }
+
+
 
                 </div>
 
@@ -529,9 +575,69 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                             />
                         </div>
                     </div>
+                    <div className="box">
+                        <div className="box-header">
+                            <div className="box-title">Asset Tag Availability</div>
+                        </div>
+                        <div className="box-body">
+                            <FormCheckbox
+                                name="asset_tag_available"
+                                label="Asset Tag Available"
+                                control={control}
+                                errors={errors}
+                            />
+                        </div>
+                    </div>
+                    {isEditMode && (
+                        <div className="box">
+                            <div className="box-header">
+                                <div className="box-title">Verification</div>
+                            </div>
+                            <div className="box-body">
+                                {verified ? (
+                                    <div className="space-y-2">
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700">
+                                                Verified On
+                                            </p>
+                                            <p className="text-sm">
+                                                {new Date(verified_on).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700">
+                                                Verified By
+                                            </p>
+                                            <p className="text-sm">
+                                                {verified_by?.full_name || "N/A"}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                {verified_by?.email || ""}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={handleVerify}
+                                        disabled={isVerifying}
+                                        className="ti-btn ti-btn-primary-full ti-btn-wave w-full"
+                                    >
+                                        {isVerifying ? "Verifying..." : "Marked As Verified"}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
             </div>
+            {
+                isEditMode===true&&(
+                    <EquipmentRepairFormList control={control} errors={errors} />
+
+                )
+            }
         </form>
     );
 };

@@ -6,7 +6,6 @@ import HasPermission from "@components/HasPermission.jsx";
 import ProjectDashboardTaskStats from "@modules/dashboards/pms/components/ProjectDashboardTaskStats.jsx";
 import IconTabs from "@components/IconTabs.jsx";
 import ProjectDashboardStats from "@modules/dashboards/pms/components/ProjectDashboardStats.jsx";
-import {useSelector} from "react-redux";
 import ProjectDashboardProjectTasksStatuses from "@modules/dashboards/pms/components/ProjectDashboardProjectTasksStatuses.jsx";
 import {useFetchWithFilters} from "@hooks/useFetchWithFilters.js";
 import ProjectDashboardProjectTasksPriorities
@@ -47,7 +46,7 @@ const ProjectDashboard = () => {
     };
 
     const { data, isLoading } = useFetchWithFilters(
-        activeTab === "task_overview" ? '/dashboard/pms/task/statistics/' : activeTab === "project_status_overview" ? '/dashboard/pms/project/tasks/statuses/' : activeTab === "task_priority_overview" ? '/dashboard/pms/project/tasks/priorities/' : '/dashboard/pms/statistics/', filters
+        activeTab === "task_overview" ? '/dashboard/pms/task/statistics/' : activeTab === "project_status_overview" ? '/dashboard/pms/project/tasks/statuses/' : activeTab === "task_priority_overview" ? '/dashboard/pms/project/tasks/priorities/' : '', filters
     );
 
 
@@ -66,7 +65,7 @@ const ProjectDashboard = () => {
                         label: "Project Overview",
                         icon: <i className="bx bx-task"></i>,
                         content: (
-                            <ProjectDashboardStats data={data} isLoading={isLoading} isActive={'project_overview' === activeTab} filters={filters} />
+                            <ProjectDashboardStats isActive={'project_overview' === activeTab} filters={filters} />
                         ),
                     },
                     {
@@ -92,7 +91,7 @@ const ProjectDashboard = () => {
                     {
                         id: "task_priority_overview",
                         label: "Priority Overview",
-                        icon: <i class='bx bx-line-chart'></i>,
+                        icon: <i className='bx bx-line-chart'></i>,
                         content: (
                             <>
                                 <ProjectDashboardProjectTasksPriorities data={data} isLoading={isLoading} filters={filters} isActive={'task_priority_overview' === activeTab} />

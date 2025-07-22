@@ -1,61 +1,20 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import FormInput from "@components/form/FormInput.jsx";
-import FormButton from "@components/form/FormButton.jsx";
+import React, { useState } from "react";
 
 const SearchSection = ({ onSearch }) => {
-    const {
-        handleSubmit,
-        control,
-        formState: { errors, isSubmitting }
-    } = useForm({
-        defaultValues: {
-            phone: "",
-            case_number: ""
-        }
-    });
-
-    const handleSearch = async (data) => {
-        const { phone, case_number } = data;
-        if (case_number.trim()) {
-            onSearch("case_number", case_number);
-        } else if (phone.trim()) {
-            onSearch("phone", phone);
-        } else {
-            alert("Please enter a value to search");
-        }
-    };
+    const [search, setSearch] = useState("");
 
     return (
-        <form
-            onSubmit={handleSubmit(handleSearch)}
-            className="flex gap-4 p-4 bg-gray-100 rounded-lg items-end"
-        >
-            <div className="flex-grow">
-                <FormInput
-                    name="case_number"
-                    control={control}
-                    errors={errors}
-                    placeholder="Case Number"
-                />
+        <div className="mb-4 custom-form-group ">
+            <input type="text"
+                   className="form-control !py-4 !px-6 w-full  !rounded-md form-control-lg shadow-sm"
+                   placeholder="Job title, Keywords or Company.."
+                   aria-label="Recipient's username"/>
+            <div className="custom-form-btn">
+                <button className="ti-btn bg-primary text-white   !font-medium !border dark:border-defaultborder/10-0" type="button">
+                    <i className="bi bi-search me-2"></i> Search
+                </button>
             </div>
-
-            <div className="flex-grow">
-                <FormInput
-                    name="phone"
-                    control={control}
-                    errors={errors}
-                    placeholder="Phone"
-                />
-            </div>
-
-            <FormButton
-                isLoading={isSubmitting}
-                text="Search"
-                submitTxt="Searching..."
-                className="!h-[42px] !px-6"
-            />
-        </form>
+        </div>
     );
 };
 

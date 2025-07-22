@@ -1,9 +1,10 @@
-import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { useTable, usePagination, useSortBy } from 'react-table';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {usePagination, useSortBy, useTable} from 'react-table';
+import ExcelJS from 'exceljs';
+
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
-import { useDataTable } from "@hooks/dataTableHooks.js";
-
+import {useDataTable} from "@hooks/dataTableHooks.js";
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
  * If any segment is missing/undefined, returns undefined.
@@ -442,29 +443,37 @@ const AdvancedFilters = ({ columns, filters, onFiltersChange, onApplyFilters, on
         </div>
     );
 };
-const DataTable = React.memo(({
-                                  columns,
-                                  apiUrl,
-                                  title = null,
-                                  buttons,
-                                  filter,
-                                  needHeader = true,
-                                  enableAdvancedFilters = false
-                              }) => {
+const DataTable = React.memo(React.forwardRef(({
+                                                   columns,
+                                                   apiUrl,
+                                                   title = null,
+                                                   buttons,
+                                                   filter,
+                                                   needHeader = true,
+                                                   enableAdvancedFilters = false,
+                                                   tableParentClass = '',
+                                                   tableClass = '',
+                                                   rowClassName = ''
+                                               }, ref) => {
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
     const {
         data,
         isLoading,
+        refetch,
         page,
         setPage,
         size,
         handleSearch,
         handleSizeChange,
         handleSortChange,
-        handleFilterChange, // Assuming this exists in your hook
+        handleFilterChange,
     } = useDataTable(apiUrl, 10, { ...filter, ...advancedFilters }, enableAdvancedFilters);
+
+    React.useImperativeHandle(ref, () => ({
+        refetch,
+    }));
 
     // Table rows and total count from server response
     const items = Array.isArray(data?.data?.rows) ? data.data?.rows : [];
@@ -473,10 +482,17 @@ const DataTable = React.memo(({
     // States for column filtering
     const [hiddenCols, setHiddenCols] = useState([]);
     const [showColFilter, setShowColFilter] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Memoize columns/data
     const memoizedColumns = useMemo(() => columns, [columns]);
     const memoizedData = useMemo(() => items, [items]);
+
+    const filteredColumns = memoizedColumns.filter(col => {
+        const colId = col.id || col.accessor;
+        const label = typeof col.Header === 'string' ? col.Header : colId;
+        return label.toLowerCase().includes(searchTerm.toLowerCase());
+    });
 
     // Initialize React Table
     const {
@@ -502,6 +518,7 @@ const DataTable = React.memo(({
                 hiddenColumns: hiddenCols,
             },
             autoResetHiddenColumns: false,
+            getCellProps: (cell) => cell.column.getCellProps?.(cell) || {},
         },
         useSortBy,
         usePagination
@@ -562,7 +579,8 @@ const DataTable = React.memo(({
     /**
      * Download CSV with current filters applied
      */
-    const handleDownloadCSV = () => {
+
+    const handleDownloadExcel = async () => {
         const visibleCols = memoizedColumns.filter(
             (col) => !hiddenCols.includes(col.id || col.accessor)
         );
@@ -571,15 +589,167 @@ const DataTable = React.memo(({
             return;
         }
 
-        // 1) Header
-        const headerRow = visibleCols.map((col) =>
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sheet1');
+
+        const headers = visibleCols.map(col =>
             typeof col.Header === 'string' ? col.Header : col.id || ''
         );
-        const csvRows = [headerRow.join(',')];
+        worksheet.addRow(headers);
 
-        // 2) Data rows
-        memoizedData.forEach((rowObj) => {
-            const rowArray = visibleCols.map((col) => {
+        const headerRow = worksheet.getRow(1);
+        headerRow.height = 30;
+
+        const formatForExcel = (rowObj, col) => {
+            let val;
+
+            // 1. Get value via accessor
+            if (typeof col.accessor === 'string') {
+                val = getNestedValue(rowObj, col.accessor);
+            } else if (typeof col.accessor === 'function') {
+                val = col.accessor(rowObj);
+            }
+
+            if (val == null) return '';
+
+            // 2. Flatten array values
+            if (Array.isArray(val)) {
+                val = val.map(item =>
+                    item && typeof item === 'object'
+                        ? (item.name ?? item.full_name ?? JSON.stringify(item))
+                        : String(item)
+                ).join(', ');
+            }
+
+            // 3. Format based on column type
+            const type = col.excelColumnType;
+            const format = col.excelFormat;
+
+            try {
+                if (type === 'date') {
+                    if (!val) return null;
+                    const [year, month, day] = val.split('T')[0].split('-').map(Number);
+                    return new Date(Date.UTC(year, month - 1, day));
+                }
+
+                if (type === 'datetime') {
+                    return val ? new Date(val) : null;
+                }
+
+                if (type === 'boolean') {
+                    return val ? 'Yes' : 'No';
+                }
+
+                if (type === 'number') {
+                    return Number(val);
+                }
+
+                if (type === 'string') {
+                    return String(val);
+                }
+
+                if (typeof format === 'function') {
+                    return format(val);
+                }
+
+                return String(val);
+            } catch {
+                return String(val);
+            }
+        };
+
+
+        headerRow.eachCell((cell) => {
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF1F4E79' }
+            };
+            cell.font = {
+                name: 'Calibri',
+                size: 12,
+                bold: true,
+                color: { argb: 'FFFFFFFF' }
+            };
+            cell.alignment = {
+                horizontal: 'center',
+                vertical: 'middle',
+                wrapText: false
+            };
+            cell.border = {
+                top: { style: 'medium', color: { argb: 'FF1F4E79' } },
+                bottom: { style: 'medium', color: { argb: 'FF1F4E79' } },
+                left: { style: 'thin', color: { argb: 'FF4472C4' } },
+                right: { style: 'thin', color: { argb: 'FF4472C4' } }
+            };
+        });
+
+        worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+        memoizedData.forEach((rowObj, index) => {
+            const row = worksheet.addRow(
+                visibleCols.map(col => formatForExcel(rowObj, col))
+            );
+
+            row.height = 25;
+            const isEvenRow = index % 2 === 0;
+
+            row.eachCell((cell, colIndex) => {
+                const col = visibleCols[colIndex - 1];
+                const rawValue = row.values[colIndex] ?? '';
+
+                const styleMap = col.excelStyleMap || {};
+                const style = styleMap[rawValue];
+
+                if (style) {
+                    cell.value = style.label || rawValue;
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: (style.bgColor || '#FFFFFF').replace('#', 'FF') }
+                    };
+                    cell.font = {
+                        name: 'Calibri',
+                        size: 10,
+                        bold: true,
+                        color: { argb: (style.textColor || '#000000').replace('#', 'FF') }
+                    };
+                    cell.alignment = {
+                        horizontal: 'center',
+                        vertical: 'middle',
+                        wrapText: false
+                    };
+                } else {
+                    cell.font = {
+                        name: 'Calibri',
+                        size: 10,
+                        color: { argb: 'FF333333' }
+                    };
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: isEvenRow ? 'FFFFFFFF' : 'FFF2F2F2' }
+                    };
+                    cell.alignment = {
+                        horizontal: col?.excelAlignment || 'center',
+                        vertical: 'middle',
+                        wrapText: false
+                    };
+                }
+
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FFD0D0D0' } },
+                    bottom: { style: 'thin', color: { argb: 'FFD0D0D0' } },
+                    left: { style: 'thin', color: { argb: 'FFD0D0D0' } },
+                    right: { style: 'thin', color: { argb: 'FFD0D0D0' } }
+                };
+            });
+        });
+
+        visibleCols.forEach((col, colIndex) => {
+            let maxLength = headers[colIndex]?.length || 0;
+
+            memoizedData.forEach((rowObj) => {
                 let val;
                 if (typeof col.accessor === 'string') {
                     val = getNestedValue(rowObj, col.accessor);
@@ -588,47 +758,82 @@ const DataTable = React.memo(({
                 }
                 if (val == null) val = '';
 
-                // If val is an array, try to handle array-of-objects or array-of-strings
                 if (Array.isArray(val)) {
-                    // For array of objects with "name"
-                    if (val.every((item) => item && typeof item === 'object' && (item.name ?? item.full_name))) {
-                        val = val.map((item) => item.name ?? item.full_name).join(', ');
-                    } else {
-                        // generic fallback for arrays
-                        val = val.map((item) =>
-                            typeof item === 'object'
-                                ? JSON.stringify(item)
-                                : String(item)
-                        ).join(', ');
-                    }
+                    val = val.map(item =>
+                        item && typeof item === 'object'
+                            ? (item.name ?? item.full_name ?? JSON.stringify(item))
+                            : String(item)
+                    ).join(', ');
                 }
 
-                // Convert to string, escaping quotes
-                val = String(val).replace(/"/g, '""');
-                // Wrap in quotes for CSV
-                return `"${val}"`;
+                const lines = String(val).split('\n');
+                const longestLine = Math.max(...lines.map(line => line.length));
+                maxLength = Math.max(maxLength, longestLine);
             });
-            csvRows.push(rowArray.join(','));
+
+            const minWidth = 10;
+            const maxWidth = 50;
+            worksheet.getColumn(colIndex + 1).width = Math.min(maxWidth, Math.max(minWidth, maxLength + 3));
         });
 
-        // 3) Blob + Download
-        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        workbook.creator = 'Professional Report System';
+        workbook.lastModifiedBy = 'Professional Report System';
+        workbook.created = new Date();
+        workbook.modified = new Date();
+        workbook.company = 'Report Generator';
+        workbook.description = 'Professional data export with enhanced formatting';
 
-        // Get current date and time for the filename
-        const currentDate = new Date();
-        const options = { month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(currentDate);
-        const fileName = `${title || 'Data'} Report ${formattedDate}.csv`;
+        worksheet.pageSetup = {
+            paperSize: 9,
+            orientation: 'landscape',
+            fitToPage: true,
+            fitToWidth: 1,
+            fitToHeight: 0,
+            margins: {
+                left: 0.5,
+                right: 0.5,
+                top: 0.75,
+                bottom: 0.75,
+                header: 0.3,
+                footer: 0.3
+            },
+            printTitlesRow: '1:1'
+        };
 
-        const url = URL.createObjectURL(blob);
+        worksheet.headerFooter.oddHeader = `&C&"Calibri,Bold"&16${title || 'Professional Data Report'}`;
+        worksheet.headerFooter.oddFooter = '&L&"Calibri"&10Generated: &D &T&C&"Calibri,Bold"&12Confidential&R&"Calibri"&10Page &P of &N';
+
+        const lastRow = memoizedData.length + 1;
+        const lastCol = visibleCols.length;
+        worksheet.pageSetup.printArea = `A1:${String.fromCharCode(64 + lastCol)}${lastRow}`;
+
+        worksheet.properties.showGridLines = true;
+        worksheet.properties.showRowColHeaders = true;
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10);
+        const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '');
+        const fileName = `${title || 'Professional_Report'}_${dateStr}_${timeStr}.xlsx`;
+
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;
+        link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+
+        setTimeout(() => {
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }, 100);
     };
+
 
     // Pagination
     const totalPages = Math.ceil(total / size);
@@ -781,45 +986,173 @@ const DataTable = React.memo(({
                     {/* RIGHT side => Filter Icon, CSV Download, Search */}
                     <div className="flex items-center gap-2">
                         {/* Column Filter toggle button */}
-                        <button
-                            type="button"
-                            className="px-2 py-1 border rounded text-sm"
-                            onClick={() => setShowColFilter((prev) => !prev)}
-                        >
-                            {showColFilter ? <i className="ri-filter-line"></i> :
-                                <i className="ri-filter-off-line"></i>}
-                        </button>
+                        <div className='relative'>
+                            <button
+                                type="button"
+                                className="inline-flex items-center gap-2 px-2 py-1.5 border rounded text-sm"
+                                onClick={() => setShowColFilter((prev) => !prev)}
+                            >
+                                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                                </svg>
+                                <span>Columns</span>
+                                <svg
+                                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showColFilter ? 'rotate-180' : ''}`}
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                          d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            {/* Column visibility dropdown */}
+                            {showColFilter && (
+                                <div
+                                    className="absolute z-50 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-lg top-full right-0 overflow-hidden">
+                                    {/* Header */}
+                                    <div
+                                        className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                        <h3 className="text-sm font-medium text-gray-900">Column visibility</h3>
+                                        <button
+                                            onClick={() => setShowColFilter(false)}
+                                            className="p-1 hover:bg-gray-200 rounded transition-colors"
+                                        >
+                                            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600" fill="none"
+                                                 stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                      d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    {/* Search */}
+                                    <div className="p-3 border-b border-gray-200">
+                                        <div className="relative">
+                                            <svg
+                                                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                            </svg>
+                                            <input
+                                                type="text"
+                                                placeholder="Search columns..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Column list */}
+                                    <div className="max-h-60 overflow-y-auto">
+                                        {filteredColumns.length > 0 ? (
+                                            <div className="p-2">
+                                                {filteredColumns.map((col) => {
+                                                    const colId = col.id || col.accessor;
+                                                    if (!colId) return null;
+                                                    const isHidden = hiddenCols.includes(colId);
+                                                    const label = typeof col.Header === 'string' ? col.Header : colId;
+
+                                                    return (
+                                                        <div
+                                                            key={colId}
+                                                            className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-md cursor-pointer transition-colors"
+                                                            onClick={() => handleToggleColumn(colId)}
+                                                        >
+                                                            <div className="relative flex-shrink-0">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={!isHidden}
+                                                                    onChange={() => {
+                                                                    }}
+                                                                    className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                                />
+                                                            </div>
+
+                                                            <div className="flex-1 min-w-0">
+                                                                    <span className={`text-sm font-normal ${
+                                                                        !isHidden ? 'text-gray-900' : 'text-gray-500'
+                                                                    }`}>
+                                                                        {label}
+                                                                    </span>
+                                                            </div>
+
+                                                            <div className="flex-shrink-0">
+                                                                    <span
+                                                                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                                                            !isHidden
+                                                                                ? 'badge !rounded-full bg-success text-white'
+                                                                                : 'badge !rounded-full bg-warning text-white'
+                                                                        }`}>
+                                                                        {!isHidden ? 'Visible' : 'Hidden'}
+                                                                    </span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="px-4 py-8 text-center">
+                                                <svg className="mx-auto w-8 h-8 text-gray-300 mb-2" fill="none"
+                                                     stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <p className="text-sm text-gray-500">No columns found</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Footer */}
+                                    <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                                        <div className="flex items-center justify-between">
+                                                <span className="text-xs text-gray-500">
+                                                    {memoizedColumns.length - hiddenCols.length} of {memoizedColumns.length} visible
+                                                </span>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => {
+                                                        memoizedColumns.forEach(col => {
+                                                            const colId = col.id || col.accessor;
+                                                            if (colId && hiddenCols.includes(colId)) {
+                                                                handleToggleColumn(colId);
+                                                            }
+                                                        });
+                                                    }}
+                                                    className="px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+                                                >
+                                                    Show all
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        memoizedColumns.slice(1).forEach(col => {
+                                                            const colId = col.id || col.accessor;
+                                                            if (colId && !hiddenCols.includes(colId)) {
+                                                                handleToggleColumn(colId);
+                                                            }
+                                                        });
+                                                    }}
+                                                    className="px-3 py-1 text-xs font-medium text-gray-600 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
+                                                >
+                                                    Hide all
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {/* CSV Download button */}
                         <button
                             type="button"
                             className="px-2 py-1 border rounded text-sm"
-                            onClick={handleDownloadCSV}
+                            onClick={handleDownloadExcel}
                         >
                             <i className="ri-download-2-line"></i>
                         </button>
-
-                        {/* Column visibility dropdown */}
-                        {showColFilter && (
-                            <div className="absolute z-10 bg-white border shadow-md p-2 top-12 right-0">
-                                {memoizedColumns.map((col) => {
-                                    const colId = col.id || col.accessor;
-                                    if (!colId) return null;
-                                    const isHidden = hiddenCols.includes(colId);
-                                    const label = typeof col.Header === 'string' ? col.Header : colId;
-                                    return (
-                                        <label key={colId} className="flex items-center gap-2 text-sm my-1">
-                                            <input
-                                                type="checkbox"
-                                                checked={!isHidden}
-                                                onChange={() => handleToggleColumn(colId)}
-                                            />
-                                            {label}
-                                        </label>
-                                    );
-                                })}
-                            </div>
-                        )}
 
                         {/* Search */}
                         <input
@@ -833,25 +1166,25 @@ const DataTable = React.memo(({
 
                 {/* Main Table */}
                 {isLoading ? (
-                    <LoadingSpinner />
+                    <LoadingSpinner/>
                 ) : (
-                    <div className="table-responsive">
+                    <div className={`table-responsive ${tableParentClass}`}>
                         <table
                             {...getTableProps()}
-                            className="table whitespace-nowrap table-hover min-w-full ti-custom-table-hover"
+                            className={`table whitespace-nowrap table-hover min-w-full ti-custom-table-hover ${tableClass}`}
                         >
                             <thead>
                             {headerGroups.map((headerGroup) => {
-                                const { key: headerGroupKey, ...headerGroupProps } =
+                                const {key: headerGroupKey, ...headerGroupProps} =
                                     headerGroup.getHeaderGroupProps();
                                 return (
                                     <tr
                                         key={headerGroupKey}
                                         {...headerGroupProps}
-                                        className="border-b border-defaultborder"
+                                        className={`border-b border-defaultborder ${rowClassName || ''}`}
                                     >
                                         {headerGroup.headers.map((column) => {
-                                            const { key: columnKey, ...columnProps } = column.getHeaderProps(
+                                            const {key: columnKey, ...columnProps} = column.getHeaderProps(
                                                 column.getSortByToggleProps
                                                     ? column.getSortByToggleProps()
                                                     : undefined
@@ -862,13 +1195,14 @@ const DataTable = React.memo(({
                                                     key={columnKey}
                                                     {...columnProps}
                                                     scope="col"
-                                                    className="text-start cursor-pointer select-none align-middle"
+                                                    className={`text-start cursor-pointer select-none align-middle ${column.headerClassName || ''}`}
                                                 >
                                                     <div className="inline-flex items-center">
                                                         <span>{column.render('Header')}</span>
                                                         {/* Sort arrows if sortable */}
                                                         {column.canSort && (
-                                                            <span className="flex flex-col items-center justify-center ml-2 leading-none">
+                                                            <span
+                                                                className="flex flex-col items-center justify-center ml-2 leading-none">
                                                                     <span
                                                                         className={
                                                                             (column.isSorted && !column.isSortedDesc
@@ -900,7 +1234,9 @@ const DataTable = React.memo(({
                             <tbody {...getTableBodyProps()}>
                             {tablePage.map((row) => {
                                 prepareRow(row);
-                                const { key: rowKey, ...rowProps } = row.getRowProps();
+
+                                const {key: rowKey, ...rowProps} = row.getRowProps();
+
                                 return (
                                     <tr
                                         key={rowKey}
@@ -908,9 +1244,18 @@ const DataTable = React.memo(({
                                         className="border-b border-defaultborder text-[0.6875rem]"
                                     >
                                         {row.cells.map((cell) => {
-                                            const { key: cellKey, ...cellProps } = cell.getCellProps();
+                                            const {key: cellKey, ...baseProps} = cell.getCellProps();
+
+                                            const customProps = cell.column.getCellProps
+                                                ? cell.column.getCellProps(cell)
+                                                : {};
+
                                             return (
-                                                <td key={cellKey} {...cellProps}>
+                                                <td
+                                                    key={cellKey}
+                                                    {...baseProps}
+                                                    {...customProps}
+                                                >
                                                     {cell.render('Cell')}
                                                 </td>
                                             );
@@ -919,6 +1264,7 @@ const DataTable = React.memo(({
                                 );
                             })}
                             </tbody>
+
                         </table>
                     </div>
                 )}
@@ -935,7 +1281,7 @@ const DataTable = React.memo(({
             </div>
         </div>
     );
-});
+}));
 
 DataTable.propTypes = {
     columns: PropTypes.array.isRequired,

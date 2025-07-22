@@ -13,6 +13,7 @@ import {useQuery} from "@tanstack/react-query";
 import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSchema.js";
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
+import useBodyScrollLock from "@hooks/useBodyScrollLock.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -344,7 +345,7 @@ export function useKanbanBoard({ filterPriority, searchQuery }) {
 export const useTaskDetailModal = () => {
   const [id, setId] = useState(null);
   const [isTaskDetailModalOpen, setIsTaskDetailModalOpen] = useState(false);
-
+  useBodyScrollLock(isTaskDetailModalOpen);
   const openTaskDetailModal = (id) => {
     setId(id);
     setIsTaskDetailModalOpen(true);
@@ -411,3 +412,36 @@ export const useTaskActivityLog = (id) => {
 
   return { data, isLoading };
 };
+
+export default function useSetActiveUserModal({ task, refetch }) {
+  const [isOpen, setIsOpen] = useState(false);
+  useBodyScrollLock(isOpen);
+
+  const openModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  const getCurrentActiveUserIds = useCallback(() => {
+    if (!task?.users) return [];
+    return task.users
+        .filter((user) => user.is_active)
+        .map((user) => user.id);
+  }, [task]);
+
+  const handleUpdate = useCallback(() => {
+    if (refetch) refetch();
+    setIsOpen(false);
+  }, [refetch]);
+
+  return {
+    isOpen,
+    openModal,
+    closeModal,
+    getCurrentActiveUserIds,
+    handleUpdate,
+  };
+}

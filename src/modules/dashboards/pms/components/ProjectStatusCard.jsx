@@ -3,10 +3,8 @@ import {getChangeStyles, getStatusStyles} from "@helpers/statusStyles.js";
 import CountUp from "react-countup";
 import SvgIcon from "@components/SvgIcon.jsx";
 import PercentageIcon from "@components/PercentageIcon.jsx";
-import {useNavigate} from "react-router-dom";
 
 const ProjectStatusCard = ({ item }) => {
-    const navigate = useNavigate();
     const { status, last_month, total, percentage_change } = item;
     const styles = getStatusStyles(status);
     const { changeClass, arrowIconClass, ariaLabel } = getChangeStyles(percentage_change);

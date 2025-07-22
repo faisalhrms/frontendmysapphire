@@ -3,6 +3,7 @@ import Notify from "@helpers/toastNotifications.js";
 
 // Equipment statuses (similar to projectStatuses in the project service)
 export const equipmentStatuses = [
+    { value: 'available_in_inventory', label: 'Available in Inventory' },
     { value: 'no_status', label: 'N/A' },
     { value: 'brand_new', label: 'Brand New' },
     { value: 'faulty', label: 'Faulty' },
@@ -79,6 +80,18 @@ export const reAssignEquipment = async (payload) => {
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message || "Error reassigning equipment.");
+        throw error;
+    }
+};
+
+// Add to inventoryService.js
+export const verifyEquipmentItem = async (id, payload) => {
+    try {
+        const response = await api.patch(`/equipments/${id}/verify/`, payload);
+        Notify.success(response.data.message);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Verification failed");
         throw error;
     }
 };

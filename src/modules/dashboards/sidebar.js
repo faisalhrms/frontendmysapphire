@@ -1,5 +1,6 @@
 import {generateSidebarItem} from "@helpers/formatters.js";
 import {DASHBOARD_ROUTES} from "@modules/dashboards/routes.js";
+import {BEIRHOLM_BI_ROUTES} from "@modules/beirholm-bi/routes.js";
 
 export const sidebarMenu = [
     generateSidebarItem(
@@ -97,7 +98,15 @@ export const sidebarMenu = [
                 10,
                 '',
                 DASHBOARD_ROUTES.SALES_DASHBOARD.permission,
-            )
+            ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.ROAD_MAP_DASHBOARD.path,
+                'link',
+                'RoadMap Dashboard',
+                11,
+                '',
+                DASHBOARD_ROUTES.ROAD_MAP_DASHBOARD.permission
+            ),
 
         ]
     ),

@@ -1,5 +1,4 @@
 import React from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import TaskKanbanList from "@modules/project-management/components/task/TaskKanbanList.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useKanbanBoard } from "@modules/project-management/hooks/taskHooks.js";
@@ -7,6 +6,8 @@ import { useSearchHook } from "@hooks/useSearchHook.js";
 import useFilters from "@hooks/useFilters.js";
 import ProjectPriorityDropdown from "@modules/project-management/components/dropdowns/ProjectPriorityDropdown.jsx";
 import { useWatch } from "react-hook-form";
+import {Columns} from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const TaskKanban = () => {
     const { searchTerm, handleSearchChange } = useSearchHook();
@@ -21,7 +22,11 @@ const TaskKanban = () => {
 
     return (
         <>
-            <PageHeader currentpage="Task Kanban Board" activepage="Task" mainpage="Kanban Board" />
+            <IconPageHeader
+                heading="Task Kanban Board"
+                description="Visualize and manage tasks across different stages"
+                icon={Columns}
+            />
 
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="xl:col-span-12 col-span-12">
@@ -54,7 +59,7 @@ const TaskKanban = () => {
             </div>
             {isLoading ? (
                 <div className="text-center mt-4">
-                    <LoadingSpinner />
+                    <LoadingSpinner/>
                 </div>
             ) : (
                 <div className="ynex-kanban-board text-defaulttextcolor dark:text-defaulttextcolor/70 text-defaultsize">
@@ -75,6 +80,7 @@ const TaskKanban = () => {
                     </div>
                 </div>
             )}
+            <div id="modal-root"></div>
         </>
     );
 };
