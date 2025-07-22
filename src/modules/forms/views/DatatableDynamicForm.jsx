@@ -48,6 +48,7 @@ const DatatableDynamicForm = () => {
     const columns = [
         {
             Header: "QR Code",
+            disableSortBy: true,
             Cell: ({ row }) => {
                 const rowData = row.original;
                 return (
@@ -160,7 +161,8 @@ const DatatableDynamicForm = () => {
             filterType: 'text',
             filterable: true,
             Cell: ({ value }) => (
-                 <span className="badge !rounded-full bg-light text-default">
+                value &&
+                <span className="badge !rounded-full bg-light text-default">
                     {toTitleCase(value)}
                  </span>
             ),
@@ -168,7 +170,7 @@ const DatatableDynamicForm = () => {
         {
             Header: 'Created by',
             accessor: 'created_by',
-            Cell: ({ value }) => (
+            Cell: ({value}) => (
                 <div className="flex items-center">
                     <Avatar
                         avatar={value?.avatar ? value?.avatar : null}

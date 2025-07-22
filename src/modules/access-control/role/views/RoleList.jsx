@@ -25,7 +25,6 @@ const Role = () => {
         {
             Header: 'Actions',
             Cell: ({ row }) => {
-                console.log("row.original.name:", row.original.name);
                 return (
                   <div className="flex space-x-2">
                       <HasPermission permission='auth.change_group'>

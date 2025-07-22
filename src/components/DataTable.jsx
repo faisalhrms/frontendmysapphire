@@ -1,10 +1,16 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePagination, useSortBy, useTable} from 'react-table';
 import ExcelJS from 'exceljs';
-
+import { Inbox } from "lucide-react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
 import {useDataTable} from "@hooks/dataTableHooks.js";
+import DatatableAdvanceFilters from "@components/DatatableAdvanceFilters.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import {updateColumnOrder} from "@redux/common/tableConfigSlice.js";
+import {  makeSelectColumnOrder, makeSelectTableConfig } from "@redux/common/selectors/tableConfigSelectors.js";
+import EmptyState from "@components/EmptyState.jsx";
+import TableShimmerRow from "@components/TableShimmerRow.jsx";
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
  * If any segment is missing/undefined, returns undefined.
@@ -18,431 +24,6 @@ function getNestedValue(obj, path) {
     }, obj);
 }
 
-/**
- * Advanced Filter Component with Professional Features
- */
-const AdvancedFilters = ({ columns, filters, onFiltersChange, onApplyFilters, onClearFilters }) => {
-    const [localFilters, setLocalFilters] = useState(filters || {});
-
-    const handleFilterChange = (columnId, filterType, value) => {
-        setLocalFilters(prev => ({
-            ...prev,
-            [columnId]: {
-                ...prev[columnId],
-                [filterType]: value
-            }
-        }));
-    };
-
-    const handleRemoveFilter = (columnId) => {
-        setLocalFilters(prev => {
-            const newFilters = { ...prev };
-            delete newFilters[columnId];
-            return newFilters;
-        });
-    };
-
-    const applyFilters = () => {
-        onFiltersChange(localFilters);
-        onApplyFilters(localFilters);
-    };
-
-    const clearAllFilters = () => {
-        setLocalFilters({});
-        onFiltersChange({});
-        onClearFilters();
-    };
-
-    const getDateFilterOperators = () => [
-        { value: 'equals', label: 'Equals' },
-        { value: 'not_equals', label: 'Not Equals' },
-        { value: 'greater_than', label: 'After' },
-        { value: 'greater_than_equal', label: 'On or After' },
-        { value: 'less_than', label: 'Before' },
-        { value: 'less_than_equal', label: 'On or Before' },
-        { value: 'range', label: 'Between' },
-        { value: 'time_period', label: 'Time Period' },
-        { value: 'is_null', label: 'Is Empty' },
-        { value: 'is_not_null', label: 'Is Not Empty' },
-    ];
-
-    const getNumberFilterOperators = () => [
-        { value: 'equals', label: 'Equals' },
-        { value: 'not_equals', label: 'Not Equals' },
-        { value: 'greater_than', label: 'Greater Than' },
-        { value: 'greater_than_equal', label: 'Greater Than or Equal' },
-        { value: 'less_than', label: 'Less Than' },
-        { value: 'less_than_equal', label: 'Less Than or Equal' },
-        { value: 'range', label: 'Between' },
-        { value: 'is_null', label: 'Is Empty' },
-        { value: 'is_not_null', label: 'Is Not Empty' }
-    ];
-
-    const getTimePeriodOptions = () => [
-        // Current time periods
-        { value: 'today', label: 'Today' },
-        { value: 'yesterday', label: 'Yesterday' },
-        { value: 'tomorrow', label: 'Tomorrow' },
-
-        // Week options
-        { value: 'previous_week', label: 'Previous Week' },
-        { value: 'previous_two_weeks', label: 'Previous Two Weeks' },
-        { value: 'this_week', label: 'This Week' },
-        { value: 'next_week', label: 'Next Week' },
-        { value: 'next_two_weeks', label: 'Next Two Weeks' },
-
-        // Month options
-        { value: 'previous_month', label: 'Previous Month' },
-        { value: 'previous_two_months', label: 'Previous Two Months' },
-        { value: 'this_month', label: 'This Month' },
-        { value: 'next_month', label: 'Next Month' },
-        { value: 'next_two_months', label: 'Next Two Months' },
-
-        // Quarter options
-        { value: 'previous_quarter', label: 'Previous Quarter' },
-        { value: 'this_quarter', label: 'This Quarter' },
-        { value: 'next_quarter', label: 'Next Quarter' },
-
-        // Year options
-        { value: 'previous_year', label: 'Previous Year' },
-        { value: 'this_year', label: 'This Year' },
-        { value: 'next_year', label: 'Next Year' },
-
-        // Fiscal periods (assuming fiscal year starts July 1)
-        { value: 'current_fiscal_quarter', label: 'Current Fiscal Quarter' },
-        { value: 'current_fiscal_year', label: 'Current Fiscal Year' },
-        { value: 'previous_fiscal_quarter', label: 'Previous Fiscal Quarter' },
-        { value: 'previous_fiscal_year', label: 'Previous Fiscal Year' },
-
-        // Custom rolling periods
-        { value: 'last_7_days', label: 'Last 7 Days' },
-        { value: 'last_30_days', label: 'Last 30 Days' },
-        { value: 'last_90_days', label: 'Last 90 Days' },
-        { value: 'last_365_days', label: 'Last 365 Days' },
-        { value: 'next_7_days', label: 'Next 7 Days' },
-        { value: 'next_30_days', label: 'Next 30 Days' },
-
-        // Special business periods
-        { value: 'mtd', label: 'Month to Date' },
-        { value: 'qtd', label: 'Quarter to Date' },
-        { value: 'ytd', label: 'Year to Date' },
-        { value: 'fytd', label: 'Fiscal Year to Date' }
-    ];
-
-    const getTextFilterOperators = () => [
-        { value: 'equals', label: 'Equals' },
-        { value: 'contains', label: 'Contains' },
-        { value: 'not_equals', label: 'Not Equals' },
-        { value: 'starts_with', label: 'Starts With' },
-        { value: 'ends_with', label: 'Ends With' },
-        { value: 'is_null', label: 'Is Empty' },
-        { value: 'is_not_null', label: 'Is Not Empty' }
-    ];
-
-    const renderFilterInput = (column, filterId, operator) => {
-        const columnFilter = localFilters[filterId] || {};
-        const filterType = column.filterType || 'text';
-
-        if (['is_null', 'is_not_null'].includes(operator)) {
-            return null;
-        }
-
-        if (operator === 'time_period') {
-            return (
-                <select
-                    className="form-control form-control-sm"
-                    value={columnFilter.timePeriod || ''}
-                    onChange={(e) => handleFilterChange(filterId, 'timePeriod', e.target.value)}
-                >
-                    <option value="">Select time period</option>
-                    {getTimePeriodOptions().map(option => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-            );
-        }
-
-        switch (filterType) {
-            case 'date':
-                if (operator === 'range') {
-                    return (
-                        <div className="flex gap-2">
-                            <input
-                                type="date"
-                                className="form-control form-control-sm"
-                                value={columnFilter.from || ''}
-                                onChange={(e) => handleFilterChange(filterId, 'from', e.target.value)}
-                                placeholder="From"
-                            />
-                            <input
-                                type="date"
-                                className="form-control form-control-sm"
-                                value={columnFilter.to || ''}
-                                onChange={(e) => handleFilterChange(filterId, 'to', e.target.value)}
-                                placeholder="To"
-                            />
-                        </div>
-                    );
-                }
-                return (
-                    <input
-                        type="date"
-                        className="form-control form-control-sm"
-                        value={columnFilter.value || ''}
-                        onChange={(e) => handleFilterChange(filterId, 'value', e.target.value)}
-                    />
-                );
-
-            case 'datetime':
-                if (operator === 'range') {
-                    return (
-                        <div className="flex gap-2">
-                            <input
-                                type="datetime-local"
-                                className="form-control form-control-sm"
-                                value={columnFilter.from || ''}
-                                onChange={(e) => handleFilterChange(filterId, 'from', e.target.value)}
-                                placeholder="From"
-                            />
-                            <input
-                                type="datetime-local"
-                                className="form-control form-control-sm"
-                                value={columnFilter.to || ''}
-                                onChange={(e) => handleFilterChange(filterId, 'to', e.target.value)}
-                                placeholder="To"
-                            />
-                        </div>
-                    );
-                }
-                return (
-                    <input
-                        type="datetime-local"
-                        className="form-control form-control-sm"
-                        value={columnFilter.value || ''}
-                        onChange={(e) => handleFilterChange(filterId, 'value', e.target.value)}
-                    />
-                );
-
-            case 'number':
-                if (operator === 'range') {
-                    return (
-                        <div className="flex gap-2">
-                            <input
-                                type="number"
-                                placeholder="From"
-                                className="form-control form-control-sm"
-                                value={columnFilter.from || ''}
-                                onChange={(e) => handleFilterChange(filterId, 'from', e.target.value)}
-                            />
-                            <input
-                                type="number"
-                                placeholder="To"
-                                className="form-control form-control-sm"
-                                value={columnFilter.to || ''}
-                                onChange={(e) => handleFilterChange(filterId, 'to', e.target.value)}
-                            />
-                        </div>
-                    );
-                }
-                return (
-                    <input
-                        type="number"
-                        className="form-control form-control-sm"
-                        value={columnFilter.value || ''}
-                        onChange={(e) => handleFilterChange(filterId, 'value', e.target.value)}
-                        placeholder="Enter value"
-                    />
-                );
-
-            case 'select':
-                return (
-                    <select
-                        className="form-control form-control-sm"
-                        value={columnFilter.value || ''}
-                        onChange={(e) => handleFilterChange(filterId, 'value', e.target.value)}
-                    >
-                        <option value="">Select option</option>
-                        {column.filterOptions?.map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                );
-
-            case 'multiselect':
-                return (
-                    <select
-                        className="form-control form-control-sm"
-                        multiple
-                        value={columnFilter.values || []}
-                        onChange={(e) => {
-                            const values = Array.from(e.target.selectedOptions, option => option.value);
-                            handleFilterChange(filterId, 'values', values);
-                        }}
-                    >
-                        {column.filterOptions?.map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                );
-
-            case 'boolean':
-                return (
-                    <select
-                        className="form-control form-control-sm"
-                        value={columnFilter.value || ''}
-                        onChange={(e) => handleFilterChange(filterId, 'value', e.target.value)}
-                    >
-                        <option value="">All</option>
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
-                    </select>
-                );
-
-            default:
-                return (
-                    <input
-                        type="text"
-                        placeholder="Enter value"
-                        className="form-control form-control-sm"
-                        value={columnFilter.value || ''}
-                        onChange={(e) => handleFilterChange(filterId, 'value', e.target.value)}
-                    />
-                );
-        }
-    };
-
-    const getFilterComponent = (column, filterId) => {
-        const columnFilter = localFilters[filterId] || {};
-        const filterType = column.filterType || 'text';
-
-        // Get appropriate operators based on filter type
-        let operators = [];
-        if (filterType === 'date' || filterType === 'datetime') {
-            operators = getDateFilterOperators();
-        } else if (filterType === 'number') {
-            operators = getNumberFilterOperators();
-        } else if (filterType === 'text') {
-            operators = getTextFilterOperators();
-        } else if (filterType === 'select' || filterType === 'multiselect' || filterType === 'boolean') {
-            return renderFilterInput(column, filterId, null);
-        }
-
-        const currentOperator = columnFilter.operator || operators[0]?.value;
-
-        return (
-            <div className="space-y-2">
-                <div className="flex gap-2">
-                    {operators.length > 0 && (
-                        <select
-                            className="form-control form-control-sm max-w-[150px]"
-                            value={currentOperator}
-                            onChange={(e) => handleFilterChange(filterId, 'operator', e.target.value)}
-                        >
-                            {operators.map(op => (
-                                <option key={op.value} value={op.value}>
-                                    {op.label}
-                                </option>
-                            ))}
-                        </select>
-                    )}
-                    {renderFilterInput(column, filterId, currentOperator)}
-                </div>
-            </div>
-        );
-    };
-
-    const activeFiltersCount = Object.keys(localFilters).length;
-
-    return (
-        <div className="border rounded p-4 mb-4 bg-gray-50">
-            <div className="flex items-center justify-between mb-3">
-                <h6 className="font-semibold">Advanced Filters</h6>
-                <div className="flex gap-2">
-                    <button
-                        type="button"
-                        className="btn btn-sm btn-primary"
-                        onClick={applyFilters}
-                    >
-                        Apply Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-sm btn-secondary"
-                        onClick={clearAllFilters}
-                    >
-                        Clear All
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {columns
-                    .filter(col => col.filterable)
-                    .map(column => {
-                        const filterId = column.filterKey || column.id || column.accessor;
-                        const columnFilter = localFilters[filterId];
-
-                        return (
-                            <div key={filterId} className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <label className="text-sm font-medium">
-                                        {typeof column.Header === 'string' ? column.Header : filterId}
-                                    </label>
-                                    {columnFilter && (
-                                        <button
-                                            type="button"
-                                            className="text-red-500 hover:text-red-700 text-sm"
-                                            onClick={() => handleRemoveFilter(filterId)}
-                                        >
-                                            <i className="ri-close-line"></i>
-                                        </button>
-                                    )}
-                                </div>
-                                {getFilterComponent(column, filterId)}
-                            </div>
-                        );
-                    })}
-            </div>
-
-            {/* Active Filters Display */}
-            {activeFiltersCount > 0 && (
-                <div className="mt-4 pt-4 border-t">
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium">Active Filters:</span>
-                        {Object.entries(localFilters).map(([columnId, filter]) => {
-                            const column = columns.find(col =>
-                                (col.filterKey || col.id || col.accessor) === columnId
-                            );
-                            const columnName = typeof column?.Header === 'string' ? column.Header : columnId;
-
-                            return (
-                                <span
-                                    key={columnId}
-                                    className="inline-flex items-center gap-1 px-2 !rounded-full bg-primary/10 text-primary text-xs"
-                                >
-                                    {columnName}
-                                    <button
-                                        type="button"
-                                        className="hover:text-blue-600"
-                                        onClick={() => handleRemoveFilter(columnId)}
-                                    >
-                                        <i className="ri-close-line"></i>
-                                    </button>
-                                </span>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
 const DataTable = React.memo(React.forwardRef(({
                                                    columns,
                                                    apiUrl,
@@ -451,12 +32,189 @@ const DataTable = React.memo(React.forwardRef(({
                                                    filter,
                                                    needHeader = true,
                                                    enableAdvancedFilters = false,
-                                                   tableParentClass = '',
-                                                   tableClass = '',
-                                                   rowClassName = ''
+                                                   tableParentClass = 'task-table overflow-hidden transition-all duration-300 min-h-[200px] !rounded-l-none',
+                                                   tableClass = 'whitespace-nowrap table-bordered min-w-full !border-l',
+                                                   rowClassName = 'bg-gray-100 dark:bg-neutral-700'
                                                }, ref) => {
+    const EMPTY_ARRAY = Object.freeze([]);
+    const EMPTY_OBJECT = Object.freeze({});
+    const dispatch = useDispatch();
+    const selectColumnOrder = (state, apiUrl) => state.tableConfig[apiUrl]?.columnOrder || EMPTY_ARRAY;
+    const selectTableConfig = (state, apiUrl) => state.tableConfig[apiUrl] || EMPTY_OBJECT;
+
+    const storedColumnOrder = useSelector((state) => selectColumnOrder(state, apiUrl));
+    const tableConfig = useSelector((state) => selectTableConfig(state, apiUrl));
+
+    const normalizedColumns = useMemo(() => {
+        return (columns || []).map((col, idx) => ({
+            ...col,
+            id: col.id || col.accessor || `col_${idx}`,
+        }));
+    }, [columns]);
+
+    const [columnOrder, setColumnOrder] = useState(
+        storedColumnOrder.length > 0 ? storedColumnOrder : normalizedColumns.map(col => col.id)
+    );
+
+    useEffect(() => {
+        if (
+            storedColumnOrder.length === 0 &&
+            normalizedColumns.length > 0 &&
+            columnOrder.length === 0
+        ) {
+            setColumnOrder(normalizedColumns.map(col => col.id));
+        }
+    }, [normalizedColumns, storedColumnOrder, columnOrder]);
+
+
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
+    const handleMoveColumn = useCallback((headerId, direction) => {
+        setColumnOrder(prevOrder => {
+            const currentIndex = prevOrder.indexOf(headerId);
+            if (currentIndex === -1) return prevOrder;
+
+            const newIndex = direction === 'left' ? currentIndex - 1 : currentIndex + 1;
+            if (newIndex < 0 || newIndex >= prevOrder.length) return prevOrder;
+
+            const newOrder = [...prevOrder];
+            [newOrder[currentIndex], newOrder[newIndex]] = [newOrder[newIndex], newOrder[currentIndex]];
+
+            dispatch(updateColumnOrder({
+                apiKey: apiUrl,
+                columnOrder: newOrder
+            }));
+
+            return newOrder;
+        });
+    }, [apiUrl, dispatch]);
+
+    const EnhancedHeader = ({ column, handleSortChange, currentSort }) => {
+        const headerLabel = column.render ? column.render('Header') : column.Header;
+        const [isOpen, setIsOpen] = useState(false);
+        const dropdownRef = useRef(null);
+        const headerId = column.id || column.accessor;
+        const currentIndex = columnOrder.indexOf(headerId);
+
+        // Get current sort state for this column
+        const isCurrentlySorted = currentSort?.field === headerId;
+        const sortDirection = isCurrentlySorted ? currentSort.direction : null;
+
+        // Close dropdown when clicking outside
+        useEffect(() => {
+            const handleClickOutside = (event) => {
+                if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                    setIsOpen(false);
+                }
+            };
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }, []);
+
+        const handleSort = (direction) => {
+            if (direction === 'clear') {
+                handleSortChange(null, null);
+            } else {
+                handleSortChange(headerId, direction);
+            }
+            setIsOpen(false);
+        };
+
+        return (
+            <div className="flex items-center">
+                <span>{headerLabel}</span>
+                {/* Sort indicator */}
+                {isCurrentlySorted && (
+                    <span className="ml-1">
+                        {sortDirection === 'asc' ? (
+                            <i className="ri-arrow-up-line text-blue-500"></i>
+                        ) : (
+                            <i className="ri-arrow-down-line text-blue-500"></i>
+                        )}
+                    </span>
+                )}
+                <div className="relative ml-2" ref={dropdownRef}>
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="rounded-full transition-colors duration-200 text-gray-500 hover:bg-gray-200 dark:hover:bg-neutral-700 p-1"
+                        aria-label={`Column options for ${column.Header}`}
+                    >
+                        <i className="ri-more-2-line"></i>
+                    </button>
+
+                    {isOpen && (
+                        <div className="absolute right-0 w-40 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-md shadow-lg py-1 z-50">
+                            {/* Sorting options */}
+                            {!column.disableSortBy && (
+                                <>
+                                    <button
+                                        onClick={() => handleSort('asc')}
+                                        className={`w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs hover:bg-gray-100 dark:hover:bg-neutral-700 ${
+                                            sortDirection === 'asc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
+                                        }`}
+                                    >
+                                        <i className="ri-arrow-up-line"></i>
+                                        Sort Ascending
+                                        {sortDirection === 'asc' && <i className="ri-check-line ml-auto"></i>}
+                                    </button>
+
+                                    <button
+                                        onClick={() => handleSort('desc')}
+                                        className={`w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs hover:bg-gray-100 dark:hover:bg-neutral-700 ${
+                                            sortDirection === 'desc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
+                                        }`}
+                                    >
+                                        <i className="ri-arrow-down-line"></i>
+                                        Sort Descending
+                                        {sortDirection === 'desc' && <i className="ri-check-line ml-auto"></i>}
+                                    </button>
+
+                                    {isCurrentlySorted && (
+                                        <button
+                                            onClick={() => handleSort('clear')}
+                                            className="w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs text-gray-500 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700"
+                                        >
+                                            <i className="ri-close-line"></i>
+                                            Clear Sort
+                                        </button>
+                                    )}
+
+                                    <hr className="my-1 border-gray-200 dark:border-neutral-700" />
+                                </>
+                            )}
+
+                            {/* Column movement options */}
+                            <button
+                                onClick={() => {
+                                    handleMoveColumn(headerId, 'left');
+                                    setIsOpen(false);
+                                }}
+                                disabled={currentIndex === 0}
+                                className="w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs text-gray-500 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <i className="ri-arrow-left-line"></i>
+                                Move Left
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    handleMoveColumn(headerId, 'right');
+                                    setIsOpen(false);
+                                }}
+                                disabled={currentIndex === columnOrder.length - 1}
+                                className="w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs text-gray-500 hover:bg-gray-100 dark:text-neutral-200 dark:hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <i className="ri-arrow-right-line"></i>
+                                Move Right
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
 
     const {
         data,
@@ -470,6 +228,37 @@ const DataTable = React.memo(React.forwardRef(({
         handleSortChange,
         handleFilterChange,
     } = useDataTable(apiUrl, 10, { ...filter, ...advancedFilters }, enableAdvancedFilters);
+
+    // Track current sort state
+    const [currentSort, setCurrentSort] = useState({ field: null, direction: null });
+
+    // Wrapper function for sort change that updates local state
+    const handleSortChangeWrapper = useCallback((field, direction) => {
+        setCurrentSort({ field, direction });
+        handleSortChange(field, direction);
+    }, [handleSortChange]);
+
+    const orderedColumns = useMemo(() => {
+        if (!normalizedColumns || normalizedColumns.length === 0) return [];
+
+        return [...normalizedColumns]
+            .sort((a, b) => {
+                const aId = a.id;
+                const bId = b.id;
+                return columnOrder.indexOf(aId) - columnOrder.indexOf(bId);
+            })
+            .map(column => ({
+                ...column,
+                Header: () => (
+                    <EnhancedHeader
+                        column={column}
+                        handleSortChange={handleSortChangeWrapper}
+                        currentSort={currentSort}
+                    />
+                ),
+            }));
+    }, [normalizedColumns, columnOrder, handleSortChangeWrapper, currentSort]);
+
 
     React.useImperativeHandle(ref, () => ({
         refetch,
@@ -508,7 +297,7 @@ const DataTable = React.memo(React.forwardRef(({
         state: { pageIndex, sortBy },
     } = useTable(
         {
-            columns: memoizedColumns,
+            columns: orderedColumns,
             data: memoizedData,
             manualPagination: true,
             manualSortBy: true,
@@ -519,6 +308,7 @@ const DataTable = React.memo(React.forwardRef(({
             },
             autoResetHiddenColumns: false,
             getCellProps: (cell) => cell.column.getCellProps?.(cell) || {},
+            disableSortBy: true,
         },
         useSortBy,
         usePagination
@@ -529,7 +319,6 @@ const DataTable = React.memo(React.forwardRef(({
         setPage(pageIndex + 1);
     }, [pageIndex, setPage]);
 
-    // On sort changes, inform server
     useEffect(() => {
         if (sortBy.length > 0) {
             const { id: field, desc } = sortBy[0];
@@ -932,7 +721,7 @@ const DataTable = React.memo(React.forwardRef(({
                 {enableAdvancedFilters && (
                     <div className="mb-4">
                         {showAdvancedFilters && (
-                            <AdvancedFilters
+                            <DatatableAdvanceFilters
                                 columns={memoizedColumns}
                                 filters={advancedFilters}
                                 onFiltersChange={handleAdvancedFiltersChange}
@@ -1163,12 +952,7 @@ const DataTable = React.memo(React.forwardRef(({
                         />
                     </div>
                 </div>
-
-                {/* Main Table */}
-                {isLoading ? (
-                    <LoadingSpinner/>
-                ) : (
-                    <div className={`table-responsive ${tableParentClass}`}>
+                <div className={`table-responsive ${tableParentClass}`}>
                         <table
                             {...getTableProps()}
                             className={`table whitespace-nowrap table-hover min-w-full ti-custom-table-hover ${tableClass}`}
@@ -1195,34 +979,10 @@ const DataTable = React.memo(React.forwardRef(({
                                                     key={columnKey}
                                                     {...columnProps}
                                                     scope="col"
-                                                    className={`text-start cursor-pointer select-none align-middle ${column.headerClassName || ''}`}
+                                                    className={`text-start align-middle ${column.headerClassName || ''}`}
                                                 >
                                                     <div className="inline-flex items-center">
                                                         <span>{column.render('Header')}</span>
-                                                        {/* Sort arrows if sortable */}
-                                                        {column.canSort && (
-                                                            <span
-                                                                className="flex flex-col items-center justify-center ml-2 leading-none">
-                                                                    <span
-                                                                        className={
-                                                                            (column.isSorted && !column.isSortedDesc
-                                                                                ? 'text-black'
-                                                                                : 'text-gray-400') + ' text-[0.5rem]'
-                                                                        }
-                                                                    >
-                                                                        ▲
-                                                                    </span>
-                                                                    <span
-                                                                        className={
-                                                                            (column.isSorted && column.isSortedDesc
-                                                                                ? 'text-black'
-                                                                                : 'text-gray-400') + ' text-[0.5rem]'
-                                                                        }
-                                                                    >
-                                                                        ▼
-                                                                    </span>
-                                                                </span>
-                                                        )}
                                                     </div>
                                                 </th>
                                             );
@@ -1232,42 +992,50 @@ const DataTable = React.memo(React.forwardRef(({
                             })}
                             </thead>
                             <tbody {...getTableBodyProps()}>
-                            {tablePage.map((row) => {
-                                prepareRow(row);
+                            {isLoading ? (
+                                Array.from({length: 10}).map((_, idx) => (
+                                    <TableShimmerRow key={idx} columns={columns.length}/>
+                                ))
+                            ) : tablePage.length === 0 ? (
+                                <tr>
+                                    <td colSpan={columns.length} className="py-6">
+                                        <EmptyState
+                                            icon={Inbox}
+                                            heading="No Results"
+                                            description="There is no data available to display."
+                                        />
+                                    </td>
+                                </tr>
+                            ) : (
+                                tablePage.map((row) => {
+                                    prepareRow(row);
+                                    const {key: rowKey, ...rowProps} = row.getRowProps();
+                                    return (
+                                        <tr
+                                            key={rowKey}
+                                            {...rowProps}
+                                            className="border-b border-defaultborder text-[0.6875rem]"
+                                        >
+                                            {row.cells.map((cell) => {
+                                                const {key: cellKey, ...baseProps} = cell.getCellProps();
+                                                const customProps = cell.column.getCellProps
+                                                    ? cell.column.getCellProps(cell)
+                                                    : {};
 
-                                const {key: rowKey, ...rowProps} = row.getRowProps();
-
-                                return (
-                                    <tr
-                                        key={rowKey}
-                                        {...rowProps}
-                                        className="border-b border-defaultborder text-[0.6875rem]"
-                                    >
-                                        {row.cells.map((cell) => {
-                                            const {key: cellKey, ...baseProps} = cell.getCellProps();
-
-                                            const customProps = cell.column.getCellProps
-                                                ? cell.column.getCellProps(cell)
-                                                : {};
-
-                                            return (
-                                                <td
-                                                    key={cellKey}
-                                                    {...baseProps}
-                                                    {...customProps}
-                                                >
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
+                                                return (
+                                                    <td key={cellKey} {...baseProps} {...customProps}>
+                                                        {cell.render('Cell')}
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    );
+                                })
+                            )}
                             </tbody>
 
                         </table>
                     </div>
-                )}
             </div>
 
             <div className="box-footer">
@@ -1291,14 +1059,6 @@ DataTable.propTypes = {
     filter: PropTypes.any,
     needHeader: PropTypes.bool,
     enableAdvancedFilters: PropTypes.bool,
-};
-
-AdvancedFilters.propTypes = {
-    columns: PropTypes.array.isRequired,
-    filters: PropTypes.object.isRequired,
-    onFiltersChange: PropTypes.func.isRequired,
-    onApplyFilters: PropTypes.func.isRequired,
-    onClearFilters: PropTypes.func.isRequired,
 };
 
 export default DataTable;
