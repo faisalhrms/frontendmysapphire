@@ -1,14 +1,14 @@
-import {useEffect, useState} from 'react'
-import {useForm} from 'react-hook-form'
-import {useNavigate} from 'react-router-dom'
-import {createChain, getChainById, updateChain} from '@modules/road-map/Chain-Designer/services/ChainService.js'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { createChain, getChainById, updateChain } from '@modules/road-map/Chain-Designer/services/ChainService.js'
 
 const mapRows = rows =>
   (rows || []).map(r => ({
     item          : r.unit?.id        || '',
     item_label    : r.unit?.name      || '',
-    supplier      : r.supplier?.id    || '',
-    supplier_label: r.supplier?.name  || '',
+    suppliers: r.suppliers?.map(s => s.id) || [],
+    suppliersOptions: r.suppliers?.map(s => ({ value: s.id, label: s.name })) || [],
     dyes_method   : r.dyes_method?.id || '',
     dyes_label    : r.dyes_method?.name || '',
     stitch_type   : r.stitch_type?.id || '',
@@ -25,10 +25,10 @@ export const useChain = id => {
     control,
     reset,
     watch,
-    formState: {errors, isSubmitting}
+    formState: { errors, isSubmitting }
   } = useForm({
     defaultValues: {
-      business_unit : '',
+      business_unit  : '',
       process_methods: '',
       qualities      : '',
       products       : [],
@@ -39,15 +39,17 @@ export const useChain = id => {
     }
   })
 
-  useEffect(() => { if (id) getChainById(id).then(r => setChain(r.data)) }, [id])
+  useEffect(() => {
+    if (id) getChainById(id).then(r => setChain(r.data))
+  }, [id])
 
   useEffect(() => {
     if (!chain) return
     reset({
-      business_unit : chain.business_unit,
-      process_methods: chain.process_method?.id || '',
-      qualities      : chain.quality?.id       || '',
-      products       : chain.products?.id || [],
+      business_unit  : chain.business_unit,
+      process_methods: chain.process_method?.id       || '',
+      qualities      : chain.quality?.id             || '',
+      products       : chain.products?.id            || [],
       raw_materials  : mapRows(chain.raw_materials),
       units          : mapRows(chain.units_detail),
       accessories    : mapRows(chain.accessories),
@@ -60,5 +62,13 @@ export const useChain = id => {
     nav(-1)
   }
 
-  return {handleSubmit, control, errors, isSubmitting, onSubmit: submit, chain, watch}
+  return {
+    handleSubmit,
+    control,
+    errors,
+    isSubmitting,
+    onSubmit: submit,
+    chain,
+    watch
+  }
 }
