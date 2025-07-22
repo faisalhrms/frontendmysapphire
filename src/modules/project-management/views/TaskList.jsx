@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import DataTable from "@components/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
-import {getStatusClasses} from "@helpers/badges.js";
+import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
 import AvatarList from "@components/AvatarList.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
@@ -13,6 +13,8 @@ import {taskStatuses} from "@modules/project-management/services/taskService.js"
 import TaskStatusDropdown from "@modules/project-management/components/dropdowns/TaskStatusDropdown.jsx";
 import {ListTodo} from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {priorities} from "@modules/project-management/services/projectService.js";
+import TaskDeadLineItem from "@modules/project-management/components/task/TaskDeadLineItem.jsx";
 
 const TaskList = () => {
     const {
@@ -28,13 +30,18 @@ const TaskList = () => {
             Header: 'Workspace',
             accessor: 'workspace.name',
             disableSortBy: true,
-            Cell: ({ value }) => {
-                return <span className="badge badge-md !rounded-full bg-primary/10 text-primary"> {value ?? 'N/A'}</span>
-            },
             filterType: 'text',
             filterable: true,
             filterKey: 'milestone__project__workspace__name',
             excelAlignment: 'left',
+            Cell: ({cell}) => {
+                return cell.value
+            },
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `!text-center bg-secondary/10 text-secondary`,
+                }
+            },
         },
         {
             Header: "Project",
@@ -54,7 +61,7 @@ const TaskList = () => {
                 return (
                     <Tooltip
                         id={`project-tooltip-${project.id}`}
-                        tooltipContent={`Click To View Project: ${project.name}`}
+                        tooltipContent={project.name}
                     >
                         <Link
                             to={`/module/projects/detail/${project.id}`}
@@ -93,12 +100,12 @@ const TaskList = () => {
                 const task = row.original;
                 return (
                     <Tooltip
-                        id={`project-tooltip-${task.id}`}
-                        tooltipContent={`Click To View Task: ${task.name}`}
+                        id={`task-tooltip-${task.id}`}
+                        tooltipContent={task.name}
                     >
                         <Link
                             onClick={() => {openTaskDetailModal(task.id)}}
-                            to="#" className='font-semibold'>
+                            to="#">
 
                             {task.name.length>20?task.name.slice(0, 20) + "...":task.name}
                         </Link>
@@ -122,13 +129,16 @@ const TaskList = () => {
                 <div className="space-x-1 rtl:space-x-reverse">
                     {Array.isArray(value) && value.length > 0 && (
                         [...new Set(value)].map((team, index) => (
-                            <span key={index} className="badge bg-primary/10 text-primary">
-                                {toTitleCase(team.name)}
-                            </span>
+                            toTitleCase(team.name)
                         ))
                     )}
                 </div>
             ),
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `!text-center bg-primary/10 text-primary`,
+                }
+            },
         },
         {
             Header: 'Person',
@@ -158,11 +168,13 @@ const TaskList = () => {
         {
             Header: "Deadline",
             accessor: "ended_at",
-            Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
             filterType: 'datetime',
             filterable: true,
             excelColumnType: 'date',
             excelFormat: "MMM dd, yyyy",
+            Cell: ({ row }) => (
+                <TaskDeadLineItem task={row.original} />
+            ),
         },
         {
             Header: "Status",
@@ -210,7 +222,40 @@ const TaskList = () => {
             excelColumnType: 'number'
         },
         {Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType: 'number'},
-        {Header: "Timeline Group", accessor: "time_line_group", disableSortBy: true, filterable: false},
+        {
+            Header: "Timeline Group",
+            accessor: "time_line_group",
+            disableSortBy: true,
+            filterable: false,
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                let bgClass = "bg-info";
+                if (value.includes("Delayed")) {
+                    bgClass = "bg-red";
+                } else {
+                    switch (value) {
+                        case "Advance":
+                            bgClass = "bg-success";
+                            break;
+                        case "On Time":
+                            bgClass = "bg-green";
+                            break;
+                        case "Between 1 – 5 days":
+                            bgClass = "bg-yellow";
+                            break;
+                        case "Between 6 – 16 days":
+                            bgClass = "bg-orange";
+                            break;
+                        case "More than 16 days":
+                            bgClass = "bg-danger";
+                            break;
+                    }}
+
+                return {
+                    className: `text-white ${bgClass}`,
+                };
+            },
+        },
         {
             Header: "Launch/Milestone Deadline",
             accessor: "milestone.ended_at",
@@ -228,7 +273,12 @@ const TaskList = () => {
             accessor: "is_ecom",
             filterType: 'boolean',
             filterable: true,
-            Cell: ({value}) => (value ? 'Yes': 'No')
+            Cell: ({value}) => (value ? 'Yes': 'No'),
+            getCellProps: (cellInfo) => {
+                return {
+                    className: cellInfo.value ? 'bg-success text-white' : 'bg-info text-white',
+                }
+            },
         },
         {
             Header: 'Progress',
@@ -243,6 +293,27 @@ const TaskList = () => {
                         withStatus={false}
                     />
                 );
+            },
+        },
+        {
+            Header: 'Priority',
+            accessor: 'priority',
+            filterType: 'select',
+            filterable: true,
+            filterOptions: priorities,
+            excelStyleMap: {
+                low: {label: 'LOW', bgColor: '#9E9E9E', textColor: '#FFFFFF'},
+                high: {label: 'HIGH', bgColor: '#D32F2F', textColor: '#FFFFFF'},
+                medium: {label: 'MEDIUM', bgColor: '#0097A7', textColor: '#FFFFFF'},
+            },
+            headerClassName: '!text-center',
+            Cell: ({cell}) => {
+                return toTitleCase(cell.value);
+            },
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `${getBadgeClasses(cellInfo.value, '', false)}`,
+                }
             },
         },
         {
