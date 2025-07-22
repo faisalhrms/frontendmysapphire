@@ -47,6 +47,7 @@ const RoadmapDashboard = () => {
           control={control}
           errors={errors}
           selectedBU={values.business_unit}
+          labelCerts={data?.quality_detail?.label_certificates || []}
         />
       </form>
 

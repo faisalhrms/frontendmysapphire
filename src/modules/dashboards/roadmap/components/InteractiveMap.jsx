@@ -100,53 +100,67 @@ const grouped = useMemo(() => {
         <svg className="absolute inset-0 pointer-events-none" width="1400" height="720">
           {points.map(p=>{const hasOut=p.units.some(u=>!u.inHouse);const icon=hasOut?"https://res.cloudinary.com/dtsguaevl/image/upload/v1751621545/red_location_icon_svg_hfnkfi.svg":"https://res.cloudinary.com/dtsguaevl/image/upload/v1751621408/blue_location_icon_svg_itujxr.svg";const m=markers[p.id];return<image key={p.id} href={icon} x={m.x-12} y={m.y-16} width="40" height="40"/>})}
         </svg>
-        {points.map(p=>{const pos=positions[p.id];const headerBg=p.units.some(u=>!u.inHouse)?"!bg-pink/20":"bg-info/15";return(
-          <div key={p.id} className="absolute w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden" style={{left:pos.left,top:pos.top}}>
-            <div className={`flex items-center gap-6 p-1 ${headerBg}`}>
-              <div className="p-1">{p.icon}</div>
-              <span className="font-bold text-gray-800 dark:text-gray-200 truncate">{p.name}</span>
-            </div>
-            <div className="p-3">
-              <ul className="space-y-2">
-                {p.units.map(u=>{const key=`${p.cid}:${u.unitId}`;const showToggle=u.suppliers.length>0;return(
-                  <li key={u.unitId}>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-800 font-medium dark:text-gray-200 cursor-pointer" onClick={()=>openCanvas(p.cid,u.unitId,u.unitName)}>{u.unitName}</span>
-                      {showToggle&&<span className="text-blue-600 font-bold text-lg cursor-pointer" onClick={()=>toggle(p.cid,u.unitId)}>{expanded[key]?"−":"+"}</span>}
-                    </div>
-                    {expanded[key]&&showToggle&&<ul className="pl-4 mt-2 space-y-1">{u.suppliers.map(s=><li key={s.id} className="inline-block text-xs px-2 py-1 rounded-full">{s.name}</li>)}</ul>}
-                  </li>)})}
-              </ul>
-            </div>
-          </div>)})}
-          <div className="absolute flex flex-col items-center gap-0" style={{ left: 1220, top: 0 }}>
-            {labelCerts.map((cert, idx) => (
-            <React.Fragment key={cert.id}>
-              <div className="relative w-[4.5rem] h-[4.5rem]">
-                <div className="absolute inset-0 bg-white rounded-full shadow-lg ring-2 ring-info flex items-center justify-center">
-                  <img
-                    src={cert.media.medium_url}
-                    alt={cert.name}
-                    title={cert.name}
-                    className="w-12 h-12 object-contain"
-                  />
+          {points.map(p => {
+            const pos = positions[p.id]
+            const headerBg = p.units.some(u => !u.inHouse) ? "!bg-pink/20" : "bg-info/15"
+            return (
+              <div
+                key={p.id}
+                className="absolute w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+                style={{ left: pos.left, top: pos.top }}
+              >
+                <div className={`flex items-center gap-6 p-1 ${headerBg}`}>
+                  <div className="p-1">{p.icon}</div>
+                  <span className="font-bold text-gray-800 dark:text-gray-200 truncate">
+                    {p.name}
+                  </span>
+                </div>
+                <div className="p-3">
+                  <ul className="space-y-2">
+                    {p.units.map(u => {
+                      const key = `${p.cid}:${u.unitId}`
+                      const showToggle = u.suppliers.length > 0
+                      return (
+                        <li key={u.unitId}>
+                          <div className="flex justify-between items-center">
+                            <span
+                              className="text-xs text-gray-800 font-medium dark:text-gray-200 cursor-pointer"
+                              onClick={() => openCanvas(p.cid, u.unitId, u.unitName)}
+                            >
+                              {u.unitName}
+                            </span>
+                            {showToggle && (
+                              <span
+                                className="text-blue-600 font-bold text-lg cursor-pointer"
+                                onClick={() => toggle(p.cid, u.unitId)}
+                              >
+                                {expanded[key] ? "−" : "+"}
+                              </span>
+                            )}
+                          </div>
+                          {expanded[key] && showToggle && (
+                            <ul className="pl-4 mt-2 space-y-1 max-h-24 overflow-auto list-disc list-inside">
+                              {u.suppliers.map(s => (
+                                <li
+                                  key={s.id}
+                                  className="text-xs cursor-pointer"
+                                  onClick={() =>
+                                    openCanvas(p.cid, u.unitId, u.unitName)
+                                  }
+                                >
+                                  {s.name}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      )
+                    })}
+                  </ul>
                 </div>
               </div>
-              {idx < labelCerts.length - 1 && (
-                <svg width="10" height="40" viewBox="0 0 10 40" fill="none">
-                  <path
-                    d="M5 0 C9 8, 1 16, 5 24 C9 32, 1 40, 5 48"
-                    stroke="#9CA3AF"
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              )}
-            </React.Fragment>
-
-            ))}
-          </div>
+            )
+          })}
 
       </div>
       <CertificateCanvas id="hs-overlay-right" unitName={canvasData.unitName} groups={canvasData.groups}/>
