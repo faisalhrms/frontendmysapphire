@@ -76,6 +76,11 @@ const UserList = () => {
         {
             Header: 'Name',
             accessor: 'full_name',
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `!text-left`,
+                }
+            },
             Cell: ({ row }) => (
                 <div className="flex items-center">
                     <Avatar
@@ -241,23 +246,6 @@ const UserList = () => {
                 </div>
             ),
         },
-        // {
-        //     Header: 'Actions',
-        //     accessor: 'id', // Adding accessor for better performance
-        //     Cell: ({ value }) => (
-        //         <HasPermission permission='change_user'>
-        //             <div className="flex space-x-2">
-        //                 <button
-        //                     onClick={() => handleEdit(value)}
-        //                     className="ti-btn ti-btn-primary ti-btn-sm"
-        //                     title="Edit User"
-        //                 >
-        //                     <i className="ri-edit-line"></i>
-        //                 </button>
-        //             </div>
-        //         </HasPermission>
-        //     ),
-        // },
     ];
 
     const buttons = (
@@ -286,8 +274,6 @@ const UserList = () => {
                 buttons={buttons}
                 apiUrl="/users/datatable/"
                 filter={filters}
-                // Assuming DataTable can handle 'data.rows' and 'data.total'
-                // If not, adjust DataTable's implementation accordingly
             />
         </>
     );
