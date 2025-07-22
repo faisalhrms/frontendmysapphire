@@ -371,6 +371,7 @@ const DataSanitizationList = () => {
             )}
             {isConfirmModalOpen && fileToDelete && (
                 <ConfirmDeleteModal
+                    bodyMessage={"Are you sure you want to delete this file and all related data?"}
                     closeModal={closeConfirmModal}
                     onConfirm={async () => {
                         const key = `delete_${fileToDelete}`;
