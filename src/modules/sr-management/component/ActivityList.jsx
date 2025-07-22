@@ -78,9 +78,16 @@ const ActivityList = ({activities = [], refreshActivities}) => {
                                         )}
 
                                     </div>
-                                    <p className="badge bg-light text-default">
-                                        Target Time: {format(new Date(activity.ended_at), 'EEEE, MMM d, yyyy, h:mm a')}
-                                    </p>
+
+                                        <div className="flex flex-col gap-1 mt-1 w-fit">
+                                          <p className="badge bg-light text-default w-fit">
+                                            Created By: <span className="ml-1">{activity.created_by_name}</span>
+                                          </p>
+                                          <p className="badge bg-light text-default w-fit">
+                                            Target Time: <span className="ml-1">{format(new Date(activity.ended_at), 'EEEE, MMM d, yyyy, h:mm a')}</span>
+                                          </p>
+                                        </div>
+
                                     <div className="flex items-center justify-between flex-wrap">
                                         <div>
                                             <p className="badge bg-light text-default">

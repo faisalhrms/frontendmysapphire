@@ -39,7 +39,6 @@ const ServiceRequestCard = ({serviceData = {}, currentUser}) => {
                         </div>
                         <div className="flex items-center justify-between mb-4">
                             <p className="text-sm">{serviceData?.status}</p>
-                            <p className="text-sm">{serviceData?.startDate || "Mar 08, 2023"}</p>
                         </div>
                     </div>
                 </div>
