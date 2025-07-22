@@ -1,5 +1,5 @@
 import React, {useEffect, useCallback} from "react";
-const ConfirmDeleteModal = ({closeModal, onConfirm}) => {
+const ConfirmDeleteModal = ({closeModal, onConfirm,bodyMessage=""}) => {
   const handleClose = useCallback(() => {
     const modal = document.getElementById("confirmDeleteModal");
     if (modal && window.HSOverlay && typeof window.HSOverlay.close === "function") {
@@ -53,7 +53,7 @@ const ConfirmDeleteModal = ({closeModal, onConfirm}) => {
             </button>
           </div>
           <div className="ti-modal-body">
-            <p>Are you sure you want to delete this file and all related data?</p>
+            <p>{bodyMessage}</p>
           </div>
           <div className="ti-modal-footer">
             <button onClick={handleConfirm} type="button" className="ti-btn ti-btn-danger">

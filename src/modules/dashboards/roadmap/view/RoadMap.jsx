@@ -1,17 +1,17 @@
 import React from 'react';
-import RoadmapForm from "@modules/beirholm-bi/components/RoadMapform.jsx";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
+import RoadmapDashboard from "@modules/dashboards/roadmap/view/RoadmapDashboard.jsx";
 
 const RoadMap = () => {
     return (
         <>
             <PageHeader
-                currentpage="Road Map Sourcing Beirholm"
-                activepage="Road map"
-                mainpage="Road Map Sourcing Beirholm"
+                currentpage="RoadMap Sourcing Beirholm"
+                activepage="Roadmap"
+                mainpage="RoadMap Sourcing Beirholm"
             />
         <div>
-         <RoadmapForm/>
+         <RoadmapDashboard/>
         </div>
             </>
     );

@@ -68,14 +68,6 @@ export const sidebarMenu = [
                 '',
                 BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission
             ),
-                generateSidebarItem(
-                    BEIRHOLM_BI_ROUTES.ROAD_MAP_RULE_CREATE.path,
-                    'link',
-                    'RoadMap',
-                    9,
-                    '',
-                    BEIRHOLM_BI_ROUTES.ROAD_MAP_RULE_CREATE.permission
-                ),
         ]
     )
 ];
