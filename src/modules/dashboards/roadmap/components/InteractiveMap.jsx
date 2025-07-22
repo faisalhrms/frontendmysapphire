@@ -27,7 +27,34 @@ export default function InteractiveMap({chain}) {
   const pkg=sec.packaging||[]
   const labelCerts=data.quality_detail?.label_certificates||[]
   const rowsByCat=useMemo(()=>{const o={};[...raw,...units,...acc,...pkg].forEach(r=>{const cid=r.category_id;if(!o[cid])o[cid]=[];o[cid].push(r)});return o},[raw,units,acc,pkg])
-  const grouped=useMemo(()=>{const g={};Object.entries(rowsByCat).forEach(([cid,rows])=>{const m={};rows.forEach(r=>{const uid=r.unit?.id;if(!uid)return;if(!m[uid])m[uid]={unitId:uid,unitName:r.unit?.name||"",suppliers:[],inHouse:r.is_in_house};else if(r.is_in_house)m[uid].inHouse=true;if(r.supplier)m[uid].suppliers.push({id:r.supplier.id,name:r.supplier.name})});g[cid]=Object.values(m)});return g},[rowsByCat])
+const grouped = useMemo(() => {
+  const g = {};
+  Object.entries(rowsByCat).forEach(([cid, rows]) => {
+    const m = {};
+    rows.forEach(r => {
+      const uid = r.unit?.id;
+      if (!uid) return;
+      if (!m[uid]) {
+        m[uid] = {
+          unitId: uid,
+          unitName: r.unit?.name || "",
+          suppliers: [],
+          inHouse: !!r.is_in_house
+        };
+      } else if (r.is_in_house) {
+        m[uid].inHouse = true;
+      }
+      (r.suppliers || []).forEach(s => {
+        if (!m[uid].suppliers.find(x => x.id === s.id)) {
+          m[uid].suppliers.push(s);
+        }
+      });
+    });
+    g[cid] = Object.values(m);
+  });
+  return g;
+}, [rowsByCat]);
+
   const basePoints=[
     {id:"fiber",name:"Fiber",x:170,y:400},
     {id:"spinning",name:"Spinning",x:350,y:180},

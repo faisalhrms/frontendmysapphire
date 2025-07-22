@@ -7,6 +7,7 @@ const makePreset = (row, idKey) =>
     ? [{ value: row[idKey], label: row[`${idKey}_label`] }]
     : []
 
+
 const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, errors, isUnit }) => {
   const { fields, append, remove } = useFieldArray({ control, name: fieldName })
 
@@ -15,8 +16,7 @@ const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, error
       append({
         item: null,
         item_label: '',
-        supplier: null,
-        supplier_label: '',
+        suppliers: [],
         dyes_method: null,
         dyes_label: '',
         stitch_type: null,
@@ -35,8 +35,7 @@ const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, error
             append({
               item: null,
               item_label: '',
-              supplier: null,
-              supplier_label: '',
+              suppliers: [],
               dyes_method: null,
               dyes_label: '',
               stitch_type: null,
@@ -67,14 +66,15 @@ const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, error
 
             <FormAsyncSelect
               label={false}
-              name={`${fieldName}.${i}.supplier`}
+              name={`${fieldName}.${i}.suppliers`}
               control={control}
               errors={errors}
-              placeholder="Supplier"
+              placeholder="Suppliers"
               apiUrl={`/select/roadmap/suppliers?business_unit=${selectedBusinessUnit}`}
               queryKeyBase={`suppliers-${selectedBusinessUnit}-${i}`}
               className="flex-1"
-              preselectedOptions={makePreset(row, 'supplier')}
+              isMulti={true}
+              preselectedOptions={row.suppliersOptions}
             />
 
             {isUnit && (
