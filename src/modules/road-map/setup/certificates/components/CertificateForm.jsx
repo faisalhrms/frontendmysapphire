@@ -15,15 +15,15 @@ const CertificateForm = () => {
     const {handleSubmit, control, errors, isSubmitting, onSubmit, certificate, watch} = useCertificate(id);
     return (
         <div>
-            <PageHeader currentpage={id ? "Edit Supplier" : "Add Supplier"} activepage="Supplier"
-                        mainpage={id ? "Edit Supplier" : "Add Supplier"}/>
+            <PageHeader currentpage={id ? "Edit Certificate" : "Add Certificate"} activepage="Certificate"
+                        mainpage={id ? "Edit Certificate" : "Add Certificate"}/>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-12 gap-x-6">
                     <div className="md:col-span-12 sm:col-span-12 col-span-12">
                         <div className="box">
                             <div className="box-header">
                                 <div
-                                    className="box-title">{id && id !== ":id" ? "Edit Supplier" : "Add Supplier"}</div>
+                                    className="box-title">{id && id !== ":id" ? "Edit Certificate" : "Add Certificate"}</div>
                             </div>
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
@@ -47,7 +47,7 @@ const CertificateForm = () => {
                                             type="text"
                                             control={control}
                                             errors={errors}
-                                            placeholder="Supplier Name"/>
+                                            placeholder="Certificate Name"/>
                                     </div>
                                     <div className="xl:col-span-12 col-span-12">
                                         <FileUpload
