@@ -8,12 +8,12 @@ import stm9 from "@assets/images/road-map/STM-9.png";
 import stm10 from "@assets/images/road-map/STM-10.png";
 
 const mediaByUnit = {
-  "stm-4": { img: stm4, addr: "63/64-KM, Multan Road, Jumber Khurd,Chunian, District Kasur",video: "https://youtu.be/uYB8xy1RB3Y" },
-  "stm-5": { img: stm5, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura",video: "https://youtu.be/uYB8xy1RB3Y" },
-  "stm-6": { img: stm6, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura",video: "https://youtu.be/JHrh59H2GZE" },
-  "stm-7": { img: stm7, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura",video: "https://youtu.be/sQqD6sJXyvE" },
-  "stm-9": { img: stm9, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura",video: "https://youtu.be/4ABaiJrhDWY" },
-  "stm-10":{ img: stm10,addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura",video: "https://youtu.be/cWBTrfAM3nc" }
+  "stm-4": { img: stm4, addr: "63/64-KM, Multan Road, Jumber Khurd,Chunian, District Kasur", video: "https://youtu.be/uYB8xy1RB3Y" },
+  "stm-5": { img: stm5, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/uYB8xy1RB3Y" },
+  "stm-6": { img: stm6, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/JHrh59H2GZE" },
+  "stm-7": { img: stm7, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/sQqD6sJXyvE" },
+  "stm-9": { img: stm9, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/4ABaiJrhDWY" },
+  "stm-10": { img: stm10, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/cWBTrfAM3nc" }
 };
 
 export default function CertificateCanvas({ id = "hs-overlay-right", unitName, groups = {} }) {
@@ -34,7 +34,6 @@ export default function CertificateCanvas({ id = "hs-overlay-right", unitName, g
         </h6>
         <button type="button" className="ti-btn text-gray-700 dark:text-gray-300" data-hs-overlay={`#${id}`}>×</button>
       </div>
-
       <div className="ti-offcanvas-body overflow-y-auto space-y-6 py-4 bg-white dark:bg-gray-800">
         {meta.img && (
           <div className="mx-2 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex">
@@ -51,13 +50,11 @@ export default function CertificateCanvas({ id = "hs-overlay-right", unitName, g
             </div>
           </div>
         )}
-
         {Object.entries(groups).map(([type, certs]) => (
           <div key={type} className="mx-2 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800">
-            <div className="sticky top-0 z-10 text-center py-1 rounded-t-xl bg-sky-300 dark:bg-sky-600">
+            <div className="text-center py-1 rounded-t-xl bg-sky-300 dark:bg-sky-600">
               <span className="text-sm tracking-wide text-white">{type}</span>
             </div>
-
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase text-gray-500 dark:text-gray-400">
                 <tr>
@@ -69,9 +66,11 @@ export default function CertificateCanvas({ id = "hs-overlay-right", unitName, g
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {certs.map(c => {
-                  const days = differenceInCalendarDays(parseISO(c.expiry_date), new Date());
+                  const days = c.expiry_date ? differenceInCalendarDays(parseISO(c.expiry_date), new Date()) : 0;
                   const badge = badgeClass(c.status, days);
-
+                  const parts = c.certificate.name.split(" ");
+                  const first = parts.slice(0, 2).join(" ");
+                  const rest = parts.slice(2).join(" ");
                   return (
                     <tr key={c.certificate.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="px-4 py-3 whitespace-nowrap">
@@ -85,13 +84,18 @@ export default function CertificateCanvas({ id = "hs-overlay-right", unitName, g
                               <i className="ri-certificate-line text-lg text-gray-400 dark:text-gray-500" />
                             </div>
                           )}
-                          <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{c.certificate.name}</span>
+                          <div className="flex flex-col text-xs font-medium text-gray-800 dark:text-gray-100">
+                            <span className="truncate-m">{first}</span>
+                            {rest && <span className="truncate-m">{rest}</span>}
+                          </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`badge ${badge}`}>{c.status}</span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{c.expiry_date}</td>
+                      <td className="px-4 py-3 text-xs text-gray-700 dark:text-gray-300">
+                        {c.expiry_date || "-"}
+                      </td>
                       <td className="px-2 py-3 text-right">
                         {c.certificate.media && (
                           <button
@@ -111,7 +115,6 @@ export default function CertificateCanvas({ id = "hs-overlay-right", unitName, g
             </table>
           </div>
         ))}
-
         {Object.keys(groups).length === 0 && (
           <p className="text-center text-sm text-gray-500 dark:text-gray-400">No certificates assigned.</p>
         )}

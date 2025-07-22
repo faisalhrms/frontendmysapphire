@@ -1,4 +1,3 @@
-// RoadmapFilter.jsx
 import React from 'react'
 import FormSelect from '@components/form/FormSelect.jsx'
 import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx'
@@ -72,7 +71,7 @@ const RoadmapFilter = ({ control, errors = {}, selectedBU, labelCerts = [] }) =>
                       src={cert.media.medium_url}
                       alt={cert.name}
                       title={cert.name}
-                      className="h-12 w-auto object-contain"
+                      className="h-14 w-14 object-contain"
                     />
                   </span>
                 ))}

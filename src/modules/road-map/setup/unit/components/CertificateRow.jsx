@@ -77,6 +77,7 @@ export default function CertificateRow({
           errors={errors}
           placeholder="Certificate Status"
           options={[
+            { value: "Active", label: "Active" },
             { value: "Renewal", label: "Renewal" },
             { value: "N/A", label: "N/A" },
             { value: "Membership", label: "Membership" }
