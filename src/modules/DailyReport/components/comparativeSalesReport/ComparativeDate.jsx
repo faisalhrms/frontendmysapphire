@@ -100,8 +100,8 @@ const ComparativeDate = ({
                                         placeholder="To Current Period"
                                         control={control}
                                         errors={errors}
-                                        min={minDate}
-                                        max={maxDate}
+                                        // min={minDate}
+                                        // max={maxDate}
                                     />
                                 </div>
                                 {!hideOnlyComparativePeriod && (
