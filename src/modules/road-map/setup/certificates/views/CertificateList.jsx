@@ -36,15 +36,13 @@ const CertificateList = () => {
                 const media = row.original.media;
                 const thumb = media?.medium_url;
                 return thumb ? (
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-center">
                         <a href={media.file_url} target="_blank" rel="noopener noreferrer">
-              <span className="avatar avatar-lg">
-                <img src={thumb} alt={row.original.name}/>
-              </span>
+                        <img src={thumb} alt={row.original.name} className={"h-14 w-14 object-contain"}/>
                         </a>
                     </div>
                 ) : (
-                    "N/A"
+                    "-"
                 );
             }
         },
