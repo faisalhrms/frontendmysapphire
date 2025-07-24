@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { getEmailSetupTypeLabel } from "@modules/setup/services/emailSetupService.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import { SETUP_ROUTES } from "@modules/setup/routes.js";

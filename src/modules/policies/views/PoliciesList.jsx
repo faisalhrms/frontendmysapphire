@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { formatDate } from "@helpers/dateTime.js";
 import { useHasPermission } from "@modules/auth/hooks/authHooks.js";

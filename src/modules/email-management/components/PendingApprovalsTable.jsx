@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import ApprovalStatusDropdown from "@modules/email-management/components/ApprovalStatusDropdown.jsx";
 import {getBadgeClasses} from "@helpers/badges.js";
 

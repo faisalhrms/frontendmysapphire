@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '@modules/layouts/includes/PageHeader';
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import RoleModal from '../components/RoleModel';
 import HasPermission from "@components/HasPermission.jsx";
 

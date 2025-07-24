@@ -1,4 +1,4 @@
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import React, {useState} from "react";
 import ProgressBar from "@components/ProgressBar.jsx";
 import {getBadgeClasses} from "@helpers/badges.js";

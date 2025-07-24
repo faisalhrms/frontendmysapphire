@@ -20,14 +20,10 @@ import ProjectListItems from "@modules/project-management/components/ProjectList
 import { setFilters } from "@modules/project-management/redux/pmsSlice.js";
 import PmsDemoModal from "@modules/project-management/components/model/PmsDemoModal.jsx";
 import TagDropdown from "@components/dropdowns/TagDropdown.jsx";
-import queryString from "query-string";
 import {ClipboardList} from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const ProjectList = () => {
-    const location = useLocation();
-    const query = queryString.parse(location.search);
-
     const { searchTerm, currentPage, setCurrentPage, handleSearchChange } = useSearchHook();
     const { filterControl,
         filterSubmit,
@@ -171,24 +167,6 @@ const ProjectList = () => {
                                     >
                                         <i className="ti ti-list"></i>
                                     </button>
-
-                                    {/*<div className="relative">*/}
-                                    {/*    /!* Button to toggle PeopleFilter *!/*/}
-                                    {/*    <button*/}
-                                    {/*        className="ti-btn ti-btn-sm ti-btn-primary"*/}
-                                    {/*        title="Filter by People"*/}
-                                    {/*        onClick={() => setIsPeopleFilterOpen(!isPeopleFilterOpen)}*/}
-                                    {/*    >*/}
-                                    {/*        <i className="ti ti-user"></i>*/}
-                                    {/*    </button>*/}
-
-                                    {/*    /!* PeopleFilter Dropdown (Properly Positioned Below) *!/*/}
-                                    {/*    {isPeopleFilterOpen && (*/}
-                                    {/*        <div className="absolute top-full mt-2 right-0 z-50">*/}
-                                    {/*            <PeopleFilter onClose={() => setIsPeopleFilterOpen(false)}/>*/}
-                                    {/*        </div>*/}
-                                    {/*    )}*/}
-                                    {/*</div>*/}
                                 </div>
                                 <HasPermission permission='pms.add_project'>
                                     <div className="hs-dropdown ti-dropdown ms-2">

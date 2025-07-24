@@ -61,7 +61,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 ECOM_ROUTES.WR.path,
                 'link',
-                'Weekly Report',
+                'Website Metrics',
                 6,
                 '',
                 ECOM_ROUTES.WR.permission,

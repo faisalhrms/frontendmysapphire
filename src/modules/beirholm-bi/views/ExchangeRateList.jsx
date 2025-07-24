@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { BEIRHOLM_BI_ROUTES } from "@modules/beirholm-bi/routes.js";
 import { toTitleCase } from "@helpers/formatters.js";
 

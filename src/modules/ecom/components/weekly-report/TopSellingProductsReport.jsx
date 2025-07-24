@@ -1,5 +1,5 @@
 import React from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {formatNumberWithCommas} from "@helpers/formatters.js";
 
 const TopSellingProductsReport = ({isActive, filters }) => {

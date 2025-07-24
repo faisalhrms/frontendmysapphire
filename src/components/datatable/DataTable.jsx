@@ -2,13 +2,11 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePagination, useSortBy, useTable} from 'react-table';
 import ExcelJS from 'exceljs';
 import { Inbox } from "lucide-react";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
 import {useDataTable} from "@hooks/dataTableHooks.js";
-import DatatableAdvanceFilters from "@components/DatatableAdvanceFilters.jsx";
+import DatatableAdvanceFilters from "@components/datatable/DatatableAdvanceFilters.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {updateColumnOrder} from "@redux/common/tableConfigSlice.js";
-import {  makeSelectColumnOrder, makeSelectTableConfig } from "@redux/common/selectors/tableConfigSelectors.js";
 import EmptyState from "@components/EmptyState.jsx";
 import TableShimmerRow from "@components/TableShimmerRow.jsx";
 /**

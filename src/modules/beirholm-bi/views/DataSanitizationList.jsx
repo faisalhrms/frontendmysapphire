@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import DataSanitizeModel from "@modules/beirholm-bi/components/DataSanitizeModel.jsx";
 import DataSanitizeService from "@modules/beirholm-bi/services/DataSanitizeService.js";
 import UploadErrorModal from "@modules/beirholm-bi/components/UploadErrorModal.jsx";

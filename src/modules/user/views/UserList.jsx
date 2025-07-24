@@ -2,7 +2,7 @@
 
 import React, {useCallback, useMemo, useState} from 'react';
 import PageHeader from '@modules/layouts/includes/PageHeader';
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";

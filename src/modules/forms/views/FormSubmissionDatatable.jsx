@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {toTitleCase} from "@helpers/formatters.js";
 import {useParams} from "react-router-dom";
 import {useDynamicFormColumns} from "@modules/forms/hooks/dynamicFormHooks.js";

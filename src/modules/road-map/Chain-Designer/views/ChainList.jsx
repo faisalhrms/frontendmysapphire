@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {Link} from 'react-router-dom'
-import DataTable from '@components/DataTable.jsx'
+import DataTable from '@components/datatable/DataTable.jsx'
 import PageHeader from '@modules/layouts/includes/PageHeader.jsx'
 import ConfirmDeleteModal from '@modules/beirholm-bi/components/ConfirmDeleteModal.jsx'
 import {deleteChain} from '@modules/road-map/Chain-Designer/services/ChainService.js'
