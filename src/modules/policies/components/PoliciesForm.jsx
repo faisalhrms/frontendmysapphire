@@ -78,9 +78,6 @@ const PoliciesForm = ({ policyData = {}, isEditMode = false }) => {
 
                 <div className="col-span-12">
                     <div className="box">
-                        <div className="box-header">
-                            <div className="box-title">Policy Details</div>
-                        </div>
                         <div className="box-body">
                             <div className="grid grid-cols-12 gap-4">
                                 <div className="xl:col-span-4 col-span-12">
