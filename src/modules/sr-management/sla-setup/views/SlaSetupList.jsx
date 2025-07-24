@@ -1,5 +1,5 @@
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {Link} from "react-router-dom";
 import {SLA_SETUP_ROUTES} from "@modules/sr-management/sla-setup/routes.js";
 

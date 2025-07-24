@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { Link } from "react-router-dom";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getDigitalProfiles } from "@modules/digital-profiles/services/Service.js";

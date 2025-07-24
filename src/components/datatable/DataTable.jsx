@@ -2,15 +2,14 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePagination, useSortBy, useTable} from 'react-table';
 import ExcelJS from 'exceljs';
 import { Inbox } from "lucide-react";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
 import {useDataTable} from "@hooks/dataTableHooks.js";
-import DatatableAdvanceFilters from "@components/DatatableAdvanceFilters.jsx";
+import DatatableAdvanceFilters from "@components/datatable/DatatableAdvanceFilters.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {updateColumnOrder} from "@redux/common/tableConfigSlice.js";
-import {  makeSelectColumnOrder, makeSelectTableConfig } from "@redux/common/selectors/tableConfigSelectors.js";
 import EmptyState from "@components/EmptyState.jsx";
 import TableShimmerRow from "@components/TableShimmerRow.jsx";
+
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
  * If any segment is missing/undefined, returns undefined.
@@ -29,13 +28,16 @@ const DataTable = React.memo(React.forwardRef(({
                                                    apiUrl,
                                                    title = null,
                                                    buttons,
-                                                   filter,
+                                                   filter = {},
                                                    needHeader = true,
                                                    enableAdvancedFilters = false,
                                                    tableParentClass = 'task-table overflow-hidden transition-all duration-300 min-h-[200px] !rounded-l-none',
                                                    tableClass = 'whitespace-nowrap table-bordered min-w-full !border-l',
                                                    rowClassName = 'bg-gray-100 dark:bg-neutral-700'
                                                }, ref) => {
+
+    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
     const EMPTY_ARRAY = Object.freeze([]);
     const EMPTY_OBJECT = Object.freeze({});
     const dispatch = useDispatch();
@@ -66,10 +68,6 @@ const DataTable = React.memo(React.forwardRef(({
         }
     }, [normalizedColumns, storedColumnOrder, columnOrder]);
 
-
-    const [advancedFilters, setAdvancedFilters] = useState({});
-    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-
     const handleMoveColumn = useCallback((headerId, direction) => {
         setColumnOrder(prevOrder => {
             const currentIndex = prevOrder.indexOf(headerId);
@@ -90,7 +88,7 @@ const DataTable = React.memo(React.forwardRef(({
         });
     }, [apiUrl, dispatch]);
 
-    const EnhancedHeader = ({ column, handleSortChange, currentSort }) => {
+    const EnhancedHeader = ({ column, handleSortChange, sortField, sortDirection }) => {
         const headerLabel = column.render ? column.render('Header') : column.Header;
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
@@ -98,8 +96,8 @@ const DataTable = React.memo(React.forwardRef(({
         const currentIndex = columnOrder.indexOf(headerId);
 
         // Get current sort state for this column
-        const isCurrentlySorted = currentSort?.field === headerId;
-        const sortDirection = isCurrentlySorted ? currentSort.direction : null;
+        const isCurrentlySorted = sortField === headerId;
+        const currentSortDirection = isCurrentlySorted ? sortDirection : null;
 
         // Close dropdown when clicking outside
         useEffect(() => {
@@ -127,7 +125,7 @@ const DataTable = React.memo(React.forwardRef(({
                 {/* Sort indicator */}
                 {isCurrentlySorted && (
                     <span className="ml-1">
-                        {sortDirection === 'asc' ? (
+                        {currentSortDirection === 'asc' ? (
                             <i className="ri-arrow-up-line text-blue-500"></i>
                         ) : (
                             <i className="ri-arrow-down-line text-blue-500"></i>
@@ -151,23 +149,23 @@ const DataTable = React.memo(React.forwardRef(({
                                     <button
                                         onClick={() => handleSort('asc')}
                                         className={`w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs hover:bg-gray-100 dark:hover:bg-neutral-700 ${
-                                            sortDirection === 'asc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
+                                            currentSortDirection === 'asc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
                                         }`}
                                     >
                                         <i className="ri-arrow-up-line"></i>
                                         Sort Ascending
-                                        {sortDirection === 'asc' && <i className="ri-check-line ml-auto"></i>}
+                                        {currentSortDirection === 'asc' && <i className="ri-check-line ml-auto"></i>}
                                     </button>
 
                                     <button
                                         onClick={() => handleSort('desc')}
                                         className={`w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs hover:bg-gray-100 dark:hover:bg-neutral-700 ${
-                                            sortDirection === 'desc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
+                                            currentSortDirection === 'desc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
                                         }`}
                                     >
                                         <i className="ri-arrow-down-line"></i>
                                         Sort Descending
-                                        {sortDirection === 'desc' && <i className="ri-check-line ml-auto"></i>}
+                                        {currentSortDirection === 'desc' && <i className="ri-check-line ml-auto"></i>}
                                     </button>
 
                                     {isCurrentlySorted && (
@@ -215,28 +213,27 @@ const DataTable = React.memo(React.forwardRef(({
         );
     };
 
-
+    // Use the updated hook with URL management
     const {
         data,
         isLoading,
+        error,
         refetch,
         page,
         setPage,
         size,
+        search,
+        advancedFilters,
+        sortField,
+        sortDirection,
         handleSearch,
         handleSizeChange,
         handleSortChange,
         handleFilterChange,
-    } = useDataTable(apiUrl, 10, { ...filter, ...advancedFilters }, enableAdvancedFilters);
-
-    // Track current sort state
-    const [currentSort, setCurrentSort] = useState({ field: null, direction: null });
-
-    // Wrapper function for sort change that updates local state
-    const handleSortChangeWrapper = useCallback((field, direction) => {
-        setCurrentSort({ field, direction });
-        handleSortChange(field, direction);
-    }, [handleSortChange]);
+        applyAdvancedFilters,
+        clearAdvancedFilters,
+        resetAll,
+    } = useDataTable(apiUrl, 10, filter, enableAdvancedFilters);
 
     const orderedColumns = useMemo(() => {
         if (!normalizedColumns || normalizedColumns.length === 0) return [];
@@ -252,13 +249,13 @@ const DataTable = React.memo(React.forwardRef(({
                 Header: () => (
                     <EnhancedHeader
                         column={column}
-                        handleSortChange={handleSortChangeWrapper}
-                        currentSort={currentSort}
+                        handleSortChange={handleSortChange}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
                     />
                 ),
             }));
-    }, [normalizedColumns, columnOrder, handleSortChangeWrapper, currentSort]);
-
+    }, [normalizedColumns, columnOrder, handleSortChange, sortField, sortDirection]);
 
     React.useImperativeHandle(ref, () => ({
         refetch,
@@ -269,7 +266,9 @@ const DataTable = React.memo(React.forwardRef(({
     const total = data?.data?.total || 0;
 
     // States for column filtering
-    const [hiddenCols, setHiddenCols] = useState([]);
+    const [hiddenCols, setHiddenCols] = useState(() =>
+        columns.filter(col => col.hide).map(col => col.id || col.accessor)
+    );
     const [showColFilter, setShowColFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -294,7 +293,7 @@ const DataTable = React.memo(React.forwardRef(({
         canNextPage,
         gotoPage,
         setHiddenColumns,
-        state: { pageIndex, sortBy },
+        state: { pageIndex },
     } = useTable(
         {
             columns: orderedColumns,
@@ -314,27 +313,16 @@ const DataTable = React.memo(React.forwardRef(({
         usePagination
     );
 
-    // Keep table page in sync
     useEffect(() => {
-        setPage(pageIndex + 1);
-    }, [pageIndex, setPage]);
-
-    useEffect(() => {
-        if (sortBy.length > 0) {
-            const { id: field, desc } = sortBy[0];
-            const direction = desc ? 'desc' : 'asc';
-            handleSortChange(field, direction);
-        } else {
-            handleSortChange(null, null);
+        if (pageIndex + 1 !== page) {
+            gotoPage(page - 1);
         }
-    }, [sortBy, handleSortChange]);
+    }, [page, pageIndex, gotoPage]);
 
-    // Whenever hiddenCols changes, update React Table
     useEffect(() => {
         setHiddenColumns(hiddenCols);
     }, [hiddenCols, setHiddenColumns]);
 
-    // Toggle column visibility
     const handleToggleColumn = (colId) => {
         setHiddenCols((prev) =>
             prev.includes(colId)
@@ -343,32 +331,26 @@ const DataTable = React.memo(React.forwardRef(({
         );
     };
 
-    // Advanced filter handlers
     const handleAdvancedFiltersChange = useCallback((filters) => {
-        setAdvancedFilters(filters);
-    }, []);
+        handleFilterChange(filters);
+    }, [handleFilterChange]);
 
     const handleApplyAdvancedFilters = useCallback((filters) => {
-        // If your useDataTable hook supports handleFilterChange
-        if (handleFilterChange) {
-            handleFilterChange(filters);
-        }
-        // Reset to first page when filters change
-        gotoPage(0);
-    }, [handleFilterChange, gotoPage]);
+        applyAdvancedFilters(filters);
+        toggleAdvancedFilters();
+    }, [applyAdvancedFilters]);
 
     const handleClearAdvancedFilters = useCallback(() => {
-        setAdvancedFilters({});
-        if (handleFilterChange) {
-            handleFilterChange({});
-        }
-        gotoPage(0);
-    }, [handleFilterChange, gotoPage]);
+        clearAdvancedFilters();
+    }, [clearAdvancedFilters]);
+
+    const toggleAdvancedFilters = useCallback(() => {
+        setShowAdvancedFilters(prev => !prev);
+    }, []);
 
     /**
-     * Download CSV with current filters applied
+     * Download Excel with current filters applied
      */
-
     const handleDownloadExcel = async () => {
         const visibleCols = memoizedColumns.filter(
             (col) => !hiddenCols.includes(col.id || col.accessor)
@@ -446,7 +428,6 @@ const DataTable = React.memo(React.forwardRef(({
                 return String(val);
             }
         };
-
 
         headerRow.eachCell((cell) => {
             cell.fill = {
@@ -623,7 +604,6 @@ const DataTable = React.memo(React.forwardRef(({
         }, 100);
     };
 
-
     // Pagination
     const totalPages = Math.ceil(total / size);
     const pageRange = 5;
@@ -637,7 +617,7 @@ const DataTable = React.memo(React.forwardRef(({
                     <button
                         type="button"
                         className="page-link"
-                        onClick={() => canPreviousPage && gotoPage(pageIndex - 1)}
+                        onClick={() => canPreviousPage && setPage(page - 1)}
                     >
                         Prev
                     </button>
@@ -646,7 +626,7 @@ const DataTable = React.memo(React.forwardRef(({
                 {startPage > 1 && (
                     <>
                         <li className="page-item">
-                            <button type="button" className="page-link" onClick={() => gotoPage(0)}>
+                            <button type="button" className="page-link" onClick={() => setPage(1)}>
                                 1
                             </button>
                         </li>
@@ -666,7 +646,7 @@ const DataTable = React.memo(React.forwardRef(({
                         <button
                             type="button"
                             className="page-link"
-                            onClick={() => gotoPage(i + startPage - 1)}
+                            onClick={() => setPage(i + startPage)}
                         >
                             {i + startPage}
                         </button>
@@ -684,7 +664,7 @@ const DataTable = React.memo(React.forwardRef(({
                             <button
                                 type="button"
                                 className="page-link"
-                                onClick={() => gotoPage(totalPages - 1)}
+                                onClick={() => setPage(totalPages)}
                             >
                                 {totalPages}
                             </button>
@@ -696,7 +676,7 @@ const DataTable = React.memo(React.forwardRef(({
                     <button
                         type="button"
                         className="page-link"
-                        onClick={() => canNextPage && gotoPage(pageIndex + 1)}
+                        onClick={() => canNextPage && setPage(page + 1)}
                     >
                         Next
                     </button>
@@ -718,17 +698,15 @@ const DataTable = React.memo(React.forwardRef(({
             )}
 
             <div className="box-body">
-                {enableAdvancedFilters && (
+                {enableAdvancedFilters && showAdvancedFilters && (
                     <div className="mb-4">
-                        {showAdvancedFilters && (
-                            <DatatableAdvanceFilters
-                                columns={memoizedColumns}
-                                filters={advancedFilters}
-                                onFiltersChange={handleAdvancedFiltersChange}
-                                onApplyFilters={handleApplyAdvancedFilters}
-                                onClearFilters={handleClearAdvancedFilters}
-                            />
-                        )}
+                        <DatatableAdvanceFilters
+                            columns={memoizedColumns}
+                            filters={advancedFilters}
+                            onFiltersChange={handleAdvancedFiltersChange}
+                            onApplyFilters={handleApplyAdvancedFilters}
+                            onClearFilters={handleClearAdvancedFilters}
+                        />
                     </div>
                 )}
 
@@ -748,26 +726,36 @@ const DataTable = React.memo(React.forwardRef(({
                             <option value="100">Show 100</option>
                             <option value="500">Show 500</option>
                             <option value="1000">Show 1000</option>
-                            <option value="3000">Show 3000</option>
-                            <option value="5000">Show 5000</option>
-                            <option value="10000">Show 10000</option>
                         </select>
 
                         {/* Advanced Filters Button */}
                         {enableAdvancedFilters && (
-                            <button
-                                type="button"
-                                className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                            >
-                                <i className={`ri-filter-${showAdvancedFilters ? '3' : '2'}-line mr-1`}></i>
-                                {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
-                                {Object.keys(advancedFilters).length > 0 && (
-                                    <span className="ml-2 badge bg-primary/10 text-primary">
+                            <>
+                                <button
+                                    type="button"
+                                    className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                                    onClick={toggleAdvancedFilters}
+                                >
+                                    <i className={`ri-filter-${showAdvancedFilters ? '3' : '2'}-line mr-1`}></i>
+                                    {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
+                                    {Object.keys(advancedFilters).length > 0 && (
+                                        <span className="ml-2 badge bg-success text-white">
                                         {Object.keys(advancedFilters).length}
                                     </span>
-                                )}
-                            </button>
+                                    )}
+                                </button>
+                                {
+                                    Object.keys(advancedFilters).length > 0 &&
+                                    <button
+                                        type="button"
+                                        className="whitespace-nowrap ti-btn ti-btn-danger-full !py-1 !px-2 !text-[0.75rem]"
+                                        onClick={resetAll}
+                                    >
+                                        <i className={`ri-filter-off-line mr-1`}></i>
+                                        Reset Advanced Filters
+                                    </button>
+                                }
+                            </>
                         )}
                     </div>
 
@@ -783,10 +771,15 @@ const DataTable = React.memo(React.forwardRef(({
                             >
                                 <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
                                      viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                           d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                                 </svg>
                                 <span>Columns</span>
+                                {Object.keys(hiddenCols).length > 0 && (
+                                    <span className="ml-2 badge bg-warning/10 text-warning">
+                                        {Object.keys(hiddenCols).length}
+                                    </span>
+                                )}
                                 <svg
                                     className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showColFilter ? 'rotate-180' : ''}`}
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -948,8 +941,13 @@ const DataTable = React.memo(React.forwardRef(({
                             type="search"
                             onChange={handleSearch}
                             placeholder="Search Here"
+                            defaultValue={search}
                             className="form-control form-control-sm"
                         />
+                        {
+                            !needHeader && buttons &&
+                            <>{buttons}</>
+                        }
                     </div>
                 </div>
                 <div className={`table-responsive ${tableParentClass}`}>

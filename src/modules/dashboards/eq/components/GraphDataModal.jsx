@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 
 const GraphDataModal = ({
                             isOpen,

@@ -65,7 +65,7 @@ const EcomWeeklyReport = () =>{
     };
     return (
         <>
-            <PageHeader currentpage="Ecom Weekly Report" activepage="Reports" mainpage="Ecom Weekly Report"/>
+            <PageHeader currentpage="Website Metrics" activepage="Reports" mainpage="Ecom Weekly Report"/>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <WeeklyReportFilter filters={filters} control={control} errors={errors} activeTab={activeTab}/>
                     </form>

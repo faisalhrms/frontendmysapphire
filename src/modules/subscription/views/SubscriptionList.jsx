@@ -1,5 +1,5 @@
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SUBSCRIPTION_ROUTES } from "@modules/subscription/routes.js";
 import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";

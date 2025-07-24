@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
 import {formatDate} from "@helpers/dateTime.js";
@@ -219,7 +219,17 @@ const TaskList = () => {
             accessor: "completion_timeline",
             disableSortBy: true,
             filterable: false,
-            excelColumnType: 'number'
+            excelColumnType: 'number',
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                if (value == null) {
+                    return {};
+                }
+                return {
+                    className: value < 1 ? 'bg-success text-white' : 'bg-red text-white',
+                };
+            }
+
         },
         {Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType: 'number'},
         {

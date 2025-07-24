@@ -1,7 +1,7 @@
 // src/modules/inventory/components/EquipmentTableCard.jsx
 
 import React, { useMemo } from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";

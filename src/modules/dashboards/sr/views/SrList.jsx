@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import DataTable from "@components/DataTable.jsx"
+import DataTable from "@components/datatable/DataTable.jsx"
 import {format} from "date-fns"
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom"
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx"

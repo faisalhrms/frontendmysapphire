@@ -1,5 +1,5 @@
 import React from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import Avatar from "@components/Avatar.jsx";
 import {formatDate} from "@helpers/dateTime.js";
 import {toTitleCase} from "@helpers/formatters.js";
