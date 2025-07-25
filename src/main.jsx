@@ -41,22 +41,23 @@ const PasswordResetGuard = ({ children }) => {
     const tokens = useSelector((state) => state.auth.tokens);
     const navigate = useNavigate();
     const location = useLocation();
+
     React.useEffect(() => {
         if (user && tokens?.access_token) {
             if (user.password_changed_at === null) {
-                navigate(`${import.meta.env.BASE_URL}reset-old-password`, { replace: true });
+                navigate(`${import.meta.env.BASE_URL}change-password`, { replace: true });
             }
         } else {
-            // Redirect to login with current path as state
             navigate(`${import.meta.env.BASE_URL}`, {
                 replace: true,
-                state: { from: location } // Preserve current location
+                state: { from: location }
             });
         }
-    }, [user, tokens, navigate, location]); // Add location dependency
+    }, [user, tokens, navigate, location]);
 
     return user && tokens?.access_token ? children : null;
 };
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.Fragment>
@@ -65,27 +66,35 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <BrowserRouter>
                     <ScrollToTop/>
                     <Routes>
-                        <Route path={`${import.meta.env.BASE_URL}`} element={<Authentication/>}>
-                            <Route index element={<Login/>}/>
-                            <Route path="resetpassword" element={<ForgotPassView/>}/>
-                            <Route path="reset-old-password" element={<ResetPassView/>}/>
-                            <Route path="vcard/profile/:id" element={<VCardProfile />} />
+                        <Route path={`${import.meta.env.BASE_URL}`} element={<Authentication />}>
+                            <Route index element={<Login />} />
+                            <Route path="resetpassword" element={<ForgotPassView />} />
                             <Route path="resetpassword/:uidb64/:token" element={<ForgotPassView />} />
+                            <Route path="vcard/profile/:id" element={<VCardProfile />} />
                             <Route path="forms/:slug" element={<PublicDynamicForm />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-
                         </Route>
 
-                        <Route path={`${import.meta.env.BASE_URL}/error/:code`} element={<Error/>}/>
+                        {/* Error Page */}
+                        <Route path={`${import.meta.env.BASE_URL}/error/:code`} element={<Error />} />
 
+                        {/* Authenticated App Routes */}
                         <Route path={`${import.meta.env.BASE_URL}`} element={
                             <PasswordResetGuard>
-                                <App/>
+                                <App />
                             </PasswordResetGuard>
                         }>
-                            <Route path="*" element={<AppRoutes/>}/>
+                            <Route path="*" element={<AppRoutes />} />
                         </Route>
+
+                        {/* ✅ Protected Reset Password Route */}
+                        <Route path={`${import.meta.env.BASE_URL}change-password`} element={
+                            <PasswordResetGuard>
+                                <ResetPassView />
+                            </PasswordResetGuard>
+                        } />
                     </Routes>
+
                     <Toast/>
                 </BrowserRouter>
             </Provider>
