@@ -140,6 +140,7 @@ const TaskGeneratedTable = () => {
             columns={columns}
             apiUrl="/service-request/generated/sr/"
             title="Task Generated"
+            externalFilters={['status']}
         />
     );
 };

@@ -8,15 +8,10 @@ import React from "react";
 import HasPermission from "@components/HasPermission.jsx";
 
 const SubscriptionList = () => {
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const initialFilterType = queryParams.get("filter");
    const [excludeCanceled, setExcludeCanceled] = React.useState(false);
     const toggleCanceled = () => {
         setExcludeCanceled((prev) => !prev);
     };
-
-    const computedFilterType = excludeCanceled ? "exclude-canceled" : initialFilterType || null;
 
     const columns = [
         {
@@ -108,7 +103,7 @@ const SubscriptionList = () => {
                 title="Subscriptions"
                 buttons={buttons}
                 apiUrl={`/subscriptions/`}
-                filter={computedFilterType}
+                externalFilters={['filter']}
             />
         </>
     );

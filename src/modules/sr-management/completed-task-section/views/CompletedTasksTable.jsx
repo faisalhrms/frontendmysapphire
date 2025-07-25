@@ -141,6 +141,7 @@ const TaskCompletedTable = () => {
             columns={columns}
             apiUrl="service-request/completed/sr/"
             title="Task Completed"
+            externalFilters={['status']}
         />
     );
 };

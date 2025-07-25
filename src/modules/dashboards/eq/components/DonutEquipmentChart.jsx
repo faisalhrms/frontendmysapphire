@@ -12,9 +12,6 @@ const DonutEquipmentChart = ({ labels = [], series = [], colors = [], height = 3
         },
         labels: labels,
         colors: colors.length ? colors : ["#845adf", "#23b7e5", "#f5b849", "#49b6f5", "#e6533c"],
-        fill: {
-            type: 'gradient',
-        },
         stroke: {
             show: true,
             colors: ['#fff'],
@@ -43,7 +40,7 @@ const DonutEquipmentChart = ({ labels = [], series = [], colors = [], height = 3
                 startAngle: -90,
                 endAngle: 270,
                 donut: {
-                    size: '75%',
+                    size: '60%',
                     background: 'transparent',
                     labels: {
                         show: true,
