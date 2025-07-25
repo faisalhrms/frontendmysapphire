@@ -146,6 +146,7 @@ const AllTaskTable = () => {
             columns={columns}
             apiUrl="/service-request/all/sr/"
             title="All Tasks"
+            externalFilters={['status']}
         />
     );
 };

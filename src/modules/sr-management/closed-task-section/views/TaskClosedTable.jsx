@@ -151,6 +151,7 @@ const TaskClosedTable = () => {
             columns={columns}
             apiUrl="/service-request/closed/sr/"
             title="Task Closed"
+            externalFilters={['status']}
         />
     );
 };

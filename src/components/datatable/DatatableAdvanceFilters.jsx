@@ -1,8 +1,22 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilters, onClearFilters}) => {
-    const [localFilters, setLocalFilters] = useState(filters || {});
+const DatatableAdvanceFilters = ({
+                                     columns,
+                                     filters,
+                                     onFiltersChange,
+                                     onApplyFilters,
+                                     onClearFilters
+                                 }) => {
+    const [localFilters, setLocalFilters] = useState(() => {
+        return filters && Object.keys(filters).length > 0 ? filters : {};
+    });
+
+    useEffect(() => {
+        if (JSON.stringify(filters) !== JSON.stringify(localFilters)) {
+            setLocalFilters(filters || {});
+        }
+    }, [filters]);
 
     const handleFilterChange = (columnId, filterType, value) => {
         setLocalFilters(prev => ({
@@ -14,6 +28,11 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
         }));
     };
 
+    const applyFilters = () => {
+        onApplyFilters(localFilters);
+        onFiltersChange(localFilters);
+    };
+
     const handleRemoveFilter = (columnId) => {
         setLocalFilters(prev => {
             const newFilters = { ...prev };
@@ -22,15 +41,10 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
         });
     };
 
-    const applyFilters = () => {
-        onFiltersChange(localFilters);
-        onApplyFilters(localFilters);
-    };
-
     const clearAllFilters = () => {
         setLocalFilters({});
-        onFiltersChange({});
         onClearFilters();
+        onFiltersChange({});
     };
 
     const getDateFilterOperators = () => [
@@ -301,7 +315,6 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
         const columnFilter = localFilters[filterId] || {};
         const filterType = column.filterType || 'text';
 
-        // Get appropriate operators based on filter type
         let operators = [];
         if (filterType === 'date' || filterType === 'datetime') {
             operators = getDateFilterOperators();
@@ -376,7 +389,7 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
                                     {columnFilter && (
                                         <button
                                             type="button"
-                                            className="text-red-500 hover:text-red-700 text-sm"
+                                            className="text-red hover:text-red-500 text-sm"
                                             onClick={() => handleRemoveFilter(filterId)}
                                         >
                                             <i className="ri-close-line"></i>
@@ -389,7 +402,6 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
                     })}
             </div>
 
-            {/* Active Filters Display */}
             {activeFiltersCount > 0 && (
                 <div className="mt-4 pt-4 border-t">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -408,7 +420,6 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
                                     {columnName}
                                     <button
                                         type="button"
-                                        className="hover:text-blue-600"
                                         onClick={() => handleRemoveFilter(columnId)}
                                     >
                                         <i className="ri-close-line"></i>
@@ -423,7 +434,7 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
     );
 }
 
-export default DatatableAdvanceFilters;
+export default React.memo(DatatableAdvanceFilters);
 
 DatatableAdvanceFilters.propTypes = {
     columns: PropTypes.array.isRequired,
