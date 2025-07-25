@@ -948,6 +948,10 @@ const DataTable = React.memo(React.forwardRef(({
                             placeholder="Search Here"
                             className="form-control form-control-sm"
                         />
+                        {
+                            !needHeader && buttons &&
+                            <>{buttons}</>
+                        }
                     </div>
                 </div>
                 <div className={`table-responsive ${tableParentClass}`}>

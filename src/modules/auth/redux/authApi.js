@@ -26,8 +26,8 @@ export const authApi = createApi({
             }),
         }),
         resetPassword: builder.mutation({
-            query: ({ userId, password }) => ({
-                url: `/auth/users/${userId}/password/`,
+            query: ({ password }) => ({
+                url: `/auth/change-password/`,  // updated URL without userId
                 method: 'POST',
                 body: { password },
             }),
