@@ -72,7 +72,8 @@ const UnitList = () => {
             <DataTable
                 columns={columns}
                 title="Unit"
-                apiUrl="unit/datatable"
+                apiUrl="unit/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

@@ -48,7 +48,8 @@ const ProcessMethodList = () => {
             <DataTable
                 columns={columns}
                 title="Process Methods"
-                apiUrl="process/method/datatable"
+                apiUrl="process/method/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>
