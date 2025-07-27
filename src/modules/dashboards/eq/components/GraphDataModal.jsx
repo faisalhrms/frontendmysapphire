@@ -56,7 +56,7 @@ const GraphDataModal = ({
                     <DataTable
                         apiUrl={apiUrl}
                         columns={columns}
-                        enableAdvancedFilters
+                        enableAdvancedFilters={false}
                         title={title} // ✅ passed title to DataTable
                     />
                 </div>
