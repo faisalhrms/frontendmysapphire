@@ -98,6 +98,7 @@ const RoadMapQualityList = () => {
       columns={columns}
       title="Qualities"
       apiUrl="quality/datatable/"
+      externalFilters={['tab']}
       buttons={buttons}
     />
   );

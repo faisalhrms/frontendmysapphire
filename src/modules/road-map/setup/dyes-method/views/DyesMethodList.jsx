@@ -49,6 +49,7 @@ const DyesMethodList = () => {
                 columns={columns}
                 title="Dyes Methods"
                 apiUrl="dyes/method/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

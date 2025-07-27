@@ -66,6 +66,7 @@ const CertificateList = () => {
                 columns={columns}
                 title="Certificates"
                 apiUrl="certificate/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

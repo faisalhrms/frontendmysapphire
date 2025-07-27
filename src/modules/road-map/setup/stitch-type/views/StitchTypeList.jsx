@@ -49,6 +49,7 @@ const StitchTypeList = () => {
                 columns={columns}
                 title="Stitch Types"
                 apiUrl="stitch/type/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

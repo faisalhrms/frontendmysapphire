@@ -49,6 +49,7 @@ const RoadMapProductList = () => {
                 columns={columns}
                 title="Products"
                 apiUrl="product/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

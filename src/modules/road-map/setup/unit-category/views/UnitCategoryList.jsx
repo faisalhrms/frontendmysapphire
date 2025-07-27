@@ -54,6 +54,7 @@ const UnitCategoryList = () => {
                 columns={columns}
                 title="Unit Category"
                 apiUrl="unit/category/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

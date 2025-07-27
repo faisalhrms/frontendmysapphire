@@ -49,6 +49,7 @@ const SupplierList = () => {
                 columns={columns}
                 title="Suppliers"
                 apiUrl="supplier/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

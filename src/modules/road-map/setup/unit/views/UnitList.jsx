@@ -73,6 +73,7 @@ const UnitList = () => {
                 columns={columns}
                 title="Unit"
                 apiUrl="unit/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>
