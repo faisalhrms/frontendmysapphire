@@ -53,7 +53,7 @@ const UnitCategoryList = () => {
             <DataTable
                 columns={columns}
                 title="Unit Category"
-                apiUrl="unit/category/datatable"
+                apiUrl="unit/category/datatable/"
                 buttons={buttons}
             />
         </>

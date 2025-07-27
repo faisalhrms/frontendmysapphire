@@ -48,7 +48,7 @@ const StitchTypeList = () => {
             <DataTable
                 columns={columns}
                 title="Stitch Types"
-                apiUrl="stitch/type/datatable"
+                apiUrl="stitch/type/datatable/"
                 buttons={buttons}
             />
         </>

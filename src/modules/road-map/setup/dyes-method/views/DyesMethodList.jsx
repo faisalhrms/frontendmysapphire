@@ -48,7 +48,7 @@ const DyesMethodList = () => {
             <DataTable
                 columns={columns}
                 title="Dyes Methods"
-                apiUrl="dyes/method/datatable"
+                apiUrl="dyes/method/datatable/"
                 buttons={buttons}
             />
         </>

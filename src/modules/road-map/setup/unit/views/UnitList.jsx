@@ -72,7 +72,7 @@ const UnitList = () => {
             <DataTable
                 columns={columns}
                 title="Unit"
-                apiUrl="unit/datatable"
+                apiUrl="unit/datatable/"
                 buttons={buttons}
             />
         </>

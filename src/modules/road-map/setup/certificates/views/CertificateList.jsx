@@ -65,7 +65,7 @@ const CertificateList = () => {
             <DataTable
                 columns={columns}
                 title="Certificates"
-                apiUrl="certificate/datatable"
+                apiUrl="certificate/datatable/"
                 buttons={buttons}
             />
         </>
