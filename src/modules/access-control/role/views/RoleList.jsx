@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '@modules/layouts/includes/PageHeader';
 import DataTable from "@components/datatable/DataTable.jsx";
 import RoleModal from '../components/RoleModel';
 import HasPermission from "@components/HasPermission.jsx";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {HardDrive} from "lucide-react";
 
 const Role = () => {
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -71,7 +73,11 @@ const Role = () => {
 
     return (
         <>
-            <PageHeader currentpage="Roles" activepage="User" mainpage="Roles" />
+            <IconPageHeader
+                heading="Roles"
+                description="Define user roles and assign related permissions to manage access control."
+                icon={HardDrive}
+            />
             <DataTable
                 columns={columns}
                 title="Roles"

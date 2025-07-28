@@ -14,10 +14,10 @@ import RoadMapQualityList from "@modules/road-map/setup/quality/views/RoadMapQua
 
 const RoadMapSetup = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeStatus, setActiveStatus] = useState(() => searchParams.get("page") || "unit-category");
+  const [activeStatus, setActiveStatus] = useState(() => searchParams.get("tab") || "unit-category");
 
   useEffect(() => {
-    setActiveStatus(searchParams.get("page") || "unit-category");
+    setActiveStatus(searchParams.get("tab") || "unit-category");
   }, [searchParams]);
 
 
@@ -27,7 +27,7 @@ const RoadMapSetup = () => {
         <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
           <nav aria-label="Statuses" className="md:flex block !justify-start whitespace-nowrap">
             <button
-              onClick={() => setSearchParams({ page: "unit-category" })}
+              onClick={() => setSearchParams({ tab: "unit-category" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "unit-category"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -38,7 +38,7 @@ const RoadMapSetup = () => {
                Units Category
             </button>
             <button
-              onClick={() => setSearchParams({ page: "unit" })}
+              onClick={() => setSearchParams({ tab: "unit" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "unit"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -49,7 +49,7 @@ const RoadMapSetup = () => {
                Units
             </button>
             <button
-              onClick={() => setSearchParams({ page: "process-method" })}
+              onClick={() => setSearchParams({ tab: "process-method" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "process-method"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -60,7 +60,7 @@ const RoadMapSetup = () => {
                Process Methods
             </button>
             <button
-              onClick={() => setSearchParams({ page: "dyes-method" })}
+              onClick={() => setSearchParams({ tab: "dyes-method" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "dyes-method"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -71,7 +71,7 @@ const RoadMapSetup = () => {
                Dyes Methods
             </button>
             <button
-              onClick={() => setSearchParams({ page: "stitch-type" })}
+              onClick={() => setSearchParams({ tab: "stitch-type" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "stitch-type"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -82,7 +82,7 @@ const RoadMapSetup = () => {
                Stitch Types
             </button>
             <button
-              onClick={() => setSearchParams({ page: "supplier" })}
+              onClick={() => setSearchParams({ tab: "supplier" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "supplier"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -93,7 +93,7 @@ const RoadMapSetup = () => {
                Suppliers
             </button>
             <button
-              onClick={() => setSearchParams({ page: "certificate" })}
+              onClick={() => setSearchParams({ tab: "certificate" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "certificate"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -104,7 +104,7 @@ const RoadMapSetup = () => {
                Certificates
             </button>
             <button
-              onClick={() => setSearchParams({ page: "products" })}
+              onClick={() => setSearchParams({ tab: "products" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "products"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
@@ -115,7 +115,7 @@ const RoadMapSetup = () => {
                Products
             </button>
             <button
-              onClick={() => setSearchParams({ page: "quality" })}
+              onClick={() => setSearchParams({ tab: "quality" })}
               className={`relative m-1 block w-full py-2 px-3 flex-grow text-[0.8rem] font-medium rounded-md ${
                 activeStatus === "quality"
                   ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"

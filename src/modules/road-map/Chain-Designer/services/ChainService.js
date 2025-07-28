@@ -1,5 +1,6 @@
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
+import {downloadFile} from "@modules/beirholm-bi/services/DataSanitizeService.js";
 
 export const createChain = async (chainData) => {
   try {
@@ -44,3 +45,7 @@ export const deleteChain = async (id, chainData) => {
   }
 };
 
+export const downloadChainSample = async () => {
+    const url = `/chain/download-sample-file/`;
+    await downloadFile(url, "sample_file.xlsx");
+};
