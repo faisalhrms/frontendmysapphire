@@ -15,6 +15,8 @@ import Avatar from "@components/Avatar.jsx";
 import { USER_ROUTES } from '@modules/user/routes';
 import useFilters from "@hooks/useFilters.js";
 import UserListFilter from "@modules/user/components/UserListFilter.jsx";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {HardDrive} from "lucide-react";
 
 const UserList = () => {
 
@@ -264,7 +266,13 @@ const UserList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Users" mainpage="Users" />
+            <IconPageHeader
+                heading="Users"
+                description="Manage application users, assign roles, and control access permissions."
+
+
+                icon={HardDrive}
+            />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <UserListFilter control={control} errors={errors} clearFilter={onClear}/>
             </form>

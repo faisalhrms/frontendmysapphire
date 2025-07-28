@@ -6,7 +6,7 @@ import FormButton from "@components/form/FormButton.jsx";
 const customGlobalFilter = (rows, id, filterValue) => {
   if (!filterValue) return rows;
 
-  const searchTerm = filterValue.toLowerCase().replace(/[\s_]/g, ''); // Remove spaces and underscores from search term
+  const searchTerm = filterValue.toLowerCase().replace(/[\s_]/g, '');
 
   return rows.filter(row => {
     const { roleName, permissions } = row.original.roleWithPermissions || {};

@@ -17,14 +17,10 @@ const PermissionDetail = () => {
                 const params = new URLSearchParams();
 
                 if (ids.includes('0')) {
-                    // Handle "Select All" case
                     params.append('permission_id', '0');
                 } else {
-                    // Add multiple permission_id parameters
                     ids.forEach(id => params.append('permission_id', id));
                 }
-
-                // Add pagination parameters if needed
                 params.append('skip', '0');
                 params.append('limit', '100');
 
@@ -58,9 +54,7 @@ const PermissionDetail = () => {
                                 {permission.codename}
                             </code>
                         </div>
-
                         <div className="grid gap-8 md:grid-cols-2 p-6">
-                            {/* Roles Section */}
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 text-gray-700">
                                     Assigned Roles ({permission.groups.length})
@@ -87,8 +81,6 @@ const PermissionDetail = () => {
                                     </div>
                                 )}
                             </div>
-
-                            {/* Users Section */}
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 text-gray-700">
                                     Assigned Users ({permission.users.length})
