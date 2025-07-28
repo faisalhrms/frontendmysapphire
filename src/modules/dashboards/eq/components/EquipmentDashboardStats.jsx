@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useState} from "react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import EquipmentStatusCard from "@modules/dashboards/eq/components/EquipmentStatusCard.jsx";
 import EquipmentAnalysisCard from "@modules/dashboards/eq/components/EquipmentAnalysisCard.jsx";
@@ -11,14 +11,22 @@ import EquipmentSiteStats from "@modules/dashboards/eq/components/EquipmentSiteS
 import EquipmentSummaryCard from "@modules/dashboards/eq/components/EquipmentSummaryCard.jsx";
 import EquipmentTypeChart from "@modules/dashboards/eq/components/EquipmentTypeChart.jsx";
 import EquipmentValueStats from "@modules/dashboards/eq/components/EquipmentValueStats.jsx";
+import {equipmentColumns} from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
 
 const EquipmentDashboardStats = ({ filters }) => {
     const { data: mainData, isLoading: mainLoading } = useFetchWithFilters('/dashboard/equipment/statistics/', filters);
     const { data: statusData, isLoading: statusLoading } = useFetchWithFilters('/dashboard/equipment/status-stats/', filters);
 
-    if (mainLoading || statusLoading) {
-        return <LoadingSpinner />;
-    }
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalParams, setModalParams] = useState({});
+
+    const handleCardClick = useCallback((status) => {
+        setModalParams({ status, company_id: filters.company_id });
+        setModalOpen(true);
+    }, [filters]);
+
+    if (mainLoading || statusLoading) return <LoadingSpinner />;
 
     return (
         <>
@@ -29,6 +37,7 @@ const EquipmentDashboardStats = ({ filters }) => {
                         key={index}
                         item={item}
                         currentFilters={filters}
+                        onCardClick={handleCardClick}
                     />
                 ))}
             </div>
@@ -54,6 +63,15 @@ const EquipmentDashboardStats = ({ filters }) => {
                     <EquipmentValueStats filters={filters} />
                 </div>
             </div>
+            <GraphDataModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                title={`Equipments: ${modalParams.status}`}
+                apiEndpoint="/equipments/datatable/"
+                queryParams={modalParams}
+                columns={equipmentColumns}
+                addButton={null}
+            />
         </>
     );
 };

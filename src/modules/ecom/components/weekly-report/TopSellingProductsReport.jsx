@@ -59,6 +59,7 @@ const TopSellingProductsReport = ({isActive, filters }) => {
                 apiUrl="ecom/weekly-report/top-selling-products/"
                 needHeader={false}
                 filter={filters}
+                hiddenParameters={['tab']}
             />
         </>
     );

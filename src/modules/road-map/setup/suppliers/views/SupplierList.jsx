@@ -48,7 +48,8 @@ const SupplierList = () => {
             <DataTable
                 columns={columns}
                 title="Suppliers"
-                apiUrl="supplier/datatable"
+                apiUrl="supplier/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

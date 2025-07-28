@@ -25,6 +25,7 @@ const CompanyDropdown = ({
             apiUrl="/select/user/companies/"
             queryKeyBase="companies"
             clientSideSearch={true}
+            isClearable={false}
             preselectedOptions={eqData ? formatOptions(eqData, dataKey) : []}
             className={classes}
             onSelectChange={onCompanySelect}

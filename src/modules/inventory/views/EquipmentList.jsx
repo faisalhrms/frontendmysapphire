@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Link, useLocation} from "react-router-dom";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
 import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
@@ -8,16 +7,12 @@ import {getBadgeClasses} from "@helpers/badges.js";
 import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 import EquipmentRepairListModal from "@modules/inventory/models/EquipmentRepairListModal.jsx";
 import EquipmentRepairFormModal from "@modules/inventory/models/EquipmentRepairFormModal.jsx";
-import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
-import { HardDrive, Wrench } from "lucide-react";
-
-const EquipmentList = ({ isActive }) => {
+const EquipmentList = ({ isActive, externalFilters = [] }) => {
     if (!isActive) return null;
     const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
     const [showRepairForm, setShowRepairForm] = useState(false);
     const [showRepairList, setShowRepairList] = useState(false);
-    const { search } = useLocation();
     const openRepairForm = (id) => {
         setSelectedEquipmentId(id);
         setShowRepairForm(true);
@@ -27,19 +22,6 @@ const EquipmentList = ({ isActive }) => {
         setSelectedEquipmentId(id);
         setShowRepairList(true);
     };
-    const params = new URLSearchParams(search);
-    const queryParams = {};
-    [
-        'status',
-        'company_id',
-        'department_id',
-        'location_id',
-        'equipment_site_id',
-        'equipment_type_id',
-        'custodian_id'
-    ].forEach(param => {
-        if (params.get(param)) queryParams[param] = params.get(param);
-    });
 
 
     const columns = [
@@ -255,9 +237,11 @@ const EquipmentList = ({ isActive }) => {
             <DataTable
                 columns={columns}
                 title="Assets"
-                apiUrl={`/equipments/datatable/?${new URLSearchParams(queryParams).toString()}`}
+                apiUrl={`/equipments/datatable/`}
                 buttons={buttons}
                 enableAdvancedFilters={true}
+                externalFilters={externalFilters}
+                hiddenParameters={['tab']}
             />
             {showRepairForm && (
                 <EquipmentRepairFormModal
@@ -272,6 +256,7 @@ const EquipmentList = ({ isActive }) => {
                     isOpen={showRepairList}
                     onClose={() => setShowRepairList(false)}
                     equipmentId={selectedEquipmentId}
+                    hiddenParameters={externalFilters}
                 />
             )}
         </>

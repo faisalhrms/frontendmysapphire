@@ -140,6 +140,7 @@ const PendingRequestsTable = () => {
                 columns={columns}
                 apiUrl="service-request/pending/sr/"
                 title="Task Pending"
+                externalFilters={['status']}
             />
             {isModalOpen && (
                 <ConfirmationModal

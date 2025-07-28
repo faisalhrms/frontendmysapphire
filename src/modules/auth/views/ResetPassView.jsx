@@ -34,18 +34,21 @@ const ResetPassView = () => {
     const onSubmit = async ({ newPassword }) => {
         try {
             const response = await resetPassword({
-                userId,
                 password: newPassword
             }).unwrap();
 
             const changedAt = response.data?.password_changed_at;
-            dispatch(updateUser({ password_changed_at: changedAt }));
+            if (changedAt) {
+                dispatch(updateUser({ password_changed_at: changedAt }));
+            }
+
             Notify.success('Password reset successful!');
             navigate(import.meta.env.BASE_URL, { replace: true });
         } catch (err) {
             Notify.error(err.data?.message || err.message || 'Failed to reset password.');
         }
     };
+
     const newPassword = useWatch({ control, name: "newPassword" });
     const passwordPolicies = [
         {

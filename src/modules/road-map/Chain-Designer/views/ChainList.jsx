@@ -3,8 +3,12 @@ import {Link} from 'react-router-dom'
 import DataTable from '@components/datatable/DataTable.jsx'
 import PageHeader from '@modules/layouts/includes/PageHeader.jsx'
 import ConfirmDeleteModal from '@modules/beirholm-bi/components/ConfirmDeleteModal.jsx'
-import {deleteChain} from '@modules/road-map/Chain-Designer/services/ChainService.js'
+import {
+  deleteChain,
+  downloadChainSample,
+} from '@modules/road-map/Chain-Designer/services/ChainService.js'
 import {CHAIN_DESIGNER} from '@modules/road-map/routes.js'
+import DownloadSampleFile from "@components/DownloadSampleFile.jsx";
 
 const chunk = (arr, n = 3) =>
   arr.reduce((a, c, i) => {
@@ -107,14 +111,24 @@ const ChainList = () => {
   ]
 
   const buttons = (
-    <div>
-      <Link
-        to={CHAIN_DESIGNER.CREATE.path}
-        className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-      >
-        <i className="ri-add-line align-middle" /> Add
-      </Link>
-    </div>
+      <>
+        <div>
+          <Link
+              to={CHAIN_DESIGNER.CREATE.path}
+              className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+          >
+            <i className="ri-add-line align-middle"/> Add
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-1">
+          <DownloadSampleFile
+              downloadFn={downloadChainSample}
+              title="Download Sample File"
+              className="ti-btn-success"
+          />
+        </div>
+      </>
+
   )
 
   return (

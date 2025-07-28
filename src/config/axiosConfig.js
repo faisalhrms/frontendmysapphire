@@ -42,6 +42,10 @@ api.interceptors.response.use(
             window.location.href = '/error/403';
             return Promise.reject(new Error('Permission Denied.'));
         }
+        if (code === 419) {
+            window.location.href = `${import.meta.env.BASE_URL}change-password`;
+            return Promise.reject(new Error('Password Expired.'));
+        }
 
         console.error(`Error ${code}:`, response.data);
         return Promise.reject(error);

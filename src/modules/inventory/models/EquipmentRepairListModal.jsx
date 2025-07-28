@@ -1,4 +1,3 @@
-// src/modules/inventory/components/EquipmentRepairListModal.jsx
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { getBadgeClasses } from '@helpers/badges.js';
 import { useEquipmentRepair } from '@modules/inventory/hooks/inventoryRepairHooks.js';
 import EquipmentRepairFormWrapper from "@modules/inventory/models/components/EquipmentRepairFormWrapper.jsx"; // ✅ import
 
-export default function EquipmentRepairListModal({ isOpen, onClose, equipmentId }) {
+export default function EquipmentRepairListModal({ isOpen, onClose, equipmentId, hiddenParameters = [] }) {
     useEffect(() => {
         document.body.style.overflow = isOpen ? 'hidden' : '';
         return () => { document.body.style.overflow = ''; };
@@ -153,6 +152,7 @@ export default function EquipmentRepairListModal({ isOpen, onClose, equipmentId 
                     apiUrl={apiUrl}
                     enableAdvancedFilters={true}
                     paginationSize={10}
+                    hiddenParameters={hiddenParameters}
                 />
             </Modal>
 
@@ -167,7 +167,6 @@ export default function EquipmentRepairListModal({ isOpen, onClose, equipmentId 
                 onSuccess={() => {
                     setIsFormOpen(false);
                     setSelectedRepairId(null);
-                    // Optionally refresh table
                 }}
             />
 

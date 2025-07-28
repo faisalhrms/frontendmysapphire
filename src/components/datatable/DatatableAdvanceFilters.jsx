@@ -1,8 +1,22 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilters, onClearFilters}) => {
-    const [localFilters, setLocalFilters] = useState(filters || {});
+const DatatableAdvanceFilters = ({
+                                     columns,
+                                     filters,
+                                     onFiltersChange,
+                                     onApplyFilters,
+                                     onClearFilters
+                                 }) => {
+    const [localFilters, setLocalFilters] = useState(() => {
+        return filters && Object.keys(filters).length > 0 ? filters : {};
+    });
+
+    useEffect(() => {
+        if (JSON.stringify(filters) !== JSON.stringify(localFilters)) {
+            setLocalFilters(filters || {});
+        }
+    }, [filters]);
 
     const handleFilterChange = (columnId, filterType, value) => {
         setLocalFilters(prev => ({
@@ -14,6 +28,11 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
         }));
     };
 
+    const applyFilters = () => {
+        onApplyFilters(localFilters);
+        onFiltersChange(localFilters);
+    };
+
     const handleRemoveFilter = (columnId) => {
         setLocalFilters(prev => {
             const newFilters = { ...prev };
@@ -22,15 +41,10 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
         });
     };
 
-    const applyFilters = () => {
-        onFiltersChange(localFilters);
-        onApplyFilters(localFilters);
-    };
-
     const clearAllFilters = () => {
         setLocalFilters({});
-        onFiltersChange({});
         onClearFilters();
+        onFiltersChange({});
     };
 
     const getDateFilterOperators = () => [
@@ -301,7 +315,6 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
         const columnFilter = localFilters[filterId] || {};
         const filterType = column.filterType || 'text';
 
-        // Get appropriate operators based on filter type
         let operators = [];
         if (filterType === 'date' || filterType === 'datetime') {
             operators = getDateFilterOperators();
@@ -339,91 +352,89 @@ const DatatableAdvanceFilters = ({columns, filters, onFiltersChange, onApplyFilt
 
     const activeFiltersCount = Object.keys(localFilters).length;
     return (
-            <div className="border rounded p-4 mb-4 bg-gray-50">
-                <div className="flex items-center justify-between mb-3">
-                    <h6 className="font-semibold">Advanced Filters</h6>
-                    <div className="flex gap-2">
-                        <button
-                            type="button"
-                            className="btn btn-sm btn-primary"
-                            onClick={applyFilters}
-                        >
-                            Apply Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-sm btn-secondary"
-                            onClick={clearAllFilters}
-                        >
-                            Clear All
-                        </button>
-                    </div>
+        <div className="border rounded p-4 mb-4 bg-gray-50">
+            <div className="flex items-center justify-between mb-3">
+                <h6 className="font-semibold">Advanced Filters</h6>
+                <div className="flex gap-2">
+                    <button
+                        type="button"
+                        className="btn btn-sm btn-primary"
+                        onClick={applyFilters}
+                    >
+                        Apply Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-sm btn-secondary"
+                        onClick={clearAllFilters}
+                    >
+                        Clear All
+                    </button>
                 </div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {columns
-                        .filter(col => col.filterable)
-                        .map(column => {
-                            const filterId = column.filterKey || column.id || column.accessor;
-                            const columnFilter = localFilters[filterId];
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {columns
+                    .filter(col => col.filterable)
+                    .map(column => {
+                        const filterId = column.filterKey || column.id || column.accessor;
+                        const columnFilter = localFilters[filterId];
 
-                            return (
-                                <div key={filterId} className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-sm font-medium">
-                                            {typeof column.Header === 'string' ? column.Header : filterId}
-                                        </label>
-                                        {columnFilter && (
-                                            <button
-                                                type="button"
-                                                className="text-red-500 hover:text-red-700 text-sm"
-                                                onClick={() => handleRemoveFilter(filterId)}
-                                            >
-                                                <i className="ri-close-line"></i>
-                                            </button>
-                                        )}
-                                    </div>
-                                    {getFilterComponent(column, filterId)}
-                                </div>
-                            );
-                        })}
-                </div>
-
-                {/* Active Filters Display */}
-                {activeFiltersCount > 0 && (
-                    <div className="mt-4 pt-4 border-t">
-                        <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-sm font-medium">Active Filters:</span>
-                            {Object.entries(localFilters).map(([columnId, filter]) => {
-                                const column = columns.find(col =>
-                                    (col.filterKey || col.id || col.accessor) === columnId
-                                );
-                                const columnName = typeof column?.Header === 'string' ? column.Header : columnId;
-
-                                return (
-                                    <span
-                                        key={columnId}
-                                        className="inline-flex items-center gap-1 px-2 !rounded-full bg-primary/10 text-primary text-xs"
-                                    >
-                                    {columnName}
+                        return (
+                            <div key={filterId} className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-sm font-medium">
+                                        {typeof column.Header === 'string' ? column.Header : filterId}
+                                    </label>
+                                    {columnFilter && (
                                         <button
                                             type="button"
-                                            className="hover:text-blue-600"
-                                            onClick={() => handleRemoveFilter(columnId)}
+                                            className="text-red hover:text-red-500 text-sm"
+                                            onClick={() => handleRemoveFilter(filterId)}
                                         >
+                                            <i className="ri-close-line"></i>
+                                        </button>
+                                    )}
+                                </div>
+                                {getFilterComponent(column, filterId)}
+                            </div>
+                        );
+                    })}
+            </div>
+
+            {activeFiltersCount > 0 && (
+                <div className="mt-4 pt-4 border-t">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-medium">Active Filters:</span>
+                        {Object.entries(localFilters).map(([columnId, filter]) => {
+                            const column = columns.find(col =>
+                                (col.filterKey || col.id || col.accessor) === columnId
+                            );
+                            const columnName = typeof column?.Header === 'string' ? column.Header : columnId;
+
+                            return (
+                                <span
+                                    key={columnId}
+                                    className="inline-flex items-center gap-1 px-2 !rounded-full bg-primary/10 text-primary text-xs"
+                                >
+                                    {columnName}
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveFilter(columnId)}
+                                    >
                                         <i className="ri-close-line"></i>
                                     </button>
                                 </span>
-                                );
-                            })}
-                        </div>
+                            );
+                        })}
                     </div>
-                )}
-            </div>
-        );
+                </div>
+            )}
+        </div>
+    );
 }
 
-export default DatatableAdvanceFilters;
+export default React.memo(DatatableAdvanceFilters);
 
 DatatableAdvanceFilters.propTypes = {
     columns: PropTypes.array.isRequired,
