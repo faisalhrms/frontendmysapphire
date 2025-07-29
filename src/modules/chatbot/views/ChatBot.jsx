@@ -49,9 +49,13 @@ const ChatBot = () => {
     setSuggestions(suggestionsDefault)
   }
 
-  const handleReset = () => {
+  const handleReset = async () => {
+    try {
+    await api.post("chat/query/reset_memory/")
+    } catch {}
     handleInit()
   }
+
 
   const sendQuery = async (msg, webSearch = false) => {
     setIsThinking(true)

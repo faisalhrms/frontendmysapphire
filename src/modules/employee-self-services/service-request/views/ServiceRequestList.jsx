@@ -103,7 +103,7 @@ const ServiceRequestList = () => {
             <DataTable
                 columns={columns}
                 title="Self Services"
-                apiUrl="/service-request/datatable"
+                apiUrl="/service-request/datatable/"
                 buttons={buttons}
             />
         </>
