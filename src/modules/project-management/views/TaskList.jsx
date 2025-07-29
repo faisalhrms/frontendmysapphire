@@ -67,7 +67,7 @@ const TaskList = () => {
                             to={`/module/projects/detail/${project.id}`}
                             className=''
                             >
-                            {project.name.length>20?project.name.slice(0, 20) + "...":project.name}
+                            {project.name}
                         </Link>
                     </Tooltip>
                 )
@@ -81,9 +81,6 @@ const TaskList = () => {
             filterable: true,
             filterKey: 'milestone__name',
             excelAlignment: 'left',
-            Cell: ({value}) => (
-                <p className=''>{value.length>20?value.slice(0,20)+"...":value}</p>
-            ),
             getCellProps: (cellInfo) => {
                 return {
                     className: `!text-left`,
@@ -96,6 +93,7 @@ const TaskList = () => {
             filterType: 'text',
             filterable: true,
             excelAlignment: 'left',
+            width: 300,
             Cell: ({row}) => {
                 const task = row.original;
                 return (
@@ -107,7 +105,7 @@ const TaskList = () => {
                             onClick={() => {openTaskDetailModal(task.id)}}
                             to="#">
 
-                            {task.name.length>20?task.name.slice(0, 20) + "...":task.name}
+                            {task.name}
                         </Link>
                     </Tooltip>
                 )
@@ -182,6 +180,7 @@ const TaskList = () => {
             filterType: 'select',
             filterable: true,
             filterOptions: taskStatuses,
+            width: 250,
             excelStyleMap: {
                 open:           { label: 'OPEN',            bgColor: '#1976D2', textColor: '#FFFFFF' }, // blue
                 not_started:    { label: 'NOT STARTED',     bgColor: '#F57C00', textColor: '#FFFFFF' }, // orange
@@ -231,7 +230,7 @@ const TaskList = () => {
             }
 
         },
-        {Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType: 'number'},
+        {Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType: 'number', width: 150},
         {
             Header: "Timeline Group",
             accessor: "time_line_group",

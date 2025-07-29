@@ -1,6 +1,4 @@
 import React, {useState, useMemo} from "react";
-import {Link} from "react-router-dom";
-import Discussion from "@components/Discussion.jsx";
 import SRDiscussion from "@modules/sr-management/component/SRDiscussion.jsx";
 import ModelRight from "@components/ModalRight.jsx";
 import {getBadgeClasses} from "@helpers/badges.js";
@@ -122,12 +120,12 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus, showFoot
                                         <span className="text-gray-500">-</span>
                                     )}
                                 </td>
-                                <td>SLA Hours:</td>
+                                <td>Efforts:</td>
                                 <td>
                                     {generatedReqData?.sla_hours ? (
-                                        <span className={getSlaBadgeClasses(generatedReqData.sla_hours)}>
-                        {generatedReqData.sla_hours} : Hours
-                      </span>
+                                <span
+                                className="block text-[.875rem]  dark:text-defaulttextcolor/70 font-semibold">
+                                    {generatedReqData?.sla_hours}</span>
                                     ) : (
                                         <span className="text-gray-500">-</span>
                                     )}
