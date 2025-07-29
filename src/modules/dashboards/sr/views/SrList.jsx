@@ -15,7 +15,7 @@ const SrList = () => {
     useEffect(() => {
         if (status) {
             const paramsString = searchParams.toString()
-            setApiUrl(`dashboard/status/${status}${paramsString ? `?${paramsString}` : ""}`)
+            setApiUrl(`dashboard/status/${status}/${paramsString ? `?${paramsString}` : ""}`)
         } else {
             setApiUrl(null)
         }
