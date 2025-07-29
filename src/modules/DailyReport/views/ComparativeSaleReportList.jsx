@@ -65,6 +65,7 @@ const ComparativeSaleReportList = () => {
         "AClassIslamic",
         "online_target",
         "store_islamic"
+        // "store_fiscal"
 
     ].includes(activeTab);
     const { data, isLoading } = useFetchWithFilters(
@@ -192,6 +193,25 @@ const ComparativeSaleReportList = () => {
                             <Unstitiched color='text-emerald-600' data={data} title={filters.category}/>) : ''
                     },
                     {
+                        id: "conversion_local",
+                        label: "Conversion based on Sales Force Report-Local",
+                        icon: <i className='bx bx-briefcase'></i>,
+                        content: isLoading ? <LoadingSpinner/> :
+                            <ConversionLocal  data={data} isLoading={isLoading}
+                                              filters={filters} />
+
+                    },
+                    {
+                        id: "store_fiscal",
+                        label: "Store Wise Foot Fall and Converion-Fiscal",
+                        icon: <i className='bx bx-briefcase'></i>,
+                        content: isLoading ? <LoadingSpinner/> :
+                            <StoreWiseFootFallFiscal data={data} isLoading={isLoading}
+                                                     isActive={activeTab === 'store_fiscal'}
+                                                     filters={filters} />
+
+                    },
+                    {
                         id: "store_islamic",
                         label: "Store Wise Foot Fall and Converion-islamic",
                         icon: <i className='bx bx-briefcase'></i>,
@@ -201,25 +221,8 @@ const ComparativeSaleReportList = () => {
                                                       filters={filters} />
 
                     },
-                    {
-                        id: "store_fiscal",
-                        label: "Store Wise Foot Fall and Converion-Fiscal",
-                        icon: <i className='bx bx-briefcase'></i>,
-                        content: isLoading ? <LoadingSpinner/> :
-                            <StoreWiseFootFallFiscal data={data} isLoading={isLoading}
-                                                      isActive={activeTab === 'store_islamic'}
-                                                      filters={filters} />
 
-                    },
-                    {
-                        id: "conversion_local",
-                        label: "Conversion based on Sales Force Report-Local",
-                        icon: <i className='bx bx-briefcase'></i>,
-                        content: isLoading ? <LoadingSpinner/> :
-                            <ConversionLocal  data={data} isLoading={isLoading}
-                                              filters={filters} />
 
-                    },
                     // {
                     //     id: "conversion_global",
                     //     label: "Conversion (Global) based on Sales Force Report",
