@@ -1,14 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import ApexChart from "@components/charts/ApexChart.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
+import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
 
 const EquipmentAnalysisCard = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters("/dashboard/equipment/monthly-acquisition/", filters);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalParams, setModalParams] = useState(null);
 
-    const items = useMemo(() => {
-        return Array.isArray(rawData) ? rawData : [];
-    }, [rawData]);
+    const items = useMemo(() => Array.isArray(rawData) ? rawData : [], [rawData]);
 
     const categories = useMemo(() => {
         return items.map(item =>
@@ -21,14 +23,31 @@ const EquipmentAnalysisCard = ({ filters }) => {
         data: items.map(item => item.count),
     }], [items]);
 
-    if (isLoading) return <LoadingSpinner />;
-    if (!items.length) return <div className="box p-4">
-        <div className="box-header mb-1">
-            <div className="box-title text-base font-semibold">Monthly Asset Acquisitions</div>
-        </div>
-        <div className="text-center py-10 text-gray-500">No monthly acquisition data available</div>
-    </div>
+    const handleBarClick = (event, chartContext, config) => {
+        const index = config.dataPointIndex;
+        const item = Array.isArray(items) ? items[index] : null;
 
+        if (!item) return;
+
+        setModalParams({
+            purchase_date: item.month,  // 🔄 changed from acquisition_month to purchase_date
+            company_id: filters?.company_id || null
+        });
+
+        setModalOpen(true);
+    };
+
+    if (isLoading) return <LoadingSpinner />;
+    if (!items.length) {
+        return (
+            <div className="box p-4">
+                <div className="box-header mb-1">
+                    <div className="box-title text-base font-semibold">Monthly Asset Acquisitions</div>
+                </div>
+                <div className="text-center py-10 text-gray-500">No monthly acquisition data available</div>
+            </div>
+        );
+    }
 
     return (
         <div className="col-span-6">
@@ -48,10 +67,14 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                 series={series}
                                 colors={['#EF4444']}
                                 columnWidth="30%"
-
                                 additionalOptions={{
+                                    chart: {
+                                        toolbar: { show: false },
+                                        events: {
+                                            dataPointSelection: handleBarClick
+                                        }
+                                    },
                                     legend: { position: 'top' },
-
                                     dataLabels: {
                                         enabled: true,
                                         formatter: val => (val > 0.1 ? `${val.toLocaleString()}` : ''),
@@ -59,7 +82,7 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                         style: {
                                             fontSize: '11px',
                                             colors: ['#000']
-                                        },
+                                        }
                                     },
                                     plotOptions: {
                                         bar: {
@@ -72,11 +95,6 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                             }
                                         }
                                     },
-                                    chart: {
-                                        toolbar: {
-                                            show: false
-                                        }
-                                    },
                                     xaxis: {
                                         categories,
                                         title: { text: 'Month' },
@@ -86,7 +104,7 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                         }
                                     },
                                     yaxis: {
-                                        title: { text: 'Number of Equipments' },
+                                        title: { text: 'Number of Equipments' }
                                     },
                                     grid: {
                                         borderColor: '#f1f1f1',
@@ -98,6 +116,22 @@ const EquipmentAnalysisCard = ({ filters }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Graph Data Modal */}
+            {modalOpen && (
+                <GraphDataModal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    title={`Equipments acquired in ${new Date(modalParams?.purchase_date).toLocaleString('default', { month: 'long', year: 'numeric' })}`} // 🔄 updated
+                    apiEndpoint="/equipments/datatable-by-purchase-month/"
+                    queryParams={{
+                        purchase_date: modalParams?.purchase_date, // 🔄 updated
+                        company_id: modalParams?.company_id
+                    }}
+                    columns={equipmentColumns}
+                    addButton={null}
+                />
+            )}
         </div>
     );
 };

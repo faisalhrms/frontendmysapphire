@@ -5,14 +5,12 @@ import { createPermission, updatePermission } from '@modules/access-control/serv
 
 const PermissionModal = ({ isOpen, onClose, permission }) => {
 
-  // State variables for name and codename
   const [permissionName, setPermissionName] = useState('');
   const [permissionCodename, setPermissionCodename] = useState('');
   const [permissionError, setPermissionError] = useState('');
 
   const queryClient = useQueryClient();
 
-  // Populate form fields when editing a permission
   useEffect(() => {
     if (permission) {
       setPermissionName(permission.name || '');
@@ -23,7 +21,6 @@ const PermissionModal = ({ isOpen, onClose, permission }) => {
     }
   }, [permission]);
 
-  // Mutation for creating a new permission
   const permissionMutation = useMutation({
     mutationFn: createPermission,
     onSuccess: () => {
@@ -36,7 +33,6 @@ const PermissionModal = ({ isOpen, onClose, permission }) => {
     },
   });
 
-  // Mutation for updating an existing permission
   const updatePermissionMutation = useMutation({
     mutationFn: updatePermission,
     onSuccess: () => {
@@ -49,37 +45,30 @@ const PermissionModal = ({ isOpen, onClose, permission }) => {
     },
   });
 
-  // Reset form fields and errors
   const resetPermissionForm = () => {
     setPermissionName('');
     setPermissionCodename('');
     setPermissionError('');
   };
 
-  // Handle form submission for creating/updating permission
   const handlePermissionSubmit = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!permissionName.trim() || !permissionCodename.trim()) {
       setPermissionError('Please fill in both the permission name and codename.');
       return;
     }
 
-    // Clear previous errors
     setPermissionError('');
 
-    // Prepare the payload
     const payload = {
       name: permissionName.trim(),
       codename: permissionCodename.trim(),
     };
 
     if (permission && permission.id) {
-      // Update existing permission
       updatePermissionMutation.mutate({ id: permission.id, permissionData: payload });
     } else {
-      // Create new permission
       permissionMutation.mutate(payload);
     }
   };
@@ -108,7 +97,6 @@ const PermissionModal = ({ isOpen, onClose, permission }) => {
                   </div>
                   <form onSubmit={handlePermissionSubmit}>
                     <div className=" border-gray-200">
-                      {/* Permission Codename Input */}
                       <label htmlFor="input-permission-codename" className="block py-3 text-sm font-bold">
                          Codename
                       </label>
@@ -125,7 +113,6 @@ const PermissionModal = ({ isOpen, onClose, permission }) => {
                       </small>
                     </div>
                     <div className=" border-gray-200 pb-2">
-                      {/* Permission Name Input */}
                       <label htmlFor="input-permission-name" className="block py-3 text-sm font-bold">
                         Description
                       </label>
