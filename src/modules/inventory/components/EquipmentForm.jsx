@@ -632,12 +632,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                 </div>
 
             </div>
-            {
-                isEditMode===true&&(
-                    <EquipmentRepairFormList control={control} errors={errors} />
 
-                )
-            }
         </form>
     );
 };
