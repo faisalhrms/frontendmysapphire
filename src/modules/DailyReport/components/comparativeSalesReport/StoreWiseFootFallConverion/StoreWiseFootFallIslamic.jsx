@@ -11,27 +11,6 @@ const SalesDataTable = ({ data }) => {
         return num || '-';
     };
 
-    const getCellColor = (value, isSaleValue = false) => {
-        if (typeof value === 'number') {
-            if (isSaleValue) {
-                return '';
-            }
-            if (value > 0) return 'text-emerald-600';
-            if (value < 0) return 'text-danger';
-        }
-        return '';
-    };
-
-    const formatGrowth = (value) => {
-        if (value === null || value === undefined) return '';
-        return `${value.toFixed(2)}%`;
-    };
-
-    const formatConvPercentage = (value) => {
-        if (value === null || value === undefined) return '';
-        return `${value.toFixed(2)}%`;
-    };
-
     if (!data || !data.rows) {
         return (
             <div className="bg-white p-4 dark:text-gray-200 dark:bg-bodybg mb-4">
@@ -58,7 +37,7 @@ const SalesDataTable = ({ data }) => {
     return (
         <div className="bg-white p-4 dark:text-gray-200 dark:bg-bodybg mb-4">
             <div className="overflow-x-auto overflow-y-auto border border-gray-400"
-                    style={{ maxHeight: '650px' }}>
+                 style={{ maxHeight: '650px' }}>
                 <table className="min-w-max border-collapse border border-gray-300 text-xs">
                     <thead className="sticky top-0 bg-gray-800 text-white">
                     <tr   className="text-white bg-[#383853]"
@@ -107,23 +86,23 @@ const SalesDataTable = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(row.conv_percentage_cy)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_cy || ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.ff_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(row.conv_percentage_ly)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_ly || ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(row.sales_value_growth, true)}`}>
-                                {formatGrowth(row.sales_value_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {row.sales_value_growth || ''}
                             </td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(row.invoice_growth)}`}>
-                                {formatGrowth(row.invoice_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {row.invoice_growth || ''}
                             </td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(row.ff_growth)}`}>
-                                {formatGrowth(row.ff_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {row.ff_growth || ''}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatGrowth(row.conv_percentage_growth)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_growth || ''}</td>
                         </tr>
                     ))}
 
@@ -136,23 +115,23 @@ const SalesDataTable = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalLflRow.conv_percentage_cy)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_cy || ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.invoice_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.ff_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalLflRow.conv_percentage_ly)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_ly || ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalLflRow.sales_value_growth, true)}`}>
-                                {formatGrowth(totalLflRow.sales_value_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {totalLflRow.sales_value_growth || ''}
                             </td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalLflRow.invoice_growth)}`}>
-                                {formatGrowth(totalLflRow.invoice_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {totalLflRow.invoice_growth || ''}
                             </td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalLflRow.ff_growth)}`}>
-                                {formatGrowth(totalLflRow.ff_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {totalLflRow.ff_growth || ''}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatGrowth(totalLflRow.conv_percentage_growth)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_growth || ''}</td>
                         </tr>
                     )}
 
@@ -165,23 +144,23 @@ const SalesDataTable = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalNetworkRow.conv_percentage_cy)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_cy || ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalNetworkRow.conv_percentage_ly)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_ly || ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.sales_value_growth, true)}`}>
-                                {formatGrowth(totalNetworkRow.sales_value_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {totalNetworkRow.sales_value_growth || ''}
                             </td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.invoice_growth)}`}>
-                                {formatGrowth(totalNetworkRow.invoice_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {totalNetworkRow.invoice_growth || ''}
                             </td>
-                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.ff_growth)}`}>
-                                {formatGrowth(totalNetworkRow.ff_growth)}
+                            <td className="border border-gray-300 px-2 py-3 text-right font-medium">
+                                {totalNetworkRow.ff_growth || ''}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatGrowth(totalNetworkRow.conv_percentage_growth)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_growth || ''}</td>
                         </tr>
                     )}
                     </tbody>
