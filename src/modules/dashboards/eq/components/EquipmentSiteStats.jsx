@@ -89,10 +89,11 @@ const EquipmentSiteStats = ({ filters }) => {
                                 plotOptions: {
                                     bar: {
                                         horizontal: false,
-                                        columnWidth: '20%',
+                                        columnWidth: "20%",
                                         borderRadius: 4,
                                         dataLabels: {
-                                            position: 'top'
+                                            position: 'top',
+                                            hideOverflowingLabels: false
                                         }
                                     }
                                 },
