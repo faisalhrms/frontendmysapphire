@@ -1,4 +1,3 @@
-
 import React, { useCallback, useMemo, useState } from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
@@ -15,6 +14,14 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 import getComparativeReportDates from "@modules/DailyReport/views/utils.js";
 import Unstitiched from "@modules/DailyReport/components/comparativeSalesReport/OfflineUnstitiched/Unstitiched.jsx";
+import StoreWiseFootFallIslamic
+    from "@modules/DailyReport/components/comparativeSalesReport/StoreWiseFootFallConverion/StoreWiseFootFallIslamic.jsx";
+import ConversionLocal
+    from "@modules/DailyReport/components/comparativeSalesReport/Conversion(Local)basedSalesForce/ConversionLocal.jsx";
+import ConversionGlobal
+    from "@modules/DailyReport/components/comparativeSalesReport/Conversion(Global)BasedShopify/Conversion(Global)Shopify.jsx";
+import StoreWiseFootFallFiscal
+    from "@modules/DailyReport/components/comparativeSalesReport/StoreWiseFootFallConverion-(Fiscal)/StoreWiseFootFallFiscal.jsx";
 
 const ComparativeSaleReportList = () => {
     const [activeTab, setActiveTab] = useState("ClassonlineFiscal");
@@ -57,6 +64,8 @@ const ComparativeSaleReportList = () => {
     const hideOnlyComparativePeriod = [
         "AClassIslamic",
         "online_target",
+        "store_islamic"
+        // "store_fiscal"
 
     ].includes(activeTab);
     const { data, isLoading } = useFetchWithFilters(
@@ -69,7 +78,14 @@ const ComparativeSaleReportList = () => {
                                 activeTab === "offline_stitiched" ? '/reporting/comparative/category/Offline/Stitched Women/Full Price/' :
                                     activeTab === "online_stitiched" ? '/reporting/comparative/category/Online/Stitched Women/Full Price/' :
                                     activeTab === "other_category" ? `/reporting/comparative/category/${filters.group}/${filters.category}/${filters.sale_type}/` :
-                        '',
+                                        activeTab === "store_islamic" ? '/reporting/comparative/foot-fall/islamic/' :
+                                            activeTab === "store_fiscal" ? '/reporting/comparative/foot-fall/gregorian/' :
+                                                activeTab === "conversion_local" ? '/reporting/comparative/conversion/local/' :
+                                                activeTab === "conversion_global" ? '' :
+
+
+
+                                                    '',
         filters
     );
 
@@ -176,6 +192,46 @@ const ComparativeSaleReportList = () => {
                         content: activeTab === 'other_category' ? (isLoading ? <LoadingSpinner/> :
                             <Unstitiched color='text-emerald-600' data={data} title={filters.category}/>) : ''
                     },
+                    {
+                        id: "conversion_local",
+                        label: "Conversion based on Sales Force Report-Local",
+                        icon: <i className='bx bx-briefcase'></i>,
+                        content: isLoading ? <LoadingSpinner/> :
+                            <ConversionLocal  data={data} isLoading={isLoading}
+                                              filters={filters} />
+
+                    },
+                    {
+                        id: "store_fiscal",
+                        label: "Store Wise Foot Fall and Converion-Fiscal",
+                        icon: <i className='bx bx-briefcase'></i>,
+                        content: isLoading ? <LoadingSpinner/> :
+                            <StoreWiseFootFallFiscal data={data} isLoading={isLoading}
+                                                     isActive={activeTab === 'store_fiscal'}
+                                                     filters={filters} />
+
+                    },
+                    {
+                        id: "store_islamic",
+                        label: "Store Wise Foot Fall and Converion-islamic",
+                        icon: <i className='bx bx-briefcase'></i>,
+                        content: isLoading ? <LoadingSpinner/> :
+                            <StoreWiseFootFallIslamic data={data} isLoading={isLoading}
+                                                      isActive={activeTab === 'store_islamic'}
+                                                      filters={filters} />
+
+                    },
+
+
+                    // {
+                    //     id: "conversion_global",
+                    //     label: "Conversion (Global) based on Sales Force Report",
+                    //     icon: <i className='bx bx-briefcase'></i>,
+                    //     content: isLoading ? <LoadingSpinner/> :
+                    //         <ConversionGlobal/>
+                    //
+                    // },
+
                 ]}
                 onTabChange={handleTabChange}
             />
