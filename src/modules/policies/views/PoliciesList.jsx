@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { formatDate } from "@helpers/dateTime.js";
 import { useHasPermission } from "@modules/auth/hooks/authHooks.js";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import InfoAlert from "../../../InfoAlert.jsx";
 import { POLICIES_ROUTES } from "@modules/policies/routes.js";
+import {Shield} from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const PoliciesList = () => {
 
@@ -135,25 +135,27 @@ const PoliciesList = () => {
     ];
 
     const buttons = (
-        <div className="grid grid-cols-1 sm:grid-cols-1">
             <Link
                 to={POLICIES_ROUTES.ADD.path}
-                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
             >
                 <i className="ri-add-line font-semibold align-middle"></i> Add New Policy
             </Link>
-        </div>
     );
 
     return (
         <>
-            <PageHeader currentpage="Policies" mainpage="Policies List" activepage="Policies" />
-            <InfoAlert />
+            <IconPageHeader
+                heading="Company Policies"
+                description="Manage and review organizational policies, their visibility, and related documents."
+                icon={Shield}
+            />
             <DataTable
                 columns={columns}
                 title="Policies"
                 apiUrl="/policies/datatable/"
                 buttons={buttons}
+                needHeader={false}
                 enableAdvancedFilters={true}
             />
         </>

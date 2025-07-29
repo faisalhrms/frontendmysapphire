@@ -1,4 +1,4 @@
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import React from "react";
 import { formatAmountWithCommas, toTitleCase } from "@helpers/formatters.js";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {formatNumberWithCommas} from "@helpers/formatters.js";
 
 const TopSellingProductsReport = ({isActive, filters }) => {
@@ -59,6 +59,7 @@ const TopSellingProductsReport = ({isActive, filters }) => {
                 apiUrl="ecom/weekly-report/top-selling-products/"
                 needHeader={false}
                 filter={filters}
+                hiddenParameters={['tab']}
             />
         </>
     );

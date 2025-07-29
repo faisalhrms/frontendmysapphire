@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {Link} from "react-router-dom";
 import {toTitleCase} from "@helpers/formatters.js";
 import {STITCH_TYPE} from "@modules/road-map/routes.js";
@@ -48,7 +48,8 @@ const StitchTypeList = () => {
             <DataTable
                 columns={columns}
                 title="Stitch Types"
-                apiUrl="stitch/type/datatable"
+                apiUrl="stitch/type/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

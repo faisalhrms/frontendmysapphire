@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {Link} from "react-router-dom";
 import {toTitleCase} from "@helpers/formatters.js";
 import {UNIT_CATEGORY} from "@modules/road-map/routes.js";
@@ -53,7 +53,8 @@ const UnitCategoryList = () => {
             <DataTable
                 columns={columns}
                 title="Unit Category"
-                apiUrl="unit/category/datatable"
+                apiUrl="unit/category/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

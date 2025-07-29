@@ -1,4 +1,4 @@
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import React, { useMemo } from "react";
 import { getEmailSetupTypeLabel } from "@modules/setup/services/emailSetupService.js";
 import { formatDate } from "@helpers/dateTime.js";

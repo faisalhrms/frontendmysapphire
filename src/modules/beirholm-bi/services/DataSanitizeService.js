@@ -8,7 +8,7 @@ export const productCountry = [
     {value: 'turkey', label: 'Turkey'},
 ];
 
-const downloadFile = async (url, defaultFilename) => {
+export const downloadFile = async (url, defaultFilename) => {
     try {
         const response = await api.get(url, {responseType: "blob"});
         const blob = response.data;

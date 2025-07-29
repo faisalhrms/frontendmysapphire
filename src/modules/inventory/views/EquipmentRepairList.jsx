@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { formatAmountWithCommas, toTitleCase } from "@helpers/formatters.js";
 import EquipmentRepairFormWrapper from "@modules/inventory/models/components/EquipmentRepairFormWrapper.jsx";
-import {getBadgeClasses} from "@helpers/badges.js"; // ✅ Import wrapper
+import {getBadgeClasses} from "@helpers/badges.js";
 
-const EquipmentRepairList = ({ isActive }) => {
+const EquipmentRepairList = ({ isActive, externalFilters = [] }) => {
     if (!isActive) return null;
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedRepairId, setSelectedRepairId] = useState(null);
@@ -101,6 +101,8 @@ const EquipmentRepairList = ({ isActive }) => {
                 title="Equipment Repairs"
                 apiUrl="/equipment-repairs/datatable/"
                 enableAdvancedFilters={false}
+                externalFilters={externalFilters}
+                hiddenParameters={['tab', 'status']}
             />
 
             <EquipmentRepairFormWrapper

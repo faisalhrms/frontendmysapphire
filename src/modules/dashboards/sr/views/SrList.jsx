@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react"
-import DataTable from "@components/DataTable.jsx"
+import DataTable from "@components/datatable/DataTable.jsx"
 import {format} from "date-fns"
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom"
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx"
@@ -15,7 +15,7 @@ const SrList = () => {
     useEffect(() => {
         if (status) {
             const paramsString = searchParams.toString()
-            setApiUrl(`dashboard/status/${status}${paramsString ? `?${paramsString}` : ""}`)
+            setApiUrl(`dashboard/status/${status}/${paramsString ? `?${paramsString}` : ""}`)
         } else {
             setApiUrl(null)
         }
@@ -152,7 +152,12 @@ const SrList = () => {
         <>
             <PageHeader currentpage="SR Dashboard" activepage="Sr dashboard" mainpage={status}/>
             {apiUrl ? (
-                <DataTable columns={columns} apiUrl={apiUrl} title={status}/>
+                <DataTable
+                    columns={columns}
+                    apiUrl={apiUrl}
+                    title={status}
+                    externalFilters={['company_id', 'store_region_id', 'city_id', 'location_id', 'department_id', 'sub_department_id', 'month', 'year_dashboard', 'status']}
+                />
             ) : (
                 <p className="text-center text-gray-500">No data available</p>
             )}

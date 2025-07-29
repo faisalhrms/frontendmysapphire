@@ -1,7 +1,8 @@
-import { useState } from 'react'; 
-import PageHeader from '@modules/layouts/includes/PageHeader';
-import DataTable from "@components/DataTable.jsx";
+import React, { useState } from 'react';
+import DataTable from "@components/datatable/DataTable.jsx";
 import PermissionModal from '../components/PermissionModel';
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {HardDrive} from "lucide-react";
 
 const Role = () => {
     const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
@@ -42,7 +43,11 @@ const Role = () => {
 
     return (
         <>
-            <PageHeader currentpage="Roles" activepage="User" mainpage="Permissions" />
+            <IconPageHeader
+                heading="Permissions"
+                description="Control fine-grained access by managing individual permissions for each role."
+                icon={HardDrive}
+            />
             <DataTable
                 columns={columns}
                 title="Permissions"

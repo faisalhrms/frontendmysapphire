@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import PageHeader from '@modules/layouts/includes/PageHeader';
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {useNavigate} from "react-router-dom";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";
@@ -9,6 +9,8 @@ import Avatar from "@components/Avatar.jsx";
 import { USER_ROUTES } from '@modules/user/routes';
 import useFilters from "@hooks/useFilters.js";
 import OtherUserListFilter from "@modules/user/components/OtherUserListFilter.jsx";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {HardDrive} from "lucide-react";
 
 const OtherUserList = () => {
 
@@ -151,7 +153,11 @@ const OtherUserList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Other Users" activepage="User" mainpage="Other" />
+            <IconPageHeader
+                heading="Other Users"
+                description="View and manage users outside the core admin group, including their roles and permissions."
+                icon={HardDrive}
+            />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <OtherUserListFilter control={control} errors={errors} clearFilter={onClear}/>
             </form>

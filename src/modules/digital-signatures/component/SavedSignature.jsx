@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import ConfirmationModal from "@modules/sr-management/component/ConfirmationModal.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {

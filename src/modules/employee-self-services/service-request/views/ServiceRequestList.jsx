@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
 import {submitServiceRequest} from "@modules/employee-self-services/services/service-request/ServiceRequestServices.js";
 import {formatDate} from "@helpers/dateTime.js";
@@ -103,7 +103,7 @@ const ServiceRequestList = () => {
             <DataTable
                 columns={columns}
                 title="Self Services"
-                apiUrl="/service-request/datatable"
+                apiUrl="/service-request/datatable/"
                 buttons={buttons}
             />
         </>

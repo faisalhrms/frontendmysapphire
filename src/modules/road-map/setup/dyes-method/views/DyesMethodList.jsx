@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {Link} from "react-router-dom";
 import {toTitleCase} from "@helpers/formatters.js";
 import {DYES_METHOD} from "@modules/road-map/routes.js";
@@ -48,7 +48,8 @@ const DyesMethodList = () => {
             <DataTable
                 columns={columns}
                 title="Dyes Methods"
-                apiUrl="dyes/method/datatable"
+                apiUrl="dyes/method/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

@@ -1,9 +1,8 @@
 import React, {useCallback, useMemo, useState} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import DataSanitizeModel from "@modules/beirholm-bi/components/DataSanitizeModel.jsx";
 import DataSanitizeService from "@modules/beirholm-bi/services/DataSanitizeService.js";
 import UploadErrorModal from "@modules/beirholm-bi/components/UploadErrorModal.jsx";
-import DownloadSampleFileButton from "@modules/beirholm-bi/components/DownloadSampleFileButton.jsx";
 import ProgressBar from "@components/ProgressBar.jsx";
 import ConfirmDeleteModal from "@modules/beirholm-bi/components/ConfirmDeleteModal.jsx";
 import ConfirmReprocessModal from "@modules/beirholm-bi/components/ConfirmReprocessModal.jsx";
@@ -12,6 +11,7 @@ import HasPermission from "@components/HasPermission.jsx";
 import useFilters from "@hooks/useFilters.js";
 import DataSanitizeFilter from "@modules/beirholm-bi/components/DataSanitizeFilter.jsx";
 import DownloadErrorChoiceModal from "@modules/beirholm-bi/components/DownloadErrorChoiceModal.jsx";
+import DownloadSampleFile from "@components/DownloadSampleFile.jsx";
 
 const DataSanitizationList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -316,7 +316,11 @@ const DataSanitizationList = () => {
             </div>
             </HasPermission>
             <div className="grid grid-cols-1 sm:grid-cols-1">
-                <DownloadSampleFileButton/>
+                <DownloadSampleFile
+                    downloadFn={DataSanitizeService.downloadSampleFile}
+                    title="Download Sample File"
+                    className="ti-btn-success"
+                />
             </div>
             <HasPermission permission='beirholm_bi.change_beirholm_clean_data'>
             <div className="grid grid-cols-1 sm:grid-cols-1">

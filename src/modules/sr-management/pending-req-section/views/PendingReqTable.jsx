@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
 import {closeServiceRequest} from "@modules/sr-management/services/Pending.js";
@@ -140,6 +140,7 @@ const PendingRequestsTable = () => {
                 columns={columns}
                 apiUrl="service-request/pending/sr/"
                 title="Task Pending"
+                externalFilters={['status']}
             />
             {isModalOpen && (
                 <ConfirmationModal

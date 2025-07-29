@@ -1,5 +1,5 @@
 import React from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {format} from "date-fns";
 import {Link, useNavigate} from "react-router-dom";
 import {getBadgeClasses} from "@helpers/badges.js";
@@ -146,6 +146,7 @@ const AllTaskTable = () => {
             columns={columns}
             apiUrl="/service-request/all/sr/"
             title="All Tasks"
+            externalFilters={['status']}
         />
     );
 };

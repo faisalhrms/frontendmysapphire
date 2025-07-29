@@ -1,5 +1,5 @@
 import React from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import { Link } from "react-router-dom";
 import { toTitleCase } from "@helpers/formatters.js";
 import { ROADMAP_Quality } from "@modules/road-map/routes.js";
@@ -97,7 +97,8 @@ const RoadMapQualityList = () => {
     <DataTable
       columns={columns}
       title="Qualities"
-      apiUrl="quality/datatable"
+      apiUrl="quality/datatable/"
+      externalFilters={['tab']}
       buttons={buttons}
     />
   );

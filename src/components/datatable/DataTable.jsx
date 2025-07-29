@@ -2,15 +2,14 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePagination, useSortBy, useTable} from 'react-table';
 import ExcelJS from 'exceljs';
 import { Inbox } from "lucide-react";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PropTypes from "prop-types";
 import {useDataTable} from "@hooks/dataTableHooks.js";
-import DatatableAdvanceFilters from "@components/DatatableAdvanceFilters.jsx";
+import DatatableAdvanceFilters from "@components/datatable/DatatableAdvanceFilters.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {updateColumnOrder} from "@redux/common/tableConfigSlice.js";
-import {  makeSelectColumnOrder, makeSelectTableConfig } from "@redux/common/selectors/tableConfigSelectors.js";
+import {updateColumnOrder, updateColumnWidths} from "@redux/common/tableConfigSlice.js";
 import EmptyState from "@components/EmptyState.jsx";
 import TableShimmerRow from "@components/TableShimmerRow.jsx";
+
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
  * If any segment is missing/undefined, returns undefined.
@@ -29,46 +28,105 @@ const DataTable = React.memo(React.forwardRef(({
                                                    apiUrl,
                                                    title = null,
                                                    buttons,
-                                                   filter,
+                                                   filter = {},
                                                    needHeader = true,
                                                    enableAdvancedFilters = false,
                                                    tableParentClass = 'task-table overflow-hidden transition-all duration-300 min-h-[200px] !rounded-l-none',
                                                    tableClass = 'whitespace-nowrap table-bordered min-w-full !border-l',
-                                                   rowClassName = 'bg-gray-100 dark:bg-neutral-700'
+                                                   rowClassName = 'bg-gray-100 dark:bg-neutral-700',
+                                                   externalFilters = [],
+                                                   hiddenParameters = []
                                                }, ref) => {
+
+    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
+
     const EMPTY_ARRAY = Object.freeze([]);
     const EMPTY_OBJECT = Object.freeze({});
     const dispatch = useDispatch();
     const selectColumnOrder = (state, apiUrl) => state.tableConfig[apiUrl]?.columnOrder || EMPTY_ARRAY;
     const selectTableConfig = (state, apiUrl) => state.tableConfig[apiUrl] || EMPTY_OBJECT;
+    const selectColumnWidths = (state, apiUrl) => state.tableConfig[apiUrl]?.columnWidths || EMPTY_OBJECT;
 
     const storedColumnOrder = useSelector((state) => selectColumnOrder(state, apiUrl));
     const tableConfig = useSelector((state) => selectTableConfig(state, apiUrl));
+    const storedColumnWidths = useSelector((state) => selectColumnWidths(state, apiUrl));
 
     const normalizedColumns = useMemo(() => {
         return (columns || []).map((col, idx) => ({
             ...col,
             id: col.id || col.accessor || `col_${idx}`,
+            width: col.width || 200,
+            minWidth: col.minWidth || 100,
+            maxWidth: col.maxWidth || 1000,
         }));
     }, [columns]);
 
-    const [columnOrder, setColumnOrder] = useState(
+    const [columnWidths, setColumnWidths] = useState(() => {
+        const widths = {};
+        normalizedColumns.forEach(col => {
+            if (storedColumnWidths[col.id] !== undefined) {
+                widths[col.id] = storedColumnWidths[col.id];
+            }
+            else {
+                widths[col.id] = col.width || 200;
+            }
+        });
+        return widths;
+    });
+
+    useEffect(() => {
+        setColumnWidths(prevWidths => {
+            const newWidths = {...prevWidths};
+            let hasChanges = false;
+
+            normalizedColumns.forEach(col => {
+                if (newWidths[col.id] === undefined) {
+                    newWidths[col.id] = col.width || 200;
+                    hasChanges = true;
+                }
+            });
+
+            Object.keys(newWidths).forEach(colId => {
+                if (!normalizedColumns.some(col => col.id === colId)) {
+                    delete newWidths[colId];
+                    hasChanges = true;
+                }
+            });
+
+            return hasChanges ? newWidths : prevWidths;
+        });
+    }, [normalizedColumns]);
+
+    useEffect(() => {
+        if (Object.keys(storedColumnWidths).length > 0) {
+            setColumnWidths(prevWidths => {
+                const newWidths = {...prevWidths};
+                let hasChanges = false;
+
+                normalizedColumns.forEach(col => {
+                    if (storedColumnWidths[col.id] !== undefined &&
+                        storedColumnWidths[col.id] !== prevWidths[col.id]) {
+                        newWidths[col.id] = storedColumnWidths[col.id];
+                        hasChanges = true;
+                    }
+                });
+
+                return hasChanges ? newWidths : prevWidths;
+            });
+        }
+    }, [storedColumnWidths, normalizedColumns]);
+
+    const [columnOrder, setColumnOrder] = useState(() =>
         storedColumnOrder.length > 0 ? storedColumnOrder : normalizedColumns.map(col => col.id)
     );
 
     useEffect(() => {
-        if (
-            storedColumnOrder.length === 0 &&
-            normalizedColumns.length > 0 &&
-            columnOrder.length === 0
-        ) {
-            setColumnOrder(normalizedColumns.map(col => col.id));
+        if (storedColumnOrder.length === 0 && normalizedColumns.length > 0 && columnOrder.length === 0) {
+            const newOrder = normalizedColumns.map(col => col.id);
+            setColumnOrder(newOrder);
         }
-    }, [normalizedColumns, storedColumnOrder, columnOrder]);
-
-
-    const [advancedFilters, setAdvancedFilters] = useState({});
-    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+    }, [normalizedColumns, storedColumnOrder, columnOrder.length]);
 
     const handleMoveColumn = useCallback((headerId, direction) => {
         setColumnOrder(prevOrder => {
@@ -81,6 +139,7 @@ const DataTable = React.memo(React.forwardRef(({
             const newOrder = [...prevOrder];
             [newOrder[currentIndex], newOrder[newIndex]] = [newOrder[newIndex], newOrder[currentIndex]];
 
+            // Save to Redux
             dispatch(updateColumnOrder({
                 apiKey: apiUrl,
                 columnOrder: newOrder
@@ -90,18 +149,103 @@ const DataTable = React.memo(React.forwardRef(({
         });
     }, [apiUrl, dispatch]);
 
-    const EnhancedHeader = ({ column, handleSortChange, currentSort }) => {
+    const handleColumnResize = useCallback((columnId, width) => {
+        const columnDefinition = normalizedColumns.find(col => col.id === columnId);
+        const minW = columnDefinition?.minWidth || 100;
+        const maxW = columnDefinition?.maxWidth || 1000;
+
+        const newWidth = Math.max(minW, Math.min(maxW, width));
+
+        setColumnWidths(prev => {
+            if (prev[columnId] === newWidth) {
+                return prev;
+            }
+            return {
+                ...prev,
+                [columnId]: newWidth
+            };
+        });
+    }, [normalizedColumns]); // <<< IMPORTANT: Add normalizedColumns as a dependency
+
+    const saveTimeoutRef = useRef(null);
+    useEffect(() => {
+        if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+        }
+
+        saveTimeoutRef.current = setTimeout(() => {
+            if (Object.keys(columnWidths).length > 0) {
+                dispatch(updateColumnWidths({
+                    apiKey: apiUrl,
+                    columnWidths
+                }));
+            }
+        }, 300);
+
+        return () => {
+            if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current);
+            }
+        };
+    }, [columnWidths, apiUrl, dispatch]);
+
+    const ColumnResizer = React.memo(({ column }) => {
+        const [isDragging, setIsDragging] = useState(false);
+        const startPositionRef = useRef({ x: 0, width: 0 });
+
+        const handleMouseDown = useCallback((e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const currentWidth = columnWidths[column.id] || (column.width || 200);
+            setIsDragging(true);
+            setIsResizing(true);
+            startPositionRef.current = {
+                x: e.clientX,
+                width: currentWidth
+            };
+
+            const handleMouseMove = (moveEvent) => {
+                const diff = moveEvent.clientX - startPositionRef.current.x;
+                handleColumnResize(column.id, startPositionRef.current.width + diff);
+            };
+
+            const handleMouseUp = () => {
+                setIsDragging(false);
+                setIsResizing(false);
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            };
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        }, [column.id, column.width, columnWidths, handleColumnResize]);
+
+        return (
+            <div
+                className={`absolute top-0 right-[-4px] w-[8px] h-full cursor-col-resize transition-colors duration-150 ${
+                    isDragging ? '' : ''
+                }`}
+                onMouseDown={handleMouseDown}
+                style={{ zIndex: 10 }}
+            />
+        );
+    });
+
+    const EnhancedHeader = ({ column, handleSortChange, sortField, sortDirection }) => {
         const headerLabel = column.render ? column.render('Header') : column.Header;
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
         const headerId = column.id || column.accessor;
         const currentIndex = columnOrder.indexOf(headerId);
 
-        // Get current sort state for this column
-        const isCurrentlySorted = currentSort?.field === headerId;
-        const sortDirection = isCurrentlySorted ? currentSort.direction : null;
+        const isCurrentlySorted = sortField === headerId;
+        const currentSortDirection = isCurrentlySorted ? sortDirection : null;
 
-        // Close dropdown when clicking outside
         useEffect(() => {
             const handleClickOutside = (event) => {
                 if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -112,29 +256,31 @@ const DataTable = React.memo(React.forwardRef(({
             return () => document.removeEventListener('mousedown', handleClickOutside);
         }, []);
 
-        const handleSort = (direction) => {
+        const handleSort = useCallback((direction) => {
             if (direction === 'clear') {
                 handleSortChange(null, null);
             } else {
                 handleSortChange(headerId, direction);
             }
             setIsOpen(false);
-        };
+        }, [headerId, handleSortChange]);
 
         return (
-            <div className="flex items-center">
-                <span>{headerLabel}</span>
-                {/* Sort indicator */}
-                {isCurrentlySorted && (
-                    <span className="ml-1">
-                        {sortDirection === 'asc' ? (
-                            <i className="ri-arrow-up-line text-blue-500"></i>
-                        ) : (
-                            <i className="ri-arrow-down-line text-blue-500"></i>
-                        )}
-                    </span>
-                )}
-                <div className="relative ml-2" ref={dropdownRef}>
+            <div className="flex items-center justify-between w-full relative pr-2">
+                <div className="flex items-center flex-1 min-w-0">
+                    <span className="truncate">{headerLabel}</span>
+                    {isCurrentlySorted && (
+                        <span className="ml-1 flex-shrink-0">
+                            {currentSortDirection === 'asc' ? (
+                                <i className="ri-arrow-up-line text-blue-500"></i>
+                            ) : (
+                                <i className="ri-arrow-down-line text-blue-500"></i>
+                            )}
+                        </span>
+                    )}
+                </div>
+
+                <div className="relative ml-2 flex-shrink-0" ref={dropdownRef}>
                     <button
                         onClick={() => setIsOpen(!isOpen)}
                         className="rounded-full transition-colors duration-200 text-gray-500 hover:bg-gray-200 dark:hover:bg-neutral-700 p-1"
@@ -145,29 +291,28 @@ const DataTable = React.memo(React.forwardRef(({
 
                     {isOpen && (
                         <div className="absolute right-0 w-40 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-md shadow-lg py-1 z-50">
-                            {/* Sorting options */}
                             {!column.disableSortBy && (
                                 <>
                                     <button
                                         onClick={() => handleSort('asc')}
                                         className={`w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs hover:bg-gray-100 dark:hover:bg-neutral-700 ${
-                                            sortDirection === 'asc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
+                                            currentSortDirection === 'asc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
                                         }`}
                                     >
                                         <i className="ri-arrow-up-line"></i>
                                         Sort Ascending
-                                        {sortDirection === 'asc' && <i className="ri-check-line ml-auto"></i>}
+                                        {currentSortDirection === 'asc' && <i className="ri-check-line ml-auto"></i>}
                                     </button>
 
                                     <button
                                         onClick={() => handleSort('desc')}
                                         className={`w-full text-left flex items-center gap-x-2 py-2 px-3 text-xs hover:bg-gray-100 dark:hover:bg-neutral-700 ${
-                                            sortDirection === 'desc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
+                                            currentSortDirection === 'desc' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'text-gray-500 dark:text-neutral-200'
                                         }`}
                                     >
                                         <i className="ri-arrow-down-line"></i>
                                         Sort Descending
-                                        {sortDirection === 'desc' && <i className="ri-check-line ml-auto"></i>}
+                                        {currentSortDirection === 'desc' && <i className="ri-check-line ml-auto"></i>}
                                     </button>
 
                                     {isCurrentlySorted && (
@@ -184,7 +329,6 @@ const DataTable = React.memo(React.forwardRef(({
                                 </>
                             )}
 
-                            {/* Column movement options */}
                             <button
                                 onClick={() => {
                                     handleMoveColumn(headerId, 'left');
@@ -215,28 +359,26 @@ const DataTable = React.memo(React.forwardRef(({
         );
     };
 
-
     const {
         data,
         isLoading,
+        error,
         refetch,
         page,
         setPage,
         size,
+        search,
+        advancedFilters,
+        sortField,
+        sortDirection,
         handleSearch,
         handleSizeChange,
         handleSortChange,
         handleFilterChange,
-    } = useDataTable(apiUrl, 10, { ...filter, ...advancedFilters }, enableAdvancedFilters);
-
-    // Track current sort state
-    const [currentSort, setCurrentSort] = useState({ field: null, direction: null });
-
-    // Wrapper function for sort change that updates local state
-    const handleSortChangeWrapper = useCallback((field, direction) => {
-        setCurrentSort({ field, direction });
-        handleSortChange(field, direction);
-    }, [handleSortChange]);
+        applyAdvancedFilters,
+        clearAdvancedFilters,
+        resetAll,
+    } = useDataTable(apiUrl, 10, filter, enableAdvancedFilters, externalFilters, normalizedColumns, hiddenParameters);
 
     const orderedColumns = useMemo(() => {
         if (!normalizedColumns || normalizedColumns.length === 0) return [];
@@ -249,16 +391,17 @@ const DataTable = React.memo(React.forwardRef(({
             })
             .map(column => ({
                 ...column,
+                width: columnWidths[column.id] || column.width || 150,
                 Header: () => (
                     <EnhancedHeader
                         column={column}
-                        handleSortChange={handleSortChangeWrapper}
-                        currentSort={currentSort}
+                        handleSortChange={handleSortChange}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
                     />
                 ),
             }));
-    }, [normalizedColumns, columnOrder, handleSortChangeWrapper, currentSort]);
-
+    }, [normalizedColumns, columnOrder, columnWidths, handleSortChange, sortField, sortDirection]);
 
     React.useImperativeHandle(ref, () => ({
         refetch,
@@ -269,7 +412,9 @@ const DataTable = React.memo(React.forwardRef(({
     const total = data?.data?.total || 0;
 
     // States for column filtering
-    const [hiddenCols, setHiddenCols] = useState([]);
+    const [hiddenCols, setHiddenCols] = useState(() =>
+        columns.filter(col => col.hide).map(col => col.id || col.accessor)
+    );
     const [showColFilter, setShowColFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -283,7 +428,7 @@ const DataTable = React.memo(React.forwardRef(({
         return label.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    // Initialize React Table
+    // Initialize React Table without resizing hooks
     const {
         getTableProps,
         getTableBodyProps,
@@ -294,7 +439,7 @@ const DataTable = React.memo(React.forwardRef(({
         canNextPage,
         gotoPage,
         setHiddenColumns,
-        state: { pageIndex, sortBy },
+        state: { pageIndex },
     } = useTable(
         {
             columns: orderedColumns,
@@ -314,61 +459,57 @@ const DataTable = React.memo(React.forwardRef(({
         usePagination
     );
 
-    // Keep table page in sync
     useEffect(() => {
-        setPage(pageIndex + 1);
-    }, [pageIndex, setPage]);
-
-    useEffect(() => {
-        if (sortBy.length > 0) {
-            const { id: field, desc } = sortBy[0];
-            const direction = desc ? 'desc' : 'asc';
-            handleSortChange(field, direction);
-        } else {
-            handleSortChange(null, null);
+        if (pageIndex + 1 !== page) {
+            gotoPage(page - 1);
         }
-    }, [sortBy, handleSortChange]);
+    }, [page, pageIndex, gotoPage]);
 
-    // Whenever hiddenCols changes, update React Table
     useEffect(() => {
         setHiddenColumns(hiddenCols);
     }, [hiddenCols, setHiddenColumns]);
 
-    // Toggle column visibility
-    const handleToggleColumn = (colId) => {
+    const handleToggleColumn = useCallback((colId) => {
         setHiddenCols((prev) =>
             prev.includes(colId)
                 ? prev.filter((c) => c !== colId)
                 : [...prev, colId]
         );
-    };
-
-    // Advanced filter handlers
-    const handleAdvancedFiltersChange = useCallback((filters) => {
-        setAdvancedFilters(filters);
     }, []);
 
+    const handleAdvancedFiltersChange = useCallback((filters) => {
+        handleFilterChange(filters);
+    }, [handleFilterChange]);
+
     const handleApplyAdvancedFilters = useCallback((filters) => {
-        // If your useDataTable hook supports handleFilterChange
-        if (handleFilterChange) {
-            handleFilterChange(filters);
-        }
-        // Reset to first page when filters change
-        gotoPage(0);
-    }, [handleFilterChange, gotoPage]);
+        applyAdvancedFilters(filters);
+        toggleAdvancedFilters();
+    }, [applyAdvancedFilters]);
 
     const handleClearAdvancedFilters = useCallback(() => {
-        setAdvancedFilters({});
-        if (handleFilterChange) {
-            handleFilterChange({});
-        }
-        gotoPage(0);
-    }, [handleFilterChange, gotoPage]);
+        clearAdvancedFilters();
+        toggleAdvancedFilters();
+    }, [clearAdvancedFilters]);
+
+    const toggleAdvancedFilters = useCallback(() => {
+        setShowAdvancedFilters(prev => !prev);
+    }, []);
+
+    const handleResetColumnWidths = useCallback(() => {
+        const defaultWidths = {};
+        normalizedColumns.forEach(col => {
+            defaultWidths[col.id] = col.width || 200;
+        });
+        setColumnWidths(defaultWidths);
+        dispatch(updateColumnWidths({
+            apiKey: apiUrl,
+            columnWidths: {}
+        }));
+    }, [normalizedColumns, apiUrl, dispatch]);
 
     /**
-     * Download CSV with current filters applied
+     * Download Excel with current filters applied
      */
-
     const handleDownloadExcel = async () => {
         const visibleCols = memoizedColumns.filter(
             (col) => !hiddenCols.includes(col.id || col.accessor)
@@ -392,7 +533,6 @@ const DataTable = React.memo(React.forwardRef(({
         const formatForExcel = (rowObj, col) => {
             let val;
 
-            // 1. Get value via accessor
             if (typeof col.accessor === 'string') {
                 val = getNestedValue(rowObj, col.accessor);
             } else if (typeof col.accessor === 'function') {
@@ -401,7 +541,6 @@ const DataTable = React.memo(React.forwardRef(({
 
             if (val == null) return '';
 
-            // 2. Flatten array values
             if (Array.isArray(val)) {
                 val = val.map(item =>
                     item && typeof item === 'object'
@@ -410,7 +549,6 @@ const DataTable = React.memo(React.forwardRef(({
                 ).join(', ');
             }
 
-            // 3. Format based on column type
             const type = col.excelColumnType;
             const format = col.excelFormat;
 
@@ -446,7 +584,6 @@ const DataTable = React.memo(React.forwardRef(({
                 return String(val);
             }
         };
-
 
         headerRow.eachCell((cell) => {
             cell.fill = {
@@ -623,7 +760,6 @@ const DataTable = React.memo(React.forwardRef(({
         }, 100);
     };
 
-
     // Pagination
     const totalPages = Math.ceil(total / size);
     const pageRange = 5;
@@ -637,7 +773,7 @@ const DataTable = React.memo(React.forwardRef(({
                     <button
                         type="button"
                         className="page-link"
-                        onClick={() => canPreviousPage && gotoPage(pageIndex - 1)}
+                        onClick={() => canPreviousPage && setPage(page - 1)}
                     >
                         Prev
                     </button>
@@ -646,7 +782,7 @@ const DataTable = React.memo(React.forwardRef(({
                 {startPage > 1 && (
                     <>
                         <li className="page-item">
-                            <button type="button" className="page-link" onClick={() => gotoPage(0)}>
+                            <button type="button" className="page-link" onClick={() => setPage(1)}>
                                 1
                             </button>
                         </li>
@@ -666,7 +802,7 @@ const DataTable = React.memo(React.forwardRef(({
                         <button
                             type="button"
                             className="page-link"
-                            onClick={() => gotoPage(i + startPage - 1)}
+                            onClick={() => setPage(i + startPage)}
                         >
                             {i + startPage}
                         </button>
@@ -684,7 +820,7 @@ const DataTable = React.memo(React.forwardRef(({
                             <button
                                 type="button"
                                 className="page-link"
-                                onClick={() => gotoPage(totalPages - 1)}
+                                onClick={() => setPage(totalPages)}
                             >
                                 {totalPages}
                             </button>
@@ -696,7 +832,7 @@ const DataTable = React.memo(React.forwardRef(({
                     <button
                         type="button"
                         className="page-link"
-                        onClick={() => canNextPage && gotoPage(pageIndex + 1)}
+                        onClick={() => canNextPage && setPage(page + 1)}
                     >
                         Next
                     </button>
@@ -718,17 +854,15 @@ const DataTable = React.memo(React.forwardRef(({
             )}
 
             <div className="box-body">
-                {enableAdvancedFilters && (
+                {enableAdvancedFilters && showAdvancedFilters && (
                     <div className="mb-4">
-                        {showAdvancedFilters && (
-                            <DatatableAdvanceFilters
-                                columns={memoizedColumns}
-                                filters={advancedFilters}
-                                onFiltersChange={handleAdvancedFiltersChange}
-                                onApplyFilters={handleApplyAdvancedFilters}
-                                onClearFilters={handleClearAdvancedFilters}
-                            />
-                        )}
+                        <DatatableAdvanceFilters
+                            columns={memoizedColumns}
+                            filters={advancedFilters}
+                            onFiltersChange={handleAdvancedFiltersChange}
+                            onApplyFilters={handleApplyAdvancedFilters}
+                            onClearFilters={handleClearAdvancedFilters}
+                        />
                     </div>
                 )}
 
@@ -748,33 +882,40 @@ const DataTable = React.memo(React.forwardRef(({
                             <option value="100">Show 100</option>
                             <option value="500">Show 500</option>
                             <option value="1000">Show 1000</option>
-                            <option value="3000">Show 3000</option>
-                            <option value="5000">Show 5000</option>
-                            <option value="10000">Show 10000</option>
                         </select>
 
                         {/* Advanced Filters Button */}
                         {enableAdvancedFilters && (
-                            <button
-                                type="button"
-                                className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                            >
-                                <i className={`ri-filter-${showAdvancedFilters ? '3' : '2'}-line mr-1`}></i>
-                                {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
-                                {Object.keys(advancedFilters).length > 0 && (
-                                    <span className="ml-2 badge bg-primary/10 text-primary">
+                            <>
+                                <button
+                                    type="button"
+                                    className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                                    onClick={toggleAdvancedFilters}
+                                >
+                                    <i className={`ri-filter-${showAdvancedFilters ? '3' : '2'}-line mr-1`}></i>
+                                    {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
+                                    {Object.keys(advancedFilters).length > 0 && (
+                                        <span className="ml-2 badge bg-success text-white">
                                         {Object.keys(advancedFilters).length}
                                     </span>
-                                )}
-                            </button>
+                                    )}
+                                </button>
+                            </>
                         )}
+
+                        {/* Reset Column Widths Button */}
+                        <button
+                            type="button"
+                            className="whitespace-nowrap ti-btn ti-btn-secondary-full !py-1 !px-2 !text-[0.75rem]"
+                            onClick={handleResetColumnWidths}
+                            title="Reset column widths to default"
+                        >
+                            <i className="ri-refresh-line mr-1"></i>
+                            Reset Widths
+                        </button>
                     </div>
 
-
-                    {/* RIGHT side => Filter Icon, CSV Download, Search */}
                     <div className="flex items-center gap-2">
-                        {/* Column Filter toggle button */}
                         <div className='relative'>
                             <button
                                 type="button"
@@ -787,6 +928,11 @@ const DataTable = React.memo(React.forwardRef(({
                                           d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                                 </svg>
                                 <span>Columns</span>
+                                {Object.keys(hiddenCols).length > 0 && (
+                                    <span className="ml-2 badge bg-warning/10 text-warning">
+                                        {Object.keys(hiddenCols).length}
+                                    </span>
+                                )}
                                 <svg
                                     className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showColFilter ? 'rotate-180' : ''}`}
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -795,11 +941,9 @@ const DataTable = React.memo(React.forwardRef(({
                                 </svg>
                             </button>
 
-                            {/* Column visibility dropdown */}
                             {showColFilter && (
                                 <div
                                     className="absolute z-50 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-lg top-full right-0 overflow-hidden">
-                                    {/* Header */}
                                     <div
                                         className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
                                         <h3 className="text-sm font-medium text-gray-900">Column visibility</h3>
@@ -815,7 +959,6 @@ const DataTable = React.memo(React.forwardRef(({
                                         </button>
                                     </div>
 
-                                    {/* Search */}
                                     <div className="p-3 border-b border-gray-200">
                                         <div className="relative">
                                             <svg
@@ -948,94 +1091,117 @@ const DataTable = React.memo(React.forwardRef(({
                             type="search"
                             onChange={handleSearch}
                             placeholder="Search Here"
+                            defaultValue={search}
                             className="form-control form-control-sm"
                         />
+                        {
+                            !needHeader && buttons &&
+                            <>{buttons}</>
+                        }
                     </div>
                 </div>
+
                 <div className={`table-responsive ${tableParentClass}`}>
-                        <table
-                            {...getTableProps()}
-                            className={`table whitespace-nowrap table-hover min-w-full ti-custom-table-hover ${tableClass}`}
-                        >
-                            <thead>
-                            {headerGroups.map((headerGroup) => {
-                                const {key: headerGroupKey, ...headerGroupProps} =
-                                    headerGroup.getHeaderGroupProps();
+                    <table
+                        {...getTableProps()}
+                        className={`table whitespace-nowrap table-hover min-w-full ti-custom-table-hover ${tableClass}`}
+                        style={{
+                            cursor: isResizing ? 'col-resize' : 'default'
+                        }}
+                    >
+                        <thead>
+                        {headerGroups.map((headerGroup) => {
+                            const {key: headerGroupKey, ...headerGroupProps} =
+                                headerGroup.getHeaderGroupProps();
+                            return (
+                                <tr
+                                    key={headerGroupKey}
+                                    {...headerGroupProps}
+                                    className={`border-b border-defaultborder ${rowClassName || ''}`}
+                                >
+                                    {headerGroup.headers.map((column) => {
+                                        const {key: columnKey, ...columnProps} = column.getHeaderProps();
+
+                                        return (
+                                            <th
+                                                key={columnKey}
+                                                {...columnProps}
+                                                scope="col"
+                                                className={`text-start align-middle relative ${column.headerClassName || ''}`}
+                                                style={{
+                                                    width: `${columnWidths[column.id] || 200}px`,
+                                                    minWidth: `${columnWidths[column.id] || 200}px`,
+                                                    maxWidth: `${columnWidths[column.id] || 200}px`,
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                <div className="inline-flex items-center">
+                                                    <span>{column.render('Header')}</span>
+                                                </div>
+                                                <ColumnResizer column={column} />
+                                            </th>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                        </thead>
+                        <tbody {...getTableBodyProps()}>
+                        {isLoading ? (
+                            Array.from({length: 10}).map((_, idx) => (
+                                <TableShimmerRow key={idx} columns={columns.length}/>
+                            ))
+                        ) : tablePage.length === 0 ? (
+                            <tr>
+                                <td colSpan={columns.length} className="py-6">
+                                    <EmptyState
+                                        icon={Inbox}
+                                        heading="No Results"
+                                        description="There is no data available to display."
+                                    />
+                                </td>
+                            </tr>
+                        ) : (
+                            tablePage.map((row) => {
+                                prepareRow(row);
+                                const {key: rowKey, ...rowProps} = row.getRowProps();
                                 return (
                                     <tr
-                                        key={headerGroupKey}
-                                        {...headerGroupProps}
-                                        className={`border-b border-defaultborder ${rowClassName || ''}`}
+                                        key={rowKey}
+                                        {...rowProps}
+                                        className="border-b border-defaultborder text-[0.6875rem]"
                                     >
-                                        {headerGroup.headers.map((column) => {
-                                            const {key: columnKey, ...columnProps} = column.getHeaderProps(
-                                                column.getSortByToggleProps
-                                                    ? column.getSortByToggleProps()
-                                                    : undefined
-                                            );
+                                        {row.cells.map((cell) => {
+                                            const {key: cellKey, ...baseProps} = cell.getCellProps();
+                                            const customProps = cell.column.getCellProps
+                                                ? cell.column.getCellProps(cell)
+                                                : {};
 
                                             return (
-                                                <th
-                                                    key={columnKey}
-                                                    {...columnProps}
-                                                    scope="col"
-                                                    className={`text-start align-middle ${column.headerClassName || ''}`}
+                                                <td
+                                                    key={cellKey}
+                                                    {...baseProps}
+                                                    {...customProps}
+                                                    style={{
+                                                        width: `${columnWidths[cell.column.id] || 150}px`,
+                                                        minWidth: `${columnWidths[cell.column.id] || 150}px`,
+                                                        maxWidth: `${columnWidths[cell.column.id] || 150}px`,
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }}
                                                 >
-                                                    <div className="inline-flex items-center">
-                                                        <span>{column.render('Header')}</span>
-                                                    </div>
-                                                </th>
+                                                    {cell.render('Cell')}
+                                                </td>
                                             );
                                         })}
                                     </tr>
                                 );
-                            })}
-                            </thead>
-                            <tbody {...getTableBodyProps()}>
-                            {isLoading ? (
-                                Array.from({length: 10}).map((_, idx) => (
-                                    <TableShimmerRow key={idx} columns={columns.length}/>
-                                ))
-                            ) : tablePage.length === 0 ? (
-                                <tr>
-                                    <td colSpan={columns.length} className="py-6">
-                                        <EmptyState
-                                            icon={Inbox}
-                                            heading="No Results"
-                                            description="There is no data available to display."
-                                        />
-                                    </td>
-                                </tr>
-                            ) : (
-                                tablePage.map((row) => {
-                                    prepareRow(row);
-                                    const {key: rowKey, ...rowProps} = row.getRowProps();
-                                    return (
-                                        <tr
-                                            key={rowKey}
-                                            {...rowProps}
-                                            className="border-b border-defaultborder text-[0.6875rem]"
-                                        >
-                                            {row.cells.map((cell) => {
-                                                const {key: cellKey, ...baseProps} = cell.getCellProps();
-                                                const customProps = cell.column.getCellProps
-                                                    ? cell.column.getCellProps(cell)
-                                                    : {};
+                            })
+                        )}
+                        </tbody>
 
-                                                return (
-                                                    <td key={cellKey} {...baseProps} {...customProps}>
-                                                        {cell.render('Cell')}
-                                                    </td>
-                                                );
-                                            })}
-                                        </tr>
-                                    );
-                                })
-                            )}
-                            </tbody>
-
-                        </table>
-                    </div>
+                    </table>
+                </div>
             </div>
 
             <div className="box-footer">

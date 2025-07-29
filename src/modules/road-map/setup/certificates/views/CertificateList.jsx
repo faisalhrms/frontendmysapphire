@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {Link} from "react-router-dom";
 import {toTitleCase} from "@helpers/formatters.js";
 import {Certificate} from "@modules/road-map/routes.js";
@@ -65,7 +65,8 @@ const CertificateList = () => {
             <DataTable
                 columns={columns}
                 title="Certificates"
-                apiUrl="certificate/datatable"
+                apiUrl="certificate/datatable/"
+                externalFilters={['tab']}
                 buttons={buttons}
             />
         </>

@@ -1,5 +1,5 @@
 import React from "react";
-import DataTable from "@components/DataTable.jsx";
+import DataTable from "@components/datatable/DataTable.jsx";
 import {format} from "date-fns";
 import {Link} from "react-router-dom";
 import {toTitleCase} from "@helpers/formatters.js";
@@ -140,6 +140,7 @@ const TaskGeneratedTable = () => {
             columns={columns}
             apiUrl="/service-request/generated/sr/"
             title="Task Generated"
+            externalFilters={['status']}
         />
     );
 };
