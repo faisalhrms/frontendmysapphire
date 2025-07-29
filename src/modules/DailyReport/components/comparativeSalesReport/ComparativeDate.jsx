@@ -201,11 +201,7 @@ const ComparativeDate = ({
                                     onClick={downloadPDF}
                                     disabled={isDownloading}
                                 >
-                                    <i
-                                        className={`bi bi-file-earmark-pdf ${
-                                            isDownloading ? "spin" : ""
-                                        } `}
-                                    ></i>
+                                    <i className={`bi bi-file-earmark-pdf ${isDownloading ? "animate-spin inline-block" : ""}`}></i>
                                     {isDownloading ? "" : ""}
                                 </button>
                             </div>
