@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import ApexChart from "@components/charts/ApexChart.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
@@ -6,48 +6,64 @@ import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx
 import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
 
 const EquipmentAnalysisCard = ({ filters }) => {
-    const { data: rawData, isLoading } = useFetchWithFilters("/dashboard/equipment/monthly-acquisition/", filters);
+    const { data: rawData, isLoading } = useFetchWithFilters(
+        "/dashboard/equipment/monthly-acquisition/",
+        filters
+    );
     const [modalOpen, setModalOpen] = useState(false);
     const [modalParams, setModalParams] = useState(null);
 
-    const items = useMemo(() => Array.isArray(rawData) ? rawData : [], [rawData]);
+    const items = useMemo(() => (Array.isArray(rawData) ? rawData : []), [
+        rawData,
+    ]);
 
-    const categories = useMemo(() => {
-        return items.map(item =>
-            new Date(item.month).toLocaleString('default', { month: 'short', year: '2-digit' })
-        );
-    }, [items]);
+    const categories = useMemo(
+        () =>
+            items.map((item) =>
+                new Date(item.month).toLocaleString('default', {
+                    month: 'short',
+                    year: '2-digit',
+                })
+            ),
+        [items]
+    );
 
-    const series = useMemo(() => [{
-        name: 'Monthly Acquisitions',
-        data: items.map(item => item.count),
-    }], [items]);
+    const series = useMemo(
+        () => [
+            {
+                name: 'Monthly Acquisitions',
+                data: items.map((item) => item.count),
+            },
+        ],
+        [items]
+    );
 
-    const handleBarClick = (event, chartContext, config) => {
-        const index = config.dataPointIndex;
-        const item = Array.isArray(items) ? items[index] : null;
-
+    const handleBarClick = useCallback((_, __, config) => {
+        const idx = config.dataPointIndex;
+        const item = items[idx];
         if (!item) return;
 
         setModalParams({
-            purchase_date: item.month,  // 🔄 changed from acquisition_month to purchase_date
-            company_id: filters?.company_id || null
+            purchase_date: item.month,          // pass month string
+            company_id: filters.company_id,
         });
-
         setModalOpen(true);
-    };
+    }, [items, filters.company_id]);
 
     if (isLoading) return <LoadingSpinner />;
-    if (!items.length) {
+    if (!items.length)
         return (
             <div className="box p-4">
                 <div className="box-header mb-1">
-                    <div className="box-title text-base font-semibold">Monthly Asset Acquisitions</div>
+                    <div className="box-title text-base font-semibold">
+                        Monthly Asset Acquisitions
+                    </div>
                 </div>
-                <div className="text-center py-10 text-gray-500">No monthly acquisition data available</div>
+                <div className="text-center py-10 text-gray-500">
+                    No monthly acquisition data available
+                </div>
             </div>
         );
-    }
 
     return (
         <div className="col-span-6">
@@ -61,55 +77,47 @@ const EquipmentAnalysisCard = ({ filters }) => {
                             <ApexChart
                                 chartType="bar"
                                 height={370}
-                                chartWidth={categories.length * 160}
+                                columnWidth="25%"                        // narrower bars
+                                baseWidthPerCategory={160}               // space per bar
+                                chartWidth={Math.max(600, categories.length * 160)}
                                 labels={categories}
-                                baseWidthPerCategory={2}
-                                series={series}
+                                categories={categories}
                                 colors={['#EF4444']}
-                                columnWidth="30%"
+                                series={series}
                                 additionalOptions={{
                                     chart: {
                                         toolbar: { show: false },
-                                        events: {
-                                            dataPointSelection: handleBarClick
-                                        }
+                                        events: { dataPointSelection: handleBarClick },
                                     },
                                     legend: { position: 'top' },
                                     dataLabels: {
                                         enabled: true,
-                                        formatter: val => (val > 0.1 ? `${val.toLocaleString()}` : ''),
+                                        formatter: (v) => (v > 0.1 ? v.toLocaleString() : ''),
                                         offsetY: -20,
                                         style: {
                                             fontSize: '11px',
-                                            colors: ['#000']
-                                        }
+                                            colors: ['#EF4444']  // ← now purple
+                                        },
                                     },
                                     plotOptions: {
                                         bar: {
                                             horizontal: false,
-                                            columnWidth: '30%',
+                                            columnWidth: '25%',
                                             borderRadius: 4,
-                                            dataLabels: {
-                                                position: 'top',
-                                                hideOverflowingLabels: false
-                                            }
-                                        }
+                                            dataLabels: { position: 'top' },
+                                        },
                                     },
                                     xaxis: {
                                         categories,
                                         title: { text: 'Month' },
                                         labels: {
                                             rotate: -45,
-                                            style: { fontSize: '12px' }
-                                        }
+                                            trim: false,
+                                            style: { fontSize: '12px', whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.1rem', maxWidth: 100 },
+                                        },
                                     },
-                                    yaxis: {
-                                        title: { text: 'Number of Equipments' }
-                                    },
-                                    grid: {
-                                        borderColor: '#f1f1f1',
-                                        strokeDashArray: 4
-                                    }
+                                    yaxis: { title: { text: 'Number of Equipments' }, tickAmount: 6 },
+                                    grid: { borderColor: '#f1f1f1', strokeDashArray: 4 },
                                 }}
                             />
                         </div>
@@ -117,16 +125,21 @@ const EquipmentAnalysisCard = ({ filters }) => {
                 </div>
             </div>
 
-            {/* Graph Data Modal */}
+            {/* Drill‑down modal */}
             {modalOpen && (
                 <GraphDataModal
                     isOpen={modalOpen}
                     onClose={() => setModalOpen(false)}
-                    title={`Equipments acquired in ${new Date(modalParams?.purchase_date).toLocaleString('default', { month: 'long', year: 'numeric' })}`} // 🔄 updated
+                    title={`Equipments acquired in ${new Date(
+                        modalParams.purchase_date
+                    ).toLocaleString('default', {
+                        month: 'long',
+                        year: 'numeric',
+                    })}`}
                     apiEndpoint="/equipments/datatable-by-purchase-month/"
                     queryParams={{
-                        purchase_date: modalParams?.purchase_date, // 🔄 updated
-                        company_id: modalParams?.company_id
+                        purchase_date: modalParams.purchase_date,
+                        company_id: modalParams.company_id,
                     }}
                     columns={equipmentColumns}
                     addButton={null}

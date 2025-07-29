@@ -55,70 +55,69 @@ const EquipmentSummaryCard = ({ filters }) => {
                 <div className="box-header mb-1">
                     <div className="box-title text-base font-semibold">Status Distribution (Bar)</div>
                 </div>
-                <div className="box-body !p-0">
-                    <div className="p-2">
-                        <ApexChart
-                            chartType="bar"
-                            height={330}
-                            columnWidth="35%"
-                            baseWidthPerCategory={160}
-                            chartWidth={600}
-                            labels={labels}
-                            categories={labels}
-                            onPointClick={(e, chartCtx, config) => openModalByIndex(config.dataPointIndex)}
-                            colors={colors}
-                            series={[{ name: "Equipments", data: values }]}
-                            additionalOptions={{
-                                legend: { position: 'top' },
-                                dataLabels: {
-                                    enabled: true,
-                                    formatter: val => val > 0.1 ? `${val.toLocaleString()}` : '',
-                                    offsetY: -20,
-                                    style: {
-                                        fontSize: '11px',
-                                        colors: ['#000']
-                                    },
-                                },
-                                plotOptions: {
-                                    bar: {
-                                        dataLabels: {
-                                            position: 'top',
-                                            hideOverflowingLabels: false
-                                        },
-                                        borderRadius: 4
-                                    }
-                                },
-                                xaxis: {
-                                    categories: labels,
-                                    labels: {
-                                        rotate: 0,
-                                        trim: false,
-                                        style: {
-                                            fontSize: '10px',
-                                            whiteSpace: 'normal',
-                                            wordBreak: 'break-word',
-                                            lineHeight: '1.1rem',
-                                            maxWidth: 120
-                                        }
-                                    }
-                                },
-                                yaxis: {
-                                    title: {
-                                        text: 'Number of Equipments'
-                                    },
-                                    tickAmount: 6
-                                },
-                                chart: {
-                                    toolbar: { show: false }
-                                },
-                                grid: {
-                                    borderColor: '#f1f1f1',
-                                    strokeDashArray: 4
-                                }
-                            }}
-                        />
-                    </div>
-                </div>
+                <ApexChart
+                    chartType="bar"
+                    height={330}
+                    columnWidth="35%"
+                    baseWidthPerCategory={160}
+                    chartWidth={600}
+                    labels={labels}
+                    categories={labels}
+                    onPointClick={(e, chartCtx, config) => openModalByIndex(config.dataPointIndex)}
+                    colors={colors}
+                    series={[{ name: "Equipments", data: values }]}
+                    additionalOptions={{
+                        legend: { position: 'top' },
+                        dataLabels: {
+                                enabled: true,
+                                formatter: val => val > 0.1 ? `${val.toLocaleString()}` : '',
+
+                            style: {
+                               fontSize: '11px',
+                              colors: colors  // ← now purple
+                            },
+                        offsetY: -20,
+                    },
+                        plotOptions: {
+                        bar: {
+                        dataLabels: {
+                        position: 'top',
+                        hideOverflowingLabels: false,
+                              style: { colors: ['#845adf'] }  // keep top-of-bar text purple here as well
+                    },
+                        borderRadius: 4
+                    }
+                    },
+                        xaxis: {
+                        categories: labels,
+                        labels: {
+                        rotate: 0,
+                        trim: false,
+                        style: {
+                        fontSize: '10px',
+                        whiteSpace: 'normal',
+                        wordBreak: 'break-word',
+                        lineHeight: '1.1rem',
+                        maxWidth: 120
+                    }
+                    }
+                    },
+                        yaxis: {
+                        title: {
+                        text: 'Number of Equipments'
+                    },
+                        tickAmount: 6
+                    },
+                        chart: {
+                        toolbar: { show: false }
+                    },
+                        grid: {
+                        borderColor: '#f1f1f1',
+                        strokeDashArray: 4
+                    }
+                    }}
+                />
+
             </div>
 
             {/* Donut Chart */}

@@ -61,8 +61,8 @@ const EquipmentDepartmentStats = ({ filters }) => {
                             <ApexChart
                                 chartType="bar"
                                 height={370}
-                                columnWidth="35%"
-                                baseWidthPerCategory={160}
+                                columnWidth="20%"
+                                baseWidthPerCategory={200}
                                 chartWidth={categories.length * 160}
                                 labels={categories}
                                 categories={categories}
@@ -79,13 +79,13 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                         offsetY: -20,
                                         style: {
                                             fontSize: '11px',
-                                            colors: ['#000']
-                                        }
+                                            colors: ['#3B82F6']  // ← now purple
+                                        },
                                     },
                                     plotOptions: {
                                         bar: {
                                             horizontal: false,
-                                            columnWidth: '35%',
+                                            columnWidth: "20%",
                                             borderRadius: 4,
                                             dataLabels: {
                                                 position: 'top',
@@ -104,7 +104,7 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                                 whiteSpace: 'normal',
                                                 wordBreak: 'break-word',
                                                 lineHeight: '1.1rem',
-                                                maxWidth: 120
+                                                maxWidth: 150,
                                             }
                                         }
                                     },

@@ -59,8 +59,8 @@ const EquipmentSiteStats = ({ filters }) => {
                         <ApexChart
                             chartType="bar"
                             height={400}
-                            columnWidth="35%"
-                            baseWidthPerCategory={160}
+                            columnWidth="20%"
+                            baseWidthPerCategory={200}
                             chartWidth={Math.max(600, siteLabels.length * 160)}
                             labels={siteLabels}
                             categories={siteLabels}
@@ -83,17 +83,16 @@ const EquipmentSiteStats = ({ filters }) => {
                                     offsetY: -20,
                                     style: {
                                         fontSize: '11px',
-                                        colors: ['#000']
-                                    }
+                                        colors: ['#FACC15']  // ← now purple
+                                    },
                                 },
                                 plotOptions: {
                                     bar: {
                                         horizontal: false,
-                                        columnWidth: '35%',
+                                        columnWidth: '20%',
                                         borderRadius: 4,
                                         dataLabels: {
-                                            position: 'top',
-                                            hideOverflowingLabels: false
+                                            position: 'top'
                                         }
                                     }
                                 },
@@ -108,7 +107,7 @@ const EquipmentSiteStats = ({ filters }) => {
                                             whiteSpace: 'normal',
                                             wordBreak: 'break-word',
                                             lineHeight: '1.1rem',
-                                            maxWidth: 120
+                                            maxWidth: 150
                                         }
                                     }
                                 },
