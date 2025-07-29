@@ -8,11 +8,10 @@ const Tooltip = ({ id, tooltipContent, children }) => {
       <span data-tooltip-id={id}>
         {children}
       </span>
-      {/* Define the tooltip once, separately */}
-      <ReactTooltip 
+      <ReactTooltip
         className="z-[9999]" 
         id={id} 
-        place="top" 
+        place="top"
         effect="float" 
         content={tooltipContent} 
       />

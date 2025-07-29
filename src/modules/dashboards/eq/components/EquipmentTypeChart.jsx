@@ -77,7 +77,7 @@ const EquipmentTypeChart = ({ filters }) => {
                                     offsetY: -20,
                                     style: {
                                         fontSize: '11px',
-                                        colors: ['#000']
+                                        colors: colors // ← now purple
                                     },
                                 },
                                 plotOptions: {

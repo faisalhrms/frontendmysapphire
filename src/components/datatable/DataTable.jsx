@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import {useDataTable} from "@hooks/dataTableHooks.js";
 import DatatableAdvanceFilters from "@components/datatable/DatatableAdvanceFilters.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {updateColumnOrder} from "@redux/common/tableConfigSlice.js";
+import {updateColumnOrder, updateColumnWidths} from "@redux/common/tableConfigSlice.js";
 import EmptyState from "@components/EmptyState.jsx";
 import TableShimmerRow from "@components/TableShimmerRow.jsx";
 
@@ -39,36 +39,94 @@ const DataTable = React.memo(React.forwardRef(({
                                                }, ref) => {
 
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
 
     const EMPTY_ARRAY = Object.freeze([]);
     const EMPTY_OBJECT = Object.freeze({});
     const dispatch = useDispatch();
     const selectColumnOrder = (state, apiUrl) => state.tableConfig[apiUrl]?.columnOrder || EMPTY_ARRAY;
     const selectTableConfig = (state, apiUrl) => state.tableConfig[apiUrl] || EMPTY_OBJECT;
+    const selectColumnWidths = (state, apiUrl) => state.tableConfig[apiUrl]?.columnWidths || EMPTY_OBJECT;
 
     const storedColumnOrder = useSelector((state) => selectColumnOrder(state, apiUrl));
     const tableConfig = useSelector((state) => selectTableConfig(state, apiUrl));
+    const storedColumnWidths = useSelector((state) => selectColumnWidths(state, apiUrl));
 
     const normalizedColumns = useMemo(() => {
         return (columns || []).map((col, idx) => ({
             ...col,
             id: col.id || col.accessor || `col_${idx}`,
+            width: col.width || 200,
+            minWidth: col.minWidth || 100,
+            maxWidth: col.maxWidth || 1000,
         }));
     }, [columns]);
 
-    const [columnOrder, setColumnOrder] = useState(
+    const [columnWidths, setColumnWidths] = useState(() => {
+        const widths = {};
+        normalizedColumns.forEach(col => {
+            if (storedColumnWidths[col.id] !== undefined) {
+                widths[col.id] = storedColumnWidths[col.id];
+            }
+            else {
+                widths[col.id] = col.width || 200;
+            }
+        });
+        return widths;
+    });
+
+    useEffect(() => {
+        setColumnWidths(prevWidths => {
+            const newWidths = {...prevWidths};
+            let hasChanges = false;
+
+            normalizedColumns.forEach(col => {
+                if (newWidths[col.id] === undefined) {
+                    newWidths[col.id] = col.width || 200;
+                    hasChanges = true;
+                }
+            });
+
+            Object.keys(newWidths).forEach(colId => {
+                if (!normalizedColumns.some(col => col.id === colId)) {
+                    delete newWidths[colId];
+                    hasChanges = true;
+                }
+            });
+
+            return hasChanges ? newWidths : prevWidths;
+        });
+    }, [normalizedColumns]);
+
+    useEffect(() => {
+        if (Object.keys(storedColumnWidths).length > 0) {
+            setColumnWidths(prevWidths => {
+                const newWidths = {...prevWidths};
+                let hasChanges = false;
+
+                normalizedColumns.forEach(col => {
+                    if (storedColumnWidths[col.id] !== undefined &&
+                        storedColumnWidths[col.id] !== prevWidths[col.id]) {
+                        newWidths[col.id] = storedColumnWidths[col.id];
+                        hasChanges = true;
+                    }
+                });
+
+                return hasChanges ? newWidths : prevWidths;
+            });
+        }
+    }, [storedColumnWidths, normalizedColumns]);
+
+    const [columnOrder, setColumnOrder] = useState(() =>
         storedColumnOrder.length > 0 ? storedColumnOrder : normalizedColumns.map(col => col.id)
     );
 
     useEffect(() => {
-        if (
-            storedColumnOrder.length === 0 &&
-            normalizedColumns.length > 0 &&
-            columnOrder.length === 0
-        ) {
-            setColumnOrder(normalizedColumns.map(col => col.id));
+        if (storedColumnOrder.length === 0 && normalizedColumns.length > 0 && columnOrder.length === 0) {
+            const newOrder = normalizedColumns.map(col => col.id);
+            setColumnOrder(newOrder);
         }
-    }, [normalizedColumns, storedColumnOrder, columnOrder]);
+    }, [normalizedColumns, storedColumnOrder, columnOrder.length]);
 
     const handleMoveColumn = useCallback((headerId, direction) => {
         setColumnOrder(prevOrder => {
@@ -81,6 +139,7 @@ const DataTable = React.memo(React.forwardRef(({
             const newOrder = [...prevOrder];
             [newOrder[currentIndex], newOrder[newIndex]] = [newOrder[newIndex], newOrder[currentIndex]];
 
+            // Save to Redux
             dispatch(updateColumnOrder({
                 apiKey: apiUrl,
                 columnOrder: newOrder
@@ -90,6 +149,93 @@ const DataTable = React.memo(React.forwardRef(({
         });
     }, [apiUrl, dispatch]);
 
+    const handleColumnResize = useCallback((columnId, width) => {
+        const columnDefinition = normalizedColumns.find(col => col.id === columnId);
+        const minW = columnDefinition?.minWidth || 100;
+        const maxW = columnDefinition?.maxWidth || 1000;
+
+        const newWidth = Math.max(minW, Math.min(maxW, width));
+
+        setColumnWidths(prev => {
+            if (prev[columnId] === newWidth) {
+                return prev;
+            }
+            return {
+                ...prev,
+                [columnId]: newWidth
+            };
+        });
+    }, [normalizedColumns]); // <<< IMPORTANT: Add normalizedColumns as a dependency
+
+    const saveTimeoutRef = useRef(null);
+    useEffect(() => {
+        if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+        }
+
+        saveTimeoutRef.current = setTimeout(() => {
+            if (Object.keys(columnWidths).length > 0) {
+                dispatch(updateColumnWidths({
+                    apiKey: apiUrl,
+                    columnWidths
+                }));
+            }
+        }, 300);
+
+        return () => {
+            if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current);
+            }
+        };
+    }, [columnWidths, apiUrl, dispatch]);
+
+    const ColumnResizer = React.memo(({ column }) => {
+        const [isDragging, setIsDragging] = useState(false);
+        const startPositionRef = useRef({ x: 0, width: 0 });
+
+        const handleMouseDown = useCallback((e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const currentWidth = columnWidths[column.id] || (column.width || 200);
+            setIsDragging(true);
+            setIsResizing(true);
+            startPositionRef.current = {
+                x: e.clientX,
+                width: currentWidth
+            };
+
+            const handleMouseMove = (moveEvent) => {
+                const diff = moveEvent.clientX - startPositionRef.current.x;
+                handleColumnResize(column.id, startPositionRef.current.width + diff);
+            };
+
+            const handleMouseUp = () => {
+                setIsDragging(false);
+                setIsResizing(false);
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            };
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        }, [column.id, column.width, columnWidths, handleColumnResize]);
+
+        return (
+            <div
+                className={`absolute top-0 right-[-4px] w-[8px] h-full cursor-col-resize transition-colors duration-150 ${
+                    isDragging ? '' : ''
+                }`}
+                onMouseDown={handleMouseDown}
+                style={{ zIndex: 10 }}
+            />
+        );
+    });
+
     const EnhancedHeader = ({ column, handleSortChange, sortField, sortDirection }) => {
         const headerLabel = column.render ? column.render('Header') : column.Header;
         const [isOpen, setIsOpen] = useState(false);
@@ -97,11 +243,9 @@ const DataTable = React.memo(React.forwardRef(({
         const headerId = column.id || column.accessor;
         const currentIndex = columnOrder.indexOf(headerId);
 
-        // Get current sort state for this column
         const isCurrentlySorted = sortField === headerId;
         const currentSortDirection = isCurrentlySorted ? sortDirection : null;
 
-        // Close dropdown when clicking outside
         useEffect(() => {
             const handleClickOutside = (event) => {
                 if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -112,29 +256,31 @@ const DataTable = React.memo(React.forwardRef(({
             return () => document.removeEventListener('mousedown', handleClickOutside);
         }, []);
 
-        const handleSort = (direction) => {
+        const handleSort = useCallback((direction) => {
             if (direction === 'clear') {
                 handleSortChange(null, null);
             } else {
                 handleSortChange(headerId, direction);
             }
             setIsOpen(false);
-        };
+        }, [headerId, handleSortChange]);
 
         return (
-            <div className="flex items-center">
-                <span>{headerLabel}</span>
-                {/* Sort indicator */}
-                {isCurrentlySorted && (
-                    <span className="ml-1">
-                        {currentSortDirection === 'asc' ? (
-                            <i className="ri-arrow-up-line text-blue-500"></i>
-                        ) : (
-                            <i className="ri-arrow-down-line text-blue-500"></i>
-                        )}
-                    </span>
-                )}
-                <div className="relative ml-2" ref={dropdownRef}>
+            <div className="flex items-center justify-between w-full relative pr-2">
+                <div className="flex items-center flex-1 min-w-0">
+                    <span className="truncate">{headerLabel}</span>
+                    {isCurrentlySorted && (
+                        <span className="ml-1 flex-shrink-0">
+                            {currentSortDirection === 'asc' ? (
+                                <i className="ri-arrow-up-line text-blue-500"></i>
+                            ) : (
+                                <i className="ri-arrow-down-line text-blue-500"></i>
+                            )}
+                        </span>
+                    )}
+                </div>
+
+                <div className="relative ml-2 flex-shrink-0" ref={dropdownRef}>
                     <button
                         onClick={() => setIsOpen(!isOpen)}
                         className="rounded-full transition-colors duration-200 text-gray-500 hover:bg-gray-200 dark:hover:bg-neutral-700 p-1"
@@ -145,7 +291,6 @@ const DataTable = React.memo(React.forwardRef(({
 
                     {isOpen && (
                         <div className="absolute right-0 w-40 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-md shadow-lg py-1 z-50">
-                            {/* Sorting options */}
                             {!column.disableSortBy && (
                                 <>
                                     <button
@@ -184,7 +329,6 @@ const DataTable = React.memo(React.forwardRef(({
                                 </>
                             )}
 
-                            {/* Column movement options */}
                             <button
                                 onClick={() => {
                                     handleMoveColumn(headerId, 'left');
@@ -215,7 +359,6 @@ const DataTable = React.memo(React.forwardRef(({
         );
     };
 
-    // Use the updated hook with URL management
     const {
         data,
         isLoading,
@@ -248,6 +391,7 @@ const DataTable = React.memo(React.forwardRef(({
             })
             .map(column => ({
                 ...column,
+                width: columnWidths[column.id] || column.width || 150,
                 Header: () => (
                     <EnhancedHeader
                         column={column}
@@ -257,7 +401,7 @@ const DataTable = React.memo(React.forwardRef(({
                     />
                 ),
             }));
-    }, [normalizedColumns, columnOrder, handleSortChange, sortField, sortDirection]);
+    }, [normalizedColumns, columnOrder, columnWidths, handleSortChange, sortField, sortDirection]);
 
     React.useImperativeHandle(ref, () => ({
         refetch,
@@ -284,7 +428,7 @@ const DataTable = React.memo(React.forwardRef(({
         return label.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    // Initialize React Table
+    // Initialize React Table without resizing hooks
     const {
         getTableProps,
         getTableBodyProps,
@@ -325,13 +469,13 @@ const DataTable = React.memo(React.forwardRef(({
         setHiddenColumns(hiddenCols);
     }, [hiddenCols, setHiddenColumns]);
 
-    const handleToggleColumn = (colId) => {
+    const handleToggleColumn = useCallback((colId) => {
         setHiddenCols((prev) =>
             prev.includes(colId)
                 ? prev.filter((c) => c !== colId)
                 : [...prev, colId]
         );
-    };
+    }, []);
 
     const handleAdvancedFiltersChange = useCallback((filters) => {
         handleFilterChange(filters);
@@ -350,6 +494,18 @@ const DataTable = React.memo(React.forwardRef(({
     const toggleAdvancedFilters = useCallback(() => {
         setShowAdvancedFilters(prev => !prev);
     }, []);
+
+    const handleResetColumnWidths = useCallback(() => {
+        const defaultWidths = {};
+        normalizedColumns.forEach(col => {
+            defaultWidths[col.id] = col.width || 200;
+        });
+        setColumnWidths(defaultWidths);
+        dispatch(updateColumnWidths({
+            apiKey: apiUrl,
+            columnWidths: {}
+        }));
+    }, [normalizedColumns, apiUrl, dispatch]);
 
     /**
      * Download Excel with current filters applied
@@ -377,7 +533,6 @@ const DataTable = React.memo(React.forwardRef(({
         const formatForExcel = (rowObj, col) => {
             let val;
 
-            // 1. Get value via accessor
             if (typeof col.accessor === 'string') {
                 val = getNestedValue(rowObj, col.accessor);
             } else if (typeof col.accessor === 'function') {
@@ -386,7 +541,6 @@ const DataTable = React.memo(React.forwardRef(({
 
             if (val == null) return '';
 
-            // 2. Flatten array values
             if (Array.isArray(val)) {
                 val = val.map(item =>
                     item && typeof item === 'object'
@@ -395,7 +549,6 @@ const DataTable = React.memo(React.forwardRef(({
                 ).join(', ');
             }
 
-            // 3. Format based on column type
             const type = col.excelColumnType;
             const format = col.excelFormat;
 
@@ -747,25 +900,22 @@ const DataTable = React.memo(React.forwardRef(({
                                     </span>
                                     )}
                                 </button>
-                                {/*{*/}
-                                {/*    Object.keys(advancedFilters).length > 0 &&*/}
-                                {/*    <button*/}
-                                {/*        type="button"*/}
-                                {/*        className="whitespace-nowrap ti-btn ti-btn-danger-full !py-1 !px-2 !text-[0.75rem]"*/}
-                                {/*        onClick={resetAll}*/}
-                                {/*    >*/}
-                                {/*        <i className={`ri-filter-off-line mr-1`}></i>*/}
-                                {/*        Reset Advanced Filters*/}
-                                {/*    </button>*/}
-                                {/*}*/}
                             </>
                         )}
+
+                        {/* Reset Column Widths Button */}
+                        <button
+                            type="button"
+                            className="whitespace-nowrap ti-btn ti-btn-secondary-full !py-1 !px-2 !text-[0.75rem]"
+                            onClick={handleResetColumnWidths}
+                            title="Reset column widths to default"
+                        >
+                            <i className="ri-refresh-line mr-1"></i>
+                            Reset Widths
+                        </button>
                     </div>
 
-
-                    {/* RIGHT side => Filter Icon, CSV Download, Search */}
                     <div className="flex items-center gap-2">
-                        {/* Column Filter toggle button */}
                         <div className='relative'>
                             <button
                                 type="button"
@@ -791,11 +941,9 @@ const DataTable = React.memo(React.forwardRef(({
                                 </svg>
                             </button>
 
-                            {/* Column visibility dropdown */}
                             {showColFilter && (
                                 <div
                                     className="absolute z-50 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-lg top-full right-0 overflow-hidden">
-                                    {/* Header */}
                                     <div
                                         className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
                                         <h3 className="text-sm font-medium text-gray-900">Column visibility</h3>
@@ -811,7 +959,6 @@ const DataTable = React.memo(React.forwardRef(({
                                         </button>
                                     </div>
 
-                                    {/* Search */}
                                     <div className="p-3 border-b border-gray-200">
                                         <div className="relative">
                                             <svg
@@ -953,10 +1100,14 @@ const DataTable = React.memo(React.forwardRef(({
                         }
                     </div>
                 </div>
+
                 <div className={`table-responsive ${tableParentClass}`}>
                     <table
                         {...getTableProps()}
                         className={`table whitespace-nowrap table-hover min-w-full ti-custom-table-hover ${tableClass}`}
+                        style={{
+                            cursor: isResizing ? 'col-resize' : 'default'
+                        }}
                     >
                         <thead>
                         {headerGroups.map((headerGroup) => {
@@ -969,22 +1120,25 @@ const DataTable = React.memo(React.forwardRef(({
                                     className={`border-b border-defaultborder ${rowClassName || ''}`}
                                 >
                                     {headerGroup.headers.map((column) => {
-                                        const {key: columnKey, ...columnProps} = column.getHeaderProps(
-                                            column.getSortByToggleProps
-                                                ? column.getSortByToggleProps()
-                                                : undefined
-                                        );
+                                        const {key: columnKey, ...columnProps} = column.getHeaderProps();
 
                                         return (
                                             <th
                                                 key={columnKey}
                                                 {...columnProps}
                                                 scope="col"
-                                                className={`text-start align-middle ${column.headerClassName || ''}`}
+                                                className={`text-start align-middle relative ${column.headerClassName || ''}`}
+                                                style={{
+                                                    width: `${columnWidths[column.id] || 200}px`,
+                                                    minWidth: `${columnWidths[column.id] || 200}px`,
+                                                    maxWidth: `${columnWidths[column.id] || 200}px`,
+                                                    position: 'relative'
+                                                }}
                                             >
                                                 <div className="inline-flex items-center">
                                                     <span>{column.render('Header')}</span>
                                                 </div>
+                                                <ColumnResizer column={column} />
                                             </th>
                                         );
                                     })}
@@ -1024,7 +1178,18 @@ const DataTable = React.memo(React.forwardRef(({
                                                 : {};
 
                                             return (
-                                                <td key={cellKey} {...baseProps} {...customProps}>
+                                                <td
+                                                    key={cellKey}
+                                                    {...baseProps}
+                                                    {...customProps}
+                                                    style={{
+                                                        width: `${columnWidths[cell.column.id] || 150}px`,
+                                                        minWidth: `${columnWidths[cell.column.id] || 150}px`,
+                                                        maxWidth: `${columnWidths[cell.column.id] || 150}px`,
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }}
+                                                >
                                                     {cell.render('Cell')}
                                                 </td>
                                             );
