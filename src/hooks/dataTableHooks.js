@@ -107,7 +107,7 @@ export const useDataTable = (apiUrl, pageSize, filter = null, enableAdvancedFilt
     };
 
     const updateURL = useCallback((updates = {}) => {
-        const currentParams = {
+        let currentParams = {
             page: updates.page !== undefined ? updates.page : page,
             size: updates.size !== undefined ? updates.size : size,
             s: updates.search !== undefined ? updates.search : search,
@@ -115,9 +115,20 @@ export const useDataTable = (apiUrl, pageSize, filter = null, enableAdvancedFilt
             sort_dir: updates.sortDirection !== undefined ? updates.sortDirection : sortDirection,
             ...urlExternalFilters,
             ...hiddenParams,
-            ...advancedFilters,
-            ...(updates.advancedFilters !== undefined ? updates.advancedFilters : {})
         };
+
+        let newAdvancedFilters = updates.advancedFilters !== undefined ? updates.advancedFilters : advancedFilters;
+        if (Object.keys(newAdvancedFilters).length === 0) {
+            const validFilterKeys = getValidFilterKeys();
+            validFilterKeys.forEach(key => {
+                if (currentParams.hasOwnProperty(key)) {
+                    delete currentParams[key];
+                }
+            });
+        } else {
+            currentParams = { ...currentParams, ...newAdvancedFilters };
+        }
+
 
         const cleanParams = Object.entries(currentParams).reduce((acc, [key, value]) => {
             if (value !== null && value !== undefined && value !== '' &&
@@ -144,8 +155,7 @@ export const useDataTable = (apiUrl, pageSize, filter = null, enableAdvancedFilt
         });
 
         setSearchParams(queryString);
-    }, [page, size, search, sortField, sortDirection, advancedFilters, urlExternalFilters, pageSize, setSearchParams]);
-
+    }, [page, size, search, sortField, sortDirection, advancedFilters, urlExternalFilters, pageSize, setSearchParams, getValidFilterKeys, hiddenParams]); // Added getValidFilterKeys and hiddenParams to dependencies
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: [apiUrl, page, size, search, combinedFilters, sortField, sortDirection, enableAdvancedFilters],
         queryFn: fetchData,
