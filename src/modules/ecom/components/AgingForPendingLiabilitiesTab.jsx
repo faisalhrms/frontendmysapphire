@@ -1,5 +1,4 @@
 import React from "react";
-import InfoAlert from "../../../InfoAlert.jsx";
 import PendingLiabilitiesTable from "@modules/ecom/components/PendingLiabilitiesTable.jsx";
 import PendingLiabilitiesReturnAgeTable from "@modules/ecom/components/PendingLiabilitiesReturnAgeTable.jsx";
 
@@ -9,7 +8,6 @@ const AgingForPendingLiabilitiesTab = ({ isActive, filters }) => {
     }
     return (
         <>
-            <InfoAlert/>
             <div className="grid grid-cols-12 gap-x-4">
                 <div className="xl:col-span-6 col-span-12">
                     <PendingLiabilitiesTable
