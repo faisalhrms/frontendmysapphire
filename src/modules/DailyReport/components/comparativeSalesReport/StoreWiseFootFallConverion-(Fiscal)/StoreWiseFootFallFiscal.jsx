@@ -1,6 +1,42 @@
 import React from 'react';
 
 const StoreWiseFootFallFiscal = ({ data }) => {
+
+    const formatToDayMonthYear = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const monthNames = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        const month = monthNames[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
+    const formatDateHeader = (gregorianPeriod, hijriPeriod) => {
+        if (gregorianPeriod && hijriPeriod) {
+            const fromDayMonthYear = formatToDayMonthYear(gregorianPeriod.from_date);
+            const toDayMonthYear = formatToDayMonthYear(gregorianPeriod.to_date);
+            return (
+                <div>
+                    <div>{fromDayMonthYear} to {toDayMonthYear}</div>
+                    <div className="text-xs text-gray-300 mt-1">
+                        ({hijriPeriod.from_date} to {hijriPeriod.to_date})
+                    </div>
+                </div>
+            );
+        } else if (gregorianPeriod) {
+            const fromDayMonthYear = formatToDayMonthYear(gregorianPeriod.from_date);
+            const toDayMonthYear = formatToDayMonthYear(gregorianPeriod.to_date);
+            return `${fromDayMonthYear} to ${toDayMonthYear}`;
+        } else if (hijriPeriod) {
+            return `${hijriPeriod.from_date} to ${hijriPeriod.to_date}`;
+        }
+        return 'Period';
+    };
+
     const getCellColor = (value, isSaleValue = false) => {
         if (typeof value === 'number') {
             if (isSaleValue) {
@@ -12,10 +48,8 @@ const StoreWiseFootFallFiscal = ({ data }) => {
         return '';
     };
 
-
-
     if (!data || !data.rows) {
-        console.log('No data or rows available:', data);
+
         return (
             <div className="bg-white p-4 dark:text-gray-200 dark:bg-bodybg mb-4">
                 <div className="flex justify-center items-center h-32">
@@ -25,7 +59,7 @@ const StoreWiseFootFallFiscal = ({ data }) => {
         );
     }
 
-    console.log('Data rows:', data.rows);
+
 
     const regularRows = data.rows.filter(row =>
         row.lfl_status !== 'Total LFL' && row.lfl_status !== 'Total Network (Inc. NS)'
@@ -34,55 +68,80 @@ const StoreWiseFootFallFiscal = ({ data }) => {
     const totalLflRow = data.rows.find(row => row.lfl_status === 'Total LFL');
     const totalNetworkRow = data.rows.find(row => row.lfl_status === 'Total Network (Inc. NS)');
 
-    const currentPeriod = data.dates?.gregorian?.current;
-    const comparativePeriod = data.dates?.gregorian?.comparative;
+    // Updated date handling logic
+    const currentPeriodGregorian = data.dates?.gregorian?.current;
+    const comparativePeriodGregorian = data.dates?.gregorian?.comparative;
+    const currentPeriodHijri = data.dates?.hijri?.current;
+    const comparativePeriodHijri = data.dates?.hijri?.comparative;
 
     return (
         <div className="bg-white p-4 dark:text-gray-200 dark:bg-bodybg mb-4">
             <div className="overflow-x-auto overflow-y-auto border border-gray-400"
                  style={{ maxHeight: '650px' }}>
                 <table className="min-w-max border-collapse border border-gray-300 text-xs">
-                    <thead className="sticky top-0 bg-gray-800 text-white">
-                    <tr   className="text-white bg-[#383853]"
-                          style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-                        <th rowSpan={2} className="border border-gray-300 px-2 py-3 text-left font-medium">LFL Status</th>
-                        <th rowSpan={2} className="border border-gray-300 px-2 py-3 text-center font-medium">Region</th>
-                        <th rowSpan={2} className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[150px]">Store Name</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium" colSpan="5">
-                            {currentPeriod ? `${currentPeriod.from_date} to ${currentPeriod.to_date}` : 'Current Period'}
+                    <thead className="sticky top-0 bg-gray-800 text-white z-50">
+                    <tr className="text-white bg-[#383853]"
+                        style={{position: 'sticky', top: 0, zIndex: 10}}>
+                        <th rowSpan={2}
+                            className="sticky left-0 bg-[#383853] border border-gray-300 px-2 py-3 text-left font-medium  min-w-[100px]">
+                            LFL Status
+                        </th>
+                        <th rowSpan={2}
+                            className="sticky left-[100px] bg-[#383853] border border-gray-300 px-2 py-3 text-center font-medium  min-w-[120px]">
+                            Region
+                        </th>
+                        <th rowSpan={2}
+                            className="sticky left-[220px] bg-[#383853] border border-gray-300 px-2 py-3 text-center font-medium whitespace-nowrap  min-w-[200px]">
+                            Store Name
                         </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium" colSpan="5">
-                            {comparativePeriod ? `${comparativePeriod.from_date} to ${comparativePeriod.to_date}` : 'Comparative Period'}
+
+                            <div className="text-xs text-gray-300 ">
+                                {formatDateHeader(currentPeriodGregorian)}
+                            </div>
+                        </th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium" colSpan="5">
+
+                            <div className="text-xs text-gray-300 ">
+                                {formatDateHeader(comparativePeriodGregorian)}
+                            </div>
                         </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium" colSpan="5">
                             Growth
                         </th>
                     </tr>
-                    <tr className="bg-[#4d5875] text-white" style={{ position: 'sticky', top: '38px', zIndex: 10 }}>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Sale Value</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Invoice</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">FF</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Conv%</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Sale Value</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Invoice</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">FF</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Conv%</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Sale Value</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Invoice</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">FF</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium">Conv%</th>
+                    <tr className="bg-[#4d5875] text-white">
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     {regularRows.map((row) => (
-                        <tr key={row.store_name || `row-${row.lfl_status}-${row.region}`} className="text-black font-medium bg-white dark:text-gray-200 dark:bg-bodybg whitespace-nowrap">
-                            <td className="border border-gray-300 px-2 py-3">{row.lfl_status}</td>
-                            <td className="border border-gray-300 px-2 py-3">{row.region || ''}</td>
-                            <td className="border border-gray-300 px-2 py-3 min-w-[150px] whitespace-normal">
+                        <tr key={row.store_name || `row-${row.lfl_status}-${row.region}`}
+                            className="text-black font-medium bg-white dark:text-gray-200 dark:bg-bodybg whitespace-nowrap">
+                            <td className="sticky left-0 bg-white dark:bg-bodybg border border-gray-300 px-2 py-3 z-20">{row.lfl_status}</td>
+                            <td className="sticky left-[100px] bg-white dark:bg-bodybg border border-gray-300 px-2 py-3 z-20">{row.region || ''}</td>
+                            <td className="sticky left-[220px] bg-white dark:bg-bodybg border border-gray-300 px-2 py-3 whitespace-nowrap z-20">
                                 {row.store_name ? row.store_name : 'N/A'}
                             </td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
@@ -110,10 +169,12 @@ const StoreWiseFootFallFiscal = ({ data }) => {
                     ))}
 
                     {totalLflRow && (
-                        <tr className="bg-gray-400 font-medium text-black whitespace-nowrap" style={{ position: 'sticky', bottom: 43,  zIndex: 5 }}>
-                            <td className="border border-gray-300 px-2 py-3">Total LFL</td>
-                            <td className="border border-gray-300 px-2 py-3"></td>
-                            <td className="border border-gray-300 px-2 py-3"></td>
+                        <tr className="bg-gray-400 font-medium text-black whitespace-nowrap sticky bottom-[40px] z-20"
+                            // style={{ position: 'sticky', bottom: 43, zIndex: 5 }}
+                        >
+                            <td className="sticky left-0 bg-gray-400 border border-gray-300 px-2 py-3 z-20">Total LFL</td>
+                            <td className="sticky left-[100px] bg-gray-400 border border-gray-300 px-2 py-3 z-20"></td>
+                            <td className="sticky left-[220px] bg-gray-400 border border-gray-300 px-2 py-3 whitespace-nowrap z-20"></td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.sales_value_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.invoice_cy?.toLocaleString() || '-'}</td>
@@ -139,10 +200,12 @@ const StoreWiseFootFallFiscal = ({ data }) => {
                     )}
 
                     {totalNetworkRow && (
-                        <tr className="bg-[#949eb7] font-medium text-black whitespace-nowrap"  style={{ position: 'sticky', bottom: 0, backgroundColor: '#949eb7', zIndex: 5 }}>
-                            <td className="border border-gray-300 px-2 py-3">Total Network</td>
-                            <td className="border border-gray-300 px-2 py-3"></td>
-                            <td className="border border-gray-300 px-2 py-3"></td>
+                        <tr className="bg-[#949eb7] font-medium text-black whitespace-nowrap sticky bottom-0 z-30"
+                            // style={{ position: 'sticky', bottom: 0, backgroundColor: '#949eb7', zIndex: 10 }}
+                        >
+                            <td className="sticky left-0 bg-[#949eb7] border border-gray-300 px-2 py-3 z-20">Total Network</td>
+                            <td className="sticky left-[100px] bg-[#949eb7] border border-gray-300 px-2 py-3 z-20"></td>
+                            <td className="sticky left-[220px] bg-[#949eb7] border border-gray-300 px-2 py-3 whitespace-nowrap z-20"></td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.sales_value_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.invoice_cy?.toLocaleString() || '-'}</td>
