@@ -151,47 +151,47 @@ const ComparativeSaleReportList = () => {
                             <SalesPerformanceTable data={data} isLoading={isLoading}
                                                    isActive={activeTab === 'online_target'} filters={filters}/>) : ''
                     },
-                    {
-                        id: "offline_unstitiched",
-                        label: " Offline (A-Class) - Unstitiched - Full Price Sales",
-                        icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner/> :
-                            <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading}
-                                         isActive={activeTab === 'offline_unstitiched'} filters={filters}/>) : ''
-                    },
-                    {
-                        id: "online_unstitiched",
-                        label: "Online - Unstitiched - Full Price Sales",
-                        icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner/> :
-                            <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading}
-                                         isActive={activeTab === 'online_unstitiched'} filters={filters}/>) : ''
-                    },
-                    {
-                        id: "offline_stitiched",
-                        label: "Offline (A-Class) - Stitiched - Full Price Sales",
-                        icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner/> :
-                            <Unstitiched color='text-emerald-600' title='Stitiched Women' data={data}
-                                         isLoading={isLoading} isActive={activeTab === 'offline_stitiched'}
-                                         filters={filters}/>) : ''
-                    },
-                    {
-                        id: "online_stitiched",
-                        label: "Online - Stitiched - Full Price Sales",
-                        icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner/> :
-                            <Unstitiched color='text-emerald-600' data={data} title='Stitiched Women'
-                                         isLoading={isLoading} isActive={activeTab === 'online_stitiched'}
-                                         filters={filters}/>) : ''
-                    },
-                    {
-                        id: "other_category",
-                        label: "Other Category - Sales",
-                        icon: <i className='bx bx-target-lock'></i>,
-                        content: activeTab === 'other_category' ? (isLoading ? <LoadingSpinner/> :
-                            <Unstitiched color='text-emerald-600' data={data} title={filters.category}/>) : ''
-                    },
+                    // {
+                    //     id: "offline_unstitiched",
+                    //     label: " Offline (A-Class) - Unstitiched - Full Price Sales",
+                    //     icon: <i className='bx bx-target-lock'></i>,
+                    //     content: activeTab === 'offline_unstitiched' ? (isLoading ? <LoadingSpinner/> :
+                    //         <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading}
+                    //                      isActive={activeTab === 'offline_unstitiched'} filters={filters}/>) : ''
+                    // },
+                    // {
+                    //     id: "online_unstitiched",
+                    //     label: "Online - Unstitiched - Full Price Sales",
+                    //     icon: <i className='bx bx-target-lock'></i>,
+                    //     content: activeTab === 'online_unstitiched' ? (isLoading ? <LoadingSpinner/> :
+                    //         <Unstitiched color='text-red' title='Unstitiched Women' data={data} isLoading={isLoading}
+                    //                      isActive={activeTab === 'online_unstitiched'} filters={filters}/>) : ''
+                    // },
+                    // {
+                    //     id: "offline_stitiched",
+                    //     label: "Offline (A-Class) - Stitiched - Full Price Sales",
+                    //     icon: <i className='bx bx-target-lock'></i>,
+                    //     content: activeTab === 'offline_stitiched' ? (isLoading ? <LoadingSpinner/> :
+                    //         <Unstitiched color='text-emerald-600' title='Stitiched Women' data={data}
+                    //                      isLoading={isLoading} isActive={activeTab === 'offline_stitiched'}
+                    //                      filters={filters}/>) : ''
+                    // },
+                    // {
+                    //     id: "online_stitiched",
+                    //     label: "Online - Stitiched - Full Price Sales",
+                    //     icon: <i className='bx bx-target-lock'></i>,
+                    //     content: activeTab === 'online_stitiched' ? (isLoading ? <LoadingSpinner/> :
+                    //         <Unstitiched color='text-emerald-600' data={data} title='Stitiched Women'
+                    //                      isLoading={isLoading} isActive={activeTab === 'online_stitiched'}
+                    //                      filters={filters}/>) : ''
+                    // },
+                    // {
+                    //     id: "other_category",
+                    //     label: "Other Category - Sales",
+                    //     icon: <i className='bx bx-target-lock'></i>,
+                    //     content: activeTab === 'other_category' ? (isLoading ? <LoadingSpinner/> :
+                    //         <Unstitiched color='text-emerald-600' data={data} title={filters.category}/>) : ''
+                    // },
                     {
                         id: "conversion_local",
                         label: "Conversion based on Sales Force Report-Local",
@@ -213,7 +213,7 @@ const ComparativeSaleReportList = () => {
                     },
                     {
                         id: "store_islamic",
-                        label: "Store Wise Foot Fall and Converion-islamic",
+                        label: "Store Wise Foot Fall and Converion-Islamic",
                         icon: <i className='bx bx-briefcase'></i>,
                         content: isLoading ? <LoadingSpinner/> :
                             <StoreWiseFootFallIslamic data={data} isLoading={isLoading}

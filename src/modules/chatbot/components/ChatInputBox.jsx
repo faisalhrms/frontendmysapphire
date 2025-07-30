@@ -15,7 +15,7 @@ const ChatInputBox = ({
   setModeOpen
 }) => {
   return (
-    <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-visible shadow-xl ring-1 ring-gray-400">
+    <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-visible shadow-xl ring-2 ring-gray-300">
       <div className="overflow-hidden rounded-t-xl p-3">
         <textarea
           ref={inputRef}
@@ -53,10 +53,10 @@ const ChatInputBox = ({
                   Export Data
                 </button>
                 <button
-                  onClick={() => {setModeSelection("Sales Force"); setModeOpen(false)}}
+                  onClick={() => {setModeSelection("Salesforce"); setModeOpen(false)}}
                   className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  Sales Force
+                  Salesforce
                 </button>
               </div>
             )}
