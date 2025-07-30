@@ -1,16 +1,6 @@
 import React from 'react';
 
 const StoreWiseFootFallFiscal = ({ data }) => {
-    const formatNumber = (num) => {
-        if (typeof num === 'string' && num.includes(',')) {
-            return num;
-        }
-        if (typeof num === 'number') {
-            return num.toLocaleString();
-        }
-        return num || '-';
-    };
-
     const getCellColor = (value, isSaleValue = false) => {
         if (typeof value === 'number') {
             if (isSaleValue) {
@@ -22,15 +12,7 @@ const StoreWiseFootFallFiscal = ({ data }) => {
         return '';
     };
 
-    const formatGrowth = (value) => {
-        if (value === null || value === undefined) return '';
-        return `${value.toFixed(2)}%`;
-    };
 
-    const formatConvPercentage = (value) => {
-        if (value === null || value === undefined) return '';
-        return `${value.toFixed(2)}%`;
-    };
 
     if (!data || !data.rows) {
         console.log('No data or rows available:', data);
@@ -104,26 +86,26 @@ const StoreWiseFootFallFiscal = ({ data }) => {
                                 {row.store_name ? row.store_name : 'N/A'}
                             </td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(row.conv_percentage_cy)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.sales_value_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.invoice_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.ff_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_cy ? `${row.conv_percentage_cy.toFixed(2)}%` : ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.ff_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(row.conv_percentage_ly)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.sales_value_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.invoice_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.ff_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_ly ? `${row.conv_percentage_ly.toFixed(2)}%` : ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(row.sales_value_growth, true)}`}>
-                                {formatGrowth(row.sales_value_growth)}
+                                {row.sales_value_growth}
                             </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(row.invoice_growth)}`}>
-                                {formatGrowth(row.invoice_growth)}
+                                {row.invoice_growth}
                             </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(row.ff_growth)}`}>
-                                {formatGrowth(row.ff_growth)}
+                                {row.ff_growth}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatGrowth(row.conv_percentage_growth)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_growth}</td>
                         </tr>
                     ))}
 
@@ -133,26 +115,26 @@ const StoreWiseFootFallFiscal = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3"></td>
                             <td className="border border-gray-300 px-2 py-3"></td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.sales_value_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.invoice_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalLflRow.conv_percentage_cy)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.sales_value_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.invoice_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.ff_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_cy ? `${totalLflRow.conv_percentage_cy.toFixed(2)}%` : ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.sales_value_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.invoice_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.ff_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalLflRow.conv_percentage_ly)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.sales_value_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.invoice_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.ff_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_ly ? `${totalLflRow.conv_percentage_ly.toFixed(2)}%` : ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalLflRow.sales_value_growth, true)}`}>
-                                {formatGrowth(totalLflRow.sales_value_growth)}
+                                {totalLflRow.sales_value_growth}
                             </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalLflRow.invoice_growth)}`}>
-                                {formatGrowth(totalLflRow.invoice_growth)}
+                                {totalLflRow.invoice_growth}
                             </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalLflRow.ff_growth)}`}>
-                                {formatGrowth(totalLflRow.ff_growth)}
+                                {totalLflRow.ff_growth}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatGrowth(totalLflRow.conv_percentage_growth)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_growth}</td>
                         </tr>
                     )}
 
@@ -162,26 +144,26 @@ const StoreWiseFootFallFiscal = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3"></td>
                             <td className="border border-gray-300 px-2 py-3"></td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalNetworkRow.conv_percentage_cy)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.sales_value_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.invoice_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.ff_cy?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_cy ? `${totalNetworkRow.conv_percentage_cy.toFixed(2)}%` : ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatConvPercentage(totalNetworkRow.conv_percentage_ly)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.sales_value_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.invoice_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.ff_ly?.toLocaleString() || '-'}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_ly ? `${totalNetworkRow.conv_percentage_ly.toFixed(2)}%` : ''}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">-</td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.sales_value_growth, true)}`}>
-                                {formatGrowth(totalNetworkRow.sales_value_growth)}
+                                {totalNetworkRow.sales_value_growth}
                             </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.invoice_growth)}`}>
-                                {formatGrowth(totalNetworkRow.invoice_growth)}
+                                {totalNetworkRow.invoice_growth}
                             </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.ff_growth)}`}>
-                                {formatGrowth(totalNetworkRow.ff_growth)}
+                                {totalNetworkRow.ff_growth}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatGrowth(totalNetworkRow.conv_percentage_growth)}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_growth}</td>
                         </tr>
                     )}
                     </tbody>
