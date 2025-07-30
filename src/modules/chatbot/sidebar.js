@@ -6,7 +6,7 @@ export const sidebarMenu = [
     generateSidebarItem(
         CHAT_BOT.CHAT_BOT_READ.path,
         'link',
-        'ChatBot',
+        'SappSense',
         5,
         'bi bi-robot',
         CHAT_BOT.CHAT_BOT_READ.permission,

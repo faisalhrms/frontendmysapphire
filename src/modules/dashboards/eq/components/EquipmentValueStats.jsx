@@ -90,8 +90,11 @@ const EquipmentValueStats = ({ filters }) => {
                                             horizontal: false,
                                             columnWidth: "20%",
                                             borderRadius: 4,
-                                            dataLabels: { position: "top" },
-                                        },
+                                            dataLabels: {
+                                                position: 'top',
+                                                hideOverflowingLabels: false
+                                            }
+                                        }
                                     },
                                     xaxis: {
                                         categories: typeLabels,
