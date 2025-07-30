@@ -68,7 +68,7 @@ export default function ChatBot() {
 
     <div className="flex-1 min-h-0 overflow-hidden">
       <PerfectScrollbar className="h-full">
-        <ul className="px-8 py-4 space-y-6 pb-44">
+        <ul className="px-16 py-4 space-y-6 pb-44">
           {messages.map((m, i) => {
             if (m.type === "bot" && m.loading && !isWebSearch) return null
             return m.type === "bot" ? (
