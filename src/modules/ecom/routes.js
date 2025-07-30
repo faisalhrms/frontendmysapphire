@@ -60,7 +60,7 @@ export const MODULE_ROUTES = [
     {
         path: ECOM_ROUTES.IR.path,
         component: InventoryRecon,
-        permission: ECOM_ROUTES.OS.permission,
+        permission: ECOM_ROUTES.IR.permission,
     },
     {
         path: ECOM_ROUTES.WR.path,
