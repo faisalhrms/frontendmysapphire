@@ -3,7 +3,6 @@ import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import PerfectScrollbar from "react-perfect-scrollbar"
 import LottieLoader from "@components/LottieLoader.jsx"
-import botAnimation from "@assets/jsons/loading-bot.json"
 import botLoading from "@assets/jsons/bot.json"
 import ChatInputDock from "@modules/chatbot/components/ChatInputDock.jsx"
 import ChatInputBox from "@modules/chatbot/components/ChatInputBox.jsx"
@@ -58,7 +57,7 @@ export default function ChatBot() {
     <div className="h-screen flex flex-col bg-white dark:bg-bodybg">
       <div className="flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2">
         <div className="flex items-center gap-2">
-          <LottieLoader animationData={botLoading} width={48} height={48} speed={0.3} opacity={1}/>
+          <LottieLoader animationData={botLoading} width={50} height={50} speed={0.3} opacity={1}/>
           <Link to="#" className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70">SappSense</Link>
         </div>
         <button onClick={handleReset} className="ti-btn ti-btn-icon ti-btn-outline-light dark:border-defaultborder/10">
@@ -75,9 +74,9 @@ export default function ChatBot() {
               <li key={i} className="space-y-1">
                 <div className="flex items-center gap-2">
                   {m.loading ? (
-                    <LottieLoader animationData={botAnimation} width={30} height={30} speed={1} opacity={1} />
+                    <LottieLoader animationData={botLoading} width={40} height={40} speed={1} opacity={1} />
                   ) : (
-                    <LottieLoader animationData={botAnimation} width={30} height={30} speed={0} opacity={1} />
+                    <LottieLoader animationData={botLoading} width={40} height={40} speed={0} opacity={1} />
                   )}
                   <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
                   <span className="text-xs text-gray-500">
@@ -126,7 +125,7 @@ export default function ChatBot() {
           {isThinking && !isWebSearch && (
             <li className="space-y-1">
               <div className="flex items-center gap-2">
-                <LottieLoader animationData={botAnimation} width={30} height={30} speed={1} opacity={1} />
+                <LottieLoader animationData={botLoading} width={40} height={40} speed={1} opacity={1} />
                 <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
               </div>
               <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-lg">
