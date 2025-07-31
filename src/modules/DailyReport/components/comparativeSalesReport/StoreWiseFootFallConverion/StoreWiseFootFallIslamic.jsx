@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { formatToDayMonthYear } from "@helpers/dateTime.js";
 
 const SalesDataTable = ({ data }) => {
     const formatNumber = (num) => {
@@ -34,18 +34,7 @@ const SalesDataTable = ({ data }) => {
     const currentPeriodHijri = data.dates?.hijri?.current;
     const comparativePeriodHijri = data.dates?.hijri?.comparative;
 
-    const formatToDayMonthYear = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const monthNames = [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ];
-        const month = monthNames[date.getMonth()];
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    };
+
 
     const formatDateHeader = (gregorianPeriod, hijriPeriod) => {
         if (gregorianPeriod && hijriPeriod) {
@@ -82,13 +71,16 @@ const SalesDataTable = ({ data }) => {
                 <table className="min-w-max border-collapse border border-gray-300 text-xs">
                     <thead className="sticky top-0 bg-gray-800 text-white z-50">
                     <tr className="text-white bg-[#383853]">
-                        <th rowSpan={2} className="sticky left-0 bg-[#383853] border border-gray-300 px-2 py-3 text-left font-medium  min-w-[100px]">
+                        <th rowSpan={2}
+                            className="sticky left-0 bg-[#383853] border border-gray-300 px-2 py-3 text-left font-medium  min-w-[100px]">
                             LFL Status
                         </th>
-                        <th rowSpan={2} className="sticky left-[100px] bg-[#383853] border border-gray-300 px-2 py-3 text-center font-medium  min-w-[120px]">
+                        <th rowSpan={2}
+                            className="sticky left-[100px] bg-[#383853] border border-gray-300 px-2 py-3 text-center font-medium  min-w-[120px]">
                             Region
                         </th>
-                        <th rowSpan={2} className="sticky left-[220px] bg-[#383853] border border-gray-300 px-2 py-3 text-center font-medium whitespace-nowrap  min-w-[200px]">
+                        <th rowSpan={2}
+                            className="sticky left-[220px] bg-[#383853] border border-gray-300 px-2 py-3 text-center font-medium whitespace-nowrap  min-w-[200px]">
                             Store Name
                         </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium" colSpan="5">
@@ -107,17 +99,23 @@ const SalesDataTable = ({ data }) => {
                     </tr>
                     <tr className="bg-[#4d5875] text-white">
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale Value</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale Value</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale Value</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
@@ -126,7 +124,8 @@ const SalesDataTable = ({ data }) => {
 
                     <tbody>
                     {regularRows.map((row, index) => (
-                        <tr key={index} className="text-black font-medium bg-white dark:text-gray-200 dark:bg-bodybg whitespace-nowrap">
+                        <tr key={index}
+                            className="text-black font-medium bg-white dark:text-gray-200 dark:bg-bodybg whitespace-nowrap">
                             <td className="sticky left-0 bg-white dark:bg-bodybg border border-gray-300 px-2 py-3 z-20">
                                 {row.lfl_status}
                             </td>
@@ -136,17 +135,17 @@ const SalesDataTable = ({ data }) => {
                             <td className="sticky left-[220px] bg-white dark:bg-bodybg border border-gray-300 px-2 py-3 whitespace-nowrap z-20">
                                 {row.store_name}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.qty_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.ff_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_cy || ''}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.qty_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.ff_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_ly || ''}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.qty_growth)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right font-medium">
                                 {row.sales_value_growth || ''}
                             </td>
@@ -162,20 +161,21 @@ const SalesDataTable = ({ data }) => {
 
                     {totalLflRow && (
                         <tr className="bg-gray-400 font-medium text-black whitespace-nowrap sticky bottom-[40px] z-20">
-                            <td className="sticky left-0 bg-gray-400 border border-gray-300 px-2 py-3 z-20">Total LFL</td>
+                            <td className="sticky left-0 bg-gray-400 border border-gray-300 px-2 py-3 z-20">Total LFL
+                            </td>
                             <td className="sticky left-[100px] bg-gray-400 border border-gray-300 px-2 py-3 z-20"></td>
                             <td className="sticky left-[220px] bg-gray-400 border border-gray-300 px-2 py-3 whitespace-nowrap z-20"></td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.qty_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.ff_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_cy || ''}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.qty_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.invoice_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.ff_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_ly || ''}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.qty_growth)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right font-medium">
                                 {totalLflRow.sales_value_growth || ''}
                             </td>
@@ -191,20 +191,22 @@ const SalesDataTable = ({ data }) => {
 
                     {totalNetworkRow && (
                         <tr className="bg-[#949eb7] font-medium text-black whitespace-nowrap sticky bottom-0 z-30">
-                            <td className="sticky left-0 bg-[#949eb7] border border-gray-300 px-2 py-3 z-20">Total Network</td>
+                            <td className="sticky left-0 bg-[#949eb7] border border-gray-300 px-2 py-3 z-20">Total
+                                Network
+                            </td>
                             <td className="sticky left-[100px] bg-[#949eb7] border border-gray-300 px-2 py-3 z-20"></td>
                             <td className="sticky left-[220px] bg-[#949eb7] border border-gray-300 px-2 py-3 whitespace-nowrap z-20"></td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.qty_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_cy || ''}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.qty_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_ly || ''}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">-</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.qty_growth)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right font-medium">
                                 {totalNetworkRow.sales_value_growth || ''}
                             </td>

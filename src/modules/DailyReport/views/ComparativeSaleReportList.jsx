@@ -192,15 +192,7 @@ const ComparativeSaleReportList = () => {
                     //     content: activeTab === 'other_category' ? (isLoading ? <LoadingSpinner/> :
                     //         <Unstitiched color='text-emerald-600' data={data} title={filters.category}/>) : ''
                     // },
-                    {
-                        id: "conversion_local",
-                        label: "Conversion based on Sales Force Report-Local",
-                        icon: <i className='bx bx-briefcase'></i>,
-                        content: isLoading ? <LoadingSpinner/> :
-                            <ConversionLocal  data={data} isLoading={isLoading}
-                                              filters={filters} />
 
-                    },
                     {
                         id: "store_fiscal",
                         label: "Store Wise Foot Fall and Converion-Fiscal",
@@ -219,6 +211,15 @@ const ComparativeSaleReportList = () => {
                             <StoreWiseFootFallIslamic data={data} isLoading={isLoading}
                                                       isActive={activeTab === 'store_islamic'}
                                                       filters={filters} />
+
+                    },
+                    {
+                        id: "conversion_local",
+                        label: "Conversion based on Sales Force Report-Local",
+                        icon: <i className='bx bx-briefcase'></i>,
+                        content: isLoading ? <LoadingSpinner/> :
+                            <ConversionLocal  data={data} isLoading={isLoading}
+                                              filters={filters} />
 
                     },
 
