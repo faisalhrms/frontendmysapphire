@@ -184,15 +184,15 @@ const ScanBarcode = ({ isActive }) => {
                                                 </div>
                                             </div>
 
-                                            {currentWarehouse.show_matching_separate && (
                                                 <div>
                                                     <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Matching Separate</h4>
                                                     <div className="space-y-3">
-                                                        <div className="flex justify-between py-2 border-b border-slate-100">
-                                                            <span className="text-sm text-slate-600">Quantity</span>
-                                                            <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
-                                                        </div>
-
+                                                        {currentWarehouse.combos && (
+                                                            <div className="flex justify-between py-2 border-b border-slate-100">
+                                                                <span className="text-sm text-slate-600">Quantity</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
+                                                            </div>
+                                                        )}
                                                         {currentWarehouse.matching_shirt && (
                                                             <div className="flex justify-between py-2 border-b border-slate-100">
                                                                 <span className="text-sm text-slate-600">Shirt</span>
@@ -208,7 +208,6 @@ const ScanBarcode = ({ isActive }) => {
                                                         )}
                                                     </div>
                                                 </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>

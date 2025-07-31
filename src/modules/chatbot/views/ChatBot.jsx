@@ -113,7 +113,7 @@ export default function ChatBot() {
                     </span>
                   </div>
                   <div className="bg-sky-100 dark:bg-blue text-blue dark:text-white rounded-lg px-4 py-3">
-                    <p className="text-sm">{m.text}</p>
+                    <p className="text-xs">{m.text}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-center">
