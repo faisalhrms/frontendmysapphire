@@ -12,6 +12,9 @@ const SalesDataTable = ({ data }) => {
         return num || '-';
     };
 
+    const getGrowthColor = (growth) => {
+        return growth < 0 ? 'text-red' : 'text-emerald-600';
+    };
     if (!data || !data.rows) {
         return (
             <div className="bg-white p-4 dark:text-gray-200 dark:bg-bodybg mb-4">
@@ -139,7 +142,9 @@ const SalesDataTable = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{row.conv_percentage_cy || ''}</td>
+                            <td className={`border border-gray-300 px-2 py-3 text-right ${getGrowthColor(row.conv_percentage_cy)}`}>
+                                {row.conv_percentage_cy !== null && row.conv_percentage_cy !== undefined ? `${row.conv_percentage_cy}%` : ''}
+                            </td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.qty_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.invoice_ly)}</td>
@@ -200,12 +205,15 @@ const SalesDataTable = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_cy)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_cy)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_cy || ''}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">
+                                {totalNetworkRow.conv_percentage_cy || ''}%
+                            </td>
+
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.qty_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.sales_value_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.invoice_ly)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.ff_ly)}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_ly || ''}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_ly || ''}%</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.qty_growth)}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right font-medium">
                                 {totalNetworkRow.sales_value_growth || ''}
@@ -216,7 +224,7 @@ const SalesDataTable = ({ data }) => {
                             <td className="border border-gray-300 px-2 py-3 text-right font-medium">
                                 {totalNetworkRow.ff_growth || ''}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_growth || ''}</td>
+                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_growth || ''}%</td>
                         </tr>
                     )}
                     </tbody>
