@@ -52,6 +52,7 @@ const badgeStyles = {
     not_started: info,
     on_hold: warning,
     closed: danger,
+    blocked:warning
 };
 
 const statusStyles = {
@@ -89,6 +90,7 @@ const statusStyles = {
     high: txtDanger,
     low: txtSuccess,
     medium: txtWarning,
+    blocked:warning
 
 
 };

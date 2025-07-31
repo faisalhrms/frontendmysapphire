@@ -188,18 +188,40 @@ const UserList = () => {
         },
         {
             Header: 'Status',
-            accessor: 'is_active',
-            Cell: ({ value }) => {
-                const status = value ? 'active' : 'inactive';
-                const statusLabel = value ? 'Active' : 'Inactive';
-                return (
-                    <span className={getBadgeClasses(status, '!rounded-full')}>
-                        {toTitleCase(statusLabel)}
-                    </span>
-                );
+            accessor: row => {
+                // Show "blocked" if attempts === 4, regardless of is_active
+                if (row.attempts === 4) return 'blocked';
+                return row.is_active ? 'active' : 'inactive';
             },
-
+            id: 'status', // required because accessor is a function
+            filterType: 'select',
+            filterable: true,
+            filterOptions: [
+                { label: 'Active', value: 'active' },
+                { label: 'Inactive', value: 'inactive' },
+                { label: 'Temporarily Blocked', value: 'blocked' }
+            ],
+            excelStyleMap: {
+                active: { label: 'ACTIVE', bgColor: '#4CAF50', textColor: '#FFFFFF' },
+                inactive: { label: 'INACTIVE', bgColor: '#9E9E9E', textColor: '#FFFFFF' },
+                blocked: { label: 'TEMPORARILY BLOCKED', bgColor: '#FFA000', textColor: '#FFFFFF' }
+            },
+            headerClassName: '!text-center',
+            Cell: ({ cell }) => {
+                const statusLabelMap = {
+                    active: 'Active',
+                    inactive: 'Inactive',
+                    blocked: 'Temporarily Blocked'
+                };
+                return statusLabelMap[cell.value] || 'Unknown';
+            },
+            getCellProps: (cellInfo) => {
+                return {
+                    className: `${getBadgeClasses(cellInfo.value, '', false)}`,
+                };
+            },
         },
+
         {
             Header: 'Is Super User',
                 "accessor": "is_superuser",
