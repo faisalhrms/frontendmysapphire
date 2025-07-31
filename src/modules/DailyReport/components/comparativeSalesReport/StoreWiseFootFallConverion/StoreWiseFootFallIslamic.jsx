@@ -152,7 +152,9 @@ const SalesDataTable = ({ data }) => {
                             <td className={`border border-gray-300 px-2 py-3 text-right ${getGrowthColor(row.conv_percentage_ly)}`}>
                                 {row.conv_percentage_ly ? `${row.conv_percentage_ly}%` : ''}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(row.qty_growth)}</td>
+                            <td className={`border border-gray-300 px-2 py-3 text-right ${getGrowthColor(row.qty_growth)}`}>
+                                {formatNumber(row.qty_growth)}%
+                            </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getGrowthColor(row.sales_value_growth)}`}>
                                 {row.sales_value_growth ? `${row.sales_value_growth}%` : ''}
                             </td>
@@ -188,7 +190,9 @@ const SalesDataTable = ({ data }) => {
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getGrowthColor(totalLflRow.conv_percentage_ly)}`}>
                                 {totalLflRow.conv_percentage_ly ? `${totalLflRow.conv_percentage_ly.toFixed(2)}%` : ''}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalLflRow.qty_growth)}</td>
+                            <td className={`border border-gray-300 px-2 py-3 text-right ${getGrowthColor(totalLflRow.qty_growth)}`}>
+                                {formatNumber(totalLflRow.qty_growth)}%
+                            </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getGrowthColor(totalLflRow.sales_value_growth)}`}>
                                 {totalLflRow.sales_value_growth ? `${totalLflRow.sales_value_growth.toFixed(2)}%` : ''}
                             </td>
@@ -225,7 +229,9 @@ const SalesDataTable = ({ data }) => {
                             <td className={`border border-gray-300 px-2 py-3 text-right ${getGrowthColor(totalNetworkRow.conv_percentage_ly)}`}>
                                 {totalNetworkRow.conv_percentage_ly ? `${totalNetworkRow.conv_percentage_ly.toFixed(2)}%` : ''}
                             </td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{formatNumber(totalNetworkRow.qty_growth)}</td>
+                            <td className={`border border-gray-300 px-2 py-3 text-right ${getGrowthColor(totalNetworkRow.qty_growth)}`}>
+                                {formatNumber(totalNetworkRow.qty_growth)}%
+                            </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getGrowthColor(totalNetworkRow.sales_value_growth)}`}>
                                 {totalNetworkRow.sales_value_growth ? `${totalNetworkRow.sales_value_growth.toFixed(2)}%` : ''}
                             </td>
