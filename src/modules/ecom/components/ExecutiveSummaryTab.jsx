@@ -1,6 +1,5 @@
 import React from "react";
 import ExecutiveSummaryTable from "@modules/ecom/components/ExecutiveSummaryTable.jsx";
-import InfoAlert from "../../../InfoAlert.jsx";
 
 const ExecutiveSummaryTab = ({ isActive, filters }) => {
     if (!isActive) {
@@ -8,7 +7,6 @@ const ExecutiveSummaryTab = ({ isActive, filters }) => {
     }
     return (
         <>
-            <InfoAlert />
             <div className="grid grid-cols-12 gap-x-4">
                 <div className="xl:col-span-6 col-span-12">
                     <ExecutiveSummaryTable

@@ -85,15 +85,25 @@ export default function useChatBot() {
           if (e.results[i].isFinal) finalTranscriptRef.current += e.results[i][0].transcript
           else interim += e.results[i][0].transcript
         }
-        setInput(finalTranscriptRef.current + interim)
+        const text = finalTranscriptRef.current + interim
+        setInput(text)
+        if (inputRef.current) {
+          const el = inputRef.current
+          el.style.height = "30px"
+          el.style.height = el.scrollHeight + "px"
+        }
         if (e.results[e.results.length - 1].isFinal) rec.stop()
       }
       rec.onend = () => {
         setListening(false)
-        const msg = finalTranscriptRef.current.trim()
-        if (msg) sendQuery(msg, isWebSearch)
+        const msg = (finalTranscriptRef.current || input).trim()
+        if (msg) {
+          if (!isBotActive) handleStartChat()
+          sendQuery(msg, isWebSearch)
+        }
         finalTranscriptRef.current = ""
         setInput("")
+        if (inputRef.current) inputRef.current.style.height = "30px"
       }
       rec.onerror = () => setListening(false)
       recognitionRef.current = rec
@@ -101,9 +111,11 @@ export default function useChatBot() {
     if (!listening) {
       finalTranscriptRef.current = ""
       setInput("")
+      if (inputRef.current) inputRef.current.style.height = "30px"
       recognitionRef.current.start()
     }
   }
+
 
   useEffect(() => {
     const el = document.getElementById("chat-global-style")
