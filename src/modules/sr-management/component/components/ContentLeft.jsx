@@ -131,6 +131,20 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus, showFoot
                                     )}
                                 </td>
                             </tr>
+                            <tr className="border-b border-defaultborder">
+                                <td>SR Type:</td>
+                                <td>
+                                    {serviceRequest.sr_type
+                                        ? serviceRequest.sr_type.name
+                                        : "-"}
+                                </td>
+                                <td>On Behalf Of:</td>
+                                <td>
+                                    {serviceRequest.on_behalf_of
+                                        ? serviceRequest.on_behalf_employee
+                                        : "-"}
+                                </td>
+                            </tr>
                             <tr className="border-b border-defaultborder align-top">
                               <td className="font-semibold">To Employees:</td>
                               <td colSpan={3}>
@@ -165,16 +179,6 @@ function ContentLeft({generatedReqData, serviceRequest, selectedStatus, showFoot
                                     : <span className="text-gray-500 text-xs">-</span>}
                                 </div>
                               </td>
-                            </tr>
-
-
-                            <tr className="border-b border-defaultborder">
-                                <td>On Behalf Of:</td>
-                                <td>
-                                    {serviceRequest.on_behalf_of
-                                        ? serviceRequest.on_behalf_employee
-                                        : "-"}
-                                </td>
                             </tr>
                             </tbody>
                         </table>
