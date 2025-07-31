@@ -90,17 +90,23 @@ const StoreWiseFootFallFiscal = ({ data }) => {
                     </tr>
                     <tr className="bg-[#4d5875] text-white">
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale Value</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale Value</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Qty</th>
-                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale Value</th>
+                        <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[100px]">Sale
+                            Value
+                        </th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Invoice</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">FF</th>
                         <th className="border border-gray-300 px-2 py-3 text-center font-medium min-w-[80px]">Conv%</th>
@@ -152,14 +158,17 @@ const StoreWiseFootFallFiscal = ({ data }) => {
 
                     {totalLflRow && (
                         <tr className="bg-gray-400 font-medium text-black whitespace-nowrap sticky bottom-[40px] z-20">
-                            <td className="sticky left-0 bg-gray-400 border border-gray-300 px-2 py-3 z-20">Total LFL</td>
+                            <td className="sticky left-0 bg-gray-400 border border-gray-300 px-2 py-3 z-20">Total LFL
+                            </td>
                             <td className="sticky left-[100px] bg-gray-400 border border-gray-300 px-2 py-3 z-20"></td>
                             <td className="sticky left-[220px] bg-gray-400 border border-gray-300 px-2 py-3 whitespace-nowrap z-20"></td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.qty_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.sales_value_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.invoice_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.ff_cy?.toLocaleString() || '-'}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.conv_percentage_cy ? `${totalLflRow.conv_percentage_cy.toFixed(2)}%` : ''}</td>
+                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalLflRow.conv_percentage_cy)}`}>
+                                {totalLflRow.conv_percentage_cy ? `${totalLflRow.conv_percentage_cy.toFixed(2)}%` : ''}
+                            </td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.qty_ly?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.sales_value_ly?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalLflRow.invoice_ly?.toLocaleString() || '-'}</td>
@@ -187,19 +196,25 @@ const StoreWiseFootFallFiscal = ({ data }) => {
 
                     {totalNetworkRow && (
                         <tr className="bg-[#949eb7] font-medium text-black whitespace-nowrap sticky bottom-0 z-30">
-                            <td className="sticky left-0 bg-[#949eb7] border border-gray-300 px-2 py-3 z-20">Total Network</td>
+                            <td className="sticky left-0 bg-[#949eb7] border border-gray-300 px-2 py-3 z-20">Total
+                                Network
+                            </td>
                             <td className="sticky left-[100px] bg-[#949eb7] border border-gray-300 px-2 py-3 z-20"></td>
                             <td className="sticky left-[220px] bg-[#949eb7] border border-gray-300 px-2 py-3 whitespace-nowrap z-20"></td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.qty_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.sales_value_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.invoice_cy?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.ff_cy?.toLocaleString() || '-'}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_cy ? `${totalNetworkRow.conv_percentage_cy.toFixed(2)}%` : ''}</td>
+                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.conv_percentage_cy)}`}>
+                                {totalNetworkRow.conv_percentage_cy ? `${totalNetworkRow.conv_percentage_cy.toFixed(2)}%` : ''}
+                            </td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.qty_ly?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.sales_value_ly?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.invoice_ly?.toLocaleString() || '-'}</td>
                             <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.ff_ly?.toLocaleString() || '-'}</td>
-                            <td className="border border-gray-300 px-2 py-3 text-right">{totalNetworkRow.conv_percentage_ly ? `${totalNetworkRow.conv_percentage_ly.toFixed(2)}%` : ''}</td>
+                            <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.conv_percentage_ly)}`}>
+                                {totalNetworkRow.conv_percentage_ly ? `${totalNetworkRow.conv_percentage_ly.toFixed(2)}%` : ''}
+                            </td>
                             <td className={`border border-gray-300 px-2 py-3 text-right font-medium ${getCellColor(totalNetworkRow.qty_growth)}`}>
                                 {totalNetworkRow.qty_growth ? `${totalNetworkRow.qty_growth.toFixed(2)}%` : ''}
                             </td>
