@@ -129,9 +129,9 @@ const ScanBarcode = ({ isActive }) => {
                                             </div>
                                             <div className="bg-white p-4 rounded-lg border border-slate-200">
                                                 <div className="flex">
-                                                    <Percent className="w-5 h-5 text-orange mr-2"/>
+                                                    <Banknote className="w-5 h-5 text-orange mr-2"/>
                                                     <div>
-                                                        <p className="text-sm font-medium text-slate-600">Discount</p>
+                                                        <p className="text-sm font-medium text-slate-600">Discount Price</p>
                                                         <p className="text-lg font-bold text-slate-900">{currentWarehouse.discount_price}</p>
                                                     </div>
                                                 </div>
@@ -175,31 +175,39 @@ const ScanBarcode = ({ isActive }) => {
                                                         <span
                                                             className="text-sm font-medium text-slate-900">{currentWarehouse.sizes}</span>
                                                     </div>
-                                                    <div className="flex justify-between py-2 border-b border-slate-100">
+                                                    <div
+                                                        className="flex justify-between py-2 border-b border-slate-100">
                                                         <span className="text-sm text-slate-600">Rack Location</span>
                                                         <span
-                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.rack_location || ""}</span>
+                                                            className="text-sm font-medium text-slate-900">{currentWarehouse.rack_location || "N/A"}</span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Matching Separate</h4>
-                                                <div className="space-y-3">
-                                                    <div className="flex justify-between py-2 border-b border-slate-100">
-                                                    <span className="text-sm text-slate-600">Quantity</span>
-                                                        <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
-                                                    </div>
-                                                    <div className="flex justify-between py-2 border-b border-slate-100">
-                                                        <span className="text-sm text-slate-600">Shirt</span>
-                                                        <span className="text-sm font-medium text-slate-900">{currentWarehouse.shirt}</span>
-                                                    </div>
-                                                    <div className="flex justify-between py-2 ">
-                                                        <span className="text-sm text-slate-600">Trouser</span>
-                                                        <span className="text-sm font-medium text-slate-900">{currentWarehouse.trouser}</span>
+                                                <div>
+                                                    <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Matching Separate</h4>
+                                                    <div className="space-y-3">
+                                                        {currentWarehouse.combos && (
+                                                            <div className="flex justify-between py-2 border-b border-slate-100">
+                                                                <span className="text-sm text-slate-600">Quantity</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
+                                                            </div>
+                                                        )}
+                                                        {currentWarehouse.matching_shirt && (
+                                                            <div className="flex justify-between py-2 border-b border-slate-100">
+                                                                <span className="text-sm text-slate-600">Shirt</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.matching_shirt}</span>
+                                                            </div>
+                                                        )}
+
+                                                        {currentWarehouse.matching_trouser && (
+                                                            <div className="flex justify-between py-2">
+                                                                <span className="text-sm text-slate-600">Trouser</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.matching_trouser}</span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
