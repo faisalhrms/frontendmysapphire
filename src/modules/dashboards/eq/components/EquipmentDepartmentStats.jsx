@@ -98,7 +98,6 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                     },
                                     xaxis: {
                                         categories,
-                                        title: {text: 'Department'},
                                         labels: {
                                             rotate: 0,
                                             trim: false,
@@ -112,7 +111,7 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                         }
                                     },
                                     yaxis: {
-                                        title: {text: 'Number of Equipments'},
+                                        title: {text: 'Number of Assets'},
                                         tickAmount: 5
                                     },
                                     chart: {

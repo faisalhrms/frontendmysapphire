@@ -100,7 +100,6 @@ const EquipmentValueStats = ({ filters }) => {
                                     },
                                     xaxis: {
                                         categories: typeLabels,
-                                        title: {text: "Equipment Type"},
                                         labels: {
                                             rotate: 0,
                                             trim: false,

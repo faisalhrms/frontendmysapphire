@@ -103,7 +103,6 @@ const EquipmentSiteStats = ({ filters }) => {
                                 },
                                 xaxis: {
                                     categories: siteLabels,
-                                    title: {text: 'Sites'},
                                     labels: {
                                         rotate: 0,
                                         trim: false,
@@ -117,7 +116,7 @@ const EquipmentSiteStats = ({ filters }) => {
                                     }
                                 },
                                 yaxis: {
-                                    title: {text: 'Number of Equipments'},
+                                    title: {text: 'Number of Assets'},
                                     tickAmount: 6
                                 },
                                 grid: {
