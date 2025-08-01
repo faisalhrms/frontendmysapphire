@@ -3,11 +3,12 @@ import ApexChart from "@components/charts/ApexChart.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
-import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx"; // ✅ reuse columns
+import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+import {colorPalette} from "@helpers/styles.js"; // ✅ reuse columns
 
 const EquipmentSiteStats = ({ filters }) => {
     const { data: items, isLoading } = useFetchWithFilters("/dashboard/equipment/site-stats/", filters);
-
+    const siteHeaderColor=colorPalette.yellow.background
     const [modalOpen, setModalOpen] = useState(false);
     const [modalParams, setModalParams] = useState(null);
 
@@ -50,9 +51,12 @@ const EquipmentSiteStats = ({ filters }) => {
 
     return (
         <div className="col-span-6">
-            <div className="box p-3">
-                <div className="box-header mb-1">
-                    <div className="box-title text-base font-semibold">Assets by Site</div>
+            <div className="box">
+
+                <div className={`box-header mb-1 ${siteHeaderColor}`}>
+                    <div className="box-title text-base font-semibold text-info">
+                        Assets by Site
+                    </div>
                 </div>
                 <div className="box-body !p-0">
                     <div className="p-2 min-w-[600px] overflow-x-auto">
@@ -71,12 +75,12 @@ const EquipmentSiteStats = ({ filters }) => {
                             }]}
                             additionalOptions={{
                                 chart: {
-                                    toolbar: { show: false },
+                                    toolbar: {show: false},
                                     events: {
                                         dataPointSelection: handleBarClick
                                     }
                                 },
-                                legend: { position: 'top' },
+                                legend: {position: 'top'},
                                 dataLabels: {
                                     enabled: true,
                                     formatter: val => val > 0 ? `${val.toLocaleString()}` : '',
@@ -99,7 +103,7 @@ const EquipmentSiteStats = ({ filters }) => {
                                 },
                                 xaxis: {
                                     categories: siteLabels,
-                                    title: { text: 'Sites' },
+                                    title: {text: 'Sites'},
                                     labels: {
                                         rotate: 0,
                                         trim: false,
@@ -113,7 +117,7 @@ const EquipmentSiteStats = ({ filters }) => {
                                     }
                                 },
                                 yaxis: {
-                                    title: { text: 'Number of Equipments' },
+                                    title: {text: 'Number of Equipments'},
                                     tickAmount: 6
                                 },
                                 grid: {

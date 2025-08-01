@@ -5,11 +5,13 @@ import ApexChart from "@components/charts/ApexChart.jsx";
 import { generateColorPalette } from "@helpers/colorUtils.js";
 import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
 import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+import {colorPalette} from "@helpers/styles.js";
 
 const EquipmentTypeChart = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters("/dashboard/equipment/type-stats/", filters);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalParams, setModalParams] = useState({});
+    const TypeBgColor=colorPalette.purple.background
         console.log(modalParams);
     const data = useMemo(() => (Array.isArray(rawData) ? rawData : []), [rawData]);
 
@@ -50,9 +52,12 @@ const EquipmentTypeChart = ({ filters }) => {
 
     return (
         <>
-            <div className="box p-4">
-                <div className="box-header mb-2">
-                    <div className="box-title">Equipment Count by Type</div>
+            <div className="box">
+
+                <div className={`box-header mb-1 p-2 rounded ${TypeBgColor}`}>
+                    <div className="box-title text-base font-semibold text-info">
+                        Equipment Count by Type
+                    </div>
                 </div>
                 <div className="box-body !p-0">
                     <div className="p-2">
@@ -70,7 +75,7 @@ const EquipmentTypeChart = ({ filters }) => {
                                 data: values,
                             }]}
                             additionalOptions={{
-                                legend: { position: 'top' },
+                                legend: {position: 'top'},
                                 dataLabels: {
                                     enabled: true,
                                     formatter: val => val > 0.1 ? `${val.toLocaleString()}` : '',
@@ -110,7 +115,7 @@ const EquipmentTypeChart = ({ filters }) => {
                                     tickAmount: 6
                                 },
                                 chart: {
-                                    toolbar: { show: false },
+                                    toolbar: {show: false},
                                     events: {
                                         dataPointSelection: handleBarClick // ✅ add click handler
                                     }
