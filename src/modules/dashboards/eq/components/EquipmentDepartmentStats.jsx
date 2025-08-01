@@ -4,10 +4,11 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
 import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+import {colorPalette} from "@helpers/styles.js";
 
 const EquipmentDepartmentStats = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters("/dashboard/equipment/department-stats/", filters);
-
+    const departmentHeaderColor=colorPalette.info.background
     const [modalOpen, setModalOpen] = useState(false);
     const [modalParams, setModalParams] = useState({});
 
@@ -53,8 +54,10 @@ const EquipmentDepartmentStats = ({ filters }) => {
         <>
             <div className="col-span-6">
                 <div className="box">
-                    <div className="box-header mb-1">
-                        <div className="box-title text-base font-semibold">Assets by Department</div>
+                    <div className={`box-header mb-1 ${departmentHeaderColor}`}>
+                        <div className="box-title text-base font-semibold text-info">
+                            Assets by Department
+                        </div>
                     </div>
                     <div className="box-body !p-0">
                         <div className="p-2 min-w-[600px] overflow-x-auto">
@@ -72,7 +75,7 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                     data: values
                                 }]}
                                 additionalOptions={{
-                                    legend: { position: 'top' },
+                                    legend: {position: 'top'},
                                     dataLabels: {
                                         enabled: true,
                                         formatter: val => (val > 0.1 ? `${val.toLocaleString()}` : ''),
@@ -95,7 +98,7 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                     },
                                     xaxis: {
                                         categories,
-                                        title: { text: 'Department' },
+                                        title: {text: 'Department'},
                                         labels: {
                                             rotate: 0,
                                             trim: false,
@@ -109,7 +112,7 @@ const EquipmentDepartmentStats = ({ filters }) => {
                                         }
                                     },
                                     yaxis: {
-                                        title: { text: 'Number of Equipments' },
+                                        title: {text: 'Number of Equipments'},
                                         tickAmount: 5
                                     },
                                     chart: {

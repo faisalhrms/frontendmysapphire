@@ -4,12 +4,15 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
 import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+import {colorPalette} from "@helpers/styles.js";
 
 const EquipmentAnalysisCard = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters(
         "/dashboard/equipment/monthly-acquisition/",
         filters
     );
+    const analysisHeaderColor=colorPalette.red.background
+
     const [modalOpen, setModalOpen] = useState(false);
     const [modalParams, setModalParams] = useState(null);
 
@@ -68,8 +71,11 @@ const EquipmentAnalysisCard = ({ filters }) => {
     return (
         <div className="col-span-6">
             <div className="box">
-                <div className="box-header justify-between">
-                    <div className="box-title">Monthly Asset Acquisitions</div>
+
+                <div className={`box-header justify-between ${analysisHeaderColor}`}>
+                    <div className="box-title text-base font-semibold text-info">
+                        Monthly Asset Acquisitions
+                    </div>
                 </div>
                 <div className="box-body !p-0">
                     <div className="overflow-x-auto">
@@ -86,10 +92,10 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                 series={series}
                                 additionalOptions={{
                                     chart: {
-                                        toolbar: { show: false },
-                                        events: { dataPointSelection: handleBarClick },
+                                        toolbar: {show: false},
+                                        events: {dataPointSelection: handleBarClick},
                                     },
-                                    legend: { position: 'top' },
+                                    legend: {position: 'top'},
                                     dataLabels: {
                                         enabled: true,
                                         formatter: (v) => (v > 0.1 ? v.toLocaleString() : ''),
@@ -104,20 +110,26 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                             horizontal: false,
                                             columnWidth: '25%',
                                             borderRadius: 4,
-                                            dataLabels: { position: 'top' },
+                                            dataLabels: {position: 'top'},
                                         },
                                     },
                                     xaxis: {
                                         categories,
-                                        title: { text: 'Month' },
+                                        title: {text: 'Month'},
                                         labels: {
                                             rotate: -45,
                                             trim: false,
-                                            style: { fontSize: '12px', whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.1rem', maxWidth: 100 },
+                                            style: {
+                                                fontSize: '12px',
+                                                whiteSpace: 'normal',
+                                                wordBreak: 'break-word',
+                                                lineHeight: '1.1rem',
+                                                maxWidth: 100
+                                            },
                                         },
                                     },
-                                    yaxis: { title: { text: 'Number of Equipments' }, tickAmount: 6 },
-                                    grid: { borderColor: '#f1f1f1', strokeDashArray: 4 },
+                                    yaxis: {title: {text: 'Number of Equipments'}, tickAmount: 6},
+                                    grid: {borderColor: '#f1f1f1', strokeDashArray: 4},
                                 }}
                             />
                         </div>

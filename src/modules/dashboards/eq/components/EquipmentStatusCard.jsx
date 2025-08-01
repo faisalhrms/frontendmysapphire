@@ -1,18 +1,6 @@
 import React from 'react';
 import CountUp from 'react-countup';
-
-const statusBgColors = {
-    available_in_inventory: 'bg-amber-50',
-    sold_to_employee: 'bg-emerald-50',
-    functional: 'bg-lime-50',
-    faulty: 'bg-sky-50',
-    lost: 'bg-rose-50',
-    temporary_allocation: 'bg-fuchsia-50',
-    total_assets: 'bg-cyan-50',
-    write_off: 'bg-zinc-50',
-    brand_new: 'bg-violet-50',
-    no_status: 'bg-slate-50',
-};
+import { colorPalette } from '@helpers/styles.js';
 
 const getStatusIcon = (status) => {
     try {
@@ -26,6 +14,25 @@ const getStatusIcon = (status) => {
     }
 };
 
+const getStatusBgColor = (statusKey) => {
+    const map = {
+        available_in_inventory: 'yellow',
+        sold_to_employee: 'pink',
+        functional: 'success',
+        faulty: 'secondary',
+        lost: 'danger',
+        temporary_allocation: 'purple',
+        total_assets: 'cyan',
+        write_off: 'warning',
+        brand_new: 'indigo',
+        no_status: 'orange',
+    };
+
+
+    const paletteKey = map[statusKey] || 'default';
+    return colorPalette[paletteKey]?.background || 'bg-white';
+};
+
 const EquipmentStatusCard = ({ item, currentFilters, onCardClick }) => {
     const { status, count } = item;
 
@@ -34,7 +41,7 @@ const EquipmentStatusCard = ({ item, currentFilters, onCardClick }) => {
         .replace(/\b\w/g, c => c.toUpperCase());
 
     const iconUrl = getStatusIcon(status);
-    const bgColor = statusBgColors[status] || 'bg-white';
+    const bgColor = getStatusBgColor(status);
 
     const handleClick = () => {
         if (typeof onCardClick === 'function') {
@@ -57,7 +64,7 @@ const EquipmentStatusCard = ({ item, currentFilters, onCardClick }) => {
                 )}
             </div>
             <div className="flex flex-col justify-center">
-                <div className="text-base font-medium text-gray-800 leading-snug">
+                <div className="text-base font-medium leading-snug">
                     {label}
                 </div>
                 <div className="text-xl font-bold text-primary">
