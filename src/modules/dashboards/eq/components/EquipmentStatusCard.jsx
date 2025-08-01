@@ -9,7 +9,7 @@ const statusBgColors = {
     lost: 'bg-rose-50',
     temporary_allocation: 'bg-fuchsia-50',
     total_assets: 'bg-cyan-50',
-    write_off: 'bg-red-50',
+    write_off: 'bg-zinc-50',
     brand_new: 'bg-violet-50',
     no_status: 'bg-slate-50',
 };

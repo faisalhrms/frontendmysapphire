@@ -195,4 +195,57 @@ const getComparativeReportDates = () => {
 export default getComparativeReportDates;
 
 
+// utils.js
+
+/**
+ * Returns dynamic comparative report date ranges based on today's date.
+ * - On the 1st of any month: CY is previous month full range, LY is same previous month last year
+ * - Otherwise: CY is from 1st of current month to yesterday, LY is same for previous year
+ *
+ * @returns {{ cy_from: string, cy_to: string, ly_from: string, ly_to: string }}
+ */export function getDynamicComparativeReportsDates() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth(); // 0-based (0=Jan, 1=Feb, ..., 7=Aug)
+    const day = today.getDate();
+
+    let cyFrom, cyTo;
+    let lyFrom, lyTo;
+
+    if (day === 1) {
+        // Full previous month
+        const prevMonth = (month + 11) % 12;
+        const prevYear = month === 0 ? year - 1 : year;
+
+        cyFrom = new Date(prevYear, prevMonth, 1);
+        cyTo = new Date(prevYear, prevMonth + 1, 0);
+
+        lyFrom = new Date(prevYear - 1, prevMonth, 1);
+        lyTo = new Date(prevYear - 1, prevMonth + 1, 0);
+    } else {
+        // From 1st of current month to yesterday
+        cyFrom = new Date(year, month, 1);
+        cyTo = new Date(year, month, day - 1);
+
+        // Same period last year
+        lyFrom = new Date(year - 1, month, 1);
+        lyTo = new Date(year - 1, month, day - 1);
+    }
+
+    // Format date as YYYY-MM-DD without timezone shifts
+    function fmt(dateObj) {
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const d = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    return {
+        cy_from: fmt(cyFrom),
+        cy_to: fmt(cyTo),
+        ly_from: fmt(lyFrom),
+        ly_to: fmt(lyTo),
+    };
+}
+
 
