@@ -4,6 +4,7 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
 import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+import {colorPalette} from "@helpers/styles.js";
 
 const EquipmentValueStats = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters(
@@ -13,7 +14,7 @@ const EquipmentValueStats = ({ filters }) => {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalParams, setModalParams] = useState({});
-
+    const ValueHeaderColor=colorPalette.success.background
     const items = useMemo(() => (Array.isArray(rawData) ? rawData : []), [
         rawData,
     ]);
@@ -56,9 +57,10 @@ const EquipmentValueStats = ({ filters }) => {
     return (
         <>
             <div className="col-span-6">
-                <div className="box p-3">
-                    <div className="box-header mb-1">
-                        <div className="box-title text-base font-semibold">
+                <div className="box">
+
+                    <div className={`box-header mb-1 ${ValueHeaderColor}`}>
+                        <div className="box-title text-base font-semibold text-info">
                             Total Value by Equipment Type
                         </div>
                     </div>
@@ -73,9 +75,9 @@ const EquipmentValueStats = ({ filters }) => {
                                 labels={typeLabels}
                                 categories={typeLabels}
                                 colors={["#10B981"]}
-                                series={[{ name: "Total Value", data: values }]}
+                                series={[{name: "Total Value", data: values}]}
                                 additionalOptions={{
-                                    legend: { position: "top" },
+                                    legend: {position: "top"},
                                     dataLabels: {
                                         enabled: true,
                                         formatter: (v) => `₨ ${v.toLocaleString()}`,
@@ -98,7 +100,6 @@ const EquipmentValueStats = ({ filters }) => {
                                     },
                                     xaxis: {
                                         categories: typeLabels,
-                                        title: { text: "Equipment Type" },
                                         labels: {
                                             rotate: 0,
                                             trim: false,
@@ -112,14 +113,14 @@ const EquipmentValueStats = ({ filters }) => {
                                         },
                                     },
                                     yaxis: {
-                                        title: { text: "Total Value (PKR)" },
+                                        title: {text: "Total Value (PKR)"},
                                         labels: {
                                             formatter: (v) => `₨${(v / 1_000_000).toFixed(1)}M`,
                                         },
                                     },
                                     chart: {
-                                        toolbar: { show: false },
-                                        events: { dataPointSelection: handleBarClick },
+                                        toolbar: {show: false},
+                                        events: {dataPointSelection: handleBarClick},
                                     },
                                     grid: {
                                         borderColor: "#f1f1f1",

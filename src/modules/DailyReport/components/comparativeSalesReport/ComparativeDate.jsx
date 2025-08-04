@@ -21,8 +21,10 @@ const ComparativeDate = ({
     const [isDownloading, setIsDownloading] = useState(false);
 
     const downloadPDF = async () => {
+        console.log("Download PDF");
         try {
             setIsDownloading(true);
+            console.log(`filters in downloadPDF`,filters);
             const pdfData = await downloadComparativeSaleReport(filters);
             const blob = new Blob([pdfData], { type: "application/pdf" });
             const link = document.createElement("a");
