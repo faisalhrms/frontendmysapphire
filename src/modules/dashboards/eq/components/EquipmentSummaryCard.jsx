@@ -139,7 +139,7 @@ const EquipmentSummaryCard = ({ filters }) => {
                             series={values}
                             colors={colors}
                             height={320}
-                            onSliceClick={(_, __, config) => openModalByIndex(config.dataPointIndex)}
+                            onSliceClick={(_, __, config) => openModalByIndex(config.dataPointIndex)} // Pass the callback here
                         />
                     </div>
                 </div>
