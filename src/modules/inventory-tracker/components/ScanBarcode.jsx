@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import OtherStoreInventoryTable from "@modules/inventory-tracker/components/OtherStoreInventoryTable.jsx";
 import api from "@config/axiosConfig.js";
-import { Search, Package, Percent, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote, Truck, Globe, Boxes, Ruler, Grid3x3, Layers3, ExternalLink} from "lucide-react";
+import { Search, Package, ChevronDown, ChevronUp, AlertCircle, Building2, Layers, Hash, Banknote, Truck, Globe, Boxes, Ruler, Grid3x3, Layers3, ExternalLink} from "lucide-react";
 import EmptyState from "@components/EmptyState.jsx";
 
 const ScanBarcode = ({ isActive }) => {
@@ -34,6 +34,7 @@ const ScanBarcode = ({ isActive }) => {
     };
 
     const syncTime = data?.sync_time || null;
+    const updatedAt = data?.updated_at || null;
     const currentWarehouse = data?.item || null;
     const otherLocations = data?.other_stocks || [];
     const onlineStocks = data?.online_stocks || null;
@@ -98,9 +99,14 @@ const ScanBarcode = ({ isActive }) => {
                         />
                     )}
                     {
-                        syncTime &&
-                        <p className="text-sm text-primary text-right mb-2">Last Sync Time : {syncTime}</p>
+                        (syncTime || updatedAt) && (
+                            <div className="flex justify-between mb-2 text-sm text-primary">
+                                {syncTime ? <p>Data Fetched on: {syncTime}</p> : <div />}
+                                {updatedAt && <p>Data Refreshed on: {updatedAt}</p>}
+                            </div>
+                        )
                     }
+
                     {data && (
                         <div className="space-y-6">
                             {currentWarehouse && (
@@ -193,17 +199,17 @@ const ScanBarcode = ({ isActive }) => {
                                                                 <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
                                                             </div>
                                                         )}
-                                                        {currentWarehouse.matching_shirt && (
+                                                        {currentWarehouse.shirt && (
                                                             <div className="flex justify-between py-2 border-b border-slate-100">
                                                                 <span className="text-sm text-slate-600">Shirt</span>
-                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.matching_shirt}</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.shirt}</span>
                                                             </div>
                                                         )}
 
-                                                        {currentWarehouse.matching_trouser && (
+                                                        {currentWarehouse.trouser && (
                                                             <div className="flex justify-between py-2">
                                                                 <span className="text-sm text-slate-600">Trouser</span>
-                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.matching_trouser}</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.trouser}</span>
                                                             </div>
                                                         )}
                                                     </div>
@@ -289,13 +295,34 @@ const ScanBarcode = ({ isActive }) => {
 
                                     {isOnlineStocksOpen && (
                                         <div className="p-6 bg-slate-50">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                                 <div className="bg-white p-4 rounded-lg border border-slate-200">
                                                     <div className="flex items-center">
                                                         <Boxes className="w-5 h-5 text-info mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">On Hand Quantity</p>
+                                                            <p className="text-sm font-medium text-slate-600">On Hand
+                                                                Quantity</p>
                                                             <p className="text-lg font-bold text-slate-900">{onlineStocks.onhand_qty}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                    <div className="flex">
+                                                        <Banknote className="w-5 h-5 text-success mr-2"/>
+                                                        <div>
+                                                            <p className="text-sm font-medium text-slate-600">Unit
+                                                                Price</p>
+                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.salesprice}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                    <div className="flex">
+                                                        <Banknote className="w-5 h-5 text-orange mr-2"/>
+                                                        <div>
+                                                            <p className="text-sm font-medium text-slate-600">Discount
+                                                                Price</p>
+                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.discount_price}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -304,7 +331,8 @@ const ScanBarcode = ({ isActive }) => {
                                                     <div className="flex items-center">
                                                         <Ruler className="w-5 h-5 text-success mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">Available Sizes</p>
+                                                            <p className="text-sm font-medium text-slate-600">Available
+                                                                Sizes</p>
                                                             <p className="text-xs font-medium text-gray-600">{onlineStocks.sizes || 'N/A'}</p>
                                                         </div>
                                                     </div>
@@ -324,7 +352,8 @@ const ScanBarcode = ({ isActive }) => {
                                                     <div className="flex items-center">
                                                         <Layers3 className="w-5 h-5 text-orange mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">(MS) Size</p>
+                                                            <p className="text-sm font-medium text-slate-600">(MS)
+                                                                Size</p>
                                                             <p className="text-xs font-medium text-gray-600">{onlineStocks.size_set || 'N/A'}</p>
                                                         </div>
                                                     </div>

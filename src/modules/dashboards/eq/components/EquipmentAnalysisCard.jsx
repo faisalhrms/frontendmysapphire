@@ -115,7 +115,6 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                     },
                                     xaxis: {
                                         categories,
-                                        title: {text: 'Month'},
                                         labels: {
                                             rotate: -45,
                                             trim: false,
@@ -128,7 +127,7 @@ const EquipmentAnalysisCard = ({ filters }) => {
                                             },
                                         },
                                     },
-                                    yaxis: {title: {text: 'Number of Equipments'}, tickAmount: 6},
+                                    yaxis: {title: {text: 'Number of Assets'}, tickAmount: 6},
                                     grid: {borderColor: '#f1f1f1', strokeDashArray: 4},
                                 }}
                             />
