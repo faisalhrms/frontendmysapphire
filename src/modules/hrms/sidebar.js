@@ -18,6 +18,14 @@ export let sidebarMenu = [
                 "bx bx-message-square-edit",
                 HRMS_ROUTES.SETUPS.YEAR.permission
             ),
+            generateSidebarItem(
+                HRMS_ROUTES.SETUPS.APPROVAL.path,
+                "link",
+                "PMS Approval Setup Form ",
+                1,
+                "bx bx-message-square-edit",
+                HRMS_ROUTES.SETUPS.APPROVAL.permission
+            ),
         ]
 
     ),
