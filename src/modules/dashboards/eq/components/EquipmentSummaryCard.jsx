@@ -6,12 +6,14 @@ import ApexChart from "@components/charts/ApexChart.jsx";
 import DonutEquipmentChart from "@modules/dashboards/eq/components/DonutEquipmentChart.jsx";
 import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
 import { equipmentColumns } from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
+import {colorPalette} from "@helpers/styles.js";
 
 const EquipmentSummaryCard = ({ filters }) => {
     const { data: rawData, isLoading } = useFetchWithFilters('/dashboard/equipment/summary/', filters);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalParams, setModalParams] = useState({});
-
+    const headerBgColor = colorPalette.green.background;
+    const donatBgColor=colorPalette.indigo.background
     const data = useMemo(() => (rawData && typeof rawData === 'object' ? rawData : {}), [rawData]);
 
     const { labels, values, keys } = useMemo(() => {
@@ -51,9 +53,11 @@ const EquipmentSummaryCard = ({ filters }) => {
     return (
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-2">
             {/* Bar Chart */}
-            <div className="xl:col-span-2 col-span-1 box p-3">
-                <div className="box-header mb-1">
-                    <div className="box-title text-base font-semibold">Status Distribution (Bar)</div>
+            <div className="xl:col-span-2 col-span-1 box ">
+                <div className={`box-header mb-1 p-2 rounded ${headerBgColor}`}>
+                    <div className="box-title text-base font-semibold text-info">
+                        Status Distribution (Bar)
+                    </div>
                 </div>
                 <ApexChart
                     chartType="bar"
@@ -64,67 +68,70 @@ const EquipmentSummaryCard = ({ filters }) => {
                     labels={labels}
                     categories={labels}
                     onPointClick={(e, chartCtx, config) => openModalByIndex(config.dataPointIndex)}
-                    colors={colors}
-                    series={[{ name: "Equipments", data: values }]}
+                    colors={["#10B981"]}
+                    series={[{name: "Equipments", data: values}]}
                     additionalOptions={{
-                        legend: { position: 'top' },
+                        legend: {position: 'top'},
                         dataLabels: {
-                                enabled: true,
-                                formatter: val => val > 0.1 ? `${val.toLocaleString()}` : '',
+                            enabled: true,
+                            formatter: val => val > 0.1 ? `${val.toLocaleString()}` : '',
 
                             style: {
-                               fontSize: '11px',
-                              colors: colors  // ← now purple
+                                fontSize: '11px',
+                                colors: ['#10B981']// ← now purple
                             },
-                        offsetY: -20,
-                    },
+                            offsetY: -20,
+                        },
                         plotOptions: {
-                        bar: {
-                        dataLabels: {
-                        position: 'top',
-                        hideOverflowingLabels: false,
-                              style: { colors: ['#845adf'] }  // keep top-of-bar text purple here as well
-                    },
-                        borderRadius: 4
-                    }
-                    },
+                            bar: {
+                                dataLabels: {
+                                    position: 'top',
+                                    hideOverflowingLabels: false,
+                                    style: {colors: ['#845adf']}  // keep top-of-bar text purple here as well
+                                },
+                                borderRadius: 4
+                            }
+                        },
                         xaxis: {
-                        categories: labels,
-                        labels: {
-                        rotate: 0,
-                        trim: false,
-                        style: {
-                        fontSize: '10px',
-                        whiteSpace: 'normal',
-                        wordBreak: 'break-word',
-                        lineHeight: '1.1rem',
-                        maxWidth: 120
-                    }
-                    }
-                    },
+                            categories: labels,
+                            labels: {
+                                rotate: 0,
+                                trim: false,
+                                style: {
+                                    fontSize: '10px',
+                                    whiteSpace: 'normal',
+                                    wordBreak: 'break-word',
+                                    lineHeight: '1.1rem',
+                                    maxWidth: 120
+                                }
+                            }
+                        },
                         yaxis: {
-                        title: {
-                        text: 'Number of Equipments'
-                    },
-                        tickAmount: 6
-                    },
+                            title: {
+                                text: 'Number of Equipments'
+                            },
+                            tickAmount: 6
+                        },
                         chart: {
-                        toolbar: { show: false }
-                    },
+                            toolbar: {show: false}
+                        },
                         grid: {
-                        borderColor: '#f1f1f1',
-                        strokeDashArray: 4
-                    }
+                            borderColor: '#f1f1f1',
+                            strokeDashArray: 4
+                        }
                     }}
                 />
 
             </div>
 
             {/* Donut Chart */}
-            <div className="box p-3 flex items-center justify-center">
+            <div className="box  flex items-center justify-center">
                 <div className="w-full">
-                    <div className="box-header mb-1">
-                        <div className="box-title text-base font-semibold">Status Distribution (Donut)</div>
+
+                    <div className={`box-header mb-1 p-2 rounded ${donatBgColor}`}>
+                        <div className="box-title text-base font-semibold text-info">
+                            Status Distribution (Donut)
+                        </div>
                     </div>
                     <div className="box-body p-0">
                         <DonutEquipmentChart
@@ -132,7 +139,7 @@ const EquipmentSummaryCard = ({ filters }) => {
                             series={values}
                             colors={colors}
                             height={320}
-                            onSliceClick={(_, __, config) => openModalByIndex(config.dataPointIndex)}
+                            onSliceClick={(_, __, config) => openModalByIndex(config.dataPointIndex)} // Pass the callback here
                         />
                     </div>
                 </div>

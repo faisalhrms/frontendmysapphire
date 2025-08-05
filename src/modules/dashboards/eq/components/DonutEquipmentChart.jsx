@@ -2,13 +2,21 @@ import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { formatNumberWithCommas } from '@helpers/formatters.js'; // Optional helper
 
-const DonutEquipmentChart = ({ labels = [], series = [], colors = [], height = 300 }) => {
+const DonutEquipmentChart = ({ labels = [], series = [], colors = [], height = 300, onSliceClick }) => {
     const totalCount = series.reduce((sum, val) => sum + val, 0);
 
     const options = {
         chart: {
             type: 'donut',
             height,
+            events: {
+                dataPointSelection: (event, chartContext, config) => {
+                    // Trigger the passed in onSliceClick function on slice click
+                    if (onSliceClick) {
+                        onSliceClick(event, chartContext, config);
+                    }
+                }
+            }
         },
         labels: labels,
         colors: colors.length ? colors : ["#845adf", "#23b7e5", "#f5b849", "#49b6f5", "#e6533c"],

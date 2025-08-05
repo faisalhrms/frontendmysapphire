@@ -99,6 +99,7 @@ export const colorPalette = {
         svgFill: "fill-purple",
         badge: "bg-purple",
     },
+
     orange: {
         background: "bg-orange/10",
         text: "text-orange",
@@ -154,6 +155,13 @@ export const colorPalette = {
         svgColor: "svg-blue",
         svgFill: "fill-blue",
         badge: "bg-blue",
+    },
+    pink:{
+        background: "bg-pink/10",
+        text: "text-pink",
+        svgColor: "svg-pink",
+        svgFill: "fill-pink",
+        badge: "bg-pink",
     },
     default: {
         background: "bg-primary/10",

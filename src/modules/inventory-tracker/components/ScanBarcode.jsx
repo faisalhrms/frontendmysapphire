@@ -199,17 +199,17 @@ const ScanBarcode = ({ isActive }) => {
                                                                 <span className="text-sm font-medium text-slate-900">{currentWarehouse.combos}</span>
                                                             </div>
                                                         )}
-                                                        {currentWarehouse.matching_shirt && (
+                                                        {currentWarehouse.shirt && (
                                                             <div className="flex justify-between py-2 border-b border-slate-100">
                                                                 <span className="text-sm text-slate-600">Shirt</span>
-                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.matching_shirt}</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.shirt}</span>
                                                             </div>
                                                         )}
 
-                                                        {currentWarehouse.matching_trouser && (
+                                                        {currentWarehouse.trouser && (
                                                             <div className="flex justify-between py-2">
                                                                 <span className="text-sm text-slate-600">Trouser</span>
-                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.matching_trouser}</span>
+                                                                <span className="text-sm font-medium text-slate-900">{currentWarehouse.trouser}</span>
                                                             </div>
                                                         )}
                                                     </div>
