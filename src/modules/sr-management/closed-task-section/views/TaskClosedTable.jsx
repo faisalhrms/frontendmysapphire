@@ -6,6 +6,7 @@ import {getBadgeClasses} from "@helpers/badges.js";
 import {toTitleCase} from "@helpers/formatters.js";
 import Tooltip from "@components/Tooltip.jsx";
 import HighlightCell from "@modules/sr-management/component/HighlightCell.jsx";
+import {normalizeStatus} from "@modules/sr-management/services/srServices.js";
 
 const TaskClosedTable = () => {
     const navigate = useNavigate();
@@ -59,6 +60,7 @@ const TaskClosedTable = () => {
         {
             Header: "Request Title",
             accessor: "request_title",
+            width: 300,
             Cell: ({value, row}) =>
                 value ? (
                     <Tooltip
@@ -77,72 +79,107 @@ const TaskClosedTable = () => {
         {
             Header: "SR Time",
             accessor: "created_at",
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {value ? format(new Date(value), "MMM d, yyyy, h:mm a") : <span className="text-gray-500">N/A</span>}
+                </div>
+            ),
+            getCellProps: () => ({
+                className: `!text-center bg-info/10 text-info`
+            })
+        },
+        {
+            Header: "Requester",
+            accessor: "reporter",
+            width: 250,
             Cell: ({value}) =>
                 value ? (
-                    <span className="bg-info/10 text-info px-2 py-1 rounded-md">
-            {format(new Date(value), "MMM d, yyyy, h:mm a")}
+                    <span className="badge !rounded-full bg-light text-default">
+            {value}
           </span>
                 ) : (
                     <span className="text-gray-500">N/A</span>
                 ),
         },
         {
-            Header: "Requester",
-            accessor: "reporter",
-            Cell: ({value}) =>
-                value ? value : <span className="text-gray-500">N/A</span>,
-        },
-        {
-            Header: "Priority",
-            accessor: "priority",
-            Cell: ({row}) => {
-                const {sr_tasks} = row.original;
+            Header: 'Status',
+            accessor: row => {
+                const { sr_tasks } = row;
                 if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
-                    return (
-                        <div className="flex flex-wrap gap-1">
-                            {sr_tasks.map((task, index) => (
-                                <span key={index} className={getBadgeClasses(task.priority)}>
-                  {toTitleCase(task.priority)}
-                </span>
-                            ))}
-                        </div>
-                    );
+                    return sr_tasks[0].status;
                 }
-                return <span className="text-gray-500">No Tasks</span>;
+                return 'No Tasks';
             },
+            id: 'status',
+            width: 250,
+            headerClassName: '!text-center',
+            Cell: ({ cell }) => {
+                const statusLabelMap = {
+                    not_started: 'Not-Started',
+                    in_progress: 'In-Progress',
+                    on_hold: 'On-Hold',
+                    cancelled: 'Cancelled',
+                    completed: 'Completed',
+                    waiting_for_pr: 'Waiting for PR',
+                    waiting_for_budget: 'Waiting for Budget',
+                    waiting_for_purchase: 'Waiting for Purchase',
+                    waiting_for_quotation: 'Waiting for Quotation',
+                    waiting_for_acknowledgement: 'Waiting for Acknowledgement',
+                    waiting_for_approval: 'Waiting for Approval'
+                };
+                const key = normalizeStatus(cell.value);
+                return statusLabelMap[key] || cell.value || 'Unknown';
+            },
+            getCellProps: cellInfo => {
+                const key = normalizeStatus(cellInfo.value);
+                return {
+                    className: getBadgeClasses(key, '', false)
+                };
+            }
         },
         {
             Header: "Assignee",
             accessor: "sr_tasks",
-            Cell: ({value}) => {
-                if (Array.isArray(value) && value.length > 0) {
-                    const allAssignees = value.flatMap((task) =>
-                        task.assignees.map((a) => a.name)
-                    );
-                    const uniqueAssignees = [...new Set(allAssignees)];
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {Array.isArray(value) && value.length > 0 ? (
+                        [...new Set(value.flatMap(task => task.assignees.map(a => toTitleCase(a.name))))]
+                            .map((assignee, index) => assignee)
+                    ) : (
+                        <span className="text-gray-500">No Assignees</span>
+                    )}
+                </div>
+            ),
+            getCellProps: () => ({
+                className: `!text-center bg-indigo/10 text-blue text-sm`
+            })
+        },
+        {
+            Header: "Priority",
+            accessor: "priority",
+            Cell: ({ row }) => {
+                const { sr_tasks } = row.original;
+                if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
+                    const priorities = sr_tasks.map(task => task.priority?.toLowerCase());
+                    const uniquePriorities = [...new Set(priorities)];
                     return (
-                        <div className="flex flex-wrap gap-1">
-                            {uniqueAssignees.map((assignee, index) => (
-                                <span key={index} className="bg-primary/10 text-primary px-2 py-1 rounded-md">
-                  {assignee}
-                </span>
+                        <div className="space-x-1 rtl:space-x-reverse">
+                            {uniquePriorities.map((priority, index) => (
+                                <span key={index}>
+                                    {toTitleCase(priority)}
+                                </span>
                             ))}
                         </div>
                     );
                 }
-                return <span className="text-gray-500">No Assignees</span>;
+                return <span className="text-gray-500">N/A</span>;
             },
-        },
-        {
-            Header: "Status",
-            accessor: "status",
-            Cell: ({row}) => {
-                const {sr_tasks} = row.original;
-                if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
-                    return sr_tasks.map((task) => task.status).join(", ");
-                }
-                return "No Tasks";
-            },
+            getCellProps: cellInfo => {
+                const priority = cellInfo.row.original.sr_tasks?.[0]?.priority?.toLowerCase() || '';
+                return {
+                    className: getBadgeClasses(priority, '', false)
+                };
+            }
         },
     ];
 
