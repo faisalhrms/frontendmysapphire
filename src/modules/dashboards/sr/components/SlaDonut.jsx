@@ -5,8 +5,7 @@ const SlaDonut = ({ onTime, overDue, onLegendClick }) => {
   const [selectedIdx, setSelectedIdx] = useState(0)
   const total = onTime + overDue
   const percentOnTime = total > 0 ? Math.round((onTime / total) * 100) : 0
-  const percentOverDue = total > 0 ? 100 - percentOnTime : 0
-  const series = [percentOnTime, percentOverDue]
+  const series = [onTime, overDue]
   const options = {
     chart: {
       type: 'donut',
@@ -14,10 +13,6 @@ const SlaDonut = ({ onTime, overDue, onLegendClick }) => {
         dataPointSelection: (_e, _c, config) => {
           setSelectedIdx(config.dataPointIndex)
           onLegendClick(config.dataPointIndex)
-        },
-        legendClick: (_c, seriesIndex) => {
-          setSelectedIdx(seriesIndex)
-          onLegendClick(seriesIndex)
         }
       }
     },
@@ -29,12 +24,25 @@ const SlaDonut = ({ onTime, overDue, onLegendClick }) => {
         offsetY: 15
       }
     },
-    dataLabels: { enabled: false },
+    dataLabels: {
+      enabled: true,
+      formatter: (_val, opts) => opts.w.config.series[opts.seriesIndex],
+      style: { colors: ['#fff'], fontSize: '14px', fontWeight: '600' }
+    },
+    tooltip: {
+      y: { formatter: val => val }
+    },
     legend: {
       show: true,
       position: 'bottom',
       offsetY: 10,
-      onItemClick: { toggleDataSeries: false },
+      onItemClick: {
+        toggleDataSeries: false,
+        click: (_e, _chart, { seriesIndex }) => {
+          setSelectedIdx(seriesIndex)
+          onLegendClick(seriesIndex)
+        }
+      },
       labels: { colors: ['#44528f', '#912238'] }
     }
   }
@@ -43,12 +51,8 @@ const SlaDonut = ({ onTime, overDue, onLegendClick }) => {
     <div className="relative w-full h-full flex justify-center items-center">
       <Chart options={options} series={series} type="donut" width="100%" height="100%" />
       <div className="absolute flex flex-col items-center pointer-events-none">
-        <span className="text-xl font-bold">
-          {selectedIdx === 0 ? percentOnTime : percentOverDue}%
-        </span>
-        <span className="text-[0.75rem] text-gray-500">
-          {options.labels[selectedIdx]}
-        </span>
+        <span className="text-xl font-bold">{percentOnTime}%</span>
+        <span className="text-[0.75rem] text-gray-500">On Time</span>
       </div>
     </div>
   )

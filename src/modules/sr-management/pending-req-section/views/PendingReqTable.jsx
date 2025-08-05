@@ -6,6 +6,7 @@ import {closeServiceRequest} from "@modules/sr-management/services/Pending.js";
 import ConfirmationModal from "@modules/sr-management/component/ConfirmationModal.jsx";
 import Tooltip from "@components/Tooltip.jsx";
 import HighlightCell from "@modules/sr-management/component/HighlightCell.jsx";
+import {toTitleCase} from "@helpers/formatters.js";
 
 const PendingRequestsTable = () => {
     const navigate = useNavigate();
@@ -38,8 +39,8 @@ const PendingRequestsTable = () => {
 
     const columns = [
         {
-            Header: "Action",
-            accessor: "status",
+            Header: "Actions",
+            accessor: "actions",
             Cell: ({row}) => {
                 const {id} = row.original;
                 return (
@@ -85,6 +86,7 @@ const PendingRequestsTable = () => {
         {
             Header: "Request Title",
             accessor: "request_title",
+            width: 300,
             Cell: ({value, row}) =>
                 value ? (
                     <Tooltip id={`request-tooltip-${row.index}`} text={value} tooltipContent={value}>
@@ -99,21 +101,22 @@ const PendingRequestsTable = () => {
         {
             Header: "SR Time",
             accessor: "created_at",
-            Cell: ({value}) =>
-                value ? (
-                    <span className="bg-info/10 text-info px-2 py-1 rounded-md">
-            {format(new Date(value), "MMM d, yyyy, h:mm a")}
-          </span>
-                ) : (
-                    <span className="text-gray-500">N/A</span>
-                ),
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {value ? format(new Date(value), "MMM d, yyyy, h:mm a") : <span className="text-gray-500">N/A</span>}
+                </div>
+            ),
+            getCellProps: () => ({
+                className: `!text-center bg-info/10 text-info`
+            })
         },
-        {
+         {
             Header: "Requester",
             accessor: "reporter",
+            width: 250,
             Cell: ({value}) =>
                 value ? (
-                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                    <span className="badge !rounded-full bg-light text-default">
             {value}
           </span>
                 ) : (
@@ -123,14 +126,19 @@ const PendingRequestsTable = () => {
         {
             Header: "Assignee",
             accessor: "assignee",
-            Cell: ({value}) =>
-                value ? (
-                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
-            {value}
-          </span>
-                ) : (
-                    "-"
-                ),
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {Array.isArray(value) && value.length > 0 ? (
+                        [...new Set(value.flatMap(task => task.assignees.map(a => toTitleCase(a.name))))]
+                            .map((assignee, index) => assignee)
+                    ) : (
+                        <span className="text-gray-500">No Assignees</span>
+                    )}
+                </div>
+            ),
+            getCellProps: () => ({
+                className: `!text-center bg-indigo/10 text-blue`
+            })
         },
     ];
 

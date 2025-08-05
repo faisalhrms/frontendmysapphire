@@ -180,7 +180,7 @@ const SrDashboard = () => {
     const selCity = watch('city_id')
 
     return (
-        <div className="dark:bg-bodybg min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col">
             <div className="flex justify-end space-x-2">
                 <button className="ti-btn bg-primary text-white py-2 px-4" onClick={toggleFilters}>
                     <i className="ri-filter-3-fill"></i> Filters
@@ -628,7 +628,7 @@ const SrDashboard = () => {
                             <div
                                 key={idx}
                                 onClick={() => handleCardClick(`rating-${item.rating}`)}
-                                className="flex items-center justify-between mb-3 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer"
+                                className="flex items-center justify-between mb-3 p-2 bg-gray-50 dark:bg-bodybg rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer"
                             >
                                 <div className="flex items-center">
                                     <span className="text-sm mr-2">{item.label}</span>
@@ -648,7 +648,8 @@ const SrDashboard = () => {
 
                 <div className="box overflow-hidden h-full flex flex-col shadow-xl">
                     <div className="box-header !bg-green/15">
-                        <div className="box-title">SLA Performance</div>
+                        <div className="box-title">SLA Performance <span
+                            className="text-gray-500 font-normal">(Current Month):</span></div>
                     </div>
                     <div className="box-body h-full">
                         {isLoading
