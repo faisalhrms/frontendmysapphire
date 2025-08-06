@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { GripVertical, Plus, Minus } from 'lucide-react';
+import UserDropdown from "@components/dropdowns/UserDropdown.jsx";
 
 const ItemType = 'DROPDOWN';
 
@@ -74,53 +75,7 @@ const DraggableDropdown = ({
                 </span>
             </td>
             <td className="py-3 px-4 w-full">
-                <div className="relative">
-                    <div
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="w-full pl-4 pr-10 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none bg-white cursor-pointer"
-                    >
-                        {dropdown.value || 'Select '}
-                    </div>
-                    {isOpen && (
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
-                            <div className="p-2">
-                                <input
-                                    type="text"
-                                    placeholder="Enter person to search..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="form-control form-control-sm w-full"
-                                />
-                            </div>
-                            <div className="max-h-40 overflow-y-auto">
-                                {filteredUsers?.map(user => (
-                                    <div
-                                        key={user.id}
-                                        onClick={() => {
-                                            updateDropdownValue(dropdown.id, user.name);
-                                            setIsOpen(false);
-                                            setSearchTerm('');
-                                        }}
-                                        className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
-                                    >
-                                        <img
-                                            src={user?.avatar}
-                                            alt={user?.name}
-                                            className="w-8 h-8 rounded-full mr-2"
-                                        />
-                                        <div>
-                                            <div>{user?.name}</div>
-                                            <div className="text-sm text-gray-500">{user.email}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                                <div className="text-sm text-gray-500 p-2">
-                                    {users?.length} team members available
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
+
             </td>
             <td className="py-3 px-4">
                 <div className="flex items-center space-x-2">

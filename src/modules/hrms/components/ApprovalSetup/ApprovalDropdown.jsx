@@ -5,8 +5,15 @@ import { useForm, FormProvider } from 'react-hook-form';
 import FormSelect from '@components/form/FormSelect.jsx';
 import useDynamicDropdown from '@modules/hrms/hooks/useApprovalSetupModal.js';
 import DraggableDropdown from "../../components/ApprovalSetup/DraggableApproval.jsx"
+import UserDropdown from "@components/dropdowns/UserDropdown.jsx";
+import {formatOptionsWithConcatenation} from "@helpers/formatters.js";
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import {useSelector} from "react-redux";
 
 const DynamicDropdownChain = ({ initialDropdowns }) => {
+    const user = useSelector((state) => state.auth.user);
+    const company_id = user.employee?.company?.id
+
     const {
         dropdowns,
         addDropdown,
@@ -25,7 +32,7 @@ const DynamicDropdownChain = ({ initialDropdowns }) => {
             <DndProvider backend={HTML5Backend}>
                 <div className="max-w-4xl mx-auto">
                     <div className="flex md:flex-row gap-4 mb-4">
-                        <div className="w-[200px]">
+                        <div className="w-full">
                             <FormSelect
                                 name="Type"
                                 control={methods.control}
@@ -35,25 +42,19 @@ const DynamicDropdownChain = ({ initialDropdowns }) => {
                                     {value: 'objective', label: 'Objective'},
                                     {value: 'appraisal', label: 'Appraisal'},
                                 ]}
-                                // label="Left Selection"
                                 is_required={true}
                                 className="w-full"
                             />
                         </div>
-                        <div className="w-[200px]">
-                            <FormSelect
-                                name="User"
+                        <div className="w-full">
+                            <FormAsyncSelect
+                                name="user_id"
                                 control={methods.control}
                                 errors={methods.formState.errors}
                                 placeholder="User"
-                                options={[
-                                    {value: 'john_doe', label: 'John Doe'},
-                                    {value: 'jane_smith', label: 'Jane Smith'},
-                                    {value: 'alex_wilson', label: 'Alex Wilson'},
-                                ]}
-                                // label="Right Selection"
-                                is_required={true}
-                                className="w-full"
+                                apiUrl={`/select/users/?company_id=${company_id}`}
+                                queryKeyBase={`company_${company_id}_users`}
+                                preselectedOptions={[]}
                             />
                         </div>
                     </div>

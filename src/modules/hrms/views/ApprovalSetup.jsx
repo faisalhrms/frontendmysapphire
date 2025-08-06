@@ -5,12 +5,75 @@ import DataTable from "@components/datatable/DataTable.jsx";
 import {useYearSetupModal} from "@modules/hrms/hooks/useYearSetupModal.js";
 import DynamicDropdownChain from "@modules/hrms/components/modals/ApprovalSetupModel.jsx";
 import Avatar from "@components/Avatar.jsx";
+import { ArrowRight } from "lucide-react";
 
 const ApprovalSetup = () => {
     const dataTableRef = React.useRef();
     const columns = [
         {
-            Header: 'Employee Code',
+            Header: 'Name',
+            accessor: 'user.full_name',
+            Cell: ({ row }) => {
+                const user = row.original.user
+                return (
+                    <div className="flex items-center">
+                        <Avatar
+                            avatar={user.avatar ? user.avatar : null}
+                            full_name={user.full_name || 'N/A'}
+                            size='md'
+                            parentClasses='dark:text-gray-200 dark:bg-bodybg'
+                        />
+                        <div className='ms-2'>
+                            <p className="font-semibold mb-0 flex items-center">
+                                {user.full_name || 'N/A'}
+                            </p>
+                            <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                {user?.email || 'N/A'}
+                            </p>
+                        </div>
+                    </div>
+                )
+            }
+        },
+        {
+            Header: 'Designation',
+            accessor: 'user.designation',
+        },
+        {
+            Header: 'Position',
+            accessor: 'user.position',
+        },
+        {
+            Header: 'Department',
+            accessor: 'user.department',
+        },
+        {
+            Header: 'Hierarchy',
+            accessor: 'approvers',
+            Cell: ({ row }) => {
+                const approvers = row.original.approvers || [];
+
+                return (
+                    <div className="flex items-center gap-1 flex-wrap">
+                        {approvers.map((user, index) => (
+                            <React.Fragment key={user.approver.id || index}>
+                                <Avatar
+                                    avatar={user.approver.avatar || null}
+                                    full_name={user.approver.full_name || 'N/A'}
+                                    size="sm"
+                                    parentClasses="dark:text-gray-200 dark:bg-bodybg"
+                                />
+                                {index < approvers.length - 1 && (
+                                    <ArrowRight className="mx-1 text-gray-700 w-2 h-2" />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                );
+            }
+        },
+        {
+            Header: 'Type',
             accessor: 'type',
             getCellProps: (cellInfo) => {
                 const value = cellInfo.value;
@@ -24,18 +87,6 @@ const ApprovalSetup = () => {
                     className: `text-white ${bgClass}`,
                 };
             },
-        },
-        {
-            Header: 'Employee Name',
-            accessor: row => row.user.full_name,
-        },
-        {
-            Header: 'Designation',
-            accessor: row => row.user.designation,
-        },
-        {
-            Header: 'Department',
-            accessor: row => row.user.department,
         },
         {
             Header: 'Actions',
