@@ -56,24 +56,19 @@ const ApprovalSetup = () => {
 
                 return (
                     <div className="flex items-center gap-1 flex-wrap">
-                        {approvers.map((user, index) => {
-                            const approver = user?.approver;
-                            if (!approver) return null;
-
-                            return (
-                                <React.Fragment key={approver.id || index}>
-                                    <Avatar
-                                        avatar={approver.avatar || null}
-                                        full_name={approver.full_name || 'N/A'}
-                                        size="sm"
-                                        parentClasses="dark:text-gray-200 dark:bg-bodybg"
-                                    />
-                                    {index < approvers.length - 1 && (
-                                        <ArrowRight className="mx-1 text-gray-700 w-2 h-2" />
-                                    )}
-                                </React.Fragment>
-                            );
-                        })}
+                        {approvers.map((approver, index) => (
+                            <React.Fragment key={approver.id || index}>
+                                <Avatar
+                                    avatar={approver.avatar || null}
+                                    full_name={approver.full_name || 'N/A'}
+                                    size="sm"
+                                    parentClasses="dark:text-gray-200 dark:bg-bodybg"
+                                />
+                                {index < approvers.length - 1 && (
+                                    <ArrowRight className="mx-1 text-gray-700 w-2 h-2" />
+                                )}
+                            </React.Fragment>
+                        ))}
                     </div>
                 );
             }
