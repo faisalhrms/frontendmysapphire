@@ -15,6 +15,7 @@ import DayWiseSalesSpent            from "@modules/ecom/components/DigitalSpent/
 import CategoryDayWiseLocalSpent    from "@modules/ecom/components/DigitalSpent/CategoryDayWiseLocalSpent.jsx"
 import DailyWebsiteVisitors         from "@modules/ecom/components/DigitalSpent/DailyWebsiteVisitors.jsx"
 import CategoryOrdersCount          from "@modules/ecom/components/DigitalSpent/CategoryOrdersCount.jsx"
+import DayWisePerformanceLocal from "@modules/ecom/components/DigitalSpent/DayWisePerformanceLocal.jsx";
 
 const DigitalSpent = () => {
   const [activeTab, setActiveTab] = useState("ObjectiveWiseSpentSummary")
@@ -209,6 +210,19 @@ const DigitalSpent = () => {
             data={data}
           />
         )
+    },
+    {
+      id: "DayWisePerformanceLocal",
+      label: "Daywise Performance Update - Local Only",
+      icon: <i className="bx bx-list-ul" />,
+      content:
+          activeTab === "DayWisePerformanceLocal" && (
+              <DayWisePerformanceLocal
+                  filters={filters}
+                  loading={false}
+                  data={data}
+              />
+          )
     }
   ]
 

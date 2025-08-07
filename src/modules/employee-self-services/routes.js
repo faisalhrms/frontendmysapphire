@@ -6,6 +6,7 @@ import WorkDesk from '@modules/employee-self-services/work-desk/views/WorkDesk.j
 import DiscountCard from '@modules/employee-self-services/discount-card/views/DiscountCard.jsx';
 import DigitalProfile from '@modules/employee-self-services/my-digital-profile/views/DigitalProfile.jsx';
 import SelfPolicies from "@modules/policies/views/SelfPolicies.jsx";
+import ObjectivesList from "@modules/employee-self-services/objectives/views/ObjectivesList.jsx";
 export const SELF_SERVICES_ROUTES = {
     SERVICES: {
         READ: {
@@ -36,6 +37,10 @@ export const SELF_SERVICES_ROUTES = {
         POLICIES:{
             path: '/module/ess/policies',
             permission:'auth.view_public_policies'
+        },
+        OBJECTIVES:{
+            path:'/module/ess/objects',
+            permission: "hrms.manage_year_setup_form"
         }
 
     }
@@ -78,5 +83,9 @@ export const MODULE_ROUTES = [
         path:SELF_SERVICES_ROUTES.SERVICES.POLICIES.path,
         component:SelfPolicies,
         permission: SELF_SERVICES_ROUTES.SERVICES.POLICIES.permission
+    },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.path,
+        component:ObjectivesList
     }
 ];
