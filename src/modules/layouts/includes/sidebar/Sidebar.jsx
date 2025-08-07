@@ -19,7 +19,6 @@ const Sidebar = () => {
   const initialMenuItems = useMenuItems();
   const [menuItems, setMenuItems] = useState(initialMenuItems);
 
-
   useEffect(() => {
     setMenuItems(initialMenuItems);
   }, [initialMenuItems]);
@@ -49,7 +48,6 @@ const Sidebar = () => {
     mainContent.addEventListener('click', menuClose);
     window.addEventListener('resize', menuResizeFn);
   }, []);
-
 
   const location = useLocation();
 
@@ -112,6 +110,7 @@ const Sidebar = () => {
       }
     }
   }
+
   function switcherArrowFn() {
     function slideClick() {
       const slide = document.querySelectorAll(".slide");
@@ -411,26 +410,47 @@ const Sidebar = () => {
   const toggleSidemenu = (event, clickedItem) => {
     event.preventDefault();
 
-    menuItems.forEach(item => {
-      if (item !== clickedItem) {
-        item.active = false;
-        item.selected = false;
-      }
-    });
+    const findAndCloseSiblings = (items, targetItem, parentItems = null) => {
+      items.forEach(item => {
+        if (item.children && item.children.includes(targetItem)) {
+          item.children.forEach(sibling => {
+            if (sibling !== targetItem) {
+              sibling.active = false;
+              sibling.selected = false;
+              if (sibling.children) {
+                closeAllChildren(sibling.children);
+              }
+            }
+          });
+          return;
+        }
+        if (item.children) {
+          findAndCloseSiblings(item.children, targetItem, items);
+        }
+      });
+    };
+
+    const closeAllChildren = (children) => {
+      children.forEach(child => {
+        child.active = false;
+        child.selected = false;
+        if (child.children) {
+          closeAllChildren(child.children);
+        }
+      });
+    };
+
+    findAndCloseSiblings(menuItems, clickedItem);
 
     clickedItem.active = !clickedItem.active;
     clickedItem.selected = !clickedItem.selected;
 
     if (!clickedItem.active && clickedItem.children) {
-      clickedItem.children.forEach(child => {
-        child.active = false;
-        child.selected = false;
-      });
+      closeAllChildren(clickedItem.children);
     }
 
     setMenuItems([...menuItems]);
   };
-
 
   function closeOtherMenusAtSameLevel(items, targetItem) {
     for (const item of items) {
@@ -699,7 +719,6 @@ const Sidebar = () => {
                           <Link
                               to={levelone.path}
                               className={`side-menu__item ${levelone.selected ? 'active' : ''}`}
-                              // onClick={(e) => handleMenuItemClick(e, levelone)}
                           >
                             <i className={`side-menu__icon bx ${levelone.icon}`}></i>
                             <span className="side-menu__label">
