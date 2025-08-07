@@ -10,11 +10,11 @@ export const HRMS_ROUTES = {
     },
     APPROVAL: {
       path: "/module/hrms/setups/approval-hierarchy",
-      // permission: "hrms.manage_year_setup_form"
+      permission: "hrms.manage_year_setup_form"
     },
     OBJECTIVE: {
       path: "/module/hrms/setups/approval-objective",
-      // permission: "hrms.manage_year_setup_form"
+       permission: "hrms.manage_year_setup_form"
     },
   },
 };
