@@ -49,16 +49,7 @@ export const sidebarMenu = [
                 "bx-book-bookmark",
                 5,
                  SELF_SERVICES_ROUTES.SERVICES.POLICIES.permission,
-            ),
-            generateSidebarItem(
-                SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.path,
-                'link',
-                'Objectives',
-                "bx-book-bookmark",
-                6,
-                SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.permission,
             )
-
             ]
     )
 ]

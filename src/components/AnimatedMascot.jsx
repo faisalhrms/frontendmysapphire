@@ -96,14 +96,6 @@ const mascots = [
         classes: 'right-0'
     },
     {
-        name: "mouse",
-        animation: mouse,
-        topOffset: "-165px",
-        width: 170,
-        speed: 0.8,
-        classes: 'left-0'
-    },
-    {
         name: "pandaFlying",
         animation: pandaFlying,
         topOffset: "-131px",
