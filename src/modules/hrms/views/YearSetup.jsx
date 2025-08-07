@@ -77,6 +77,7 @@ const YearSetup = () => {
                 </button>
             </div>
     );
+    console.log(`rendering `)
     return (
         <>
             <IconPageHeader

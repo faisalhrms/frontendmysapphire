@@ -6,7 +6,8 @@ import FormSelect from "@components/form/FormSelect.jsx";
 
 const YearSetupModal = ({control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, isEditMode = false}) => {
     const handleClose = useCallback(() => closeModal(), [closeModal]);
-    return (<div id="yearSetupModal" data-hs-overlay-keyboard="false"
+    return (
+        <div id="yearSetupModal" data-hs-overlay-keyboard="false"
                  className="hs-overlay ti-modal hidden [--overlay-backdrop:static] backdrop-blur-[0.08rem]">
             <div
                 className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] flex items-center">

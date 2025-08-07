@@ -1,68 +1,168 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {z} from "zod";
+import api from "@config/axiosConfig.js";
+import Notify from "@helpers/toastNotifications.js";
 
-const useDynamicDropdown = (initialDropdowns = []) => {
-    const [dropdowns, setDropdowns] = useState(initialDropdowns.length ? initialDropdowns : [
-        {
-            id: 1,
-            value: '',
-            options: [
-                { value: 'option1', label: 'Option 1' },
-                { value: 'option2', label: 'Option 2' },
-                { value: 'option3', label: 'Option 3' },
-                { value: 'option4', label: 'Option 4' },
-            ],
-        },
-    ]);
+const approverSchema = z.object({
+    level: z.coerce.number({
+        required_error: "Level is required",
+        invalid_type_error: "Level must be a number",
+    }).min(1, "Level must be at least 1"),
 
-    const users = [
-        { id: '1', name: 'All People', email: 'all@team.com', avatar: 'http://127.0.0.1:8000/media/uploads/2025/01/09/kinza-sm.jpg' },
-        { id: '2', name: 'kinza', email: 'sana@team.com', avatar: 'http://127.0.0.1:8000/media/uploads/2025/01/09/kinza-sm.jpg' },
-        { id: '3', name: 'abc', email: 'yasir@team.com', avatar: '' },
-    ];
+    approver_id: z.coerce.number({
+        required_error: "Approver is required",
+        invalid_type_error: "Approver must be a number",
+    }).min(1, "Approver ID must be at least 1"),
+});
 
-    const addDropdown = useCallback(() => {
-        const newDropdown = {
-            id: Date.now(),
-            value: '',
-            options: [
-                { value: 'sub1', label: 'Sub Option 1' },
-                { value: 'sub2', label: 'Sub Option 2' },
-                { value: 'sub3', label: 'Sub Option 3' },
-                { value: 'sub4', label: 'Sub Option 4' },
-            ],
-        };
-        setDropdowns((prev) => [...prev, newDropdown]);
-    }, []);
+const approvalSetupSchema = z.object({
+    user_id: z.coerce.number({
+        required_error: "User is required",
+        invalid_type_error: "User ID must be a number",
+    }).min(1, "User is required"),
 
-    const removeDropdown = useCallback((id) => {
-        setDropdowns((prev) => prev.filter((dropdown) => dropdown.id !== id));
-    }, []);
+    type: z.enum(["objective", "appraisal"], {
+        required_error: "Type is required",
+    }),
 
-    const updateDropdownValue = useCallback((id, value) => {
-        setDropdowns((prev) =>
-            prev.map((dropdown) =>
-                dropdown.id === id ? { ...dropdown, value } : dropdown
-            )
-        );
-    }, []);
+    // ← now required and enforces at least one entry
+    approvers: z.array(approverSchema)
+        .min(1, "At least one approver is required"),
+});
 
-    const moveItem = useCallback((fromIndex, toIndex) => {
-        setDropdowns((prevItems) => {
-            const updated = [...prevItems];
-            const [movedItem] = updated.splice(fromIndex, 1);
-            updated.splice(toIndex, 0, movedItem);
-            return updated;
-        });
-    }, []);
-
-    return {
-        dropdowns,
-        addDropdown,
-        removeDropdown,
-        updateDropdownValue,
-        moveItem,
-        users,
-    };
+const create = async (data) => {
+    try {
+        const response = await api.post(`/hrms/setups/approval-hierarchy/`, data);
+        Notify.success(response.data.message);
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
 };
 
-export default useDynamicDropdown;
+const update = async (id, data) => {
+    try {
+        const response = await api.put(`/hrms/setups/approval-hierarchy/${id}/`, data);
+        Notify.success(response.data.message);
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+
+const fetchById = async (id) => {
+    try {
+        const response = await api.get(`/hrms/setups/approval-hierarchy/${id}/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error("Failed to fetch year setup data.");
+        return null;
+    }
+};
+export const useApprovalSetupModel = (refetch) => {
+    const [editId, setEditId] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
+
+    const {
+        control,
+        handleSubmit,
+        reset,
+        setValue,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(approvalSetupSchema),
+        defaultValues: {
+            user_id: 0,
+            type: "objective",
+            approvers: [{ level: 1, approver_id: null }],
+        },
+    });
+
+    const openModal = async (id = null, isEdit = false) => {
+        setEditId(id);
+        setIsEditMode(isEdit);
+
+        let values = {
+            user_id: 0,
+            userOption: null,
+            type: 'objective',
+            approvers: [{ level: 1, approver_id: null, approverOption: null }],
+        };
+
+        if (id && isEdit) {
+            const data = await fetchById(id);
+            if (data) {
+                // build userOption
+                const userOption = data.user && { value: data.user.id, label: data.user.full_name };
+                // build approvers with options
+                const approvers = data.approvers.map(item => {
+                    const u = data.users.find(u => u.id === item.approver_id);
+                    return {
+                        level: item.level,
+                        approver_id: item.approver_id,
+                        approverOption: u && { value: u.id, label: u.full_name },
+                    };
+                });
+                values = {
+                    user_id: data.user_id,
+                    userOption,
+                    type: data.type,
+                    approvers,
+                };
+            }
+        }
+        console.log("Opening modal with data:", values);
+
+
+        reset(values);
+
+        const modal = document.getElementById("approvalSetupModal");
+        if (modal) {
+            window.HSOverlay.open(modal);
+        }
+    };
+
+    const closeModal = () => {
+        const modal = document.getElementById("approvalSetupModal");
+        if (modal) {
+            window.HSOverlay.close(modal);
+        }
+        reset();
+        setEditId(null);
+        setIsEditMode(false);
+    };
+
+    const onSubmit = async (data) => {
+        console.log(`Data on submistion`,data)
+        try {
+            let res = null;
+            if (editId) {
+                res = await update(editId, data);
+            } else {
+                res = await create(data);
+            }
+
+            if (res) {
+                closeModal();
+                if (refetch) refetch();
+            }
+        } catch (err) {
+            console.error("Submit error:", err);
+        }
+    };
+
+    return {
+        openModal,
+        closeModal,
+        control,
+        errors,
+        isSubmitting,
+        handleSubmit,
+        onSubmit,
+        isEditMode,
+        setValue,
+    };
+};
