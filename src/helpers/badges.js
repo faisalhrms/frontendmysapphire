@@ -52,7 +52,13 @@ const badgeStyles = {
     not_started: info,
     on_hold: warning,
     closed: danger,
-    blocked:warning
+    blocked:warning,
+    waiting_for_pr: info,
+    waiting_for_budget: primary,
+    waiting_for_purchase: warning,
+    waiting_for_quotation: secondary,
+    waiting_for_acknowledgement: success,
+    waiting_for_approval: danger,
 };
 
 const statusStyles = {
@@ -90,7 +96,13 @@ const statusStyles = {
     high: txtDanger,
     low: txtSuccess,
     medium: txtWarning,
-    blocked:warning
+    blocked:warning,
+    waiting_for_pr: txtPrimary,
+    waiting_for_budget: txtWarning,
+    waiting_for_purchase: txtWarning,
+    waiting_for_quotation: txtSecondary,
+    waiting_for_acknowledgement: txtSuccess,
+    waiting_for_approval: txtDanger,
 
 
 };

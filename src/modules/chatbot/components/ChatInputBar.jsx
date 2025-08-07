@@ -25,7 +25,6 @@ const ChatInputBar = ({
       onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
       className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] max-h-48 leading-6"
     />
-
     <div className="absolute bottom-3 left-3 flex items-center gap-2">
       <button
         onClick={toggleWebSearch}
@@ -33,7 +32,6 @@ const ChatInputBar = ({
       >
         <i className="ri-earth-line text-xl"></i>
       </button>
-
       <div className="relative">
         <button
           onClick={() => setModeOpen(o => !o)}
@@ -60,7 +58,6 @@ const ChatInputBar = ({
         )}
       </div>
     </div>
-
     <div className="absolute bottom-3 right-3 flex items-center gap-2">
       <button
         onClick={startVoice}

@@ -5,6 +5,9 @@ import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom"
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx"
 import HighlightCell from "@modules/sr-management/component/HighlightCell.jsx"
 import Tooltip from "@components/Tooltip.jsx"
+import {toTitleCase} from "@helpers/formatters.js";
+import {normalizeStatus} from "@modules/sr-management/services/srServices.js";
+import {getBadgeClasses} from "@helpers/badges.js";
 
 const SrList = () => {
     const [apiUrl, setApiUrl] = useState(null)
@@ -65,6 +68,7 @@ const SrList = () => {
         {
             Header: "Request Title",
             accessor: "request_title",
+            width: 300,
             Cell: ({value, row}) =>
                 value ? (
                     <Tooltip id={`request-tooltip-${row.index}`} text={value} tooltipContent={value}>
@@ -79,37 +83,45 @@ const SrList = () => {
         {
             Header: "SR Time",
             accessor: "created_at",
-            Cell: ({value}) =>
-                value ? (
-                    <span className="bg-info/10 text-info px-2 py-1 rounded-md">
-            {format(new Date(value), "MMM d, yyyy, h:mm a")}
-          </span>
-                ) : (
-                    <span className="text-gray-500">N/A</span>
-                ),
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {value ? format(new Date(value), "MMM d, yyyy, h:mm a") : <span className="text-gray-500">N/A</span>}
+                </div>
+            ),
+            getCellProps: () => ({
+                className: `!text-center bg-info/10 text-info`
+            })
         },
         ...(status === "Completed"
             ? [
-                {
-                    Header: "Completed At",
-                    accessor: "completed_at",
-                    Cell: ({value}) =>
-                        value ? (
-                            <span className="bg-success/10 text-success px-2 py-1 rounded-md">
-                  {format(new Date(value), "MMM d, yyyy, h:mm a")}
-                </span>
-                        ) : (
-                            <span className="text-gray-500">N/A</span>
-                        ),
-                },
+        {
+            Header: "Completed At",
+            accessor: "completed_at",
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {value ? format(new Date(value), "MMM d, yyyy, h:mm a") : <span className="text-gray-500">N/A</span>}
+                </div>
+            ),
+            getCellProps: cellInfo => {
+                const completed = new Date(cellInfo.value);
+                const needBy = new Date(cellInfo.row.original.need_by_date);
+                const isLate = completed > needBy;
+                return {
+                    className: `!text-center ${isLate ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'}`
+                };
+            }
+        },
+
+
             ]
             : []),
         {
             Header: "Requester",
             accessor: "reporter",
+            width: 250,
             Cell: ({value}) =>
                 value ? (
-                    <span className="bg-primary/10 text-primary px-2 py-1 rounded-md">
+                    <span className="badge !rounded-full bg-light text-default">
             {value}
           </span>
                 ) : (
@@ -119,32 +131,55 @@ const SrList = () => {
         {
             Header: "Assignee",
             accessor: "sr_tasks",
-            Cell: ({value}) => {
-                if (Array.isArray(value) && value.length > 0) {
-                    const names = [...new Set(value.flatMap(task => task.assignees.map(a => a.name)))]
-                    return (
-                        <div className="flex flex-wrap gap-1">
-                            {names.map((name, i) => (
-                                <span key={i} className="bg-green/10 text-success px-2 py-1 rounded-md">
-                  {name}
-                </span>
-                            ))}
-                        </div>
-                    )
-                }
-                return <span className="text-gray-500">No Assignees</span>
-            },
+            Cell: ({ value }) => (
+                <div className="space-x-1 rtl:space-x-reverse">
+                    {Array.isArray(value) && value.length > 0 ? (
+                        [...new Set(value.flatMap(task => task.assignees.map(a => toTitleCase(a.name))))]
+                            .map((assignee, index) => assignee)
+                    ) : (
+                        <span className="text-gray-500">No Assignees</span>
+                    )}
+                </div>
+            ),
+            getCellProps: () => ({
+                className: `!text-center bg-indigo/10 text-blue text-sm`
+            })
         },
         {
-            Header: "Status",
-            accessor: "status",
-            Cell: ({row}) => {
-                const {sr_tasks} = row.original
+            Header: 'Status',
+            accessor: row => {
+                const { sr_tasks } = row;
                 if (Array.isArray(sr_tasks) && sr_tasks.length > 0) {
-                    return sr_tasks.map(task => task.status).join(", ")
+                    return sr_tasks[0].status;
                 }
-                return "No Tasks"
+                return 'No Tasks';
             },
+            id: 'status',
+            width: 250,
+            headerClassName: '!text-center',
+            Cell: ({ cell }) => {
+                const statusLabelMap = {
+                    not_started: 'Not-Started',
+                    in_progress: 'In-Progress',
+                    on_hold: 'On-Hold',
+                    cancelled: 'Cancelled',
+                    completed: 'Completed',
+                    waiting_for_pr: 'Waiting for PR',
+                    waiting_for_budget: 'Waiting for Budget',
+                    waiting_for_purchase: 'Waiting for Purchase',
+                    waiting_for_quotation: 'Waiting for Quotation',
+                    waiting_for_acknowledgement: 'Waiting for Acknowledgement',
+                    waiting_for_approval: 'Waiting for Approval'
+                };
+                const key = normalizeStatus(cell.value);
+                return statusLabelMap[key] || cell.value || 'Unknown';
+            },
+            getCellProps: cellInfo => {
+                const key = normalizeStatus(cellInfo.value);
+                return {
+                    className: getBadgeClasses(key, '', false)
+                };
+            }
         },
     ]
 
