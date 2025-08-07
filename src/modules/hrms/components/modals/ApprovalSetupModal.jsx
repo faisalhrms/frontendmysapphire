@@ -4,6 +4,7 @@ import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
 import FormSelect from '@components/form/FormSelect.jsx';
 import ApproversFieldArray from '@modules/hrms/components/ApprovalSetup/ApproversFieldArray.jsx';
 import {useWatch} from "react-hook-form";
+import FormButton from "@components/form/FormButton.jsx";
 
 const ApprovalSetupModal = ({
                                 control,
@@ -12,18 +13,22 @@ const ApprovalSetupModal = ({
                                 handleSubmit,
                                 onSubmit,
                                 isSubmitting,
+                                moveApprover,      // Add this prop
+                                addApprover,       // Add this prop
+                                removeApprover,    // Add this prop
                             }) => {
     const user = useSelector((state) => state.auth.user);
     const company_id = user?.employee?.company?.id;
     const userOption = useWatch({ control, name: 'userOption' });
     const userPre = userOption ? [userOption] : [];
+
     return (
         <div id="approvalSetupModal" className="hs-overlay hidden ti-modal">
             <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
                 <div className="ti-modal-content">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="ti-modal-header">
-                            <h6 className="ti-modal-title">Approval Setup</h6>
+                            <h6 className="modal-title">Approval Setup</h6>
                             <button
                                 type="button"
                                 className="hs-dropdown-toggle ti-modal-close-btn"
@@ -42,7 +47,7 @@ const ApprovalSetupModal = ({
 
                         <div className="ti-modal-body">
                             <div className="grid grid-cols-12 gap-4">
-                                <div className="col-span-6">
+                                <div className="col-span-6 z-10">
                                     <FormAsyncSelect
                                         name="user_id"
                                         control={control}
@@ -51,6 +56,7 @@ const ApprovalSetupModal = ({
                                         apiUrl={`/select/users/?company_id=${company_id}`}
                                         queryKeyBase={`company_${company_id}_users`}
                                         preselectedOptions={userPre}
+                                        is_required={true}
                                     />
                                 </div>
                                 <div className="col-span-6">
@@ -70,24 +76,17 @@ const ApprovalSetupModal = ({
                             </div>
 
                             {/* Approvers Section */}
-                            <ApproversFieldArray control={control} errors={errors} />
+                            <ApproversFieldArray
+                                control={control}
+                                errors={errors}
+                                moveApprover={moveApprover}
+                                addApprover={addApprover}
+                                removeApprover={removeApprover}
+                            />
                         </div>
 
                         <div className="ti-modal-footer mt-4">
-                            <button
-                                type="submit"
-                                className="ti-btn ti-btn-primary"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? 'Submitting...' : 'Submit'}
-                            </button>
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-light"
-                                onClick={closeModal}
-                            >
-                                Cancel
-                            </button>
+                            <FormButton isLoading={isSubmitting}/>
                         </div>
                     </form>
                 </div>

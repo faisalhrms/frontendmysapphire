@@ -13,7 +13,7 @@ export let sidebarMenu = [
             generateSidebarItem(
                 "",
                 "sub",
-                "Setup",
+                "Setups",
                 1,
                 "bx bx-target-lock",
                 "",
@@ -21,7 +21,7 @@ export let sidebarMenu = [
                     generateSidebarItem(
                         HRMS_ROUTES.SETUPS.YEAR.path,
                         "link",
-                        "PMS Year Setup Form",
+                        "PMS Year Setup",
                         1,
                         "bx bx-message-square-edit",
                         HRMS_ROUTES.SETUPS.YEAR.permission
@@ -29,7 +29,7 @@ export let sidebarMenu = [
                     generateSidebarItem(
                         HRMS_ROUTES.SETUPS.APPROVAL.path,
                         "link",
-                        "PMS Approval Setup Form ",
+                        "PMS Approval Setup",
                         1,
                         "bx bx-message-square-edit",
                         HRMS_ROUTES.SETUPS.APPROVAL.permission
