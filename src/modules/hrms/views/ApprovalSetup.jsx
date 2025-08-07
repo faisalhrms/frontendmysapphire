@@ -55,11 +55,11 @@ const ApprovalSetup = () => {
 
                 return (
                     <div className="flex items-center gap-1 flex-wrap">
-                        {approvers.map((user, index) => (
-                            <React.Fragment key={user.approver.id || index}>
+                        {approvers.map((approver, index) => (
+                            <React.Fragment key={approver.id || index}>
                                 <Avatar
-                                    avatar={user.approver.avatar || null}
-                                    full_name={user.approver.full_name || 'N/A'}
+                                    avatar={approver.avatar || null}
+                                    full_name={approver.full_name || 'N/A'}
                                     size="sm"
                                     parentClasses="dark:text-gray-200 dark:bg-bodybg"
                                 />
