@@ -4,49 +4,54 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ApproverRow from '@modules/hrms/components/ApprovalSetup/ApproverRow.jsx';
 
-const ApproversFieldArray = ({
-                                 control,
-                                 errors,
-                                 moveApprover,
-                                 addApprover,
-                                 removeApprover
-                             }) => {
-    const { fields } = useFieldArray({
+const ApproversFieldArray = ({ control, errors, setValue }) => {
+    const { fields, append, remove, move } = useFieldArray({
         control,
         name: 'approvers',
     });
 
     const approvers = useWatch({ control, name: 'approvers' }) || [];
 
-    // Memoize fields to prevent unnecessary re-renders
     const memoizedFields = useMemo(() => fields, [fields]);
 
-    // Memoize handlers to prevent child re-renders
     const handleMoveItem = useCallback(
         (fromIndex, toIndex) => {
             if (fromIndex === toIndex) return;
-            moveApprover(fromIndex, toIndex);
+            move(fromIndex, toIndex);
         },
-        [moveApprover]
+        [move]
     );
 
     const handleAddApprover = useCallback(() => {
-        addApprover(approvers.length);
-    }, [addApprover, approvers.length]);
+        append({
+            level: approvers.length + 1,
+            approver_id: null,
+            approverOption: null,
+        });
+    }, [append, approvers.length]);
 
-    const handleRemoveApprover = useCallback((index) => {
-        removeApprover(index);
-    }, [removeApprover]);
+    const handleRemoveApprover = useCallback(
+        (index) => {
+            remove(index);
+        },
+        [remove]
+    );
 
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="space-y-4 mt-4 relative">
                 {memoizedFields.map((field, index) => (
-                    <div key={field.id} className="relative" style={{ zIndex: memoizedFields.length - index }}>
+                    <div
+                        key={field.id}
+                        className="relative"
+                        style={{ zIndex: memoizedFields.length - index }}
+                    >
                         <ApproverRow
+                            field={field}                 // pass the field so child can use stable id
                             index={index}
                             control={control}
                             errors={errors}
+                            setValue={setValue}           // pass setValue
                             onRemove={handleRemoveApprover}
                             onAdd={handleAddApprover}
                             moveItem={handleMoveItem}

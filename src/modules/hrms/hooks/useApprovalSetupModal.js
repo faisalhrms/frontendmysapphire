@@ -90,6 +90,7 @@ export const uploadApprovalSetup = async (formData) => {
     }
 };
 
+
 export const useApprovalSetupModel = (refetch) => {
     const [editId, setEditId] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -98,57 +99,16 @@ export const useApprovalSetupModel = (refetch) => {
         control,
         handleSubmit,
         reset,
-        setValue,
+        setValue,                        // <-- added
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(approvalSetupSchema),
         defaultValues: {
             user_id: 0,
             type: "objective",
-            approvers: [{ level: 1, approver_id: null }],
+            approvers: [{ level: 1, approver_id: null, approverOption: null }], // include approverOption
         },
     });
-
-    const updateApproverLevels = useCallback((approvers) => {
-        return approvers.map((approver, index) => ({
-            ...approver,
-            level: index + 1
-        }));
-    }, []);
-
-    const moveApprover = useCallback((fromIndex, toIndex) => {
-        if (fromIndex === toIndex) return;
-
-        const currentApprovers = control._formValues.approvers || [];
-
-        const newApprovers = [...currentApprovers];
-        const [movedItem] = newApprovers.splice(fromIndex, 1);
-        newApprovers.splice(toIndex, 0, movedItem);
-
-        const updatedApprovers = updateApproverLevels(newApprovers);
-
-        setValue('approvers', updatedApprovers, { shouldValidate: true });
-    }, [control, setValue, updateApproverLevels]);
-
-    const addApprover = useCallback((currentLength) => {
-        const currentApprovers = control._formValues.approvers || [];
-        const newApprover = {
-            level: currentLength + 1,
-            approver_id: null,
-            approverOption: null
-        };
-
-        const updatedApprovers = [...currentApprovers, newApprover];
-        setValue('approvers', updatedApprovers, { shouldValidate: true });
-    }, [control, setValue]);
-
-    const removeApprover = useCallback((index) => {
-        const currentApprovers = control._formValues.approvers || [];
-        const newApprovers = currentApprovers.filter((_, i) => i !== index);
-
-        const updatedApprovers = updateApproverLevels(newApprovers);
-        setValue('approvers', updatedApprovers, { shouldValidate: true });
-    }, [control, setValue, updateApproverLevels]);
 
     const openModal = useCallback(async (id = null, isEdit = false) => {
         setEditId(id);
@@ -210,8 +170,6 @@ export const useApprovalSetupModel = (refetch) => {
     }, [reset]);
 
     const onSubmit = useCallback(async (data) => {
-        console.log(`Data on submission:`, data);
-
         const processedData = {
             ...data,
             approvers: data.approvers.map((approver, index) => ({
@@ -219,7 +177,6 @@ export const useApprovalSetupModel = (refetch) => {
                 approver_id: approver.approver_id
             }))
         };
-
 
         try {
             let res;
@@ -247,10 +204,7 @@ export const useApprovalSetupModel = (refetch) => {
         handleSubmit,
         onSubmit,
         isEditMode,
-        setValue,
-        moveApprover,
-        addApprover,
-        removeApprover,
+        setValue,                    // <-- expose setValue so children can persist approverOption
     };
 };
 

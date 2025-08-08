@@ -28,7 +28,9 @@ const FormAsyncSelect = ({
                              preselectedOptions = [],
                              saveOptionEndpoint = "",
                              allowSaveNewOption = false,
-                             onSelectChange,
+                             onSelectChange,             // existing callback (keeps current behavior)
+                             onChange: onRawChange,      // capture parent onChange if provided (will receive raw option object(s))
+                             onOptionChange,             // explicit new callback that also receives raw option object(s)
                              needObject = false,
                              isClearable = true,
                              ...rest
@@ -124,20 +126,51 @@ const FormAsyncSelect = ({
                 const updated = [...prev, newOption];
                 return Array.from(new Map(updated.map(opt => [opt.value, opt])).values());
             });
+
             if (isMulti) {
                 const updatedValues = [...(field.value || []), newOption.value];
                 field.onChange(updatedValues);
+
+                // Call legacy onSelectChange with the same payload as before
                 if (onSelectChange) {
-                    onSelectChange(updatedValues);
+                    if (needObject) {
+                        const payload = updatedValues.map(val => {
+                            const opt = optionsWithSelected.find(o => o.value === val) || (val === newOption.value ? newOption : null);
+                            return opt ? { id: opt.value, name: opt.label } : { id: val, name: '' };
+                        });
+                        onSelectChange(payload);
+                    } else {
+                        onSelectChange(updatedValues);
+                    }
+                }
+
+                // Notify raw option(s)
+                if (typeof onRawChange === 'function') {
+                    onRawChange([ ...((field.value || []).map(v => optionsWithSelected.find(o=>o.value===v)).filter(Boolean)), newOption ]);
+                }
+                if (typeof onOptionChange === 'function') {
+                    onOptionChange([ ...((field.value || []).map(v => optionsWithSelected.find(o=>o.value===v)).filter(Boolean)), newOption ]);
                 }
             } else {
                 field.onChange(newOption.value);
+
                 if (onSelectChange) {
-                    onSelectChange(newOption.value);
+                    if (needObject) {
+                        onSelectChange({ id: newOption.value, name: newOption.label });
+                    } else {
+                        onSelectChange(newOption.value);
+                    }
+                }
+
+                if (typeof onRawChange === 'function') {
+                    onRawChange(newOption);
+                }
+                if (typeof onOptionChange === 'function') {
+                    onOptionChange(newOption);
                 }
             }
         }
-    }, [saveNewOption, isMulti]);
+    }, [saveNewOption, isMulti, onSelectChange, needObject, onRawChange, onOptionChange, optionsWithSelected]);
 
     return (
         <>
@@ -156,34 +189,49 @@ const FormAsyncSelect = ({
 
                     // Memoized onChange handler
                     const handleChange = useCallback((selectedOption, actionMeta) => {
-                        if (actionMeta.action === 'create-option') {
+                        if (actionMeta && actionMeta.action === 'create-option') {
+                            // creation handled separately
                             handleCreateOption(actionMeta.option.label, field);
                         } else {
                             const selectedValues = isMulti
-                                ? selectedOption.map(opt => opt.value)
-                                : selectedOption?.value;
+                                ? (selectedOption ? selectedOption.map(opt => opt.value) : [])
+                                : (selectedOption ? selectedOption.value : null);
 
+                            // Update local selectedOptions state with actual option objects
                             setSelectedOptions(isMulti
-                                ? selectedOption.map(opt => optionsWithSelected.find(opt2 => opt2.value === opt.value))
+                                ? (selectedOption ? selectedOption.map(opt => optionsWithSelected.find(opt2 => opt2.value === opt.value) || opt) : [])
                                 : selectedOption ? [selectedOption] : []
                             );
 
+                            // Update the field value (IDs)
                             field.onChange(selectedValues);
 
-                        if (onSelectChange) {
-                            if (needObject) {
-                               const payload = isMulti
-                                    ? selectedOption.map(opt => ({ id: opt.value, name: opt.label }))
-                                    : selectedOption
-                                        ? { id: selectedOption.value, name: selectedOption.label }
-                                        : null;
-                                onSelectChange(payload);
-                           } else {
-                                onSelectChange(selectedValues);
+                            // Keep legacy onSelectChange semantics intact
+                            if (onSelectChange) {
+                                if (needObject) {
+                                    const payload = isMulti
+                                        ? (selectedOption ? selectedOption.map(opt => ({ id: opt.value, name: opt.label })) : [])
+                                        : (selectedOption ? { id: selectedOption.value, name: selectedOption.label } : null);
+                                    onSelectChange(payload);
+                                } else {
+                                    onSelectChange(selectedValues);
+                                }
+                            }
+
+                            // **New**: call parent's onChange / onOptionChange with the raw option object(s)
+                            const rawPayload = isMulti
+                                ? (selectedOption ? selectedOption : [])
+                                : (selectedOption ? selectedOption : null);
+
+                            if (typeof onRawChange === 'function') {
+                                try { onRawChange(rawPayload); } catch (e) { console.warn('onChange callback error', e); }
+                            }
+
+                            if (typeof onOptionChange === 'function') {
+                                try { onOptionChange(rawPayload); } catch (e) { console.warn('onOptionChange callback error', e); }
                             }
                         }
-                        }
-                    }, [handleCreateOption, isMulti, onSelectChange, optionsWithSelected, field]);
+                    }, [handleCreateOption, isMulti, onSelectChange, needObject, onRawChange, onOptionChange, optionsWithSelected, field]);
 
                     // Memoized onInputChange handler
                     const handleInputChange = useCallback((inputValue) => {

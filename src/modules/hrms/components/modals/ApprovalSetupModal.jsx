@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
 import FormSelect from '@components/form/FormSelect.jsx';
 import ApproversFieldArray from '@modules/hrms/components/ApprovalSetup/ApproversFieldArray.jsx';
-import {useWatch} from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import FormButton from "@components/form/FormButton.jsx";
 
 const ApprovalSetupModal = ({
@@ -13,14 +13,34 @@ const ApprovalSetupModal = ({
                                 handleSubmit,
                                 onSubmit,
                                 isSubmitting,
-                                moveApprover,      // Add this prop
-                                addApprover,       // Add this prop
-                                removeApprover,    // Add this prop
+                                setValue
                             }) => {
+    // Memoize user from Redux to avoid re-renders when state changes elsewhere
     const user = useSelector((state) => state.auth.user);
-    const company_id = user?.employee?.company?.id;
+    const memoizedUser = useMemo(() => user, [user]);
+
+    // Memoize derived values
+    const company_id = useMemo(
+        () => memoizedUser?.employee?.company?.id,
+        [memoizedUser]
+    );
+
+    // Watch specific field and memoize preselected options
     const userOption = useWatch({ control, name: 'userOption' });
-    const userPre = userOption ? [userOption] : [];
+    const userPre = useMemo(
+        () => (userOption ? [userOption] : []),
+        [userOption]
+    );
+
+    // Memoize API URL and query key
+    const apiUrl = useMemo(
+        () => `/select/users/?company_id=${company_id}`,
+        [company_id]
+    );
+    const queryKeyBase = useMemo(
+        () => `company_${company_id}_users`,
+        [company_id]
+    );
 
     return (
         <div id="approvalSetupModal" className="hs-overlay hidden ti-modal">
@@ -53,8 +73,8 @@ const ApprovalSetupModal = ({
                                         control={control}
                                         errors={errors}
                                         placeholder="User"
-                                        apiUrl={`/select/users/?company_id=${company_id}`}
-                                        queryKeyBase={`company_${company_id}_users`}
+                                        apiUrl={apiUrl}
+                                        queryKeyBase={queryKeyBase}
                                         preselectedOptions={userPre}
                                         is_required={true}
                                     />
@@ -66,8 +86,8 @@ const ApprovalSetupModal = ({
                                         errors={errors}
                                         placeholder="Type"
                                         options={[
-                                            {value: 'objective', label: 'Objective'},
-                                            {value: 'appraisal', label: 'Appraisal'},
+                                            { value: 'objective', label: 'Objective' },
+                                            { value: 'appraisal', label: 'Appraisal' },
                                         ]}
                                         is_required={true}
                                         className="w-full"
@@ -79,14 +99,12 @@ const ApprovalSetupModal = ({
                             <ApproversFieldArray
                                 control={control}
                                 errors={errors}
-                                moveApprover={moveApprover}
-                                addApprover={addApprover}
-                                removeApprover={removeApprover}
+                                setValue={setValue}
                             />
                         </div>
 
                         <div className="ti-modal-footer mt-4">
-                            <FormButton isLoading={isSubmitting}/>
+                            <FormButton isLoading={isSubmitting} />
                         </div>
                     </form>
                 </div>
@@ -95,4 +113,4 @@ const ApprovalSetupModal = ({
     );
 };
 
-export default ApprovalSetupModal;
+export default React.memo(ApprovalSetupModal);

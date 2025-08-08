@@ -8,9 +8,11 @@ import { useDrag, useDrop } from 'react-dnd';
 const ITEM_TYPE = 'APPROVER_ROW';
 
 const ApproverRow = ({
+                         field,
                          index,
                          control,
                          errors,
+                         setValue,
                          onRemove,
                          onAdd,
                          moveItem,
@@ -20,20 +22,17 @@ const ApproverRow = ({
     const user = useSelector((state) => state.auth.user);
     const company_id = user?.employee?.company?.id;
 
-    // Watch specific approver to avoid unnecessary re-renders
+    // watch only this approver
     const approver = useWatch({ control, name: `approvers.${index}` });
     const option = approver?.approverOption;
 
-    // Memoize preselected options
     const pre = useMemo(() => (option ? [option] : []), [option]);
-
-    // Memoize API URL
     const apiUrl = useMemo(() => `/select/users/?company_id=${company_id}`, [company_id]);
     const queryKeyBase = useMemo(() => `company_${company_id}_users`, [company_id]);
 
     const [{ isDragging }, drag] = useDrag({
         type: ITEM_TYPE,
-        item: { index },
+        item: { index, id: field?.id },
         collect: (monitor) => ({
             isDragging: monitor.isDragging()
         }),
@@ -41,23 +40,34 @@ const ApproverRow = ({
 
     const [{ isOver }, drop] = useDrop({
         accept: ITEM_TYPE,
-        hover: (dragged) => {
+        hover: (dragged, monitor) => {
+            if (!ref.current) return;
             const fromIndex = dragged.index;
             const toIndex = index;
-            if (fromIndex !== toIndex) {
-                moveItem(fromIndex, toIndex);
-                dragged.index = toIndex;
-            }
+            if (fromIndex === toIndex) return;
+
+            const hoverBoundingRect = ref.current.getBoundingClientRect();
+            const clientOffset = monitor.getClientOffset();
+            if (!clientOffset) return;
+
+            const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+            // dragging downwards
+            if (fromIndex < toIndex && hoverClientY < hoverMiddleY) return;
+            // dragging upwards
+            if (fromIndex > toIndex && hoverClientY > hoverMiddleY) return;
+
+            moveItem(fromIndex, toIndex);
+            dragged.index = toIndex;
         },
         collect: (monitor) => ({
             isOver: monitor.isOver()
         })
     });
 
-    // Combine drag and drop refs
     drag(drop(ref));
 
-    // Memoize handlers
     const handleAdd = useCallback(() => {
         onAdd();
     }, [onAdd]);
@@ -65,6 +75,16 @@ const ApproverRow = ({
     const handleRemove = useCallback(() => {
         onRemove(index);
     }, [onRemove, index]);
+
+    const handleSelectChange = useCallback((selected) => {
+        // Set both the approver id and the full option so reorders keep the label
+        if (typeof setValue === 'function') {
+            setValue(`approvers.${index}.approver_id`, selected?.value ?? null, { shouldValidate: true, shouldDirty: true });
+            setValue(`approvers.${index}.approverOption`, selected ?? null, { shouldValidate: false, shouldDirty: true });
+        } else {
+            console.warn('setValue not supplied to ApproverRow — approverOption will not persist on moves.');
+        }
+    }, [index, setValue]);
 
     return (
         <div
@@ -94,6 +114,7 @@ const ApproverRow = ({
             {/* Approver Select */}
             <div className="col-span-10 relative z-50">
                 <FormAsyncSelect
+                    key={field?.id ?? index}   // stable identity to avoid mismatches on reorder
                     name={`approvers.${index}.approver_id`}
                     control={control}
                     errors={errors}
@@ -102,6 +123,7 @@ const ApproverRow = ({
                     apiUrl={apiUrl}
                     queryKeyBase={queryKeyBase}
                     preselectedOptions={pre}
+                    onChange={handleSelectChange}   // must be supported by FormAsyncSelect
                 />
             </div>
 
@@ -126,5 +148,4 @@ const ApproverRow = ({
     );
 };
 
-// Memoize the component to prevent unnecessary re-renders
 export default React.memo(ApproverRow);
