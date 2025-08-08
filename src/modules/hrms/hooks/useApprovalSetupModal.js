@@ -90,61 +90,6 @@ export const uploadApprovalSetup = async (formData) => {
     }
 };
 
-// Dedicated hook for drag and drop functionality
-export const useDragDropApprovers = (control, setValue) => {
-    const updateApproverLevels = (approvers) => {
-        return approvers.map((approver, index) => ({
-            ...approver,
-            level: index + 1
-        }));
-    };
-
-    const moveApprover = (fromIndex, toIndex) => {
-        if (fromIndex === toIndex) return;
-
-        // Get current approvers
-        const currentApprovers = control._formValues.approvers || [];
-
-        // Create a new array with the moved item
-        const newApprovers = [...currentApprovers];
-        const [movedItem] = newApprovers.splice(fromIndex, 1);
-        newApprovers.splice(toIndex, 0, movedItem);
-
-        // Update levels based on new positions
-        const updatedApprovers = updateApproverLevels(newApprovers);
-
-        // Set the new array in the form
-        setValue('approvers', updatedApprovers, { shouldValidate: true });
-    };
-
-    const addApprover = (currentLength) => {
-        const currentApprovers = control._formValues.approvers || [];
-        const newApprover = {
-            level: currentLength + 1,
-            approver_id: null,
-            approverOption: null
-        };
-
-        const updatedApprovers = [...currentApprovers, newApprover];
-        setValue('approvers', updatedApprovers, { shouldValidate: true });
-    };
-
-    const removeApprover = (index) => {
-        const currentApprovers = control._formValues.approvers || [];
-        const newApprovers = currentApprovers.filter((_, i) => i !== index);
-
-        // Update levels after removal
-        const updatedApprovers = updateApproverLevels(newApprovers);
-        setValue('approvers', updatedApprovers, { shouldValidate: true });
-    };
-
-    return {
-        moveApprover,
-        addApprover,
-        removeApprover
-    };
-};
-
 export const useApprovalSetupModel = (refetch) => {
     const [editId, setEditId] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -164,7 +109,6 @@ export const useApprovalSetupModel = (refetch) => {
         },
     });
 
-    // Optimized drag and drop functions using useCallback
     const updateApproverLevels = useCallback((approvers) => {
         return approvers.map((approver, index) => ({
             ...approver,
@@ -175,18 +119,14 @@ export const useApprovalSetupModel = (refetch) => {
     const moveApprover = useCallback((fromIndex, toIndex) => {
         if (fromIndex === toIndex) return;
 
-        // Get current approvers
         const currentApprovers = control._formValues.approvers || [];
 
-        // Create a new array with the moved item
         const newApprovers = [...currentApprovers];
         const [movedItem] = newApprovers.splice(fromIndex, 1);
         newApprovers.splice(toIndex, 0, movedItem);
 
-        // Update levels based on new positions
         const updatedApprovers = updateApproverLevels(newApprovers);
 
-        // Set the new array in the form
         setValue('approvers', updatedApprovers, { shouldValidate: true });
     }, [control, setValue, updateApproverLevels]);
 
@@ -206,7 +146,6 @@ export const useApprovalSetupModel = (refetch) => {
         const currentApprovers = control._formValues.approvers || [];
         const newApprovers = currentApprovers.filter((_, i) => i !== index);
 
-        // Update levels after removal
         const updatedApprovers = updateApproverLevels(newApprovers);
         setValue('approvers', updatedApprovers, { shouldValidate: true });
     }, [control, setValue, updateApproverLevels]);
@@ -225,17 +164,14 @@ export const useApprovalSetupModel = (refetch) => {
         if (id && isEdit) {
             const data = await fetchById(id);
             if (data) {
-                // build userOption
                 const userOption = data.user && { value: data.user.id, label: data.user.full_name };
 
-                // Sort approvers by level to ensure correct order
                 const sortedApprovers = [...data.approvers].sort((a, b) => a.level - b.level);
 
-                // build approvers with options
                 const approvers = sortedApprovers.map((item, index) => {
                     const u = data.users.find(u => u.id === item.approver_id);
                     return {
-                        level: index + 1, // Ensure sequential levels
+                        level: index + 1,
                         approver_id: item.approver_id,
                         approverOption: u && { value: u.id, label: u.full_name },
                     };
@@ -250,10 +186,8 @@ export const useApprovalSetupModel = (refetch) => {
             }
         }
 
-        console.log("Opening modal with data:", values);
         reset(values);
 
-        // Use timeout to ensure DOM is ready
         setTimeout(() => {
             const modal = document.getElementById("approvalSetupModal");
             if (modal && window.HSOverlay) {
@@ -268,7 +202,6 @@ export const useApprovalSetupModel = (refetch) => {
             window.HSOverlay.close(modal);
         }
 
-        // Reset form after modal closes
         setTimeout(() => {
             reset();
             setEditId(null);
@@ -279,7 +212,6 @@ export const useApprovalSetupModel = (refetch) => {
     const onSubmit = useCallback(async (data) => {
         console.log(`Data on submission:`, data);
 
-        // Ensure approvers have correct sequential levels before submission
         const processedData = {
             ...data,
             approvers: data.approvers.map((approver, index) => ({
@@ -288,10 +220,9 @@ export const useApprovalSetupModel = (refetch) => {
             }))
         };
 
-        console.log(`Processed data for submission:`, processedData);
 
         try {
-            let res = null;
+            let res;
             if (editId) {
                 res = await update(editId, processedData);
             } else {
@@ -317,7 +248,6 @@ export const useApprovalSetupModel = (refetch) => {
         onSubmit,
         isEditMode,
         setValue,
-        // Drag and drop functions
         moveApprover,
         addApprover,
         removeApprover,
@@ -346,7 +276,7 @@ export const useUploadApprovalSetupModal = (refetch) => {
         if (modal) {
             window.HSOverlay.close(modal);
         }
-        setTimeout(() => setIsUploadModalOut(false), 350);
+        setTimeout(() => setIsUploadModalOpen(false), 350);
     };
 
     const onSubmit = async (data) => {

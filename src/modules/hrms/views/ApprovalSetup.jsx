@@ -7,11 +7,10 @@ import { ArrowRight } from "lucide-react";
 import {useApprovalSetupModel, useUploadApprovalSetupModal} from "@modules/hrms/hooks/useApprovalSetupModal.js";
 import ApprovalSetupModal from "@modules/hrms/components/modals/ApprovalSetupModal.jsx";
 import UploadModal from "@modules/hrms/components/modals/UploadModel.jsx";
+import sampleFile from "@assets/files/pms_approval_upload_sample.xlsx";
 
-// Memoized Avatar component to prevent unnecessary re-renders
 const MemoizedAvatar = React.memo(Avatar);
 
-// Memoized cell components
 const UserCell = React.memo(({ user }) => (
     <div className="flex items-center">
         <MemoizedAvatar
@@ -70,18 +69,14 @@ ActionCell.displayName = 'ActionCell';
 const ApprovalSetup = () => {
     const dataTableRef = React.useRef();
 
-    // Memoized refetch callback
     const refetchCallback = useCallback(() => {
         dataTableRef.current?.refetch();
     }, []);
 
-    // Upload modal hook
     const uploadApprovalSetupModel = useUploadApprovalSetupModal(refetchCallback);
 
-    // Main approval setup hook with drag and drop functionality
     const approvalSetupModel = useApprovalSetupModel(refetchCallback);
 
-    // Destructure all needed properties from the main hook
     const {
         openModal,
         closeModal,
@@ -97,7 +92,6 @@ const ApprovalSetup = () => {
         removeApprover,
     } = approvalSetupModel;
 
-    // Destructure upload modal properties
     const {
         openUploadModal,
         isUploadModalOpen,
@@ -109,7 +103,6 @@ const ApprovalSetup = () => {
         closeUploadModal
     } = uploadApprovalSetupModel;
 
-    // Memoize the openModal callbacks
     const handleOpenModal = useCallback((id = null, isEdit = false) => {
         openModal(id, isEdit);
     }, [openModal]);
@@ -118,11 +111,11 @@ const ApprovalSetup = () => {
         openModal(null, false);
     }, [openModal]);
 
-    // Memoize columns to prevent recreation on every render
     const columns = useMemo(() => [
         {
             Header: 'Name',
             accessor: 'user.full_name',
+            width: 300,
             Cell: ({ row }) => <UserCell user={row.original.user} />
         },
         {
@@ -140,6 +133,7 @@ const ApprovalSetup = () => {
         {
             Header: 'Hierarchy',
             accessor: 'approvers',
+            width: 300,
             Cell: ({ row }) => <HierarchyCell approvers={row.original.approvers || []} />
         },
         {
@@ -166,7 +160,6 @@ const ApprovalSetup = () => {
         },
     ], [handleOpenModal]);
 
-    // Memoize buttons to prevent recreation
     const buttons = useMemo(() => (
         <div className="flex space-x-2">
             <button
@@ -176,18 +169,23 @@ const ApprovalSetup = () => {
             >
                 <i className="ri-add-line font-semibold align-middle"></i>
             </button>
+            <a
+                href={sampleFile}
+                download="sample_upload_tasks_against_milestone.xlsx"
+                className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]"
+            >
+                <i class="ri-file-excel-2-line font-semibold align-middle"></i>
+            </a>
             <button
                 type="button"
                 className="hs-dropdown-toggle ti-btn ti-btn-secondary-full !py-1 !px-2 !text-[0.75rem]"
                 onClick={openUploadModal}
             >
                 <i className="ri-upload-2-line font-semibold align-middle"></i>
-                <span className="ms-1">Upload</span>
             </button>
         </div>
     ), [handleOpenAddModal, openUploadModal]);
 
-    // Memoize modal props to prevent unnecessary re-renders
     const modalProps = useMemo(() => ({
         control,
         errors,
@@ -243,10 +241,8 @@ const ApprovalSetup = () => {
                 buttons={buttons}
             />
 
-            {/* Main Approval Setup Modal with drag and drop functionality */}
             <ApprovalSetupModal {...modalProps} />
 
-            {/* Upload Modal */}
             {isUploadModalOpen && (
                 <UploadModal {...uploadModalProps} />
             )}
@@ -254,5 +250,4 @@ const ApprovalSetup = () => {
     );
 };
 
-// Export memoized component
 export default React.memo(ApprovalSetup);
