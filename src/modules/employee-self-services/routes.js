@@ -40,7 +40,7 @@ export const SELF_SERVICES_ROUTES = {
         },
         OBJECTIVES:{
             path:'/module/ess/objects',
-            permission: "hrms.manage_year_setup_form"
+            //permission: "hrms.manage_year_setup_form"
         }
 
     }

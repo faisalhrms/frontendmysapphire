@@ -56,7 +56,7 @@ export const sidebarMenu = [
                 'Objectives',
                 "bx-book-bookmark",
                 6,
-                SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.permission,
+            //    SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.permission,
             )
 
             ]
