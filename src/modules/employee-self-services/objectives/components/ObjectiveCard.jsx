@@ -11,9 +11,9 @@ const ObjectiveCard = ({
                            canRemove
                        }) => {
     return (
-        <div className="group bg-white rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 hover:border-slate-300 transition-all duration-300 overflow-hidden">
+        <div className="group bg-white rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 hover:border-slate-300 transition-all duration-300 overflow-hidden dark:text-gray-200 dark:bg-bodybg">
             {/* Header Section */}
-            <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200">
+            <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-2">
@@ -22,7 +22,7 @@ const ObjectiveCard = ({
                                 </span>
                             </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-slate-900 tracking-tight">
+                            <h3 className="text-lg font-semibold text-slate-900 tracking-tight ">
                                 Key Result Area {index + 1}
                             </h3>
                             <p className="text-xs text-slate-500 mt-0.5">
@@ -52,7 +52,7 @@ const ObjectiveCard = ({
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2">
                         <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-slate-700 tracking-wide">
+                            <label className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
                                 Key Result Area
                                 <span className="text-red ml-1">*</span>
                             </label>
@@ -69,7 +69,7 @@ const ObjectiveCard = ({
 
                     <div>
                         <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-slate-700 tracking-wide">
+                            <label className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
                                 Weightage (%)
                                 <span className="text-red ml-1">*</span>
                             </label>
@@ -94,11 +94,11 @@ const ObjectiveCard = ({
                 <div className="space-y-3">
                     <div className="flex items-start space-x-2">
                         <div className="flex-1">
-                            <label className="block text-sm font-semibold text-slate-700 tracking-wide">
+                            <label className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
                                 Key Performance Indicators & Objectives
                                 <span className="text-red ml-1">*</span>
                             </label>
-                            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                            <p className="text-xs text-slate-500 mt-1 leading-relaxed dark:text-gray-200 dark:bg-bodybg">
                                 Define specific, measurable, achievable, relevant, and time-bound objectives for this KRA
                             </p>
                         </div>
