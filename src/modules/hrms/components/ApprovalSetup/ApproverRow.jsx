@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
 import { PlusCircle, MinusCircle, GripVertical } from 'lucide-react';
@@ -26,7 +26,22 @@ const ApproverRow = ({
     const approver = useWatch({ control, name: `approvers.${index}` });
     const option = approver?.approverOption;
 
-    const pre = useMemo(() => (option ? [option] : []), [option]);
+    // CRITICAL FIX: Track the immediate selection to prevent reset
+    const [immediateSelection, setImmediateSelection] = useState(null);
+
+    // FIXED: Use immediate selection if available, otherwise use watched option
+    const currentOption = immediateSelection || option;
+
+    // Ensure we always have a valid preselected options array
+    const pre = useMemo(() => {
+        if (!currentOption) return [];
+        // Make sure the option has both value and label
+        if (currentOption && typeof currentOption === 'object' && currentOption.value && currentOption.label) {
+            return [currentOption];
+        }
+        return [];
+    }, [currentOption]);
+
     const apiUrl = useMemo(() => `/select/users/?company_id=${company_id}`, [company_id]);
     const queryKeyBase = useMemo(() => `company_${company_id}_users`, [company_id]);
 
@@ -76,11 +91,40 @@ const ApproverRow = ({
         onRemove(index);
     }, [onRemove, index]);
 
+    // FIXED: Use onOptionChange instead of onChange + handle immediate selection
     const handleSelectChange = useCallback((selected) => {
-        // Set both the approver id and the full option so reorders keep the label
+        console.log('ApproverRow handleSelectChange called with:', selected, 'for index:', index);
+
+        // CRITICAL FIX: Set immediate selection first to prevent reset
+        setImmediateSelection(selected);
+
         if (typeof setValue === 'function') {
-            setValue(`approvers.${index}.approver_id`, selected?.value ?? null, { shouldValidate: true, shouldDirty: true });
-            setValue(`approvers.${index}.approverOption`, selected ?? null, { shouldValidate: false, shouldDirty: true });
+            if (selected) {
+                // When a valid selection is made
+                setValue(`approvers.${index}.approver_id`, selected.value, {
+                    shouldValidate: true,
+                    shouldDirty: true
+                });
+                setValue(`approvers.${index}.approverOption`, selected, {
+                    shouldValidate: false,
+                    shouldDirty: true
+                });
+            } else {
+                // When selection is cleared
+                setValue(`approvers.${index}.approver_id`, null, {
+                    shouldValidate: true,
+                    shouldDirty: true
+                });
+                setValue(`approvers.${index}.approverOption`, null, {
+                    shouldValidate: false,
+                    shouldDirty: true
+                });
+            }
+
+            // Clear immediate selection after a short delay to let useWatch catch up
+            setTimeout(() => {
+                setImmediateSelection(null);
+            }, 100);
         } else {
             console.warn('setValue not supplied to ApproverRow — approverOption will not persist on moves.');
         }
@@ -114,7 +158,7 @@ const ApproverRow = ({
             {/* Approver Select */}
             <div className="col-span-10 relative z-50">
                 <FormAsyncSelect
-                    key={field?.id ?? index}   // stable identity to avoid mismatches on reorder
+                    key={`approver-${field?.id || index}-${approver?.approver_id || 'empty'}`}
                     name={`approvers.${index}.approver_id`}
                     control={control}
                     errors={errors}
@@ -123,7 +167,8 @@ const ApproverRow = ({
                     apiUrl={apiUrl}
                     queryKeyBase={queryKeyBase}
                     preselectedOptions={pre}
-                    onChange={handleSelectChange}   // must be supported by FormAsyncSelect
+                    onOptionChange={handleSelectChange}  // FIXED: Use onOptionChange instead of onChange
+                    isClearable={true}
                 />
             </div>
 
