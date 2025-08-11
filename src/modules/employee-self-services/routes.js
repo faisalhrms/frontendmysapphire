@@ -7,6 +7,10 @@ import DiscountCard from '@modules/employee-self-services/discount-card/views/Di
 import DigitalProfile from '@modules/employee-self-services/my-digital-profile/views/DigitalProfile.jsx';
 import SelfPolicies from "@modules/policies/views/SelfPolicies.jsx";
 import ObjectivesList from "@modules/employee-self-services/objectives/views/ObjectivesList.jsx";
+import CreateObjective from "@modules/employee-self-services/objectives/views/CreateObjective.jsx";
+import EditObjective from "@modules/employee-self-services/objectives/views/EditObjective.jsx";
+import ObjectiveDetail from "@modules/employee-self-services/objectives/views/ObjectiveDetail.jsx";
+import TeamObjectivesList from "@modules/employee-self-services/objectives/views/TeamObjectivesList.jsx";
 export const SELF_SERVICES_ROUTES = {
     SERVICES: {
         READ: {
@@ -39,8 +43,21 @@ export const SELF_SERVICES_ROUTES = {
             permission:'auth.view_public_policies'
         },
         OBJECTIVES:{
-            path:'/module/ess/objects',
-            //permission: "hrms.manage_year_setup_form"
+            LIST: {
+                path:'/module/ess/objectives',
+            },
+            CREATE: {
+                path:'/module/ess/objectives/create',
+            },
+            EDIT: {
+                path: "/module/ess/objectives/edit/:year",
+            },
+            DETAIL: {
+                path: "/module/ess/objectives/detail/:slug",
+            },
+            TEAM: {
+                path: "/module/ess/objectives/team/",
+            },
         }
 
     }
@@ -85,7 +102,23 @@ export const MODULE_ROUTES = [
         permission: SELF_SERVICES_ROUTES.SERVICES.POLICIES.permission
     },
     {
-        path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.path,
+        path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.LIST.path,
         component:ObjectivesList
+    },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.CREATE.path,
+        component: CreateObjective
+    },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.EDIT.path,
+        component: EditObjective
+    },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.DETAIL.path,
+        component: ObjectiveDetail
+    },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.TEAM.path,
+        component: TeamObjectivesList
     }
 ];
