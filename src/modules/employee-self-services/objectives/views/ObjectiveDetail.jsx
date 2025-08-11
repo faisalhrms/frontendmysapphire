@@ -203,21 +203,22 @@ const ObjectiveDetail = () => {
                             </div>
                         )}
                         {activeTab === 'line-manager' && (
-                            <div>
-                                <div >
-                                    <LineMangerProfile actions={timelineActions} />
+                            data?.line_manager_objective ? (
+                                <div>
+                                    <div>
+                                        <LineMangerProfile manager={data?.line_manager_objective?.user} />
+                                    </div>
+                                    <div>
+                                        <LineManger details={data?.line_manager_objective?.details} />
+                                    </div>
                                 </div>
-
-                                <div >
-                                    <LineManger details={data.objective.details} />
-                                </div>
-                            </div>
+                            ) : (
+                                <p>No line manager objective found.</p>
+                            )
                         )}
 
-
-
                     </div>
-                </div>
+                    </div>
                 </div>
             )}
         </>

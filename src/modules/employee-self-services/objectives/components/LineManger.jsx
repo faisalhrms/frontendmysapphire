@@ -3,7 +3,7 @@ import { Target, TrendingUp, Award, Shield } from 'lucide-react';
 import LoadingSpinner from '@components/LoadingSpinner.jsx';
 import EmptyState from '@components/EmptyState.jsx';
 
-const LineManger = ({ details = [], isLoading, isError, error }) => {
+const LineManger = ({ details = []}) => {
     const getWeightageColor = (weightage) => {
         const weight = parseFloat(weightage);
         if (weight >= 30) return 'text-emerald-600 bg-emerald-100';
@@ -31,21 +31,7 @@ const LineManger = ({ details = [], isLoading, isError, error }) => {
                     </div>
                 </div>
             </div>
-
-            {isLoading ? (
-                <div className="p-6 flex justify-center">
-                    <LoadingSpinner />
-                </div>
-            ) : isError ? (
-                <div className="p-6">
-                    <EmptyState
-                        icon={Shield}
-                        heading="Error"
-                        description={error?.message || 'Something went wrong.'}
-                    />
-                </div>
-            ) : (
-                <div className="p-6 space-y-6 dark:text-gray-200 dark:bg-bodybg">
+            <div className="p-6 space-y-6 dark:text-gray-200 dark:bg-bodybg">
                     {details.map((kra, index) => (
                         <div
                             key={index}
@@ -184,7 +170,6 @@ const LineManger = ({ details = [], isLoading, isError, error }) => {
                         </div>
                     </div>
                 </div>
-            )}
         </div>
     );
 };

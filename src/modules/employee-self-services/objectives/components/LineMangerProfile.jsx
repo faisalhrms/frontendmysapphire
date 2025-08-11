@@ -5,12 +5,8 @@ import Avatar from "@components/Avatar.jsx";
 import { Mail, Building, MapPin, User, Star, Shield } from 'lucide-react';
 
 const LineManagerProfile = ({
-                                totalObjectives,
-                                totalWeightage,
-                                coverBg = "bg-success",
-                                coverPadding = "p-6"
+                             manager = null
                             }) => {
-    const userData = useSelector((state) => state.auth.user);
 
     return (
         <div className="xxl:col-span-4 xl:col-span-12 col-span-12 overflow-auto">
@@ -30,11 +26,11 @@ const LineManagerProfile = ({
                         <div className="flex-shrink-0 relative group">
                             <div className="relative">
                                 <Avatar
-                                    avatar={userData.avatar}
+                                    avatar={manager.avatar}
                                     size="xxl"
                                     parentClasses="w-24 h-24 rounded-2xl bg-gradient-to-br from-white to-gray-100 border-4 border-white/30 shadow-2xl backdrop-blur-sm"
                                     backgroundColor="bg-gradient-to-br from-white to-gray-100"
-                                    full_name={userData.full_name || 'N/A'}
+                                    full_name={manager.full_name || 'N/A'}
                                 />
                                 <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl border-4 border-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                                     <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -45,34 +41,18 @@ const LineManagerProfile = ({
                         <div className="flex-grow">
                             <div className="flex items-center gap-3 mb-2">
                                 <h1 className="text-2xl font-bold text-white group-hover:text-blue-100 transition-colors">
-                                    {userData.full_name}
+                                    {manager.full_name}
                                 </h1>
                                 <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold text-white border border-white/30 hover:bg-white/30 transition-colors">
-                                    {userData.employee.emp_code}
+                                    {manager.emp_code}
                                 </span>
                             </div>
 
                             <div className="flex items-center gap-2 mb-4">
                                 <Star className="w-5 h-5 text-blue-200" />
                                 <p className="text-sm text-white/90">
-                                    {userData.employee.position.name}
+                                    {manager.position}
                                 </p>
-                            </div>
-                            
-
-                            <div className="flex flex-wrap gap-6 text-white/80">
-                                <div className="flex items-center gap-3 group/item hover:text-white transition-colors">
-                                    <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover/item:bg-white/30 transition-colors">
-                                        <Building className="w-5 h-5" />
-                                    </div>
-                                    <span className="text-sm">{userData.employee.company.name}</span>
-                                </div>
-                                <div className="flex items-center gap-3 group/item hover:text-white transition-colors">
-                                    <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover/item:bg-white/30 transition-colors">
-                                        <MapPin className="w-5 h-5" />
-                                    </div>
-                                    <span className="text-sm">{userData.employee.location.name}</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -90,21 +70,11 @@ const LineManagerProfile = ({
                                 <Mail className="w-6 h-6 text-white"/>
                             </div>
                             <div className="flex-1">
-                                <span className="text-white/90 text-sm">{userData.email}</span>
+                                <span className="text-white/90 text-sm">{manager.email}</span>
                                 <p className="text-white/60 text-sm">Primary Email</p>
                             </div>
-                            <div className="text-right">
-                                <div className="text-2xl font-bold text-gray-800">
-                                    {userData?.objective?.total_weightage}%
-                                </div>
-                                <div className="text-sm text-white">Total Weightage</div>
-                            </div>
-
-
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
