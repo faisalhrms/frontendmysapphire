@@ -7,16 +7,23 @@ export const useServiceRequest = (initialFilters = {}) => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
-    const fetchServiceData = async () => {
+    let cancelled = false;
+    setServiceRequest(null);
+    (async () => {
       try {
         const data = await serviceRequestData(filters);
-        setServiceRequest(data);
-      } catch (_) {}
+        if (!cancelled) setServiceRequest(data);
+      } catch (_) {
+        if (!cancelled) setServiceRequest({});
+      }
+    })();
+    return () => {
+      cancelled = true;
     };
-    fetchServiceData();
   }, [filters]);
 
   const applyFilters = (newFilters) => {
+    setServiceRequest(null);
     setFilters(newFilters);
   };
 

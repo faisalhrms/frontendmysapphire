@@ -178,7 +178,11 @@ const SrDashboard = () => {
 
     const selRegion = watch('store_region_id')
     const selCity = watch('city_id')
-
+    if (isLoading) {
+        return (
+                <LoadingSpinner/>
+        )
+    }
     return (
         <div className="min-h-screen flex flex-col">
             <div className="flex justify-end space-x-2">
