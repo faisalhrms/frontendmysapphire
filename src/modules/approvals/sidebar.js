@@ -18,6 +18,14 @@ export const sidebarMenu = [
                 '',
                 APPROVAL_ROUTES.TASK.permission,
             ),
+            generateSidebarItem(
+                APPROVAL_ROUTES.OBJECTIVE.path,
+                'link',
+                'Objectives',
+                2,
+                '',
+                '',
+            ),
 
         ]
     ),
