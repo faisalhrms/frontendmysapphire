@@ -8,7 +8,8 @@ const Avatar = ({
                     parentClasses = '',
                     size = 'sm',
                     shape = 'rounded',
-                    id = null
+                    id = null,
+                    backgroundColor = ""
                 }) => {
     const bgColors = ['ti-btn-primary', 'ti-btn-success', 'ti-btn-warning', 'ti-btn-danger', 'ti-btn-info'];
 
@@ -31,7 +32,7 @@ const Avatar = ({
     }, [id, full_name]);
 
     return (
-        <span className={`avatar avatar-${shape} avatar-${size} ${parentClasses}`}>
+        <span className={`avatar avatar-${shape} avatar-${size} ${parentClasses} ${backgroundColor} `}>
             {avatar && avatar?.small_url ? (
                 <img
                     className={classes}

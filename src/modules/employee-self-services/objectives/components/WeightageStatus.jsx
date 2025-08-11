@@ -20,16 +20,16 @@ const WeightageStatus = ({ totalWeightage }) => {
         } else if (totalWeightage > 100) {
             return {
                 status: 'error',
-                bgGradient: 'from-red-500/10 to-rose-500/10',
-                borderColor: 'border-red-200/60',
-                textColor: 'text-red-800',
-                iconColor: 'text-red-600',
-                iconBg: 'bg-red-100',
+                bgGradient: 'from-danger/5 to-rose-500/10',
+                borderColor: 'border-danger/20',
+                textColor: 'text-danger',
+                iconColor: 'text-danger/80',
+                iconBg: 'bg-danger/40',
                 icon: AlertCircle,
                 message: 'Exceeds maximum limit',
-                weightageColor: 'text-red-600',
-                badgeStyle: 'bg-red-100 text-red-700',
-                progressColor: 'bg-red-500'
+                weightageColor: 'text-danger',
+                badgeStyle: 'bg-danger/20 text-danger',
+                progressColor: 'bg-danger'
             };
         } else {
             return {

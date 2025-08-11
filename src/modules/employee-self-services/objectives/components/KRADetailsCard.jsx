@@ -26,13 +26,11 @@ const KRADetailsCard = ({ details }) => {
             </div>
 
             {/* KRA List */}
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-6 dark:text-gray-200 dark:bg-bodybg">
                 {details.map((kra, index) => (
                     <div key={index} className="group bg-slate-50/50 hover:bg-slate-50 rounded-2xl p-6 border border-slate-200/50 hover:border-slate-300/70 transition-all duration-300">
-                        {/* KRA Header */}
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-start space-x-4">
-                                {/* Index Badge */}
                                 <div className="flex-shrink-0">
                                     <div className="relative">
                                         <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg"
@@ -43,12 +41,11 @@ const KRADetailsCard = ({ details }) => {
                                     </div>
                                 </div>
 
-                                {/* KRA Title */}
                                 <div className="flex-1">
                                     <h3 className="text-lg font-semibold text-slate-900 mb-1">
                                         {kra.kra}
                                     </h3>
-                                    <div className="flex items-center space-x-2 text-xs text-slate-500">
+                                    <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">
                                         <Award className="w-3 h-3" />
                                         <span>Key Result Area #{index + 1}</span>
                                     </div>
@@ -65,7 +62,7 @@ const KRADetailsCard = ({ details }) => {
                         {/* KPI Content */}
                         <div className="bg-white rounded-xl p-4 border border-slate-200/60">
                             <div className="flex items-start space-x-3">
-                                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mt-1">
+                                <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-lg flex items-center justify-center mt-1">
                                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -112,7 +109,7 @@ const KRADetailsCard = ({ details }) => {
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200/50">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg">
                                 <Target className="w-6 h-6" />
                             </div>
                             <div>

@@ -13,17 +13,19 @@ import {
     useApprovalHierarchyApprovers
 } from "@modules/employee-self-services/objectives/hooks/useApprovalHierarchyApprovers.js";
 import ObjectiveApprovers from "@modules/employee-self-services/objectives/components/ObjectiveApprovers.jsx";
+import LineManger from "@modules/employee-self-services/objectives/components/LineManger.jsx";
+import LineMangerProfile from "@modules/employee-self-services/objectives/components/LineMangerProfile.jsx";
 
 const ObjectiveDetail = () => {
     const { slug } = useParams();
 
     const { data, isLoading, refetch, isRefetching, isError, error } = useObjectiveDetail(slug);
 
-    const { data: approvers, isLoading: isApproversLoading } = useApprovalHierarchyApprovers(data?.user?.id, 'objective');
+    const { data: approvers, isLoading: isApproversLoading } = useApprovalHierarchyApprovers(data?.objective?.user?.id, 'objective');
 
     const [activeTab, setActiveTab] = useState('overview');
 
-    const timelineActions = data?.actions || [];
+    const timelineActions = data?.objective?.actions || [];
 
     const tabs = [
         {
@@ -38,7 +40,7 @@ const ObjectiveDetail = () => {
             label: 'Key Result Areas',
             icon: Target,
             description: 'Performance objectives',
-            count: data?.details?.length
+            count: data?.objective?.details?.length
         },
         {
             id: 'timeline',
@@ -53,7 +55,15 @@ const ObjectiveDetail = () => {
             icon: Users,
             description: 'Team & approvers',
             count: 3
+        },
+        {
+            id: 'line-manager',
+            label: 'Line Manager',
+            icon: Users,
+            description: 'Manage reporting hierarchy & approvals',
+            count: null
         }
+
     ];
 
 
@@ -61,7 +71,7 @@ const ObjectiveDetail = () => {
         <>
             <IconPageHeader
                 heading="Objective Details"
-                description={`${data && data.year} Performance Review`}
+                description={`${data && data.objective.year} Performance Review`}
                 icon={Target}
                 children={
                     <>
@@ -91,9 +101,9 @@ const ObjectiveDetail = () => {
             ) : (
                 <div
                     className={`min-h-screen transition-all duration-300 bg-gradient-to-br from-slate-50 via-white to-slate-100`}>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 dark:text-gray-200 dark:bg-bodybg">
                         <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                            <ObjectiveDetailHeader data={data}/>
+                            <ObjectiveDetailHeader data={data.objective}/>
                         </div>
 
                         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -106,9 +116,9 @@ const ObjectiveDetail = () => {
                                             <button
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id)}
-                                                className={`relative flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group ${
+                                                className={`relative flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium  group ${
                                                     activeTab === tab.id
-                                                        ? 'bg-gradient-to-r from-green-500 to-indigo-600 text-white shadow-lg shadow-green-500/25'
+                                                        ? 'bg-gradient-to-r bg-success text-gray-800 shadow-lg shadow-success/20'
                                                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                                                 }`}
                                             >
@@ -118,10 +128,10 @@ const ObjectiveDetail = () => {
                                                 <span>{tab.label}</span>
                                                 {tab.count > 0 && (
                                                     <span
-                                                        className={`px-2 py-0.5 rounded-lg text-xs font-semibold transition-colors ${
+                                                        className={`px-2 py-0.5 rounded-lg text-xs font-semibold ${
                                                             activeTab === tab.id
-                                                                ? 'bg-white/20 text-white'
-                                                                : 'bg-slate-200 text-slate-600 group-hover:bg-slate-300'
+                                                                ? 'bg-gray-800  text-white'
+                                                                : 'bg-gray-800 text-white  group-hover:bg-gray-500'
                                                         }`}>
                                                     {tab.count}
                                                 </span>
@@ -140,7 +150,7 @@ const ObjectiveDetail = () => {
                             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                                 <div className="xl:col-span-2 space-y-8">
                                     <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                        <KRADetailsCard details={data.details}/>
+                                        <KRADetailsCard details={data.objective.details}/>
                                     </div>
                                 </div>
                                 <div className="space-y-6">
@@ -156,7 +166,7 @@ const ObjectiveDetail = () => {
                                             <div className="flex justify-between items-center">
                                                 <span className="text-slate-600">Total KRAs</span>
                                                 <span
-                                                    className="font-bold text-indigo-600">{data.details.length}</span>
+                                                    className="font-bold text-indigo-600">{data.objective.details.length}</span>
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-slate-600">Timeline Events</span>
@@ -166,7 +176,7 @@ const ObjectiveDetail = () => {
                                             <div className="flex justify-between items-center">
                                                 <span className="text-slate-600">Current Status</span>
                                                 <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-semibold">
-                                                    {toTitleCase(data.status)}
+                                                    {toTitleCase(data.objective.status)}
                                                 </span>
                                             </div>
                                         </div>
@@ -177,7 +187,7 @@ const ObjectiveDetail = () => {
 
                         {activeTab === 'kras' && (
                             <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                <KRADetailsCard details={data.details}/>
+                                <KRADetailsCard details={data.objective.details}/>
                             </div>
                         )}
 
@@ -192,8 +202,23 @@ const ObjectiveDetail = () => {
                                 <ObjectiveApprovers approvers={approvers} />
                             </div>
                         )}
+                        {activeTab === 'line-manager' && (
+                            data?.line_manager_objective ? (
+                                <div>
+                                    <div>
+                                        <LineMangerProfile manager={data?.line_manager_objective?.user} />
+                                    </div>
+                                    <div>
+                                        <LineManger details={data?.line_manager_objective?.details} />
+                                    </div>
+                                </div>
+                            ) : (
+                                <p>No line manager objective found.</p>
+                            )
+                        )}
+
                     </div>
-                </div>
+                    </div>
                 </div>
             )}
         </>
