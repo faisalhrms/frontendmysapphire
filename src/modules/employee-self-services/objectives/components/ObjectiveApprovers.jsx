@@ -37,7 +37,7 @@ const ObjectiveApprovers = ({ approvers = [] }) => {
                                                     className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-lg"
                                                 />
                                             ) : (
-                                                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                                <div className="w-14 h-14 rounded-full  bg-primary flex items-center justify-center text-white font-bold text-lg shadow-lg">
                                                     {item.approver.full_name
                                                         ?.split(" ")
                                                         .map((n) => n[0])
@@ -45,7 +45,7 @@ const ObjectiveApprovers = ({ approvers = [] }) => {
                                                         .toUpperCase()}
                                                 </div>
                                             )}
-                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-white"></div>
                                         </div>
                                         <div className="flex-1">
                                             <h4 className="font-bold text-slate-900 text-lg">

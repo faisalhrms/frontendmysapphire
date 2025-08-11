@@ -96,7 +96,7 @@ const ObjectivesList = () => {
                             to={`/module/ess/objectives/detail/${slug}`}
                               title="Edit Objective"
                               className="ti-btn ti-btn-primary ti-btn-sm">
-                            <i className="ri-eye"></i>
+                            <i className="ri-eye-line"></i>
                         </Link>
                     </div>
                 );
