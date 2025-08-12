@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from "react-redux";
 import { formatDate } from "@helpers/dateTime.js";
-import { Link } from "react-router-dom";
 import Avatar from "@components/Avatar.jsx";
 
 const ProfileSidebar = ({
@@ -79,13 +78,8 @@ const ProfileSidebar = ({
                                         </span>
                                         {userData.email}
                                     </p>
-
-
                                 </div>
                             </div>
-
-
-
                         </div>
                     </div>
                 </div>

@@ -53,11 +53,7 @@ const ObjectiveForm = ({year = null, editMode = false, active = true,userData}) 
                 <form>
                     <div className="grid grid-cols-12 gap-x-6">
                         {isActive && (
-                            <ProfileSidebar
-                                userData={userData}
-                                totalObjectives={fields.length}
-                                totalWeightage={getTotalWeightage()}
-                            />
+                            <ProfileSidebar />
 
 
                         )}
