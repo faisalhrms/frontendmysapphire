@@ -22,13 +22,14 @@ const ObjectiveForm = ({year = null, editMode = false, active = true,userData}) 
         isWeightageValid,
         handleActionClick,
         onSubmitForApproval,
-        onSaveDraft: saveDraftHandler,
+        onSaveDraft: saveDraftHandler, // rename to avoid conflict
         isModalOpen,
         setIsModalOpen,
         isSubmitting,
     } = useObjectiveForm(year, editMode);
 
     const [isSavingDraft, setIsSavingDraft] = useState(false);
+    const [isSubmittingApproval, setIsSubmittingApproval] = useState(false);
 
     const onSaveDraft = async (data) => {
         try {
@@ -38,6 +39,16 @@ const ObjectiveForm = ({year = null, editMode = false, active = true,userData}) 
             setIsSavingDraft(false);
         }
     };
+
+    const handleApproval = async (data) => {
+        try {
+            setIsSubmittingApproval(true);
+            await handleActionClick(data);
+        } finally {
+            setIsSubmittingApproval(false);
+        }
+    };
+
 
 
     const toggleActive = () => setIsActive(!isActive);
@@ -337,7 +348,13 @@ const ObjectiveForm = ({year = null, editMode = false, active = true,userData}) 
                                                     `}>
                                                         <Target className="w-3 h-3"/>
                                                     </div>
-                                                    {isWeightageValid ? 'Submit for Approval' : 'Complete All Fields : "animate-spin inline-block" : ""'}
+                                                    {isWeightageValid ? (
+                                                        <span className={`${isSubmittingApproval ? "animate-spin inline-block" : ""}`}>
+        Submit for Approval
+    </span>
+                                                    ) : (
+                                                        'Complete All Fields'
+                                                    )}
 
                                                     {isWeightageValid && (
                                                         <div className="ml-2 flex items-center">
