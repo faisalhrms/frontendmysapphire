@@ -34,16 +34,22 @@ const TeamObjectivesList = () => {
             )
         },
         {
-            Header: 'Year',
-            accessor: 'year',
+            Header: "Year",
+            accessor: "year",
             Cell: ({ row }) => {
-                const { slug, year } = row.original;
+                const year = row.original.year;
+                const slug = row.original.slug;
                 return (
-                        <Link
-                            to={`/module/ess/objectives/detail/${slug}`}>
-                            {year}
-                        </Link>
-                )}
+                    <Link
+                        to={`/module/ess/objectives/detail/${slug}`}
+                        title={`View Objective for ${year}`}
+                        className="text-primary hover:underline flex items-center space-x-1"
+                    >
+                        <span className="pl-14">{year}</span>
+                        <ExternalLink className="h-3.5 w-3.5" />
+                    </Link>
+                );
+            },
         },
         {
             Header: 'Status',
