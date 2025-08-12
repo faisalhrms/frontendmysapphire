@@ -132,7 +132,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         placeholder="Physical Location"
                                         apiUrl="/select/equipment/locations/"
                                         queryKeyBase="locations"
-                                        clientSideSearch={true}
+                                        clientSideSearch={false}
                                         preselectedOptions={formatOptions(
                                             equipmentData,
                                             "location",

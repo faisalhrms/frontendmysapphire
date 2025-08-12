@@ -59,6 +59,8 @@ const badgeStyles = {
     waiting_for_quotation: secondary,
     waiting_for_acknowledgement: success,
     waiting_for_approval: danger,
+    draft:primary
+
 };
 
 const statusStyles = {

@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
 import { PlusCircle, MinusCircle, GripVertical } from 'lucide-react';
@@ -8,9 +8,11 @@ import { useDrag, useDrop } from 'react-dnd';
 const ITEM_TYPE = 'APPROVER_ROW';
 
 const ApproverRow = ({
+                         field,
                          index,
                          control,
                          errors,
+                         setValue,
                          onRemove,
                          onAdd,
                          moveItem,
@@ -20,20 +22,32 @@ const ApproverRow = ({
     const user = useSelector((state) => state.auth.user);
     const company_id = user?.employee?.company?.id;
 
-    // Watch specific approver to avoid unnecessary re-renders
+    // watch only this approver
     const approver = useWatch({ control, name: `approvers.${index}` });
     const option = approver?.approverOption;
 
-    // Memoize preselected options
-    const pre = useMemo(() => (option ? [option] : []), [option]);
+    // CRITICAL FIX: Track the immediate selection to prevent reset
+    const [immediateSelection, setImmediateSelection] = useState(null);
 
-    // Memoize API URL
+    // FIXED: Use immediate selection if available, otherwise use watched option
+    const currentOption = immediateSelection || option;
+
+    // Ensure we always have a valid preselected options array
+    const pre = useMemo(() => {
+        if (!currentOption) return [];
+        // Make sure the option has both value and label
+        if (currentOption && typeof currentOption === 'object' && currentOption.value && currentOption.label) {
+            return [currentOption];
+        }
+        return [];
+    }, [currentOption]);
+
     const apiUrl = useMemo(() => `/select/users/?company_id=${company_id}`, [company_id]);
     const queryKeyBase = useMemo(() => `company_${company_id}_users`, [company_id]);
 
     const [{ isDragging }, drag] = useDrag({
         type: ITEM_TYPE,
-        item: { index },
+        item: { index, id: field?.id },
         collect: (monitor) => ({
             isDragging: monitor.isDragging()
         }),
@@ -41,23 +55,34 @@ const ApproverRow = ({
 
     const [{ isOver }, drop] = useDrop({
         accept: ITEM_TYPE,
-        hover: (dragged) => {
+        hover: (dragged, monitor) => {
+            if (!ref.current) return;
             const fromIndex = dragged.index;
             const toIndex = index;
-            if (fromIndex !== toIndex) {
-                moveItem(fromIndex, toIndex);
-                dragged.index = toIndex;
-            }
+            if (fromIndex === toIndex) return;
+
+            const hoverBoundingRect = ref.current.getBoundingClientRect();
+            const clientOffset = monitor.getClientOffset();
+            if (!clientOffset) return;
+
+            const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+            // dragging downwards
+            if (fromIndex < toIndex && hoverClientY < hoverMiddleY) return;
+            // dragging upwards
+            if (fromIndex > toIndex && hoverClientY > hoverMiddleY) return;
+
+            moveItem(fromIndex, toIndex);
+            dragged.index = toIndex;
         },
         collect: (monitor) => ({
             isOver: monitor.isOver()
         })
     });
 
-    // Combine drag and drop refs
     drag(drop(ref));
 
-    // Memoize handlers
     const handleAdd = useCallback(() => {
         onAdd();
     }, [onAdd]);
@@ -65,6 +90,45 @@ const ApproverRow = ({
     const handleRemove = useCallback(() => {
         onRemove(index);
     }, [onRemove, index]);
+
+    // FIXED: Use onOptionChange instead of onChange + handle immediate selection
+    const handleSelectChange = useCallback((selected) => {
+        console.log('ApproverRow handleSelectChange called with:', selected, 'for index:', index);
+
+        // CRITICAL FIX: Set immediate selection first to prevent reset
+        setImmediateSelection(selected);
+
+        if (typeof setValue === 'function') {
+            if (selected) {
+                // When a valid selection is made
+                setValue(`approvers.${index}.approver_id`, selected.value, {
+                    shouldValidate: true,
+                    shouldDirty: true
+                });
+                setValue(`approvers.${index}.approverOption`, selected, {
+                    shouldValidate: false,
+                    shouldDirty: true
+                });
+            } else {
+                // When selection is cleared
+                setValue(`approvers.${index}.approver_id`, null, {
+                    shouldValidate: true,
+                    shouldDirty: true
+                });
+                setValue(`approvers.${index}.approverOption`, null, {
+                    shouldValidate: false,
+                    shouldDirty: true
+                });
+            }
+
+            // Clear immediate selection after a short delay to let useWatch catch up
+            setTimeout(() => {
+                setImmediateSelection(null);
+            }, 100);
+        } else {
+            console.warn('setValue not supplied to ApproverRow — approverOption will not persist on moves.');
+        }
+    }, [index, setValue]);
 
     return (
         <div
@@ -94,6 +158,7 @@ const ApproverRow = ({
             {/* Approver Select */}
             <div className="col-span-10 relative z-50">
                 <FormAsyncSelect
+                    key={`approver-${field?.id || index}-${approver?.approver_id || 'empty'}`}
                     name={`approvers.${index}.approver_id`}
                     control={control}
                     errors={errors}
@@ -102,6 +167,8 @@ const ApproverRow = ({
                     apiUrl={apiUrl}
                     queryKeyBase={queryKeyBase}
                     preselectedOptions={pre}
+                    onOptionChange={handleSelectChange}  // FIXED: Use onOptionChange instead of onChange
+                    isClearable={true}
                 />
             </div>
 
@@ -126,5 +193,4 @@ const ApproverRow = ({
     );
 };
 
-// Memoize the component to prevent unnecessary re-renders
 export default React.memo(ApproverRow);

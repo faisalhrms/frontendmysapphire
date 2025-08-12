@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
+import React, { useEffect, useLayoutEffect, useRef, useState, useMemo } from "react"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -26,7 +26,8 @@ export default function ChatBot() {
     startVoice,
     autoResize,
     setModeSelection,
-    setModeOpen
+    setModeOpen,
+    streamTick
   } = useChatBot()
 
   const currentUser = useSelector(s => s.auth.user)
@@ -47,19 +48,28 @@ export default function ChatBot() {
     }
   }, [])
 
-  const scrollToBottom = (smooth = true) => {
-    const c = psContainerRef.current
-    if (c) c.scrollTop = c.scrollHeight
-    if (endRef.current) endRef.current.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "end" })
-  }
+ const scrollToBottom = (smooth = true) => {
+   const c = psContainerRef.current
+   if (!c) return
+   const nearBottom = c.scrollHeight - c.scrollTop - c.clientHeight < 120
+   if (nearBottom) {
+     c.scrollTo({ top: c.scrollHeight, behavior: smooth ? "smooth" : "auto" })
+   }
+ }
 
   useEffect(() => {
     scrollToBottom(false)
   }, [])
 
-  useEffect(() => {
-    scrollToBottom(true)
-  }, [messages.length, isThinking, isWebSearch])
+useEffect(() => {
+  scrollToBottom(true)
+}, [messages.length])
+
+useEffect(() => {
+  scrollToBottom(false)
+}, [streamTick])
+
+  const hasLoadingBot = useMemo(() => messages.some(m => m.type === "bot" && m.loading), [messages])
 
   if (!isBotActive) {
     return (
@@ -99,9 +109,8 @@ export default function ChatBot() {
       <div className="flex-1 min-h-0 overflow-hidden">
         <PerfectScrollbar className="h-full" containerRef={ref => (psContainerRef.current = ref)}>
           <ul className="px-16 py-4 space-y-6" style={{ paddingBottom: dockH + 16 }}>
-            {messages.map((m, i) => {
-              if (m.type === "bot" && m.loading && !isWebSearch) return null
-              return m.type === "bot" ? (
+            {messages.map((m, i) => (
+              m.type === "bot" ? (
                 <li key={i} className="space-y-1">
                   <div className="flex items-center gap-2">
                     {m.loading ? (
@@ -114,26 +123,13 @@ export default function ChatBot() {
                       {m.time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
-                  {m.loading && isWebSearch ? (
-                    <div className="ml-8 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg px-4 py-3 max-w-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-500">Searching the web</span>
-                        <i className="ri-earth-line animate-spin text-sky-800"></i>
-                      </div>
-                    </div>
-                  ) : (
-                    !m.loading && (
-                      <div className="ml-8 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-lg">
-                        {m.table ? (
-                          <div className="overflow-x-auto"></div>
-                        ) : m.html ? (
-                          <div dangerouslySetInnerHTML={{ __html: m.html }} />
-                        ) : (
-                          <p>{m.text}</p>
-                        )}
-                      </div>
-                    )
-                  )}
+                <div className="ml-8 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 w-full max-w-lg main-chat-msg prose dark:prose-invert">                    {m.html
+                      ? <div dangerouslySetInnerHTML={{ __html: m.html }} />
+                      : <div className="whitespace-pre-line break-words">
+                          <span>{m.text || (m.loading ? "Thinking…" : "")}</span>
+                          {m.loading && <span className="animate-pulse">▌</span>}
+                        </div>}
+                  </div>
                 </li>
               ) : (
                 <li key={i} className="flex justify-end items-start space-x-3">
@@ -152,8 +148,8 @@ export default function ChatBot() {
                   </div>
                 </li>
               )
-            })}
-            {isThinking && !isWebSearch && (
+            ))}
+            {!hasLoadingBot && isThinking && !isWebSearch && (
               <li className="space-y-1">
                 <div className="flex items-center gap-2">
                   <LottieLoader animationData={botLoading} width={40} height={40} speed={1} opacity={1} />

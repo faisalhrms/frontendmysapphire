@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useQuery } from '@tanstack/react-query';
@@ -28,7 +28,9 @@ const FormAsyncSelect = ({
                              preselectedOptions = [],
                              saveOptionEndpoint = "",
                              allowSaveNewOption = false,
-                             onSelectChange,
+                             onSelectChange,             // existing callback (keeps current behavior)
+                             onChange: onRawChange,      // capture parent onChange if provided (will receive raw option object(s))
+                             onOptionChange,             // explicit new callback that also receives raw option object(s)
                              needObject = false,
                              isClearable = true,
                              ...rest
@@ -38,6 +40,10 @@ const FormAsyncSelect = ({
     const [allOptions, setAllOptions] = useState([]);
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState(preselectedOptions);
+    const [isUserInteracting, setIsUserInteracting] = useState(false); // NEW: Track user interaction
+
+    // Use ref to track previous preselectedOptions to avoid unnecessary updates
+    const prevPreselectedRef = useRef(preselectedOptions);
 
     // Debounced search handler
     const debouncedSetSearch = useMemo(
@@ -52,10 +58,24 @@ const FormAsyncSelect = ({
         };
     }, [debouncedSetSearch]);
 
-    // Update selected options when preselectedOptions change
+    // FIXED: Better handling of preselectedOptions changes - prevent race condition
     useEffect(() => {
-        setSelectedOptions(preselectedOptions);
-    }, [preselectedOptions]);
+        // Only update if user is not currently interacting with the component
+        if (isUserInteracting) {
+            console.log('FormAsyncSelect: Skipping preselectedOptions update - user is interacting');
+            return;
+        }
+
+        // Deep comparison to avoid unnecessary updates
+        const currentOptionsStr = JSON.stringify(preselectedOptions?.map(opt => ({ value: opt?.value, label: opt?.label })) || []);
+        const prevOptionsStr = JSON.stringify(prevPreselectedRef.current?.map(opt => ({ value: opt?.value, label: opt?.label })) || []);
+
+        if (currentOptionsStr !== prevOptionsStr) {
+            console.log('FormAsyncSelect: preselectedOptions changed from', prevPreselectedRef.current, 'to', preselectedOptions);
+            setSelectedOptions(preselectedOptions);
+            prevPreselectedRef.current = preselectedOptions;
+        }
+    }, [preselectedOptions, isUserInteracting]);
 
     // Fetch options from API
     const fetchOptions = useCallback(async (searchTerm) => {
@@ -95,12 +115,22 @@ const FormAsyncSelect = ({
             : options;
     }, [clientSideSearch, allOptions, options, search]);
 
-    // Ensure selected options are included in the options list
+    // FIXED: Ensure selected options are included in the options list
     const optionsWithSelected = useMemo(() => {
-        const uniqueOptions = new Map(filteredOptions.map(opt => [opt.value, opt]));
-        selectedOptions.forEach(opt => {
+        const uniqueOptions = new Map();
+
+        // Add filtered options first
+        filteredOptions.forEach(opt => {
             if (opt && opt.value) uniqueOptions.set(opt.value, opt);
         });
+
+        // Add selected options (this ensures they're always available)
+        selectedOptions.forEach(opt => {
+            if (opt && opt.value && opt.label) {
+                uniqueOptions.set(opt.value, opt);
+            }
+        });
+
         return Array.from(uniqueOptions.values());
     }, [filteredOptions, selectedOptions]);
 
@@ -124,20 +154,51 @@ const FormAsyncSelect = ({
                 const updated = [...prev, newOption];
                 return Array.from(new Map(updated.map(opt => [opt.value, opt])).values());
             });
+
             if (isMulti) {
                 const updatedValues = [...(field.value || []), newOption.value];
                 field.onChange(updatedValues);
+
+                // Call legacy onSelectChange with the same payload as before
                 if (onSelectChange) {
-                    onSelectChange(updatedValues);
+                    if (needObject) {
+                        const payload = updatedValues.map(val => {
+                            const opt = optionsWithSelected.find(o => o.value === val) || (val === newOption.value ? newOption : null);
+                            return opt ? { id: opt.value, name: opt.label } : { id: val, name: '' };
+                        });
+                        onSelectChange(payload);
+                    } else {
+                        onSelectChange(updatedValues);
+                    }
+                }
+
+                // Notify raw option(s)
+                if (typeof onRawChange === 'function') {
+                    onRawChange([ ...((field.value || []).map(v => optionsWithSelected.find(o=>o.value===v)).filter(Boolean)), newOption ]);
+                }
+                if (typeof onOptionChange === 'function') {
+                    onOptionChange([ ...((field.value || []).map(v => optionsWithSelected.find(o=>o.value===v)).filter(Boolean)), newOption ]);
                 }
             } else {
                 field.onChange(newOption.value);
+
                 if (onSelectChange) {
-                    onSelectChange(newOption.value);
+                    if (needObject) {
+                        onSelectChange({ id: newOption.value, name: newOption.label });
+                    } else {
+                        onSelectChange(newOption.value);
+                    }
+                }
+
+                if (typeof onRawChange === 'function') {
+                    onRawChange(newOption);
+                }
+                if (typeof onOptionChange === 'function') {
+                    onOptionChange(newOption);
                 }
             }
         }
-    }, [saveNewOption, isMulti]);
+    }, [saveNewOption, isMulti, onSelectChange, needObject, onRawChange, onOptionChange, optionsWithSelected]);
 
     return (
         <>
@@ -154,36 +215,81 @@ const FormAsyncSelect = ({
                     const value = isMulti ? (Array.isArray(field.value) ? field.value : []) : field.value;
                     const SelectComponent = allowSaveNewOption ? MemoizedCreatableSelect : MemoizedSelect;
 
-                    // Memoized onChange handler
+                    // FIXED: Enhanced onChange handler with race condition prevention
                     const handleChange = useCallback((selectedOption, actionMeta) => {
-                        if (actionMeta.action === 'create-option') {
+                        console.log('FormAsyncSelect handleChange called with:', selectedOption, actionMeta?.action, 'for field:', name);
+
+                        // Mark that user is interacting to prevent preselectedOptions interference
+                        setIsUserInteracting(true);
+
+                        if (actionMeta && actionMeta.action === 'create-option') {
+                            // creation handled separately
                             handleCreateOption(actionMeta.option.label, field);
-                        } else {
-                            const selectedValues = isMulti
-                                ? selectedOption.map(opt => opt.value)
-                                : selectedOption?.value;
+                            // Reset interaction flag after a delay
+                            setTimeout(() => setIsUserInteracting(false), 100);
+                            return;
+                        }
 
-                            setSelectedOptions(isMulti
-                                ? selectedOption.map(opt => optionsWithSelected.find(opt2 => opt2.value === opt.value))
-                                : selectedOption ? [selectedOption] : []
-                            );
+                        // Handle different action types
+                        const isClearing = actionMeta?.action === 'clear' || actionMeta?.action === 'select-option' && selectedOption === null;
 
-                            field.onChange(selectedValues);
+                        const selectedValues = isMulti
+                            ? (selectedOption ? selectedOption.map(opt => opt.value) : [])
+                            : (selectedOption ? selectedOption.value : null);
 
+                        // CRITICAL FIX: Update selectedOptions immediately to prevent reset
+                        const newSelectedOptions = isMulti
+                            ? (selectedOption || [])
+                            : (selectedOption ? [selectedOption] : []);
+
+                        setSelectedOptions(newSelectedOptions);
+
+                        // Update the field value (IDs) - this will trigger useWatch and preselectedOptions change
+                        field.onChange(selectedValues);
+
+                        console.log('FormAsyncSelect: Setting field value to:', selectedValues);
+
+                        // Keep legacy onSelectChange semantics intact
                         if (onSelectChange) {
                             if (needObject) {
-                               const payload = isMulti
-                                    ? selectedOption.map(opt => ({ id: opt.value, name: opt.label }))
-                                    : selectedOption
-                                        ? { id: selectedOption.value, name: selectedOption.label }
-                                        : null;
+                                const payload = isMulti
+                                    ? (selectedOption ? selectedOption.map(opt => ({ id: opt.value, name: opt.label })) : [])
+                                    : (selectedOption ? { id: selectedOption.value, name: selectedOption.label } : null);
                                 onSelectChange(payload);
-                           } else {
+                            } else {
                                 onSelectChange(selectedValues);
                             }
                         }
+
+                        // **Enhanced**: call parent's onChange / onOptionChange with the raw option object(s)
+                        const rawPayload = isMulti
+                            ? (selectedOption || [])
+                            : (selectedOption || null);
+
+                        if (typeof onRawChange === 'function') {
+                            try {
+                                onRawChange(rawPayload);
+                            } catch (e) {
+                                console.warn('onChange callback error', e);
+                            }
                         }
-                    }, [handleCreateOption, isMulti, onSelectChange, optionsWithSelected, field]);
+
+                        if (typeof onOptionChange === 'function') {
+                            try {
+                                console.log('FormAsyncSelect: Calling onOptionChange with:', rawPayload);
+                                onOptionChange(rawPayload);
+                            } catch (e) {
+                                console.warn('onOptionChange callback error', e);
+                            }
+                        }
+
+                        // Reset interaction flag after callbacks complete
+                        setTimeout(() => {
+                            setIsUserInteracting(false);
+                            console.log('FormAsyncSelect: User interaction completed for field:', name);
+                        }, 50);
+
+                    }, [handleCreateOption, isMulti, onSelectChange, needObject, onRawChange, onOptionChange, field, name]);
 
                     // Memoized onInputChange handler
                     const handleInputChange = useCallback((inputValue) => {
@@ -194,11 +300,25 @@ const FormAsyncSelect = ({
                         }
                     }, [clientSideSearch, debouncedSetSearch]);
 
-                    // Determine the current value for the select component
+                    // FIXED: Better selectValue calculation with proper logging
                     const selectValue = useMemo(() => {
-                        return isMulti
-                            ? optionsWithSelected.filter(option => value.includes(option.value))
-                            : optionsWithSelected.find(option => option.value === value) || null;
+                        if (isMulti) {
+                            if (!Array.isArray(value) || value.length === 0) {
+                                console.log('FormAsyncSelect: Multi-select with empty value:', value);
+                                return [];
+                            }
+                            const result = optionsWithSelected.filter(option => value.includes(option.value));
+                            console.log('FormAsyncSelect: Multi-select value:', value, 'matched options:', result);
+                            return result;
+                        } else {
+                            if (value === null || value === undefined || value === '') {
+                                console.log('FormAsyncSelect: Single-select with empty value:', value);
+                                return null;
+                            }
+                            const result = optionsWithSelected.find(option => option.value === value) || null;
+                            console.log('FormAsyncSelect: Single-select value:', value, 'matched option:', result, 'from options:', optionsWithSelected);
+                            return result;
+                        }
                     }, [isMulti, optionsWithSelected, value]);
 
                     return (

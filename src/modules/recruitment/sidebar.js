@@ -17,7 +17,7 @@ export const sidebarMenu = [
             'Applicant List',
             1,
             'bx-laptop',
-            DAILYREPORT_ROUTES.READ.permission
+            RECRUITMENTS_ROUTES.READ.permission
         ),
 
 

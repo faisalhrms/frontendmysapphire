@@ -17,7 +17,7 @@ const SlaDonut = ({ onTime, overDue, onLegendClick }) => {
       }
     },
     labels: ['On Time', 'Overdue'],
-    colors: ['#44528f', '#912238'],
+    colors: ['#3b82f6', '#ef4444'],
     plotOptions: {
       pie: {
         donut: { size: '75%' },
@@ -43,7 +43,7 @@ const SlaDonut = ({ onTime, overDue, onLegendClick }) => {
           onLegendClick(seriesIndex)
         }
       },
-      labels: { colors: ['#44528f', '#912238'] }
+      labels: { colors: ['#3b82f6', '#ef4444'] }
     }
   }
 

@@ -9,7 +9,7 @@ export const HRMS_ROUTES = {
     },
     APPROVAL: {
       path: "/module/hrms/setups/approval-hierarchy",
-      permission: "hrms.manage_year_setup_form"
+      permission: "hrms.manage_approval_hierarchy_form"
     }
   },
 };

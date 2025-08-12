@@ -151,7 +151,7 @@ function handleModal(isOpen, id) {
         if (isOpen) {
             window.HSOverlay.open(modal);
         } else {
-            window.HSOverlay.close(modal);
+            window.HSOverlay.close(modal, { removeBackdrop: true });
         }
     }
 }
