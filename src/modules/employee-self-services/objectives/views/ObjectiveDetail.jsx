@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Eye, Target, Clock, Users, Shield, RefreshCw, Share2} from 'lucide-react';
+import {Eye, Target, Clock, Users, Shield, RefreshCw, User} from 'lucide-react';
 import ObjectiveDetailHeader from "@modules/employee-self-services/objectives/components/ObjectiveDetailHeader.jsx";
 import KRADetailsCard from "@modules/employee-self-services/objectives/components/KRADetailsCard.jsx";
 import ActionTimeline from "@modules/employee-self-services/objectives/components/ActionTimeline.jsx";
@@ -58,9 +58,9 @@ const ObjectiveDetail = () => {
         },
         {
             id: 'line-manager',
-            label: 'Line Manager',
-            icon: Users,
-            description: 'Manage reporting hierarchy & approvals',
+            label: 'Line Manager Key Result Areas',
+            icon: User,
+            description: 'Line Manager Key Result Areas',
             count: null
         }
 
@@ -212,9 +212,9 @@ const ObjectiveDetail = () => {
                                 </div>
                             ) : (
                                 <EmptyState
-                                    icon={Shield}
-                                    heading="Error"
-                                    description={error?.message || "No line manager objective found."}
+                                    icon={User}
+                                    heading="Line Manager Key Result Areas"
+                                    description={error?.message || "Line Manager have not yet added Key Result Areas."}
                                 />
                             )
                         )}
