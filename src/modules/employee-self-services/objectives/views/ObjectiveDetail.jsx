@@ -13,7 +13,7 @@ import {
     useApprovalHierarchyApprovers
 } from "@modules/employee-self-services/objectives/hooks/useApprovalHierarchyApprovers.js";
 import ObjectiveApprovers from "@modules/employee-self-services/objectives/components/ObjectiveApprovers.jsx";
-import LineManger from "@modules/employee-self-services/objectives/components/LineManger.jsx";
+import LineMangerObjective from "@modules/employee-self-services/objectives/components/LineMangerObjective.jsx";
 import LineMangerProfile from "@modules/employee-self-services/objectives/components/LineMangerProfile.jsx";
 
 const ObjectiveDetail = () => {
@@ -143,9 +143,7 @@ const ObjectiveDetail = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* Dynamic Content Area */}
-                    <div className="space-y-8">
+                        <div className="space-y-8">
                         {activeTab === 'overview' && (
                             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                                 <div className="xl:col-span-2 space-y-8">
@@ -205,17 +203,22 @@ const ObjectiveDetail = () => {
                         {activeTab === 'line-manager' && (
                             data?.line_manager_objective ? (
                                 <div>
-                                    <div>
+                                    <div className="mb-4">
                                         <LineMangerProfile manager={data?.line_manager_objective?.user} />
                                     </div>
                                     <div>
-                                        <LineManger details={data?.line_manager_objective?.details} />
+                                        <LineMangerObjective details={data?.line_manager_objective?.details} />
                                     </div>
                                 </div>
                             ) : (
-                                <p>No line manager objective found.</p>
+                                <EmptyState
+                                    icon={Shield}
+                                    heading="Error"
+                                    description={error?.message || "No line manager objective found."}
+                                />
                             )
                         )}
+
 
                     </div>
                     </div>

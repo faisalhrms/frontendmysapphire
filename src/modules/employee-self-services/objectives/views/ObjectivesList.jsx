@@ -127,7 +127,7 @@ const ObjectivesList = () => {
                 columns={columns}
                 apiUrl="/hrms/objectives/datatable/"
                 needHeader={false}
-                enableAdvancedFilters={true}
+                enableAdvancedFilters={false}
                 buttons={buttons}
             />
         </>

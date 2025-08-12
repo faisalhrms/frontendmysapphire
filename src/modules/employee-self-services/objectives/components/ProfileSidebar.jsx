@@ -3,11 +3,9 @@ import { useSelector } from "react-redux";
 import { formatDate } from "@helpers/dateTime.js";
 import { Link } from "react-router-dom";
 import Avatar from "@components/Avatar.jsx";
-import {Calendar, Target, User} from "lucide-react";
 
 const ProfileSidebar = ({
-                            totalObjectives,
-                            totalWeightage,
+
                             coverBg = "bg-success",
                             coverPadding = "p-6"
                         }) => {
@@ -17,99 +15,148 @@ const ProfileSidebar = ({
         <div className="xxl:col-span-4 xl:col-span-12 col-span-12 sticky top-0 h-screen overflow-auto">
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="xxl:col-span-5 xl:col-span-12 col-span-12">
-                    <div className="relative">
-                        <div className="absolute inset-0 opacity-5"
-                             style={{background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)'}}></div>
-                        <div className="relative px-8 py-8">
-                            <div className="flex items-start justify-between">
-                                {/* Left Section - User Info */}
-                                <div className="flex items-start space-x-6">
-                                    {/* Avatar */}
-                                    <div className="flex-shrink-0">
-                                        <div className="relative">
-                                            {data.user.avatar ? (
-                                                <img
-                                                    src={data.user.avatar.medium_url}
-                                                    alt={data.user.full_name}
-                                                    className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-lg"
-                                                />
-                                            ) : (
-                                                <div
-                                                    className="w-20 h-20 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg"
-                                                    style={{background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)'}}>
-                                                    {data.user.full_name.split(' ').map(n => n[0]).join('')}
-                                                </div>
-                                            )}
-                                            <div
-                                                className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-lg">
-                                                <Target className="w-4 h-4 text-blue-600"/>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div className="box overflow-hidden">
+                        <div className="box-body !p-0">
 
-                                    {/* User Details */}
-                                    <div className="flex-1">
-                                        <div className="mb-3">
-                                            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-                                                Performance Objectives {data.year}
-                                            </h1>
-                                            <p className="text-slate-600 mt-1">
-                                                Annual Key Result Areas & Performance Indicators
+                            <div  className={`flex items-start gap-4 ${coverPadding} `}    style={{background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)'}}>
+                                <div className="flex-shrink-0">
+                                    <Avatar
+                                        avatar={userData.avatar}
+                                        size="xxl"
+                                        parentClasses="me-4 p-1"
+                                        backgroundColor="bg-white border"
+                                        full_name={userData.full_name || 'N/A'}
+                                    />
+                                </div>
+
+                                <div className="flex-grow main-profile-info">
+                                    <div className="flex items-center justify-between">
+                                        <h6 className="font-semibold mb-1 text-white text-[1rem]">
+                                            {userData.full_name} ({userData.employee.emp_code})
+                                        </h6>
+                                    </div>
+                                    <p className="mb-1 text-white opacity-70">
+                                        {userData.employee.position.name}
+                                    </p>
+                                    <p className="text-[0.75rem] text-white mb-6 opacity-50">
+                                        <span className="me-4 inline-flex">
+                                            <i className="ri-building-line me-1 align-middle"></i>
+                                            {userData.employee.company.name}
+                                        </span>
+                                        <span className="inline-flex">
+                                            <i className="ri-map-pin-line me-1 align-middle"></i>
+                                            {userData.employee.location.name}
+                                        </span>
+                                    </p>
+                                    <div className="flex mb-0">
+                                        <div className="me-6">
+                                            <p className="font-bold text-[1rem] text-white text-shadow mb-0">
+                                                {formatDate(userData.employee.service_started_at)}
+                                            </p>
+                                            <p className="mb-0 text-[.6875rem] opacity-50 text-white">
+                                                Service started date
                                             </p>
                                         </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                            <div className="flex items-center space-x-3">
-                                                <div
-                                                    className="w-10 h-10 bg-info/50 rounded-xl flex items-center justify-center">
-                                                    <User className="w-5 h-5 text-info"/>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-slate-500">Employee</p>
-                                                    <p className="font-semibold text-slate-900">{data.user.full_name}</p>
-                                                    <p className="text-xs text-slate-500">{data.user.emp_code} • {data.user.position}</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center space-x-3">
-                                                <div
-                                                    className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                                                    <Calendar className="w-5 h-5 text-emerald-600"/>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-slate-500">Department</p>
-                                                    <p className="font-semibold text-slate-900">{data.user.department}</p>
-                                                    <p className="text-xs text-slate-500">{data.user.designation}</p>
-                                                </div>
-                                            </div>
+                                        <div className="me-6">
+                                            <p className="font-bold text-[1rem] text-white text-shadow mb-0">
+                                                {userData.is_active ? "Active" : "Not Active"}
+                                            </p>
+                                            <p className="mb-0 text-[.6875rem] opacity-50 text-white">
+                                                Service status
+                                            </p>
                                         </div>
                                     </div>
-                                </div>
-
-                                {/* Right Section - Status & Actions */}
-                                <div className="flex flex-col items-end space-y-4">
-                                    {/* Status Badge */}
-                                    <div
-                                        className={`flex items-center space-x-2 px-4 py-2 rounded-xl border ${statusConfig.color}`}>
-                                        <StatusIcon className={`w-4 h-4 ${statusConfig.iconColor}`}/>
-                                        <span className="font-semibold text-sm">{statusConfig.label}</span>
-                                    </div>
-
-                                    {/* Quick Stats */}
-                                    <div className="text-right">
-                                        <div className="text-2xl font-bold text-slate-900">{data.total_weightage}%</div>
-                                        <div className="text-sm text-slate-500">Total Weightage</div>
-                                    </div>
-
-                                    {/* Current Approver */}
-                                    {data.current_approver && (
-                                        <div className="text-right">
-                                            <p className="text-xs text-slate-500">Pending Approval</p>
-                                            <p className="font-semibold text-sm text-slate-900">{data.current_approver.full_name}</p>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
+
+                            {/* Contact Information */}
+                            <div className="p-6 border-b border-dashed dark:border-defaultborder/10">
+                                <p className="text-[.9375rem] mb-2 font-semibold">Contact Information :</p>
+                                <div className="text-[#8c9097] dark:text-white/50">
+                                    <p className="mb-2 flex items-center">
+                                        <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                                            <i className="ri-mail-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                                        </span>
+                                        {userData.email}
+                                    </p>
+                                    <p className="mb-2 flex items-center">
+                                        <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                                            <i className="ri-phone-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                                        </span>
+                                        {userData.employee.phone}
+                                    </p>
+                                    <p className="mb-2 flex items-center">
+                                        <span className="avatar avatar-sm avatar-rounded me-2 bg-light text-[#8c9097] dark:text-white/50">
+                                            <i className="ri-map-pin-line align-middle text-[.875rem] text-[#8c9097] dark:text-white/50"></i>
+                                        </span>
+                                        {userData.employee.city?.name}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Line Manager Info */}
+                            {userData?.line_manager && (
+                                <div className="p-6 border-b border-dashed dark:border-defaultborder/10">
+                                    <p className="text-[.9375rem] mb-2 font-semibold">Line Manager :</p>
+                                    <ul className="list-group">
+                                        <li className="list-group-item">
+                                            <div className="flex items-start gap-3">
+                                                {/* Manager Avatar Left */}
+                                                <div className="flex-shrink-0">
+                                                    <Avatar avatar={userData?.line_manager?.avatar} />
+                                                </div>
+                                                {/* Manager Info Right */}
+                                                <div className="flex-grow font-semibold">
+                                                    <p className="mb-0 leading-none">
+                                                        {userData?.line_manager?.full_name}
+                                                    </p>
+                                                    <span className="text-[.6875rem] text-[#8c9097] dark:text-white/50 opacity-70">
+                                                        {userData?.line_manager?.email}
+                                                    </span>
+                                                </div>
+                                                <Link
+                                                    to={`/module/users/edit/${userData?.line_manager?.id}`}
+                                                    className="ti-btn ti-btn-light !py-1 !px-2 !text-[0.75rem]"
+                                                >
+                                                    View
+                                                </Link>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
+
+                            {/* Other Information */}
+                            <div className="p-6">
+                                <p className="text-[.9375rem] mb-2 font-semibold">Other Information :</p>
+                                <ul className="list-group">
+                                    <li className="list-group-item flex flex-wrap items-center">
+                                        <div className="me-2 font-semibold">Emp code :</div>
+                                        <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                                            {userData.employee.emp_code}
+                                        </span>
+                                    </li>
+                                    <li className="list-group-item flex flex-wrap items-center">
+                                        <div className="me-2 font-semibold">Father name :</div>
+                                        <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                                            {userData.employee.father_name}
+                                        </span>
+                                    </li>
+                                    <li className="list-group-item flex flex-wrap items-center">
+                                        <div className="me-2 font-semibold">Gender :</div>
+                                        <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                                            {userData.employee.gender === "M" ? "Male" : "Female"}
+                                        </span>
+                                    </li>
+                                    <li className="list-group-item flex flex-wrap items-center">
+                                        <div className="me-2 font-semibold">Department :</div>
+                                        <span className="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                                            {userData?.employee.department.name}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+
                         </div>
                     </div>
                 </div>
