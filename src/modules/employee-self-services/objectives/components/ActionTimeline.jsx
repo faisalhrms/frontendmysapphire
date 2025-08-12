@@ -7,25 +7,25 @@ const ActionTimeline = ({ actions }) => {
             case 'submitted':
                 return {
                     icon: Send,
-                    color: 'bg-blue',
-                    bgColor: 'bg-success/10',
-                    textColor: 'bg-success/40',
+                    color: 'bg-info',
+                    bgColor: 'bg-info/10',
+                    textColor: 'text-info',
                     label: 'Submitted'
                 };
             case 'approved':
                 return {
                     icon: CheckCircle2,
-                    color: 'bg-emerald-500',
-                    bgColor: 'bg-emerald-50',
-                    textColor: 'text-emerald-700',
+                    color: 'bg-success',
+                    bgColor: 'bg-success/10',
+                    textColor: 'text-success',
                     label: 'Approved'
                 };
             case 'rejected':
                 return {
                     icon: XCircle,
-                    color: 'bg-red',
-                    bgColor: 'bg-red',
-                    textColor: 'text-red',
+                    color: 'bg-danger',
+                    bgColor: 'bg-danger/10',
+                    textColor: 'text-danger',
                     label: 'Rejected'
                 };
             case 'edited':
@@ -47,23 +47,6 @@ const ActionTimeline = ({ actions }) => {
         }
     };
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffTime = Math.abs(now - date);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) return 'Yesterday';
-        if (diffDays < 7) return `${diffDays} days ago`;
-
-        return date.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
 
     const formatDetailedDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -172,19 +155,6 @@ const ActionTimeline = ({ actions }) => {
                                                                 )}
                                                             </div>
                                                         </div>
-
-                                                        {/* Timestamp */}
-                                                        {/*<div className="text-right ml-4 flex-shrink-0">*/}
-                                                        {/*    <p className="text-sm font-medium text-slate-900">*/}
-                                                        {/*        {formatDate(action.created_at)}*/}
-                                                        {/*    </p>*/}
-                                                        {/*    <p className="text-xs text-slate-500">*/}
-                                                        {/*        {new Date(action.created_at).toLocaleTimeString('en-US', {*/}
-                                                        {/*            hour: '2-digit',*/}
-                                                        {/*            minute: '2-digit'*/}
-                                                        {/*        })}*/}
-                                                        {/*    </p>*/}
-                                                        {/*</div>*/}
                                                     </div>
 
                                                     {/* Detailed timestamp on hover */}

@@ -36,6 +36,7 @@ export function useObjectiveForm(year = null, editMode = false) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [objectiveId, setObjectiveId] = useState(null);
+    const [actions, setActions] = useState([]);
     const navigate = useNavigate();
 
 
@@ -87,6 +88,7 @@ export function useObjectiveForm(year = null, editMode = false) {
                     if (data) {
                         form.reset({ objectives: data.objectives });
                         setObjectiveId(data.id);
+                        setActions(data?.actions || [])
                     }
                 } catch (error) {
                     Notify.error("Failed to load existing objective.");
@@ -177,5 +179,6 @@ export function useObjectiveForm(year = null, editMode = false) {
         isModalOpen,
         setIsModalOpen,
         isSubmitting,
+        actions,
     };
 }

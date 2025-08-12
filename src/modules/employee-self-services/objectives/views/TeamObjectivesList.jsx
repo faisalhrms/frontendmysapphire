@@ -1,9 +1,8 @@
 import React, { useRef } from "react";
-import { Target } from "lucide-react";
+import { Target, ExternalLink } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
-import ProgressBar from "@components/ProgressBar.jsx";
 import Avatar from "@components/Avatar.jsx";
 import {formatDate} from "@helpers/dateTime.js";
 import {Link} from "react-router-dom";
