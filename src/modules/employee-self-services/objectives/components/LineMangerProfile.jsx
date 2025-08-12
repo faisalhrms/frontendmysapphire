@@ -9,7 +9,7 @@ const LineManagerProfile = ({
                             }) => {
 
     return (
-        <div className="xxl:col-span-4 xl:col-span-12 col-span-12 overflow-auto">
+        <div className="xxl:col-span-4 xl:col-span-12 col-span-12 overflow-auto mb-4">
             <div className="relative overflow-hidden rounded-3xl shadow-2xl border border-white/20 backdrop-blur-sm">
 
                 <div className="absolute inset-0" style={{background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)'}}>
