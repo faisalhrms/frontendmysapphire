@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import Avatar from "@components/Avatar.jsx";
 
 const ProfileSidebar = ({
-
                             coverBg = "bg-success",
                             coverPadding = "p-6"
                         }) => {
@@ -24,7 +23,7 @@ const ProfileSidebar = ({
                                         avatar={userData.avatar}
                                         size="xxl"
                                         parentClasses="me-4 p-1"
-                                        backgroundColor="bg-white border"
+                                        backgroundColor="bg-primary border"
                                         full_name={userData.full_name || 'N/A'}
                                     />
                                 </div>
