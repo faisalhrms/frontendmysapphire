@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { CalendarRange } from "lucide-react";
+import { Target } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
@@ -34,16 +34,22 @@ const TeamObjectivesList = () => {
             )
         },
         {
-            Header: 'Year',
-            accessor: 'year',
+            Header: "Year",
+            accessor: "year",
             Cell: ({ row }) => {
-                const { slug, year } = row.original;
+                const year = row.original.year;
+                const slug = row.original.slug;
                 return (
-                        <Link
-                            to={`/module/ess/objectives/detail/${slug}`}>
-                            {year}
-                        </Link>
-                )}
+                    <Link
+                        to={`/module/ess/objectives/detail/${slug}`}
+                        title={`View Objective for ${year}`}
+                        className="text-primary hover:underline flex items-center space-x-1"
+                    >
+                        <span className="pl-14">{year}</span>
+                        <ExternalLink className="h-3.5 w-3.5" />
+                    </Link>
+                );
+            },
         },
         {
             Header: 'Status',
@@ -105,15 +111,15 @@ const TeamObjectivesList = () => {
         <>
             <IconPageHeader
                 heading="Team Objectives"
-                description="Track and manage yearly objectives and their progress of team."
-                icon={CalendarRange}
+                description="Set, track, and manage your team's yearly objectives to drive collective success."
+                icon={Target}
             />
             <DataTable
                 ref={dataTableRef}
                 columns={columns}
                 apiUrl="/hrms/objectives/team-objectives/"
                 needHeader={false}
-                enableAdvancedFilters={true}
+                enableAdvancedFilters={false}
             />
         </>
     );

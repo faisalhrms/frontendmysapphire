@@ -126,8 +126,8 @@ const ObjectiveApprovalList = () => {
     return (
         <>
             <IconPageHeader
-                heading="Objectives"
-                description="Track and manage yearly objectives and their progress."
+                heading="Objectives Approvals"
+                description="Review, approve, or reject objectives to ensure alignment with organizational goals."
                 icon={CalendarRange}
             />
 
