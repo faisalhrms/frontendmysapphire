@@ -86,25 +86,35 @@ const TeamObjectivesList = () => {
         {
             Header: 'Pending At',
             accessor: 'current_approver',
-            Cell: ({ value }) => (
-                <div className="flex items-center">
-                    <Avatar
-                        avatar={value?.avatar ? value?.avatar : null}
-                        full_name={value?.full_name || 'N A'}
-                        size='md'
-                        parentClasses='dark:text-gray-200 dark:bg-bodybg'
-                    />
-                    <div className='ms-2'>
-                        <p className="font-semibold mb-0 flex items-center">
-                            {value?.full_name || 'N/A'}
-                        </p>
-                        <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                            {value?.email || 'N/A'}
-                        </p>
+            Cell: ({ value }) => {
+                if (!value?.full_name && !value?.email && !value?.avatar) {
+                    return null; // nothing at all
+                }
+
+                return (
+                    <div className="flex items-center">
+                        <Avatar
+                            avatar={value?.avatar || null}
+                            full_name={value?.full_name || ''}
+                            size='md'
+                            parentClasses='dark:text-gray-200 dark:bg-bodybg'
+                        />
+                        <div className='ms-2'>
+                            {value?.full_name && (
+                                <p className="font-semibold mb-0 flex items-center">
+                                    {value.full_name}
+                                </p>
+                            )}
+                            {value?.email && (
+                                <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                    {value.email}
+                                </p>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )
-        },
+                );
+            }
+        }
     ];
 
     return (
