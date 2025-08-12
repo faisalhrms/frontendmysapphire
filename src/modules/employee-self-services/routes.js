@@ -45,6 +45,7 @@ export const SELF_SERVICES_ROUTES = {
         OBJECTIVES:{
             LIST: {
                 path:'/module/ess/objectives',
+                permission: "hrms.manage_year_setup_form"
             },
             CREATE: {
                 path:'/module/ess/objectives/create',
@@ -57,6 +58,7 @@ export const SELF_SERVICES_ROUTES = {
             },
             TEAM: {
                 path: "/module/ess/objectives/team/",
+                permission: "hrms.manage_year_setup_form"
             },
         }
 
@@ -103,7 +105,8 @@ export const MODULE_ROUTES = [
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.LIST.path,
-        component:ObjectivesList
+        component:ObjectivesList,
+        permission: SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.LIST.permission
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.CREATE.path,
@@ -119,6 +122,7 @@ export const MODULE_ROUTES = [
     },
     {
         path:SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.TEAM.path,
-        component: TeamObjectivesList
+        component: TeamObjectivesList,
+        permission: SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.TEAM.permission
     }
 ];

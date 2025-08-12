@@ -1,5 +1,6 @@
 import {generateSidebarItem} from "@helpers/formatters.js"
 import {SELF_SERVICES_ROUTES} from "@modules/employee-self-services/routes.js";
+import {HRMS_ROUTES} from "@modules/hrms/routes.js";
 
 export const sidebarMenu = [
     generateSidebarItem(
@@ -48,7 +49,33 @@ export const sidebarMenu = [
                 'Policies',
                 "bx-book-bookmark",
                 5,
-                 SELF_SERVICES_ROUTES.SERVICES.POLICIES.permission,
+                 '',
+            ),
+            generateSidebarItem(
+                "",
+                "sub",
+                "PMS",
+                6,
+                "bx bx-target-lock",
+                "",
+                [
+                    generateSidebarItem(
+                        SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.LIST.path,
+                        "link",
+                        "Objectives",
+                        1,
+                        "",
+                        SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.LIST.permission
+                    ),
+                    generateSidebarItem(
+                        SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.TEAM.path,
+                        "link",
+                        "Team Objectives",
+                        2,
+                        "",
+                        SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.TEAM.permission
+                    ),
+                ]
             )
 
             ]

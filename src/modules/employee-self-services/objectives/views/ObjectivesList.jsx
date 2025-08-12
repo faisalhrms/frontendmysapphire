@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { CalendarRange } from "lucide-react";
+import { Trophy } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
@@ -119,15 +119,15 @@ const ObjectivesList = () => {
         <>
             <IconPageHeader
                 heading="Objectives"
-                description="Track and manage yearly objectives and their progress."
-                icon={CalendarRange}
+                description="Manage your strategic objectives and stay on track to success."
+                icon={Trophy}
             />
             <DataTable
                 ref={dataTableRef}
                 columns={columns}
                 apiUrl="/hrms/objectives/datatable/"
                 needHeader={false}
-                enableAdvancedFilters={true}
+                enableAdvancedFilters={false}
                 buttons={buttons}
             />
         </>
