@@ -11,20 +11,26 @@ export const OBJECTIVE_STATUS = {
     DRAFT: 'draft',
     SUBMITTED: 'submitted',
 };
-
 const formSchema = z.object({
     objectives: z
         .array(
             z.object({
                 kra: z.string().min(1, 'KRA is required'),
                 kpi: z.string().min(1, 'KPI is required'),
-                weightage: z.number()
-                    .min(0.1, "Weightage must be at least 0.1%")
-                    .max(100, "Weightage cannot exceed 100%"),
+                weightage: z
+                    .union([
+                        z.number(),
+                        z.string().regex(/^\d+(\.\d+)?$/, 'Weightage must be a number')
+                    ])
+                    .transform((val) => Number(val))
+                    .refine((num) => num >= 0.1 && num <= 100, {
+                        message: "Weightage must be between 0.1 and 100",
+                    }),
             })
         )
-        .min(1, 'At least one objective is required')
+        .min(1, 'At least one objective is required'),
 });
+
 
 export function useObjectiveForm(year = null, editMode = false) {
     const [isModalOpen, setIsModalOpen] = useState(false);

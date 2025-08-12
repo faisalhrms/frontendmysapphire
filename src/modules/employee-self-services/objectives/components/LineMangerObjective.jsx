@@ -3,7 +3,7 @@ import { Target, TrendingUp, Award, Shield } from 'lucide-react';
 import LoadingSpinner from '@components/LoadingSpinner.jsx';
 import EmptyState from '@components/EmptyState.jsx';
 
-const LineManger = ({ details = []}) => {
+const LineMangerObjective = ({ details = []}) => {
     const getWeightageColor = (weightage) => {
         const weight = parseFloat(weightage);
         if (weight >= 30) return 'text-emerald-600 bg-emerald-100';
@@ -174,4 +174,4 @@ const LineManger = ({ details = []}) => {
     );
 };
 
-export default LineManger;
+export default LineMangerObjective;

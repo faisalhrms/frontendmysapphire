@@ -7,9 +7,9 @@ const ActionTimeline = ({ actions }) => {
             case 'submitted':
                 return {
                     icon: Send,
-                    color: 'bg-blue-500',
-                    bgColor: 'bg-blue-50',
-                    textColor: 'text-blue-700',
+                    color: 'bg-blue',
+                    bgColor: 'bg-success/10',
+                    textColor: 'bg-success/40',
                     label: 'Submitted'
                 };
             case 'approved':
@@ -23,9 +23,9 @@ const ActionTimeline = ({ actions }) => {
             case 'rejected':
                 return {
                     icon: XCircle,
-                    color: 'bg-red-500',
-                    bgColor: 'bg-red-50',
-                    textColor: 'text-red-700',
+                    color: 'bg-red',
+                    bgColor: 'bg-red',
+                    textColor: 'text-red',
                     label: 'Rejected'
                 };
             case 'edited':
@@ -76,7 +76,6 @@ const ActionTimeline = ({ actions }) => {
         });
     };
 
-    // Reverse actions to show latest first
     const sortedActions = [...actions].reverse();
 
     return (
@@ -175,17 +174,17 @@ const ActionTimeline = ({ actions }) => {
                                                         </div>
 
                                                         {/* Timestamp */}
-                                                        <div className="text-right ml-4 flex-shrink-0">
-                                                            <p className="text-sm font-medium text-slate-900">
-                                                                {formatDate(action.created_at)}
-                                                            </p>
-                                                            <p className="text-xs text-slate-500">
-                                                                {new Date(action.created_at).toLocaleTimeString('en-US', {
-                                                                    hour: '2-digit',
-                                                                    minute: '2-digit'
-                                                                })}
-                                                            </p>
-                                                        </div>
+                                                        {/*<div className="text-right ml-4 flex-shrink-0">*/}
+                                                        {/*    <p className="text-sm font-medium text-slate-900">*/}
+                                                        {/*        {formatDate(action.created_at)}*/}
+                                                        {/*    </p>*/}
+                                                        {/*    <p className="text-xs text-slate-500">*/}
+                                                        {/*        {new Date(action.created_at).toLocaleTimeString('en-US', {*/}
+                                                        {/*            hour: '2-digit',*/}
+                                                        {/*            minute: '2-digit'*/}
+                                                        {/*        })}*/}
+                                                        {/*    </p>*/}
+                                                        {/*</div>*/}
                                                     </div>
 
                                                     {/* Detailed timestamp on hover */}
@@ -204,7 +203,6 @@ const ActionTimeline = ({ actions }) => {
                     </ul>
                 </div>
 
-                {/* Timeline Summary */}
                 <div className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-4 border border-slate-200">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
