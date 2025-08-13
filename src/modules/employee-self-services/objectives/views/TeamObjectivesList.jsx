@@ -12,21 +12,21 @@ const TeamObjectivesList = () => {
     const columns = [
         {
             Header: 'Person',
-            accessor: 'user',
-            Cell: ({ value }) => (
+            accessor: 'full_name',
+            Cell: ({ row }) => (
                 <div className="flex items-center">
                     <Avatar
-                        avatar={value?.avatar ? value?.avatar : null}
-                        full_name={value?.full_name || 'N A'}
+                        avatar={row.original?.avatar ? row.original : null}
+                        full_name={row.original?.full_name || 'N A'}
                         size='md'
                         parentClasses='dark:text-gray-200 dark:bg-bodybg'
                     />
                     <div className='ms-2'>
                         <p className="font-semibold mb-0 flex items-center">
-                            {value?.full_name || 'N/A'}
+                            {row.original?.full_name || 'N/A'}
                         </p>
                         <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                            {value?.email || 'N/A'}
+                            {row.original?.email || 'N/A'}
                         </p>
                     </div>
                 </div>
@@ -35,75 +35,27 @@ const TeamObjectivesList = () => {
         {
             Header: "Year",
             accessor: "year",
-            Cell: ({ row }) => {
+        },
+        {
+            Header: "Objective",
+            accessor: "actions",
+            Cell: ({row}) => {
+                const objective = row.original.objective;
                 const year = row.original.year;
-                const slug = row.original.slug;
                 return (
-                    <Link
-                        to={`/module/ess/objectives/detail/${slug}`}
-                        title={`View Objective for ${year}`}
-                        className="text-primary hover:underline flex items-center space-x-1"
-                    >
-                        <span className="pl-14">{year}</span>
-                        <ExternalLink className="h-3.5 w-3.5" />
-                    </Link>
-                );
+                    objective ?
+                        <Link
+                            to={`/module/ess/objectives/detail/${objective}`}
+                            title={`View Objective for ${year}`}
+                            className="text-primary hover:underline flex items-center justify-center space-x-1"
+                        >
+                            <span>{year}</span>
+                            <ExternalLink className="h-3.5 w-3.5" />
+                        </Link>
+                        : ''
+                )
             },
-        },
-        {
-            Header: 'Status',
-            accessor: 'status',
-            Cell: ({ value }) => toTitleCase(value),
-            getCellProps: (cellInfo) => {
-                const value = cellInfo.value;
-                let bgClass = "";
-
-                if (value === "under_approval") bgClass = "bg-warning";
-                else if (value === "approved") bgClass = "bg-success";
-                else if (value === "rejected") bgClass = "bg-danger";
-                else bgClass = "bg-primary";
-
-                return {
-                    className: `text-white capitalize ${bgClass}`,
-                };
-            },
-        },
-        {
-            Header: 'Total KRAs',
-            accessor: 'total_kras',
-        },
-        {
-            Header: 'Created At',
-            accessor: 'created_at',
-            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy - HH:mm") : ""),
-        },
-        {
-            Header: 'Submitted At',
-            accessor: 'submitted_at',
-            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy - HH:mm") : ""),
-        },
-        {
-            Header: 'Pending At',
-            accessor: 'current_approver',
-            Cell: ({ value }) => (
-                <div className="flex items-center">
-                    <Avatar
-                        avatar={value?.avatar ? value?.avatar : null}
-                        full_name={value?.full_name || 'N A'}
-                        size='md'
-                        parentClasses='dark:text-gray-200 dark:bg-bodybg'
-                    />
-                    <div className='ms-2'>
-                        <p className="font-semibold mb-0 flex items-center">
-                            {value?.full_name || 'N/A'}
-                        </p>
-                        <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                            {value?.email || 'N/A'}
-                        </p>
-                    </div>
-                </div>
-            )
-        },
+        }
     ];
 
     return (
