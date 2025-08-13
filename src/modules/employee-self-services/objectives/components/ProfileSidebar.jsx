@@ -13,7 +13,7 @@ const ProfileSidebar = ({
         <div className="xxl:col-span-4 xl:col-span-12 col-span-12 sticky top-0 h-screen overflow-auto">
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="xxl:col-span-5 xl:col-span-12 col-span-12">
-                    <div className="box overflow-hidden">
+                    <div className="box">
                         <div className="box-body !p-0">
 
                             <div  className={`flex items-start gap-4 ${coverPadding} `}  style={{background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)'}}>
