@@ -15,6 +15,7 @@ import {
 import ObjectiveApprovers from "@modules/employee-self-services/objectives/components/ObjectiveApprovers.jsx";
 import LineMangerObjective from "@modules/employee-self-services/objectives/components/LineMangerObjective.jsx";
 import LineMangerProfile from "@modules/employee-self-services/objectives/components/LineMangerProfile.jsx";
+import {useSelector} from "react-redux";
 
 const ObjectiveDetail = () => {
     const { slug } = useParams();
@@ -22,7 +23,7 @@ const ObjectiveDetail = () => {
     const { data, isLoading, refetch, isRefetching, isError, error } = useObjectiveDetail(slug);
 
     const { data: approvers, isLoading: isApproversLoading } = useApprovalHierarchyApprovers(data?.objective?.user?.id, 'objective');
-
+    const currentUser = useSelector((state) => state.auth.user);
     const [activeTab, setActiveTab] = useState('overview');
 
     const timelineActions = data?.objective?.actions || [];
@@ -54,15 +55,19 @@ const ObjectiveDetail = () => {
             label: 'Stakeholders',
             icon: Users,
             description: 'Team & approvers',
-            count: 3
+            count: approvers?.length
         },
-        {
-            id: 'line-manager',
-            label: 'Line Manager Key Result Areas',
-            icon: User,
-            description: 'Line Manager Key Result Areas',
-            count: null
-        }
+        ...(currentUser?.id === data?.objective?.user?.id
+            ? [
+                {
+                    id: "line-manager",
+                    label: "Line Manager Key Result Areas",
+                    icon: User,
+                    description: "Line Manager Key Result Areas",
+                    count: null,
+                },
+            ]
+            : []),
 
     ];
 
