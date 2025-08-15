@@ -24,7 +24,7 @@ const replenishmentSchema = z.object({
     from_date: dateSchema('From'),
     launch_date: dateSchema('Launch').optional(),
     to_date: dateSchema('To'),
-    category: z.number().optional(),
+    categories: z.array(z.string()).optional(),
     excluded_from_date: dateSchema('Excluded From', true),
     excluded_to_date: dateSchema('Excluded To', true),
     forecast_days: z.number().min(1),
