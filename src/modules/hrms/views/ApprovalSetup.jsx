@@ -8,6 +8,7 @@ import {useApprovalSetupModel, useUploadApprovalSetupModal} from "@modules/hrms/
 import ApprovalSetupModal from "@modules/hrms/components/modals/ApprovalSetupModal.jsx";
 import UploadModal from "@modules/hrms/components/modals/UploadModel.jsx";
 import sampleFile from "@assets/files/pms_approval_upload_sample.xlsx";
+import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 
 const MemoizedAvatar = React.memo(Avatar);
 
@@ -116,29 +117,51 @@ const ApprovalSetup = () => {
             Header: 'Name',
             accessor: 'user.full_name',
             width: 300,
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'user__full_name',
             Cell: ({ row }) => <UserCell user={row.original.user} />
         },
         {
             Header: 'Designation',
             accessor: 'user.designation',
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'user__employee__designation__name',
         },
         {
             Header: 'Position',
             accessor: 'user.position',
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'user__employee__position__name',
         },
         {
             Header: 'Department',
             accessor: 'user.department',
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'user__employee__department__name',
         },
         {
             Header: 'Hierarchy',
             accessor: 'approvers',
             width: 300,
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'approvers__full_name',
             Cell: ({ row }) => <HierarchyCell approvers={row.original.approvers || []} />
         },
         {
             Header: 'Type',
             accessor: 'type',
+            filterable: true,
+            filterType: 'select',
+            filterKey: 'type',
+            filterOptions: [
+                { value: 'objective', label: 'Objective' },
+                { value: 'appraisal', label: 'Appraisal' },
+            ],
             getCellProps: (cellInfo) => {
                 const value = cellInfo.value;
                 let bgClass = "";
@@ -156,6 +179,7 @@ const ApprovalSetup = () => {
             Header: 'Actions',
             accessor: 'id',
             disableSortBy: true,
+            filterable: false,
             Cell: ({ value }) => <ActionCell id={value} onEdit={handleOpenModal} />
         },
     ], [handleOpenModal]);

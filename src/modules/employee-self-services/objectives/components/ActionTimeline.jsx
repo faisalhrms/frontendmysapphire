@@ -79,6 +79,7 @@ const ActionTimeline = ({ actions }) => {
             {/* Timeline */}
             <div className="p-6">
                 <div className="flow-root">
+                    <div className="max-h-[549px] overflow-y-auto pr-2">
                     <ul className="-mb-8">
                         {sortedActions.map((action, index) => {
                             const config = getActionConfig(action.action);
@@ -171,6 +172,7 @@ const ActionTimeline = ({ actions }) => {
                             );
                         })}
                     </ul>
+                    </div>
                 </div>
 
                 <div className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-4 border border-slate-200">

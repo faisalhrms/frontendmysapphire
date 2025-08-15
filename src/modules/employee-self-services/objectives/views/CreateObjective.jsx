@@ -16,7 +16,7 @@ const CreateObjective = () => {
         <>
             <IconPageHeader
                 heading="Objective"
-                description="My Objective - From view"
+                description="My Objective - Create Form"
                 icon={HardDrive}
             />
             <div className="min-h-screen">

@@ -279,6 +279,19 @@ const ReplenishmentFrom = () => {
                                   errors={errors}
                               />
                             </div>
+                            <div>
+                              <FormAsyncSelect
+                                  isMulti={true}
+                                  label={true}
+                                  name={`categories`}
+                                  control={control}
+                                  errors={errors}
+                                  placeholder="Category"
+                                  apiUrl="/select/scm/categories/"
+                                  queryKeyBase="categories"
+                                  preselectedOptions={[]}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -303,6 +316,16 @@ const ReplenishmentFrom = () => {
                         </div>
                         <div className="xl:col-span-8 col-span-12">
                           <div className="flex flex-col gap-y-4">
+                            <div>
+                              <FormInput
+                                  type="date"
+                                  id="launch_date"
+                                  name="launch_date"
+                                  control={control}
+                                  errors={errors}
+                                  placeholder="Launch Date"
+                              />
+                            </div>
                             <div>
                               <FormInput
                                   type="date"
@@ -350,12 +373,12 @@ const ReplenishmentFrom = () => {
                       </div>
                     </li>
 
-                    <li className="list-group-item !border !border-defaultborder dark:!border-defaultborder/10 !border-t-0 !border-e-0 !border-s-0">
-                      <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                        <div className="xl:col-span-4 col-span-12">
-                          <label
-                              className="text-[1rem] mb-1 font-semibold"
-                              title="File Columns Configuration"
+            <li className="list-group-item !border !border-defaultborder dark:!border-defaultborder/10 !border-t-0 !border-e-0 !border-s-0">
+              <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                <div className="xl:col-span-4 col-span-12">
+                  <label
+                      className="text-[1rem] mb-1 font-semibold"
+                      title="File Columns Configuration"
                           >
                             File Columns Configuration
                           </label>

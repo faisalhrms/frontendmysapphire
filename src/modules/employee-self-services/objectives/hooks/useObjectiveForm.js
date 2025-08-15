@@ -11,12 +11,18 @@ export const OBJECTIVE_STATUS = {
     DRAFT: 'draft',
     SUBMITTED: 'submitted',
 };
+
+const stripHtml = (html) => html.replace(/<[^>]*>/g, '').trim();
 const formSchema = z.object({
     objectives: z
         .array(
             z.object({
                 kra: z.string().min(1, 'KRA is required'),
-                kpi: z.string().min(1, 'KPI is required'),
+                kpi: z.string()
+                    .transform((val) => stripHtml(val))
+                    .refine((text) => text.length >= 20, {
+                        message: "KPI must be at least 20 characters long",
+                    }),
                 weightage: z
                     .union([
                         z.number(),
