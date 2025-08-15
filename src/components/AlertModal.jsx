@@ -22,6 +22,9 @@ function AlertModal({
 
     useEffect(() => {
         handleModal(isOpen, `${id}-alert-modal`);
+        if (!isOpen) {
+            setInput("");
+        }
     }, [isOpen, id]);
 
     const togglePasswordVisibility = () => {

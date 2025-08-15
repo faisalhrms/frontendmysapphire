@@ -6,13 +6,16 @@ import { toTitleCase } from "@helpers/formatters.js";
 import Avatar from "@components/Avatar.jsx";
 import {formatDate} from "@helpers/dateTime.js";
 import {Link} from "react-router-dom";
-const TeamObjectivesList = () => {
+const TeamObjectivesList = ({ externalFilters = [] }) => {
 
     const dataTableRef = useRef();
     const columns = [
         {
             Header: 'Person',
             accessor: 'full_name',
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'full_name',
             Cell: ({ row }) => (
                 <div className="flex items-center">
                     <Avatar
@@ -33,17 +36,29 @@ const TeamObjectivesList = () => {
             )
         },
         {
+            Header: "Designation",
+            accessor: "designation",
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'employee__designation__name',
+            Cell: ({ value }) => value || 'N/A',
+        },
+        {
             Header: "Year",
             accessor: "year",
+            filterable: true,
+            filterType: 'number',
+            filterKey: 'year',
         },
         {
             Header: "Objective",
             accessor: "actions",
-            Cell: ({row}) => {
+            filterable: false, // no filter needed here
+            Cell: ({ row }) => {
                 const objective = row.original.objective;
                 const year = row.original.year;
                 return (
-                    objective ?
+                    objective ? (
                         <Link
                             to={`/module/ess/objectives/detail/${objective}`}
                             title={`View Objective for ${year}`}
@@ -52,11 +67,12 @@ const TeamObjectivesList = () => {
                             <span>{year}</span>
                             <ExternalLink className="h-3.5 w-3.5" />
                         </Link>
-                        : ''
-                )
+                    ) : ''
+                );
             },
         }
     ];
+
 
     return (
         <>
@@ -70,7 +86,8 @@ const TeamObjectivesList = () => {
                 columns={columns}
                 apiUrl="/hrms/objectives/team-objectives/"
                 needHeader={false}
-                enableAdvancedFilters={false}
+                enableAdvancedFilters={true}
+                externalFilters={externalFilters}
             />
         </>
     );
