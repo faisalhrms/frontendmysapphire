@@ -57,7 +57,7 @@ export const SELF_SERVICES_ROUTES = {
                 path: "/module/ess/objectives/detail/:slug",
             },
             TEAM: {
-                path: "/module/ess/objectives/team/",
+                path: "/module/ess/objectives/team",
                 permission: "hrms.manage_year_setup_form"
             },
         }

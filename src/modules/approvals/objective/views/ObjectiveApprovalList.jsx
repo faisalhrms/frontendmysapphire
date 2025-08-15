@@ -29,34 +29,47 @@ const ObjectiveApprovalList = () => {
         dataTableRef.current?.refetch();
     });
 
+
     const columns = [
         {
             Header: "Actions",
             accessor: "id",
             disableSortBy: true,
-            Cell: ({ row }) => (
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => handleActionClick(row.original.id, "approved")}
-                        className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-emerald-500 hover:bg-emerald-600"
-                        title="Approve Objective"
-                    >
-                        Approve
-                    </button>
-                    <button
-                        onClick={() => handleActionClick(row.original.id, "rejected")}
-                        className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-rose-500 hover:bg-rose-600"
-                        title="Reject Objective"
-                    >
-                        Reject
-                    </button>
-                </div>
-            ),
+
+            Cell: ({ row }) => {
+                const slug = row.original.objective.slug;
+                return (
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => handleActionClick(row.original.id, "approved")}
+                            className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-emerald-500 hover:bg-emerald-600"
+                            title="Approve Objective"
+                        >
+                            Approve
+                        </button>
+                        <button
+                            onClick={() => handleActionClick(row.original.id, "rejected")}
+                            className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-rose-500 hover:bg-rose-600"
+                            title="Reject Objective"
+                        >
+                            Reject
+                        </button>
+
+                        <Link
+                            to={`/module/ess/objectives/detail/${slug}`}
+                            className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
+                            title="view Objective"
+                        >
+                            View
+                        </Link>
+                    </div>
+                )
+            },
         },
         {
             Header: "Submitter",
             accessor: "objective.user",
-            Cell: ({ value }) => (
+            Cell: ({value}) => (
                 <div className="flex items-center">
                     <Avatar
                         avatar={value?.avatar || null}
@@ -76,7 +89,7 @@ const ObjectiveApprovalList = () => {
         {
             Header: "Year",
             accessor: "objective.year",
-            Cell: ({ row }) => {
+            Cell: ({row}) => {
                 const year = row.original.objective.year;
                 const slug = row.original.objective.slug;
                 return (
