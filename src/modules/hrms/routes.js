@@ -1,6 +1,6 @@
 import YearSetup from '@modules/hrms/views/YearSetup.jsx';
 import ApprovalSetup from "@modules/hrms/views/ApprovalSetup.jsx";
-import ObjectiveList from "@modules/hrms/views/ObjectiveList.jsx";
+import HrObjectivesList from "@modules/hrms/views/HrObjectivesList.jsx";
 
 export const HRMS_ROUTES = {
   SETUPS: {
@@ -35,7 +35,7 @@ export const MODULE_ROUTES = [
   },
   {
     path:HRMS_ROUTES.MANAGEMENT.OBJECTIVE.path,
-    component: ObjectiveList,
-    permission: HRMS_ROUTES.SETUPS.OBJECTIVE.permission
+    component: HrObjectivesList,
+    permission: HRMS_ROUTES.MANAGEMENT.OBJECTIVE.permission
   }
 ];
