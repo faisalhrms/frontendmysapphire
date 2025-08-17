@@ -1,6 +1,9 @@
 import React from 'react';
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import FormInput from "@components/form/FormInput.jsx";
+import FormSelect from "@components/form/FormSelect.jsx";
+import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
+import GalleryUpload from "@components/GalleryUpload.jsx";
 
 const ObjectiveCard = ({
                            objective,
@@ -52,7 +55,8 @@ const ObjectiveCard = ({
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2">
                         <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
+                            <label
+                                className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
                                 Key Result Area
                                 <span className="text-red ml-1">*</span>
                             </label>
@@ -66,10 +70,10 @@ const ObjectiveCard = ({
                             />
                         </div>
                     </div>
-
                     <div>
                         <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
+                            <label
+                                className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
                                 Weightage (%)
                                 <span className="text-red ml-1">*</span>
                             </label>
@@ -90,16 +94,66 @@ const ObjectiveCard = ({
                         </div>
                     </div>
                 </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2">
+                        <div className="space-y-2">
+                            <label
+                                className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
+                                 Quarter
+                                <span className="text-red ml-1">*</span>
+                            </label>
+                            <FormSelect
+                                name={`objectives.${index}.quarter`}
+                                control={control}
+                                errors={errors}
+                                placeholder="quarter"
+                                        options={[
+                                            {value: 1, label: "Quarter 1"},
+                                            {value: 2, label: "Quarter 2"},
+                                            {value: 3, label: "Quarter 3"},
+                                            {value: 4, label: "Quarter 4"},
+                                        ]}
+                                label={false}
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <div className="space-y-2">
+                            <label
+                                className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
+                                Priority
+                                <span className="text-red ml-1">*</span>
+                            </label>
+                            <div className="relative">
+                                <FormSelect
+                                    name={`objectives.${index}.priority`}
+                                    control={control}
+                                    errors={errors}
+                                    placeholder="priority"
+                                    options={[
+                                        {value: "high", label: "High"},
+                                        {value: "medium", label: "Medium"},
+                                        {value: "Low", label: "Low"},
+
+                                    ]}
+                                    label={false}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div className="space-y-3">
                     <div className="flex items-start space-x-2">
                         <div className="flex-1">
-                            <label className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
+                            <label
+                                className="block text-sm font-semibold text-slate-700 tracking-wide dark:text-gray-200 dark:bg-bodybg">
                                 Key Performance Indicators & Objectives
                                 <span className="text-red ml-1">*</span>
                             </label>
                             <p className="text-xs text-slate-500 mt-1 leading-relaxed dark:text-gray-200 dark:bg-bodybg">
-                                Define specific, measurable, achievable, relevant, and time-bound objectives for this KRA
+                                Define specific, measurable, achievable, relevant, and time-bound objectives for this
+                                KRA
                             </p>
                         </div>
                     </div>
@@ -114,8 +168,18 @@ const ObjectiveCard = ({
                             }}
                         />
                     </div>
+                        <div className="col-span-12">
+                            <GalleryUpload
+                                currentValue={objective?.attachment_ids}
+                                files={objective?.attachments}
+                                inputName={`objectives.${index}.attachment_ids`}
+                                placeholder="Attachments"
+                                control={control}
+                                errors={errors}
+                                className="w-full"
+                            />
+                    </div>
                 </div>
-
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <div className="flex items-center space-x-2 text-xs text-slate-500">
                         <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
@@ -126,11 +190,12 @@ const ObjectiveCard = ({
                         <div className="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
                         <div className="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
                     </div>
+                    </div>
                 </div>
-            </div>
 
-            {/* Hover Effect Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"></div>
+                {/* Hover Effect Overlay */}
+                <div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"></div>
         </div>
     );
 };
