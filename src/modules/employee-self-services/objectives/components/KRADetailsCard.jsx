@@ -99,23 +99,37 @@ const KRADetailsCard = ({ details }) => {
 
                                         {kra.priority && (
                                             <div
-                                                className={`absolute top-115 right-0 text-white text-xs bold uppercase font-medium transform rotate-45 origin-top-right ${
-                                                                                    kra.priority.toLowerCase() === "high"
-                                                                                         ? "bg-danger"
-                                                                                         : kra.priority.toLowerCase() === "medium"
-                                                                                             ? "bg-primary"
-                                                                                             : "bg-success"
-                                                                                }`}
+                                                className={`absolute top-2 right-2 text-white text-xs font-bold uppercase px-2 py-1 ${
+                                                    kra.priority.toLowerCase() === "high"
+                                                        ? "bg-danger"
+                                                        : kra.priority.toLowerCase() === "medium"
+                                                            ? "bg-primary"
+                                                            : "bg-success"
+                                                }`}
                                                 style={{
-                                                    width: '280px',
-                                                    height: '20px',
-                                                    transform: 'rotate(45deg) translate(70px, -15px)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center'
+                                                    borderRadius: '3px',
+                                                    zIndex: 10
                                                 }}>
                                                 {kra.priority}
                                             </div>
+                                            // <div
+                                            //     className={`absolute top-115 right-0 text-white text-xs bold uppercase font-medium transform rotate-45 origin-top-right ${
+                                            //                                         kra.priority.toLowerCase() === "high"
+                                            //                                              ? "bg-danger"
+                                            //                                              : kra.priority.toLowerCase() === "medium"
+                                            //                                                  ? "bg-primary"
+                                            //                                                  : "bg-success"
+                                            //                                     }`}
+                                            //     style={{
+                                            //         width: '280px',
+                                            //         height: '20px',
+                                            //         transform: 'rotate(45deg) translate(70px, -15px)',
+                                            //         display: 'flex',
+                                            //         alignItems: 'center',
+                                            //         justifyContent: 'center'
+                                            //     }}>
+                                            //     {kra.priority}
+                                            // </div>
                                         )}
                                     </div>
 
