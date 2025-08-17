@@ -32,6 +32,14 @@ const formSchema = z.object({
                     .refine((num) => num >= 0.1 && num <= 100, {
                         message: "Weightage must be between 0.1 and 100",
                     }),
+                quarter: z
+                    .preprocess((val) => Number(val), z.number().int().min(1).max(4)),
+
+                priority: z
+                    .enum(["high", "medium", "Low"], {
+                        errorMap: () => ({ message: "Priority is required" })
+                    }),
+                attachment_ids: z.array(z.number()).optional(),
             })
         )
         .min(1, 'At least one objective is required'),
@@ -49,7 +57,7 @@ export function useObjectiveForm(year = null, editMode = false) {
     const form = useForm({
         defaultValues: {
             objectives: [
-                { kra: '', kpi: '', weightage: '' }
+                { kra: '', kpi: '', weightage: '',quarter:1,priority:"medium", attachment_ids: [] }
             ]
         },
         mode: 'onChange',
