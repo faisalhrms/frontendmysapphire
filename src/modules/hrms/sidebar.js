@@ -36,6 +36,25 @@ export let sidebarMenu = [
                     ),
                 ]
             ),
+            generateSidebarItem(
+                "",
+                "sub",
+                "Management",
+                2,
+                "bx bx-target-lock",
+                "",
+                [
+                    generateSidebarItem(
+                        HRMS_ROUTES.MANAGEMENT.OBJECTIVE.path,
+                        "link",
+                        "Objective",
+                        1,
+                        "bx bx-message-square-edit",
+                        HRMS_ROUTES.MANAGEMENT.OBJECTIVE.permission
+                    )
+                ]
+            )
+
         ]
     ),
 ];

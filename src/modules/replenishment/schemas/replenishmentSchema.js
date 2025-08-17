@@ -22,7 +22,7 @@ const replenishmentSchema = z.object({
         }),
     forecast_method: z.string().min(1),
     from_date: dateSchema('From'),
-    launch_date: dateSchema('Launch').optional(),
+    launch_date: dateSchema('Launch Date', true),
     to_date: dateSchema('To'),
     categories: z.array(z.string()).optional(),
     excluded_from_date: dateSchema('Excluded From', true),
