@@ -21,7 +21,7 @@ export let sidebarMenu = [
                     generateSidebarItem(
                         HRMS_ROUTES.SETUPS.YEAR.path,
                         "link",
-                        "PMS Year Setup",
+                        "PAS Year Setup",
                         1,
                         "bx bx-message-square-edit",
                         HRMS_ROUTES.SETUPS.YEAR.permission
@@ -29,7 +29,7 @@ export let sidebarMenu = [
                     generateSidebarItem(
                         HRMS_ROUTES.SETUPS.APPROVAL.path,
                         "link",
-                        "PMS Approval Setup",
+                        "PAS Approval Setup",
                         1,
                         "bx bx-message-square-edit",
                         HRMS_ROUTES.SETUPS.APPROVAL.permission

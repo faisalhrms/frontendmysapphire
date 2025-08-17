@@ -79,103 +79,111 @@ const ActionTimeline = ({ actions }) => {
             {/* Timeline */}
             <div className="p-6">
                 <div className="flow-root">
-                    <div className="max-h-[549px] overflow-y-auto pr-2">
-                    <ul className="-mb-8">
-                        {sortedActions.map((action, index) => {
-                            const config = getActionConfig(action.action);
-                            const ActionIcon = config.icon;
-                            const isLast = index === sortedActions.length - 1;
+                    <div
+                        className="max-h-[549px] overflow-y-auto pr-2 ">
+                        <ul className="-mb-8">
+                            {sortedActions.map((action, index) => {
+                                const config = getActionConfig(action.action);
+                                const ActionIcon = config.icon;
+                                const isLast = index === sortedActions.length - 1;
 
-                            return (
-                                <li key={index}>
-                                    <div className="relative pb-8">
-                                        {/* Connecting Line */}
-                                        {!isLast && (
-                                            <span
-                                                className="absolute left-6 top-10 -ml-px h-full w-0.5 bg-gradient-to-b from-slate-300 to-slate-100"
-                                                aria-hidden="true"
-                                            />
-                                        )}
+                                return (
+                                    <li key={index}>
+                                        <div className="relative pb-8">
+                                            {/* Connecting Line */}
+                                            {!isLast && (
+                                                <span
+                                                    className="absolute left-6 top-10 -ml-px h-full w-0.5 bg-gradient-to-b from-slate-300 to-slate-100"
+                                                    aria-hidden="true"
+                                                />
+                                            )}
 
-                                        <div className="relative flex items-start space-x-4 group">
-                                            {/* Timeline Icon */}
-                                            <div className="relative flex-shrink-0">
-                                                <div className={`w-12 h-12 ${config.color} rounded-2xl flex items-center justify-center text-white shadow-lg ring-4 ring-white group-hover:scale-105 transition-transform duration-200`}>
-                                                    <ActionIcon className="w-5 h-5" />
+                                            <div className="relative flex items-start space-x-4 group">
+                                                {/* Timeline Icon */}
+                                                <div className="relative flex-shrink-0">
+                                                    <div
+                                                        className={`w-12 h-12 ${config.color} rounded-2xl flex items-center justify-center text-white shadow-lg ring-4 ring-white group-hover:scale-105 transition-transform duration-200`}>
+                                                        <ActionIcon className="w-5 h-5"/>
+                                                    </div>
+                                                    {/* Level Badge */}
+                                                    <div
+                                                        className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-slate-200 shadow-sm">
+                                                        <span
+                                                            className="text-xs font-bold text-slate-600">{action.level}</span>
+                                                    </div>
                                                 </div>
-                                                {/* Level Badge */}
-                                                <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-slate-200 shadow-sm">
-                                                    <span className="text-xs font-bold text-slate-600">{action.level}</span>
-                                                </div>
-                                            </div>
 
-                                            {/* Content */}
-                                            <div className="min-w-0 flex-1">
-                                                <div className={`${config.bgColor} rounded-2xl p-4 border border-slate-200/50 group-hover:border-slate-300/70 transition-all duration-200`}>
-                                                    <div className="flex items-start justify-between">
-                                                        <div className="flex-1">
-                                                            {/* User Info */}
-                                                            <div className="flex items-center space-x-3 mb-3">
-                                                                {action.user.avatar ? (
-                                                                    <img
-                                                                        src={action.user.avatar.small_url}
-                                                                        alt={action.user.full_name}
-                                                                        className="w-8 h-8 rounded-xl object-cover border-2 border-white shadow-sm"
-                                                                    />
-                                                                ) : (
-                                                                    <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-sm"
-                                                                         style={{background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'}}>
-                                                                        {action.user.full_name.split(' ').map(n => n[0]).join('')}
+                                                {/* Content */}
+                                                <div className="min-w-0 flex-1">
+                                                    <div
+                                                        className={`${config.bgColor} rounded-2xl p-4 border border-slate-200/50 group-hover:border-slate-300/70 transition-all duration-200`}>
+                                                        <div className="flex items-start justify-between">
+                                                            <div className="flex-1">
+                                                                {/* User Info */}
+                                                                <div className="flex items-center space-x-3 mb-3">
+                                                                    {action.user.avatar ? (
+                                                                        <img
+                                                                            src={action.user.avatar.small_url}
+                                                                            alt={action.user.full_name}
+                                                                            className="w-8 h-8 rounded-xl object-cover border-2 border-white shadow-sm"
+                                                                        />
+                                                                    ) : (
+                                                                        <div
+                                                                            className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-sm"
+                                                                            style={{background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'}}>
+                                                                            {action.user.full_name.split(' ').map(n => n[0]).join('')}
+                                                                        </div>
+                                                                    )}
+                                                                    <div>
+                                                                        <p className="font-semibold text-slate-900 text-sm">
+                                                                            {action.user.full_name}
+                                                                        </p>
+                                                                        <p className="text-xs text-slate-500">
+                                                                            {action.user.email}
+                                                                        </p>
                                                                     </div>
-                                                                )}
-                                                                <div>
-                                                                    <p className="font-semibold text-slate-900 text-sm">
-                                                                        {action.user.full_name}
-                                                                    </p>
-                                                                    <p className="text-xs text-slate-500">
-                                                                        {action.user.email}
-                                                                    </p>
                                                                 </div>
-                                                            </div>
 
-                                                            {/* Action Details */}
-                                                            <div className="mb-3">
-                                                                <div className="flex items-center space-x-2 mb-2">
-                                                                    <span className={`px-2 py-1 ${config.textColor} ${config.bgColor} rounded-lg text-xs font-semibold border border-current/20`}>
+                                                                {/* Action Details */}
+                                                                <div className="mb-3">
+                                                                    <div className="flex items-center space-x-2 mb-2">
+                                                                    <span
+                                                                        className={`px-2 py-1 ${config.textColor} ${config.bgColor} rounded-lg text-xs font-semibold border border-current/20`}>
                                                                         {config.label}
                                                                     </span>
-                                                                    <span className="text-xs text-slate-500">
+                                                                        <span className="text-xs text-slate-500">
                                                                         Level {action.level}
                                                                     </span>
-                                                                </div>
+                                                                    </div>
 
-                                                                {action.remarks && (
-                                                                    <p className="text-sm text-slate-700 leading-relaxed">
-                                                                        {action.remarks}
-                                                                    </p>
-                                                                )}
+                                                                    {action.remarks && (
+                                                                        <p className="text-sm text-slate-700 leading-relaxed">
+                                                                            {action.remarks}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    {/* Detailed timestamp on hover */}
-                                                    <div className="mt-3 pt-3 border-t border-slate-200/60">
-                                                        <p className="text-xs text-slate-500">
-                                                            {formatDetailedDate(action.created_at)}
-                                                        </p>
+                                                        {/* Detailed timestamp on hover */}
+                                                        <div className="mt-3 pt-3 border-t border-slate-200/60">
+                                                            <p className="text-xs text-slate-500">
+                                                                {formatDetailedDate(action.created_at)}
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     </div>
                 </div>
 
-                <div className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-4 border border-slate-200">
+                <div
+                    className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-4 border border-slate-200">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 bg-slate-300 rounded-xl flex items-center justify-center">

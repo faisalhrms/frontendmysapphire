@@ -54,7 +54,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 "",
                 "sub",
-                "PMS",
+                "PAS",
                 6,
                 "bx bx-target-lock",
                 "",
