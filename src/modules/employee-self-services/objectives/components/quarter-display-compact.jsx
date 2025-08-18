@@ -4,9 +4,9 @@ export function QuarterDisplayCompact({ quarter }) {
 
         const styles = {
             1: { dot: "bg-emerald-500", text: "text-emerald-700", bg: "bg-emerald-50 hover:bg-emerald-100" },
-            2: { dot: "bg-blue-500", text: "text-blue-700", bg: "bg-blue-50 hover:bg-blue-100" },
+            2: { dot: "bg-primary/20", text: "text-primary", bg: "bg-primary/20 hover:bg-primary/20" },
             3: { dot: "bg-amber-500", text: "text-amber-700", bg: "bg-amber-50 hover:bg-amber-100" },
-            4: { dot: "bg-red-500", text: "text-red-700", bg: "bg-red-50 hover:bg-red-100" },
+            4: { dot: "bg-danger/30", text: "text-danger", bg: "bg-danger/30 hover:bg-danger/30" },
         }
 
         return (
