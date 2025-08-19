@@ -179,7 +179,7 @@ const SrDashboard = () => {
     const selRegion = watch('store_region_id')
     const selCity = watch('city_id')
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col mb-4">
             <div className="flex justify-end space-x-2">
                 <button className="ti-btn bg-primary text-white py-2 px-4" onClick={toggleFilters}>
                     <i className="ri-filter-3-fill"></i> Filters
