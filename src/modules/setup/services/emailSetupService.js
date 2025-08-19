@@ -5,7 +5,7 @@ export const emailSetupTypes = [
     { value: 'offline_store_performance_report', label: 'Offline Store Performance' },
     { value: 'daily_sales_report', label: 'Daily Sales Report' },
     { value: 'comparative_sales_report', label: 'Comparative Sales Report' },
-    // Add more as needed
+    { value: 'sr_daily_stat_report', label: 'SR Daily Stat Report' },
 ];
 
 export const getEmailSetupTypeLabel = (value) => {
@@ -14,7 +14,6 @@ export const getEmailSetupTypeLabel = (value) => {
 };
 
 
-// Create a new email setup
 export const createEmailSetup = async (emailSetupData) => {
     try {
         const response = await api.post("/setups/email-setups/", emailSetupData);
@@ -25,7 +24,6 @@ export const createEmailSetup = async (emailSetupData) => {
     }
 };
 
-// Update an existing email setup
 export const updateEmailSetup = async (id, emailSetupData) => {
     try {
         const response = await api.put(`/setups/email-setups/${id}/`, emailSetupData);
@@ -36,7 +34,6 @@ export const updateEmailSetup = async (id, emailSetupData) => {
     }
 };
 
-// (Optional) Get a single email setup by ID
 export const getEmailSetupById = async (id) => {
     try {
         const response = await api.get(`/setups/email-setups/${id}/`);
