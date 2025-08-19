@@ -32,7 +32,7 @@ const ObjectiveApproversTable = ({ approvers = [] }) => {
                         </thead>
                         <tbody>
                         {approvers?.map((item, index) => (
-                            <tr key={item.approver.id} className="">
+                            <tr key={item.approver.id} className="border-b">
                                 <td className="px-4 py-3 text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">{index + 1}</td>
                                 <td className="px-4 py-3 dark:text-gray-200 dark:bg-bodybg">
                                     <div className="flex items-center space-x-3 dark:text-gray-200 dark:bg-bodybg">

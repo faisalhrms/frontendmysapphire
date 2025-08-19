@@ -95,7 +95,7 @@ const ActionTimelineTable = ({ actions }) => {
                             const ActionIcon = config.icon;
 
                             return (
-                                <tr key={index} className="">
+                                <tr key={index} className="border-b">
                                     <td className={`text-center px-3 py-2 border border-slate-300 ${config.bg}`}>
                                         <div className={`flex items-center justify-center gap-2 ${config.color}`}>
                                             <config.icon className="w-4 h-4"/>
