@@ -11,17 +11,17 @@ const KRADetailsCard = ({ details }) => {
     };
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden dark:text-gray-200 dark:bg-bodybg">
             {/* Header */}
-            <div className="bg-gradient-to-r from-slate-50 via-slate-50 to-white border-b border-slate-200 px-6 py-4">
-                <div className="flex items-center space-x-3">
+            <div className="bg-gray-100 to-white border-b border-slate-200 px-6 py-4 dark:text-gray-200 dark:bg-bodybg">
+                <div className="flex items-center space-x-3 dark:bg-bodybg dark:text-gray-200">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg"
                          style={{background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)'}}>
                         <Target className="w-5 h-5" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900">Key Result Areas</h2>
-                        <p className="text-sm text-slate-600">Performance objectives and key indicators</p>
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg">Key Result Areas</h2>
+                        <p className="text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">Performance objectives and key indicators</p>
                     </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@ const KRADetailsCard = ({ details }) => {
             {/* KRA List */}
             <div className="p-6 space-y-6 dark:text-gray-200 dark:bg-bodybg">
                 {details.map((kra, index) => (
-                    <div key={index} className="group bg-slate-50/50 hover:bg-slate-50 rounded-2xl p-6 border border-slate-200/50 hover:border-slate-300/70 transition-all duration-300">
+                    <div key={index} className="group bg-slate-50/50 hover:bg-slate-50 rounded-2xl p-6 border border-slate-200/50 hover:border-slate-300/70 dark:text-gray-200 dark:bg-bodybg">
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-start space-x-4">
                                 <div className="flex-shrink-0">
@@ -42,8 +42,8 @@ const KRADetailsCard = ({ details }) => {
                                     </div>
                                 </div>
 
-                                <div className="flex-1">
-                                    <h3 className="text-lg font-semibold text-slate-900 mb-1">
+                                <div className="flex-1 dark:text-gray-200 dark:bg-bodybg">
+                                    <h3 className="text-lg font-semibold text-slate-900 text-white mb-1 dark:text-gray-200 dark:bg-bodybg">
                                         {kra.kra}
                                     </h3>
                                     <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">
@@ -61,35 +61,35 @@ const KRADetailsCard = ({ details }) => {
                         </div>
 
                         {/* KPI Content */}
-                        <div className="bg-white rounded-xl p-4 border border-slate-200/60 relative overflow-hidden">
-                            <div className="flex items-start space-x-3 overflow-hidden">
+                        <div className="bg-white rounded-xl p-4 border border-slate-200/60 relative overflow-hidden dark:text-gray-200 dark:bg-bodybg">
+                            <div className="flex items-start space-x-3 overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                                 <div
-                                    className="flex-shrink-0 w-6 h-6 bg-primary rounded-lg flex items-center justify-center mt-1">
+                                    className="flex-shrink-0 w-6 h-6 bg-primary rounded-lg flex items-center justify-center mt-1 dark:text-gray-200 dark:bg-bodybg">
                                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <div className="flex-1 space-y-4">
+                                <div className="flex-1 space-y-4 dark:text-gray-200 dark:bg-bodybg">
                                     {/* KPI Heading */}
-                                    <h4 className="font-semibold text-slate-800 mb-2 text-sm">
+                                    <h4 className="font-semibold text-slate-800 mb-2 text-sm dark:text-gray-200 dark:bg-bodybg">
                                         Key Performance Indicators
                                     </h4>
-                                    <div className="prose prose-sm prose-slate max-w-none">
+                                    <div className="prose prose-sm prose-slate max-w-none dark:text-gray-200 dark:bg-bodybg">
                                         {kra.kpi?.includes('<') ? (
                                             <div
-                                                className="text-slate-700 leading-relaxed"
+                                                className="text-slate-700 leading-relaxed dark:text-gray-200 dark:bg-bodybg"
                                                 dangerouslySetInnerHTML={{__html: kra.kpi}}
                                             />
                                         ) : (
-                                            <p className="text-slate-700 leading-relaxed">{kra.kpi}</p>
+                                            <p className="text-slate-700 leading-relaxed dark:text-gray-200 dark:bg-bodybg">{kra.kpi}</p>
                                         )}
                                     </div>
-                                    <div className="flex flex-wrap items-center gap-4 mb-6">
+                                    <div className="flex flex-wrap items-center gap-4 mb-6 dark:text-gray-200 dark:bg-bodybg">
                                         {kra.quarter && (
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-3 dark:text-gray-200 dark:bg-bodybg">
+                                                <div className="flex items-center gap-2 dark:text-gray-200 dark:bg-bodybg">
 
-                                                    <div className="flex flex-wrap items-center gap-2">
+                                                    <div className="flex flex-wrap items-center gap-2 dark:text-gray-200 dark:bg-bodybg">
                                                         <QuarterDisplayCompact quarter={kra.quarter}/>
                                                     </div>
 
@@ -99,7 +99,7 @@ const KRADetailsCard = ({ details }) => {
 
                                         {kra.priority && (
                                             <div
-                                                className={`absolute top-2 right-2 text-white text-xs font-bold uppercase px-2 py-1 ${
+                                                className={`absolute top-2 right-2 text-white text-xs font-bold uppercase px-2 py-1  ${
                                                     kra.priority.toLowerCase() === "high"
                                                         ? "bg-danger"
                                                         : kra.priority.toLowerCase() === "medium"
@@ -126,8 +126,8 @@ const KRADetailsCard = ({ details }) => {
                                                     </svg>
                                                 </div>
                                                 <div>
-                                                    <h5 className="text-sm font-bold text-slate-800">ATTACHMENTS</h5>
-                                                    <p className="text-xs text-slate-500">{kra.attachments.length} file{kra.attachments.length > 1 ? 's' : ''} attached</p>
+                                                    <h5 className="text-sm font-bold text-slate-800 dark:text-gray-200 dark:bg-bodybg">ATTACHMENTS</h5>
+                                                    <p className="text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">{kra.attachments.length} file{kra.attachments.length > 1 ? 's' : ''} attached</p>
                                                 </div>
                                             </div>
 
@@ -208,21 +208,21 @@ const KRADetailsCard = ({ details }) => {
                                         style={{width: `${Math.min((parseFloat(kra.weightage) / 50) * 100, 100)}%`}}
                                     />
                                 </div>
-                                <span className="text-xs text-slate-500">Weight Distribution</span>
+                                <span className="text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">Weight Distribution</span>
                             </div>
 
-                            <div className="flex items-center space-x-1">
+                            <div className="flex items-center space-x-1 dark:text-gray-200 dark:bg-bodybg ">
                                 <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
                                 <div className="w-1.5 h-1.5 bg-slate-300 rounded-full"></div>
                                 <div className="w-1.5 h-1.5 bg-slate-300 rounded-full"></div>
-                                <span className="text-xs text-slate-500 ml-2">Defined</span>
+                                <span className="text-xs text-slate-500 ml-2 dark:text-gray-200 dark:bg-bodybg">Defined</span>
                             </div>
                         </div>
                     </div>
                 ))}
 
                 {/* Summary Card */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200/50">
+                <div className="bg-gray-100 rounded-2xl p-6 border border-blue-200/50 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                             <div
@@ -230,15 +230,15 @@ const KRADetailsCard = ({ details }) => {
                                 <Target className="w-6 h-6"/>
                             </div>
                             <div>
-                                <h4 className="font-semibold text-slate-900">Total KRAs Summary</h4>
-                                <p className="text-sm text-slate-600">Complete performance framework</p>
+                                <h4 className="font-semibold text-slate-900 dark:text-gray-200 dark:bg-bodybg">Total KRAs Summary</h4>
+                                <p className="text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">Complete performance framework</p>
                             </div>
                         </div>
                         <div className="text-right">
-                            <div className="text-2xl font-bold text-blue-600">
+                            <div className="text-2xl font-bold text-blue-600 dark:text-gray-200 dark:bg-bodybg">
                                 {details.reduce((sum, kra) => sum + parseFloat(kra.weightage), 0).toFixed(0)}%
                             </div>
-                            <div className="text-sm text-slate-500">{details.length} Areas</div>
+                            <div className="text-sm text-slate-500 dark:text-gray-200 dark:bg-bodybg">{details.length} Areas</div>
                         </div>
                     </div>
                 </div>
