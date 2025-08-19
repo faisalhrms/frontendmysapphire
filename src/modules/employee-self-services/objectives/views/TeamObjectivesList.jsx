@@ -1,39 +1,48 @@
 import React, { useRef } from "react";
-import { Target, ExternalLink } from "lucide-react";
+import { Target, ExternalLink, Crown } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
-import { toTitleCase } from "@helpers/formatters.js";
 import Avatar from "@components/Avatar.jsx";
-import {formatDate} from "@helpers/dateTime.js";
 import {Link} from "react-router-dom";
 const TeamObjectivesList = ({ externalFilters = [] }) => {
 
     const dataTableRef = useRef();
     const columns = [
         {
-            Header: 'Person',
-            accessor: 'full_name',
+            Header: "Person",
+            accessor: "full_name",
             filterable: true,
-            filterType: 'text',
-            filterKey: 'full_name',
-            Cell: ({ row }) => (
-                <div className="flex items-center">
-                    <Avatar
-                        avatar={row.original?.avatar ? row.original : null}
-                        full_name={row.original?.full_name || 'N A'}
-                        size='md'
-                        parentClasses='dark:text-gray-200 dark:bg-bodybg'
-                    />
-                    <div className='ms-2'>
-                        <p className="font-semibold mb-0 flex items-center">
-                            {row.original?.full_name || 'N/A'}
-                        </p>
-                        <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                            {row.original?.email || 'N/A'}
-                        </p>
+            filterType: "text",
+            filterKey: "full_name",
+            Cell: ({ row }) => {
+                const { full_name, email, avatar, is_line_manager } = row.original;
+
+                return (
+                    <div className="flex items-center">
+                        <Avatar
+                            avatar={avatar ? row.original : null}
+                            full_name={full_name || "N A"}
+                            size="md"
+                            parentClasses="dark:text-gray-200 dark:bg-bodybg"
+                        />
+                        <div className="ms-2">
+                            <p className="font-semibold mb-0 flex items-center">
+                                {full_name || "N/A"}
+                                {is_line_manager && (
+                                    <Crown
+                                        className="ml-1 text-warning"
+                                        size={14}
+                                        title="Line Manager"
+                                    />
+                                )}
+                            </p>
+                            <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                {email || "N/A"}
+                            </p>
+                        </div>
                     </div>
-                </div>
-            )
+                );
+            },
         },
         {
             Header: "Designation",
@@ -41,19 +50,21 @@ const TeamObjectivesList = ({ externalFilters = [] }) => {
             filterable: true,
             filterType: 'text',
             filterKey: 'employee__designation__name',
-            Cell: ({ value }) => value || 'N/A',
         },
         {
             Header: "Year",
             accessor: "year",
-            filterable: true,
+            filterable: false,
             filterType: 'number',
             filterKey: 'year',
+            disableSortBy: true,
+
         },
         {
             Header: "Objective",
             accessor: "actions",
-            filterable: false, // no filter needed here
+            filterable: false,
+            disableSortBy: true,
             Cell: ({ row }) => {
                 const objective = row.original.objective;
                 const year = row.original.year;

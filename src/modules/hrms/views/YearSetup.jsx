@@ -11,6 +11,13 @@ const YearSetup = () => {
         {
             Header: 'Type',
             accessor: 'type',
+            filterable: true,
+            filterType: 'select',
+            filterKey: 'type',
+            filterOptions: [
+                { value: 'objective', label: 'Objective' },
+                { value: 'appraisal', label: 'Appraisal' },
+            ],
             getCellProps: (cellInfo) => {
                 const value = cellInfo.value;
                 let bgClass = "";
@@ -31,10 +38,14 @@ const YearSetup = () => {
         {
             Header: 'Started Date',
             accessor: 'started_at',
+            filterType: 'datetime',
+            filterable: true,
         },
         {
             Header: 'Ended Date',
             accessor: 'ended_at',
+            filterType: 'datetime',
+            filterable: true,
         },
         {
             Header: 'Actions',

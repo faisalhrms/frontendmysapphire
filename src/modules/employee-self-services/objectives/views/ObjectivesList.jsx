@@ -14,6 +14,7 @@ const ObjectivesList = () => {
     const columns = [
         {
             Header: "Year",
+            id: "setup_year__year",
             accessor: "year",
             Cell: ({ row }) => {
                 const year = row.original.year;
@@ -33,6 +34,14 @@ const ObjectivesList = () => {
         {
             Header: 'Status',
             accessor: 'status',
+            filterable: true,
+            filterType: 'select',
+            filterKey: 'status',
+            filterOptions: [
+                { value: 'approved', label: 'Approved' },
+                { value: 'under_approval', label: 'Under Approval' },
+                { value: 'rejected', label: 'Rejected' },
+            ],
             Cell: ({ value }) => toTitleCase(value),
             getCellProps: (cellInfo) => {
                 const value = cellInfo.value;
@@ -64,6 +73,7 @@ const ObjectivesList = () => {
 ,      {
             Header: 'Pending At',
             accessor: 'current_approver',
+            disableSortBy: true,
             Cell: ({ value }) => {
                 if (!value?.full_name && !value?.email && !value?.avatar) {
                     return null;
@@ -92,13 +102,11 @@ const ObjectivesList = () => {
                     </div>
                 );
             }
-        }
-
-        ,
-        {
+        }, {
             Header: 'Weightage',
             accessor: 'total_weightage',
             excelColumnType:'number',
+            disableSortBy: true,
             Cell: ({ row }) => {
                 return (
                     <ProgressBar
@@ -111,10 +119,13 @@ const ObjectivesList = () => {
         {
             Header: 'Total KRAs',
             accessor: 'total_kras',
+            disableSortBy: true,
         },
         {
             Header: 'Submitted At',
             accessor: 'submitted_at',
+            filterType: 'date',
+            filterable: true,
         },
         {
             Header: 'Actions',
@@ -166,7 +177,7 @@ const ObjectivesList = () => {
                 columns={columns}
                 apiUrl="/hrms/objectives/datatable/"
                 needHeader={false}
-                enableAdvancedFilters={false}
+                enableAdvancedFilters={true}
                 buttons={buttons}
             />
         </>

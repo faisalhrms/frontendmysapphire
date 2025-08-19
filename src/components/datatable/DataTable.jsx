@@ -240,7 +240,7 @@ const DataTable = React.memo(React.forwardRef(({
         const headerLabel = column.render ? column.render('Header') : column.Header;
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
-        const headerId = column.id || column.accessor;
+        const headerId = column.filterKey || column.id || column.accessor;
         const currentIndex = columnOrder.indexOf(headerId);
 
         const isCurrentlySorted = sortField === headerId;
