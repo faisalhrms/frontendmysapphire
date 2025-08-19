@@ -54,13 +54,13 @@ const ObjectiveDetailHeader = ({ data }) => {
             <div className="relative">
                 <div className="absolute inset-0 opacity-5"
                      style={{background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)'}}></div>
-                <div className="relative px-8 py-8">
+                <div className="relative px-8 py-8 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-start justify-between">
                         {/* Left Section - User Info */}
                         <div className="flex items-start space-x-6">
                             {/* Avatar */}
                             <div className="flex-shrink-0">
-                                <div className="relative">
+                                <div className="relative dark:text-gray-200 dark:bg-bodybg">
                                     {data.user.avatar ? (
                                         <img
                                             src={data.user.avatar.medium_url}
@@ -73,7 +73,7 @@ const ObjectiveDetailHeader = ({ data }) => {
                                             {data.user.full_name.split(' ').map(n => n[0]).join('')}
                                         </div>
                                     )}
-                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-lg dark:text-gray-200 dark:bg-bodybg" >
                                         <Target className="w-4 h-4 text-blue-600" />
                                     </div>
                                 </div>
@@ -82,10 +82,10 @@ const ObjectiveDetailHeader = ({ data }) => {
                             {/* User Details */}
                             <div className="flex-1">
                                 <div className="mb-3">
-                                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+                                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight dark:text-gray-200 dark:bg-bodybg">
                                         Performance Objectives {data.year}
                                     </h1>
-                                    <p className="text-slate-600 mt-1">
+                                    <p className="text-slate-600 mt-1 dark:text-gray-200 dark:bg-bodybg">
                                         Annual Key Result Areas & Performance Indicators
                                     </p>
                                 </div>
@@ -96,9 +96,9 @@ const ObjectiveDetailHeader = ({ data }) => {
                                             <User className="w-5 h-5 text-info" />
                                         </div>
                                         <div>
-                                            <p className="text-sm text-slate-500">Employee</p>
-                                            <p className="font-semibold text-slate-900">{data.user.full_name}</p>
-                                            <p className="text-xs text-slate-500">{data.user.emp_code} • {data.user.position}</p>
+                                            <p className="text-sm text-slate-500 dark:text-gray-200 dark:bg-bodybg">Employee</p>
+                                            <p className="font-semibold text-slate-900 dark:text-gray-200 dark:bg-bodybg">{data.user.full_name}</p>
+                                            <p className="text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">{data.user.emp_code} • {data.user.position}</p>
                                         </div>
                                     </div>
 
@@ -107,9 +107,9 @@ const ObjectiveDetailHeader = ({ data }) => {
                                             <Calendar className="w-5 h-5 text-emerald-600" />
                                         </div>
                                         <div>
-                                            <p className="text-sm text-slate-500">Department</p>
-                                            <p className="font-semibold text-slate-900">{data.user.department}</p>
-                                            <p className="text-xs text-slate-500">{data.user.designation}</p>
+                                            <p className="text-sm text-slate-500 dark:text-gray-200 dark:bg-bodybg">Department</p>
+                                            <p className="font-semibold text-slate-900 dark:text-gray-200 dark:bg-bodybg">{data.user.department}</p>
+                                            <p className="text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">{data.user.designation}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -126,15 +126,15 @@ const ObjectiveDetailHeader = ({ data }) => {
 
                             {/* Quick Stats */}
                             <div className="text-right">
-                                <div className="text-2xl font-bold text-slate-900">{data.total_weightage}%</div>
-                                <div className="text-sm text-slate-500">Total Weightage</div>
+                                <div className="text-2xl font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{data.total_weightage}%</div>
+                                <div className="text-sm text-slate-500 dark:text-gray-200 dark:bg-bodybg">Total Weightage</div>
                             </div>
 
                             {/* Current Approver */}
                             {data.current_approver && (
                                 <div className="text-right">
-                                    <p className="text-xs text-slate-500">Pending Approval</p>
-                                    <p className="font-semibold text-sm text-slate-900">{data.current_approver.full_name}</p>
+                                    <p className="text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">Pending Approval</p>
+                                    <p className="font-semibold text-sm text-slate-900 dark:text-gray-200 dark:bg-bodybg">{data.current_approver.full_name}</p>
                                 </div>
                             )}
                         </div>
@@ -143,23 +143,23 @@ const ObjectiveDetailHeader = ({ data }) => {
             </div>
 
             {/* Timeline Info Bar */}
-            <div className="bg-slate-50 border-t border-slate-100 px-8 py-4">
+            <div className="bg-gray-100 border-t border-slate-100 px-8 py-4 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center space-x-6">
                         <div className="flex items-center space-x-2">
                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            <span className="text-slate-600">Created: {formatDate(data.created_at)}</span>
+                            <span className="text-slate-600 dark:text-gray-200 dark:bg-bodybg">Created: {formatDate(data.created_at)}</span>
                         </div>
                         {data.submitted_at && (
                             <div className="flex items-center space-x-2">
                                 <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                <span className="text-slate-600">Submitted: {formatDate(data.submitted_at)}</span>
+                                <span className="text-slate-600 dark:text-gray-200 dark:bg-bodybg">Submitted: {formatDate(data.submitted_at)}</span>
                             </div>
                         )}
                     </div>
                     <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                        <span className="text-slate-600">{data.details.length} KRAs Defined</span>
+                        <span className="text-slate-600 dark:text-gray-200 dark:bg-bodybg">{data.details.length} KRAs Defined</span>
                     </div>
                 </div>
             </div>

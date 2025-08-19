@@ -64,23 +64,23 @@ const ActionTimeline = ({ actions }) => {
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             {/* Header */}
-            <div className="bg-gradient-to-r from-slate-50 via-slate-50 to-white border-b border-slate-200 px-6 py-4">
+            <div className="dark:text-gray-200 dark:bg-bodybg border-b border-slate-200 px-6 py-4">
                 <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg">
                         <Clock className="w-5 h-5" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900">Action Timeline</h2>
-                        <p className="text-sm text-slate-600">Complete history of objective actions</p>
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg">Action Timeline</h2>
+                        <p className="text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">Complete history of objective actions</p>
                     </div>
                 </div>
             </div>
 
             {/* Timeline */}
-            <div className="p-6">
+            <div className="p-6 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flow-root">
                     <div
-                        className="max-h-[549px] overflow-y-auto pr-2 ">
+                        className="max-h-[549px] overflow-y-auto pr-2  dark:text-gray-200 dark:bg-bodybg">
                         <ul className="-mb-8">
                             {sortedActions.map((action, index) => {
                                 const config = getActionConfig(action.action);
@@ -89,7 +89,7 @@ const ActionTimeline = ({ actions }) => {
 
                                 return (
                                     <li key={index}>
-                                        <div className="relative pb-8">
+                                        <div className="relative pb-8 dark:text-gray-200 dark:bg-bodybg">
                                             {/* Connecting Line */}
                                             {!isLast && (
                                                 <span
@@ -98,7 +98,7 @@ const ActionTimeline = ({ actions }) => {
                                                 />
                                             )}
 
-                                            <div className="relative flex items-start space-x-4 group">
+                                            <div className="relative flex items-start space-x-4 group dark:text-gray-200 dark:bg-bodybg">
                                                 {/* Timeline Icon */}
                                                 <div className="relative flex-shrink-0">
                                                     <div
@@ -135,10 +135,10 @@ const ActionTimeline = ({ actions }) => {
                                                                         </div>
                                                                     )}
                                                                     <div>
-                                                                        <p className="font-semibold text-slate-900 text-sm">
+                                                                        <p className="font-semibold text-slate-900 text-sm dark:text-gray-200 dark:bg-bodybg">
                                                                             {action.user.full_name}
                                                                         </p>
-                                                                        <p className="text-xs text-slate-500">
+                                                                        <p className="text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">
                                                                             {action.user.email}
                                                                         </p>
                                                                     </div>
@@ -183,20 +183,20 @@ const ActionTimeline = ({ actions }) => {
                 </div>
 
                 <div
-                    className="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-4 border border-slate-200">
+                    className="mt-8 bg-gray-100 rounded-2xl p-4 border border-slate-200 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 bg-slate-300 rounded-xl flex items-center justify-center">
                                 <Clock className="w-4 h-4 text-slate-600" />
                             </div>
                             <div>
-                                <p className="font-semibold text-slate-900 text-sm">Timeline Summary</p>
-                                <p className="text-xs text-slate-600">Total workflow actions recorded</p>
+                                <p className="font-semibold text-slate-900 text-sm dark:text-gray-200 dark:bg-bodybg">Timeline Summary</p>
+                                <p className="text-xs text-slate-600 dark:text-gray-200 dark:bg-bodybg">Total workflow actions recorded</p>
                             </div>
                         </div>
                         <div className="text-right">
-                            <div className="text-lg font-bold text-slate-900">{actions.length}</div>
-                            <div className="text-xs text-slate-500">Actions</div>
+                            <div className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg">{actions.length}</div>
+                            <div className="text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">Actions</div>
                         </div>
                     </div>
                 </div>

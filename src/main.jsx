@@ -74,7 +74,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="vcard/profile/:id" element={<VCardProfile />} />
                             <Route path="forms/:slug" element={<PublicDynamicForm />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                            <Route path="/ilay/inlay" element={<Inlay />} />
+                            <Route path="/ilay/QR" element={<Inlay />} />
 
                         </Route>
 
