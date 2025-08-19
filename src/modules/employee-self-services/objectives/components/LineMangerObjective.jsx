@@ -13,7 +13,7 @@ const LineMangerObjective = ({ details = []}) => {
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-slate-50 via-slate-50 to-white border-b border-slate-200 px-6 py-4">
+            <div className="border-b border-slate-200 px-6 py-4 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex items-center space-x-3">
                     <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg"
@@ -24,8 +24,8 @@ const LineMangerObjective = ({ details = []}) => {
                         <Target className="w-5 h-5" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900">Key Result Areas Line Manger</h2>
-                        <p className="text-sm text-slate-600">
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">Key Result Areas Line Manger</h2>
+                        <p className="text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">
                             Performance objectives and key indicators
                         </p>
                     </div>
@@ -35,7 +35,7 @@ const LineMangerObjective = ({ details = []}) => {
                     {details.map((kra, index) => (
                         <div
                             key={index}
-                            className="group bg-slate-50/50 hover:bg-slate-50 rounded-2xl p-6 border border-slate-200/50 hover:border-slate-300/70 transition-all duration-300"
+                            className="group bg-slate-50/50 hover:bg-slate-50 rounded-2xl p-6 border border-slate-200/50 hover:border-slate-300/70 dark:text-gray-200 dark:bg-bodybg"
                         >
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-start space-x-4">
@@ -54,8 +54,8 @@ const LineMangerObjective = ({ details = []}) => {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1">
-                                        <h3 className="text-lg font-semibold text-slate-900 mb-1">
+                                    <div className="flex-1 dark:text-gray-200 dark:bg-bodybg">
+                                        <h3 className="text-lg font-semibold text-slate-900 mb-1 dark:text-gray-200 dark:bg-bodybg">
                                             {kra.kra}
                                         </h3>
                                         <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">
@@ -65,19 +65,17 @@ const LineMangerObjective = ({ details = []}) => {
                                     </div>
                                 </div>
 
-                                {/* Weightage Badge */}
                                 <div
-                                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl ${getWeightageColor(
+                                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl dark:text-gray-200 dark:bg-bodybg ${getWeightageColor(
                                         kra.weightage
                                     )}`}
                                 >
                                     <TrendingUp className="w-4 h-4" />
-                                    <span className="font-bold text-sm">{kra.weightage}%</span>
+                                    <span className="font-bold text-sm dark:text-gray-200 dark:bg-bodybg">{kra.weightage}%</span>
                                 </div>
                             </div>
 
-                            {/* KPI Content */}
-                            <div className="bg-white rounded-xl p-4 border border-slate-200/60">
+                            <div className="bg-white rounded-xl p-4 border border-slate-200/60 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="flex items-start space-x-3">
                                     <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-lg flex items-center justify-center mt-1">
                                         <svg
@@ -89,17 +87,17 @@ const LineMangerObjective = ({ details = []}) => {
                                         </svg>
                                     </div>
                                     <div className="flex-1">
-                                        <h4 className="font-semibold text-slate-800 mb-2 text-sm">
+                                        <h4 className="font-semibold text-slate-800 mb-2 text-sm dark:text-gray-200 dark:bg-bodybg">
                                             Key Performance Indicators
                                         </h4>
                                         <div className="prose prose-sm prose-slate max-w-none">
                                             {kra.kpi.includes('<') ? (
                                                 <div
-                                                    className="text-slate-700 leading-relaxed"
+                                                    className="text-slate-700 leading-relaxed dark:text-gray-200 dark:bg-bodybg"
                                                     dangerouslySetInnerHTML={{ __html: kra.kpi }}
                                                 />
                                             ) : (
-                                                <p className="text-slate-700 leading-relaxed">
+                                                <p className="text-slate-700 leading-relaxed dark:text-gray-200 dark:bg-bodybg">
                                                     {kra.kpi}
                                                 </p>
                                             )}
@@ -108,7 +106,6 @@ const LineMangerObjective = ({ details = []}) => {
                                 </div>
                             </div>
 
-                            {/* Progress Indicator */}
                             <div className="mt-4 flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
                                     <div className="w-20 h-1.5 bg-slate-200 rounded-full overflow-hidden">
@@ -138,23 +135,23 @@ const LineMangerObjective = ({ details = []}) => {
                     ))}
 
                     {/* Summary Card */}
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200/50">
+                    <div className="bg-gray-100 dark:text-gray-200 dark:bg-bodybg rounded-2xl p-6 border border-blue-200/50">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                                 <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg">
                                     <Target className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-slate-900">
+                                    <h4 className="font-semibold text-slate-900 dark:text-gray-200 dark:bg-bodybg">
                                         Total KRAs Summary
                                     </h4>
-                                    <p className="text-sm text-slate-600">
+                                    <p className="text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">
                                         Complete performance framework
                                     </p>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <div className="text-2xl font-bold text-blue-600">
+                                <div className="text-2xl font-bold text-blue-600 dark:text-gray-200 dark:bg-bodybg">
                                     {details
                                         .reduce(
                                             (sum, kra) => sum + parseFloat(kra.weightage),
@@ -163,7 +160,7 @@ const LineMangerObjective = ({ details = []}) => {
                                         .toFixed(0)}
                                     %
                                 </div>
-                                <div className="text-sm text-slate-500">
+                                <div className="text-sm text-slate-500 dark:text-gray-200 dark:bg-bodybg">
                                     {details.length} Areas
                                 </div>
                             </div>
