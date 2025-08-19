@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function ProductShowcase() {
+export default function PublicInlay() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const productImages = [

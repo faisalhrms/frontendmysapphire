@@ -45,32 +45,29 @@ const EmailSetupForm = ({ emailSetupData, isEditMode = false }) => {
                     <div className="box-header"><h3 className="box-title">Email Setup</h3></div>
                     <div className="box-body grid grid-cols-12 gap-4">
 
-                        {/* To Emails */}
                         <div className="col-span-12 xl:col-span-6">
                             <FormAsyncSelect
+                                label={true}
                                 name="to_emails"
+                                placeholder="To Emails"
                                 control={control}
                                 errors={errors}
-                                label="To Emails"
-                                placeholder="Select Emails"
                                 isMulti
                                 is_required
                                 clientSideSearch={false}
                                 apiUrl="/select/user-emails/"
                                 queryKeyBase="to_emails"
-                                // no preselectedOptions helper needed if value=label=value
                                 preselectedOptions={emailSetupData?.to_emails.map((e) => ({label: e, value: e}))}
                             />
                         </div>
 
-                        {/* CC Emails */}
                         <div className="col-span-12 xl:col-span-6">
                             <FormAsyncSelect
+                                label={true}
+                                placeholder="CC Emails"
                                 name="cc_emails"
                                 control={control}
                                 errors={errors}
-                                label="CC Emails"
-                                placeholder="Select Emails"
                                 isMulti
                                 clientSideSearch={false}
                                 apiUrl="/select/user-emails/"
@@ -79,7 +76,6 @@ const EmailSetupForm = ({ emailSetupData, isEditMode = false }) => {
                             />
                         </div>
 
-                        {/* Type */}
                         <div className="col-span-12 xl:col-span-6">
                             <FormSelect
                                 name="type"
