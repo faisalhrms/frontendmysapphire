@@ -249,8 +249,6 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
                 endedAt={dates.endedAt}
             />
         }
-
-        <div id="modal-root"></div>
       </>
   );
 };

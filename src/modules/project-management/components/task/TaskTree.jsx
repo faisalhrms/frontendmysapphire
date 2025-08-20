@@ -56,8 +56,6 @@ const TaskTree = ({ task, openTaskModal, refetch }) => {
                   closeModal={closeTaskOverdueModal}
               />
           }
-
-          <div id="modal-root"></div>
       </>
   )
 }

@@ -369,7 +369,6 @@ const TaskList = () => {
                     viewOnly={false}
                 />
             }
-            <div id="modal-root"></div>
         </>
     );
 };

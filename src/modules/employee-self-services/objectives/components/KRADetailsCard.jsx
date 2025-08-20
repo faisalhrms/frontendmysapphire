@@ -2,7 +2,7 @@ import React from 'react';
 import { Target, TrendingUp, Award } from 'lucide-react';
 import {QuarterDisplayCompact} from "@modules/employee-self-services/objectives/components/quarter-display-compact.jsx";
 
-const KRADetailsCard = ({ details }) => {
+const KRADetailsCard = ({heading="Key Result Areas", details }) => {
     const getWeightageColor = (weightage) => {
         const weight = parseFloat(weightage);
         if (weight >= 30) return 'text-emerald-600 bg-emerald-100';
@@ -20,7 +20,7 @@ const KRADetailsCard = ({ details }) => {
                         <Target className="w-5 h-5" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg">Key Result Areas</h2>
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg">{heading}</h2>
                         <p className="text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">Performance objectives and key indicators</p>
                     </div>
                 </div>
@@ -43,7 +43,7 @@ const KRADetailsCard = ({ details }) => {
                                 </div>
 
                                 <div className="flex-1 dark:text-gray-200 dark:bg-bodybg">
-                                    <h3 className="text-lg font-semibold text-slate-900 text-white mb-1 dark:text-gray-200 dark:bg-bodybg">
+                                    <h3 className="text-lg font-semibold text-slate-900  mb-1 dark:text-gray-200 dark:bg-bodybg">
                                         {kra.kra}
                                     </h3>
                                     <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">
