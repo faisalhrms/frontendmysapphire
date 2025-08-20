@@ -155,6 +155,12 @@ const TaskDetailModal = ({ task, isLoading, closeModal, viewOnly = true }) => {
                                                         title='Launch'
                                                         children={formatDate(task.milestone.ended_at)}
                                                     />
+
+                                                    <TaskDetailRow
+                                                        icon='bi bi-ticket-detailed'
+                                                        title='Detail'
+                                                        children={task.description}
+                                                    />
                                                 </div>
                                             </PerfectScrollbar>
                                         </div>

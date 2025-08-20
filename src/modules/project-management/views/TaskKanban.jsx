@@ -80,7 +80,6 @@ const TaskKanban = () => {
                     </div>
                 </div>
             )}
-            <div id="modal-root"></div>
         </>
     );
 };
