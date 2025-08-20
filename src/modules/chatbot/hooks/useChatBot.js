@@ -8,7 +8,7 @@ export default function useChatBot() {
   const [isThinking, setIsThinking] = useState(false)
   const [isBotActive, setIsBotActive] = useState(false)
   const [isWebSearch, setIsWebSearch] = useState(false)
-  const [modeSelection, setModeSelection] = useState("Export Data")
+  const [modeSelection, setModeSelection] = useState("Select Source")
   const [modeOpen, setModeOpen] = useState(false)
   const recognitionRef = useRef(null)
   const finalTranscriptRef = useRef("")
@@ -23,27 +23,27 @@ export default function useChatBot() {
     return html.replace(/<img\s/gi, "<img loading='lazy' referrerpolicy='no-referrer' style='max-width:100%;height:auto;border-radius:8px;display:block;margin:.5rem 0;' ")
   }
 
-const sendQuery = async (msg, webSearch) => {
-  setIsThinking(true)
-  setMessages(p => [...p, { type: "user", text: msg, time: new Date() }])
-  setMessages(p => [...p, { type: "bot", loading: true, time: new Date() }])
-  try {
-    const mode = modeSelection === "Export Data" ? "export" : modeSelection.toLowerCase()
-    const res = await ChatService.query(msg, webSearch, mode)
-    const d = res?.data?.response
-    const now = new Date()
-    setMessages(p => {
-      const base = p.slice(0, -1)
-      if (Array.isArray(d)) return [...base, { type: "bot", table: d, time: now }]
-      if (d && typeof d === "object" && (d.html || d.chart)) return [...base, { type: "bot", html: d.html || "", chart: d.chart || null, time: now }]
-      return [...base, { type: "bot", html: (typeof d === "string" ? d : JSON.stringify(d)), time: now }]
-    })
-  } catch {
-    setMessages(p => [...p.slice(0, -1), { type: "bot", text: "Network error", time: new Date() }])
-  } finally {
-    setIsThinking(false)
+  const sendQuery = async (msg, webSearch) => {
+    setIsThinking(true)
+    setMessages(p => [...p, { type: "user", text: msg, time: new Date() }])
+    setMessages(p => [...p, { type: "bot", loading: true, time: new Date() }])
+    try {
+      const mode = modeSelection === "Export Data" ? "export" : modeSelection === "Salesforce" ? "salesforce" : ""
+      const res = await ChatService.query(msg, webSearch, mode)
+      const d = res?.data?.response
+      const now = new Date()
+      setMessages(p => {
+        const base = p.slice(0, -1)
+        if (Array.isArray(d)) return [...base, { type: "bot", table: d, time: now }]
+        if (d && typeof d === "object" && (d.html || d.chart)) return [...base, { type: "bot", html: d.html || "", chart: d.chart || null, time: now }]
+        return [...base, { type: "bot", html: (typeof d === "string" ? normalizeHtml(d) : JSON.stringify(d)), time: now }]
+      })
+    } catch {
+      setMessages(p => [...p.slice(0, -1), { type: "bot", text: "Network error", time: new Date() }])
+    } finally {
+      setIsThinking(false)
+    }
   }
-}
 
   const handleStartChat = () => {
     setIsBotActive(true)
@@ -56,6 +56,7 @@ const sendQuery = async (msg, webSearch) => {
     setMessages([])
     setInput("")
     setIsWebSearch(false)
+    setModeSelection("Select Source")
   }
 
   const handleSend = () => {
