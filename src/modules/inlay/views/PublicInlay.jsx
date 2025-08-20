@@ -83,13 +83,13 @@ export default function PublicInlay() {
 
                         <button
                             onClick={prevImage}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full mt-16"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full mt-12"
                         >
                             <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200" />
                         </button>
                         <button
                             onClick={nextImage}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full mt-16"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full mt-12"
                         >
                             <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
                         </button>
