@@ -114,7 +114,7 @@ const ApprovalSetup = () => {
 
     const columns = useMemo(() => [
         {
-            Header: 'Name',
+            Header: 'Person',
             accessor: 'user.full_name',
             width: 300,
             filterable: true,
@@ -135,6 +135,7 @@ const ApprovalSetup = () => {
             filterable: true,
             filterType: 'text',
             filterKey: 'user__employee__position__name',
+
         },
         {
             Header: 'Department',
@@ -146,6 +147,7 @@ const ApprovalSetup = () => {
         {
             Header: 'Hierarchy',
             accessor: 'approvers',
+            disableSortBy: true,
             width: 300,
             filterable: true,
             filterType: 'text',

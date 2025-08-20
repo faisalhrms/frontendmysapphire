@@ -7,7 +7,8 @@ import botLoading from "@assets/jsons/bot.json"
 import ChatInputDock from "@modules/chatbot/components/ChatInputDock.jsx"
 import ChatInputBox from "@modules/chatbot/components/ChatInputBox.jsx"
 import useChatBot from "@modules/chatbot/hooks/useChatBot.js"
-import Avatar from "@components/Avatar.jsx";
+import Avatar from "@components/Avatar.jsx"
+import ChartBox from "@modules/chatbot/components/ChartBox.jsx"
 
 export default function ChatBot() {
   const {
@@ -53,13 +54,8 @@ export default function ChatBot() {
     if (endRef.current) endRef.current.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "end" })
   }
 
-  useEffect(() => {
-    scrollToBottom(false)
-  }, [])
-
-  useEffect(() => {
-    scrollToBottom(true)
-  }, [messages.length, isThinking, isWebSearch])
+  useEffect(() => { scrollToBottom(false) }, [])
+  useEffect(() => { scrollToBottom(true) }, [messages.length, isThinking, isWebSearch])
 
   if (!isBotActive) {
     return (
@@ -123,14 +119,9 @@ export default function ChatBot() {
                     </div>
                   ) : (
                     !m.loading && (
-                      <div className="ml-8 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-lg">
-                        {m.table ? (
-                          <div className="overflow-x-auto"></div>
-                        ) : m.html ? (
-                          <div dangerouslySetInnerHTML={{ __html: m.html }} />
-                        ) : (
-                          <p>{m.text}</p>
-                        )}
+                      <div className="ml-8 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-3xl">
+                        {m.chart ? <ChartBox spec={m.chart} /> : null}
+                        {m.table ? <div className="overflow-x-auto"></div> : m.html ? <div className="main-chat-msg" dangerouslySetInnerHTML={{ __html: m.html }} /> : <p>{m.text}</p>}
                       </div>
                     )
                   )}
