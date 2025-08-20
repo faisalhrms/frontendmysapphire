@@ -51,7 +51,6 @@ const TaskListModal = ({tasks, isLoading, heading = 'Tasks', closeModal}) => {
                     </div>
                 </div>
             </div>
-            <div id="modal-root"></div>
         </>
     );
 };
