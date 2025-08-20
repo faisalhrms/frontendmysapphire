@@ -91,8 +91,6 @@ const ProjectsMilestonesTasksList = () => {
                     <p className="text-lg text-gray-500">There are no tasks related to you.</p>
                 </div>
             )}
-
-            <div id="modal-root"></div>
         </>
     );
 };

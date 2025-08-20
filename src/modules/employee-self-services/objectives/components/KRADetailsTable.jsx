@@ -81,7 +81,7 @@ const KRADetailsTable = ({ details }) => {
                                     style={{textAlign: "left"}}
                                     className="text-left px-3 py-2 border border-slate-300 max-w-[350px] dark:text-gray-200 dark:bg-bodybg"
                                 >
-                                    <ExpandableText content={kra.kpi || ""} maxLength={100}/>
+                                    <ExpandableText content={kra.kpi || ""}/>
                                 </td>
 
 

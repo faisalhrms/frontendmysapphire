@@ -149,35 +149,62 @@ const ObjectiveDetail = () => {
 
                                     <div className="space-y-6">
                                         {viewType === "grid" ? (
-                                            <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                                <ActionTimeline actions={timelineActions} />
+                                            <div
+                                                className="transform hover:scale-[1.01] transition-transform duration-300">
+                                                <ActionTimeline actions={timelineActions}/>
                                             </div>
                                         ) : (
-                                            <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                                <ActionTimelineTable actions={timelineActions} />
+                                            <div
+                                                className="transform hover:scale-[1.01] transition-transform duration-300">
+                                                <ActionTimelineTable actions={timelineActions}/>
                                             </div>
                                         )}
 
                                         {/* Quick Stats Card */}
-                                        <div className="dark:text-gray-200 dark:bg-bodybg  bg-white dark:from-gray-700 dark:to-gray-800 rounded-2xl p-6 border border-indigo-200/50 dark:border-gray-700">
-                                            <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-200 mb-4">Quick Stats</h3>
+                                        <div
+                                            className="dark:text-gray-200 dark:bg-bodybg  bg-white dark:from-gray-700 dark:to-gray-800 rounded-2xl p-6 border border-indigo-200/50 dark:border-gray-700">
+                                            <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-200 mb-4">Quick
+                                                Stats</h3>
                                             <div className="space-y-4">
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-slate-600 dark:text-gray-200 dark:bg-bodybg ">Total KRAs</span>
-                                                    <span className="font-bold text-indigo-600 dark:text-indigo-400 dark:text-gray-200 dark:bg-bodybg ">{data.objective.details.length}</span>
+                                                    <span
+                                                        className="font-bold text-indigo-600 dark:text-indigo-400 dark:text-gray-200 dark:bg-bodybg ">{data.objective.details.length}</span>
                                                 </div>
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-slate-600 dark:text-gray-300">Timeline Events</span>
-                                                    <span className="font-bold text-indigo-600 dark:text-indigo-400 dark:text-gray-200 dark:bg-bodybg ">{timelineActions.length}</span>
+                                                    <span
+                                                        className="text-slate-600 dark:text-gray-300">Timeline Events</span>
+                                                    <span
+                                                        className="font-bold text-indigo-600 dark:text-indigo-400 dark:text-gray-200 dark:bg-bodybg ">{timelineActions.length}</span>
                                                 </div>
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-slate-600 dark:text-gray-200 dark:bg-bodybg ">Current Status</span>
-                                                    <span className="px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-700 dark:text-amber-100 rounded-lg text-xs font-semibold">
+                                                    <span
+                                                        className="px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-700 dark:text-amber-100 rounded-lg text-xs font-semibold">
                                                         {toTitleCase(data.objective.status)}
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div
+                                            className="dark:text-gray-200 dark:bg-bodybg  bg-white dark:from-gray-700 dark:to-gray-800 rounded-2xl p-6 border border-indigo-200/50 dark:border-gray-700">
+                                            <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-200 mb-4">HR
+                                                Remarks</h3>
+                                            <div className="space-y-4">
+                                                {data.objective.remarks ?
+                                                    data.objective.remarks
+                                                :
+                                                     <EmptyState
+                                                        icon={User}
+                                                        heading="HR Remarks"
+                                                        description={"HR has not yet provided their remarks."}
+                                                    />
+                                                }
+
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             )}
@@ -185,11 +212,11 @@ const ObjectiveDetail = () => {
                             {activeTab === 'kras' && (
                                 viewType === "grid" ? (
                                     <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                        <KRADetailsCard details={data.objective.details} />
+                                        <KRADetailsCard details={data.objective.details}/>
                                     </div>
                                 ) : (
                                     <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                        <KRADetailsTable details={data.objective.details} />
+                                        <KRADetailsTable details={data.objective.details}/>
                                     </div>
                                 )
                             )}
@@ -197,11 +224,11 @@ const ObjectiveDetail = () => {
                             {activeTab === 'timeline' && (
                                 viewType === "grid" ? (
                                     <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                        <ActionTimeline actions={timelineActions} />
+                                        <ActionTimeline actions={timelineActions}/>
                                     </div>
                                 ) : (
                                     <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                        <ActionTimelineTable actions={timelineActions} />
+                                        <ActionTimelineTable actions={timelineActions}/>
                                     </div>
                                 )
                             )}
@@ -209,7 +236,7 @@ const ObjectiveDetail = () => {
                             {activeTab === 'collaboration' && (
                                 viewType === "grid" ? (
                                     <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                        <ObjectiveApprovers approvers={approvers} />
+                                        <ObjectiveApprovers approvers={approvers}/>
                                     </div>
                                 ) : (
                                     <div className="transform hover:scale-[1.01] transition-transform duration-300">
@@ -220,39 +247,37 @@ const ObjectiveDetail = () => {
 
                             {activeTab === "line-manager" && (
                                 data?.line_manager_objective ? (
-                                    viewType === "grid" ? (
-                                        <div>
-                                            <div className="transform hover:scale-[1.01] transition-transform duration-300 mb-4">
-                                                <LineMangerProfile manager={data?.line_manager_objective?.user} />
-                                            </div>
-                                            <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                                <LineMangerObjective details={data?.line_manager_objective?.details} />
-                                            </div>
+                                    <div>
+                                        <div
+                                            className="transform hover:scale-[1.01] transition-transform duration-300 mb-4">
+                                            <LineMangerProfile manager={data?.line_manager_objective?.user}/>
                                         </div>
-                                    ) : (
-                                        <div>
-                                            <div className="transform hover:scale-[1.01] transition-transform duration-300 mb-4">
-                                                <LineMangerProfileTable manager={data?.line_manager_objective?.user} />
-                                            </div>
-                                            <div className="transform hover:scale-[1.01] transition-transform duration-300">
-                                                <LineMangerObjectiveTable details={data?.line_manager_objective?.details} />
-                                            </div>
+                                        <div className="transform hover:scale-[1.01] transition-transform duration-300">
+                                            {
+                                                viewType === "grid" ? (
+                                                    <KRADetailsCard heading={`Key Result Areas Line Manger`}
+                                                                    details={data?.line_manager_objective?.details}
+                                                    />
+                                                ) : (
+                                                    <KRADetailsTable details={data?.line_manager_objective?.details} />
+                                                )
+                                            }
                                         </div>
-                                    )
-                                ) : (
-                                    <EmptyState
-                                        icon={User}
-                                        heading="Line Manager Key Result Areas"
-                                        description={error?.message || "Line Manager has not yet added Key Result Areas."}
-                                    />
-                                )
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
-    );
-};
+                                    </div>
+                                        ) : (
+                                        <EmptyState
+                                            icon={User}
+                                            heading="Line Manager Key Result Areas"
+                                            description={error?.message || "Line Manager has not yet added Key Result Areas."}
+                                        />
+                                        )
+                                        )}
+                                    </div>
+                                </div>
+                                </div>
+                                )}
+                        </>
+                        );
+                        };
 
 export default ObjectiveDetail;

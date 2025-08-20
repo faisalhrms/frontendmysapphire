@@ -55,7 +55,7 @@ const DataTable = React.memo(React.forwardRef(({
     const normalizedColumns = useMemo(() => {
         return (columns || []).map((col, idx) => ({
             ...col,
-            id: col.id || col.accessor || `col_${idx}`,
+            id: col.filterKey || col.id || col.accessor || `col_${idx}`,
             width: col.width || 200,
             minWidth: col.minWidth || 100,
             maxWidth: col.maxWidth || 1000,
@@ -240,7 +240,7 @@ const DataTable = React.memo(React.forwardRef(({
         const headerLabel = column.render ? column.render('Header') : column.Header;
         const [isOpen, setIsOpen] = useState(false);
         const dropdownRef = useRef(null);
-        const headerId = column.filterKey || column.id || column.accessor;
+        const headerId = column.filterKey ||column.id || column.accessor;
         const currentIndex = columnOrder.indexOf(headerId);
 
         const isCurrentlySorted = sortField === headerId;

@@ -87,8 +87,6 @@ const RiskAnalysisChart = ({ filters }) => {
                     projectId={selectedProjectId}
                 />
             )}
-
-            <div id="modal-root"></div>
         </>
     );
 };
