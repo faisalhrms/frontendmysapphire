@@ -40,8 +40,23 @@ const ChatInputBar = ({
           {modeSelection}
           <i className="ri-arrow-down-s-line text-lg"></i>
         </button>
+        {modeSelection !== "Select Source" && (
+          <button
+            onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }}
+            className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
+            aria-label="Clear source"
+          >
+            <i className="ri-close-line text-xs"></i>
+          </button>
+        )}
         {modeOpen && (
           <div className="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
+            <button
+              onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }}
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              Select Source
+            </button>
             <button
               onClick={() => { setModeSelection("Export Data"); setModeOpen(false) }}
               className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
