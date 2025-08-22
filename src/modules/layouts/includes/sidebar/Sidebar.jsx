@@ -12,16 +12,103 @@ import {setTheme} from "@redux/common/themeSlice.js";
 import MenuLoop from "@modules/layouts/includes/sidebar/components/MenuLoop.jsx";
 import useMenuItems from "@hooks/useMenuItems.js";
 import {DASHBOARD_ROUTES} from "@modules/dashboards/routes.js";
-
+import { Search, X } from "lucide-react";
 const Sidebar = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme);
   const initialMenuItems = useMenuItems();
   const [menuItems, setMenuItems] = useState(initialMenuItems);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredMenuItems, setFilteredMenuItems] = useState(initialMenuItems);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     setMenuItems(initialMenuItems);
+    setFilteredMenuItems(initialMenuItems);
   }, [initialMenuItems]);
+
+  // Search functionality
+  const searchInMenuItems = (items, query) => {
+    if (!query.trim()) return items;
+
+    const searchRecursively = (menuItems, searchTerm) => {
+      const results = [];
+
+      menuItems?.forEach(item => {
+        // Check if current item matches
+        const itemMatches = item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.menutitle?.toLowerCase().includes(searchTerm.toLowerCase());
+
+        // Search in children
+        let matchingChildren = [];
+        if (item.children && item.children.length > 0) {
+          matchingChildren = searchRecursively(item.children, searchTerm);
+        }
+
+        // Include item if it matches or has matching children
+        if (itemMatches || matchingChildren.length > 0) {
+          const itemCopy = { ...item };
+
+          // If item has matching children, include them and mark parent as active
+          if (matchingChildren.length > 0) {
+            itemCopy.children = matchingChildren;
+            itemCopy.active = true; // Expand parent to show matching children
+          }
+
+          // If the item itself matches, highlight it
+          if (itemMatches) {
+            itemCopy.searchMatch = true;
+          }
+
+          results.push(itemCopy);
+        }
+      });
+
+      return results;
+    };
+
+    return searchRecursively(items, query);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setIsSearching(query.trim().length > 0);
+
+    if (query.trim()) {
+      const filtered = searchInMenuItems(initialMenuItems, query);
+      setFilteredMenuItems(filtered);
+    } else {
+      setFilteredMenuItems(initialMenuItems);
+      // Reset any expanded states when clearing search
+      resetMenuStates();
+    }
+  };
+
+  // Reset menu states when clearing search
+  const resetMenuStates = () => {
+    const resetStates = (items) => {
+      return items?.map(item => ({
+        ...item,
+        active: false,
+        searchMatch: false,
+        children: item.children ? resetStates(item.children) : item.children
+      }));
+    };
+
+    const resetItems = resetStates(initialMenuItems);
+    setMenuItems(resetItems);
+    setFilteredMenuItems(resetItems);
+  };
+
+  // Clear search
+  const clearSearch = () => {
+    setSearchQuery('');
+    setIsSearching(false);
+    setFilteredMenuItems(initialMenuItems);
+    resetMenuStates();
+  };
 
   function closeMenuFn() {
     const closeMenuRecursively = (items) => {
@@ -30,8 +117,12 @@ const Sidebar = () => {
         closeMenuRecursively(item.children);
       });
     };
-    closeMenuRecursively(menuItems);
-    setMenuItems((arr) => [...arr]);
+    closeMenuRecursively(isSearching ? filteredMenuItems : menuItems);
+    if (isSearching) {
+      setFilteredMenuItems((arr) => [...arr]);
+    } else {
+      setMenuItems((arr) => [...arr]);
+    }
   }
 
   useEffect(() => {
@@ -283,7 +374,7 @@ const Sidebar = () => {
   let hasParent = false
   let hasParentLevel = 0
 
-  function setSubmenu(event, targetObject, items = menuItems) {
+  function setSubmenu(event, targetObject, items = isSearching ? filteredMenuItems : menuItems) {
     if ((window.screen.availWidth <= 992 || theme.dataNavStyle !== "icon-hover") && (window.screen.availWidth <= 992 || theme.dataNavStyle !== "menu-hover")) {
       if (!event?.ctrlKey) {
         for (const item of items) {
@@ -303,7 +394,11 @@ const Sidebar = () => {
         }
       }
     }
-    setMenuItems((arr) => [...arr]);
+    if (isSearching) {
+      setFilteredMenuItems((arr) => [...arr]);
+    } else {
+      setMenuItems((arr) => [...arr]);
+    }
   }
 
   function getParentObject(obj, childObject) {
@@ -324,7 +419,7 @@ const Sidebar = () => {
   }
 
   function setMenuAncestorsActive(targetObject) {
-    const parent = getParentObject(menuItems, targetObject);
+    const parent = getParentObject(isSearching ? filteredMenuItems : menuItems, targetObject);
     if (parent) {
       if (hasParentLevel > 2) {
         hasParent = true;
@@ -371,18 +466,18 @@ const Sidebar = () => {
         setSubmenuRecursively(item.children);
       });
     };
-    setSubmenuRecursively(menuItems);
+    setSubmenuRecursively(isSearching ? filteredMenuItems : menuItems);
   }
 
   const [previousUrl, setPreviousUrl] = useState('/')
 
   useEffect(() => {
     let currentPath = location.pathname.endsWith("/") ? location.pathname.slice(0, -1) : location.pathname;
-    if (currentPath !== previousUrl && menuItems.length > 0) {
+    if (currentPath !== previousUrl && (isSearching ? filteredMenuItems : menuItems).length > 0) {
       setMenuUsingUrl(currentPath);
       setPreviousUrl(currentPath);
     }
-  }, [location, menuItems, previousUrl]);
+  }, [location, menuItems, filteredMenuItems, previousUrl, isSearching]);
 
   useEffect(() => {
     const targetElement = document.documentElement;
@@ -409,6 +504,9 @@ const Sidebar = () => {
 
   const toggleSidemenu = (event, clickedItem) => {
     event.preventDefault();
+
+    const currentItems = isSearching ? filteredMenuItems : menuItems;
+    const setCurrentItems = isSearching ? setFilteredMenuItems : setMenuItems;
 
     const findAndCloseSiblings = (items, targetItem, parentItems = null) => {
       items.forEach(item => {
@@ -440,7 +538,7 @@ const Sidebar = () => {
       });
     };
 
-    findAndCloseSiblings(menuItems, clickedItem);
+    findAndCloseSiblings(currentItems, clickedItem);
 
     clickedItem.active = !clickedItem.active;
     clickedItem.selected = !clickedItem.selected;
@@ -449,7 +547,7 @@ const Sidebar = () => {
       closeAllChildren(clickedItem.children);
     }
 
-    setMenuItems([...menuItems]);
+    setCurrentItems([...currentItems]);
   };
 
   function closeOtherMenusAtSameLevel(items, targetItem) {
@@ -587,8 +685,11 @@ const Sidebar = () => {
   const handleMenuItemClick = (event, item) => {
     event.stopPropagation();
 
+    const currentItems = isSearching ? filteredMenuItems : menuItems;
+    const setCurrentItems = isSearching ? setFilteredMenuItems : setMenuItems;
+
     if (item.type === 'link') {
-      setMenuItems((prevItems) => {
+      setCurrentItems((prevItems) => {
         const newItems = JSON.parse(JSON.stringify(prevItems));
 
         const clearSelected = (items) => {
@@ -636,7 +737,10 @@ const Sidebar = () => {
   const handleSubmenuLinkClick = (event, item) => {
     event.stopPropagation();
 
-    setMenuItems((prevItems) => {
+    const currentItems = isSearching ? filteredMenuItems : menuItems;
+    const setCurrentItems = isSearching ? setFilteredMenuItems : setMenuItems;
+
+    setCurrentItems((prevItems) => {
       const newItems = JSON.parse(JSON.stringify(prevItems));
 
       const clearSelected = (items) => {
@@ -667,6 +771,9 @@ const Sidebar = () => {
     });
   };
 
+  // Get display items (filtered or normal)
+  const displayItems = isSearching ? filteredMenuItems : menuItems;
+
   return (
       <>
         <div
@@ -691,7 +798,37 @@ const Sidebar = () => {
               <img src={logo6} alt="logo" className="toggle-white"/>
             </Link>
           </div>
+
+
+
           <SimpleBar className="main-sidebar" id="sidebar-scroll">
+            {theme.dataNavLayout !== "horizontal" && (
+                <div className="px-4 border-gray-200 dark:border-gray-700">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-800 w-4 h-4" />
+
+                    <input
+                        type="search"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        placeholder="Search..."
+                        className="w-full pl-8 text-sm border border-gray-300 rounded-md
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+          focus:border-blue-500 dark:bg-gray-800
+          dark:border-gray-600 dark:text-white
+          dark:focus:ring-blue-400"
+                    />
+
+                  </div>
+
+                  {isSearching && displayItems.length === 0 && (
+                      <div className="pt-3 text-xs text-gray-500 text-center">
+                        No menu items found for "{searchQuery}"
+                      </div>
+                  )}
+                </div>
+            )}
+
             <nav className="main-menu-container nav nav-pills flex-column sub-open">
               <div className="slide-left" id="slide-left" onClick={() => {
                 slideLeft();
@@ -703,7 +840,7 @@ const Sidebar = () => {
               </div>
 
               <ul className="main-menu" onClick={(e) => Sideclick(e)}>
-                {menuItems.map((levelone, index) => (
+                {displayItems.map((levelone, index) => (
                     <li
                         key={levelone.id || levelone.path || index}
                         className={`${levelone.menutitle ? 'slide__category' : ''} ${levelone.type === 'link' ? 'slide' : ''}
@@ -718,7 +855,7 @@ const Sidebar = () => {
                       {levelone.type === "link" ?
                           <Link
                               to={levelone.path}
-                              className={`side-menu__item ${levelone.selected ? 'active' : ''}`}
+                              className={`side-menu__item ${levelone.selected ? 'active' : ''} ${levelone.searchMatch ? 'bg-blue-50  border-blue-500 dark:bg-blue-900/20' : ''}`}
                           >
                             <i className={`side-menu__icon bx ${levelone.icon}`}></i>
                             <span className="side-menu__label">
@@ -735,7 +872,7 @@ const Sidebar = () => {
                       {levelone.type === "empty" ?
                           <Link
                               to="#"
-                              className='side-menu__item'
+                              className={`side-menu__item ${levelone.searchMatch ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/20' : ''}`}
                               onClick={(e) => {
                                 handleClick(e);
                                 handleMenuItemClick(e, levelone);
@@ -759,6 +896,7 @@ const Sidebar = () => {
                               level={level + 1}
                               toggleSidemenu={toggleSidemenu}
                               HoverToggleInnerMenuFn={HoverToggleInnerMenuFn}
+                              isSearching={isSearching}
                           /> : ''
                       }
                     </li>
