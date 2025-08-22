@@ -10,6 +10,7 @@ export default {
     "!./src/**/node_modules/**",
     './node_modules/preline/preline.js',
   ],
+
 theme: {
   screens: {
     lg: "992px",
