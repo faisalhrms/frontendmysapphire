@@ -95,7 +95,7 @@ const ActionTimelineTable = ({ actions }) => {
                             const ActionIcon = config.icon;
 
                             return (
-                                <tr key={index} className="border-b">
+                                <tr key={index} className="border-b border border-slate-300">
                                     <td className={`text-center px-3 py-2 border border-slate-300 ${config.bg}`}>
                                         <div className={`flex items-center justify-center gap-2 ${config.color}`}>
                                             <config.icon className="w-4 h-4"/>
@@ -104,7 +104,7 @@ const ActionTimelineTable = ({ actions }) => {
                                     </td>
 
 
-                                    <td className="px-4 py-3 text-sm">
+                                    <td className="px-4 py-3 text-sm border border-slate-300">
                                         <div className="flex items-center space-x-2">
                                             {action.user.avatar ? (
                                                 <img
@@ -128,8 +128,8 @@ const ActionTimelineTable = ({ actions }) => {
                                     </td>
 
                                     <td style={{textAlign: "left"}}
-                                        className="px-4 py-3 text-sm text-slate-700 text-left dark:text-gray-200 dark:bg-bodybg">{action.remarks || '-'}</td>
-                                    <td className="px-4 py-3 text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg">{formatDetailedDate(action.created_at)}</td>
+                                        className="px-4 py-3 text-sm text-slate-700 text-left dark:text-gray-200 dark:bg-bodybg border border-slate-300">{action.remarks || '-'}</td>
+                                    <td className="px-4 py-3 text-xs text-slate-500 dark:text-gray-200 dark:bg-bodybg border border-slate-300">{formatDetailedDate(action.created_at)}</td>
                                 </tr>
                             );
                         })}
