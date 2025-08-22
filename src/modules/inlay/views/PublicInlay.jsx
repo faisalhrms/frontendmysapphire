@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import "@css/inlay/inalay.css";
 
@@ -9,6 +9,7 @@ import iconswhite from "@assets/images/company-logos/iconswhite.png";
 
 export default function PublicInlay() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isDark, setIsDark] = useState(false);
     const scrollRef = useRef(null);
 
     const productImages = [
@@ -21,6 +22,34 @@ export default function PublicInlay() {
         "https://be.mysapphire.co/media/uploads/2025/08/20/7.JPG",
         "https://be.mysapphire.co/media/uploads/2025/08/20/8.JPG",
     ];
+
+    useEffect(() => {
+        const root = document.documentElement;
+        const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        if (isSystemDark) {
+            root.classList.add("dark");
+            setIsDark(true);
+        } else {
+            root.classList.remove("dark");
+            setIsDark(false);
+        }
+
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const handler = (e) => {
+            if (e.matches) {
+                root.classList.add("dark");
+                setIsDark(true);
+            } else {
+                root.classList.remove("dark");
+                setIsDark(false);
+            }
+        };
+        mq.addEventListener("change", handler);
+
+        return () => mq.removeEventListener("change", handler);
+    }, []);
+
 
     const nextImage = () => {
         const newIndex = (currentImageIndex + 1) % productImages.length;
@@ -48,51 +77,58 @@ export default function PublicInlay() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
-            <div className="w-full max-w-6xl bg-white dark:bg-gray-800 shadow-lg grid grid-cols-1 lg:grid-cols-2">
+            <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
 
-                <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-800 order-2 lg:order-1">
+                <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-950 order-2 lg:order-1">
                     <div className="relative w-full flex flex-col items-center">
 
                         <div className="flex flex-col items-center mb-6 lg:hidden mt-4">
-                            <img src={sapphireb} alt="Logo" className="h-7 dark:hidden" />
-                            <img src={sapphirew} alt="Logo Dark" className="h-7 hidden dark:block" />
+                            {/* Fixed logo display */}
+                            <img
+                                src={isDark ? sapphirew : sapphireb }
+                                alt="Logo"
+                                style={{width: 200}}
+                            />
+
                             <p className="gotham-medium text-sm tracking-widest mt-2 text-black dark:text-white font-bold">
                                 DAILY
                             </p>
                             <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 mt-3 leading-tight font-bold">
-                                3 PIECE - EMBROIDERED <br /> ZARI LAWN SUIT
+                                3 PIECE - EMBROIDERED <br/> ZARI LAWN SUIT
                             </h2>
                         </div>
 
-                        <div
-                            ref={scrollRef}
-                            className="relative w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-                        >
-                            {productImages.map((src, index) => (
-                                <img
-                                    key={index}
-                                    src={src}
-                                    alt={`Slide ${index + 1}`}
-                                    className="w-full flex-shrink-0 snap-center object-contain"
-                                    onLoad={() => {
-                                        if (index === currentImageIndex) scrollToImage(index);
-                                    }}
-                                />
-                            ))}
-                        </div>
+                        <div className="relative w-full">
+                            <div
+                                ref={scrollRef}
+                                className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide bg-white dark:bg-gray-950"
+                            >
+                                {productImages.map((src, index) => (
+                                    <img
+                                        key={index}
+                                        src={src}
+                                        alt={`Slide ${index + 1}`}
+                                        className="w-full flex-shrink-0 snap-center object-contain"
+                                        onLoad={() => {
+                                            if (index === currentImageIndex) scrollToImage(index);
+                                        }}
+                                    />
+                                ))}
+                            </div>
 
-                        <button
-                            onClick={prevImage}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full mt-16"
-                        >
-                            <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-                        </button>
-                        <button
-                            onClick={nextImage}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full mt-16"
-                        >
-                            <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-                        </button>
+                            <button
+                                onClick={prevImage}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full"
+                            >
+                                <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200"/>
+                            </button>
+                            <button
+                                onClick={nextImage}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full"
+                            >
+                                <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200"/>
+                            </button>
+                        </div>
 
                         <div className="flex justify-center mt-4 space-x-2">
                             {productImages.map((_, index) => (
@@ -102,9 +138,9 @@ export default function PublicInlay() {
                                         setCurrentImageIndex(index);
                                         scrollToImage(index);
                                     }}
-                                    className={`w-2 h-2 rounded-full ${
+                                    className={` ${
                                         index === currentImageIndex
-                                            ? " "
+                                            ? ""
                                             : ""
                                     }`}
                                 ></button>
@@ -112,7 +148,7 @@ export default function PublicInlay() {
                         </div>
                     </div>
 
-                    <div className="block lg:hidden w-full px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="block lg:hidden w-full px-6 py-4  border-gray-200 dark:border-gray-950">
                         <div className="space-y-2 text-sm text-gray-800 dark:text-gray-200 max-w-md mx-auto text-left">
                             <div className="flex justify-between">
                                 <span>Printed Zari Lawn Shirt</span>
@@ -133,21 +169,24 @@ export default function PublicInlay() {
                         </div>
                     </div>
 
-                    <div className="w-full px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="w-full px-6 py-4  border-gray-200 dark:border-gray-700">
                         <h3 className="text-center text-sm text-black dark:text-white gotham-medium mb-2">
                             CARE INSTRUCTIONS
                         </h3>
                         <div className="flex justify-center mb-4">
-                            <img src={iconsblack} alt="Care Icons" className="dark:hidden w-20"/>
-                            <img src={iconswhite} alt="Care Icons Dark" className="hidden dark:block w-20"/>
+                            {/* Fixed icons display */}
+                            <img
+                                src={isDark ? iconswhite : iconsblack}
+                                alt={isDark? "Care Icons Dark" : "Care Icons"}
+                                className="w-20"
+                            />
                         </div>
-                        <div
-                            className="grid grid-cols-1 sm:grid-cols-2  text-xs text-gray-700 dark:text-gray-200 max-w-md mx-auto">
-                            <ul className="list-disc pl-5 ">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 text-xs text-gray-700 dark:text-gray-200 max-w-md mx-auto">
+                            <ul className="list-disc pl-5">
                                 <li>Home laundering recommended</li>
                                 <li>Do not expose damp fabric to strong sunlight</li>
                             </ul>
-                            <ul className="list-disc pl-5 ">
+                            <ul className="list-disc pl-5">
                                 <li>Iron at moderate temperature</li>
                                 <li>Do not use any type of bleach or stain removing chemicals</li>
                             </ul>
@@ -158,8 +197,12 @@ export default function PublicInlay() {
                 <div className="flex flex-col justify-between p-10 order-1 lg:order-2 hidden lg:flex">
                     <div>
                         <div className="flex flex-col items-center mb-10">
-                            <img src={sapphireb} alt="Logo" className="h-10 dark:hidden"/>
-                            <img src={sapphirew} alt="Logo Dark" className="h-10 hidden dark:block"/>
+                            {/* Fixed logo display for desktop */}
+                            <img
+                                src={isDark ? sapphirew : sapphireb}
+                                alt={isDark ? "Logo Dark" : "Logo"}
+                                className="h-10"
+                            />
                             <p className="gotham-medium text-sm tracking-widest mt-2 text-black dark:text-white">
                                 DAILY
                             </p>

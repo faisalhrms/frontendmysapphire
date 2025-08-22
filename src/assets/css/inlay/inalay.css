@@ -30,3 +30,19 @@
 .gotham-medium {
     font-family: "Gotham Medium", sans-serif;
 }
+
+html {
+    color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #111;
+        color: #fff;
+    }
+}
+
+:root {
+    --color-scheme: only light;
+}
+

@@ -87,9 +87,14 @@ export default function ChatBot() {
           <LottieLoader animationData={botLoading} width={50} height={50} speed={0.3} opacity={1}/>
           <Link to="#" className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70">SappSense</Link>
         </div>
-        <button onClick={handleReset} className="ti-btn ti-btn-icon ti-btn-outline-light dark:border-defaultborder/10">
-          <i className="ri-refresh-line dark:text-defaulttextcolor/70"></i>
+        <button
+          onClick={handleReset}
+          className="inline-flex items-center gap-2 px-5 py-1 rounded-full ring-1 ring-black/5"
+        >
+          <i className="ri-edit-box-line text-base"></i>
+          <span>New Chat</span>
         </button>
+
       </div>
 
       <div className="flex-1 min-h-0 overflow-hidden">
