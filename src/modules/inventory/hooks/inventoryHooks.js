@@ -163,7 +163,7 @@ export const useVerifyEquipment = () => {
                 setIsVerifiedSuccess(true);
                 setTimeout(() => {
                     setIsVerifiedSuccess(false);
-                }, 5000);
+                }, 3000);
 
                 return response;
             } catch (error) {
