@@ -803,26 +803,47 @@ const Sidebar = () => {
 
           <SimpleBar className="main-sidebar" id="sidebar-scroll">
             {theme.dataNavLayout !== "horizontal" && (
-                <div className="px-4 border-gray-200 dark:border-gray-700">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-800 w-4 h-4" />
+                <div className="slide has-sub open active" style={{padding: '0 1rem'}}>
+                  <div style={{position: 'relative'}}>
+                    <Search
+                        style={{
+                          position: 'absolute',
+                          left: '0.5rem',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          height: '18px',
+                          color: '#f5fcf7'
+                        }}
+                    />
 
                     <input
                         type="search"
                         value={searchQuery}
                         onChange={handleSearchChange}
                         placeholder="Search..."
-                        className="w-full pl-8 text-sm border border-gray-300 rounded-md
-          focus:outline-none focus:ring-2 focus:ring-blue-500
-          focus:border-blue-500 dark:bg-gray-800
-          dark:border-gray-600 dark:text-white
-          dark:focus:ring-blue-400"
+                        style={{
+                          width: '100%',
+                          paddingLeft: '2rem',
+                          paddingBottom: '4px',
+                          border: 'none',
+                          borderBottom: '2px solid #d1d5db',
+                          outline: 'none',
+                          fontSize: '0.875rem',
+                          backgroundColor: 'transparent',
+                          color: '#f5fcf7'
+                        }}
                     />
-
                   </div>
 
                   {isSearching && displayItems.length === 0 && (
-                      <div className="pt-3 text-xs text-gray-500 text-center">
+                      <div
+                          style={{
+                            paddingTop: '0.75rem',
+                            fontSize: '0.75rem',
+                            color: '#6b7280',
+                            textAlign: 'center'
+                          }}
+                      >
                         No menu items found for "{searchQuery}"
                       </div>
                   )}

@@ -44,10 +44,10 @@ const ScanBarcode = ({ isActive }) => {
             <div className="grid grid-cols-12 gap-x-4 mb-8">
                 <div className="col-span-2"></div>
                 <div className="xxl:col-span-8 xl:col-span-8 lg:col-span-8 sm:col-span-8 col-span-12">
-                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-8 mt-8">
-                        <div className="p-6 border-b border-slate-200">
-                            <h2 className="text-lg font-semibold text-slate-900 mb-1">Product Search</h2>
-                            <p className="text-sm text-slate-600">Enter a barcode to retrieve comprehensive product information</p>
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-8 mt-8 dark:text-gray-200 dark:bg-bodybg">
+                        <div className="p-6 border-b border-slate-200 ">
+                            <h2 className="text-lg font-semibold text-slate-900 mb-1 dark:text-gray-200 dark:bg-bodybg ">Product Search</h2>
+                            <p className="text-sm text-slate-600 dark:text-gray-200 dark:bg-bodybg">Enter a barcode to retrieve comprehensive product information</p>
                         </div>
                         <div className="p-6">
                         <div className="relative">
@@ -60,7 +60,7 @@ const ScanBarcode = ({ isActive }) => {
                                     name="barcode_search"
                                     value={searchValue}
                                     onChange={(e) => setSearchValue(e.target.value)}
-                                    className="block w-full pl-12 pr-32 py-4 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400 transition-all"
+                                    className="block w-full pl-12 pr-32 py-4 text-base border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400 transition-all  dark:text-gray-200 dark:bg-bodybg"
                                     placeholder="Enter barcode number (e.g., 1234567890123)"
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -72,7 +72,7 @@ const ScanBarcode = ({ isActive }) => {
                                     <button
                                         onClick={handleSearch}
                                         disabled={isLoading || !searchValue.trim()}
-                                        className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors  "
                                     >
                                         {isLoading ? (
                                             <>
@@ -110,7 +110,7 @@ const ScanBarcode = ({ isActive }) => {
                     {data && (
                         <div className="space-y-6">
                             {currentWarehouse && (
-                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden ">
                                     <div className="bg-slate-800 px-6 py-4">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center">
@@ -129,7 +129,7 @@ const ScanBarcode = ({ isActive }) => {
                                                     <Banknote className="w-5 h-5 text-success mr-2"/>
                                                     <div>
                                                         <p className="text-sm font-medium text-slate-600">Unit Price</p>
-                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.salesprice}</p>
+                                                        <p className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{currentWarehouse.salesprice}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -138,7 +138,7 @@ const ScanBarcode = ({ isActive }) => {
                                                     <Banknote className="w-5 h-5 text-orange mr-2"/>
                                                     <div>
                                                         <p className="text-sm font-medium text-slate-600">Discount Price</p>
-                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.discount_price}</p>
+                                                        <p className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{currentWarehouse.discount_price}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -146,9 +146,9 @@ const ScanBarcode = ({ isActive }) => {
                                                 <div className="flex">
                                                     <Layers className="w-5 h-5 text-info mr-2"/>
                                                     <div>
-                                                        <p className="text-sm font-medium text-slate-600">Product
+                                                        <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">Product
                                                             Size</p>
-                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.product_size}</p>
+                                                        <p className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{currentWarehouse.product_size}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -156,8 +156,8 @@ const ScanBarcode = ({ isActive }) => {
                                                 <div className="flex">
                                                     <Truck className="w-5 h-5 text-danger mr-2"/>
                                                     <div>
-                                                        <p className="text-sm font-medium text-slate-600">In Transit</p>
-                                                        <p className="text-lg font-bold text-slate-900">{currentWarehouse.intransit_qty || ""}</p>
+                                                        <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">In Transit</p>
+                                                        <p className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{currentWarehouse.intransit_qty || ""}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -219,14 +219,14 @@ const ScanBarcode = ({ isActive }) => {
                                 </div>
                             )}
                             {otherLocations.length > 0 && (
-                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                                     <button
                                         onClick={() => setIsAccordionOpen(!isAccordionOpen)}
-                                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors border-b border-slate-200"
+                                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors border-b border-slate-200 dark:text-gray-200 dark:bg-bodybg"
                                     >
                                         <div className="flex items-center">
-                                            <Building2 className="w-5 h-5 text-slate-600 mr-3"/>
-                                            <h3 className="text-lg font-semibold text-slate-900">
+                                            <Building2 className="w-5 h-5 text-slate-600 mr-3 dark:text-gray-200 dark:bg-bodybg"/>
+                                            <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-200 dark:bg-bodybg">
                                                 Additional Warehouse Locations
                                             </h3>
                                             <span
@@ -242,21 +242,21 @@ const ScanBarcode = ({ isActive }) => {
                                     </button>
 
                                     {isAccordionOpen && (
-                                        <div className="border-t border-slate-200">
+                                        <div className="border-t border-slate-200  ">
                                             <OtherStoreInventoryTable rows={otherLocations}/>
                                         </div>
                                     )}
                                 </div>
                             )}
                             {onlineStocks && (
-                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden dark:text-gray-200 dark:bg-bodybg  ">
                                     <button
                                         onClick={() => setIsOnlineStocksOpen(!isOnlineStocksOpen)}
-                                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors border-b border-slate-200"
+                                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors border-b border-slate-200 dark:text-gray-200 dark:bg-bodybg "
                                     >
                                         <div className="flex items-center">
-                                            <Globe className="w-5 h-5 text-blue-600 mr-3"/>
-                                            <h3 className="text-lg font-semibold text-slate-900">
+                                            <Globe className="w-5 h-5 text-blue-600 mr-3 dark:text-gray-200 dark:bg-bodybg "/>
+                                            <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">
                                                 Online Stock Information
                                             </h3>
                                             <span
@@ -294,67 +294,67 @@ const ScanBarcode = ({ isActive }) => {
                                     </button>
 
                                     {isOnlineStocksOpen && (
-                                        <div className="p-6 bg-slate-50">
+                                        <div className="p-6 bg-slate-50 dark:text-gray-200 dark:bg-bodybg ">
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200 dark:text-gray-200 dark:bg-bodybg ">
                                                     <div className="flex items-center">
                                                         <Boxes className="w-5 h-5 text-info mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">On Hand
+                                                            <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">On Hand
                                                                 Quantity</p>
-                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.onhand_qty}</p>
+                                                            <p className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{onlineStocks.onhand_qty}</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200 dark:text-gray-200 dark:bg-bodybg ">
                                                     <div className="flex">
                                                         <Banknote className="w-5 h-5 text-success mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">Unit
+                                                            <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">Unit
                                                                 Price</p>
-                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.salesprice}</p>
+                                                            <p className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{onlineStocks.salesprice}</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200  dark:text-gray-200 dark:bg-bodybg ">
                                                     <div className="flex">
                                                         <Banknote className="w-5 h-5 text-orange mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">Discount
+                                                            <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">Discount
                                                                 Price</p>
-                                                            <p className="text-lg font-bold text-slate-900">{onlineStocks.discount_price}</p>
+                                                            <p className="text-lg font-bold text-slate-900 dark:text-gray-200 dark:bg-bodybg ">{onlineStocks.discount_price}</p>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200 dark:text-gray-200 dark:bg-bodybg ">
                                                     <div className="flex items-center">
                                                         <Ruler className="w-5 h-5 text-success mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">Available
+                                                            <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">Available
                                                                 Sizes</p>
-                                                            <p className="text-xs font-medium text-gray-600">{onlineStocks.sizes || 'N/A'}</p>
+                                                            <p className="text-xs font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg ">{onlineStocks.sizes || 'N/A'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200 dark:text-gray-200 dark:bg-bodybg ">
                                                     <div className="flex items-center">
                                                         <Grid3x3 className="w-5 h-5 text-primary mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">(MS)</p>
-                                                            <p className="text-xs font-medium text-gray-600">{onlineStocks.combos || 'N/A'}</p>
+                                                            <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">(MS)</p>
+                                                            <p className="text-xs font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg ">{onlineStocks.combos || 'N/A'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="bg-white p-4 rounded-lg border border-slate-200">
+                                                <div className="bg-white p-4 rounded-lg border border-slate-200 dark:text-gray-200 dark:bg-bodybg ">
                                                     <div className="flex items-center">
                                                         <Layers3 className="w-5 h-5 text-orange mr-2"/>
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-600">(MS)
+                                                            <p className="text-sm font-medium text-slate-600 dark:text-gray-200 dark:bg-bodybg ">(MS)
                                                                 Size</p>
-                                                            <p className="text-xs font-medium text-gray-600">{onlineStocks.size_set || 'N/A'}</p>
+                                                            <p className="text-xs font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg ">{onlineStocks.size_set || 'N/A'}</p>
                                                         </div>
                                                     </div>
                                                 </div>
