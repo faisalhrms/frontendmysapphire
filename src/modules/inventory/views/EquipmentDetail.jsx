@@ -9,6 +9,7 @@ import RepairsList from "@modules/inventory/components/RepairsList.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { useEquipment } from "@modules/inventory/hooks/inventoryHooks.js";
 import EquipmentOtherDetails from "@modules/inventory/components/EquipmentOtherDetails.jsx";
+import VerificationList from "@modules/inventory/components/VerificationList.jsx";
 
 const EquipmentDetail = () => {
     const { id } = useParams();
@@ -32,6 +33,7 @@ const EquipmentDetail = () => {
                 <div className="xl:col-span-9 col-span-12 space-y-6">
                     <EquipmentSummary equipmentData={equipmentData} />
                     <RepairsList repairs={equipmentData.repairs} />
+                    <VerificationList verifications={equipmentData.verifications} />
                     <SubEquipmentDetail equipmentData={equipmentData} />
 
                 </div>

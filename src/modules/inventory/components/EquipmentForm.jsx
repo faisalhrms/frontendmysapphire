@@ -11,7 +11,7 @@ import { formatOptions } from "@helpers/formatters.js";
 import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
 import equipmentSchema from "@modules/inventory/schemas/equipmentSchema.js";
 import {useEquipmentForm, useVerifyEquipment} from "@modules/inventory/hooks/inventoryHooks.js";
-
+import { CheckCircle, Loader2, ShieldCheck } from "lucide-react";
 import SubEquipmentTable from "./SubEquipmentTable.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import CustodianDropdown from "@components/dropdowns/CustodianDropDown.jsx";
@@ -21,7 +21,7 @@ import EquipmentRepairFormList from "@modules/inventory/views/EquipmentRepairFor
 const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
     const companyId = useSelector((state) => state.auth.user.employee.company.id);
     const { employee } = useSelector((state) => state.auth.user);
-    const { verifyEquipment, isVerifying } = useVerifyEquipment();
+    const { verifyEquipment, isVerifying,isVerifiedSuccess, } = useVerifyEquipment();
       const {
         control,
         handleSubmit,
@@ -35,12 +35,10 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
             laptop_issued_as_per_policy: equipmentData?.laptop_issued_as_per_policy ?? true,
             sub_equipments: equipmentData?.sub_equipments || [],
             quantity: equipmentData?.quantity || 1,
-            verified: equipmentData?.verified || false,
             verified_on: equipmentData?.verified_on || null,
             verified_by: equipmentData?.verified_by || null,
         },
     });
-    const verified = useWatch({ control, name: "verified" });
     const verified_on = useWatch({ control, name: "verified_on" });
     const verified_by = useWatch({ control, name: "verified_by" });
 
@@ -594,41 +592,39 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 <div className="box-title">Verification</div>
                             </div>
                             <div className="box-body">
-                                {verified ? (
-                                    <div className="space-y-2">
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-700">
-                                                Verified On
-                                            </p>
-                                            <p className="text-sm">
-                                                {new Date(verified_on).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-700">
-                                                Verified By
-                                            </p>
-                                            <p className="text-sm">
-                                                {verified_by?.full_name || "N/A"}
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                {verified_by?.email || ""}
-                                            </p>
-                                        </div>
-                                    </div>
+                                {isVerifiedSuccess ? (
+                                    <button
+                                        type="button"
+                                        disabled
+                                        className="ti-btn ti-btn-success ti-btn-wave w-full flex items-center justify-center gap-2"
+                                    >
+                                        <CheckCircle className="w-5 h-5" />
+                                        Verified
+                                    </button>
                                 ) : (
                                     <button
                                         type="button"
                                         onClick={handleVerify}
                                         disabled={isVerifying}
-                                        className="ti-btn ti-btn-primary-full ti-btn-wave w-full"
+                                        className="ti-btn ti-btn-primary-full ti-btn-wave w-full flex items-center justify-center gap-2"
                                     >
-                                        {isVerifying ? "Verifying..." : "Marked As Verified"}
+                                        {isVerifying ? (
+                                            <>
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                                Verifying...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ShieldCheck className="w-5 h-5" />
+                                                Mark as Verified
+                                            </>
+                                        )}
                                     </button>
                                 )}
                             </div>
                         </div>
                     )}
+
                 </div>
 
             </div>

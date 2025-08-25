@@ -183,7 +183,7 @@ const ScanBarcode = ({ isActive }) => {
                                                     </div>
                                                     <div
                                                         className="flex justify-between py-2 border-b border-slate-100">
-                                                        <span className="text-sm text-slate-600">Rack Location</span>
+                                                        <span className="text-sm text-slate-600">Rack Status</span>
                                                         <span
                                                             className="text-sm font-medium text-slate-900">{currentWarehouse.rack_location || "N/A"}</span>
                                                     </div>

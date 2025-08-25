@@ -143,10 +143,10 @@ export const useReAssignEquipment = (id) => {
     return { handleReAssign };
 };
 
-// Add to inventoryHooks.js
-// inventoryHooks.js
+
 export const useVerifyEquipment = () => {
     const [isVerifying, setIsVerifying] = useState(false);
+    const [isVerifiedSuccess, setIsVerifiedSuccess] = useState(false);
     const employee = useSelector((state) => state.auth.user.employee);
 
     const verifyEquipment = useCallback(
@@ -154,11 +154,18 @@ export const useVerifyEquipment = () => {
             setIsVerifying(true);
             try {
                 const payload = {
-                    verified: true,
-                    verified_on: new Date().toISOString().split("T")[0],
                     verified_by: employee.id,
+                    verified_on: new Date().toISOString().split("T")[0],// ISO datetime
                 };
-                return await verifyEquipmentItem(id, payload);
+                const response = await verifyEquipmentItem(id, payload);
+
+                // Show success ✅ for 5 seconds
+                setIsVerifiedSuccess(true);
+                setTimeout(() => {
+                    setIsVerifiedSuccess(false);
+                }, 5000);
+
+                return response;
             } catch (error) {
                 throw error;
             } finally {
@@ -168,5 +175,32 @@ export const useVerifyEquipment = () => {
         [employee]
     );
 
-    return { verifyEquipment, isVerifying };
+    return { verifyEquipment, isVerifying, isVerifiedSuccess };
 };
+// Add to inventoryHooks.js
+// // inventoryHooks.js
+// export const useVerifyEquipment = () => {
+//     const [isVerifying, setIsVerifying] = useState(false);
+//     const employee = useSelector((state) => state.auth.user.employee);
+//
+//     const verifyEquipment = useCallback(
+//         async (id) => {
+//             setIsVerifying(true);
+//             try {
+//                 const payload = {
+//                     verified: true,
+//                     verified_on: new Date().toISOString().split("T")[0],
+//                     verified_by: employee.id,
+//                 };
+//                 return await verifyEquipmentItem(id, payload);
+//             } catch (error) {
+//                 throw error;
+//             } finally {
+//                 setIsVerifying(false);
+//             }
+//         },
+//         [employee]
+//     );
+//
+//     return { verifyEquipment, isVerifying };
+// };
