@@ -758,7 +758,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                                     {fields.map((field, index) => {
                                                         const fieldType = watchedFieldTypes?.[index]?.field_type;
                                                         return (
-                                                            <div key={field.id} className="border border-gray-300 rounded-lg p-4 mt-4 bg-gray-50">
+                                                            <div key={field.id} className="border border-gray-300 rounded-lg p-4 mt-4 bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
                                                                 <div className="grid grid-cols-12 gap-4">
                                                                     <div className="col-span-10">
                                                                         <div className='grid grid-cols-12 gap-4'>

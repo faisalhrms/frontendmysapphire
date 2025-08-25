@@ -52,7 +52,7 @@ const StaticDataTable = ({ data }) => {
                         </tr>
                         </thead>
                         <tbody>
-                        {data.map((row, i) => {
+                        {data?.map((row, i) => {
                             const name = row.store_name.toUpperCase();
                             const isTotal = name.includes("TOTAL");
                             const isSpecial = name.includes("LFL") || name.includes("NEW");
