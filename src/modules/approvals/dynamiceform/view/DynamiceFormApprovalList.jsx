@@ -1,5 +1,5 @@
 import React, {useMemo, useRef} from "react";
-import { CalendarRange, ExternalLink } from "lucide-react";
+import {FileCheck2} from "lucide-react";
 import { Link } from "react-router-dom";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
@@ -8,8 +8,7 @@ import { formatDate } from "@helpers/dateTime.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import AlertModal from "@components/AlertModal.jsx";
 import useObjectiveApproval from "@modules/approvals/objective/hooks/useObjectiveApproval.js";
-import {FORMS_ROUTES} from "@modules/forms/routes.js";
-import {APPROVAL_ROUTES as PPROVAL_ROUTES, APPROVAL_ROUTES} from "@modules/approvals/routes.js";
+
 
 const ObjectiveApprovalList = () => {
     const dataTableRef = useRef();
@@ -30,12 +29,12 @@ const ObjectiveApprovalList = () => {
     });
 
 
+
     const columns = [
         {
             Header: "Actions",
             accessor: "id",
             disableSortBy: true,
-
             Cell: ({ row }) => {
                 const slug = row.original.objective.slug;
                 return (
@@ -54,11 +53,10 @@ const ObjectiveApprovalList = () => {
                         >
                             Reject
                         </button>
-
                         <Link
-                            to={`/module/ess/objectives/detail/${slug}`}
+                            to={`/module/forms/edit/${row.original.id}`}
                             className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
-                            title="view Objective"
+                            title="Edit Form"
                         >
                             View
                         </Link>
@@ -66,16 +64,25 @@ const ObjectiveApprovalList = () => {
                 )
             },
         },
-
         {
             Header: "Form",
             accessor: "form",
-
         },
         {
             Header: "Submitter",
             accessor: "objective.user",
-
+            Cell: ({ value }) => (
+                <div className="flex items-center gap-2">
+                    {value?.avatar && (
+                        <img
+                            src={value.avatar}
+                            alt={value.full_name}
+                            className="w-6 h-6 rounded-full"
+                        />
+                    )}
+                    <span>{value?.full_name}</span>
+                </div>
+            ),
         },
         {
             Header: "Status",
@@ -95,27 +102,16 @@ const ObjectiveApprovalList = () => {
             accessor: "created_at",
             Cell: ({ value }) => formatDate(value),
         },
-
     ];
-    const buttons = useMemo(() => (
-        <div className="flex space-x-2">
-            <Link
-                to={PPROVAL_ROUTES.DYNAMICEFORMBUILDER.path}
-                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                title="Add Form"
-            >
-                <i className="ri-add-line font-semibold align-middle"></i>
-            </Link>
-        </div>
-    ), []);
+
 
 
     return (
         <>
             <IconPageHeader
-                heading="Objectives Approvals"
-                description="Review, approve, or reject objectives to ensure alignment with organizational goals."
-                icon={CalendarRange}
+                heading="Dynamic Forms Approval"
+                description="Manage and streamline multi-level form approval workflows with ease."
+                icon={FileCheck2}
             />
 
             <DataTable
@@ -124,7 +120,6 @@ const ObjectiveApprovalList = () => {
                 apiUrl="/hrms/objectives/que/approvals/"
                 needHeader={false}
                 enableAdvancedFilters={false}
-                buttons={buttons}
             />
 
             {selectedId && (
