@@ -51,12 +51,12 @@ const ClientSideTable = ({ config = { headers: [] }, data = [], title = 'Table',
             <SimpleBar style={{ maxHeight: containerHeight }}>
                 <div className="box-body">
                     {
-                            <div className="overflow-x-auto">
-                                <table className="table min-w-full whitespace-nowrap table-hover border table-bordered">
+                            <div className="overflow-x-auto border border-slate-300 ">
+                                <table className="table min-w-full whitespace-nowrap table-hover border table-bordered border-slate-300">
                                     <thead className={tHeadClasses}>
-                                    <tr className="border border-inherit border-solid dark:border-defaultborder/10">
+                                    <tr className=" border-inherit border-solid dark:border-defaultborder/10 border border-slate-30 ">
                                         {headers.map((header, index) => (
-                                            <th key={index} className="!text-center !text-[0.85rem]">{header.label}</th>
+                                            <th key={index} className="!text-center !text-[0.85rem] ">{header.label}</th>
                                         ))}
                                     </tr>
                                     </thead>

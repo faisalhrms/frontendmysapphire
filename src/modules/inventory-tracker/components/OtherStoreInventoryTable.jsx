@@ -4,14 +4,14 @@ import ClientSideTable from "@components/ClientSideTable.jsx";
 const OtherStoreInventoryTable = ({ rows }) => {
 
     const tableData = (rows || []).map((item) => ({
-        warehousename: <span><i className="bi bi-shop align-middle me-2 text-[#8c9097] dark:text-white/50"></i> {item.warehousename}</span>,
+        warehousename: <span><i className="bi bi-shop align-middle me-2 text-[#8c9097] dark:text-white/50 dark:text-gray-200 dark:bg-bodybg "></i> {item.warehousename}</span>,
         warehousename_text: item.warehousename,
         onhand_qty: item.onhand_qty,
         combos: item.combos,
         size_set: item.size_set,
         sizes: item.sizes,
         order: <a href={`https://pk.sapphireonline.pk/collections/three-piece-unstitched/products/${item.barcode}.html`} target='_blank'>
-            <i className="bi bi-bag-check text-success font-bold"></i>
+            <i className="bi bi-bag-check text-success font-bold "></i>
         </a>,
     }));
 
@@ -27,7 +27,7 @@ const OtherStoreInventoryTable = ({ rows }) => {
         ],
     };
     return (
-        <ClientSideTable config={tableConfig} data={tableData} title={null} tHeadClasses='bg-slate-50 border-b border-slate-200 py-4 px-6 text-sm font-semibold text-slate-700 uppercase tracking-wider' />
+        <ClientSideTable config={tableConfig} data={tableData} title={null} tHeadClasses='bg-slate-50 border-b border-slate-200 py-4 px-6 text-sm font-semibold text-slate-700 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg  border border-slate-300 ' />
     )
 }
 export default React.memo(OtherStoreInventoryTable)
