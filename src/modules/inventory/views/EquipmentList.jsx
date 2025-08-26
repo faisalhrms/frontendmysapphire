@@ -7,7 +7,8 @@ import {getBadgeClasses} from "@helpers/badges.js";
 import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 import EquipmentRepairListModal from "@modules/inventory/models/EquipmentRepairListModal.jsx";
 import EquipmentRepairFormModal from "@modules/inventory/models/EquipmentRepairFormModal.jsx";
-
+import {Avatar} from "@mui/material";
+import { ShieldCheck } from "lucide-react";
 const EquipmentList = ({ isActive, externalFilters = [] }) => {
     if (!isActive) return null;
     const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
@@ -200,17 +201,48 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
         },
         {
             Header: "Verified By",
-            accessor: "verified_by",
+            accessor: "latest_verification.verified_by",
             filterable: true,
             filterType: "text",
-            Cell: ({ value }) => value || "Not Verified",
+            filterKey: "latest_verification__verified_by__full_name",
+            Cell: ({ row }) => {
+                const latest = row.original.latest_verification;
+                if (!latest || !latest.verified_by) return "Not Verified";
+
+                const { full_name, email, avatar } = latest.verified_by;
+
+                return (
+                    <div className="flex items-center">
+                        <Avatar
+                            avatar={avatar ? latest.verified_by : null}
+                            full_name={full_name || "N/A"}
+                            size="md"
+                            parentClasses="dark:text-gray-200 dark:bg-bodybg"
+                        />
+                        <div className="ms-2">
+                            <p className="font-semibold mb-0 flex items-center">
+                                {full_name || "N/A"}
+                                <ShieldCheck className="ml-1 text-primary" size={14} title="Verified" />
+                            </p>
+                            <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                {email || "N/A"}
+                            </p>
+                        </div>
+                    </div>
+                );
+            },
         },
+
+        // ✅ Verified On (from latest_verification.verified_on)
         {
             Header: "Verified On",
-            accessor: "verified_on",
+            accessor: "latest_verification.verified_on",
             filterable: true,
             filterType: "date",
-            Cell: ({ value }) => value ? new Date(value).toLocaleDateString() : "N/A",
+            Cell: ({ row }) => {
+                const date = row.original.latest_verification?.verified_on;
+                return date ? new Date(date).toLocaleDateString() : "N/A";
+            },
         },
         {
             Header: "Company",
