@@ -2,6 +2,7 @@ import EditDynamicForm from "@modules/forms/views/EditDynamicForm.jsx";
 import DatatableDynamicForm from "@modules/forms/views/DatatableDynamicForm.jsx";
 import CreateDynamicForm from "@modules/forms/views/CreateDynamicForm.jsx";
 import FormSubmissionDatatable from "@modules/forms/views/FormSubmissionDatatable.jsx";
+import DynamicFormsApprovalSetup from "@modules/forms/views/DynamicFormApprovalSetup.jsx";
 
 export const FORMS_ROUTES = {
     LIST: {
@@ -20,7 +21,12 @@ export const FORMS_ROUTES = {
         path: "/module/forms/submissions/:id",
         permission: 'forms.view_form',
     },
-
+    SETUPS: {
+        APPROVAL: {
+            path: "/module/forms/setups/approval-hierarchy",
+            // permission: 'forms.view_approval_hierarchy',
+        },
+    },
 };
 
 export const MODULE_ROUTES = [
@@ -44,5 +50,9 @@ export const MODULE_ROUTES = [
         component: FormSubmissionDatatable,
         permission: FORMS_ROUTES.SUBMISSIONS.permission,
     },
-
+    {
+        path: FORMS_ROUTES.SETUPS.APPROVAL.path,
+        component: DynamicFormsApprovalSetup,
+        permission: FORMS_ROUTES.SETUPS.APPROVAL.permission,
+    },
 ];
