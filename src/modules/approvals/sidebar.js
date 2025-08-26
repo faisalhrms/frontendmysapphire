@@ -26,6 +26,15 @@ export const sidebarMenu = [
                 '',
                 '',
             ),
+            generateSidebarItem(
+                APPROVAL_ROUTES.DYNAMICE.path,
+                'link',
+                'Dynamice Form',
+                2,
+                '',
+                '',
+            ),
+
 
         ]
     ),
