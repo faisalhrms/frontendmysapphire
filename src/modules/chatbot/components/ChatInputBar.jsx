@@ -15,16 +15,18 @@ const ChatInputBar = ({
   setModeOpen
 }) => (
   <div className="relative w-full max-w-5xl mx-auto bg-white dark:bg-bodybg rounded-xl shadow-xl ring-1 ring-black/5 border border-gray-200 px-6 pt-4 pb-16">
-    <textarea
-      ref={inputRef}
-      rows={1}
-      placeholder="What do you want to know?"
-      value={input}
-      onChange={e => { autoResize(e) }}
-      onInput={e => { e.persist(); autoResize(e) }}
-      onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-      className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] max-h-48 leading-6"
-    />
+    {modeSelection !== "Quality Control" && (
+      <textarea
+        ref={inputRef}
+        rows={1}
+        placeholder="What do you want to know?"
+        value={input}
+        onChange={e => { autoResize(e) }}
+        onInput={e => { e.persist(); autoResize(e) }}
+        onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
+        className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] max-h-48 leading-6"
+      />
+    )}
     <div className="absolute bottom-3 left-3 flex items-center gap-2">
       <button
         onClick={toggleWebSearch}
@@ -51,24 +53,10 @@ const ChatInputBar = ({
         )}
         {modeOpen && (
           <div className="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
-            <button
-              onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }}
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              Select Source
-            </button>
-            <button
-              onClick={() => { setModeSelection("Export Data"); setModeOpen(false) }}
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              Export Data
-            </button>
-            <button
-              onClick={() => { setModeSelection("Salesforce"); setModeOpen(false) }}
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              Salesforce
-            </button>
+            <button onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Select Source</button>
+            <button onClick={() => { setModeSelection("Export Data"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Export Data</button>
+            <button onClick={() => { setModeSelection("Salesforce"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Salesforce</button>
+            <button onClick={() => { setModeSelection("Quality Control"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
           </div>
         )}
       </div>

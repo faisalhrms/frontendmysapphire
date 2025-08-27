@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -9,11 +9,14 @@ import ChatInputBox from "@modules/chatbot/components/ChatInputBox.jsx"
 import useChatBot from "@modules/chatbot/hooks/useChatBot.js"
 import Avatar from "@components/Avatar.jsx"
 import ChartBox from "@modules/chatbot/components/ChartBox.jsx"
+import TypingIndicator from "@modules/chatbot/components/TypingIndicator.jsx"
+import LiveScanLCD from "@modules/chatbot/components/LiveScan.jsx"
 
 export default function ChatBot() {
   const {
     messages,
     input,
+    setInput,
     listening,
     isThinking,
     isBotActive,
@@ -27,7 +30,14 @@ export default function ChatBot() {
     startVoice,
     autoResize,
     setModeSelection,
-    setModeOpen
+    setModeOpen,
+    qcTarget,
+    setQcTarget,
+    qcChecks,
+    setQcChecks,
+    qcRender,
+    setQcRender,
+    tick
   } = useChatBot()
 
   const currentUser = useSelector(s => s.auth.user)
@@ -56,6 +66,9 @@ export default function ChatBot() {
 
   useEffect(() => { scrollToBottom(false) }, [])
   useEffect(() => { scrollToBottom(true) }, [messages.length, isThinking, isWebSearch])
+  useEffect(() => { scrollToBottom(true) }, [tick])
+
+  const hasLoadingBot = useMemo(() => messages.some(m => m.type === "bot" && m.loading), [messages])
 
   if (!isBotActive) {
     return (
@@ -64,6 +77,7 @@ export default function ChatBot() {
         <p className="mb-6 text-xl font-semibold">SappSense</p>
         <ChatInputBox
           input={input}
+          setInput={setInput}
           inputRef={inputRef}
           autoResize={e => { autoResize(e) }}
           handleSend={handleSend}
@@ -75,6 +89,12 @@ export default function ChatBot() {
           modeOpen={modeOpen}
           setModeSelection={setModeSelection}
           setModeOpen={setModeOpen}
+          qcTarget={qcTarget}
+          setQcTarget={setQcTarget}
+          qcChecks={qcChecks}
+          setQcChecks={setQcChecks}
+          qcRender={qcRender}
+          setQcRender={setQcRender}
         />
       </div>
     )
@@ -87,76 +107,71 @@ export default function ChatBot() {
           <LottieLoader animationData={botLoading} width={50} height={50} speed={0.3} opacity={1}/>
           <Link to="#" className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70">SappSense</Link>
         </div>
-        <button
-          onClick={handleReset}
-          className="inline-flex items-center gap-2 px-5 py-1 rounded-full ring-1 ring-black/5"
-        >
+        <button onClick={handleReset} className="inline-flex items-center gap-2 px-5 py-1 rounded-full ring-1 ring-black/5">
           <i className="ri-edit-box-line text-base"></i>
           <span>New Chat</span>
         </button>
-
       </div>
 
       <div className="flex-1 min-h-0 overflow-hidden">
         <PerfectScrollbar className="h-full" containerRef={ref => (psContainerRef.current = ref)}>
           <ul className="px-16 py-4 space-y-6" style={{ paddingBottom: dockH + 16 }}>
-            {messages.map((m, i) => {
-              if (m.type === "bot" && m.loading && !isWebSearch) return null
-              return m.type === "bot" ? (
-                <li key={i} className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    {m.loading ? (
-                      <LottieLoader animationData={botLoading} width={40} height={40} speed={1} opacity={1} />
-                    ) : (
-                      <LottieLoader animationData={botLoading} width={40} height={40} speed={0} opacity={1} />
-                    )}
-                    <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
-                    <span className="text-xs text-gray-500">
-                      {m.time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </div>
-                  {m.loading && isWebSearch ? (
-                    <div className="ml-8 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg px-4 py-3 max-w-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-500">Searching the web</span>
-                        <i className="ri-earth-line animate-spin text-sky-800"></i>
+            {messages.map((m, i) => (
+              m.type === "bot"
+                ? (
+                  <li key={i} className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <LottieLoader animationData={botLoading} width={40} height={40} speed={m.loading ? 1 : 0} opacity={1} />
+                      <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
+                      {!m.loading && <span className="text-xs text-gray-500">{m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}</span>}
+                    </div>
+                    <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-3xl">
+                      {m.loading && m.mode === "qc" ? (
+                        <LiveScanLCD url={qcTarget} />
+                      ) : m.loading ? (
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          {m.latestStatus || (isWebSearch ? "Searching the web " : "Thinking ")} <TypingIndicator />
+                        </div>
+                      ) : null}
+                      {m.error ? (
+                        <div className="text-xs text-red-600 mt-1">{m.error}</div>
+                      ) : (
+                        <>
+                          {m.chart ? <ChartBox spec={m.chart} /> : null}
+                          {m.html && !(m.loading && m.mode === "qc")
+                            ? <div className="main-chat-msg mt-2" dangerouslySetInnerHTML={{ __html: m.loading ? (m.html + "<span class='ai-caret'>▍</span>") : m.html }} />
+                            : null}
+                        </>
+                      )}
+                    </div>
+                  </li>
+                )
+                : (
+                  <li key={i} className="flex justify-end items-start space-x-3">
+                    <div className="flex flex-col items-end text-right max-w-lg space-y-1">
+                      <div className="flex items-center gap-2 justify-end">
+                        <span className="text-xs text-gray-500">{m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}</span>
+                      </div>
+                      <div className="bg-sky-100 dark:bg-blue text-blue dark:text-white rounded-lg px-4 py-3">
+                        <p className="text-xs">{m.text}</p>
                       </div>
                     </div>
-                  ) : (
-                    !m.loading && (
-                      <div className="ml-8 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-3xl">
-                        {m.chart ? <ChartBox spec={m.chart} /> : null}
-                        {m.table ? <div className="overflow-x-auto"></div> : m.html ? <div className="main-chat-msg" dangerouslySetInnerHTML={{ __html: m.html }} /> : <p>{m.text}</p>}
-                      </div>
-                    )
-                  )}
-                </li>
-              ) : (
-                <li key={i} className="flex justify-end items-start space-x-3">
-                  <div className="flex flex-col items-end text-right max-w-lg space-y-1">
-                    <div className="flex items-center gap-2 justify-end">
-                      <span className="text-xs text-gray-500">
-                        {m.time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </span>
+                    <div className="flex items-center justify-center">
+                      <Avatar full_name={currentUser?.full_name} />
                     </div>
-                    <div className="bg-sky-100 dark:bg-blue text-blue dark:text-white rounded-lg px-4 py-3">
-                      <p className="text-xs">{m.text}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <Avatar full_name={currentUser?.full_name} />
-                  </div>
-                </li>
-              )
-            })}
-            {isThinking && !isWebSearch && (
+                  </li>
+                )
+            ))}
+            {!hasLoadingBot && isThinking && (
               <li className="space-y-1">
                 <div className="flex items-center gap-2">
                   <LottieLoader animationData={botLoading} width={40} height={40} speed={1} opacity={1} />
                   <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
                 </div>
                 <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-lg">
-                  <span className="animate-pulse">Thinking...</span>
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <span>Thinking <TypingIndicator /></span>
+                  </div>
                 </div>
               </li>
             )}
@@ -168,8 +183,8 @@ export default function ChatBot() {
       <ChatInputDock
         ref={dockRef}
         input={input}
+        setInput={setInput}
         inputRef={inputRef}
-        autoResize={e => { autoResize(e) }}
         handleSend={handleSend}
         toggleWebSearch={toggleWebSearch}
         isWebSearch={isWebSearch}
@@ -179,6 +194,12 @@ export default function ChatBot() {
         modeOpen={modeOpen}
         setModeSelection={setModeSelection}
         setModeOpen={setModeOpen}
+        qcTarget={qcTarget}
+        setQcTarget={setQcTarget}
+        qcChecks={qcChecks}
+        setQcChecks={setQcChecks}
+        qcRender={qcRender}
+        setQcRender={setQcRender}
       />
     </div>
   )
