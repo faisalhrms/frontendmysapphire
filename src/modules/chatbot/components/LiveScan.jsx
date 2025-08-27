@@ -14,18 +14,16 @@ const authHeaders = () => {
   return h
 }
 
-export default function LiveScanLCD({ url, shots = 1, delayMs = 1800 }) {
+export default function LiveScanLCD({ url }) {
   const [srcUrl, setSrcUrl] = useState("")
   const urlRef = useRef(url)
   useEffect(() => { urlRef.current = url }, [url])
   useEffect(() => {
     let active = true
     let blobUrl = ""
-    const maxShots = Math.max(1, Math.min(2, Number(shots) || 1))
-    const load = async (i = 0) => {
-      if (!active || i >= maxShots) return
+    const load = async () => {
       try {
-        const u = `${abs("chat/query/qc/screenshot/")}?url=${encodeURIComponent(urlRef.current)}&min_interval=1&t=${Date.now()}`
+        const u = `${abs("chat/query/qc/screenshot/")}?url=${encodeURIComponent(urlRef.current)}&t=${Date.now()}`
         const res = await fetch(u, { headers: authHeaders(), credentials: "include" })
         if (!res.ok) return
         const blob = await res.blob()
@@ -33,16 +31,16 @@ export default function LiveScanLCD({ url, shots = 1, delayMs = 1800 }) {
         if (blobUrl) URL.revokeObjectURL(blobUrl)
         blobUrl = URL.createObjectURL(blob)
         setSrcUrl(blobUrl)
-      } finally {
-        if (active && i + 1 < maxShots) setTimeout(() => load(i + 1), delayMs)
-      }
+      } catch {}
     }
-    load(0)
+    load()
+    const id = setInterval(load, 1200)
     return () => {
       active = false
+      clearInterval(id)
       if (blobUrl) URL.revokeObjectURL(blobUrl)
     }
-  }, [url, shots, delayMs])
+  }, [])
   return (
     <div className="lcd-wrap">
       <div className="lcd-screen">
