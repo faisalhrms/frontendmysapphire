@@ -52,7 +52,7 @@ export const useCertificate = (id) => {
             } else {
                 await createCertificate({certificate: data});
             }
-         navigate(`${ROADMAP_SETUP.READ.path}?page=certificate`);
+         navigate(`${ROADMAP_SETUP.READ.path}?tab=certificate`);
         } catch (error) {
             console.error(error);
         }

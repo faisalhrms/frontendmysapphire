@@ -5,15 +5,15 @@ import { createChain, getChainById, updateChain } from '@modules/road-map/Chain-
 
 const mapRows = rows =>
   (rows || []).map(r => ({
-    item          : r.unit?.id        || '',
-    item_label    : r.unit?.name      || '',
+    item: r.unit?.id || '',
+    item_label: r.unit?.name || '',
     suppliers: r.suppliers?.map(s => s.id) || [],
     suppliersOptions: r.suppliers?.map(s => ({ value: s.id, label: s.name })) || [],
-    dyes_method   : r.dyes_method?.id || '',
-    dyes_label    : r.dyes_method?.name || '',
-    stitch_type   : r.stitch_type?.id || '',
-    stitch_label  : r.stitch_type?.name || '',
-    sort_order    : r.sort_order      || 0
+    dyes_method: r.dyes_method?.id || '',
+    dyes_label: r.dyes_method?.name || '',
+    stitch_type: r.stitch_type?.id || '',
+    stitch_label: r.stitch_type?.name || '',
+    sort_order: r.sort_order || 0
   }))
 
 export const useChain = id => {
@@ -28,14 +28,14 @@ export const useChain = id => {
     formState: { errors, isSubmitting }
   } = useForm({
     defaultValues: {
-      business_unit  : '',
+      business_unit: '',
       process_methods: '',
-      qualities      : '',
-      products       : [],
-      raw_materials  : [],
-      units          : [],
-      accessories    : [],
-      packaging      : []
+      qualities: '',
+      products: [],
+      raw_materials: [],
+      units: [],
+      accessories: [],
+      packaging: []
     }
   })
 
@@ -46,14 +46,14 @@ export const useChain = id => {
   useEffect(() => {
     if (!chain) return
     reset({
-      business_unit  : chain.business_unit,
-      process_methods: chain.process_method?.id       || '',
-      qualities      : chain.quality?.id             || '',
-      products       : chain.products?.id            || [],
-      raw_materials  : mapRows(chain.raw_materials),
-      units          : mapRows(chain.units_detail),
-      accessories    : mapRows(chain.accessories),
-      packaging      : mapRows(chain.packaging)
+      business_unit: chain.business_unit,
+      process_methods: chain.process_method?.id || '',
+      qualities: chain.quality?.id || '',
+      products: (chain.products || []).map(p => p.id),
+      raw_materials: mapRows(chain.raw_materials),
+      units: mapRows(chain.units_detail),
+      accessories: mapRows(chain.accessories),
+      packaging: mapRows(chain.packaging)
     })
   }, [chain, reset])
 

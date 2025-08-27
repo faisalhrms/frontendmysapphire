@@ -66,7 +66,7 @@ export const useSupplier = id => {
   const onSubmitHandler = async data => {
     if (id) await updateSupplier(id, { supplier: data });
     else   await createSupplier({ supplier: data });
-    navigate(`${ROADMAP_SETUP.READ.path}?page=supplier`);
+    navigate(`${ROADMAP_SETUP.READ.path}?tab=supplier`);
   };
 
   return {
