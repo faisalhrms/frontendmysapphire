@@ -24,8 +24,10 @@ export default function LiveScanLCD({ url }) {
     const load = async () => {
       try {
         const u = `${abs("chat/query/qc/screenshot/")}?url=${encodeURIComponent(urlRef.current)}&t=${Date.now()}`
-        const res = await fetch(u, { headers: authHeaders(), credentials: "include" })
+        const res = await fetch(u, { headers: authHeaders(), credentials: "include", mode: "cors" })
         if (!res.ok) return
+        const ct = (res.headers.get("content-type") || "").toLowerCase()
+        if (!ct.startsWith("image/")) return
         const blob = await res.blob()
         if (!active) return
         if (blobUrl) URL.revokeObjectURL(blobUrl)
@@ -34,7 +36,7 @@ export default function LiveScanLCD({ url }) {
       } catch {}
     }
     load()
-    const id = setInterval(load, 1200)
+    const id = setInterval(load, 1500)
     return () => {
       active = false
       clearInterval(id)
