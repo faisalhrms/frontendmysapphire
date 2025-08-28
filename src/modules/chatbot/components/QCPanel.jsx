@@ -2,18 +2,27 @@ import React from "react"
 
 const QCPanel = ({ qcTarget, setQcTarget, qcChecks, setQcChecks, qcRender, setQcRender }) => {
   const all = [
-    ["status_code","HTTP 200"],
-    ["title","Title"],
-    ["meta_description","Meta Description"],
-    ["h1","H1"],
-    ["images_alt_ratio","Images Alt Ratio"],
-    ["broken_links","Broken Links"],
-    ["canonical","Canonical"],
-    ["jsonld","JSON-LD"],
-    ["viewport","Viewport"],
-    ["html_lang","HTML Lang"],
-    ["sitemap","Sitemap"],
-    ["robots","Robots.txt"]
+  ["status_code","HTTP 200"],
+  ["title","Title"],
+  ["meta_description","Meta Description"],
+  ["h1","H1"],
+  ["canonical","Canonical"],
+  ["viewport","Viewport"],
+  ["html_lang","HTML Lang"],
+  ["open_graph","Open Graph"],
+  ["twitter_card","Twitter Card"],
+  ["robots","Robots.txt"],
+  ["sitemap","Sitemap"],
+  ["images_alt_ratio","Images Alt Ratio"],
+  ["ecommerce","Ecommerce Platform"],
+  ["ecom_schema","Product Schema"],
+  ["ecom_add_to_cart","Add To Cart"],
+  ["ecom_prices","Prices Visible"],
+  ["ecom_plp","PLP Tiles"],
+  ["ecom_cart","Cart Endpoint"],
+  ["ecom_search","Search"],
+  ["security_headers","Security Headers"],
+  ["broken_links","Broken Links"]
   ]
   const toggle = k => {
     if (qcChecks.includes(k)) setQcChecks(qcChecks.filter(x => x !== k))
@@ -26,7 +35,7 @@ const QCPanel = ({ qcTarget, setQcTarget, qcChecks, setQcChecks, qcRender, setQc
         <input
           value={qcTarget}
           onChange={e=>setQcTarget(e.target.value)}
-          className="w-72 border rounded px-2 h-8 text-xs bg-white dark:bg-gray-800 truncate"
+          className="ti-form-control form-control-sm"
           placeholder="https://pk.sapphireonline.pk"
         />
         <label className="ml-1 text-[11px] inline-flex items-center gap-1">
