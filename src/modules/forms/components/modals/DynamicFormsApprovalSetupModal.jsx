@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import FormSelect from '@components/form/FormSelect.jsx';
-import { useWatch } from "react-hook-form";
 import FormButton from "@components/form/FormButton.jsx";
-import {FORMS_ROUTES} from "@modules/forms/routes.js";
-import DynamiceFormApproversFieldArray from "@modules/forms/components/DynamiceFormApprovalSetup/DynamiceFormApproverFieldArray.jsx";
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import ApproversFieldArray from "@modules/hrms/components/ApprovalSetup/ApproversFieldArray.jsx";
+import {useWatch} from "react-hook-form";
 
 const DynamicFormsApprovalSetupModal = ({
                                 control,
@@ -15,29 +13,11 @@ const DynamicFormsApprovalSetupModal = ({
                                 isSubmitting,
                                 setValue
                             }) => {
-    const user = useSelector((state) => state.auth.user);
-    const memoizedUser = useMemo(() => user, [user]);
-
-    const company_id = useMemo(
-        () => memoizedUser?.employee?.company?.id,
-        [memoizedUser]
+    const formOption = useWatch({ control, name: 'formOption' });
+    const formPre = useMemo(
+        () => (formOption ? [formOption] : []),
+        [formOption]
     );
-
-    const userOption = useWatch({ control, name: 'userOption' });
-    const userPre = useMemo(
-        () => (userOption ? [userOption] : []),
-        [userOption]
-    );
-
-    const apiUrl = useMemo(
-        () => `/select/users/?company_id=${company_id}`,
-        [company_id]
-    );
-    const queryKeyBase = useMemo(
-        () => `company_${company_id}_users`,
-        [company_id]
-    );
-
     return (
         <div id="approvalSetupModal" className="hs-overlay hidden ti-modal">
             <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
@@ -64,24 +44,21 @@ const DynamicFormsApprovalSetupModal = ({
                         <div className="ti-modal-body">
                             <div className="grid grid-cols-12 gap-4">
                                 <div className="col-span-12">
-                                    <FormSelect
-                                        name="form"
+                                    <FormAsyncSelect
+                                        name="form_id"
                                         control={control}
                                         errors={errors}
                                         placeholder="Form"
-                                        options={[
-                                            {value: FORMS_ROUTES.LIST.path, label: 'Forms List'},
-                                            {value: FORMS_ROUTES.CREATE.path, label: 'Create Form'},
-                                            {value: FORMS_ROUTES.EDIT.path, label: 'Edit Form'},
-                                            {value: FORMS_ROUTES.SUBMISSIONS.path, label: 'Form Submissions'},
-                                            {value: FORMS_ROUTES.SETUPS.APPROVAL.path, label: 'Approval Hierarchy'},
-                                        ]}
                                         is_required={true}
+                                        apiUrl="/select/forms/"
+                                        queryKeyBase="dynamic-forms"
                                         className="w-full"
+                                        preselectedOptions={formPre}
+
                                     />
                                 </div>
                             </div>
-                            <DynamiceFormApproversFieldArray
+                            <ApproversFieldArray
                                 control={control}
                                 errors={errors}
                                 setValue={setValue}
