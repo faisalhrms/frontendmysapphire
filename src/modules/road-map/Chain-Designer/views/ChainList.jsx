@@ -9,6 +9,7 @@ import {
 } from '@modules/road-map/Chain-Designer/services/ChainService.js'
 import {CHAIN_DESIGNER} from '@modules/road-map/routes.js'
 import DownloadSampleFile from "@components/DownloadSampleFile.jsx";
+import BulkUploadModel from "@modules/road-map/Chain-Designer/components/BulkUploadModel.jsx";
 
 const chunk = (arr, n = 3) =>
   arr.reduce((a, c, i) => {
@@ -35,6 +36,10 @@ const ChainList = () => {
   const [chainToDelete, setChainToDelete] = useState(null)
   const [tableKey, setTableKey] = useState(Date.now())
   const [loadingActions, setLoadingActions] = useState({})
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openUploadModal = () => setIsModalOpen(true);
+  const closeUploadModal = () => setIsModalOpen(false);
 
   const refreshTable = () => setTableKey(Date.now())
 
@@ -86,7 +91,8 @@ const ChainList = () => {
     },
     {
       Header: 'Products',
-      accessor: 'products.name',
+      accessor: 'products',
+      Cell: ({value}) => renderGrouped(value)
     },
     {
       Header: 'Unit Categories',
@@ -112,21 +118,27 @@ const ChainList = () => {
 
   const buttons = (
       <>
-        <div>
+        <div className="flex space-x-2">
           <Link
               to={CHAIN_DESIGNER.CREATE.path}
               className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
           >
-            <i className="ri-add-line align-middle"/> Add
+              <i className="ri-add-line font-semibold align-middle"></i>
           </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-1">
           <DownloadSampleFile
               downloadFn={downloadChainSample}
               title="Download Sample File"
-              className="ti-btn-success"
+              className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]"
           />
+            <button
+               className="hs-dropdown-toggle ti-btn ti-btn-secondary-full !py-1 !px-2 !text-[0.75rem]"
+                    onClick={openUploadModal}
+                    title="Upload Excel File"
+                >
+               <i className="ri-upload-line font-semibold align-middle"></i>
+            </button>
         </div>
+
       </>
 
   )
@@ -141,6 +153,12 @@ const ChainList = () => {
         apiUrl="chain/datatable"
         buttons={buttons}
       />
+       {isModalOpen && (
+         <BulkUploadModel
+          closeModal={closeUploadModal}
+          refreshTable={refreshTable}
+          />
+       )}
       {isConfirmModalOpen && chainToDelete && (
         <ConfirmDeleteModal
           bodyMessage="Are you sure you want to delete this and all related data?"

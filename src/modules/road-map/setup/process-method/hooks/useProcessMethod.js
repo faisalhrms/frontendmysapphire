@@ -47,7 +47,7 @@ export const useProcessMethod = (id) => {
             } else {
                 await createProcessMethod({processMethod: data});
             }
-         navigate(`${ROADMAP_SETUP.READ.path}?page=process-method`);
+         navigate(`${ROADMAP_SETUP.READ.path}?tab=process-method`);
         } catch (error) {
             console.error(error);
         }
