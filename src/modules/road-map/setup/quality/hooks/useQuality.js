@@ -84,7 +84,7 @@ export const useQuality = (id) => {
       } else {
         await createQuality(formData);
       }
-      navigate(`${ROADMAP_SETUP.READ.path}?page=quality`);
+      navigate(`${ROADMAP_SETUP.READ.path}?tab=quality`);
     } catch (error) {
       console.error(error);
     }

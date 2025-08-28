@@ -49,7 +49,7 @@ export const useDyesMethod = (id) => {
             } else {
                 await createDyesMethod({dyesMethod: data});
             }
-         navigate(`${ROADMAP_SETUP.READ.path}?page=dyes-method`);
+         navigate(`${ROADMAP_SETUP.READ.path}?tab=dyes-method`);
         } catch (error) {
             console.error(error);
         }

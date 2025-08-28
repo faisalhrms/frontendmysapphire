@@ -49,7 +49,7 @@ export const useProduct = (id) => {
             } else {
                 await createProduct({product: data});
             }
-         navigate(`${ROADMAP_SETUP.READ.path}?page=products`);
+         navigate(`${ROADMAP_SETUP.READ.path}?tab=products`);
         } catch (error) {
             console.error(error);
         }
