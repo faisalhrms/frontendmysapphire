@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
-import { Controller } from 'react-hook-form';
+import {Controller} from 'react-hook-form';
 import ErrorMessage from '@components/form/ErrorMessage.jsx';
 import api from '@config/axiosConfig.js';
 
@@ -62,7 +62,6 @@ const FormAsyncSelect = ({
     useEffect(() => {
         // Only update if user is not currently interacting with the component
         if (isUserInteracting) {
-            console.log('FormAsyncSelect: Skipping preselectedOptions update - user is interacting');
             return;
         }
 
@@ -71,7 +70,6 @@ const FormAsyncSelect = ({
         const prevOptionsStr = JSON.stringify(prevPreselectedRef.current?.map(opt => ({ value: opt?.value, label: opt?.label })) || []);
 
         if (currentOptionsStr !== prevOptionsStr) {
-            console.log('FormAsyncSelect: preselectedOptions changed from', prevPreselectedRef.current, 'to', preselectedOptions);
             setSelectedOptions(preselectedOptions);
             prevPreselectedRef.current = preselectedOptions;
         }
@@ -217,7 +215,6 @@ const FormAsyncSelect = ({
 
                     // FIXED: Enhanced onChange handler with race condition prevention
                     const handleChange = useCallback((selectedOption, actionMeta) => {
-                        console.log('FormAsyncSelect handleChange called with:', selectedOption, actionMeta?.action, 'for field:', name);
 
                         // Mark that user is interacting to prevent preselectedOptions interference
                         setIsUserInteracting(true);
@@ -247,7 +244,6 @@ const FormAsyncSelect = ({
                         // Update the field value (IDs) - this will trigger useWatch and preselectedOptions change
                         field.onChange(selectedValues);
 
-                        console.log('FormAsyncSelect: Setting field value to:', selectedValues);
 
                         // Keep legacy onSelectChange semantics intact
                         if (onSelectChange) {
@@ -276,7 +272,6 @@ const FormAsyncSelect = ({
 
                         if (typeof onOptionChange === 'function') {
                             try {
-                                console.log('FormAsyncSelect: Calling onOptionChange with:', rawPayload);
                                 onOptionChange(rawPayload);
                             } catch (e) {
                                 console.warn('onOptionChange callback error', e);
@@ -286,7 +281,6 @@ const FormAsyncSelect = ({
                         // Reset interaction flag after callbacks complete
                         setTimeout(() => {
                             setIsUserInteracting(false);
-                            console.log('FormAsyncSelect: User interaction completed for field:', name);
                         }, 50);
 
                     }, [handleCreateOption, isMulti, onSelectChange, needObject, onRawChange, onOptionChange, field, name]);
@@ -304,20 +298,14 @@ const FormAsyncSelect = ({
                     const selectValue = useMemo(() => {
                         if (isMulti) {
                             if (!Array.isArray(value) || value.length === 0) {
-                                console.log('FormAsyncSelect: Multi-select with empty value:', value);
                                 return [];
                             }
-                            const result = optionsWithSelected.filter(option => value.includes(option.value));
-                            console.log('FormAsyncSelect: Multi-select value:', value, 'matched options:', result);
-                            return result;
+                            return optionsWithSelected.filter(option => value.includes(option.value));
                         } else {
                             if (value === null || value === undefined || value === '') {
-                                console.log('FormAsyncSelect: Single-select with empty value:', value);
                                 return null;
                             }
-                            const result = optionsWithSelected.find(option => option.value === value) || null;
-                            console.log('FormAsyncSelect: Single-select value:', value, 'matched option:', result, 'from options:', optionsWithSelected);
-                            return result;
+                            return optionsWithSelected.find(option => option.value === value) || null;
                         }
                     }, [isMulti, optionsWithSelected, value]);
 

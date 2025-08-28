@@ -16,6 +16,7 @@ import Notify from "@helpers/toastNotifications.js";
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import { fontFamilyOptions, fieldTypeOptions, platformOptions } from "@modules/forms/services/DynamicFormService.js";
 import {getPastDate} from "@helpers/dateTime.js";
+import {formatOptions} from "@helpers/formatters.js";
 
 const DynamicFormBuilder = ({ formData }) => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -41,6 +42,7 @@ const DynamicFormBuilder = ({ formData }) => {
             is_active: true,
             authenticated_only: false,
             require_captcha: false,
+            need_approval: false,
             expired_at: undefined,
             notification_emails: [],
             fields: [
@@ -59,16 +61,13 @@ const DynamicFormBuilder = ({ formData }) => {
             send_email_to_submitter: false,
             email_subject: '',
             email_content: '',
-            enable_birthday_gift: false,
-            birthday_coupon_type: null,
-            birthday_discount_amount: null,
-            birthday_min_order_value: null,
-            birthday_coupon_valid_days: 7,
-            enable_anniversary_voucher: false,
-            anniversary_coupon_type: null,
-            anniversary_discount_amount: null,
-            anniversary_min_order_value: null,
-            anniversary_coupon_valid_days: 7,
+            enable_coupon: false,
+            coupon_config: null,
+            coupon_type: null,
+            coupon_discount_type: null,
+            coupon_discount_amount: null,
+            coupon_min_order_value: null,
+            coupon_valid_days: 7,
             ...formData,
         },
     });
@@ -79,8 +78,7 @@ const DynamicFormBuilder = ({ formData }) => {
     const watchedFieldTypes = useWatch({ control, name: 'fields' });
     const watchedAlertField = useWatch({ control, name: 'enable_alerts' });
     const watchedSendEmailToSubmitter = useWatch({ control, name: 'send_email_to_submitter' });
-    const watchedBirthdayGift = useWatch({ control, name: 'enable_birthday_gift' });
-    const watchedAnniversaryVoucher = useWatch({ control, name: 'enable_anniversary_voucher' });
+    const watchedCoupon = useWatch({ control, name: 'enable_coupon' });
 
     useEffect(() => {
         watchedFieldTypes?.forEach((field, index) => {
@@ -91,6 +89,15 @@ const DynamicFormBuilder = ({ formData }) => {
             }
         });
     }, [watchedFieldTypes, setValue]);
+
+    useEffect(() => {
+        if (watchedCoupon) {
+            setValue("send_email_to_submitter", true, { shouldValidate: true });
+            setValue("need_approval", true, { shouldValidate: true });
+        }else {
+            setValue("need_approval", false, { shouldValidate: true });
+        }
+    }, [watchedCoupon, setValue]);
 
     useEffect(() => {
         if (formData) {
@@ -155,12 +162,11 @@ const DynamicFormBuilder = ({ formData }) => {
                 await api.put(`/forms/${formData.id}/`, submitData);
                 Notify.success('Form Updated Successfully!');
             } else {
-                await api.post('/forms/', submitData);
-                Notify.success('Form Created Successfully!');
+                const response = await api.post('/forms/', submitData);
+                Notify.success(response.data.message || "Form created successfully.");
             }
         } catch (error) {
-            Notify.error('Error saving form');
-            console.error(error);
+            Notify.error(error.response?.data?.message);
         }
     };
 
@@ -184,27 +190,17 @@ const DynamicFormBuilder = ({ formData }) => {
                 'require_captcha',
                 'enable_alerts',
                 'send_email_to_submitter',
-                'enable_birthday_gift',
-                'enable_anniversary_voucher',
+                'enable_coupon',
                 ...(watchedAlertField ? ['notification_emails'] : []),
                 ...(watchedSendEmailToSubmitter ? ['email_subject', 'email_content'] : []),
-                ...(watchedBirthdayGift
+                ...(watchedCoupon
                     ? [
-                        'birthday_coupon_type',
-                        'birthday_discount_amount',
-                        'birthday_coupon_valid_days',
-                        ...(watch('birthday_coupon_type') === 'percentage_threshold'
-                            ? ['birthday_min_order_value']
-                            : []),
-                    ]
-                    : []),
-                ...(watchedAnniversaryVoucher
-                    ? [
-                        'anniversary_coupon_type',
-                        'anniversary_discount_amount',
-                        'anniversary_coupon_valid_days',
-                        ...(watch('anniversary_coupon_type') === 'percentage_threshold'
-                            ? ['anniversary_min_order_value']
+                        'coupon_type',
+                        'coupon_discount_type',
+                        'coupon_discount_amount',
+                        'coupon_valid_days',
+                        ...(watch('coupon_type') === 'Threshold'
+                            ? ['coupon_min_order_value']
                             : []),
                     ]
                     : []),
@@ -217,7 +213,7 @@ const DynamicFormBuilder = ({ formData }) => {
         const isValid = await trigger(fieldsToValidate, { shouldFocus: true });
 
         if (!isValid) {
-            // Notify.error('Please fill out all required fields correctly.');
+            Notify.error('Please fill out all required fields correctly.');
         }
 
         return isValid;
@@ -339,7 +335,8 @@ const DynamicFormBuilder = ({ formData }) => {
                                                     <div className="xl:col-span-4 col-span-12">
                                                         <p className="text-[1rem] mb-1 font-semibold">Configure</p>
                                                         <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                            Customize the appearance and expiry settings of your interface.
+                                                            Customize the appearance and expiry settings of your
+                                                            interface.
                                                         </p>
                                                     </div>
                                                     <div className="xl:col-span-8 col-span-12">
@@ -484,12 +481,12 @@ const DynamicFormBuilder = ({ formData }) => {
                                                             <div className="xl:col-span-4 col-span-12">
                                                                 {watchedAlertField && (
                                                                     <div
-                                                                        className="mt-2 w-64 xl:col-span-4 col-span-12">
+                                                                        className="w-64 xl:col-span-4 col-span-12">
                                                                         <FormAsyncSelect
                                                                             name="notification_emails"
                                                                             control={control}
                                                                             errors={errors}
-                                                                            label="User Emails"
+                                                                            label={false}
                                                                             isMulti={true}
                                                                             clientSideSearch={false}
                                                                             apiUrl="/select/user-emails/"
@@ -514,7 +511,147 @@ const DynamicFormBuilder = ({ formData }) => {
                                                                 />
                                                             </div>
                                                         </div>
+                                                        <div className="flex items-center justify-between mt-8">
+                                                            <div className="mail-notification-settings">
+                                                                <p className="text-[0.875rem] mb-1 font-semibold">Require
+                                                                    Approval</p>
+                                                                <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
+                                                                    Enable this option to ensure this form go through an approval process before becoming active or visible.
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <FormToggle
+                                                                    name="need_approval"
+                                                                    control={control}
+                                                                    errors={errors}
+                                                                    toggleClasses="text-center"
+                                                                    disabled={watchedCoupon}
+                                                                />
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                            </li>
+                                            <li className="list-group-item">
+                                                <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                                                    <div className="xl:col-span-4 col-span-12">
+                                                        <p className="text-[1rem] mb-1 font-semibold">Coupon Discount
+                                                            Settings</p>
+                                                        <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
+                                                            Customize Coupon discount options, eligibility rules, and
+                                                            notification preferences.
+                                                        </p>
+                                                    </div>
+                                                    <div className="xl:col-span-8 col-span-12">
+                                                        <div className="flex items-center justify-between mt-8">
+                                                            <div className="mail-notification-settings">
+                                                                <p className="text-[0.875rem] mb-1 font-semibold"></p>
+                                                            </div>
+                                                            <div>
+                                                                <FormToggle
+                                                                    name="enable_coupon"
+                                                                    control={control}
+                                                                    errors={errors}
+                                                                    toggleClasses="text-center"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {watchedCoupon && (
+                                                        <div
+                                                            className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
+                                                            <div className="space-y-2">
+                                                                <div className="flex flex-col md:flex-row gap-4">
+                                                                    <div className="w-full md:w-1/3">
+                                                                        <FormAsyncSelect
+                                                                            name="coupon_config"
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Select Country"
+                                                                            apiUrl="/select/coupon-config/"
+                                                                            queryKeyBase="coupon-config"
+                                                                            clientSideSearch={true}
+                                                                            is_required={true}
+                                                                            preselectedOptions={formatOptions(formData, 'coupon_config_option', 'id', 'country')}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="w-full md:w-1/3">
+                                                                        <FormSelect
+                                                                            name="coupon_type"
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            options={[
+                                                                                {
+                                                                                    label: "Simple (Percentage or Fixed)",
+                                                                                    value: "Simple",
+                                                                                },
+                                                                                {
+                                                                                    label: "Threshold Discount (excl. discounted products)",
+                                                                                    value: "Threshold",
+                                                                                },
+                                                                            ]}
+                                                                            placeholder="Select Coupon Type"
+                                                                            is_required={true}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="w-full md:w-1/3">
+                                                                        <FormSelect
+                                                                            name="coupon_discount_type"
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            options={[
+                                                                                {
+                                                                                    label: "Fixed Amount Discount",
+                                                                                    value: "Amount",
+                                                                                },
+                                                                                {
+                                                                                    label: "Percentage Discount",
+                                                                                    value: "Percentage",
+                                                                                },
+                                                                            ]}
+                                                                            placeholder="Select Discount Type"
+                                                                            is_required={true}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    className="flex flex-col md:flex-row gap-4">
+                                                                    <div className="w-full md:w-1/3">
+                                                                        <FormInput
+                                                                            name="coupon_discount_amount"
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Discount Amount / Percentage"
+                                                                            type="number"
+                                                                            is_required={true}
+                                                                        />
+                                                                    </div>
+                                                                    {watch("coupon_type") === "Threshold" && (
+                                                                        <div className="w-full md:w-1/3">
+                                                                            <FormInput
+                                                                                name="coupon_min_order_value"
+                                                                                control={control}
+                                                                                errors={errors}
+                                                                                placeholder="Min Order Value (for threshold)"
+                                                                                type="number"
+                                                                                is_required={true}
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="w-full md:w-1/3">
+                                                                        <FormInput
+                                                                            name="coupon_valid_days"
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Coupon Validity (in days)"
+                                                                            type="number"
+                                                                            is_required={true}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </li>
                                             <li className="list-group-item">
@@ -538,6 +675,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                                                     control={control}
                                                                     errors={errors}
                                                                     toggleClasses="text-center"
+                                                                    disabled={watchedCoupon}
                                                                 />
                                                             </div>
                                                         </div>
@@ -561,7 +699,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                                                         placeholder="Email Content"
                                                                         is_required={true}
                                                                         editorOptions={{
-                                                                            height: 100,
+                                                                            height: 180,
                                                                             buttonList: [
                                                                                 ["undo", "redo"],
                                                                                 ["bold", "italic", "underline", "strike"],
@@ -577,188 +715,21 @@ const DynamicFormBuilder = ({ formData }) => {
                                                     )}
                                                 </div>
                                             </li>
-                                            <li className="list-group-item">
-                                                <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                                                    <div className="xl:col-span-4 col-span-12">
-                                                        <p className="text-[1rem] mb-1 font-semibold">Birthday Gift Settings</p>
-                                                        <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                            Customize birthday gift options, eligibility rules, and notification preferences.
-                                                        </p>
-                                                    </div>
-                                                    <div className="xl:col-span-8 col-span-12">
-                                                        <div className="flex items-center justify-between mt-8">
-                                                            <div className="mail-notification-settings">
-                                                                <p className="text-[0.875rem] mb-1 font-semibold"></p>
-                                                            </div>
-                                                            <div>
-                                                                <FormToggle
-                                                                    name="enable_birthday_gift"
-                                                                    control={control}
-                                                                    errors={errors}
-                                                                    toggleClasses="text-center"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {watchedBirthdayGift && (
-                                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
-                                                            <div className="space-y-2">
-                                                                <FormSelect
-                                                                    name="birthday_coupon_type"
-                                                                    control={control}
-                                                                    errors={errors}
-                                                                    options={[
-                                                                        {
-                                                                            label: "Fixed Discount (incl. discounted products)",
-                                                                            value: "fixed",
-                                                                        },
-                                                                        {
-                                                                            label: "Percentage Discount with Min Threshold (excl. discounted products)",
-                                                                            value: "percentage_threshold",
-                                                                        },
-                                                                        {
-                                                                            label: "Percentage Discount (excl. discounted products)",
-                                                                            value: "percentage",
-                                                                        },
-                                                                    ]}
-                                                                    placeholder="Select Coupon Type"
-                                                                    is_required={true}
-                                                                />
-                                                                <div className="flex flex-col md:flex-row gap-4">
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="birthday_discount_amount"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Discount Amount / Percentage"
-                                                                            type="number"
-                                                                            is_required={true}
-                                                                        />
-                                                                    </div>
-                                                                    {watch("birthday_coupon_type") === "percentage_threshold" && (
-                                                                        <div className="w-full md:w-1/3">
-                                                                            <FormInput
-                                                                                name="birthday_min_order_value"
-                                                                                control={control}
-                                                                                errors={errors}
-                                                                                placeholder="Min Order Value (for threshold)"
-                                                                                type="number"
-                                                                                is_required={false}
-                                                                            />
-                                                                        </div>
-                                                                    )}
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="birthday_coupon_valid_days"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Coupon Validity (in days)"
-                                                                            type="number"
-                                                                            is_required={false}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </li>
-                                            <li className="list-group-item">
-                                                <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                                                    <div className="xl:col-span-4 col-span-12">
-                                                        <p className="text-[1rem] mb-1 font-semibold">Enable Anniversary Voucher</p>
-                                                        <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                            Activate and configure anniversary voucher settings, eligibility criteria, and notifications.
-                                                        </p>
-                                                    </div>
-                                                    <div className="xl:col-span-8 col-span-12">
-                                                        <div className="flex items-center justify-between mt-8">
-                                                            <div className="mail-notification-settings">
-                                                                <p className="text-[0.875rem] mb-1 font-semibold"></p>
-                                                            </div>
-                                                            <div>
-                                                                <FormToggle
-                                                                    name="enable_anniversary_voucher"
-                                                                    control={control}
-                                                                    errors={errors}
-                                                                    toggleClasses="text-center"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {watchedAnniversaryVoucher && (
-                                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
-                                                            <div className="space-y-2">
-                                                                <FormSelect
-                                                                    name="anniversary_coupon_type"
-                                                                    control={control}
-                                                                    errors={errors}
-                                                                    options={[
-                                                                        { label: "Fixed Discount", value: "fixed" },
-                                                                        {
-                                                                            label: "Percentage Discount with Min Threshold",
-                                                                            value: "percentage_threshold",
-                                                                        },
-                                                                        {
-                                                                            label: "Percentage Discount",
-                                                                            value: "percentage",
-                                                                        },
-                                                                    ]}
-                                                                    placeholder="Select Coupon Type"
-                                                                    is_required={true}
-                                                                />
-                                                                <div className="flex flex-col md:flex-row gap-4">
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="anniversary_discount_amount"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Discount Amount / Percentage"
-                                                                            type="number"
-                                                                            is_required={true}
-                                                                        />
-                                                                    </div>
-                                                                    {watch("anniversary_coupon_type") === "percentage_threshold" && (
-                                                                        <div className="w-full md:w-1/3">
-                                                                            <FormInput
-                                                                                name="anniversary_min_order_value"
-                                                                                control={control}
-                                                                                errors={errors}
-                                                                                placeholder="Min Order Value (for threshold)"
-                                                                                type="number"
-                                                                                is_required={false}
-                                                                            />
-                                                                        </div>
-                                                                    )}
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="anniversary_coupon_valid_days"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Coupon Validity (in days)"
-                                                                            type="number"
-                                                                            is_required={false}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </li>
                                         </ul>
                                     </div>
                                 )}
 
                                 {currentStep === 2 && (
                                     <div className="space-y-4">
-                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
+                                        <div
+                                            className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
                                             <div className="box">
                                                 <div className="box-body border">
                                                     {fields.map((field, index) => {
                                                         const fieldType = watchedFieldTypes?.[index]?.field_type;
                                                         return (
-                                                            <div key={field.id} className="border border-gray-300 rounded-lg p-4 mt-4 bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
+                                                            <div key={field.id}
+                                                                 className="border border-gray-300 rounded-lg p-4 mt-4 bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
                                                                 <div className="grid grid-cols-12 gap-4">
                                                                     <div className="col-span-10">
                                                                         <div className='grid grid-cols-12 gap-4'>

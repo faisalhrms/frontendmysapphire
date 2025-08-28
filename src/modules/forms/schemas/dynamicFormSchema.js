@@ -69,16 +69,14 @@ export const dynamicFormSchema = z.object({
     send_email_to_submitter: z.boolean().default(false),
     email_subject: z.string().optional().nullable(),
     email_content: z.string().optional().nullable(),
-    enable_birthday_gift: z.boolean().default(false),
-    birthday_coupon_type: z.enum(['fixed', 'percentage_threshold', 'percentage']).optional().nullable(),
-    birthday_discount_amount: z.coerce.number().optional().nullable(),
-    birthday_min_order_value: z.coerce.number().optional().nullable(),
-    birthday_coupon_valid_days: z.coerce.number().int().positive().default(7),
-    enable_anniversary_voucher: z.boolean().default(false),
-    anniversary_coupon_type: z.enum(['fixed', 'percentage_threshold', 'percentage']).optional().nullable(),
-    anniversary_discount_amount: z.coerce.number().optional().nullable(),
-    anniversary_min_order_value: z.coerce.number().optional().nullable(),
-    anniversary_coupon_valid_days: z.coerce.number().int().positive().default(7),
+    enable_coupon: z.boolean().default(false),
+    need_approval: z.boolean().default(false),
+    coupon_config: z.coerce.number().optional().nullable(),
+    coupon_type: z.enum(['Simple', 'Threshold']).optional().nullable(),
+    coupon_discount_type: z.enum(['Amount', 'Percentage']).optional().nullable(),
+    coupon_discount_amount: z.coerce.number().optional().nullable(),
+    coupon_min_order_value: z.coerce.number().optional().nullable(),
+    coupon_valid_days: z.coerce.number().int().positive().default(7),
 }).superRefine((data, ctx) => {
     if (data.send_email_to_submitter) {
         if (!data.email_subject || data.email_subject.trim() === '') {
@@ -97,50 +95,54 @@ export const dynamicFormSchema = z.object({
         }
     }
 
-    if (data.enable_birthday_gift) {
-        if (!data.birthday_coupon_type) {
+    if (data.enable_coupon) {
+        if (!data.need_approval) {
             ctx.addIssue({
-                path: ['birthday_coupon_type'],
+                path: ['need_approval'],
                 code: z.ZodIssueCode.custom,
-                message: 'Birthday coupon type is required',
+                message: 'Approval is required if coupon discount is active',
             });
         }
-        if (!data.birthday_discount_amount) {
+        if (!data.coupon_config) {
             ctx.addIssue({
-                path: ['birthday_discount_amount'],
+                path: ['coupon_config'],
                 code: z.ZodIssueCode.custom,
-                message: 'Birthday discount amount is required',
+                message: 'Coupon country/area is required',
             });
         }
-        if (data.birthday_coupon_type === 'percentage_threshold' && !data.birthday_min_order_value) {
+        if (!data.coupon_type) {
             ctx.addIssue({
-                path: ['birthday_min_order_value'],
+                path: ['coupon_type'],
                 code: z.ZodIssueCode.custom,
-                message: 'Minimum order value is required for threshold-based birthday discount',
+                message: 'Coupon type is required',
             });
         }
-    }
-
-    if (data.enable_anniversary_voucher) {
-        if (!data.anniversary_coupon_type) {
+        if (!data.coupon_discount_type) {
             ctx.addIssue({
-                path: ['anniversary_coupon_type'],
+                path: ['coupon_discount_type'],
                 code: z.ZodIssueCode.custom,
-                message: 'Anniversary coupon type is required',
+                message: 'Coupon Discount type is required',
             });
         }
-        if (!data.anniversary_discount_amount) {
+        if (!data.coupon_discount_amount) {
             ctx.addIssue({
-                path: ['anniversary_discount_amount'],
+                path: ['coupon_discount_amount'],
                 code: z.ZodIssueCode.custom,
-                message: 'Anniversary discount amount is required',
+                message: 'Coupon Discount amount/percentage is required',
             });
         }
-        if (data.anniversary_coupon_type === 'percentage_threshold' && !data.anniversary_min_order_value) {
+        if (!data.coupon_valid_days) {
             ctx.addIssue({
-                path: ['anniversary_min_order_value'],
+                path: ['coupon_valid_days'],
                 code: z.ZodIssueCode.custom,
-                message: 'Minimum order value is required for threshold-based anniversary discount',
+                message: 'Coupon Validity in days is required',
+            });
+        }
+        if (data.coupon_type === 'Threshold' && !data.coupon_min_order_value) {
+            ctx.addIssue({
+                path: ['coupon_min_order_value'],
+                code: z.ZodIssueCode.custom,
+                message: 'Minimum order value is required for Threshold based discount',
             });
         }
     }

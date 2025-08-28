@@ -4,32 +4,10 @@ import React, { useMemo, useCallback } from "react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import Avatar from "@components/Avatar.jsx";
 import { ArrowRight } from "lucide-react";
-import { useApprovalSetupModel, useUploadApprovalSetupModal } from "@modules/hrms/hooks/useApprovalSetupModal.js";
-import FormApprovalSetupModal from "@modules/forms/components/modals/DynamicFormsApprovalSetupModal.jsx";
-import DynamiceFormUploadModal from "@modules/forms/components/modals/DynamiceFormUploadModel.jsx";
+import DynamicFormsApprovalSetupModal from "@modules/forms/components/modals/DynamicFormsApprovalSetupModal.jsx";
+import {useFormApprovalSetupModel} from "@modules/forms/hooks/useFormApprovalSetupModal.js";
 
 const MemoizedAvatar = React.memo(Avatar);
-
-const UserCell = React.memo(({ user }) => (
-    <div className="flex items-center">
-        <MemoizedAvatar
-            avatar={user?.avatar || null}
-            full_name={user?.full_name || 'N/A'}
-            size='md'
-            parentClasses='dark:text-gray-200 dark:bg-bodybg'
-        />
-        <div className='ms-2'>
-            <p className="font-semibold mb-0 flex items-center">
-                {user?.full_name || 'N/A'}
-            </p>
-            <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                {user?.email || 'N/A'}
-            </p>
-        </div>
-    </div>
-));
-
-UserCell.displayName = 'UserCell';
 
 const HierarchyCell = React.memo(({ approvers }) => (
     <div className="flex items-center gap-1 flex-wrap">
@@ -68,13 +46,6 @@ ActionCell.displayName = 'ActionCell';
 const DynamicFormsApprovalSetup = () => {
     const dataTableRef = React.useRef();
 
-    const refetchCallback = useCallback(() => {
-        dataTableRef.current?.refetch();
-    }, []);
-
-    const uploadApprovalSetupModel = useUploadApprovalSetupModal(refetchCallback);
-    const approvalSetupModel = useApprovalSetupModel(refetchCallback);
-
     const {
         openModal,
         closeModal,
@@ -85,21 +56,7 @@ const DynamicFormsApprovalSetup = () => {
         onSubmit,
         isEditMode,
         setValue,
-        moveApprover,
-        addApprover,
-        removeApprover,
-    } = approvalSetupModel;
-
-    const {
-        openUploadModal,
-        isUploadModalOpen,
-        control: uploadControl,
-        errors: uploadErrors,
-        isSubmitting: uploadIsSubmitting,
-        handleSubmit: uploadHandleSubmit,
-        onSubmit: uploadOnSubmit,
-        closeUploadModal
-    } = uploadApprovalSetupModel;
+    } = useFormApprovalSetupModel(dataTableRef);
 
     const handleOpenModal = useCallback((id = null, isEdit = false) => {
         openModal(id, isEdit);
@@ -112,12 +69,7 @@ const DynamicFormsApprovalSetup = () => {
     const columns = useMemo(() => [
         {
             Header: 'Form',
-            accessor: 'form',
-            disableSortBy: true,
-            filterable: true,
-            filterType: 'text',
-            filterKey: 'form__name',
-            // Cell: ({ row }) => <FormCell form={row.original.form} />
+            accessor: 'title',
         },
         {
             Header: 'Hierarchy',
@@ -148,7 +100,7 @@ const DynamicFormsApprovalSetup = () => {
                 <i className="ri-add-line font-semibold align-middle"></i>
             </button>
         </div>
-    ), [handleOpenAddModal, openUploadModal]);
+    ), [handleOpenAddModal]);
 
     const modalProps = useMemo(() => ({
         control,
@@ -157,9 +109,7 @@ const DynamicFormsApprovalSetup = () => {
         handleSubmit,
         onSubmit,
         isSubmitting,
-        moveApprover,
-        addApprover,
-        removeApprover,
+        setValue
     }), [
         control,
         errors,
@@ -167,26 +117,7 @@ const DynamicFormsApprovalSetup = () => {
         handleSubmit,
         onSubmit,
         isSubmitting,
-        moveApprover,
-        addApprover,
-        removeApprover,
-    ]);
-
-    const uploadModalProps = useMemo(() => ({
-        control: uploadControl,
-        errors: uploadErrors,
-        isSubmitting: uploadIsSubmitting,
-        handleSubmit: uploadHandleSubmit,
-        onSubmit: uploadOnSubmit,
-        closeModal: closeUploadModal,
-        heading: "Upload Approval Setup"
-    }), [
-        uploadControl,
-        uploadErrors,
-        uploadIsSubmitting,
-        uploadHandleSubmit,
-        uploadOnSubmit,
-        closeUploadModal
+        setValue
     ]);
 
     return (
@@ -199,17 +130,13 @@ const DynamicFormsApprovalSetup = () => {
             <DataTable
                 ref={dataTableRef}
                 columns={columns}
-                apiUrl="/hrms/setups/approval-hierarchy/datatable/"
+                apiUrl="/forms/setups/approval-hierarchy/datatable/"
                 needHeader={false}
-                enableAdvancedFilters={true}
+                enableAdvancedFilters={false}
                 buttons={buttons}
             />
 
-            <FormApprovalSetupModal {...modalProps} />
-
-            {isUploadModalOpen && (
-                <DynamiceFormUploadModal {...uploadModalProps} />
-            )}
+            <DynamicFormsApprovalSetupModal {...modalProps} />
         </>
     );
 };
