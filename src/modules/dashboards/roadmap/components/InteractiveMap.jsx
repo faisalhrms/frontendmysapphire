@@ -22,6 +22,8 @@ export default function InteractiveMap({ chain }) {
     return () => clearInterval(iv)
   }, [])
 
+  const cleanName = s => (s || "").replace(/\s*\((Inhouse|Outsource)\)$/i, "")
+
   const data = chain?.data || chain || {}
   const cats = data.unit_categories || []
   const sec = data.sections || {}
@@ -49,7 +51,7 @@ export default function InteractiveMap({ chain }) {
         if (!m[uid]) {
           m[uid] = {
             unitId: uid,
-            unitName: r.unit?.name || "",
+            unitName: cleanName(r.unit?.name || ""),
             suppliers: [],
             inHouse: !!r.is_in_house
           }
@@ -124,7 +126,7 @@ export default function InteractiveMap({ chain }) {
       acc[type].push(c)
       return acc
     }, {})
-    setCanvasData({ unitName, groups })
+    setCanvasData({ unitName: cleanName(unitName), groups })
     const el = document.getElementById("hs-overlay-right")
     if (el) window.HSOverlay.open(el)
   }
@@ -193,14 +195,20 @@ export default function InteractiveMap({ chain }) {
 
         {points.map(p => {
           const pos = positions[p.id]
-          const headerBg = p.units.some(u => !u.inHouse) ? "!bg-pink/20" : "bg-info/15"
+          const hasIn = p.units.some(u => u.inHouse)
+          const hasOut = p.units.some(u => !u.inHouse)
+          const headerClass = hasIn && hasOut ? "" : hasOut ? "!bg-pink/20" : "bg-info/15"
+          const headerStyle =
+            hasIn && hasOut
+              ? { background: "linear-gradient(90deg, rgba(236,72,153,0.2) 0%, rgba(236,72,153,0.2) 50%, rgba(59,130,246,0.15) 50%, rgba(59,130,246,0.15) 100%)" }
+              : undefined
           return (
             <div
               key={p.id}
               className="absolute w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
               style={{ left: pos.left, top: pos.top }}
             >
-              <div className={`flex items-center gap-6 p-1 ${headerBg}`}>
+              <div className={`flex items-center gap-6 p-1 ${headerClass}`} style={headerStyle}>
                 <div className="p-1">{p.icon}</div>
                 <span className="font-bold text-gray-800 dark:text-gray-200 truncate">
                   {p.name}

@@ -73,7 +73,7 @@ const onSubmitHandler = async data => {
   if (id) await updateUnit(id, { unit: payload })
   else await createUnit({ unit: payload })
 
-  navigate(`${ROADMAP_SETUP.READ.path}?page=unit`)
+  navigate(`${ROADMAP_SETUP.READ.path}?tab=unit`)
 }
 
   return {

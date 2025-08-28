@@ -49,7 +49,7 @@ export const useStitchType = (id) => {
             } else {
                 await createStitchType({stitchType: data});
             }
-         navigate(`${ROADMAP_SETUP.READ.path}?page=stitch-type`);
+         navigate(`${ROADMAP_SETUP.READ.path}?tab=stitch-type`);
         } catch (error) {
             console.error(error);
         }

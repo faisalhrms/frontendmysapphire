@@ -34,6 +34,14 @@ export const sidebarMenu = [
                 '',
                 '',
             ),
+            generateSidebarItem(
+                APPROVAL_ROUTES.DETAIL.path,
+                'link',
+                'Dynamice detail',
+                2,
+                '',
+                '',
+            ),
 
 
         ]

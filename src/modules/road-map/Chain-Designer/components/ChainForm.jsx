@@ -66,6 +66,7 @@ const ChainForm = () => {
                                     <div className="xl:col-span-3 col-span-12">
                                         <FormAsyncSelect
                                             name="products"
+                                            isMulti={true}
                                             control={control}
                                             errors={errors}
                                             clientSideSearch={true}
