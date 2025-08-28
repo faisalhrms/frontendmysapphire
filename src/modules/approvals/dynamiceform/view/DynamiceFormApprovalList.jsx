@@ -54,7 +54,7 @@ const ObjectiveApprovalList = () => {
                             Reject
                         </button>
                         <Link
-                            to={`/module/forms/edit/${row.original.id}`}
+                            to={`/module/approvals/edit/${row.original.id}`}
                             className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
                             title="Edit Form"
                         >
@@ -117,7 +117,7 @@ const ObjectiveApprovalList = () => {
             <DataTable
                 ref={dataTableRef}
                 columns={columns}
-                apiUrl="/hrms/objectives/que/approvals/"
+                apiUrl="/forms/que/approvals/"
                 needHeader={false}
                 enableAdvancedFilters={false}
             />
