@@ -14,18 +14,18 @@ const authHeaders = () => {
   return h
 }
 
-export default function LiveScanLCD({ url, shots = 1, delayMs = 1800 }) {
+export default function LiveScanLCD({ url, shots = 2, delayMs = 1800, maxWidth = 600 }) {
   const [srcUrl, setSrcUrl] = useState("")
   const urlRef = useRef(url)
   useEffect(() => { urlRef.current = url }, [url])
   useEffect(() => {
     let active = true
     let blobUrl = ""
-    const maxShots = Math.max(1, Math.min(2, Number(shots) || 1))
-    const load = async (i = 0) => {
-      if (!active || i >= maxShots) return
+    let taken = 0
+    const take = async () => {
+      if (!active || taken >= Math.max(1, Math.min(3, Number(shots) || 2))) return
       try {
-        const u = `${abs("chat/query/qc/screenshot/")}?url=${encodeURIComponent(urlRef.current)}&min_interval=1&t=${Date.now()}`
+        const u = `${abs("chat/query/qc/screenshot/")}?url=${encodeURIComponent(urlRef.current)}&t=${Date.now()}`
         const res = await fetch(u, { headers: authHeaders(), credentials: "include" })
         if (!res.ok) return
         const blob = await res.blob()
@@ -33,20 +33,22 @@ export default function LiveScanLCD({ url, shots = 1, delayMs = 1800 }) {
         if (blobUrl) URL.revokeObjectURL(blobUrl)
         blobUrl = URL.createObjectURL(blob)
         setSrcUrl(blobUrl)
-      } finally {
-        if (active && i + 1 < maxShots) setTimeout(() => load(i + 1), delayMs)
+      } catch {}
+      taken += 1
+      if (taken < Math.max(1, Math.min(3, Number(shots) || 2))) {
+        setTimeout(take, Math.max(1000, Number(delayMs) || 1800))
       }
     }
-    load(0)
+    take()
     return () => {
       active = false
       if (blobUrl) URL.revokeObjectURL(blobUrl)
     }
-  }, [url, shots, delayMs])
+  }, [shots, delayMs])
   return (
-    <div className="lcd-wrap">
+    <div className="lcd-wrap" style={{ "--lcd-max-w": `${maxWidth}px` }}>
       <div className="lcd-screen">
-        {srcUrl ? <img src={srcUrl} alt="" className="w-full h-full object-contain" /> : null}
+        {srcUrl ? <img src={srcUrl} alt="" className="w-full h-full object-contain" referrerPolicy="no-referrer" /> : null}
         <div className="scan-overlay" />
         <div className="lcd-hud">
           <span className="hud-text">Scanning</span>
@@ -55,7 +57,7 @@ export default function LiveScanLCD({ url, shots = 1, delayMs = 1800 }) {
       </div>
       <div className="lcd-footer">{url}</div>
       <style>{`
-        .lcd-wrap{border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,.08);background:#0b1020}
+        .lcd-wrap{width:100%;max-width:var(--lcd-max-w);margin:0 auto;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,.08);background:#0b1020}
         .lcd-screen{position:relative;height:15rem;background:radial-gradient(ellipse at center, #0c142a 0%, #090e1e 60%, #070a16 100%);box-shadow:inset 0 0 80px rgba(0,255,180,.06)}
         .scan-overlay{pointer-events:none;position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,255,150,0) 0%, rgba(0,255,150,.18) 50%, rgba(0,255,150,0) 100%);mix-blend-mode:screen;animation:scanMove 2.4s linear infinite}
         .lcd-hud{position:absolute;top:.5rem;left:.5rem;display:flex;align-items:center;gap:.5rem;background:rgba(15,25,40,.6);backdrop-filter:blur(6px);border:1px solid rgba(0,255,150,.2);border-radius:999px;padding:.25rem .6rem;color:#9fffe0;font-size:.75rem}
