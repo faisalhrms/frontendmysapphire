@@ -1,711 +1,389 @@
-import React, { useEffect } from 'react';
-import { useForm, useFieldArray, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import FormInput from '@components/form/FormInput.jsx';
-import FormToggle from '@components/form/FormToggle.jsx';
-import FormSelect from '@components/form/FormSelect.jsx';
-import OptionsRepeater from '@modules/forms/components/OptionsRepeater.jsx';
-import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
+import React, { useState, useEffect } from "react";
 import api from "@config/axiosConfig.js";
-import { dynamicFormSchema } from "@modules/forms/schemas/dynamicFormSchema.js";
-import Notify from "@helpers/toastNotifications.js";
-import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
-import { fontFamilyOptions, fieldTypeOptions, platformOptions } from "@modules/forms/services/DynamicFormService.js";
-import { getPastDate } from "@helpers/dateTime.js";
+import {useParams} from "react-router-dom";
 
+const DynamiceDetailApproval = () => {
+    const [formData, setFormData] = useState(null);
+    const {id} = useParams();
+    console.log(id);
 
-const DynamiceDetailApproval = ({ formData, disabled = false }) => {
-    const { control, handleSubmit, watch, formState: { errors, isSubmitting }, setValue } = useForm({
-        resolver: zodResolver(dynamicFormSchema),
-        defaultValues: {
-            title: '',
-            description: '',
-            font_family: 'Inter, sans-serif',
-            success_message: "Thank you for your submission! We have received your form successfully.",
-            primary_color: '#673ab7',
-            enable_alerts: false,
-            is_active: true,
-            authenticated_only: false,
-            require_captcha: false,
-            expired_at: undefined,
-            notification_emails: [],
-            fields: [
-                {
-                    label: '',
-                    name: '',
-                    short_description: '',
-                    field_type: 'text',
-                    group: '',
-                    required: false,
-                    options: [],
-                    order: 1,
-                },
-            ],
-            social_links: [],
-            send_email_to_submitter: false,
-            email_subject: '',
-            email_content: '',
-            enable_birthday_gift: false,
-            birthday_coupon_type: null,
-            birthday_discount_amount: null,
-            birthday_min_order_value: null,
-            birthday_coupon_valid_days: 7,
-            enable_anniversary_voucher: false,
-            anniversary_coupon_type: null,
-            anniversary_discount_amount: null,
-            anniversary_min_order_value: null,
-            anniversary_coupon_valid_days: 7,
-            ...formData,
-        },
-    });
-
-    const { fields, append, remove } = useFieldArray({ control, name: 'fields' });
-    const { fields: socialLinkFields, append: appendLink, remove: removeLink } = useFieldArray({ control, name: 'social_links' });
-
-    const watchedFieldTypes = useWatch({ control, name: 'fields' });
-    const watchedAlertField = useWatch({ control, name: 'enable_alerts' });
-    const watchedSendEmailToSubmitter = useWatch({ control, name: 'send_email_to_submitter' });
-    const watchedBirthdayGift = useWatch({ control, name: 'enable_birthday_gift' });
-    const watchedAnniversaryVoucher = useWatch({ control, name: 'enable_anniversary_voucher' });
+    const fontFamilyOptions = [
+        { label: "Inter (Default)", value: "Inter, sans-serif" },
+        { label: "Arial", value: "Arial, sans-serif" },
+        { label: "Helvetica", value: "Helvetica, sans-serif" },
+        { label: "Georgia", value: "Georgia, serif" },
+        { label: "Times New Roman", value: "Times New Roman, serif" },
+    ];
 
     useEffect(() => {
-        watchedFieldTypes?.forEach((field, index) => {
-            if (['select', 'radio', 'checkbox'].includes(field?.field_type) && !field.options?.length) {
-                setValue(`fields.${index}.options`, [{ label: '', value: '' }]);
-            } else if (!['select', 'radio', 'checkbox'].includes(field?.field_type) && field.options?.length) {
-                setValue(`fields.${index}.options`, []);
-            }
-        });
-    }, [watchedFieldTypes, setValue]);
+        const fetchFormData = async () => {
+            const apiResponse = await api.get(`/forms/${id}/`);
+            console.log(apiResponse);
+            setFormData(apiResponse?.data?.data);
+        };
+        fetchFormData();
+    }, [id]);
 
-    useEffect(() => {
-        if (formData) {
-            setValue('title', formData.title || '');
-            setValue('font_family', formData.font_family || 'Inter, sans-serif');
-            setValue('success_message', formData.success_message || "Thank you for your submission! We have received your form successfully.");
-            setValue('description', formData.description || '');
-            setValue('primary_color', formData.primary_color || '#673ab7');
-            setValue('enable_alerts', formData.enable_alerts || false);
-            setValue('is_active', formData.is_active || true);
-            setValue('authenticated_only', formData.authenticated_only || false);
-            setValue('require_captcha', formData.require_captcha || false);
-            setValue('expired_at', formData.expired_at || undefined);
-            setValue(
-                'notification_emails',
-                formData.notification_emails?.split(',').filter(Boolean) || []
-            );
-            setValue(
-                'fields',
-                formData.fields?.map((field) => ({
-                    ...field,
-                    options:
-                        field.options?.length
-                            ? field.options
-                            : ['select', 'radio', 'checkbox'].includes(field.field_type)
-                                ? [{ label: '', value: '' }]
-                                : [],
-                })) || [
-                    {
-                        label: '',
-                        name: '',
-                        short_description: '',
-                        field_type: 'text',
-                        group: '',
-                        required: false,
-                        options: [],
-                        order: 1,
-                    },
-                ]
-            );
-            setValue(
-                'social_links',
-                formData.social_links?.length ? formData.social_links : []
-            );
-        }
-    }, [formData, setValue]);
-
-    const onSubmit = async (data) => {
-        if (disabled) return; // Prevent submission in view-only mode
-        try {
-            const submitData = {
-                ...data,
-                notification_emails: data.notification_emails?.join(',') || '',
-                fields: data.fields.map((field) => ({
-                    ...field,
-                    options: ['select', 'radio', 'checkbox'].includes(field.field_type)
-                        ? field.options?.filter(opt => opt.label && opt.value) || []
-                        : [],
-                })),
-            };
-
-            if (formData?.id) {
-                await api.put(`/forms/${formData.id}/`, submitData);
-                Notify.success('Form Updated Successfully!');
-            } else {
-                await api.post('/forms/', submitData);
-                Notify.success('Form Created Successfully!');
-            }
-        } catch (error) {
-            Notify.error('Error saving form');
-            console.error(error);
-        }
-    };
-
-    const addField = () => {
-        if (disabled) return;
-        append({ label: '', name: '', short_description: '', field_type: 'text', group: '', required: false, options: [], order: fields.length + 1 });
-    };
-
-    const addSocialLink = () => {
-        if (disabled) return;
-        appendLink({ platform: 'facebook', url: '' });
-    };
+    if (!formData) return <p className="p-6"></p>;
 
     return (
-        <>
+        <div className="box">
+             <div className="box-body ">
+                 <ul className=" list-group list-group-flush list-none !rounded-md space-y-6">
 
+                <li className="list-group-item bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center space-x-4">
+                        <div className="flex-shrink-0">
+                            <div className="w-12 h-12 bg-primary/80 rounded-lg flex items-center justify-center">
+                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-xl font-bold dark:text-gray-200 dark:bg-bodybg  mb-1">Form Title</h3>
+                            <div className="bg-white px-4 py-3 rounded-lg border-l-4 border-gray-500 dark:text-gray-200 dark:bg-bodybg ">
+                                <p className="text-lg font-medium text-gray-800 leading-relaxed dark:text-gray-200 dark:bg-bodybg ">
+                                    {formData.title}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
 
-            <div className='container sm:p-3 !p-0'>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-12 gap-6 mb-[3rem]">
-                    <div className="xl:col-span-12 col-span-12">
-                        <div className="box">
-                            <div className="box-body">
-                                <div className="space-y-4">
-                                    <FormInput
-                                        name="title"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Form Title"
-                                        is_required={true}
-                                        disabled={disabled}
-                                    />
-                                    <ul className="list-group list-group-flush list-none !rounded-md">
-                                        <li className="list-group-item">
-                                            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                                                <div className="xl:col-span-4 col-span-12">
-                                                    <p className="text-[1rem] mb-1 font-semibold">Configure</p>
-                                                    <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                        Customize the appearance and expiry settings of your interface.
-                                                    </p>
-                                                </div>
-                                                <div className="xl:col-span-8 col-span-12">
-                                                    <div className="flex items-center justify-between sm:mt-0 mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold">Primary Color</p>
-                                                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                                Customize primary colors to align the interface with your brand identity.
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <FormInput
-                                                                type="color"
-                                                                name="primary_color"
-                                                                control={control}
-                                                                errors={errors}
-                                                                is_required={false}
-                                                                className='form-control-color !border-0 block'
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold">Font Family Options</p>
-                                                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                                Choose a font style to match your brand's visual tone and readability.
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <FormSelect
-                                                                name="font_family"
-                                                                control={control}
-                                                                options={fontFamilyOptions}
-                                                                errors={errors}
-                                                                is_required={false}
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold">Expired At</p>
-                                                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                                Set the expiration date to automatically disable the feature after a specific time.
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <FormInput
-                                                                type="date"
-                                                                name="expired_at"
-                                                                control={control}
-                                                                errors={errors}
-                                                                min={getPastDate(0)}
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className="list-group-item">
-                                            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                                                <div className="xl:col-span-4 col-span-12">
-                                                    <p className="text-[1rem] mb-1 font-semibold">Security</p>
-                                                    <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                        Manage account protection, access rules, and alerts.
-                                                    </p>
-                                                </div>
-                                                <div className="xl:col-span-8 col-span-12">
-                                                    <div className="flex items-center justify-between sm:mt-0 mt-4">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold">Is Active</p>
-                                                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                                Toggle to enable or disable this feature or module.
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <FormToggle
-                                                                name="is_active"
-                                                                control={control}
-                                                                errors={errors}
-                                                                toggleClasses="text-center"
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold">For Authenticated User</p>
-                                                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                                Restrict access to only logged-in or authenticated users.
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <FormToggle
-                                                                name="authenticated_only"
-                                                                control={control}
-                                                                errors={errors}
-                                                                toggleClasses="text-center"
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold">Require Captcha</p>
-                                                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                                Enable CAPTCHA verification to prevent spam and ensure submissions are made by real users.
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <FormToggle
-                                                                name="require_captcha"
-                                                                control={control}
-                                                                errors={errors}
-                                                                toggleClasses="text-center"
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="xl:col-span-3 col-span-12">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold">Enable Submission Alerts</p>
-                                                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                                Get alerts when a new submission is received.
-                                                            </p>
-                                                        </div>
-                                                        <div className="xl:col-span-4 col-span-12">
-                                                            {watchedAlertField && (
-                                                                <div className="mt-2 w-64 xl:col-span-4 col-span-12">
-                                                                    <FormAsyncSelect
-                                                                        name="notification_emails"
-                                                                        control={control}
-                                                                        errors={errors}
-                                                                        label="User Emails"
-                                                                        isMulti={true}
-                                                                        clientSideSearch={false}
-                                                                        apiUrl="/select/user-emails/"
-                                                                        queryKeyBase="user_emails"
-                                                                        preselectedOptions={formData?.notification_emails
-                                                                            ?.split(',')
-                                                                            .filter(Boolean)
-                                                                            .map((e) => ({
-                                                                                label: e,
-                                                                                value: e,
-                                                                            })) || []}
-                                                                        disabled={disabled}
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="xl:col-span-4 col-span-12">
-                                                            <FormToggle
-                                                                name="enable_alerts"
-                                                                control={control}
-                                                                errors={errors}
-                                                                toggleClasses="text-right mt-4"
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className="list-group-item">
-                                            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                                                <div className="xl:col-span-4 col-span-12">
-                                                    <p className="text-[1rem] mb-1 font-semibold">Send Email to Submitter</p>
-                                                    <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                        Automatically send a confirmation or notification email to the form submitter.
-                                                    </p>
-                                                </div>
-                                                <div className="xl:col-span-8 col-span-12">
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold"></p>
-                                                        </div>
-                                                        <div>
-                                                            <FormToggle
-                                                                name="send_email_to_submitter"
-                                                                control={control}
-                                                                errors={errors}
-                                                                toggleClasses="text-center"
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    {watchedSendEmailToSubmitter && (
-                                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
-                                                            <div className="box">
-                                                                <div className="space-y-2">
-                                                                    <FormInput
-                                                                        name="email_subject"
-                                                                        control={control}
-                                                                        errors={errors}
-                                                                        placeholder="Email Subject"
-                                                                        is_required={true}
-                                                                        disabled={disabled}
-                                                                    />
-                                                                    <FormRichTextarea
-                                                                        name="email_content"
-                                                                        control={control}
-                                                                        errors={errors}
-                                                                        placeholder="Email Content"
-                                                                        is_required={true}
-                                                                        editorOptions={{
-                                                                            height: 100,
-                                                                            buttonList: [
-                                                                                ["undo", "redo"],
-                                                                                ["bold", "italic", "underline", "strike"],
-                                                                                ["list", "align", "fontColor", "hiliteColor"],
-                                                                                ["link"],
-                                                                                ["removeFormat"],
-                                                                            ],
-                                                                        }}
-                                                                        disabled={disabled}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className="list-group-item">
-                                            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                                                <div className="xl:col-span-4 col-span-12">
-                                                    <p className="text-[1rem] mb-1 font-semibold">Birthday Gift Settings</p>
-                                                    <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                        Customize birthday gift options, eligibility rules, and notification preferences.
-                                                    </p>
-                                                </div>
-                                                <div className="xl:col-span-8 col-span-12">
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold"></p>
-                                                        </div>
-                                                        <div>
-                                                            <FormToggle
-                                                                name="enable_birthday_gift"
-                                                                control={control}
-                                                                errors={errors}
-                                                                toggleClasses="text-center"
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    {watchedBirthdayGift && (
-                                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
-                                                            <div className="space-y-2">
-                                                                <FormSelect
-                                                                    name="birthday_coupon_type"
-                                                                    control={control}
-                                                                    errors={errors}
-                                                                    options={[
-                                                                        {
-                                                                            label: "Fixed Discount (incl. discounted products)",
-                                                                            value: "fixed",
-                                                                        },
-                                                                        {
-                                                                            label: "Percentage Discount with Min Threshold (excl. discounted products)",
-                                                                            value: "percentage_threshold",
-                                                                        },
-                                                                        {
-                                                                            label: "Percentage Discount (excl. discounted products)",
-                                                                            value: "percentage",
-                                                                        },
-                                                                    ]}
-                                                                    placeholder="Select Coupon Type"
-                                                                    is_required={true}
-                                                                    disabled={disabled}
-                                                                />
-                                                                <div className="flex flex-col md:flex-row gap-4">
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="birthday_discount_amount"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Discount Amount / Percentage"
-                                                                            type="number"
-                                                                            is_required={true}
-                                                                            disabled={disabled}
-                                                                        />
-                                                                    </div>
-                                                                    {watch("birthday_coupon_type") === "percentage_threshold" && (
-                                                                        <div className="w-full md:w-1/3">
-                                                                            <FormInput
-                                                                                name="birthday_min_order_value"
-                                                                                control={control}
-                                                                                errors={errors}
-                                                                                placeholder="Min Order Value (for threshold)"
-                                                                                type="number"
-                                                                                is_required={false}
-                                                                                disabled={disabled}
-                                                                            />
-                                                                        </div>
-                                                                    )}
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="birthday_coupon_valid_days"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Coupon Validity (in days)"
-                                                                            type="number"
-                                                                            is_required={false}
-                                                                            disabled={disabled}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li className="list-group-item">
-                                            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
-                                                <div className="xl:col-span-4 col-span-12">
-                                                    <p className="text-[1rem] mb-1 font-semibold">Enable Anniversary Voucher</p>
-                                                    <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
-                                                        Activate and configure anniversary voucher settings, eligibility criteria, and notifications.
-                                                    </p>
-                                                </div>
-                                                <div className="xl:col-span-8 col-span-12">
-                                                    <div className="flex items-center justify-between mt-8">
-                                                        <div className="mail-notification-settings">
-                                                            <p className="text-[0.875rem] mb-1 font-semibold"></p>
-                                                        </div>
-                                                        <div>
-                                                            <FormToggle
-                                                                name="enable_anniversary_voucher"
-                                                                control={control}
-                                                                errors={errors}
-                                                                toggleClasses="text-center"
-                                                                disabled={disabled}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    {watchedAnniversaryVoucher && (
-                                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
-                                                            <div className="space-y-2">
-                                                                <FormSelect
-                                                                    name="anniversary_coupon_type"
-                                                                    control={control}
-                                                                    errors={errors}
-                                                                    options={[
-                                                                        { label: "Fixed Discount", value: "fixed" },
-                                                                        {
-                                                                            label: "Percentage Discount with Min Threshold",
-                                                                            value: "percentage_threshold",
-                                                                        },
-                                                                        {
-                                                                            label: "Percentage Discount",
-                                                                            value: "percentage",
-                                                                        },
-                                                                    ]}
-                                                                    placeholder="Select Coupon Type"
-                                                                    is_required={true}
-                                                                    disabled={disabled}
-                                                                />
-                                                                <div className="flex flex-col md:flex-row gap-4">
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="anniversary_discount_amount"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Discount Amount / Percentage"
-                                                                            type="number"
-                                                                            is_required={true}
-                                                                            disabled={disabled}
-                                                                        />
-                                                                    </div>
-                                                                    {watch("anniversary_coupon_type") === "percentage_threshold" && (
-                                                                        <div className="w-full md:w-1/3">
-                                                                            <FormInput
-                                                                                name="anniversary_min_order_value"
-                                                                                control={control}
-                                                                                errors={errors}
-                                                                                placeholder="Min Order Value (for threshold)"
-                                                                                type="number"
-                                                                                is_required={false}
-                                                                                disabled={disabled}
-                                                                            />
-                                                                        </div>
-                                                                    )}
-                                                                    <div className="w-full md:w-1/3">
-                                                                        <FormInput
-                                                                            name="anniversary_coupon_valid_days"
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="Coupon Validity (in days)"
-                                                                            type="number"
-                                                                            is_required={false}
-                                                                            disabled={disabled}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
+                <li className="list-group-item">
+                    <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                        <div className="xl:col-span-4 col-span-12">
+                            <h3 className="text-base font-semibold text-gray-900">Configure</h3>
+                            <p className="text-xs text-gray-500">
+                                Customize the appearance and expiry settings of your interface.
+                            </p>
+                        </div>
 
-                                    <h2 className="text-[1rem] mb-1 font-semibold">Form Fields</h2>
-                                    <div className="space-y-4">
-                                        <div className="box">
-                                            <div className="box-body border">
-                                                {fields.map((field, index) => {
-                                                    const fieldType = watchedFieldTypes?.[index]?.field_type;
-                                                    return (
-                                                        <div key={field.id} className="border border-gray-300 rounded-lg p-4 mt-4 bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
-                                                            <div className="grid grid-cols-12 gap-4">
-                                                                <div className="col-span-10">
-                                                                    <div className='grid grid-cols-12 gap-4'>
-
-                                                                        <div className="xl:col-span-8 col-span-12">
-                                                                            <FormSelect
-                                                                                name={`fields.${index}.field_type`}
-                                                                                control={control}
-                                                                                errors={errors}
-                                                                                placeholder="Select Field Type"
-                                                                                options={fieldTypeOptions}
-                                                                                isClearable={false}
-                                                                                label={false}
-                                                                                disabled={disabled}
-                                                                            />
-                                                                        </div>
-
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                            {['select', 'radio', 'checkbox'].includes(fieldType) && (
-                                                                <div className="border border-gray-400 rounded-lg p-4 mt-4 bg-white">
-                                                                    <OptionsRepeater
-                                                                        fieldIndex={index}
-                                                                        control={control}
-                                                                        setValue={setValue}
-                                                                        errors={errors}
-                                                                        disabled={disabled}
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    );
-                                                })}
-
-                                            </div>
-                                        </div>
+                        <div className="xl:col-span-8 col-span-12">
+                            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                                {/* Primary Color */}
+                                <div className="xl:col-span-12 col-span-12 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-semibold">Primary Color</p>
+                                        <p className="text-xs text-gray-500">
+                                            Customize primary colors to align the interface with your brand
+                                            identity.
+                                        </p>
                                     </div>
-
-                                    <h2 className="text-[1rem] mb-1 font-semibold">Social Links</h2>
-                                    <div className="space-y-4">
-                                        <div className="box">
-                                            <div className="box-body border">
-                                                <div className="xl:col-span-12 col-span-12">
-                                                    {socialLinkFields.length === 0 ? (
-                                                        <div className="text-center py-8">
-                                                            <p className="text-gray-500 mb-4">
-                                                                No social links added yet
-                                                            </p>
-
-                                                        </div>
-                                                    ) : (
-                                                        <>
-                                                            {socialLinkFields.map((field, index) => (
-                                                                <div key={field.id} className="grid grid-cols-12 gap-4 mt-4 mb-2">
-                                                                    <div className="col-span-3">
-                                                                        <FormSelect
-                                                                            name={`social_links.${index}.platform`}
-                                                                            control={control}
-                                                                            options={platformOptions}
-                                                                            errors={errors}
-                                                                            placeholder="Platform"
-                                                                            label={false}
-                                                                            disabled={disabled}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="col-span-8">
-                                                                        <FormInput
-                                                                            name={`social_links.${index}.url`}
-                                                                            control={control}
-                                                                            errors={errors}
-                                                                            placeholder="https://"
-                                                                            label={false}
-                                                                            disabled={disabled}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="col-span-1 flex items-center space-x-2">
-                                                                        {!disabled && (
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => removeLink(index)}
-                                                                                className="ti-btn ti-btn-danger ti-btn-sm w-max"
-                                                                            >
-                                                                                <i className="bi bi-trash3-fill"></i>
-                                                                            </button>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="flex items-center space-x-3">
+                                        <span className="text-base font-mono bg-white px-2 py-1 rounded border dark:text-gray-200 dark:bg-bodybg">
+                                            {formData.primary_color}
+                                        </span>
+                                        <div
+                                            className="w-8 h-8 rounded-lg border-2 border-white shadow-md"
+                                            style={{backgroundColor: formData.primary_color}}
+                                        ></div>
                                     </div>
+                                </div>
+
+                                <div className="xl:col-span-12 col-span-12 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-semibold">Font Family</p>
+                                        <p className="text-xs text-gray-500">
+                                            Choose a font style to match your brand&apos;s visual tone and
+                                            readability.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="h-8 text-base rounded bg-purple-600">{formData.font_family}</p>
+                                    </div>
+                                </div>
+
+                                {/* Expired At */}
+                                <div className="xl:col-span-12 col-span-12 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm font-semibold">Expired At</p>
+                                        <p className="text-xs text-gray-500">
+                                            Set the expiration date to automatically disable the feature after a
+                                            specific time.
+                                        </p>
+                                    </div>
+                                    <p className="text-base font-mono">{formData.expired_at}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </li>
+
+                <li className="list-group-item">
+                    <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                        <div className="xl:col-span-4 col-span-12">
+                            <h3 className="text-base font-semibold text-gray-900">Security</h3>
+                            <p className="text-xs text-gray-500">
+                                Manage account protection, access rules, and alerts.
+                            </p>
+                        </div>
+
+                        <div className="xl:col-span-8 col-span-12">
+                            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                                {[
+                                    {
+                                        label: "Is Active",
+                                        desc: "Toggle to enable or disable this feature or module.",
+                                        value: formData.is_active
+                                    },
+                                    {
+                                        label: "For Authenticated User",
+                                        desc: "Restrict access to only logged-in or authenticated users.",
+                                        value: formData.authenticated_only
+                                    },
+                                    {
+                                        label: "Require Captcha",
+                                        desc: "Enable CAPTCHA verification to prevent spam and ensure real users.",
+                                        value: formData.require_captcha
+                                    },
+                                    {
+                                        label: "Enable Submission Alerts",
+                                        desc: "Get alerts when a new submission is received.",
+                                        value: formData.enable_submission_alerts
+                                    },
+                                    {
+                                        label: "Require Approval",
+                                        desc: "Ensure this form goes through approval before becoming visible.",
+                                        value: formData.require_approval
+                                    },
+                                ].map((item) => (
+                                    <div key={item.label}
+                                         className="xl:col-span-12 col-span-12 flex justify-between items-center">
+                                        <div>
+                                            <p className="text-sm font-semibold">{item.label}</p>
+                                            <p className="text-xs text-gray-500">{item.desc}</p>
+                                        </div>
+                                        <input
+                                            type="checkbox"
+                                            checked={item.value}
+                                            readOnly
+                                            className="w-5 h-5 accent-indigo-600 cursor-not-allowed"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li className="list-group-item">
+                    <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                        <div className="xl:col-span-4 col-span-12">
+                            <h3 className="text-base font-semibold text-gray-900">
+                                Coupon Discount Settings
+                            </h3>
+                            <p className="text-xs text-gray-500">
+                                Customize Coupon discount options, eligibility rules, and notifications.
+                            </p>
+                        </div>
+                        <div className="xl:col-span-8 col-span-12 flex justify-between items-center">
+                            <p className="text-sm font-semibold">{formData.enable_coupon ? 'Enabled' : 'Disabled'}</p>
+                            <input
+                                type="checkbox"
+                                checked={formData.enable_coupon}
+                                readOnly
+                                className="w-5 h-5 accent-indigo-600 cursor-not-allowed"
+                            />
+                        </div>
+                    </div>
+                </li>
+
+                {formData?.enable_coupon && (<div
+                    className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
+                    <div className="space-y-2">
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <div className="w-full md:w-1/3">
+                                <p className="text-sm font-semibold">Select Country</p>
+                                <p className="text-xs text-gray-500">
+
+                                </p>
+                            </div>
+                            <div className="w-full md:w-1/3">
+                                <p className="text-sm font-semibold">Select Coupon Type</p>
+                                <p className="text-xs text-gray-500">
+                                    {formData.coupon_type}
+                                </p>
+                            </div>
+                            <div className="w-full md:w-1/3">
+                                <p className="text-sm font-semibold">Select Discount Type</p>
+                                <p className="text-xs text-gray-500">
+                                    {formData.coupon_discount_type}
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            className="flex flex-col md:flex-row gap-4">
+                            <div className="w-full md:w-1/3">
+                                <p className="text-sm font-semibold">Discount Amount / Percentage</p>
+                                <p className="text-xs text-gray-500">
+                                    {formData.coupon_discount_amount}
+                                </p>
+                            </div>
+
+                            <div className="w-full md:w-1/3">
+                                <p className="text-sm font-semibold">Min Order Value (for threshold)</p>
+                                <p className="text-xs text-gray-500">
+                                    {formData.coupon_min_order_value}
+                                </p>
+                            </div>
+
+                            <div className="w-full md:w-1/3">
+                                <p className="text-sm font-semibold">Coupon Validity (in days)</p>
+                                <p className="text-xs text-gray-500">
+                                    {formData.coupon_valid_days}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>)}
+
+                <li className="list-group-item">
+                    <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+                        <div className="xl:col-span-4 col-span-12">
+                            <p className="text-[1rem] mb-1 font-semibold">Send Email to Submitter</p>
+                            <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
+                                Automatically send a confirmation or notification email to the form submitter.
+                            </p>
+                        </div>
+                        <div className="xl:col-span-8 col-span-12 flex justify-between items-center">
+                            <p className="text-sm font-semibold">{formData?.send_email ? 'Enabled' : 'Disabled'}</p>
+                            <input
+                                type="checkbox"
+                                checked={formData?.send_email || false}
+                                readOnly
+                                className="w-5 h-5 accent-indigo-600 "
+                            />
+                        </div>
+
+                        {formData?.send_email && (
+                            <div className="xxl:col-span-12 xl:col-span-12 col-span-12">
+                                <div className="box space-y-2 p-4 border rounded-md">
+                                    <input
+                                        type="text"
+                                        value={formData?.email_subject || ""}
+                                        placeholder="Email Subject"
+                                        readOnly
+                                        className="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
+                                    />
+                                    <textarea
+                                        value={formData?.email_content || ""}
+                                        placeholder="Email Content"
+                                        readOnly
+                                        className="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
+                                        rows={5}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </li>
+
+                <li className="list-group-item bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 ">
+                    <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-6">
+                        <div className="xl:col-span-4 col-span-12">
+                            <div className="flex items-center space-x-3 mb-3">
+                                <div className="w-10 h-10 bg-primary/80 rounded-lg flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">Form Fields</h3>
+                                    <div className="flex items-center space-x-2">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            {formData?.fields?.length || 0} Fields
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                                Manage and view all form field configurations including field types, validation rules, and display settings.
+                            </p>
+                        </div>
+
+                        <div className="xl:col-span-8 col-span-12">
+                            <div className="p-4 ">
+                                <div className="flex justify-between items-center mb-4">
+                                    <div className="flex items-center space-x-2">
+                                        <p className="text-sm font-semibold text-gray-900">Enable Form Fields</p>
+                                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                            {formData?.fields?.length > 0 ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <span className="text-sm text-gray-500">
+                                            {formData?.fields?.length > 0 ? 'Enabled' : 'Disabled'}
+                                        </span>
+                                        <input
+                                            type="checkbox"
+                                            checked={formData?.fields?.length > 0 || false}
+                                            readOnly
+                                            className="w-5 h-5 accent-green-600"
+                                        />
+                                    </div>
+                                </div>
+
+                                {formData?.fields?.length > 0 && (
+                                    <div className="space-y-4  pt-4">
+                                        <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                                            <svg className="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Active Form Fields
+                                        </h4>
+                                        <div className="grid gap-4">
+                                            {formData.fields.map((field, index) => (
+                                                <div
+                                                    key={field.id || index}
+                                                    className="bg-gray-50 border border-gray-300 rounded-xl p-5  dark:text-gray-200 dark:bg-bodybg"
+                                                >
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <div className="flex items-center space-x-3">
+                                                            <div className="w-8 h-8 bg-primary/80 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                                                                {index + 1}
+                                                            </div>
+                                                            <h5 className="text-sm font-semibold text-gray-900">
+                                                                Field {index + 1}
+                                                            </h5>
+                                                        </div>
+                                                        <span className="text-xs bg-primary/80 text-white px-3 py-1 rounded-full font-medium">
+                                                            {field.type || 'Field'}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                                        {Object.entries(field).map(([key, value]) => (
+                                                            <div key={key} className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm hover:border-gray-300 transition-colors dark:text-gray-200 dark:bg-bodybg">
+                                                                <div className="flex items-start space-x-2 mb-1">
+
+                                                                    <p className="text-base font-mono ">{key}</p>
+                                                                </div>
+                                                                <p className="text-sm break-words leading-relaxed">
+                                                                    {Array.isArray(value)
+                                                                        ? value.length > 0
+                                                                            ? JSON.stringify(value)
+                                                                            : "-"
+                                                                        : value !== null && value !== undefined
+                                                                            ? value.toString()
+                                                                            : "-"}
+                                                                </p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
-            </>
+        </div>
     );
 };
 

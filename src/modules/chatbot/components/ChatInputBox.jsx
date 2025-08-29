@@ -1,5 +1,5 @@
 import React from "react"
-import QCPanel from "./QCPanel.jsx"
+import QCPanel from "@modules/chatbot/components/QCPanel.jsx";
 
 const ChatInputBox = ({
   input,
@@ -33,7 +33,7 @@ const ChatInputBox = ({
             className="min-h-[7rem] w-full border-none resize-none p-4 text-sm bg-transparent focus:outline-none"
             placeholder="What do you want to know?"
             value={input}
-            onChange={e => { const el=e.target; setInput(el.value); el.style.height="30px"; el.style.height=el.scrollHeight+"px" }}
+            onChange={e => { setInput(e.target.value); autoResize(e) }}
             onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
           />
         )}
