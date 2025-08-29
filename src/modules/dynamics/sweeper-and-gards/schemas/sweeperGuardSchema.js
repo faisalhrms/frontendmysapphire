@@ -26,7 +26,7 @@ const categoryDesignSchema = z.object({
 });
 
 const sweeperGuardSchema = z.object({
-    store: z.coerce.number({
+    store_id: z.coerce.number({
         required_error: "Store is required",
         invalid_type_error: "Store must be a number",
     }).min(1, "Store is required"),

@@ -5,12 +5,9 @@ import SweepersGuardsEdit from "@modules/dynamics/sweeper-and-gards/views/Sweepe
 
 
 export const DYNAMICS_ROUTES = {
-    HOME: {
-        path: "/module/dynamics/sweepers-and-guards/home",
-        // permission: "dynamics.view_sweepersguards",
-    },
+   
     READ: {
-        path: "/module/dynamics/sweepers-and-guards/",
+        path: "/module/dynamics/sweepers-and-guards",
         // permission: "dynamics.view_sweepersguards",
     },
     ADD: {

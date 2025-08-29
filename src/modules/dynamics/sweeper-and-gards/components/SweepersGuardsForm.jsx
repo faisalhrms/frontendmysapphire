@@ -23,7 +23,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
     } = useForm({
         // resolver: zodResolver(sweeperGuardSchema),
         defaultValues: {
-            store: null,
+            store_id: null,
             num_of_guards: 0,
             num_of_sweepers: 0,
             num_of_stock_helpers: 0,
@@ -104,14 +104,18 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                         <div className="box-body p-6 grid grid-cols-12 gap-6">
                             <div className="col-span-4">
                                 <FormAsyncSelect
-                                    name="store"
+                                    name="store_id"
                                     control={control}
                                     errors={errors}
                                     placeholder="Select Store"
                                     apiUrl="/select/scm/warehouses/excluding-ec/"
                                     queryKeyBase="store"
                                     clientSideSearch={false}
-                                    preselectedOptions={formatOptions(sgData, "store")}
+                                    preselectedOptions={
+                                        sgData?.store_id && sgData?.store
+                                            ? [{ value: sgData.store_id, label: sgData.store }]
+                                            : []
+                                    }
                                 />
                             </div>
                             <div className="col-span-4">
@@ -140,15 +144,15 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                     <div className="col-span-6">
                         <SubFormSection title="Leased Selling Areas" className="mt-6">
                             {isLeasedAreaDisabled && (
-                                <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                                    <p className="text-sm text-yellow-800">
+                                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                                    <p className="text-sm text-amber-800">
                                         Please enter "Leased Area Total" first to add leased areas.
                                     </p>
                                 </div>
                             )}
                             {errors.leased_areas && (
                                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                                    <p className="text-sm text-red-800">{errors.leased_areas.message}</p>
+                                    <p className="text-sm text-rose-800">{errors.leased_areas.message}</p>
                                 </div>
                             )}
                             <div className="relative">
@@ -161,58 +165,79 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                     </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                    {leasedAreaFields.map((item, idx) => (
-                                        <tr key={item.id} className="hover:bg-gray-100">
-                                            <td className="px-6 py-4 whitespace-nowrap w-1/2">
-                                                <div className="relative z-50">
+                                    {leasedAreaFields.map((item, idx) => {
+
+                                        return (
+                                            <tr key={item.id} className="hover:bg-gray-100">
+                                                <td className="px-6 py-4 whitespace-nowrap w-1/2">
                                                     <FormAsyncSelect
                                                         label={false}
                                                         name={`leased_areas.${idx}.category`}
                                                         control={control}
                                                         errors={errors}
                                                         placeholder="Select Category"
-                                                        apiUrl="/select/leased-selling-area/category/"
-                                                        queryKeyBase="categories"
+                                                        apiUrl="/select/leased-selling-area/categories/"
+                                                        saveOptionEndpoint="/select/leased-selling-area/category/"
+                                                        queryKeyBase="lsa_categories"
                                                         clientSideSearch={false}
                                                         allowSaveNewOption={true}
-                                                        preselectedOptions={formatOptions(item, "category")}
+                                                        preselectedOptions={
+                                                            sgData?.leased_areas && sgData?.leased_areas_options
+                                                                ? [
+                                                                    sgData.leased_areas_options.find(
+                                                                        (opt) => opt.value === sgData.leased_areas[idx]?.category
+                                                                    )
+                                                                ].filter(Boolean) // removes null if not found
+                                                                : []
+                                                        }
                                                         className="w-full min-w-0"
                                                     />
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap w-1/3">
-                                                <FormInput
-                                                    label={false}
-                                                    name={`leased_areas.${idx}.area_sq_feet`}
-                                                    control={control}
-                                                    errors={errors}
-                                                    type="number"
-                                                    placeholder="Area"
-                                                    className="w-full"
-                                                    max={remainingLeasedArea + (parseFloat(leasedAreas?.[idx]?.area_sq_feet) || 0)}
-                                                    onChange={(e) => {
-                                                        let val = parseFloat(e.target.value) || 0;
-                                                        const maxAllowed = remainingLeasedArea + (parseFloat(leasedAreas?.[idx]?.area_sq_feet) || 0);
-                                                        if (val > maxAllowed) {
-                                                            val = maxAllowed; // clamp value
-                                                        }
-                                                        setValue(`leased_areas.${idx}.area_sq_feet`, val, { shouldValidate: true });
-                                                    }}
-                                                />
 
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right w-1/6">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeLeasedArea(idx)}
-                                                    className="ti-btn ti-btn-danger ti-btn-sm"
-                                                    title="Remove this leased area"
-                                                >
-                                                    <i className="ti ti-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap w-1/3">
+                                                    <FormInput
+                                                        label={false}
+                                                        name={`leased_areas.${idx}.area_sq_feet`}
+                                                        control={control}
+                                                        errors={errors}
+                                                        type="number"
+                                                        placeholder="Area"
+                                                        className="w-full"
+                                                        max={remainingLeasedArea + (parseFloat(leasedAreas?.[idx]?.area_sq_feet) || 0)}
+                                                        onChange={(e) => {
+                                                            let val = parseFloat(e.target.value) || 0;
+                                                            const maxAllowed =
+                                                                remainingLeasedArea + (parseFloat(leasedAreas?.[idx]?.area_sq_feet) || 0);
+
+                                                            console.log(
+                                                                `Index ${idx} -> Entered: ${val}, MaxAllowed: ${maxAllowed}`
+                                                            );
+
+                                                            if (val > maxAllowed) {
+                                                                val = maxAllowed; // clamp value
+                                                            }
+                                                            setValue(`leased_areas.${idx}.area_sq_feet`, val, {
+                                                                shouldValidate: true,
+                                                            });
+                                                        }}
+                                                    />
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-right w-1/6">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            console.log("Removing leased area at index:", idx, item);
+                                                            removeLeasedArea(idx);
+                                                        }}
+                                                        className="ti-btn ti-btn-danger ti-btn-sm"
+                                                        title="Remove this leased area"
+                                                    >
+                                                        <i className="ti ti-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                     </tbody>
                                 </table>
                             </div>
@@ -242,8 +267,8 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                     <div className="col-span-6">
                         <SubFormSection title="Category Wise Designs" className="mt-6">
                             {isCategoryDesignDisabled && (
-                                <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                                    <p className="text-sm text-yellow-800">
+                                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                                    <p className="text-sm text-amber-800">
                                         Please enter "Store Capacity Total" first to add category designs.
                                     </p>
                                 </div>
@@ -266,20 +291,29 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                     {categoryFields.map((item, idx) => (
                                         <tr key={item.id} className="hover:bg-gray-100">
                                             <td className="px-6 py-4 whitespace-nowrap w-1/2">
-                                                <div className="relative z-50">
-                                                    <FormAsyncSelect
-                                                        label={false}
-                                                        name={`category_designs.${idx}.category`}
-                                                        control={control}
-                                                        errors={errors}
-                                                        placeholder="Select Category"
-                                                        apiUrl="/select/scm/categories/"
-                                                        queryKeyBase="categories"
-                                                        clientSideSearch={false}
-                                                        preselectedOptions={formatOptions(item, "category")}
-                                                        className="w-full min-w-0"
-                                                    />
-                                                </div>
+
+                                                <FormAsyncSelect
+                                                    label={false}
+                                                    name={`category_designs.${idx}.category`}
+                                                    control={control}
+                                                    errors={errors}
+                                                    placeholder="Select Category"
+                                                    apiUrl="/select/scm/categories-with-id/"
+                                                    queryKeyBase="scm_categories"
+                                                    clientSideSearch={false}
+                                                    preselectedOptions={
+                                                        sgData?.category_designs && sgData?.category_designs_options
+                                                            ? [
+                                                                sgData.category_designs_options.find(
+                                                                    (opt) => opt.value === sgData.category_designs[idx]?.category
+                                                                )
+                                                            ].filter(Boolean) // removes null if not found
+                                                            : []
+                                                    }
+                                                    className="w-full min-w-0"
+                                                />
+
+
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap w-1/3">
                                                 <FormInput

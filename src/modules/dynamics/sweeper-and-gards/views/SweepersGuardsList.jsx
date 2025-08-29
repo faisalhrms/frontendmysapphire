@@ -8,6 +8,20 @@ import { DYNAMICS_ROUTES } from "@modules/dynamics/routes.js";
 const SweepersGuardsList = () => {
     const columns = [
         {
+            Header: "Actions",
+            accessor: "id",
+            disableSortBy: true,
+            Cell: ({ row }) => (
+                <div className="flex justify-center space-x-2">
+                    <Link to={`/module/dynamics/sweepers-and-guards/edit/${row.original.id}`}>
+                        <button className="ti-btn ti-btn-primary ti-btn-sm">
+                            <i className="ri-edit-line" />
+                        </button>
+                    </Link>
+                </div>
+            ),
+        },
+        {
             Header: "Store",
             accessor: "store",
             filterable: true,

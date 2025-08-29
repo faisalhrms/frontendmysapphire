@@ -69,7 +69,7 @@ export const useSweeperGuardForm = (sgData = {}, isEditMode = false, refetch) =>
     } = useForm({
         resolver: zodResolver(sweeperGuardSchema),
         defaultValues: {
-            store: sgData.store || null,
+            store_id: sgData.store || null,
             num_of_guards: sgData.num_of_guards || 0,
             num_of_sweepers: sgData.num_of_sweepers || 0,
             num_of_stock_helpers: sgData.num_of_stock_helpers || 0,
@@ -81,7 +81,9 @@ export const useSweeperGuardForm = (sgData = {}, isEditMode = false, refetch) =>
     });
 
     const handleSweeperGuardSubmit = useCallback(
+
         async (data) => {
+            console.log(`this is data`)
             try {
                 let res;
                 if (editId) {
