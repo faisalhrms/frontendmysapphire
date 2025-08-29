@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -11,6 +11,7 @@ import Avatar from "@components/Avatar.jsx"
 import ChartBox from "@modules/chatbot/components/ChartBox.jsx"
 import TypingIndicator from "@modules/chatbot/components/TypingIndicator.jsx"
 import LiveScanLCD from "@modules/chatbot/components/LiveScan.jsx"
+import QCReport from "@modules/chatbot/components/QCReport.jsx"
 
 export default function ChatBot() {
   const {
@@ -41,22 +42,9 @@ export default function ChatBot() {
   } = useChatBot()
 
   const currentUser = useSelector(s => s.auth.user)
-  const dockRef = useRef(null)
-  const [dockH, setDockH] = useState(112)
   const psContainerRef = useRef(null)
   const endRef = useRef(null)
-
-  useLayoutEffect(() => {
-    const setH = () => setDockH(dockRef.current ? dockRef.current.offsetHeight : 112)
-    setH()
-    const ro = new ResizeObserver(setH)
-    if (dockRef.current) ro.observe(dockRef.current)
-    window.addEventListener("resize", setH)
-    return () => {
-      ro.disconnect()
-      window.removeEventListener("resize", setH)
-    }
-  }, [])
+  const [_, setDockH] = useState(112) // padding handled via pb-24
 
   const scrollToBottom = (smooth = true) => {
     const c = psContainerRef.current
@@ -101,7 +89,7 @@ export default function ChatBot() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-white dark:bg-bodybg">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-bodybg">
       <div className="flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2">
         <div className="flex items-center gap-2">
           <LottieLoader animationData={botLoading} width={50} height={50} speed={0.3} opacity={1}/>
@@ -115,7 +103,8 @@ export default function ChatBot() {
 
       <div className="flex-1 min-h-0 overflow-hidden">
         <PerfectScrollbar className="h-full" containerRef={ref => (psContainerRef.current = ref)}>
-          <ul className="px-16 py-4 space-y-6" style={{ paddingBottom: dockH + 16 }}>
+          {/* padding-bottom to keep content clear of the input dock */}
+          <ul className="px-16 py-4 space-y-6 pb-24">
             {messages.map((m, i) => (
               m.type === "bot"
                 ? (
@@ -125,21 +114,27 @@ export default function ChatBot() {
                       <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
                       {!m.loading && <span className="text-xs text-gray-500">{m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}</span>}
                     </div>
-                    <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-3xl">
+                    <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-4xl">
                       {m.loading && m.mode === "qc" ? (
-                        <LiveScanLCD url={qcTarget} />
+                        <LiveScanLCD url={qcTarget} shots={2} delayMs={1800} maxWidth={680} />
                       ) : m.loading ? (
                         <div className="flex items-center gap-2 text-xs text-gray-500">
                           {m.latestStatus || (isWebSearch ? "Searching the web " : "Thinking ")} <TypingIndicator />
                         </div>
                       ) : null}
+
                       {m.error ? (
                         <div className="text-xs text-red-600 mt-1">{m.error}</div>
                       ) : (
                         <>
+                          {m.mode === "qc" && !m.loading ? (
+                            <QCReport result={m.qc} html={m.html} llm={m.qcLlm} />
+                          ) : null}
+
                           {m.chart ? <ChartBox spec={m.chart} /> : null}
-                          {m.html && !(m.loading && m.mode === "qc")
-                            ? <div className="main-chat-msg mt-2" dangerouslySetInnerHTML={{ __html: m.loading ? (m.html + "<span class='ai-caret'>▍</span>") : m.html }} />
+
+                          {m.html && m.mode !== "qc"
+                            ? <div className="main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: m.loading ? (m.html + "<span class='ai-caret'>▍</span>") : m.html }} />
                             : null}
                         </>
                       )}
@@ -181,7 +176,6 @@ export default function ChatBot() {
       </div>
 
       <ChatInputDock
-        ref={dockRef}
         input={input}
         setInput={setInput}
         inputRef={inputRef}
