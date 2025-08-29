@@ -5,8 +5,8 @@ import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { formatDate } from "@helpers/dateTime.js";
 import AlertModal from "@components/AlertModal.jsx";
-import useFormApproval from "@modules/forms/hooks/useFormApproval.js";
 import Avatar from "@components/Avatar.jsx";
+import useFormApproval from "@modules/approvals/dynamiceform/hooks/useFormApproval.js";
 
 
 const ObjectiveApprovalList = () => {
@@ -79,7 +79,7 @@ const ObjectiveApprovalList = () => {
                         parentClasses="dark:text-gray-200 dark:bg-bodybg"
                     />
                     <div className="ms-2">
-                        <p className="font-semibold mb-0">{value?.full_name || "N/A"}</p>
+                        <p className="font-semibold text-slate-900 text-left dark:text-gray-200 ">{value?.full_name || "N/A"}</p>
                         <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
                             {value?.email || "N/A"}
                         </p>
