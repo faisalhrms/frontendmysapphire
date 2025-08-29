@@ -30,6 +30,7 @@ const fieldSchema = z.object({
     ]),
     group: z.string().optional().nullable(),
     required: z.boolean().default(false),
+    unique: z.boolean().default(false),
     options: z
         .array(
             z.object({

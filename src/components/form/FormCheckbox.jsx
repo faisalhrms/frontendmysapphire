@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import ErrorMessage from '@components/form/ErrorMessage.jsx';
 
-const FormCheckbox = ({ name, label, control, errors, placeholder, classNames = "", is_required = false, ...rest }) => {
+const FormCheckbox = ({ name, label, control, errors, placeholder, classNames = "", is_required = false, childClassNames = 'me-4', ...rest }) => {
     return (
         <>
             {
@@ -17,7 +17,7 @@ const FormCheckbox = ({ name, label, control, errors, placeholder, classNames = 
                 control={control}
                 render={({ field }) => (
                     <div className={`flex items-center ${classNames}`}>
-                        <div className="form-check !ps-0 me-4">
+                        <div className={`form-check !ps-0 ${childClassNames}`}>
                         <input
                             id={name}
                             type="checkbox"

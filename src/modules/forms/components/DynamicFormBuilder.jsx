@@ -133,6 +133,7 @@ const DynamicFormBuilder = ({ formData }) => {
                         field_type: 'text',
                         group: '',
                         required: false,
+                        unique: false,
                         options: [],
                         order: 1,
                     },
@@ -171,7 +172,7 @@ const DynamicFormBuilder = ({ formData }) => {
     };
 
     const addField = () => {
-        append({ label: '', name: '', short_description: '', field_type: 'text', group: '', required: false, options: [], order: fields.length + 1 });
+        append({ label: '', name: '', short_description: '', field_type: 'text', group: '', required: false, unique: false, options: [], order: fields.length + 1 });
     };
 
     const addSocialLink = () => {
@@ -730,90 +731,95 @@ const DynamicFormBuilder = ({ formData }) => {
                                                         return (
                                                             <div key={field.id}
                                                                  className="border border-gray-300 rounded-lg p-4 mt-4 bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
-                                                                <div className="grid grid-cols-12 gap-4">
-                                                                    <div className="col-span-10">
-                                                                        <div className='grid grid-cols-12 gap-4'>
-                                                                            <div className="xl:col-span-2 col-span-12">
-                                                                                <FormInput
-                                                                                    name={`fields.${index}.label`}
-                                                                                    control={control}
-                                                                                    errors={errors}
-                                                                                    placeholder="Field Label"
-                                                                                    label={false}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="xl:col-span-2 col-span-12">
-                                                                                <FormInput
-                                                                                    name={`fields.${index}.name`}
-                                                                                    control={control}
-                                                                                    errors={errors}
-                                                                                    placeholder="Field Name"
-                                                                                    label={false}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="xl:col-span-2 col-span-12">
-                                                                                <FormInput
-                                                                                    name={`fields.${index}.short_description`}
-                                                                                    control={control}
-                                                                                    errors={errors}
-                                                                                    placeholder="Field Description"
-                                                                                    label={false}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="xl:col-span-2 col-span-12">
-                                                                                <FormInput
-                                                                                    name={`fields.${index}.group`}
-                                                                                    control={control}
-                                                                                    errors={errors}
-                                                                                    placeholder="Field Group"
-                                                                                    label={false}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="xl:col-span-2 col-span-12">
-                                                                                <FormSelect
-                                                                                    name={`fields.${index}.field_type`}
-                                                                                    control={control}
-                                                                                    errors={errors}
-                                                                                    placeholder="Select Field Type"
-                                                                                    options={fieldTypeOptions}
-                                                                                    isClearable={false}
-                                                                                    label={false}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="xl:col-span-2 col-span-12 flex items-center space-x-4 ml-4">
-                                                                                <FormCheckbox
-                                                                                    name={`fields.${index}.required`}
-                                                                                    control={control}
-                                                                                    errors={errors}
-                                                                                    label="Required"
-                                                                                />
-                                                                            </div>
-                                                                        </div>
+                                                                <div className="flex items-center gap-4 w-full overflow-x-auto">
+                                                                    <div className="w-40">
+                                                                        <FormInput
+                                                                            name={`fields.${index}.label`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Field Label"
+                                                                            label={false}
+                                                                        />
                                                                     </div>
-                                                                    <div className="col-span-2">
-                                                                        <div className='grid grid-cols-3 gap-4'>
-                                                                            <div className="col-span-2">
-                                                                                <FormInput
-                                                                                    type="number"
-                                                                                    name={`fields.${index}.order`}
-                                                                                    control={control}
-                                                                                    errors={errors}
-                                                                                    placeholder="Order"
-                                                                                    label={false}
-                                                                                />
-                                                                            </div>
-                                                                            <div className="col-span-1 flex items-center space-x-2">
-                                                                                {index !== 0 && (
-                                                                                    <button
-                                                                                        type="button"
-                                                                                        onClick={() => remove(index)}
-                                                                                        className="ti-btn ti-btn-danger ti-btn-sm w-max"
-                                                                                    >
-                                                                                        <i className="bi bi-trash3-fill"></i>
-                                                                                    </button>
-                                                                                )}
-                                                                            </div>
-                                                                        </div>
+                                                                    <div className="w-40">
+                                                                        <FormInput
+                                                                            name={`fields.${index}.name`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Field Name"
+                                                                            label={false}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="w-48">
+                                                                        <FormInput
+                                                                            name={`fields.${index}.short_description`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Field Description"
+                                                                            label={false}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="w-40">
+                                                                        <FormInput
+                                                                            name={`fields.${index}.group`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Field Group"
+                                                                            label={false}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="w-44">
+                                                                        <FormSelect
+                                                                            name={`fields.${index}.field_type`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Select Field Type"
+                                                                            options={fieldTypeOptions}
+                                                                            isClearable={false}
+                                                                            label={false}
+                                                                        />
+                                                                    </div>
+
+                                                                    <div className="w-28 flex items-center">
+                                                                        <FormCheckbox
+                                                                            name={`fields.${index}.required`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            label="Required"
+                                                                            childClassNames=''
+                                                                        />
+                                                                    </div>
+                                                                    <div className="w-28 flex items-center">
+                                                                        <FormCheckbox
+                                                                            name={`fields.${index}.unique`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            label="Unique"
+                                                                            childClassNames=''
+                                                                        />
+                                                                    </div>
+
+                                                                    <div className="w-24">
+                                                                        <FormInput
+                                                                            type="number"
+                                                                            name={`fields.${index}.order`}
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Order"
+                                                                            label={false}
+                                                                        />
+                                                                    </div>
+
+                                                                    <div className="w-16">
+                                                                        {index !== 0 && (
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => remove(index)}
+                                                                                className="ti-btn ti-btn-danger ti-btn-sm w-max"
+                                                                            >
+                                                                                <i className="bi bi-trash3-fill"></i>
+                                                                            </button>
+                                                                        )}
                                                                     </div>
                                                                 </div>
                                                                 {['select', 'radio', 'checkbox'].includes(fieldType) && (
