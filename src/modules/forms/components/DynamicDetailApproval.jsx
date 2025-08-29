@@ -7,14 +7,6 @@ const DynamicDetailApproval = () => {
     const [formData, setFormData] = useState(null);
     const {id} = useParams();
     console.log(id);
-
-    const fontFamilyOptions = [
-        { label: "Inter (Default)", value: "Inter, sans-serif" },
-        { label: "Arial", value: "Arial, sans-serif" },
-        { label: "Helvetica", value: "Helvetica, sans-serif" },
-        { label: "Georgia", value: "Georgia, serif" },
-        { label: "Times New Roman", value: "Times New Roman, serif" },
-    ];
     const fields = formData?.fields || [];
 
     useEffect(() => {
@@ -42,7 +34,6 @@ const DynamicDetailApproval = () => {
                                      View the basic details and general information here.
                                  </p>
                              </div>
-
                              <div className="xl:col-span-8 col-span-12">
                                  <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
 
@@ -72,7 +63,6 @@ const DynamicDetailApproval = () => {
                              </div>
                          </div>
                      </li>
-
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
@@ -128,7 +118,6 @@ const DynamicDetailApproval = () => {
                              </div>
                          </div>
                      </li>
-
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
@@ -181,7 +170,6 @@ const DynamicDetailApproval = () => {
                              </div>
                          </div>
                      </li>
-
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
@@ -254,8 +242,6 @@ const DynamicDetailApproval = () => {
 
                          </div>)}
                      </li>
-
-
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
@@ -296,7 +282,6 @@ const DynamicDetailApproval = () => {
                              )}
                          </div>
                      </li>
-
                      <li className="list-group-item bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 p-6 ">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-6">
                              <div className="xl:col-span-4 col-span-12">
