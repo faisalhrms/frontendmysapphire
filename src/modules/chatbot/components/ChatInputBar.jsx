@@ -33,7 +33,7 @@ const ChatInputBar = ({
           value={input}
           onChange={e => { setInput(e.target.value); autoResize(e) }}
           onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-          className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] max-h-48 leading-6"
+          className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] leading-6"
         />
       ) : (
         <QCPanel
