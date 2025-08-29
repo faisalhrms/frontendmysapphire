@@ -1,5 +1,6 @@
 import {generateSidebarItem} from "@helpers/formatters.js";
 import {DYNAMICS_ROUTES} from "@modules/dynamics/routes.js";
+import {HRMS_ROUTES} from "@modules/hrms/routes.js";
 
 
 export const sidebarMenu = [
@@ -8,18 +9,27 @@ export const sidebarMenu = [
         'sub',
         'Dynamics',
         6,
-        'bx-box',
+        'bx-clipboard',
         '',
         [
             generateSidebarItem(
-                DYNAMICS_ROUTES.READ.path,
-                'link',
-                'Sweepers & Gards',
+                "",
+                "sub",
+                "Forms",
                 1,
-                'bx-laptop',
-                ''
+                "bx bx-target-lock",
+                "",
+                [
+                    generateSidebarItem(
+                        DYNAMICS_ROUTES.READ.path,
+                        "link",
+                        "Sweepers & Guard",
+                        1,
+                        "bx bx-message-square-edit",
+                        ''
+                    )
+                ]
             )
-
         ]
 
 

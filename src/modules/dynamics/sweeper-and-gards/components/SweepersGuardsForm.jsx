@@ -23,15 +23,14 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
     } = useForm({
         // resolver: zodResolver(sweeperGuardSchema),
         defaultValues: {
-            store_id: null,
-            num_of_guards: 0,
-            num_of_sweepers: 0,
-            num_of_stock_helpers: 0,
-            leased_area_total: 0,
-            store_capacity_total: 0,
-            leased_areas: [],
-            category_designs: [],
-            ...sgData,
+            store_id: sgData?.store?.id || null, // ✅ map to id
+            num_of_guards: sgData?.num_of_guards || 0,
+            num_of_sweepers: sgData?.num_of_sweepers || 0,
+            num_of_stock_helpers: sgData?.num_of_stock_helpers || 0,
+            leased_area_total: sgData?.leased_area_total || 0,
+            store_capacity_total: sgData?.store_capacity_total || 0,
+            leased_areas: sgData?.leased_areas || [],
+            category_designs: sgData?.category_designs || [],
         },
     });
 
@@ -92,7 +91,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
     const remainingStoreCapacity = storeCapacityTotal - totalCategoryDesigns;
 
     return (
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
+        <div className="max-w-7xl mx-auto p-2 space-y-6">
             <form onSubmit={handleSubmit(handleSweeperGuardSubmit)} className="space-y-6">
 
                 {/* Basic Info Section */}
@@ -108,30 +107,40 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                     control={control}
                                     errors={errors}
                                     placeholder="Select Store"
-                                    apiUrl="/select/scm/warehouses/excluding-ec/"
+                                    is_required={true}
+                                    apiUrl="/select/dynamics/stores/"
                                     queryKeyBase="store"
                                     clientSideSearch={false}
+                                    formatOption={(option) => ({
+                                        value: option.id,
+                                        label: `${option.store_code} - ${option.store_name}`,
+                                    })}
                                     preselectedOptions={
-                                        sgData?.store_id && sgData?.store
-                                            ? [{ value: sgData.store_id, label: sgData.store }]
+                                        sgData?.store
+                                            ? [
+                                                {
+                                                    value: sgData.store.id,
+                                                    label: `${sgData.store.store_code} - ${sgData.store.store_name}`,
+                                                },
+                                            ]
                                             : []
                                     }
                                 />
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="num_of_guards" type="number" control={control} errors={errors} placeholder="Guards" />
+                                <FormInput name="num_of_guards" type="number" control={control} errors={errors} is_required={true} placeholder="Guards" />
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="num_of_sweepers" type="number" control={control} errors={errors} placeholder="Sweepers" />
+                                <FormInput name="num_of_sweepers" type="number" control={control} errors={errors} is_required={true} placeholder="Sweepers" />
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="num_of_stock_helpers" type="number" control={control} errors={errors} placeholder="Stock Helpers" />
+                                <FormInput name="num_of_stock_helpers" type="number" control={control} errors={errors} is_required={true} placeholder="Stock Helpers" />
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="leased_area_total" type="number" control={control} errors={errors} placeholder="Leased Area Total" />
+                                <FormInput name="leased_area_total" type="number" control={control} errors={errors} is_required={true} placeholder="Leased Area Total" />
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="store_capacity_total" type="number" control={control} errors={errors} placeholder="Store Capacity Total" />
+                                <FormInput name="store_capacity_total" type="number" control={control} errors={errors} is_required={true} placeholder="Store Capacity Total" />
                             </div>
                         </div>
                     </div>
@@ -142,7 +151,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
 
                     {/* Leased Selling Area Section */}
                     <div className="col-span-6">
-                        <SubFormSection title="Leased Selling Areas" className="mt-6">
+                        <SubFormSection title="Leased Selling Areas" >
                             {isLeasedAreaDisabled && (
                                 <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
                                     <p className="text-sm text-amber-800">
@@ -176,6 +185,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                                         control={control}
                                                         errors={errors}
                                                         placeholder="Select Category"
+                                                        is_required={true}
                                                         apiUrl="/select/leased-selling-area/categories/"
                                                         saveOptionEndpoint="/select/leased-selling-area/category/"
                                                         queryKeyBase="lsa_categories"
@@ -201,6 +211,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                                         control={control}
                                                         errors={errors}
                                                         type="number"
+                                                        is_required={true}
                                                         placeholder="Area"
                                                         className="w-full"
                                                         max={remainingLeasedArea + (parseFloat(leasedAreas?.[idx]?.area_sq_feet) || 0)}
@@ -265,7 +276,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
 
                     {/* Category Wise Designs Section */}
                     <div className="col-span-6">
-                        <SubFormSection title="Category Wise Designs" className="mt-6">
+                        <SubFormSection title="Category Wise Designs" >
                             {isCategoryDesignDisabled && (
                                 <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
                                     <p className="text-sm text-amber-800">
@@ -297,6 +308,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                                     name={`category_designs.${idx}.category`}
                                                     control={control}
                                                     errors={errors}
+                                                    is_required={true}
                                                     placeholder="Select Category"
                                                     apiUrl="/select/scm/categories-with-id/"
                                                     queryKeyBase="scm_categories"
@@ -321,6 +333,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                                     name={`category_designs.${idx}.design_pieces`}
                                                     control={control}
                                                     errors={errors}
+                                                    is_required={true}
                                                     type="number"
                                                     placeholder="Pieces"
                                                     className="w-full"
@@ -376,7 +389,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                 </div>
 
                 {/* Submit Button */}
-                <div className="flex justify-end ">
+                <div className="flex justify-end">
                     <FormButton
                         isLoading={isSubmitting}
                         label={isEditMode ? "Update Sweepers & Guards" : "Create Sweepers & Guards"}

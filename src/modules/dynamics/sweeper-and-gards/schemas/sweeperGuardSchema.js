@@ -31,12 +31,30 @@ const sweeperGuardSchema = z.object({
         invalid_type_error: "Store must be a number",
     }).min(1, "Store is required"),
 
-    num_of_guards: z.coerce.number().min(0, "Guards cannot be negative"),
-    num_of_sweepers: z.coerce.number().min(0, "Sweepers cannot be negative"),
-    num_of_stock_helpers: z.coerce.number().min(0, "Stock helpers cannot be negative"),
+    num_of_guards: z.coerce.number({
+        required_error: "Number of guards is required",
+        invalid_type_error: "Guards must be a number",
+    }).min(1, "At least 1 guard is required"),
 
-    leased_area_total: z.coerce.number().min(0, "Leased area total cannot be negative"),
-    store_capacity_total: z.coerce.number().min(0, "Store capacity cannot be negative"),
+    num_of_sweepers: z.coerce.number({
+        required_error: "Number of sweepers is required",
+        invalid_type_error: "Sweepers must be a number",
+    }).min(1, "At least 1 sweeper is required"),
+
+    num_of_stock_helpers: z.coerce.number({
+        required_error: "Number of stock helpers is required",
+        invalid_type_error: "Stock helpers must be a number",
+    }).min(1, "At least 1 stock helper is required"),
+
+    leased_area_total: z.coerce.number({
+        required_error: "Leased area total is required",
+        invalid_type_error: "Leased area total must be a number",
+    }).min(1, "Leased area total must be at least 1"),
+
+    store_capacity_total: z.coerce.number({
+        required_error: "Store capacity total is required",
+        invalid_type_error: "Store capacity total must be a number",
+    }).min(1, "Store capacity must be at least 1"),
 
     leased_areas: z.array(leasedAreaSchema).min(1, "At least one leased selling area is required"),
     category_designs: z.array(categoryDesignSchema).min(1, "At least one category design is required"),

@@ -7,19 +7,19 @@ import SweepersGuardsEdit from "@modules/dynamics/sweeper-and-gards/views/Sweepe
 export const DYNAMICS_ROUTES = {
    
     READ: {
-        path: "/module/dynamics/sweepers-and-guards",
+        path: "/module/dynamics/forms/sweepers-and-guards",
         // permission: "dynamics.view_sweepersguards",
     },
     ADD: {
-        path: "/module/dynamics/sweepers-and-guards/add",
+        path: "/module/dynamics/forms/sweepers-and-guards/add",
         // permission: "dynamics.add_sweepersguards",
     },
     DETAIL: {
-        path: "/module/dynamics/sweepers-and-guards/detail/:id",
+        path: "/module/dynamics/forms/sweepers-and-guards/detail/:id",
         // permission: "dynamics.view_sweepersguards",
     },
     EDIT: {
-        path: "/module/dynamics/sweepers-and-guards/edit/:id",
+        path: "/module/dynamics/forms/sweepers-and-guards/edit/:id",
         // permission: "dynamics.change_sweepersguards",
     },
 };
