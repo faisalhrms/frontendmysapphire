@@ -5,7 +5,7 @@ import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { formatDate } from "@helpers/dateTime.js";
 import AlertModal from "@components/AlertModal.jsx";
-import useFormApproval from "@modules/approvals/dynamiceform/hooks/useFormApproval.js";
+import useFormApproval from "@modules/forms/hooks/useFormApproval.js";
 import Avatar from "@components/Avatar.jsx";
 
 
@@ -53,7 +53,7 @@ const ObjectiveApprovalList = () => {
                     </button>
 
                     <Link
-                        to={`/module/approvals/edit/${row.original.id}`}
+                        to={`/module/forms/detail/${row.original.id}`}
                         className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
                         title="Edit Form"
                     >
@@ -97,7 +97,7 @@ const ObjectiveApprovalList = () => {
     return (
         <>
             <IconPageHeader
-                heading="Dynamic Forms Approval"
+                heading="Dynamic Form List"
                 description="Manage and streamline multi-level form approval workflows with ease."
                 icon={FileCheck2}
             />

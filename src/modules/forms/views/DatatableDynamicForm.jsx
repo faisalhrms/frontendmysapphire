@@ -98,6 +98,13 @@ const DatatableDynamicForm = () => {
                                 <i class="bi bi-send-check"></i>
                             </button>
                         </Link>
+                        <Link to={`/module/forms/detail/${rowData.id}`}>
+                            <button
+                                className="ti-btn ti-btn-secondary ti-btn-sm"
+                                title="View Form Submissions">
+                                <i class="ri-eye-line"></i>
+                            </button>
+                        </Link>
                     </div>
             )},
         },

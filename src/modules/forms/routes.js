@@ -3,6 +3,8 @@ import DatatableDynamicForm from "@modules/forms/views/DatatableDynamicForm.jsx"
 import CreateDynamicForm from "@modules/forms/views/CreateDynamicForm.jsx";
 import FormSubmissionDatatable from "@modules/forms/views/FormSubmissionDatatable.jsx";
 import DynamicFormsApprovalSetup from "@modules/forms/views/DynamicFormApprovalSetup.jsx";
+import DynamicFormDetail from "@modules/forms/views/EditDynamiceDetail.jsx";
+
 
 export const FORMS_ROUTES = {
     LIST: {
@@ -26,6 +28,11 @@ export const FORMS_ROUTES = {
             path: "/module/forms/setups/approval-hierarchy",
             // permission: 'forms.view_approval_hierarchy',
         },
+    },
+
+    EDITT: {
+        path: "/module/forms/detail/:id",
+
     },
 };
 
@@ -54,5 +61,10 @@ export const MODULE_ROUTES = [
         path: FORMS_ROUTES.SETUPS.APPROVAL.path,
         component: DynamicFormsApprovalSetup,
         permission: FORMS_ROUTES.SETUPS.APPROVAL.permission,
+    },
+
+    {
+        path: FORMS_ROUTES.EDITT.path,
+        component:DynamicFormDetail,
     },
 ];
