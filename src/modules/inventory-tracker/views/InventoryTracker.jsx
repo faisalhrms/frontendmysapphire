@@ -25,7 +25,7 @@ const InventoryTracker = () => {
                         <div className="hidden md:flex items-center space-x-2">
                             <button
                                 onClick={() => refetch()}
-                                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-gray-700 transition-all duration-200 group"
+                                className="p-2 rounded-xl group"
                                 disabled={isRefetching}
                             >
                                 <a
