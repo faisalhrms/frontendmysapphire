@@ -15,6 +15,8 @@ import {ListTodo} from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import {priorities} from "@modules/project-management/services/projectService.js";
 import TaskDeadLineItem from "@modules/project-management/components/task/TaskDeadLineItem.jsx";
+import EditableCompletionDate from "@modules/project-management/components/task/EditableCompletionDate.jsx";
+import {useForm} from "react-hook-form";
 
 const TaskList = () => {
     const {
@@ -24,7 +26,7 @@ const TaskList = () => {
         isTaskDetailLoading,
         task,
     } = useTaskDetailModal()
-
+    const { control, handleSubmit, formState: { errors } } = useForm();
     const columns = [
         {
             Header: 'Workspace',
@@ -207,12 +209,19 @@ const TaskList = () => {
         {
             Header: "Completion Date",
             accessor: "completed_at",
-            Cell: ({value}) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
+            Cell: ({ row }) => (
+                <EditableCompletionDate
+                    task={row.original}
+                    control={control}
+                    errors={errors}
+                />
+            ),
             filterType: 'datetime',
             filterable: true,
             excelColumnType: 'date',
             excelFormat: "MMM dd, yyyy",
         },
+
         {
             Header: "Completion Timeline",
             accessor: "completion_timeline",
@@ -231,15 +240,50 @@ const TaskList = () => {
 
         },
         {Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType: 'number', width: 150},
+        // {
+        //     Header: "Timeline Group",
+        //     accessor: "time_line_group",
+        //     disableSortBy: true,
+        //     filterable: false,
+        //     getCellProps: (cellInfo) => {
+        //         const value = cellInfo.value;
+        //         let bgClass = "bg-info";
+        //         if (value.includes("Delayed")) {
+        //             bgClass = "bg-red";
+        //         } else {
+        //             switch (value) {
+        //                 case "Advance":
+        //                     bgClass = "bg-success";
+        //                     break;
+        //                 case "On Time":
+        //                     bgClass = "bg-green";
+        //                     break;
+        //                 case "Between 1 – 5 days":
+        //                     bgClass = "bg-yellow";
+        //                     break;
+        //                 case "Between 6 – 16 days":
+        //                     bgClass = "bg-orange";
+        //                     break;
+        //                 case "More than 16 days":
+        //                     bgClass = "bg-danger";
+        //                     break;
+        //             }}
+        //
+        //         return {
+        //             className: `text-white ${bgClass}`,
+        //         };
+        //     },
+        // },
         {
             Header: "Timeline Group",
             accessor: "time_line_group",
             disableSortBy: true,
             filterable: false,
             getCellProps: (cellInfo) => {
-                const value = cellInfo.value;
+                const value = cellInfo.value || ""; // ✅ ensure string
                 let bgClass = "bg-info";
-                if (value.includes("Delayed")) {
+
+                if (typeof value === "string" && value.includes("Delayed")) {
                     bgClass = "bg-red";
                 } else {
                     switch (value) {
@@ -258,13 +302,17 @@ const TaskList = () => {
                         case "More than 16 days":
                             bgClass = "bg-danger";
                             break;
-                    }}
+                        default:
+                            bgClass = "bg-info"; // fallback
+                    }
+                }
 
                 return {
                     className: `text-white ${bgClass}`,
                 };
             },
         },
+
         {
             Header: "Launch/Milestone Deadline",
             accessor: "milestone.ended_at",
