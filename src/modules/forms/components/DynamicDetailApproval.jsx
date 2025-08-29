@@ -35,10 +35,10 @@ const DynamicDetailApproval = () => {
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
-                                 <h3 className="text-base font-semibold text-gray-900">
+                                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                      Basic Info
                                  </h3>
-                                 <p className="text-sm text-gray-500">
+                                 <p className="text-sm text-gray-500 dark:text-gray-200 dark:bg-bodybg">
                                      View the basic details and general information here.
                                  </p>
                              </div>
@@ -76,8 +76,8 @@ const DynamicDetailApproval = () => {
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
-                                 <h3 className="text-base font-semibold text-gray-900">Configure</h3>
-                                 <p className="text-xs text-gray-500">
+                                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Configure</h3>
+                                 <p className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">
                                      View the appearance and expiry settings of your interface.
                                  </p>
                              </div>
@@ -132,8 +132,8 @@ const DynamicDetailApproval = () => {
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
-                                 <h3 className="text-base font-semibold text-gray-900">Security</h3>
-                                 <p className="text-xs text-gray-500">
+                                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Security</h3>
+                                 <p className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">
                                      The account protection, access rules, and alerts.
                                  </p>
                              </div>
@@ -185,10 +185,10 @@ const DynamicDetailApproval = () => {
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
-                                 <h3 className="text-base font-semibold text-gray-900">
+                                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                      Coupon Discount
                                  </h3>
-                                 <p className="text-xs text-gray-500">
+                                 <p className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">
                                      View  Coupon discount options, eligibility rules, and notifications.
                                  </p>
                              </div>
@@ -259,8 +259,8 @@ const DynamicDetailApproval = () => {
                      <li className="list-group-item">
                          <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                              <div className="xl:col-span-4 col-span-12">
-                                 <p className="text-[1rem] mb-1 font-semibold">Email to Submitter</p>
-                                 <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
+                                 <p className="text-[1rem] mb-1 font-semibold dark:text-gray-200 dark:bg-bodybg">Email to Submitter</p>
+                                 <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50 dark:text-gray-200 dark:bg-bodybg">
                                      view the Automatically send a confirmation or notification email to the form
                                      submitter. </p>
                              </div>
@@ -302,11 +302,11 @@ const DynamicDetailApproval = () => {
                              <div className="xl:col-span-4 col-span-12">
                                  <div className="flex items-center space-x-3 mb-3">
                                      <div>
-                                         <h3 className="text-lg font-bold text-gray-900">Form Fields</h3>
+                                         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Form Fields</h3>
 
                                      </div>
                                  </div>
-                                 <p className="text-sm text-gray-600 leading-relaxed">
+                                 <p className="text-sm text-gray-600 leading-relaxed dark:text-gray-200 dark:bg-bodybg">
                                      View all form field configurations including field types, validation rules, and display settings.
                                  </p>
                              </div>
