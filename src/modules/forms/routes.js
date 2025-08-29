@@ -3,7 +3,8 @@ import DatatableDynamicForm from "@modules/forms/views/DatatableDynamicForm.jsx"
 import CreateDynamicForm from "@modules/forms/views/CreateDynamicForm.jsx";
 import FormSubmissionDatatable from "@modules/forms/views/FormSubmissionDatatable.jsx";
 import DynamicFormsApprovalSetup from "@modules/forms/views/DynamicFormApprovalSetup.jsx";
-import DynamicFormDetail from "@modules/forms/views/EditDynamiceDetail.jsx";
+import DynamicFormDetail from "@modules/forms/views/EditDynamicDetail.jsx";
+
 
 
 export const FORMS_ROUTES = {
