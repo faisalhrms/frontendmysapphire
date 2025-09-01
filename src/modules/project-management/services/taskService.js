@@ -126,3 +126,16 @@ export const fetchKanbanTasksAll = async (
         throw error;
     }
 };
+// Add to your taskService.js
+export const updateTaskCompletionDate = async (taskId, completionDate) => {
+    try {
+        const response = await api.post(`/pms/tasks/${taskId}/update-completed-at/`, {
+            completed_at: completionDate
+        });
+        Notify.success(response.data.message || "Completion date updated successfully");
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Failed to update completion date");
+        throw new Error(error.response?.data?.message || "Failed to update completion date");
+    }
+};

@@ -35,7 +35,7 @@ const InventoryTracker = () => {
                                     className="inline-flex items-center gap-2 bg-secondary text-white px-4 py-2 rounded-lg hover:opacity-90"
                                 >
                                     <Monitor className="w-4 h-4"/>
-                                    Web  Tracker
+                                    Web Training Demo
                                 </a>
                                 <a
                                     href="https://be.mysapphire.co/media/uploads/2025/08/28/Inventory_Tracker_Mobile_App_Training_Video.mp4"
@@ -44,7 +44,7 @@ const InventoryTracker = () => {
                                     className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90 ml-2"
                                 >
                                     <Smartphone className="w-4 h-4"/>
-                                    Mobile Tracker
+                                    Mobile Training Demo
                                 </a>
                             </button>
                         </div>
