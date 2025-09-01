@@ -6,7 +6,6 @@ import FormFieldTable from "@modules/forms/components/FormFieldTable.jsx";
 const DynamicDetailApproval = () => {
     const [formData, setFormData] = useState(null);
     const {id} = useParams();
-    console.log(id);
     const fields = formData?.fields || [];
 
     useEffect(() => {

@@ -114,6 +114,81 @@ const DatatableDynamicForm = () => {
             filterable: true,
         },
         {
+            Header: 'Status',
+            accessor: 'status',
+            filterable: true,
+            filterType: 'select',
+            filterKey: 'status',
+            filterOptions: [
+                { value: 'approved', label: 'Approved' },
+                { value: 'under_approval', label: 'Under Approval' },
+                { value: 'rejected', label: 'Rejected' },
+                { value: 'draft', label: 'Draft' },
+            ],
+            Cell: ({ value }) => toTitleCase(value),
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                let bgClass = "";
+                let textClass = "";
+
+                if (value === "under_approval") {
+                    bgClass = "bg-warning/10";
+                    textClass = "text-warning";
+                }
+                else if (value === "approved") {
+                    bgClass = "bg-success/10";
+                    textClass = "text-success";
+                }
+                else if (value === "rejected") {
+                    bgClass = "bg-danger/10";
+                    textClass = "text-danger";
+                }
+                else {
+                    bgClass = "bg-primary/10";
+                    textClass = "text-primary";
+                }
+
+                return {
+                    className: `capitalize px-2 py-1 rounded ${bgClass} ${textClass}`,
+                };
+            },
+        },
+        {
+            Header: 'Pending At',
+            accessor: 'current_approver',
+            filterable: true,
+            filterType: 'text',
+            filterKey: 'current_approver__full_name',
+            Cell: ({ value }) => {
+                if (!value?.full_name && !value?.email && !value?.avatar) {
+                    return null;
+                }
+
+                return (
+                    <div className="flex items-center">
+                        <Avatar
+                            avatar={value?.avatar || null}
+                            full_name={value?.full_name || ''}
+                            size='md'
+                            parentClasses='dark:text-gray-200 dark:bg-bodybg'
+                        />
+                        <div className='ms-2'>
+                            {value?.full_name && (
+                                <p className="font-semibold mb-0 flex items-center">
+                                    {value.full_name}
+                                </p>
+                            )}
+                            {value?.email && (
+                                <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                    {value.email}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+        },
+        {
             Header: "Expired Date",
             accessor: "expired_at",
             Cell: ({ value }) => formatDate(value),

@@ -12,6 +12,7 @@ import MathCaptcha from "@components/mathcaptcha/MathCaptcha.jsx";
 import {getDynamicButtonStyle, hexToRgb} from "@helpers/styles.js";
 import PhoneInputForDynamicForm, { COUNTRIES } from "@modules/forms/components/PhoneInputForDynamicForm.jsx";
 import PrivacyPolicyPopup from "@components/PrivacyPolicyPopup.jsx";
+import Notify from "@helpers/toastNotifications.js";
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 const validatePhoneNumber = (value, field) => {
     if (!value) {
@@ -314,8 +315,7 @@ export default function PublicDynamicForm() {
                 throw new Error(result.message || "Submission failed");
             }
         } catch (err) {
-            console.error("Submission error:", err);
-            alert("Failed to submit form: " + err.message);
+            Notify.error("Failed to submit form: " + err.message)
         }
         finally {
             setIsSubmitting(false);

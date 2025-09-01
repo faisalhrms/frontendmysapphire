@@ -4,7 +4,7 @@ import SunEditor from "suneditor-react";
 import ErrorMessage from "@components/form/ErrorMessage.jsx";
 
 
-const FormRichTextarea = forwardRef(({ name, control, errors, placeholder, editorOptions = {}, readOnly, is_required = false, ...rest }, ref) => {
+const FormRichTextarea = forwardRef(({ name, control, errors, placeholder, editorOptions = {}, readOnly, is_required = false, description = '', ...rest }, ref) => {
     const fieldError = name
         .split(/[\.\[\]]+/)
         .filter(Boolean)
@@ -13,10 +13,14 @@ const FormRichTextarea = forwardRef(({ name, control, errors, placeholder, edito
     return (
         <>
             {placeholder && <label htmlFor={name} className="form-label">{placeholder}{is_required && <span className="text-rose-500 pl-1">*</span>}</label>}
+            {
+                description &&
+                <div class="form-text">{description}</div>
+            }
             <Controller
                 name={name}
                 control={control}
-                render={({ field }) => (
+                render={({field}) => (
                     <SunEditor
                         {...field}
                         ref={ref}
