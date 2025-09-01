@@ -76,13 +76,15 @@ const DatatableDynamicForm = () => {
                 const rowData = row.original;
                 return (
                     <div className="flex space-x-2">
-                        <Link to={`/module/forms/edit/${rowData.id}`}>
-                            <button
-                                className="ti-btn ti-btn-primary ti-btn-sm"
-                                title="Edit Form">
-                                <i className="ri-edit-line"></i>
-                            </button>
-                        </Link>
+                        {rowData.status !== 'under_approval' && (
+                            <Link to={`/module/forms/edit/${rowData.id}`}>
+                                <button
+                                    className="ti-btn ti-btn-primary ti-btn-sm"
+                                    title="Edit Form">
+                                    <i className="ri-edit-line"></i>
+                                </button>
+                            </Link>
+                        )}
                         <Link to={`/forms/${rowData.slug}`}>
                             <button
                                 className="ti-btn ti-btn-success ti-btn-sm"

@@ -3,7 +3,7 @@ import DatatableDynamicForm from "@modules/forms/views/DatatableDynamicForm.jsx"
 import CreateDynamicForm from "@modules/forms/views/CreateDynamicForm.jsx";
 import FormSubmissionDatatable from "@modules/forms/views/FormSubmissionDatatable.jsx";
 import DynamicFormsApprovalSetup from "@modules/forms/views/DynamicFormApprovalSetup.jsx";
-import CreateDymiceDetail from "@modules/forms/views/CreateDynamicDetail.jsx";
+import DynamicFormDetail from "@modules/forms/views/DynamicFormDetail.jsx";
 
 
 
@@ -63,10 +63,9 @@ export const MODULE_ROUTES = [
         component: DynamicFormsApprovalSetup,
         permission: FORMS_ROUTES.SETUPS.APPROVAL.permission,
     },
-
     {
         path: FORMS_ROUTES.DETAIL.path,
-        component: CreateDymiceDetail,
+        component: DynamicFormDetail,
         permission: FORMS_ROUTES.DETAIL.permission,
     },
 ];
