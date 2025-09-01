@@ -335,7 +335,7 @@ const DynamicDetailApproval = () => {
         </div>
     );
 };
-const EditDymiceDetail = () => {
+const CreateDymiceDetail = () => {
     const {id} = useParams();
     const {data, isLoading} = useDynamicFormEdit(id);
 
@@ -351,4 +351,4 @@ const EditDymiceDetail = () => {
     );
 };
 
-export default EditDymiceDetail;
+export default CreateDymiceDetail;
