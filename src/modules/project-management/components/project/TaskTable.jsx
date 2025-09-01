@@ -6,6 +6,7 @@ import { setColumnOrder } from "@modules/project-management/redux/pmsSlice.js";
 import TaskDetailModalPortal from "@modules/project-management/components/task/TaskDetailModalPortal.jsx";
 import TaskTableRow from "@modules/project-management/components/task/TaskTableRow.jsx";
 import TaskTableHeader from "@modules/project-management/components/task/TaskTableHeader.jsx";
+import {useForm} from "react-hook-form";
 
 const TaskTable = ({
                        projectStatus,
@@ -24,6 +25,7 @@ const TaskTable = ({
     const [activeTaskId, setActiveTaskId] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const [filters, setFilters] = useState({})
+    const { control, handleSubmit, formState: { errors } } = useForm();
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const dispatch = useDispatch();
@@ -158,6 +160,8 @@ const heightFilter = (val)=>{
                         <TaskTableRow
                             key={task.id}
                             task={task}
+                            control={control}
+                            errors={errors}
                             isChild={isChild}
                             activeTaskId={activeTaskId}
                             setActiveTaskId={setActiveTaskId}
