@@ -332,6 +332,13 @@ const FormAsyncSelect = ({
                             isSearchable
                             loadingMessage={() => 'Loading data...'}
                             noOptionsMessage={() => 'No data found.'}
+                            // ✅ Dropdown overlap fix adding becuase its hiding the first lovs list data
+                            menuPortalTarget={document.body}
+                            menuPosition="fixed"
+                            styles={{
+                                menuPortal: base => ({ ...base, zIndex: 9999 }),
+                                menu: base => ({ ...base, zIndex: 9999 }),
+                            }}
                         />
                     );
                 }}
