@@ -3,7 +3,7 @@ import DatatableDynamicForm from "@modules/forms/views/DatatableDynamicForm.jsx"
 import CreateDynamicForm from "@modules/forms/views/CreateDynamicForm.jsx";
 import FormSubmissionDatatable from "@modules/forms/views/FormSubmissionDatatable.jsx";
 import DynamicFormsApprovalSetup from "@modules/forms/views/DynamicFormApprovalSetup.jsx";
-import DynamicFormDetail from "@modules/forms/views/EditDynamicDetail.jsx";
+import CreateDymiceDetail from "@modules/forms/views/CreateDynamicDetail.jsx";
 
 
 
@@ -31,9 +31,9 @@ export const FORMS_ROUTES = {
         },
     },
 
-    EDITT: {
+    DETAIL: {
         path: "/module/forms/detail/:id",
-
+        permission: 'forms.view_form',
     },
 };
 
@@ -65,7 +65,8 @@ export const MODULE_ROUTES = [
     },
 
     {
-        path: FORMS_ROUTES.EDITT.path,
-        component:DynamicFormDetail,
+        path: FORMS_ROUTES.DETAIL.path,
+        component: CreateDymiceDetail,
+        permission: FORMS_ROUTES.DETAIL.permission,
     },
 ];
