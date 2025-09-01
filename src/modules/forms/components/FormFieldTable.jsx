@@ -12,6 +12,14 @@ const FormFieldTable = ({ fields }) => {
             { label: "Group", accessor: "group", align: "text-left" },
             { label: "Options", accessor: "options", align: "text-left" },
             { label: "Required", accessor: "required",align: "text-left" },
+            {
+                label: "Unique",
+                accessor: "unique",
+                align: "text-left",
+                render: (value) => (
+                    <input type="checkbox" checked={!!value} readOnly />
+                )
+            },
         ],
 
     };
