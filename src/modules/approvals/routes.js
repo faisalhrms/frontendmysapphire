@@ -1,7 +1,7 @@
 import TaskApprovalList from '@modules/approvals/task/views/TaskApprovalList.jsx';
 import ObjectiveApprovalList from "@modules/approvals/objective/views/ObjectiveApprovalList.jsx";
 import DynamiceFormApprovalList from "@modules/approvals/dynamiceform/view/DynamiceFormApprovalList.jsx";
-import DynamicFormDetail from "@modules/approvals/dynamiceform/view/EditDynamiceDetail.jsx";
+
 
 export const APPROVAL_ROUTES = {
     TASK: {
@@ -15,10 +15,7 @@ export const APPROVAL_ROUTES = {
         path:'/module/approvals/form'
     },
 
-    EDIT: {
-        path: "/module/approvals/edit/:id",
 
-    },
 
 
 };
@@ -36,10 +33,5 @@ export const MODULE_ROUTES = [
     {
         path: APPROVAL_ROUTES.DYNAMICE.path,
         component:DynamiceFormApprovalList,
-    },
-
-    {
-        path: APPROVAL_ROUTES.EDIT.path,
-        component:DynamicFormDetail,
     },
 ];
