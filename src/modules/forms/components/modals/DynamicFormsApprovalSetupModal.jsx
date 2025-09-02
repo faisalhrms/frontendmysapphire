@@ -11,7 +11,8 @@ const DynamicFormsApprovalSetupModal = ({
                                 handleSubmit,
                                 onSubmit,
                                 isSubmitting,
-                                setValue
+                                setValue,
+                                isEditMode
                             }) => {
     const formOption = useWatch({ control, name: 'formOption' });
     const formPre = useMemo(
@@ -54,7 +55,7 @@ const DynamicFormsApprovalSetupModal = ({
                                         queryKeyBase="dynamic-forms"
                                         className="w-full"
                                         preselectedOptions={formPre}
-
+                                        isDisabled={isEditMode}
                                     />
                                 </div>
                             </div>

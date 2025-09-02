@@ -109,7 +109,8 @@ const DynamicFormsApprovalSetup = () => {
         handleSubmit,
         onSubmit,
         isSubmitting,
-        setValue
+        setValue,
+        isEditMode
     }), [
         control,
         errors,
@@ -117,7 +118,8 @@ const DynamicFormsApprovalSetup = () => {
         handleSubmit,
         onSubmit,
         isSubmitting,
-        setValue
+        setValue,
+        isEditMode
     ]);
 
     return (

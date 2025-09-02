@@ -5,8 +5,6 @@ import FormSubmissionDatatable from "@modules/forms/views/FormSubmissionDatatabl
 import DynamicFormsApprovalSetup from "@modules/forms/views/DynamicFormApprovalSetup.jsx";
 import DynamicFormDetail from "@modules/forms/views/DynamicFormDetail.jsx";
 
-
-
 export const FORMS_ROUTES = {
     LIST: {
         path: '/module/forms',
@@ -27,13 +25,12 @@ export const FORMS_ROUTES = {
     SETUPS: {
         APPROVAL: {
             path: "/module/forms/setups/approval-hierarchy",
-            // permission: 'forms.view_approval_hierarchy',
+            permission: 'forms.manage_approval_hierarchy',
         },
     },
-
     DETAIL: {
         path: "/module/forms/detail/:id",
-        permission: 'forms.view_form',
+        permission: 'user.view_ess_modules',
     },
 };
 
