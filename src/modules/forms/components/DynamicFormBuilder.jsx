@@ -17,8 +17,10 @@ import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 import { fontFamilyOptions, fieldTypeOptions, platformOptions } from "@modules/forms/services/DynamicFormService.js";
 import {getPastDate} from "@helpers/dateTime.js";
 import {formatOptions} from "@helpers/formatters.js";
+import {useNavigate} from "react-router-dom";
 
 const DynamicFormBuilder = ({ formData }) => {
+    const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0);
     const [isGoingBack, setIsGoingBack] = useState(false);
     const [isStepValidating, setIsStepValidating] = useState(false);
@@ -166,6 +168,7 @@ const DynamicFormBuilder = ({ formData }) => {
                 const response = await api.post('/forms/', submitData);
                 Notify.success(response.data.message || "Form created successfully.");
             }
+            navigate(`/module/forms`);
         } catch (error) {
             Notify.error(error.response?.data?.message);
         }
