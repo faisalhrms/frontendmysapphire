@@ -35,7 +35,7 @@ const DynamicFormBuilder = ({ formData }) => {
         defaultValues: {
             title: '',
             description: '',
-            font_family: 'Inter, sans-serif',
+            font_family: 'Gotham Book',
             success_message: "Thank you for your submission! We have received your form successfully.",
             primary_color: '#673ab7',
             enable_alerts: false,
@@ -102,7 +102,7 @@ const DynamicFormBuilder = ({ formData }) => {
     useEffect(() => {
         if (formData) {
             setValue('title', formData.title || '');
-            setValue('font_family', formData.font_family || 'Inter, sans-serif');
+            setValue('font_family', formData.font_family || 'Gotham Book');
             setValue('success_message', formData.success_message || "Thank you for your submission! We have received your form successfully.");
             setValue('description', formData.description || '');
             setValue('primary_color', formData.primary_color || '#673ab7');

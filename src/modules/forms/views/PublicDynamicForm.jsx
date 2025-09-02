@@ -34,6 +34,11 @@ const validatePhoneNumber = (value, field) => {
     return true;
 };
 const loadFontFamily = (fontFamily) => {
+    if (!fontFamily) return;
+
+    if (fontFamily.includes('Gotham')) {
+        return;
+    }
     const fontName = fontFamily.split(',')[0].trim().replace(/['"]/g, '');
     const googleFontName = fontName.replace(/\s+/g, '+');
 

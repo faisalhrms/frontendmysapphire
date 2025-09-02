@@ -24,18 +24,16 @@ export const sidebarMenu = [
                 'Objectives',
                 2,
                 '',
-                '',
+                APPROVAL_ROUTES.OBJECTIVE.permission,
             ),
             generateSidebarItem(
-                APPROVAL_ROUTES.DYNAMICE.path,
+                APPROVAL_ROUTES.FORM.path,
                 'link',
-                'Dynamice Form',
-                2,
+                'Dynamic Form',
+                3,
                 '',
-                '',
+                APPROVAL_ROUTES.FORM.permission,
             ),
-
-
         ]
     ),
 ];

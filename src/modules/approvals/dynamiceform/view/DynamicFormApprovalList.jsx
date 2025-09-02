@@ -9,7 +9,7 @@ import Avatar from "@components/Avatar.jsx";
 import useFormApproval from "@modules/approvals/dynamiceform/hooks/useFormApproval.js";
 
 
-const ObjectiveApprovalList = () => {
+const DynamicFormApprovalList = () => {
     const dataTableRef = useRef();
 
 
@@ -130,4 +130,4 @@ const ObjectiveApprovalList = () => {
     );
 };
 
-export default ObjectiveApprovalList;
+export default DynamicFormApprovalList;

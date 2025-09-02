@@ -1,6 +1,6 @@
 import TaskApprovalList from '@modules/approvals/task/views/TaskApprovalList.jsx';
 import ObjectiveApprovalList from "@modules/approvals/objective/views/ObjectiveApprovalList.jsx";
-import DynamiceFormApprovalList from "@modules/approvals/dynamiceform/view/DynamiceFormApprovalList.jsx";
+import DynamicFormApprovalList from "@modules/approvals/dynamiceform/view/DynamicFormApprovalList.jsx";
 
 
 export const APPROVAL_ROUTES = {
@@ -9,15 +9,13 @@ export const APPROVAL_ROUTES = {
         permission: 'pms.manage_task_approvals',
     },
     OBJECTIVE:{
-        path:'/module/approvals/objective'
+        path:'/module/approvals/objective',
+        permission: 'user.view_ess_modules',
     },
-    DYNAMICE:{
-        path:'/module/approvals/form'
+    FORM:{
+        path:'/module/approvals/form',
+        permission: 'user.view_ess_modules',
     },
-
-
-
-
 };
 
 export const MODULE_ROUTES = [
@@ -28,10 +26,12 @@ export const MODULE_ROUTES = [
     },
     {
         path: APPROVAL_ROUTES.OBJECTIVE.path,
-        component:ObjectiveApprovalList
+        component:ObjectiveApprovalList,
+        permission: APPROVAL_ROUTES.OBJECTIVE.permission,
     },
     {
-        path: APPROVAL_ROUTES.DYNAMICE.path,
-        component:DynamiceFormApprovalList,
+        path: APPROVAL_ROUTES.FORM.path,
+        component:DynamicFormApprovalList,
+        permission: APPROVAL_ROUTES.FORM.permission,
     },
 ];

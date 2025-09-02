@@ -156,7 +156,7 @@ const DynamicFormDetail = () => {
                                                 {
                                                     label: "Require Approval",
                                                     desc: " View the ensure this form goes through approval before becoming visible.",
-                                                    value: formData.require_approval
+                                                    value: formData.need_approval
                                                 },
                                             ].map((item) => (
                                                 <div key={item.label}
