@@ -26,7 +26,7 @@ export const sidebarMenu = [
                         "Sweepers & Guard",
                         1,
                         "bx bx-message-square-edit",
-                        ''
+                        DYNAMICS_ROUTES.READ.permission
                     )
                 ]
             )

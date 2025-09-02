@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Controller } from "react-hook-form";
 import ErrorMessage from "@components/form/ErrorMessage";
-import { formatDate, formatDateTimeLocal } from "@helpers/dateTime.js";
+import { formatDate } from "@helpers/dateTime.js";
 import { updateTaskCompletionDate } from "@modules/project-management/services/taskService";
 import { useHasPermission } from "@modules/auth/hooks/authHooks.js";
 import CompletionDateConfirmModal from "@modules/project-management/components/model/CompletionDateConfirmModal.jsx";
 
-const EditableCompletionDate = ({ task, control, errors }) => {
+const EditableCompletionDate = ({ task, control, errors, minDate, maxDate }) => {
     const [localValue, setLocalValue] = useState(task.completed_at);
     const [pendingValue, setPendingValue] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -35,26 +35,34 @@ const EditableCompletionDate = ({ task, control, errors }) => {
         return formatDate(localValue, "MMM dd, yyyy") || "";
     }
 
+    // ✅ Ensure only date format (YYYY-MM-DD)
+    const formatForInput = (dateString) => {
+        if (!dateString) return "";
+        return new Date(dateString).toISOString().split("T")[0];
+    };
+
+    const min = formatForInput(minDate);
+    const max = formatForInput(maxDate);
+
     return (
         <>
             <Controller
                 name={`completed_at_${task.id}`}
                 control={control}
-                defaultValue={localValue}
+                defaultValue={formatForInput(localValue)}
                 render={({ field }) => {
-                    let inputValue = field.value || "";
-                    if (inputValue) {
-                        inputValue = formatDateTimeLocal(inputValue);
-                    }
+                    const inputValue = field.value ? formatForInput(field.value) : "";
 
                     return (
                         <div className="flex items-center space-x-2">
                             <input
-                                type="datetime-local"
+                                type="date"
                                 className={`form-control w-full !rounded-sm border ${
                                     errors[`completed_at_${task.id}`] ? "!border-red" : ""
                                 }`}
                                 value={inputValue}
+                                min={min}
+                                max={max}
                                 onChange={(e) => field.onChange(e.target.value)}
                                 onBlur={() => handleBlur(field)}
                                 onKeyDown={(e) => {
