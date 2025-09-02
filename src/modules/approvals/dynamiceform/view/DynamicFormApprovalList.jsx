@@ -53,9 +53,9 @@ const DynamicFormApprovalList = () => {
                     </button>
 
                     <Link
-                        to={`/module/forms/detail/${row.original.id}`}
+                        to={`/module/forms/detail/${row.original.form.id}`}
                         className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
-                        title="Edit Form"
+                        title="View Form"
                     >
                         View
                     </Link>
@@ -97,7 +97,7 @@ const DynamicFormApprovalList = () => {
     return (
         <>
             <IconPageHeader
-                heading="Dynamic Form List"
+                heading="Dynamic Form Approvals"
                 description="Manage and streamline multi-level form approval workflows with ease."
                 icon={FileCheck2}
             />
