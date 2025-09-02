@@ -702,8 +702,8 @@ const DynamicFormBuilder = ({ formData }) => {
                                                                         errors={errors}
                                                                         placeholder="Email Content"
                                                                         is_required={true}
-                                                                        description="To insert the discount coupon, use {{discount_coupon}}.
-                                                                            For any form field values in the email, wrap the field name in triple brackets, e.g., {{{full_name}}}."
+                                                                        description="To insert the discount coupon, use discount_coupon.
+                                                                            For any form field values in the email, wrap the field name in triple brackets, e.g., {full_name}."
                                                                         editorOptions={{
                                                                             height: 180,
                                                                             buttonList: [

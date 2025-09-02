@@ -8,6 +8,7 @@ import {QRCodeCanvas} from "qrcode.react";
 import {Link} from "react-router-dom";
 import { FilePlus } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import HasPermission from "@components/HasPermission.jsx";
 
 const DatatableDynamicForm = () => {
 
@@ -77,13 +78,15 @@ const DatatableDynamicForm = () => {
                 return (
                     <div className="flex space-x-2">
                         {rowData.status !== 'under_approval' && (
-                            <Link to={`/module/forms/edit/${rowData.id}`}>
-                                <button
-                                    className="ti-btn ti-btn-primary ti-btn-sm"
-                                    title="Edit Form">
-                                    <i className="ri-edit-line"></i>
-                                </button>
-                            </Link>
+                            <HasPermission permission='forms.change_form'>
+                                <Link to={`/module/forms/edit/${rowData.id}`}>
+                                    <button
+                                        className="ti-btn ti-btn-primary ti-btn-sm"
+                                        title="Edit Form">
+                                        <i className="ri-edit-line"></i>
+                                    </button>
+                                </Link>
+                            </HasPermission>
                         )}
                         <Link to={`/forms/${rowData.slug}`}>
                             <button
@@ -102,7 +105,7 @@ const DatatableDynamicForm = () => {
                         <Link to={`/module/forms/detail/${rowData.id}`}>
                             <button
                                 className="ti-btn ti-btn-secondary ti-btn-sm"
-                                title="View Form Submissions">
+                                title="View Form">
                                 <i class="ri-eye-line"></i>
                             </button>
                         </Link>

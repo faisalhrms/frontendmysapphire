@@ -12,11 +12,11 @@ export const FORMS_ROUTES = {
     },
     CREATE: {
         path: '/module/forms/create',
-        permission: 'forms.view_form',
+        permission: 'forms.add_form',
     },
     EDIT: {
         path: "/module/forms/edit/:id",
-        permission: 'forms.view_form',
+        permission: 'forms.change_form',
     },
     SUBMISSIONS: {
         path: "/module/forms/submissions/:id",
