@@ -59,7 +59,7 @@ export const INVENTORY_ROUTES = {
     },
     EQUIPMENT_AUDIT:{
         path: '/module/asset/equipment-audit',
-        permission: 'inventory.view_equipment',
+        permission: 'inventory.manage_equipment_audit',
     },
     SETUPS: {
         READ: {
