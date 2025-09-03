@@ -11,6 +11,7 @@ import Equipment from "@modules/inventory/views/Equipment.jsx";
 import LocationSubnetList from "@modules/inventory/views/LocationSubnetList.jsx";
 import LocationSubnetAdd from "@modules/inventory/views/LocationSubnetAdd.jsx";
 import LocationSubnetEdit from "@modules/inventory/views/LocationSubnetEdit.jsx";
+import EquipmentAuditList from "@modules/inventory/views/EquipmentAuditList.jsx";
 
 export const INVENTORY_ROUTES = {
     HOME: {
@@ -55,6 +56,10 @@ export const INVENTORY_ROUTES = {
     EQUIPMENT_HISTORY: {
         path: '/module/asset/equipment-history/:id',
         permission: 'inventory.view_equipment',
+    },
+    EQUIPMENT_AUDIT:{
+        path: '/module/asset/equipment-audit',
+        permission: 'inventory.manage_equipment_audit',
     },
     SETUPS: {
         READ: {
@@ -137,5 +142,10 @@ export const MODULE_ROUTES = [
         path:INVENTORY_ROUTES.SETUPS.EDIT.path,
         component:LocationSubnetEdit,
         permission: INVENTORY_ROUTES.SETUPS.ADD.permission,
+    },
+    {
+        path:INVENTORY_ROUTES.EQUIPMENT_AUDIT.path,
+        component:EquipmentAuditList,
+        permission:INVENTORY_ROUTES.EQUIPMENT_AUDIT.permission
     }
 ];
