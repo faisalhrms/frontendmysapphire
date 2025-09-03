@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import "@css/inlay/inalay.css";
+// import "@css/inlay/inalay.css";
 
 import sapphireb from "@assets/images/company-logos/sapphireb.png";
 import sapphirew from "@assets/images/company-logos/sapphirew.png";
