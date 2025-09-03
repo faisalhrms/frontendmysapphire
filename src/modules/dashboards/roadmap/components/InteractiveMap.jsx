@@ -88,7 +88,7 @@ export default function InteractiveMap({ chain }) {
     })
     .filter(p => p.units.length > 0)
 
-  const positions = {
+  const positionsBase = {
     fiber: { left: -30, top: 170 },
     spinning: { left: 250, top: -80 },
     "yarn-dyeing": { left: 540, top: 50 },
@@ -99,6 +99,8 @@ export default function InteractiveMap({ chain }) {
     accessories: { left: 370, top: 530 },
     packaging: { left: 100, top: 530 }
   }
+  const expandShift = { fiber: 170, accessories: 30, packaging: 30 }
+
   const markers = {
     fiber: { x: 70, y: 335 },
     spinning: { x: 350, y: 75 },
@@ -114,6 +116,23 @@ export default function InteractiveMap({ chain }) {
   const [expanded, setExpanded] = useState({})
   const toggle = (cid, uid) =>
     setExpanded(e => ({ ...e, [`${cid}:${uid}`]: !e[`${cid}:${uid}`] }))
+
+  const hasToggleByCat = useMemo(() => {
+    const m = {}
+    points.forEach(p => {
+      m[p.cid] = p.units.some(u => (u.suppliers || []).length > 0)
+    })
+    return m
+  }, [points])
+
+  const expandedCats = useMemo(() => {
+    const s = new Set()
+    Object.entries(expanded).forEach(([k, v]) => {
+      if (v) s.add(k.split(":")[0])
+    })
+    return s
+  }, [expanded])
+
   const [canvasData, setCanvasData] = useState({ unitName: "", groups: {} })
 
   const openCanvas = (cid, uid, unitName) => {
@@ -145,6 +164,8 @@ export default function InteractiveMap({ chain }) {
 
   if (!points.length) return null
 
+  const roadPath = "M-500 300 L-5 300 L-5 80 L220 80 L220 180 L650 180 L650 400 L-190 400"
+
   return (
     <div ref={wrapperRef} className="w-full overflow-auto pt-24">
       <div
@@ -158,22 +179,15 @@ export default function InteractiveMap({ chain }) {
         }}
       >
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600">
-          <defs>
-            <pattern id="asphaltPattern" patternUnits="userSpaceOnUse" width="8" height="8">
-              <rect width="8" height="8" fill="#1a1c1e" />
-              <circle cx="2" cy="2" r="0.75" fill="#2f3133" />
-              <circle cx="6" cy="6" r="0.75" fill="#2f3133" />
-            </pattern>
-          </defs>
           <path
-            d="M-500 300 L-5 300 L-5 80 L220 80 L220 180 L650 180 L650 399 L450 399 L450 320 L310 320 L310 400 L-190 400"
-            stroke="url(#asphaltPattern)"
+            d={roadPath}
+            stroke="#3D2808"
             strokeWidth="48"
             fill="none"
             strokeLinejoin="round"
           />
           <path
-            d="M-500 300 L-5 300 L-5 80 L220 80 L220 180 L650 180 L650 399 L450 399 L450 320 L310 320 L310 400 L-190 400"
+            d={roadPath}
             stroke="#e8e8e8"
             strokeWidth="3"
             fill="none"
@@ -184,17 +198,24 @@ export default function InteractiveMap({ chain }) {
         </svg>
         <svg className="absolute inset-0 pointer-events-none" width="1400" height="720">
           {points.map(p => {
+            const hasIn = p.units.some(u => u.inHouse)
             const hasOut = p.units.some(u => !u.inHouse)
-            const icon = hasOut
-              ? "https://res.cloudinary.com/dtsguaevl/image/upload/v1751621545/red_location_icon_svg_hfnkfi.svg"
-              : "https://res.cloudinary.com/dtsguaevl/image/upload/v1751621408/blue_location_icon_svg_itujxr.svg"
+            const icon =
+              hasIn && hasOut
+                ? "https://be.mysapphire.co/media/uploads/2025/09/02/mix_location_4EYaR9k.png"
+                : hasOut
+                ? "https://be.mysapphire.co/media/uploads/2025/09/02/red_location_Gp0mVLE.png"
+                : "https://be.mysapphire.co/media/uploads/2025/09/02/blue_location_JnhzayS.png"
             const m = markers[p.id]
             return <image key={p.id} href={icon} x={m.x - 12} y={m.y - 16} width="40" height="40" />
           })}
         </svg>
 
         {points.map(p => {
-          const pos = positions[p.id]
+          const pos0 = positionsBase[p.id]
+          const canCollapse = !!hasToggleByCat[p.cid]
+          const shouldShift = canCollapse && expandedCats.has(String(p.cid))
+          const pos = shouldShift ? { left: pos0.left, top: Math.max(0, pos0.top - (expandShift[p.id] || 0)) } : pos0
           const hasIn = p.units.some(u => u.inHouse)
           const hasOut = p.units.some(u => !u.inHouse)
           const headerClass = hasIn && hasOut ? "" : hasOut ? "!bg-pink/20" : "bg-info/15"
@@ -238,7 +259,7 @@ export default function InteractiveMap({ chain }) {
                           )}
                         </div>
                         {expanded[key] && showToggle && (
-                          <div className="table-responsive max-h-32 overflow-hidden">
+                          <div className="table-responsive overflow-hidden">
                             <table className="table  table-hover whitespace-nowrap min-w-full">
                               <tbody>
                                 {u.suppliers.map(s => (

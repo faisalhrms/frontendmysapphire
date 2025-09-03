@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -43,20 +43,37 @@ export default function ChatBot() {
 
   const currentUser = useSelector(s => s.auth.user)
   const psContainerRef = useRef(null)
-  const endRef = useRef(null)
-  const [_, setDockH] = useState(112) // padding handled via pb-24
-
-  const scrollToBottom = (smooth = true) => {
-    const c = psContainerRef.current
-    if (c) c.scrollTop = c.scrollHeight
-    if (endRef.current) endRef.current.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "end" })
-  }
-
-  useEffect(() => { scrollToBottom(false) }, [])
-  useEffect(() => { scrollToBottom(true) }, [messages.length, isThinking, isWebSearch])
-  useEffect(() => { scrollToBottom(true) }, [tick])
-
+  const dockRef = useRef(null)
+  const [dockH, setDockH] = useState(140)
   const hasLoadingBot = useMemo(() => messages.some(m => m.type === "bot" && m.loading), [messages])
+
+  useEffect(() => {
+    if (!dockRef.current) return
+    const ro = new ResizeObserver(e => setDockH(Math.round(e[0].contentRect.height)))
+    ro.observe(dockRef.current)
+    return () => ro.disconnect()
+  }, [])
+
+  const nearBottom = useCallback(() => {
+    const c = psContainerRef.current
+    if (!c) return false
+    return c.scrollHeight - c.scrollTop - c.clientHeight < dockH + 120
+  }, [dockH])
+
+  const rafScroll = useRef(0)
+  const scrollToBottom = useCallback(() => {
+    const c = psContainerRef.current
+    if (!c) return
+    if (!nearBottom()) return
+    cancelAnimationFrame(rafScroll.current)
+    rafScroll.current = requestAnimationFrame(() => {
+      c.scrollTo({ top: c.scrollHeight, behavior: "smooth" })
+    })
+  }, [nearBottom])
+
+  useEffect(() => { scrollToBottom() }, [])
+  useEffect(() => { scrollToBottom() }, [messages.length])
+  useEffect(() => { scrollToBottom() }, [tick, isThinking, isWebSearch])
 
   if (!isBotActive) {
     return (
@@ -102,9 +119,8 @@ export default function ChatBot() {
       </div>
 
       <div className="flex-1 min-h-0 overflow-hidden">
-        <PerfectScrollbar className="h-full" containerRef={ref => (psContainerRef.current = ref)}>
-          {/* padding-bottom to keep content clear of the input dock */}
-          <ul className="px-16 py-4 space-y-6 pb-24">
+        <PerfectScrollbar className="h-full" containerRef={ref => (psContainerRef.current = ref)} style={{scrollBehavior:"smooth"}}>
+          <ul className="px-16 py-4 space-y-6" style={{paddingBottom: dockH + 24}}>
             {messages.map((m, i) => (
               m.type === "bot"
                 ? (
@@ -122,19 +138,14 @@ export default function ChatBot() {
                           {m.latestStatus || (isWebSearch ? "Searching the web " : "Thinking ")} <TypingIndicator />
                         </div>
                       ) : null}
-
                       {m.error ? (
                         <div className="text-xs text-red-600 mt-1">{m.error}</div>
                       ) : (
                         <>
-                          {m.mode === "qc" && !m.loading ? (
-                            <QCReport result={m.qc} html={m.html} llm={m.qcLlm} />
-                          ) : null}
-
+                          {m.mode === "qc" && !m.loading ? <QCReport result={m.qc} html={m.html} llm={m.qcLlm} /> : null}
                           {m.chart ? <ChartBox spec={m.chart} /> : null}
-
                           {m.html && m.mode !== "qc"
-                            ? <div className="main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: m.loading ? (m.html + "<span class='ai-caret'>▍</span>") : m.html }} />
+                            ? <div className={`main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none ${m.loading ? "streaming" : ""}`} dangerouslySetInnerHTML={{ __html: m.html }} />
                             : null}
                         </>
                       )}
@@ -170,12 +181,12 @@ export default function ChatBot() {
                 </div>
               </li>
             )}
-            <li ref={endRef} />
           </ul>
         </PerfectScrollbar>
       </div>
 
       <ChatInputDock
+        ref={dockRef}
         input={input}
         setInput={setInput}
         inputRef={inputRef}
