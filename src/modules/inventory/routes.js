@@ -8,6 +8,9 @@ import EquipmentSiteWiseReport from '@modules/inventory/views/EquipmentSiteWiseR
 import ReAssignEquipment from '@modules/inventory/views/ReAssignEquipment.jsx';
 import EquipmentHistory from '@modules/inventory/views/EquipmentHistory.jsx';
 import Equipment from "@modules/inventory/views/Equipment.jsx";
+import LocationSubnetList from "@modules/inventory/views/LocationSubnetList.jsx";
+import LocationSubnetAdd from "@modules/inventory/views/LocationSubnetAdd.jsx";
+import LocationSubnetEdit from "@modules/inventory/views/LocationSubnetEdit.jsx";
 
 export const INVENTORY_ROUTES = {
     HOME: {
@@ -53,6 +56,17 @@ export const INVENTORY_ROUTES = {
         path: '/module/asset/equipment-history/:id',
         permission: 'inventory.view_equipment',
     },
+    SETUPS: {
+        READ: {
+            path: '/module/setups/location-subnets'
+        },
+        ADD:{
+            path:'/module/setups/location-subnets/add'
+        },
+        EDIT:{
+            path:'/module/setups/location-subnets/edit/:id'
+        }
+    }
 };
 
 export const MODULE_ROUTES = [
@@ -106,4 +120,19 @@ export const MODULE_ROUTES = [
         component: EquipmentHistory,
         permission: INVENTORY_ROUTES.EQUIPMENT_HISTORY.permission,
     },
+    {
+        path:INVENTORY_ROUTES.SETUPS.READ.path,
+        component:LocationSubnetList,
+        permission: INVENTORY_ROUTES.READ.permission,
+    },
+    {
+        path:INVENTORY_ROUTES.SETUPS.ADD.path,
+        component:LocationSubnetAdd,
+        permission: INVENTORY_ROUTES.READ.permission,
+    },
+    {
+        path:INVENTORY_ROUTES.SETUPS.EDIT.path,
+        component:LocationSubnetEdit,
+        permission: INVENTORY_ROUTES.READ.permission,
+    }
 ];

@@ -37,10 +37,6 @@ export const sidebarMenu = [
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
             ),
-
-
-
-
             generateSidebarItem(
                 INVENTORY_ROUTES.EQUIPMENT_REPORT.path,
                 'link',
@@ -48,6 +44,25 @@ export const sidebarMenu = [
                 4,
                 'bx-laptop',
                 INVENTORY_ROUTES.READ.permission
+            ),
+            generateSidebarItem(
+                '',
+                'sub',
+                'Setups',
+                4,
+                'bx-box',
+                '',
+                [
+
+                    generateSidebarItem(
+                        INVENTORY_ROUTES.SETUPS.READ.path,
+                        'link',
+                        'Subnets',
+                        1,
+                        '',
+                        INVENTORY_ROUTES.READ.permission
+                    )
+                ]
             )
 
         ]
