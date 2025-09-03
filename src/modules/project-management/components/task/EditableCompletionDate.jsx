@@ -6,27 +6,26 @@ import { updateTaskCompletionDate } from "@modules/project-management/services/t
 import { useHasPermission } from "@modules/auth/hooks/authHooks.js";
 import CompletionDateConfirmModal from "@modules/project-management/components/model/CompletionDateConfirmModal.jsx";
 
-const EditableCompletionDate = ({ task, control, errors, minDate, maxDate }) => {
+const EditableCompletionDate = ({ task, control, errors, minDate }) => {
     const [localValue, setLocalValue] = useState(task.completed_at);
     const [pendingValue, setPendingValue] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const canEditCompletionDate = useHasPermission("pms.change_task");
     const isEditable = canEditCompletionDate && task.status === "completed";
 
     const handleSave = async (value) => {
         try {
+            setIsSubmitting(true);
             await updateTaskCompletionDate(task.id, value);
             setLocalValue(value);
+            setShowConfirmModal(false); // close after success
         } catch (error) {
             console.error("Failed to update completion date:", error);
-        }
-    };
-
-    const handleBlur = (field) => {
-        if (field.value !== localValue) {
-            setPendingValue(field.value);
-            setShowConfirmModal(true); // open confirm modal
+        } finally {
+            setIsSubmitting(false);
+            setPendingValue(null);
         }
     };
 
@@ -42,7 +41,6 @@ const EditableCompletionDate = ({ task, control, errors, minDate, maxDate }) => 
     };
 
     const min = formatForInput(minDate);
-    const max = formatForInput(maxDate);
 
     return (
         <>
@@ -61,16 +59,28 @@ const EditableCompletionDate = ({ task, control, errors, minDate, maxDate }) => 
                                     errors[`completed_at_${task.id}`] ? "!border-red" : ""
                                 }`}
                                 value={inputValue}
-                                min={min}
-                                max={max}
-                                onChange={(e) => field.onChange(e.target.value)}
-                                onBlur={() => handleBlur(field)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        handleBlur(field);
+                                min={min}   // ✅ only min enforced
+                                onChange={(e) => {
+                                    field.onChange(e.target.value);
+                                    if (e.target.value !== localValue) {
+                                        setPendingValue(e.target.value);
+                                    } else {
+                                        setPendingValue(null);
                                     }
                                 }}
                             />
+
+                            {/* ✅ Show Check button only if date changed */}
+                            {pendingValue && pendingValue !== localValue && (
+                                <button
+                                    type="button"
+                                    className="ti-btn ti-btn-success !py-1 !px-2 !text-[0.75rem]"
+                                    onClick={() => setShowConfirmModal(true)}
+                                >
+                                    <i className="bi bi-check-lg"></i>
+                                </button>
+                            )}
+
                             <ErrorMessage message={errors[`completed_at_${task.id}`]?.message} />
                         </div>
                     );
@@ -80,14 +90,11 @@ const EditableCompletionDate = ({ task, control, errors, minDate, maxDate }) => 
             {/* Confirmation Modal */}
             <CompletionDateConfirmModal
                 isOpen={showConfirmModal}
-                onConfirm={() => {
-                    handleSave(pendingValue);
-                    setPendingValue(null);
-                    setShowConfirmModal(false);
-                }}
+                isSubmitting={isSubmitting}   // ✅ pass loading state
+                onConfirm={() => handleSave(pendingValue)}
                 onClose={() => {
-                    setPendingValue(null);
                     setShowConfirmModal(false);
+                    setPendingValue(null);
                 }}
             />
         </>
