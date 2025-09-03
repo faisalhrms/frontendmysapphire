@@ -58,15 +58,15 @@ export const INVENTORY_ROUTES = {
     },
     SETUPS: {
         READ: {
-            path: '/module/setups/location-subnets',
+            path: '/module/asset/setups/subnets',
             permission:'inventory.manage_location_subnets'
         },
         ADD:{
-            path:'/module/setups/location-subnets/add',
+            path:'/module/setups/subnets/add',
             permission:'inventory.manage_location_subnets'
         },
         EDIT:{
-            path:'/module/setups/location-subnets/edit/:id',
+            path:'/module/setups/subnets/edit/:id',
             permission:'inventory.manage_location_subnets'
         }
     }

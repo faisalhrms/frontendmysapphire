@@ -16,7 +16,7 @@ const LocationSubnetList = () => {
             disableSortBy: true,
             Cell: ({ row }) => (
                 <div className="flex justify-center space-x-2">
-                    <Link to={`/module/setups/location-subnets/edit/${row.original.id}`}>
+                    <Link to={`/module/asset/setups/subnets/edit/${row.original.id}`}>
                         <button
                             className="ti-btn ti-btn-primary ti-btn-sm"
                             title="Edit"
