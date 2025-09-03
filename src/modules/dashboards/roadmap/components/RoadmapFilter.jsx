@@ -5,43 +5,26 @@ import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx'
 import FilterButton from '@components/form/FilterButton.jsx'
 import { businessUnit } from '@modules/road-map/setup/unit-category/services/UnitCategoryService.js'
 
-/**
- * Props:
- *  - control (required): RHF control from parent useForm
- *  - setValue (required): RHF setValue from parent useForm
- *  - errors (optional)
- *  - selectedBU (optional): legacy; will be ignored if form has business_unit selected
- *  - labelCerts (optional): array of label certificate objects
- */
-const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts = [] }) => {
-  // Watch current selections
+const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts = [],tds_file }) => {
   const watchedBU  = useWatch({ control, name: 'business_unit' })
   const watchedQ   = useWatch({ control, name: 'quality' })
   const watchedPM  = useWatch({ control, name: 'process_method' })
-
-  // Compute params for endpoints
+  console.log(tds_file, "tds")
   const bu = watchedBU ?? selectedBU ?? ''
 
-  // Hard resets when parent value changes (covers manual changes, programmatic sets, etc.)
   useEffect(() => {
-    // BU changed → reset deeper filters
     setValue('quality', null)
     setValue('process_method', null)
     setValue('product', null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchedBU])
 
   useEffect(() => {
-    // Quality changed → reset process + product
     setValue('process_method', null)
     setValue('product', null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchedQ])
 
   useEffect(() => {
-    // Process method changed → reset product only
     setValue('product', null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchedPM])
 
   return (
@@ -50,7 +33,6 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
         <div className="box">
           <div className="box-body p-4">
             <div className="flex items-center gap-4">
-              {/* Business Unit */}
               <div className="flex-1 min-w-0">
                 <FormSelect
                   className="w-full"
@@ -60,17 +42,9 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
                   errors={errors}
                   placeholder="Business Unit"
                   options={businessUnit}
-                  // If your FormSelect supports onChange/onSelectChange, you can also add:
-                  // onSelectChange={(val) => {
-                  //   setValue('business_unit', val ?? null)
-                  //   setValue('quality', null)
-                  //   setValue('process_method', null)
-                  //   setValue('product', null)
-                  // }}
                 />
               </div>
 
-              {/* Quality (by chains for BU) */}
               <div className="flex-1 min-w-0">
                 <FormAsyncSelect
                   className="w-full"
@@ -90,7 +64,6 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
                 />
               </div>
 
-              {/* Process (by chains for BU + Quality) */}
               <div className="flex-1 min-w-0">
                 <FormAsyncSelect
                   className="w-full"
@@ -109,7 +82,6 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
                 />
               </div>
 
-              {/* Product (by chains for BU + Quality + Process) */}
               <div className="flex-1 min-w-0">
                 <FormAsyncSelect
                   className="w-full"
@@ -128,7 +100,17 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
               <div className="flex-none">
                 <FilterButton />
               </div>
-
+              {tds_file && (
+                <a
+                href={tds_file}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={"TDS File"}
+                  className="ti-btn ti-btn-outline-info inline-flex items-center"
+                >
+                  <i className="ri-file-pdf-fill text-danger"></i>
+                </a>
+              )}
               {labelCerts.length > 0 && (
                 <div className="flex items-center space-x-2 ml-8 flex-none">
                   {labelCerts.map(cert => (

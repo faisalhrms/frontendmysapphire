@@ -4,12 +4,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
-import uploadProjectSchema from "@modules/project-management/schemas/uploadProjectSchema.js";
-import {uploadProjects} from "@modules/project-management/services/projectService.js";
-import {uploadTasks} from "@modules/project-management/services/taskService.js";
-import {uploadMilestones} from "@modules/project-management/services/milestoneService.js";
 
-const approverSchema = z.object({
+export const approverSchema = z.object({
     level: z.coerce.number({
         required_error: "Level is required",
         invalid_type_error: "Level must be a number",
