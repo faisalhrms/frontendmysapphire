@@ -61,7 +61,7 @@ const LocationSubnetList = () => {
 
     const buttons = (
         <Link
-            to={`/module/setups/location-subnets/add`}
+            to={`/module/asset/setups/subnets/add`}
             className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
         >
             <i className="ri-add-line font-semibold align-middle"></i> Add Location Subnet
