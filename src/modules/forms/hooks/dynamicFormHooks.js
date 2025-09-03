@@ -10,7 +10,7 @@ export const useDynamicFormEdit = (id) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get(`/forms/${id}`);
+                const response = await api.get(`/forms/${id}/`);
                 setData(response.data.data);
             } catch (error) {
                 Notify.error(error.response?.data?.message);

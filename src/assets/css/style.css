@@ -13927,4 +13927,26 @@ input[type=color i]::-webkit-color-swatch {
   background: #555;
 }
 
+@font-face {
+  font-family: "Gotham Book";
+  src: url("../fonts/Gotham-Book.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
+@font-face {
+  font-family: "Gotham Medium";
+  src: url("../fonts/Gotham-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+.gotham-normal {
+  font-family: "Gotham Book", sans-serif;
+}
+
+.gotham-medium {
+  font-family: "Gotham Medium", sans-serif;
+}

@@ -6,6 +6,7 @@ export const CHAT_BOT = {
         path: '/module/chat/bot',
         permission: 'auth.view_chat_bot',
     },
+
 };
 
 export const MODULE_ROUTES = [

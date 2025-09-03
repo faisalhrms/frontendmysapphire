@@ -32,6 +32,8 @@ export const platformOptions = [
 ];
 
 export const fontFamilyOptions = [
+    { value: "Gotham Book", label: "Gotham Book" },
+    { value: "Gotham Medium", label: "Gotham Medium" },
     { value: "Inter, sans-serif", label: "Inter (Default)" },
     { value: "Roboto, sans-serif", label: "Roboto" },
     { value: "Open Sans, sans-serif", label: "Open Sans" },
