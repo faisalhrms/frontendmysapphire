@@ -5,6 +5,8 @@ import RoadmapFilter from '@modules/dashboards/roadmap/components/RoadmapFilter.
 import { useFetchWithFilters } from '@hooks/useFetchWithFilters.js'
 import { roadmapFiltersSchema } from '@modules/dashboards/roadmap/schema/filtersSchema.js'
 import InteractiveMap from '@modules/dashboards/roadmap/components/InteractiveMap.jsx'
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import { LineSquiggle } from "lucide-react";
 
 const asId = v => (v && typeof v === 'object' && 'value' in v ? v.value : v ?? '')
 
@@ -44,9 +46,14 @@ const RoadmapDashboard = () => {
 
   const payload      = data?.data || data
   const labelCerts   = payload?.quality_detail?.label_certificates || []
-
+  const tds_file   = payload?.quality_detail?.tds_pdf_url || ""
   return (
     <div>
+        <IconPageHeader
+            heading="RoadMap Dashboard"
+            description="RoadMap Sourcing: Your Supply Chain at a Glance"
+            icon={LineSquiggle}
+        />
       <form onSubmit={handleSubmit(onSubmit)}>
         <RoadmapFilter
           control={control}
@@ -54,6 +61,7 @@ const RoadmapDashboard = () => {
           errors={errors}
           selectedBU={values.business_unit}
           labelCerts={labelCerts}
+          tds_file={tds_file}
         />
       </form>
 

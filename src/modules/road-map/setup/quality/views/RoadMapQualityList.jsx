@@ -49,8 +49,8 @@ const RoadMapQualityList = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span className="avatar avatar-lg">
-                    <img src={src} alt={label.name} />
+                  <span>
+                    <img src={src} alt={label.name}  className="h-14 w-14 object-contain"/>
                   </span>
                 </a>
               ) : (

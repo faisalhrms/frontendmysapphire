@@ -35,6 +35,7 @@ export default function useChatBot() {
   const voiceModeRef = useRef(null)
   const streamCtrlRef = useRef(null)
   const botIdxRef = useRef(-1)
+  const rafTickRef = useRef(0)
 
   const [tick, setTick] = useState(0)
 
@@ -235,7 +236,12 @@ export default function useChatBot() {
             c[i] = { ...c[i], html: (c[i].html || "") + ev.text }
             return c
           })
-          setTick(t => t + 1)
+          if (!rafTickRef.current) {
+            rafTickRef.current = requestAnimationFrame(() => {
+              setTick(t => t + 1)
+              rafTickRef.current = 0
+            })
+          }
         } else if (ev.type === "chart") {
           setMessages(prev => {
             const c = [...prev]; if (!c[i]) return prev

@@ -150,7 +150,7 @@ const ChainList = () => {
         key={tableKey}
         columns={columns}
         title="RoadMap Chain"
-        apiUrl="chain/datatable"
+        apiUrl="chain/datatable/"
         buttons={buttons}
       />
        {isModalOpen && (
