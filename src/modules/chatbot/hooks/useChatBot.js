@@ -10,22 +10,10 @@ export default function useChatBot() {
   const [isWebSearch, setIsWebSearch] = useState(false)
   const [modeSelection, setModeSelection] = useState("Select Source")
   const [modeOpen, setModeOpen] = useState(false)
-
-  const defaultChecks = [
-    "status_code","title","meta_description","h1",
-    "canonical","viewport","html_lang",
-    "open_graph","twitter_card",
-    "robots","sitemap",
-    "images_alt_ratio",
-    "ecommerce","ecom_schema","ecom_add_to_cart","ecom_prices","ecom_plp","ecom_cart","ecom_search",
-    "security_headers",
-    "broken_links"
-  ]
-
+  const defaultChecks = ["status_code","title","meta_description","h1","canonical","viewport","html_lang","open_graph","twitter_card","robots","sitemap","images_alt_ratio","ecommerce","ecom_schema","ecom_add_to_cart","ecom_prices","ecom_plp","ecom_cart","ecom_search","security_headers","broken_links"]
   const [qcTarget, setQcTarget] = useState("https://pk.sapphireonline.pk")
   const [qcChecks, setQcChecks] = useState(defaultChecks)
   const [qcRender, setQcRender] = useState(true)
-
   const recognitionRef = useRef(null)
   const finalTranscriptRef = useRef("")
   const inputRef = useRef(null)
@@ -36,7 +24,6 @@ export default function useChatBot() {
   const streamCtrlRef = useRef(null)
   const botIdxRef = useRef(-1)
   const rafTickRef = useRef(0)
-
   const [tick, setTick] = useState(0)
 
   const autoResize = useCallback((eOrEl) => {
@@ -52,11 +39,17 @@ export default function useChatBot() {
   }
 
   const normalizeStatus = l => {
-    const s = String(l || "").toLowerCase()
-    if (s === "thinking") return "Thinking "
-    if (s === "searching") return "Searching the web "
-    if (s.startsWith("running ")) return `Calling ${l.slice(8)}`
-    return l
+    const s = String(l || "").trim()
+    if (!s) return ""
+    let capitalized = s.charAt(0).toUpperCase() + s.slice(1)
+    const doneKeywords = ["ready", "complete", "all set"]
+    if (doneKeywords.some(k => capitalized.toLowerCase().includes(k))) {
+      return capitalized
+    }
+    if (capitalized.toLowerCase() === "searching") {
+      return "Searching the web"
+    }
+    return capitalized
   }
 
   const pickMimeType = () => {
@@ -198,11 +191,12 @@ export default function useChatBot() {
       const mode =
         modeSelection === "Export Data" ? "export" :
         modeSelection === "Salesforce" ? "salesforce" :
-        modeSelection === "Quality Control" ? "qc" : ""
+        modeSelection === "Quality Control" ? "qc" :
+        modeSelection === "Policies" ? "policies" : ""
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
-        { type: "bot", loading: true, time: new Date(), html: "", chart: null, latestStatus: isWebSearch ? "Searching the web " : "Thinking ", error: null, mode }
+        { type: "bot", loading: true, time: new Date(), html: "", chart: null, latestStatus: isWebSearch ? "Searching the web" : "Thinking", error: null, mode }
       ]
       botIdxRef.current = next.length - 1
       return next
@@ -211,7 +205,8 @@ export default function useChatBot() {
     const mode =
       modeSelection === "Export Data" ? "export" :
       modeSelection === "Salesforce" ? "salesforce" :
-      modeSelection === "Quality Control" ? "qc" : ""
+      modeSelection === "Quality Control" ? "qc" :
+      modeSelection === "Policies" ? "policies" : ""
 
     streamCtrlRef.current = ChatService.stream({
       msg,

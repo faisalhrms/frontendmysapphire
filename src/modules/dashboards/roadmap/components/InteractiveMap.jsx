@@ -221,7 +221,7 @@ export default function InteractiveMap({ chain }) {
           const headerClass = hasIn && hasOut ? "" : hasOut ? "!bg-pink/20" : "bg-info/15"
           const headerStyle =
             hasIn && hasOut
-              ? { background: "linear-gradient(90deg, rgba(236,72,153,0.2) 0%, rgba(236,72,153,0.2) 50%, rgba(59,130,246,0.15) 50%, rgba(59,130,246,0.15) 100%)" }
+              ? { background: "linear-gradient(90deg, rgb(231 145 188 / 0.2) 0%, rgb(231 145 188 / 0.2) 50%, rgb(73 182 245 / 0.15) 50%, rgb(73 182 245 / 0.15) 100%)" }
               : undefined
           return (
             <div
