@@ -115,7 +115,6 @@ export const useLocationSubnetForm = (subnetData = {}, isEditMode = false, refet
                 }
 
                 if (res) {
-                    if (refetch) refetch();
                     navigate(INVENTORY_ROUTES.SETUPS.READ.path); // ✅ redirect
                 }
             } catch (err) {
