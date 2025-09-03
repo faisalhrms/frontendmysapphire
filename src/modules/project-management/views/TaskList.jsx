@@ -215,7 +215,6 @@ const TaskList = () => {
                     control={control}
                     errors={errors}
                     minDate={row.original.started_at}
-                    maxDate={row.original.milestone?.ended_at}  
                 />
             ),
             filterType: 'datetime',

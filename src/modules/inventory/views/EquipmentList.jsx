@@ -1,19 +1,28 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {Link, useLocation} from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
 import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
 import {getBadgeClasses} from "@helpers/badges.js";
-import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
+import {deleteEquipment, equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 import EquipmentRepairListModal from "@modules/inventory/models/EquipmentRepairListModal.jsx";
 import EquipmentRepairFormModal from "@modules/inventory/models/EquipmentRepairFormModal.jsx";
 import {Avatar} from "@mui/material";
 import { ShieldCheck } from "lucide-react";
+import EquipmentDeleteConfirmModal from "@modules/inventory/models/EquipmentDeleteConfirmModal.jsx";
 const EquipmentList = ({ isActive, externalFilters = [] }) => {
     if (!isActive) return null;
     const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
     const [showRepairForm, setShowRepairForm] = useState(false);
     const [showRepairList, setShowRepairList] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const tableRef = useRef(null);
+    const openDeleteModal = (id) => {
+        setDeletingId(id);
+        setShowDeleteModal(true);
+    };
     const openRepairForm = (id) => {
         setSelectedEquipmentId(id);
         setShowRepairForm(true);
@@ -22,6 +31,22 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
     const openRepairList = (id) => {
         setSelectedEquipmentId(id);
         setShowRepairList(true);
+    };
+    const handleConfirmDelete = async () => {
+        setIsDeleting(true);
+        try {
+            await deleteEquipment(deletingId);
+
+            setShowDeleteModal(false);
+            setDeletingId(null);
+
+            // ✅ refresh table correctly
+            tableRef.current?.refetch();
+        } catch (error) {
+            console.error("Delete failed:", error.message);
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
 
@@ -55,6 +80,13 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
                         title="View Repairs"
                     >
                         <i className="ri-list-settings-line"></i>
+                    </button>
+                    <button
+                        className="ti-btn ti-btn-danger ti-btn-sm"
+                        onClick={() => openDeleteModal(row.original.id)}
+                        title="Delete"
+                    >
+                        <i className="ri-delete-bin-line"></i>
                     </button>
                 </div>
             ),
@@ -267,6 +299,7 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
         <>
 
             <DataTable
+                ref={tableRef}
                 columns={columns}
                 title="Assets"
                 apiUrl={`/equipments/datatable/`}
@@ -291,6 +324,16 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
                     hiddenParameters={externalFilters}
                 />
             )}
+            {showDeleteModal && (
+                <EquipmentDeleteConfirmModal
+                    isOpen={showDeleteModal}
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={handleConfirmDelete}
+                    isSubmitting={isDeleting}
+                />
+
+            )}
+
         </>
     );
 };

@@ -95,3 +95,14 @@ export const verifyEquipmentItem = async (id, payload) => {
         throw error;
     }
 };
+
+export const deleteEquipment = async (id) => {
+    try {
+        const response = await api.delete(`/equipments/${id}/delete/`);
+        Notify.success(response.data.message || "Equipment deleted successfully");
+        return response.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Failed to delete equipment");
+        throw new Error(error.response?.data?.message || "Failed to delete equipment");
+    }
+};

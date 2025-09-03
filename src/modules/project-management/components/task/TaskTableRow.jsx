@@ -14,9 +14,12 @@ import TaskDeadLineItem from "@modules/project-management/components/task/TaskDe
 import TaskTable from "@modules/project-management/components/project/TaskTable.jsx";
 import SetActiveUserModalPortal from "@modules/project-management/components/task/SetActiveUserModalPortal.jsx";
 import useSetActiveUserModal from "@modules/project-management/hooks/taskHooks.js";
+import EditableCompletionDate from "@modules/project-management/components/task/EditableCompletionDate.jsx";
 
 const TaskTableRow = ({
                           task,
+                          control,
+                          errors,
                           isChild,
                           activeTaskId,
                           setActiveTaskId,
@@ -68,7 +71,16 @@ const TaskTableRow = ({
             case 'ended_at':
                 return <td><div className="flex items-center"><TaskDeadLineItem task={task} /></div></td>;
             case 'completed_at':
-                return <td>{formatDate(task.completed_at)}</td>;
+                return (
+                    <td>
+                        <EditableCompletionDate
+                            task={task}
+                            control={control}
+                            errors={errors}
+                            minDate={startedAt}
+                        />
+                    </td>
+                );
             case 'status':
                 return (
                     <td className={`min-w-[200px] ${(projectUser?.can_view_only || viewOnly) ? `!p-0 ${getBadgeClasses(task.status, '', false)}` : ''}`}>
