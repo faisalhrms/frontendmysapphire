@@ -60,7 +60,7 @@ export const sidebarMenu = [
                         'Subnets',
                         1,
                         '',
-                        INVENTORY_ROUTES.READ.permission
+                        INVENTORY_ROUTES.SETUPS.ADD.permission
                     )
                 ]
             )

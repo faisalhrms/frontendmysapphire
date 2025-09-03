@@ -58,13 +58,16 @@ export const INVENTORY_ROUTES = {
     },
     SETUPS: {
         READ: {
-            path: '/module/setups/location-subnets'
+            path: '/module/setups/location-subnets',
+            permission:'inventory.manage_location_subnets'
         },
         ADD:{
-            path:'/module/setups/location-subnets/add'
+            path:'/module/setups/location-subnets/add',
+            permission:'inventory.manage_location_subnets'
         },
         EDIT:{
-            path:'/module/setups/location-subnets/edit/:id'
+            path:'/module/setups/location-subnets/edit/:id',
+            permission:'inventory.manage_location_subnets'
         }
     }
 };
@@ -123,16 +126,16 @@ export const MODULE_ROUTES = [
     {
         path:INVENTORY_ROUTES.SETUPS.READ.path,
         component:LocationSubnetList,
-        permission: INVENTORY_ROUTES.READ.permission,
+        permission: INVENTORY_ROUTES.SETUPS.ADD.permission,
     },
     {
         path:INVENTORY_ROUTES.SETUPS.ADD.path,
         component:LocationSubnetAdd,
-        permission: INVENTORY_ROUTES.READ.permission,
+        permission: INVENTORY_ROUTES.SETUPS.ADD.permission,
     },
     {
         path:INVENTORY_ROUTES.SETUPS.EDIT.path,
         component:LocationSubnetEdit,
-        permission: INVENTORY_ROUTES.READ.permission,
+        permission: INVENTORY_ROUTES.SETUPS.ADD.permission,
     }
 ];
