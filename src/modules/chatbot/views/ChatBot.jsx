@@ -12,6 +12,7 @@ import ChartBox from "@modules/chatbot/components/ChartBox.jsx"
 import TypingIndicator from "@modules/chatbot/components/TypingIndicator.jsx"
 import LiveScanLCD from "@modules/chatbot/components/LiveScan.jsx"
 import QCReport from "@modules/chatbot/components/QCReport.jsx"
+import ExportExcelButton from "@modules/chatbot/components/ExportExcelButton.jsx"
 
 export default function ChatBot() {
   const {
@@ -38,7 +39,9 @@ export default function ChatBot() {
     setQcChecks,
     qcRender,
     setQcRender,
-    tick
+    tick,
+    ask,
+    suggestions
   } = useChatBot()
 
   const currentUser = useSelector(s => s.auth.user)
@@ -134,16 +137,36 @@ export default function ChatBot() {
                       {m.loading && m.mode === "qc" ? (
                         <LiveScanLCD url={qcTarget} shots={2} delayMs={1800} maxWidth={680} />
                       ) : m.loading ? (
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          {m.latestStatus || (isWebSearch ? "Searching the web " : "Thinking ")} <TypingIndicator />
+                        <div className="space-y-2 text-xs text-gray-500">
+                          {m.statuses?.length > 0 ? (
+                            <ul className="list-none space-y-1">
+                              {m.statuses.map((status, sIdx) => (
+                                <li key={sIdx} className="flex items-center gap-2">
+                                  {sIdx < m.statuses.length - 1 ? (
+                                    <i className="ri-check-line text-green text-base"></i>
+                                  ) : (
+                                    <i className="ri-loader-4-line animate-spin text-sky-700 text-base"></i>
+                                  )}
+                                  <span>{status}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              {m.latestStatus || (isWebSearch ? "Searching the web " : "Thinking ")} <TypingIndicator />
+                            </div>
+                          )}
                         </div>
                       ) : null}
                       {m.error ? (
                         <div className="text-xs text-red-600 mt-1">{m.error}</div>
                       ) : (
                         <>
+                          <div className="flex justify-end mb-1">
+                            {!m.chart && /<(table|ol|ul)/i.test(m.html || "") ? <ExportExcelButton html={m.html} /> : null}
+                          </div>
                           {m.mode === "qc" && !m.loading ? <QCReport result={m.qc} html={m.html} llm={m.qcLlm} /> : null}
-                          {m.chart ? <ChartBox spec={m.chart} /> : null}
+                          {m.chart ? <ChartBox spec={m.chart} ask={ask} /> : null}
                           {m.html && m.mode !== "qc"
                             ? <div className={`main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none ${m.loading ? "streaming" : ""}`} dangerouslySetInnerHTML={{ __html: m.html }} />
                             : null}
@@ -205,6 +228,9 @@ export default function ChatBot() {
         setQcChecks={setQcChecks}
         qcRender={qcRender}
         setQcRender={setQcRender}
+        autoResize={autoResize}
+        ask={ask}
+        suggestions={suggestions}
       />
     </div>
   )

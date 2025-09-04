@@ -20,21 +20,37 @@ const ChatInputBar = ({
   qcChecks,
   setQcChecks,
   qcRender,
-  setQcRender
+  setQcRender,
+  ask,
+  suggestions = []
 }) => {
-  const pad = modeSelection === "Quality Control" ? "pb-20" : "pb-16"
+  const chips = (suggestions.length ? suggestions : [
+    "Top 10 exporters of Bed by value_usd last 12 months bar chart",
+    "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
+  ]).slice(0, 4)
+
+  const pad = modeSelection === "Quality Control" ? "pb-24" : "pb-20"
   return (
     <div className={`relative w-full max-w-5xl mx-auto bg-white dark:bg-bodybg rounded-xl shadow-xl ring-1 ring-black/5 border border-gray-200 px-6 pt-4 ${pad}`}>
       {modeSelection !== "Quality Control" ? (
-        <textarea
-          ref={inputRef}
-          rows={1}
-          placeholder="What do you want to know?"
-          value={input}
-          onChange={e => { setInput(e.target.value); autoResize(e) }}
-          onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-          className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] leading-6"
-        />
+        <>
+          <textarea
+            ref={inputRef}
+            rows={1}
+            placeholder="What do you want to know?"
+            value={input}
+            onChange={e => { setInput(e.target.value); if (typeof autoResize === "function") autoResize(e) }}
+            onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
+            className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] leading-6"
+          />
+          <div className="mt-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {chips.map((s, i) => (
+              <button key={i} onClick={() => ask?.(s)} className="shrink-0 text-[11px] px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600">
+                {s}
+              </button>
+            ))}
+          </div>
+        </>
       ) : (
         <QCPanel
           qcTarget={qcTarget}
