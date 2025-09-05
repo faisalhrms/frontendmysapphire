@@ -36,3 +36,46 @@ export const getChartData = async () => {
         throw error;
     }
 };
+
+export const getMonthlySpend = async () => {
+    try {
+        const response = await api.get("/dashboard/subscriptions/monthly-spend/");
+        console.log("monthly spend", response);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching monthly spend data");
+        throw error;
+    }
+};
+
+export const getCountByDepartment = async () => {
+    try {
+        const response = await api.get("/dashboard/subscriptions/count-by-department/");
+        console.log("count by department", response);
+        return response.data.data; // API returns data inside `data`
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching count by department");
+        throw error;
+    }
+};
+
+export const getCountByVendor = async () => {
+    try {
+        const response = await api.get("/dashboard/subscriptions/count-by-vendor/");
+        console.log("count by vendor", response);
+        return response.data.data; // API returns inside `data`
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching count by vendor");
+        throw error;
+    }
+};
+export const getUpcomingRenewals = async (days = 10) => {
+    try {
+        const response = await api.get(`/dashboard/subscriptions/upcoming-renewals/?days=${days}`);
+        console.log("upcoming renewals", response);
+        return response.data.data; // Assuming response follows { data: [...] }
+    } catch (error) {
+        Notify.error(error.response?.data?.message || "Error fetching upcoming renewals");
+        throw error;
+    }
+};

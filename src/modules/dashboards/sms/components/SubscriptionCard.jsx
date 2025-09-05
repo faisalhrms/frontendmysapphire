@@ -1,28 +1,47 @@
-// src/modules/dashboards/sms/components/SubscriptionCard.jsx
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+const subscriptionIcons = {
+  "Total Active": "https://be.mysapphire.co/media/uploads/2025/09/03/total_active.png",
+  "Paid": "https://be.mysapphire.co/media/uploads/2025/09/03/paid_icon.png",
+  "Free": "https://be.mysapphire.co/media/uploads/2025/09/03/free_icon.png",
+  "Canceled (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/03/free_icon.png",
+  "New (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/03/new_icon.png",
+};
+
+const subscriptionColors = {
+  "Total Active": "bg-success/10",
+  "Paid": "bg-secondary/10",
+  "Free": "bg-danger/10",
+  "Canceled (YTD)": "bg-orange/10",
+  "New (YTD)": "bg-purple/10",
+};
+
 const SubscriptionCard = ({ subscriptionData, route }) => {
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log(`Navigating to: ${route}`); // Log the route being navigated to
-    navigate(route); // Navigate to the dynamic route
+    navigate(route);
   };
 
+  const icon = subscriptionIcons[subscriptionData.name] || "";
+  const bgColor = subscriptionColors[subscriptionData.name] || "";
+
   return (
-      <div
-          className="cursor-pointer"
-          onClick={handleClick} // Use the new handler
-      >
-        <div className="bg-white rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto shadow-md">
-          <i className="ri-exchange-dollar-line text-4xl text-primary"></i>
+      <div className="cursor-pointer" onClick={handleClick}>
+        <div
+            className={`${bgColor} rounded-lg p-4 flex items-center border border-gray-200 space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto shadow`}
+        >
+          <img
+              src={icon}
+              alt={subscriptionData.name}
+              className="w-12 h-12"
+          />
           <div>
-            <h3 className="text-gray-600 text-sm font-medium">
+            <h3 className="font-bold text-sm text-gray-900 dark:text-white ">
               {subscriptionData.name}
             </h3>
-            <p className="text-2xl font-bold">
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
               {subscriptionData.totalSubscriptions ?? 0}
             </p>
           </div>
