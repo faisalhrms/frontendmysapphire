@@ -41,7 +41,7 @@ export const BasicBarChart = ({ data }) => {
             offsetY: -20,
             style: {
                 fontSize: "11px",
-                colors: ["#000"], 
+                colors: ["#000"],
             },
         },
         xaxis: {

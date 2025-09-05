@@ -62,9 +62,9 @@ export const VendorBasicBarChart = ({ data }) => {
     const chartWidth = Math.max(data.length * 100, 600);
 
     return (
-        <div className="box overflow-x-auto bg-gray-200">
-            <div style={{ minWidth: chartWidth }}>
-                <ReactApexChart options={options} series={series} type="bar" height={320} />
+        <div style={{overflowX: "auto", width: "100%"}}>
+            <div style={{minWidth: chartWidth}}>
+                <ReactApexChart options={options} series={series} type="bar" height={320}/>
             </div>
         </div>
     );
