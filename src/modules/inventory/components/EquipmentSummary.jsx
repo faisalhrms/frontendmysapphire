@@ -4,6 +4,7 @@ import {formatDate} from "@helpers/dateTime.js";
 import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
 
 const EquipmentSummary = ({id,equipmentData}) => {
+    console.log(id,equipmentData)
     return (
         <>
             <div className="box custom-box">

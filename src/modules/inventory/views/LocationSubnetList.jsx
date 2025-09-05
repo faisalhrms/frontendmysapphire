@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { formatDate } from "@helpers/dateTime.js";
 import { POLICIES_ROUTES } from "@modules/policies/routes.js";
-import {Shield} from "lucide-react";
+import {Router } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const LocationSubnetList = () => {
@@ -72,8 +72,8 @@ const LocationSubnetList = () => {
         <>
             <IconPageHeader
                 heading="Location Subnets"
-                description="Manage Location Subnets."
-                icon={Shield}
+                description="Organize and control subnets for every location with ease."
+                icon={Router}
             />
             <DataTable
                 columns={columns}

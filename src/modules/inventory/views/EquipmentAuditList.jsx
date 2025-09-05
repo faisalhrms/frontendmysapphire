@@ -1,7 +1,7 @@
 import React from "react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import {formatDate} from "@helpers/dateTime.js";
-import {Shield} from "lucide-react";
+import {ShieldCheck } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const EquipmentAuditList = () => {
@@ -63,8 +63,8 @@ const EquipmentAuditList = () => {
         <>
             <IconPageHeader
                 heading="Equipment Audits"
-                description="Manage Equipment Audits."
-                icon={Shield}
+                description="Track, review, and manage equipment audit records with ease."
+                icon={ShieldCheck  }
             />
             <DataTable
                 columns={columns}
