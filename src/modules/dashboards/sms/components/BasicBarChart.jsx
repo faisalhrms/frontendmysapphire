@@ -28,19 +28,20 @@ export const BasicBarChart = ({ data }) => {
                 horizontal: false,
                 columnWidth: "50%",
                 borderRadius: 4,
+                distributed: true,
                 dataLabels: {
-                    position: 'top',
-                    hideOverflowingLabels: false
+                    position: "top",
+                    hideOverflowingLabels: false,
                 },
             },
         },
         dataLabels: {
             enabled: true,
-            formatter: val => (val > 0.1 ? val.toLocaleString() : ''),
+            formatter: (val) => (val > 0.1 ? val.toLocaleString() : ""),
             offsetY: -20,
             style: {
-                fontSize: '11px',
-                colors: departmentColors,
+                fontSize: "11px",
+                colors: ["#000"], 
             },
         },
         xaxis: {
@@ -49,32 +50,31 @@ export const BasicBarChart = ({ data }) => {
                 rotate: 0,
                 trim: false,
                 style: {
-                    fontSize: '10px',
-                    whiteSpace: 'normal',
-                    wordBreak: 'break-word',
-                    lineHeight: '1.1rem',
+                    fontSize: "10px",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    lineHeight: "1.1rem",
                     maxWidth: 500,
                 },
             },
         },
         yaxis: {
-
             tickAmount: 5,
         },
         colors: departmentColors,
-        legend: { position: 'top' },
+        legend: { show: false },
         grid: {
-            borderColor: '#f1f1f1',
+            borderColor: "#f1f1f1",
             strokeDashArray: 4,
         },
     };
 
     return (
-        <div style={{ overflowX: 'auto', width: '100%' }}>
+        <div style={{ overflowX: "auto", width: "100%" }}>
             <div style={{ minWidth: chartWidth }}>
                 <ReactApexChart
                     options={options}
-                    series={[{ name: 'Subscriptions', data: values }]}
+                    series={[{ name: "Subscriptions", data: values }]}
                     type="bar"
                     height={370}
                 />
