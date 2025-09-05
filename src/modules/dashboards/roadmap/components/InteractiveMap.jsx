@@ -4,11 +4,11 @@ import { differenceInCalendarDays, parseISO } from "date-fns"
 
 const iconImg = (src, alt) => <img src={src} alt={alt} className="w-8 h-8"/>
 const iconMap = {
-  Fiber: iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751622582/fiber_svg_zawcar.svg","Fiber"),
+  Fiber: iconImg("https://be.mysapphire.co/media/uploads/2025/09/05/fiber_svg.png","Fiber"),
   Spinning: iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751622649/spinning_svg_ctprca.svg","Spinning"),
   "Yarn Dyeing": iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751624020/yarn_dyeing_svg_hcjmi8.svg","Yarn Dyeing"),
-  Weaving: iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751623481/weaving_svg_bwdrg1.svg","Weaving"),
-  Processing: iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751622978/processing_svg_ctwovk.svg","Processing"),
+  Weaving: iconImg("https://be.mysapphire.co/media/uploads/2025/09/05/weaving_svg.png","Weaving"),
+  Processing: iconImg("https://be.mysapphire.co/media/uploads/2025/09/05/processing_svg.png","Processing"),
   Wadding: iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751623012/wadding_svg_yvu1q1.svg","Wadding"),
   Stitching: iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751623689/stitching_svg_b4zb8r.svg","Stitching"),
   Accessories: iconImg("https://res.cloudinary.com/dtsguaevl/image/upload/v1751622705/accessories_svg_p011ii.svg","Accessories"),
