@@ -17,7 +17,6 @@ export const useSubscriptionSummary = () => {
                 const data = await getSubscriptionSummary();
                 setSummaryData(data);
             } catch (error) {
-                // Handle error if needed
             } finally {
                 setLoading(false);
             }
@@ -41,7 +40,6 @@ export const useActiveAndPendingSubscriptions = () => {
                 setActiveSubscriptions(data.activeSubscriptions);
                 setPendingSubscriptions(data.pendingSubscriptions);
             } catch (error) {
-                // Handle error if needed
             } finally {
                 setLoading(false);
             }
@@ -65,7 +63,6 @@ export const useSubscriptionCharts = () => {
                 setLineChartData(data.lineChartData);
                 setDonutChartData(data.donutChartData);
             } catch (error) {
-                // Handle error if needed
             } finally {
                 setLoading(false);
             }
@@ -130,7 +127,6 @@ export const useCountByVendor = () => {
                 const data = await getCountByVendor();
                 setCountByVendor(data);
             } catch (error) {
-                // already handled in service
             } finally {
                 setLoading(false);
             }

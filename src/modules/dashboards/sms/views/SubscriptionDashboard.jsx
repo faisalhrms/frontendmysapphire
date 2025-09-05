@@ -66,7 +66,7 @@ const SubscriptionDashboard = () => {
 
                 <div className="xl:col-span-4 col-span-12 flex-grow box ">
                     <SubscriptionListCard
-                        color="bg-success/10"
+                        color="bg-secondary/10"
                         title="Active Subscriptions"
                         totalCount={activeSubscriptions.totalCount}
                         items={activeSubscriptions.items}
@@ -105,7 +105,7 @@ const SubscriptionDashboard = () => {
                     </div>
                 </div>
 
-                <div className="xl:col-span-8 col-span-12 flex-grow box">
+                <div className="xl:col-span-8 col-span-12 flex-grow ">
                     <div className="box custom-box">
                         <div className="box-header bg-secondary/10">
                             <div className="box-title dark:text-white">Subscription Count by Department</div>
@@ -130,7 +130,7 @@ const SubscriptionDashboard = () => {
                         </div>
                     </div>
                 </div>
-                <div className="xl:col-span-8 col-span-12 flex-grow box">
+                <div className="xl:col-span-8 col-span-12 flex-grow ">
                     <div className="box custom-box">
                         <div className="box-header bg-primary/10">
                             <div className="box-title dark:text-white">Subscription Spending by department</div>
@@ -142,7 +142,7 @@ const SubscriptionDashboard = () => {
                 </div>
             </div>
             <div className="grid grid-cols-12 gap-x-6">
-                <div className="xl:col-span-12 col-span-12 flex-grow box">
+                <div className="xl:col-span-12 col-span-12 flex-grow ">
                     <div className="box custom-box">
                         <div className="box-header bg-warning/10">
                             <div className="box-title dark:text-white">Subscription Count by Vendor</div>
