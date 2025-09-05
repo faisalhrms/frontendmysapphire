@@ -1,5 +1,6 @@
 import React from "react"
 import QCPanel from "@modules/chatbot/components/QCPanel.jsx";
+import HasPermission from "@components/HasPermission.jsx";
 
 const ChatInputBox = ({
   input,
@@ -76,10 +77,18 @@ const ChatInputBox = ({
             {modeOpen && (
               <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-20 text-sm">
                 <button onClick={() => {setModeSelection("Select Source"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Select Source</button>
+                <HasPermission permission='auth.chatbot_export_data'>
                 <button onClick={() => {setModeSelection("Export Data"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Export Data</button>
+                </HasPermission>
+                <HasPermission permission='auth.chatbot_sales_force'>
                 <button onClick={() => {setModeSelection("Salesforce"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Salesforce</button>
+                </HasPermission>
+                <HasPermission permission='auth.chatbot_quality_control'>
                 <button onClick={() => {setModeSelection("Quality Control"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
+                </HasPermission>
+                 <HasPermission permission='auth.chatbot_policies'>
                 <button onClick={() => { setModeSelection("Policies"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Policies</button>
+                 </HasPermission>
               </div>
             )}
           </div>
