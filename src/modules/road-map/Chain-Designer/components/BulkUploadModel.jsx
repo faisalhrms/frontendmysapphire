@@ -58,7 +58,7 @@ const BulkUploadModel = ({closeModal, refreshTable}) => {
                         })}
                     >
                         <div className="ti-modal-header">
-                            <h6 className="modal-title">Upload Raw File</h6>
+                            <h6 className="modal-title">Upload File</h6>
                             <button
                                 type="button"
                                 className="hs-dropdown-toggle ti-modal-close-btn"

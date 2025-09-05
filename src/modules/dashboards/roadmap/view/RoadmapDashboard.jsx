@@ -37,7 +37,7 @@ const RoadmapDashboard = () => {
   }), [values])
 
   const { data, isLoading, error, refetch } = useFetchWithFilters(
-    '/chain/dashboard-chain',
+    '/chain/dashboard-chain/',
     filters,
     { enabled: false }
   )

@@ -5,6 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import sweeperGuardSchema from "@modules/dynamics/sweeper-and-gards/schemas/sweeperGuardSchema.js";
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
+import {DYNAMICS_ROUTES} from "@modules/dynamics/routes.js";
+import {Navigation} from "swiper/modules";
+import {INVENTORY_ROUTES} from "@modules/inventory/routes.js";
+import {useNavigate} from "react-router-dom";
 
 // ---------------- API calls ---------------- //
 
@@ -63,7 +67,7 @@ export const useFetchSweeperGuardById = (id) => {
 
 export const useSweeperGuardForm = (sgData = {}, isEditMode = false, refetch) => {
     const [editId, setEditId] = useState(isEditMode ? sgData?.id : null);
-
+    const navigate = useNavigate();
     const {
         control,
         handleSubmit,
@@ -72,35 +76,31 @@ export const useSweeperGuardForm = (sgData = {}, isEditMode = false, refetch) =>
     } = useForm({
         resolver: zodResolver(sweeperGuardSchema),
         defaultValues: {
-            // Backend expects `store`, not `store_id`
-            store: sgData.store || null,
+            store_id: sgData.store?.id || null,
             num_of_guards: sgData.num_of_guards || 0,
             num_of_sweepers: sgData.num_of_sweepers || 0,
             num_of_stock_helpers: sgData.num_of_stock_helpers || 0,
             leased_area_total: sgData.leased_area_total || 0,
             store_capacity_total: sgData.store_capacity_total || 0,
-            leased_areas: sgData.leased_areas || [], // nested array of { category, area_sq_feet }
-            category_designs: sgData.category_designs || [], // nested array of { category, design_pieces }
+            category_designs: sgData.category_designs || [],
         },
     });
 
     const handleSweeperGuardSubmit = useCallback(
         async (data) => {
             try {
-                // Normalize payload to match backend
                 const payload = {
                     ...data,
-                    store: typeof data.store === "object" ? data.store?.id : data.store,
                 };
-
                 let res;
                 if (editId) {
                     res = await updateSweeperGuard(editId, payload);
                 } else {
                     res = await createSweeperGuard(payload);
                 }
-
-                if (res && refetch) refetch();
+                if (res){
+                    navigate(DYNAMICS_ROUTES.READ.path);
+                }
             } catch (err) {
                 console.error("SweeperGuard submit error:", err);
             }

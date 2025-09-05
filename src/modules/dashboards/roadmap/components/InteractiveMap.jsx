@@ -22,7 +22,7 @@ export default function InteractiveMap({ chain }) {
     return () => clearInterval(iv)
   }, [])
 
-  const cleanName = s => (s || "").replace(/\s*\((Inhouse|Outsource)\)$/i, "")
+  const cleanName = s => (s || "").replace(/\s*[—–]\s*[^()]+(?=\s*(?:\(|$))/u,"").replace(/\s*\((?:Inhouse|Outsource)\)\s*$/i,"").trim()
 
   const data = chain?.data || chain || {}
   const cats = data.unit_categories || []
@@ -53,14 +53,16 @@ export default function InteractiveMap({ chain }) {
             unitId: uid,
             unitName: cleanName(r.unit?.name || ""),
             suppliers: [],
-            inHouse: !!r.is_in_house
+            hasIn: false,
+            hasOut: false
           }
-        } else if (r.is_in_house) {
-          m[uid].inHouse = true
         }
+        if (r.is_in_house) m[uid].hasIn = true
+        if (!r.is_in_house) m[uid].hasOut = true
         ;(r.suppliers || []).forEach(s => {
-          if (!m[uid].suppliers.find(x => x.id === s.id)) {
-            m[uid].suppliers.push(s)
+          const tag = r.is_in_house ? "in" : "out"
+          if (!m[uid].suppliers.find(x => x.id === s.id && x.tag === tag)) {
+            m[uid].suppliers.push({ ...s, tag })
           }
         })
       })
@@ -198,8 +200,8 @@ export default function InteractiveMap({ chain }) {
         </svg>
         <svg className="absolute inset-0 pointer-events-none" width="1400" height="720">
           {points.map(p => {
-            const hasIn = p.units.some(u => u.inHouse)
-            const hasOut = p.units.some(u => !u.inHouse)
+            const hasIn = p.units.some(u => u.hasIn)
+            const hasOut = p.units.some(u => u.hasOut)
             const icon =
               hasIn && hasOut
                 ? "https://be.mysapphire.co/media/uploads/2025/09/02/mix_location_4EYaR9k.png"
@@ -216,12 +218,12 @@ export default function InteractiveMap({ chain }) {
           const canCollapse = !!hasToggleByCat[p.cid]
           const shouldShift = canCollapse && expandedCats.has(String(p.cid))
           const pos = shouldShift ? { left: pos0.left, top: Math.max(0, pos0.top - (expandShift[p.id] || 0)) } : pos0
-          const hasIn = p.units.some(u => u.inHouse)
-          const hasOut = p.units.some(u => !u.inHouse)
+          const hasIn = p.units.some(u => u.hasIn)
+          const hasOut = p.units.some(u => u.hasOut)
           const headerClass = hasIn && hasOut ? "" : hasOut ? "!bg-pink/20" : "bg-info/15"
           const headerStyle =
             hasIn && hasOut
-              ? { background: "linear-gradient(90deg, rgba(236,72,153,0.2) 0%, rgba(236,72,153,0.2) 50%, rgba(59,130,246,0.15) 50%, rgba(59,130,246,0.15) 100%)" }
+              ? { background: "linear-gradient(90deg, rgb(231 145 188 / 0.2) 0%, rgb(231 145 188 / 0.2) 50%, rgb(73 182 245 / 0.15) 50%, rgb(73 182 245 / 0.15) 100%)" }
               : undefined
           return (
             <div
@@ -244,14 +246,16 @@ export default function InteractiveMap({ chain }) {
                       <li key={u.unitId}>
                         <div className="flex justify-between items-center">
                           <span
-                            className="text-xs text-gray-800 font-medium dark:text-gray-200 cursor-pointer"
+                            className="text-xs text-gray-800 font-medium dark:text-gray-200 cursor-pointer flex items-center gap-2"
                             onClick={() => openCanvas(p.cid, u.unitId, u.unitName)}
                           >
-                            {u.unitName}
+                            {u.hasIn && <span className="inline-block w-2 h-2 rounded-full" style={{ background: "rgb(73 182 245)" }} />}
+                            {u.hasOut && <span className="inline-block w-2 h-2 rounded-full" style={{ background: "rgb(231 145 188)" }} />}
+                            <span>{u.unitName}</span>
                           </span>
                           {showToggle && (
                             <span
-                              className="text-sky-700 font-bold text-lg cursor-pointer"
+                              className="font-bold text-lg cursor-pointer"
                               onClick={() => toggle(p.cid, u.unitId)}
                             >
                               {expanded[key] ? "−" : "+"}
@@ -260,17 +264,23 @@ export default function InteractiveMap({ chain }) {
                         </div>
                         {expanded[key] && showToggle && (
                           <div className="table-responsive overflow-hidden">
-                            <table className="table  table-hover whitespace-nowrap min-w-full">
+                            <table className="table table-hover whitespace-nowrap min-w-full">
                               <tbody>
                                 {u.suppliers.map(s => (
                                   <tr
-                                    key={s.id}
+                                    key={`${s.id}-${s.tag}`}
                                     className="border-t border-inherit border-solid hover:bg-gray-100 dark:hover:bg-light dark:border-defaultborder/10 cursor-pointer"
-                                    onClick={() =>
-                                      openCanvas(p.cid, u.unitId, u.unitName)
-                                    }
+                                    onClick={() => openCanvas(p.cid, u.unitId, u.unitName)}
                                   >
-                                    <td className="!text-xs !font-normal">{s.name}</td>
+                                    <td className="!text-xs !font-normal">
+                                      <span className="inline-flex items-center gap-2">
+                                        <span
+                                          className="inline-block w-2 h-2 rounded-full"
+                                          style={{ background: s.tag === "in" ? "rgb(73 182 245)" : "rgb(231 145 188)" }}
+                                        />
+                                        {s.name}
+                                      </span>
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
