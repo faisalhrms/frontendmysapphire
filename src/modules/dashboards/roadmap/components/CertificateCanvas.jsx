@@ -29,7 +29,7 @@ export default function CertificateCanvas({ id = "hs-overlay-right", unitName, g
         return "badge bg-primary/10 text-primary"
     }
   return (
-    <div id={id} className="hs-overlay hidden ti-offcanvas ti-offcanvas-right !max-w-[35rem]">
+    <div id={id} className="hs-overlay hidden ti-offcanvas ti-offcanvas-right !max-w-[35rem] p-2">
       <div className="ti-offcanvas-header border-b">
         <h6 className="ti-offcanvas-title">Certificate Details <span className="font-bold">{unitName}</span></h6>
         <button type="button" className="ti-btn" data-hs-overlay={`#${id}`}>×</button>
@@ -69,7 +69,7 @@ export default function CertificateCanvas({ id = "hs-overlay-right", unitName, g
                       <th scope="col" className="text-start">Certificate</th>
                       <th scope="col" className="text-start">Status</th>
                       <th scope="col" className="text-start">Expiry</th>
-                      <th scope="col" className="text-start">Action</th>
+                      <th scope="col" className="text-start"></th>
                     </tr>
                   </thead>
                   <tbody>
