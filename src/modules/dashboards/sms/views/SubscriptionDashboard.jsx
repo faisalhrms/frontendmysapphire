@@ -78,8 +78,10 @@ const SubscriptionDashboard = () => {
                         title="Pending Subscriptions"
                         totalCount={pendingSubscriptions.totalCount}
                         items={pendingSubscriptions.items}
+                        enableSearch={true}
                     />
                 </div>
+
                 <div className="xl:col-span-4 col-span-8 flex-grow">
                     <SubscriptionListCard
                         color="bg-orange/10"
@@ -117,8 +119,8 @@ const SubscriptionDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-x-6">
-                <div className="xl:col-span-4 col-span-12 ">
+            <div className="grid grid-cols-12 gap-x-6  ">
+                <div className="xl:col-span-5 col-span-12 flex-grow box ">
                     <div className="box">
                         <div className="box-header bg-green/10">
                             <div className="box-title dark:text-white">Monthly Spending</div>
@@ -130,7 +132,7 @@ const SubscriptionDashboard = () => {
                         </div>
                     </div>
                 </div>
-                <div className="xl:col-span-8 col-span-12 flex-grow ">
+                <div className="xl:col-span-7 col-span-12 flex-grow box ">
                     <div className="box custom-box">
                         <div className="box-header bg-primary/10">
                             <div className="box-title dark:text-white">Subscription Spending by department</div>
@@ -144,12 +146,7 @@ const SubscriptionDashboard = () => {
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="xl:col-span-12 col-span-12 flex-grow ">
                     <div className="box custom-box">
-                        <div className="box-header bg-warning/10">
-                            <div className="box-title dark:text-white">Subscription Count by Vendor</div>
-                        </div>
-                        <div className="box-body">
-                            <VendorBasicBarChart data={countByVendor}/>
-                        </div>
+                        <VendorBasicBarChart data={countByVendor}/>
                     </div>
                 </div>
             </div>

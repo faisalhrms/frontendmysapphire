@@ -22,11 +22,11 @@ export const BasiclineChart = ({ data }) => {
             toolbar: { show: false },
             animations: { enabled: false },
             zoom: { enabled: false },
-            parentHeightOffset: 0,
+            parentHeightOffset: 20,
         },
         stroke: {
             curve: "smooth",
-            width: 4,
+            width: 6,
         },
         markers: {
             size: 4,
@@ -37,13 +37,17 @@ export const BasiclineChart = ({ data }) => {
         },
         xaxis: {
             categories: chartData.categories,
-            tickPlacement: "on",
+            tickPlacement: "between",
             labels: {
-                style: { fontSize: "9px", fontWeight: 600 },
-                offsetX: 0,
-                rotate: -45,
-                rotateAlways: true,
-                trim: false,
+                rotate: 0, // straight labels
+                trim: false, // don’t cut text
+                style: {
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    letterSpacing: 1,
+                    lineHeight: 1.8,
+                },
+                formatter: (val) => val,
             },
         },
         yaxis: {
@@ -61,6 +65,7 @@ export const BasiclineChart = ({ data }) => {
             padding: {
                 left: 20,
                 right: 20,
+                bottom: 20,
             },
         },
         dataLabels: { enabled: false },
@@ -70,7 +75,10 @@ export const BasiclineChart = ({ data }) => {
     return (
         <div className="xl:col-span-8 col-span-12">
             <div className="box overflow-x-auto">
-                <div className="box-body min-w-[800px]"> 
+                <div
+                    className="box-body"
+                    style={{ minWidth: `${chartData.categories.length * 200}px` }}
+                >
                     <ReactApexChart
                         options={options}
                         series={chartData.series}

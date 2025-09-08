@@ -5,7 +5,7 @@ const subscriptionIcons = {
   "Total Active": "https://be.mysapphire.co/media/uploads/2025/09/03/total_active.png",
   "Paid": "https://be.mysapphire.co/media/uploads/2025/09/03/paid_icon.png",
   "Free": "https://be.mysapphire.co/media/uploads/2025/09/03/free_icon.png",
-  "Canceled (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/03/free_icon.png",
+  "Canceled (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/03/cancelled_icon.png",
   "New (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/03/new_icon.png",
 };
 
