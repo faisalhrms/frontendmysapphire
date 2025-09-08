@@ -182,27 +182,36 @@ const TaskDetailModal = ({ task, isLoading, closeModal, viewOnly = true }) => {
                                         </div>
                                         <div className="sm:border-b-2 border-gray-200 dark:border-white/10">
                                             <nav className="-mb-0.5 sm:flex sm:space-x-6 rtl:space-x-reverse">
-                                                <Link
+                                                <button
                                                     className="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary active"
-                                                    to="#" id="discussion-item" data-hs-tab="#discussion"
-                                                    aria-controls="discussion">
+                                                    id="discussion-item"
+                                                    data-hs-tab="#discussion"
+                                                    aria-controls="discussion"
+                                                    type="button"
+                                                >
                                                     <i className="bi bi-chat-dots text-lg"></i>
                                                     Discussion
-                                                </Link>
-                                                <Link
+                                                </button>
+                                                <button
                                                     className="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary"
-                                                    to="#" id="attachment-item" data-hs-tab="#attachment"
-                                                    aria-controls="attachment">
+                                                    id="attachment-item"
+                                                    data-hs-tab="#attachment"
+                                                    aria-controls="attachment"
+                                                    type="button"
+                                                >
                                                     <i className="ri-attachment-2 text-lg"></i>
                                                     Attachments ({task.attachments?.length || 0})
-                                                </Link>
-                                                <Link
+                                                </button>
+                                                <button
                                                     className="w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary"
-                                                    to="#" id="activitiy-item" data-hs-tab="#activitiy"
-                                                    aria-controls="activitiy">
+                                                    id="activitiy-item"
+                                                    data-hs-tab="#activitiy"
+                                                    aria-controls="activitiy"
+                                                    type="button"
+                                                >
                                                     <i className="ri-history-line text-lg"></i>
                                                     Activities
-                                                </Link>
+                                                </button>
                                             </nav>
                                         </div>
 
@@ -217,14 +226,17 @@ const TaskDetailModal = ({ task, isLoading, closeModal, viewOnly = true }) => {
                                                     maxHeight='max-h-[calc(100vh-35rem)]'
                                                 />
                                             </div>
-                                            <div id="attachment" className="hidden" role="tabpanel" aria-labelledby="attachment-item">
-                                                <TaskDetailAttachments task={task} viewOnly={viewOnly} />
+                                            <div id="attachment" className="hidden" role="tabpanel"
+                                                 aria-labelledby="attachment-item">
+                                                <TaskDetailAttachments task={task} viewOnly={viewOnly}/>
                                             </div>
-                                            <div id="activitiy" className="hidden" role="tabpanel" aria-labelledby="activity-item">
+                                            <div id="activitiy" className="hidden" role="tabpanel"
+                                                 aria-labelledby="activity-item">
                                                 <div className="p-4">
                                                     <div className="space-y-3">
-                                                        <PerfectScrollbar className='max-h-[calc(100vh-15rem)] ps--active-y'>
-                                                            <TaskActivityLog id={task.id} />
+                                                        <PerfectScrollbar
+                                                            className='max-h-[calc(100vh-15rem)] ps--active-y'>
+                                                            <TaskActivityLog id={task.id}/>
                                                         </PerfectScrollbar>
                                                     </div>
                                                 </div>
