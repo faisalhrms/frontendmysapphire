@@ -10,6 +10,14 @@ export default function useChatBot() {
   const [isWebSearch, setIsWebSearch] = useState(false)
   const [modeSelection, setModeSelection] = useState("Select Source")
   const [modeOpen, setModeOpen] = useState(false)
+
+  const defaultSuggestions = [
+    "Top 10 exporters of Bed by value_usd last 12 months bar chart",
+    "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
+    "Yearly classification-wise split of bed linen exports in value USD"
+  ]
+  const [suggestions, setSuggestions] = useState(defaultSuggestions)
+
   const defaultChecks = ["status_code","title","meta_description","h1","canonical","viewport","html_lang","open_graph","twitter_card","robots","sitemap","images_alt_ratio","ecommerce","ecom_schema","ecom_add_to_cart","ecom_prices","ecom_plp","ecom_cart","ecom_search","security_headers","broken_links"]
   const [qcTarget, setQcTarget] = useState("https://pk.sapphireonline.pk")
   const [qcChecks, setQcChecks] = useState(defaultChecks)
@@ -26,11 +34,13 @@ export default function useChatBot() {
   const rafTickRef = useRef(0)
   const [tick, setTick] = useState(0)
 
-  const autoResize = useCallback((eOrEl) => {
+  const autoResize = useCallback((eOrEl, maxHeight = 240) => {
     const el = eOrEl?.target || eOrEl
     if (!el) return
     el.style.height = "0px"
-    el.style.height = el.scrollHeight + "px"
+    const newH = Math.min(el.scrollHeight, maxHeight)
+    el.style.height = newH + "px"
+    el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden"
   }, [])
 
   const normalizeHtml = raw => {
@@ -43,12 +53,8 @@ export default function useChatBot() {
     if (!s) return ""
     let capitalized = s.charAt(0).toUpperCase() + s.slice(1)
     const doneKeywords = ["ready", "complete", "all set"]
-    if (doneKeywords.some(k => capitalized.toLowerCase().includes(k))) {
-      return capitalized
-    }
-    if (capitalized.toLowerCase() === "searching") {
-      return "Searching the web"
-    }
+    if (doneKeywords.some(k => capitalized.toLowerCase().includes(k))) return capitalized
+    if (capitalized.toLowerCase() === "searching") return "Searching the web"
     return capitalized
   }
 
@@ -196,7 +202,7 @@ export default function useChatBot() {
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
-        { type: "bot", loading: true, time: new Date(), html: "", chart: null, latestStatus: isWebSearch ? "Searching the web" : "Thinking", error: null, mode }
+        { type: "bot", loading: true, time: new Date(), html: "", chart: null, latestStatus: null, error: null, mode, statuses: [] }
       ]
       botIdxRef.current = next.length - 1
       return next
@@ -222,7 +228,7 @@ export default function useChatBot() {
           const text = normalizeStatus(ev.label)
           setMessages(prev => {
             const c = [...prev]; if (!c[i]) return prev
-            c[i] = { ...c[i], latestStatus: text }
+            c[i] = { ...c[i], statuses: [...(c[i].statuses || []), text], latestStatus: text }
             return c
           })
         } else if (ev.type === "delta") {
@@ -261,6 +267,9 @@ export default function useChatBot() {
             c[i] = { ...c[i], html: normalizeHtml(ev.html), latestStatus: null }
             return c
           })
+        } else if (ev.type === "suggestions") {
+          const items = Array.isArray(ev.items) ? ev.items.slice(0, 4) : []
+          if (items.length) setSuggestions(items)
         } else if (ev.type === "error") {
           setIsThinking(false)
           setMessages(prev => {
@@ -285,6 +294,12 @@ export default function useChatBot() {
     setMessages([])
   }
 
+  const ask = (msg) => {
+    if (!msg) return
+    if (!isBotActive) handleStartChat()
+    startStream(msg)
+  }
+
   const handleReset = async () => {
     try { await ChatService.resetMemory() } catch {}
     try { streamCtrlRef.current?.abort() } catch {}
@@ -298,6 +313,7 @@ export default function useChatBot() {
     setQcChecks(defaultChecks)
     setQcRender(true)
     botIdxRef.current = -1
+    setSuggestions(defaultSuggestions)
     if (inputRef.current) autoResize(inputRef.current)
   }
 
@@ -349,6 +365,8 @@ export default function useChatBot() {
     startVoice,
     stopSpeechRecognition,
     autoResize,
-    tick
+    tick,
+    ask,
+    suggestions
   }
 }
