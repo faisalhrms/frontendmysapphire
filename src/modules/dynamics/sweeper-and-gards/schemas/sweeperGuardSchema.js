@@ -15,6 +15,12 @@ const categoryDesignSchema = z.object({
         required_error: "Area (sq. feet) is required",
         invalid_type_error: "Area must be a number",
     }).min(1, "Area must be at least 1"),
+
+    hanging_capacity: z.coerce.number({
+        required_error: "Hanging capacity is required",
+        invalid_type_error: "Hanging capacity must be a number",
+    }).min(1, "Hanging capacity must be at least 1"),
+
 });
 
 const sweeperGuardSchema = z.object({
@@ -24,6 +30,7 @@ const sweeperGuardSchema = z.object({
     num_of_stock_helpers: z.coerce.number().min(1, "At least 1 stock helper is required"),
     leased_area_total: z.coerce.number().min(1, "Leased area total must be at least 1"),
     store_capacity_total: z.coerce.number().min(1, "Store capacity must be at least 1"),
+    hanging_capacity_total: z.coerce.number().min(1, "hanging capacity must be at least 1"),
     category_designs: z.array(categoryDesignSchema).min(1, "At least one category design is required"),
 });
 

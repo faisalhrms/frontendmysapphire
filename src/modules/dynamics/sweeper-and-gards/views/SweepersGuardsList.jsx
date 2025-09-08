@@ -69,6 +69,15 @@ const SweepersGuardsList = () => {
             Cell: ({ value }) => (value ? value.toLocaleString() : "N/A"),
         },
         {
+            Header: "Hanging Capacity",
+            accessor: "hanging_capacity_total",
+            filterable: true,
+            filterType: "number",
+            filterKey: "hanging_capacity_total",
+            Cell: ({ value }) => (value ? value.toLocaleString() : "N/A"),
+
+        },
+        {
             Header: "Created At",
             accessor: "created_at",
             filterable: true,

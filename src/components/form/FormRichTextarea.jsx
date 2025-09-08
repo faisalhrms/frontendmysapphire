@@ -15,7 +15,7 @@ const FormRichTextarea = forwardRef(({ name, control, errors, placeholder, edito
             {placeholder && <label htmlFor={name} className="form-label">{placeholder}{is_required && <span className="text-rose-500 pl-1">*</span>}</label>}
             {
                 description &&
-                <div class="form-text">{description}</div>
+                <div className="form-text">{description}</div>
             }
             <Controller
                 name={name}

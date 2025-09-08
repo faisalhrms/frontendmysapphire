@@ -26,13 +26,14 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
             num_of_stock_helpers: sgData?.num_of_stock_helpers || 0,
             leased_area_total: sgData?.leased_area_total || 0,
             store_capacity_total: sgData?.store_capacity_total || 0,
+            hanging_capacity_total: sgData?.hanging_capacity_total || 0,
             category_designs: sgData?.category_designs || [],
         },
     });
 
     const { handleSweeperGuardSubmit } = useSweeperGuardForm(sgData, isEditMode);
 
-    // Dynamic field array (only category designs now)
+    // Dynamic field array (category designs)
     const { fields: categoryFields, append: appendCategory, remove: removeCategory } =
         useFieldArray({ control, name: "category_designs" });
 
@@ -40,6 +41,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
     const categoryDesigns = useWatch({ control, name: "category_designs" });
     const leasedAreaTotal = useWatch({ control, name: "leased_area_total" });
     const storeCapacityTotal = useWatch({ control, name: "store_capacity_total" });
+    const hangingCapacityTotal = useWatch({ control, name: "hanging_capacity_total" });
 
     // Totals
     const totalLeasedArea = useMemo(() => {
@@ -52,6 +54,13 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
     const totalCategoryDesigns = useMemo(() => {
         return (categoryDesigns || []).reduce(
             (sum, item) => sum + (parseFloat(item.design_pieces) || 0),
+            0
+        );
+    }, [categoryDesigns]);
+
+    const totalHangingCapacity = useMemo(() => {
+        return (categoryDesigns || []).reduce(
+            (sum, item) => sum + (parseFloat(item.hanging_capacity) || 0),
             0
         );
     }, [categoryDesigns]);
@@ -79,9 +88,23 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
         }
     }, [totalCategoryDesigns, storeCapacityTotal, setError, clearErrors]);
 
-    const isCategoryDesignDisabled = !storeCapacityTotal || storeCapacityTotal <= 0;
+    useEffect(() => {
+        if (hangingCapacityTotal > 0 && totalHangingCapacity > hangingCapacityTotal) {
+            setError("category_designs", {
+                type: "manual",
+                message: `Total hanging capacity (${totalHangingCapacity}) cannot exceed Hanging Capacity Total (${hangingCapacityTotal})`,
+            });
+        } else {
+            clearErrors("category_designs");
+        }
+    }, [totalHangingCapacity, hangingCapacityTotal, setError, clearErrors]);
+
+    const isCategoryDesignDisabled =
+        !storeCapacityTotal || storeCapacityTotal <= 0 || !hangingCapacityTotal || hangingCapacityTotal <= 0;
+
     const remainingLeasedArea = leasedAreaTotal - totalLeasedArea;
     const remainingStoreCapacity = storeCapacityTotal - totalCategoryDesigns;
+    const remainingHangingCapacity = hangingCapacityTotal - totalHangingCapacity;
 
     return (
         <div className="max-w-7xl mx-auto p-2 space-y-6">
@@ -121,19 +144,28 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                 />
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="num_of_guards" type="number" control={control} errors={errors} is_required={true} placeholder="Guards" />
+                                <FormInput name="num_of_guards" type="number" control={control} errors={errors}
+                                           is_required={true} placeholder="Approved Guards"/>
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="num_of_sweepers" type="number" control={control} errors={errors} is_required={true} placeholder="Sweepers" />
+                                <FormInput name="num_of_sweepers" type="number" control={control} errors={errors}
+                                           is_required={true} placeholder="Approved Sweepers"/>
                             </div>
-                            <div className="col-span-4">
-                                <FormInput name="num_of_stock_helpers" type="number" control={control} errors={errors} is_required={true} placeholder="Stock Helpers" />
+                            <div className="col-span-3">
+                                <FormInput name="num_of_stock_helpers" type="number" control={control} errors={errors}
+                                           is_required={true} placeholder="Approved Stock Helpers"/>
                             </div>
-                            <div className="col-span-4">
-                                <FormInput name="leased_area_total" type="number" control={control} errors={errors} is_required={true} placeholder="Leased Area Total" />
+                            <div className="col-span-3">
+                                <FormInput name="store_capacity_total" type="number" control={control} errors={errors}
+                                           is_required={true} placeholder="Store Capacity Total"/>
                             </div>
-                            <div className="col-span-4">
-                                <FormInput name="store_capacity_total" type="number" control={control} errors={errors} is_required={true} placeholder="Store Capacity Total" />
+                            <div className="col-span-3">
+                                <FormInput name="leased_area_total" type="number" control={control} errors={errors}
+                                           is_required={true} placeholder="Leased Area Total"/>
+                            </div>
+                            <div className="col-span-3">
+                                <FormInput name="hanging_capacity_total" type="number" control={control} errors={errors}
+                                           is_required={true} placeholder="Hanging Capacity Total"/>
                             </div>
                         </div>
                     </div>
@@ -144,7 +176,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                     {isCategoryDesignDisabled && (
                         <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
                             <p className="text-sm text-amber-800">
-                                Please enter "Store Capacity Total" first to add category designs.
+                                Please enter both "Store Capacity Total" and "Hanging Capacity Total" first to add category designs.
                             </p>
                         </div>
                     )}
@@ -165,6 +197,9 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Area Sq. Feet
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Hanging Capacity
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
@@ -241,6 +276,27 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                         />
                                     </td>
 
+                                    {/* Hanging Capacity */}
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <FormInput
+                                            label={false}
+                                            name={`category_designs.${idx}.hanging_capacity`}
+                                            control={control}
+                                            errors={errors}
+                                            is_required={true}
+                                            type="number"
+                                            placeholder="Hanging"
+                                            className="w-full"
+                                            max={remainingHangingCapacity + (parseFloat(categoryDesigns?.[idx]?.hanging_capacity) || 0)}
+                                            onChange={(e) => {
+                                                let val = parseFloat(e.target.value) || 0;
+                                                const maxAllowed = remainingHangingCapacity + (parseFloat(categoryDesigns?.[idx]?.hanging_capacity) || 0);
+                                                if (val > maxAllowed) val = maxAllowed;
+                                                setValue(`category_designs.${idx}.hanging_capacity`, val, {shouldValidate: true});
+                                            }}
+                                        />
+                                    </td>
+
                                     {/* Actions */}
                                     <td className="px-6 py-4 whitespace-nowrap text-right">
                                         <button
@@ -278,6 +334,15 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                         </div>
                                     )}
                                 </td>
+                                <td className="px-6 py-3">
+                                    {totalHangingCapacity}
+                                    {hangingCapacityTotal > 0 && (
+                                        <div
+                                            className={`text-sm ${remainingHangingCapacity < 0 ? "text-red-600" : "text-gray-600"}`}>
+                                            Remaining: {remainingHangingCapacity}
+                                        </div>
+                                    )}
+                                </td>
                                 <td></td>
                             </tr>
                             </tfoot>
@@ -287,14 +352,13 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                     <div className="flex justify-between items-center mt-4">
                         <button
                             type="button"
-                            onClick={() => appendCategory({category: null, design_pieces: 0, area_sq_feet: 0})}
+                            onClick={() => appendCategory({category: null, design_pieces: 0, area_sq_feet: 0, hanging_capacity: 0})}
                             className={`ti-btn ti-btn-secondary ti-btn-md ${isCategoryDesignDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                            title={isCategoryDesignDisabled ? "Enter Store Capacity Total first" : "Add a new category design"}
+                            title={isCategoryDesignDisabled ? "Enter Store Capacity Total & Hanging Capacity Total first" : "Add a new category design"}
                             disabled={isCategoryDesignDisabled}
                         >
                             Add Category Design
                         </button>
-
                     </div>
                 </SubFormSection>
 
