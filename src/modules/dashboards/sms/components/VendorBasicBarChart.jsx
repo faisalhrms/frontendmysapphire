@@ -44,7 +44,7 @@ export const VendorBasicBarChart = ({ data }) => {
             enabled: true,
             position: "top",
             style: { fontSize: "13px", fontWeight: "bold", colors: ["#000"] },
-            offsetY: -27,
+            offsetY: -20,
         },
         xaxis: {
             categories: filteredData.map(item => item.name),

@@ -39,8 +39,8 @@ export const BasiclineChart = ({ data }) => {
             categories: chartData.categories,
             tickPlacement: "between",
             labels: {
-                rotate: 0, // straight labels
-                trim: false, // don’t cut text
+                rotate: 0,
+                trim: false,
                 style: {
                     fontSize: "12px",
                     fontWeight: 600,
