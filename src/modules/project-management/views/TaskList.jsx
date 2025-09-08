@@ -103,12 +103,10 @@ const TaskList = () => {
                         id={`task-tooltip-${task.id}`}
                         tooltipContent={task.name}
                     >
-                        <Link
-                            onClick={() => {openTaskDetailModal(task.id)}}
-                            to="#">
-
+                        <button
+                            onClick={() => {openTaskDetailModal(task.id)}}>
                             {task.name}
-                        </Link>
+                        </button>
                     </Tooltip>
                 )
             },
