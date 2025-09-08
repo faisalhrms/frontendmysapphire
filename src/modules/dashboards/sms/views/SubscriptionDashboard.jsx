@@ -1,4 +1,3 @@
-// src/modules/dashboards/sms/components/SubscriptionDashboard.jsx
 import React from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import SubscriptionCard from "@modules/dashboards/sms/components/SubscriptionCard.jsx";
@@ -9,13 +8,13 @@ import {
 } from "@modules/dashboards/sms/hooks/subscriptionHook.js";
 import SubscriptionListCard from "@modules/dashboards/sms/components/SubscriptionListCard.jsx";
 import { useSubscriptionSummary, useActiveAndPendingSubscriptions } from "@modules/dashboards/sms/hooks/subscriptionHook.js";
-import { BasiclineChart } from "@modules/dashboards/sms/components/BaselineChart.jsx";
 import {PieChart} from "@modules/dashboards/sms/components/PieChart.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { SUBSCRIPTION_ROUTES } from "@modules/subscription/routes.js";
 import {BasicBarChart} from "@modules/dashboards/sms/components/BasicBarChart.jsx";
 import {VendorBasicBarChart} from "@modules/dashboards/sms/components/VendorBasicBarChart.jsx";
-import MonthlySpendingChart from "@modules/dashboards/sms/components/MonthlyspendingChart.jsx";
+import MonthlySpendingChart from "@modules/dashboards/sms/components/MonthlySpendingChart.jsx";
+import {BasicLineChart} from "@modules/dashboards/sms/components/BaselineChart.jsx";
 
 
 
@@ -139,7 +138,7 @@ const SubscriptionDashboard = () => {
                             <div className="box-title dark:text-white">Subscription Spending by department</div>
                         </div>
                         <div className="box-body">
-                            <BasiclineChart data={lineChartData}/>
+                            <BasicLineChart data={lineChartData}/>
                         </div>
                     </div>
                 </div>
