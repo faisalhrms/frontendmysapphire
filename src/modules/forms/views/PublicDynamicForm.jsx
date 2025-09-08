@@ -649,7 +649,16 @@ export default function PublicDynamicForm() {
 
     return (
         <div className="min-h-screen bg-[#f0f2ff] py-8 px-4"
-             style={{ fontFamily }}>
+             style={{
+                 fontFamily,
+                 backgroundColor: formConfig.image?.file_url ? "transparent" : "#f0f2ff",
+                 backgroundImage: formConfig.image?.file_url
+                     ? `url('${formConfig.image.file_url}')`
+                     : "none",
+                 backgroundSize: "cover",
+
+             }}
+            >
             <div className="max-w-2xl mx-auto">
                 <PublicDynamicFormHeader
                     title={formConfig.title}

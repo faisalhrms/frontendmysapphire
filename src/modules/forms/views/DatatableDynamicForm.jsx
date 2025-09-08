@@ -57,7 +57,7 @@ const DatatableDynamicForm = () => {
                             onClick={() => openQRModal(rowData)}
                             className="ti-btn ti-btn-primary-full ti-btn-sm"
                         >
-                            <i class="bi bi-qr-code"></i>
+                            <i className="bi bi-qr-code"></i>
                         </button>
                         <button
                             onClick={() => downloadQRCode(rowData)}
@@ -92,21 +92,21 @@ const DatatableDynamicForm = () => {
                             <button
                                 className="ti-btn ti-btn-success ti-btn-sm"
                                 title="View Public Form">
-                                <i class="bi bi-file-earmark"></i>
+                                <i className="bi bi-file-earmark"></i>
                             </button>
                         </Link>
                         <Link to={`/module/forms/submissions/${rowData.id}`}>
                             <button
                                 className="ti-btn ti-btn-success-gradient ti-btn-sm"
                                 title="View Form Submissions">
-                                <i class="bi bi-send-check"></i>
+                                <i className="bi bi-send-check"></i>
                             </button>
                         </Link>
                         <Link to={`/module/forms/detail/${rowData.id}`}>
                             <button
                                 className="ti-btn ti-btn-secondary ti-btn-sm"
                                 title="View Form">
-                                <i class="ri-eye-line"></i>
+                                <i className="ri-eye-line"></i>
                             </button>
                         </Link>
                     </div>

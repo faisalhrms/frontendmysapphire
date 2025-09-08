@@ -70,6 +70,7 @@ const SubscriptionDashboard = () => {
                         title="Active Subscriptions"
                         totalCount={activeSubscriptions.totalCount}
                         items={activeSubscriptions.items}
+                        enableSearch={true}
                     />
                 </div>
                 <div className="xl:col-span-4 col-span-8 flex-grow">
@@ -78,7 +79,7 @@ const SubscriptionDashboard = () => {
                         title="Pending Subscriptions"
                         totalCount={pendingSubscriptions.totalCount}
                         items={pendingSubscriptions.items}
-                        enableSearch={true}
+                        
                     />
                 </div>
 
