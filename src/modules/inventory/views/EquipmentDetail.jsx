@@ -31,7 +31,7 @@ const EquipmentDetail = () => {
             <div className="grid grid-cols-12 gap-6">
                 {/* Main column */}
                 <div className="xl:col-span-9 col-span-12 space-y-6">
-                    <EquipmentSummary equipmentData={equipmentData} />
+                    <EquipmentSummary id={id} equipmentData={equipmentData} />
                     <RepairsList repairs={equipmentData.repairs} />
                     <VerificationList verifications={equipmentData.verifications} />
                     <SubEquipmentDetail equipmentData={equipmentData} />

@@ -1,11 +1,16 @@
 import React from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import EquipmentSiteWiseReportTable from "@modules/inventory/components/EquipmentSiteWiseReportTable.jsx";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {MapPinned } from "lucide-react";
 
 const EquipmentSiteWiseReport = () => {
     return (
         <>
-            <PageHeader currentpage="Asset Site Wise Report" mainpage="Reports" />
+            <IconPageHeader
+                heading="Asset Site Wise Report"
+                description="Review asset reports organized by site."
+                icon={MapPinned}
+            />
             <EquipmentSiteWiseReportTable
                 title="Asset Site Wise Report"
                 apiUrl="/equipments/report-site-wise-data/"

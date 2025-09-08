@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { INVENTORY_ROUTES } from "@modules/inventory/routes.js";
-import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js"; // Assuming route constants
+import {equipmentStatuses} from "@modules/inventory/services/inventoryService.js";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {Laptop } from "lucide-react";
 
 const LaptopList = () => {
     const columns = [
@@ -146,7 +147,11 @@ const LaptopList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Laptops" mainpage="Laptops" />
+            <IconPageHeader
+                heading="Laptops"
+                description="View and manage the list of laptops."
+                icon={Laptop }
+            />
             <DataTable
                 columns={columns}
                 title="Laptop List"
