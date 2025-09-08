@@ -1,7 +1,7 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-export const BasiclineChart = ({ data }) => {
+export const BasicLineChart = ({ data }) => {
     const categories = data.map(item => item.department);
     const values = data.map(item => item.total_cost || 0);
 
