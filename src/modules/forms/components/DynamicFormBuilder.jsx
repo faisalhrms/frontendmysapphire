@@ -18,6 +18,7 @@ import { fontFamilyOptions, fieldTypeOptions, platformOptions } from "@modules/f
 import {getPastDate} from "@helpers/dateTime.js";
 import {formatOptions} from "@helpers/formatters.js";
 import {useNavigate} from "react-router-dom";
+import FileUpload from "@components/FileUpload.jsx";
 
 const DynamicFormBuilder = ({ formData }) => {
     const navigate = useNavigate();
@@ -39,6 +40,7 @@ const DynamicFormBuilder = ({ formData }) => {
             description: '',
             font_family: 'Gotham Book',
             success_message: "Thank you for your submission! We have received your form successfully.",
+            image: null,
             primary_color: '#673ab7',
             enable_alerts: false,
             is_active: true,
@@ -104,6 +106,7 @@ const DynamicFormBuilder = ({ formData }) => {
     useEffect(() => {
         if (formData) {
             setValue('title', formData.title || '');
+            setValue('image', formData.image || null);
             setValue('font_family', formData.font_family || 'Gotham Book');
             setValue('success_message', formData.success_message || "Thank you for your submission! We have received your form successfully.");
             setValue('description', formData.description || '');
@@ -186,6 +189,7 @@ const DynamicFormBuilder = ({ formData }) => {
         const stepFields = {
             0: ['title', 'description', 'success_message'],
             1: [
+                'image',
                 'primary_color',
                 'font_family',
                 'expired_at',
@@ -199,6 +203,7 @@ const DynamicFormBuilder = ({ formData }) => {
                 ...(watchedSendEmailToSubmitter ? ['email_subject', 'email_content'] : []),
                 ...(watchedCoupon
                     ? [
+                        'coupon_config',
                         'coupon_type',
                         'coupon_discount_type',
                         'coupon_discount_amount',
@@ -344,7 +349,27 @@ const DynamicFormBuilder = ({ formData }) => {
                                                         </p>
                                                     </div>
                                                     <div className="xl:col-span-8 col-span-12">
-                                                        <div className="flex items-center justify-between sm:mt-0 mt-8">
+                                                        <div className="flex justify-between sm:mt-0 mt-8">
+                                                            <div className="mail-notification-settings">
+                                                                <p className="text-[0.875rem] mb-1 font-semibold">Background Image</p>
+                                                                <p className="text-[0.75rem] mb-0 text-[#8c9097] dark:text-white/50">
+                                                                    Customize background image to align the interface with
+                                                                    your brand identity.
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <div className="xl:col-span-4 col-span-12">
+                                                                    <FileUpload
+                                                                        currentValue={formData?.background_image?.file_url || null}
+                                                                        file={formData?.background_image || null}
+                                                                        inputName="image"
+                                                                        control={control}
+                                                                        errors={errors}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center justify-between mt-8">
                                                             <div className="mail-notification-settings">
                                                                 <p className="text-[0.875rem] mb-1 font-semibold">Primary
                                                                     Color</p>
