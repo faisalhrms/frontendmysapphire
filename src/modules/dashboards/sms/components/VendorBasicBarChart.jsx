@@ -4,6 +4,7 @@ import ReactApexChart from "react-apexcharts";
 export const VendorBasicBarChart = ({ data }) => {
     const [search, setSearch] = useState("");
 
+
     const filteredData = data.filter(item =>
         item.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -43,8 +44,12 @@ export const VendorBasicBarChart = ({ data }) => {
         dataLabels: {
             enabled: true,
             position: "top",
-            style: { fontSize: "13px", fontWeight: "bold", colors: ["#000"] },
             offsetY: -20,
+            style: {
+                fontSize: "13px",
+                fontWeight: "bold",
+                colors: vendorColors,
+            },
         },
         xaxis: {
             categories: filteredData.map(item => item.name),
@@ -56,7 +61,7 @@ export const VendorBasicBarChart = ({ data }) => {
                     fontWeight: 600,
                     letterSpacing: 1,
                     lineHeight: 1.8,
-                    whiteSpace: "normal"
+                    whiteSpace: "normal",
                 },
                 formatter: val =>
                     val.length > 15 ? val.match(/.{1,15}/g).join("\n") : val,
@@ -74,7 +79,10 @@ export const VendorBasicBarChart = ({ data }) => {
         grid: {
             borderColor: "#f2f5f7",
             strokeDashArray: 3,
-            padding: { top: 30, bottom: 60 },
+            padding: {
+                top: 30,
+                bottom: 80,
+            },
         },
         title: {
             align: "left",

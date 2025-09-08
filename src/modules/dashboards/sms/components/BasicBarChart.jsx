@@ -41,7 +41,8 @@ export const BasicBarChart = ({ data }) => {
             offsetY: -20,
             style: {
                 fontSize: "11px",
-                colors: ["#000"],
+                fontWeight: "bold",
+                colors: departmentColors,
             },
         },
         xaxis: {
@@ -66,6 +67,10 @@ export const BasicBarChart = ({ data }) => {
         grid: {
             borderColor: "#f1f1f1",
             strokeDashArray: 4,
+            padding: {
+                top: 30,
+                bottom: 60,
+            },
         },
     };
 
