@@ -2,6 +2,8 @@ import React from "react";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { Link } from "react-router-dom";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import {LocateFixed } from "lucide-react";
 
 const EquipmentReportList = () => {
     // Columns for the aggregated report
@@ -17,10 +19,14 @@ const EquipmentReportList = () => {
 
     return (
         <>
-            <PageHeader currentpage="Asset Report" mainpage="Asset" />
+            <IconPageHeader
+                heading="Asset Type Wise Report"
+                description="Review asset reports categorized by type."
+                icon={LocateFixed }
+            />
             <DataTable
                 columns={columns}
-                title="Asset Report"
+                title="Asset Type Wise"
                 apiUrl="/equipments/report-data/"
             />
         </>

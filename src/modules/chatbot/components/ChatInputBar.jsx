@@ -44,6 +44,7 @@ const ChatInputBar = ({
             onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
             className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] leading-6"
           />
+            {modeSelection === "Export Data" && (
           <div className="mt-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
             {chips.map((s, i) => (
               <button key={i} onClick={() => ask?.(s)} className="shrink-0 text-[11px] px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600">
@@ -51,6 +52,7 @@ const ChatInputBar = ({
               </button>
             ))}
           </div>
+           )}
         </>
       ) : (
         <QCPanel
