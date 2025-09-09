@@ -108,7 +108,7 @@ export default function InteractiveMap({ chain }) {
     spinning: { x: 350, y: 75 },
     "yarn-dyeing": { x: 640, y: 190 },
     weaving: { x: 899, y: 190 },
-    processing: { x: 1000, y: 320 },
+    processing: { x: 995, y: 320 },
     wadding: { x: 1000, y: 455 },
     stitching: { x: 750, y: 460 },
     accessories: { x: 470, y: 460 },

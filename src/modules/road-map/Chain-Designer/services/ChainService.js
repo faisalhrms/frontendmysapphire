@@ -45,10 +45,11 @@ export const deleteChain = async (id) => {
   }
 }
 
-export const downloadChainSample = async () => {
-  const url = `/chain/download-sample-file/`
-  await downloadFile(url, "sample_file.xlsx")
+export const downloadChainSample = async (business_unit) => {
+  const url = `/chain/download-sample-file/?business_unit=${encodeURIComponent(business_unit)}`
+  await downloadFile(url, `chain_mapping_template_${business_unit}.xlsx`)
 }
+
 
 export const uploadChainBulkFD = async (formData) => {
   try {
