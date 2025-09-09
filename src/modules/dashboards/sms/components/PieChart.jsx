@@ -24,7 +24,10 @@ export const PieChart = ({ data }) => {
         },
         dataLabels: {
             enabled: true,
-            formatter: (val) => `${val.toFixed(1)}%`,
+            formatter: (val, opts) => {
+                const index = opts.seriesIndex;
+                return series[index];
+            },
             style: {
                 fontSize: "18px",
                 fontWeight: 600,
