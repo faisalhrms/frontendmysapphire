@@ -28,7 +28,7 @@ const MonthlySpendingChart = () => {
 
     return (
         <div className="xl:col-span-8 col-span-12">
-            <div className="box">
+
                 <div className="box-body overflow-hidden">
                     <div className="leads-source-chart">
                         <ReactApexChart
@@ -80,7 +80,7 @@ const MonthlySpendingChart = () => {
                         />
                     </div>
                 </div>
-            </div>
+
         </div>
     );
 };
