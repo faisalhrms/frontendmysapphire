@@ -19,7 +19,7 @@ export const BasicBarChart = ({ data }) => {
 
     const options = {
         chart: {
-            height: 370,
+            height: 284,
             type: "bar",
             toolbar: { show: false },
         },
@@ -81,7 +81,7 @@ export const BasicBarChart = ({ data }) => {
                     options={options}
                     series={[{ name: "Subscriptions", data: values }]}
                     type="bar"
-                    height={370}
+                    height={284}
                 />
             </div>
         </div>

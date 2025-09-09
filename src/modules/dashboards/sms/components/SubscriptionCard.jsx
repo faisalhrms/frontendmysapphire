@@ -30,7 +30,7 @@ const SubscriptionCard = ({ subscriptionData, route }) => {
   return (
       <div className="cursor-pointer" onClick={handleClick}>
         <div
-            className={`${bgColor} rounded-lg p-4 flex items-center border border-gray-200 space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto shadow`}
+            className={`${bgColor} rounded-lg p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 max-w-[250px] mx-auto shadow`}
         >
           <img
               src={icon}

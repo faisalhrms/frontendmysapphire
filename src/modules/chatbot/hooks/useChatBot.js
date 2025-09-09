@@ -198,7 +198,7 @@ export default function useChatBot() {
         modeSelection === "Export Data" ? "export" :
         modeSelection === "Salesforce" ? "salesforce" :
         modeSelection === "Quality Control" ? "qc" :
-        modeSelection === "Policies" ? "policies" : ""
+        modeSelection === "HR" ? "hr" : ""
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
@@ -212,7 +212,7 @@ export default function useChatBot() {
       modeSelection === "Export Data" ? "export" :
       modeSelection === "Salesforce" ? "salesforce" :
       modeSelection === "Quality Control" ? "qc" :
-      modeSelection === "Policies" ? "policies" : ""
+      modeSelection === "HR" ? "hr" : ""
 
     streamCtrlRef.current = ChatService.stream({
       msg,
