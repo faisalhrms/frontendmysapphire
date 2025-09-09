@@ -16,8 +16,6 @@ import {VendorBasicBarChart} from "@modules/dashboards/sms/components/VendorBasi
 import MonthlySpendingChart from "@modules/dashboards/sms/components/MonthlySpendingChart.jsx";
 import {BasicLineChart} from "@modules/dashboards/sms/components/BaselineChart.jsx";
 
-
-
 const SubscriptionDashboard = () => {
     const { summaryData, loading: summaryLoading } = useSubscriptionSummary();
     const { activeSubscriptions, pendingSubscriptions, loading: subscriptionsLoading } = useActiveAndPendingSubscriptions();
@@ -29,7 +27,6 @@ const SubscriptionDashboard = () => {
         return <LoadingSpinner/>;
     }
 
-
     const subscriptionRoutesMap = {
         "Total Active": `${SUBSCRIPTION_ROUTES.READ.path}?filter=total-active`,
         "Paid": `${SUBSCRIPTION_ROUTES.READ.path}?filter=paid`,
@@ -37,8 +34,6 @@ const SubscriptionDashboard = () => {
         "Canceled (YTD)": `${SUBSCRIPTION_ROUTES.READ.path}?filter=canceled`,
         "New (YTD)": `${SUBSCRIPTION_ROUTES.READ.path}?filter=new`,
     };
-
-
 
     return (
         <>
@@ -63,7 +58,7 @@ const SubscriptionDashboard = () => {
 
             <div className="grid grid-cols-12 gap-x-6 ">
 
-                <div className="xl:col-span-4 col-span-12 flex-grow box ">
+                <div className="xl:col-span-4 col-span-12 flex-grow  ">
                     <SubscriptionListCard
                         color="bg-secondary/10"
                         title="Active Subscriptions"
@@ -93,7 +88,7 @@ const SubscriptionDashboard = () => {
                 </div>
             </div>
             <div className="grid grid-cols-12 gap-x-6">
-                <div className="xl:col-span-4 col-span-12 flex-grow box ">
+                <div className="xl:col-span-4 col-span-12 flex-grow  ">
                     <div className="box">
                         <div className="box-header bg-primary/10">
                             <div className="box-title dark:text-white">Subscription Count by Status</div>
@@ -101,7 +96,6 @@ const SubscriptionDashboard = () => {
                         <div className="box-body overflow-hidden">
                             <div className="leads-source-chart flex items-center justify-center">
                                 <PieChart data={donutChartData.status_counts}/>
-
                             </div>
                         </div>
                     </div>
@@ -120,7 +114,7 @@ const SubscriptionDashboard = () => {
             </div>
 
             <div className="grid grid-cols-12 gap-x-6  ">
-                <div className="xl:col-span-5 col-span-12 flex-grow box ">
+                <div className="xl:col-span-5 col-span-12 flex-grow  ">
                     <div className="box">
                         <div className="box-header bg-green/10">
                             <div className="box-title dark:text-white">Monthly Spending</div>
@@ -132,7 +126,7 @@ const SubscriptionDashboard = () => {
                         </div>
                     </div>
                 </div>
-                <div className="xl:col-span-7 col-span-12 flex-grow box ">
+                <div className="xl:col-span-7 col-span-12 flex-grow  ">
                     <div className="box custom-box">
                         <div className="box-header bg-primary/10">
                             <div className="box-title dark:text-white">Subscription Spending by department</div>
@@ -145,9 +139,7 @@ const SubscriptionDashboard = () => {
             </div>
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="xl:col-span-12 col-span-12 flex-grow ">
-                    <div className="box custom-box">
-                        <VendorBasicBarChart data={countByVendor}/>
-                    </div>
+                    <VendorBasicBarChart data={countByVendor}/>
                 </div>
             </div>
 

@@ -18,7 +18,7 @@ export const BasicLineChart = ({ data }) => {
     const options = {
         chart: {
             type: "line",
-            height: 350,
+            height: 315,
             toolbar: { show: false },
             animations: { enabled: false },
             zoom: { enabled: false },
@@ -83,7 +83,7 @@ export const BasicLineChart = ({ data }) => {
                         options={options}
                         series={chartData.series}
                         type="line"
-                        height={350}
+                        height={315}
                     />
                 </div>
             </div>
