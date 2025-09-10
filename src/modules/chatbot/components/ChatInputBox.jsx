@@ -87,7 +87,7 @@ const ChatInputBox = ({
                 <button onClick={() => {setModeSelection("Quality Control"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
                 </HasPermission>
                  <HasPermission permission='auth.chatbot_policies'>
-                <button onClick={() => { setModeSelection("Policies"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Policies</button>
+                <button onClick={() => { setModeSelection("HR"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">HR</button>
                  </HasPermission>
               </div>
             )}
