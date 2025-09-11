@@ -11,7 +11,7 @@ const authHeaders = () => {
   if (token) h.Authorization = `Bearer ${token}`
   return h
 }
-const buildPayload = (msg, webSearch, mode, qcTarget, qcChecks, qcRender) => {
+const buildPayload = (msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes) => {
   const payload = { query: msg, web_search: webSearch, mode }
   if ((mode || "").toLowerCase() === "qc") {
     payload.qc_target = qcTarget || "https://pk.sapphireonline.pk"
@@ -19,20 +19,24 @@ const buildPayload = (msg, webSearch, mode, qcTarget, qcChecks, qcRender) => {
     payload.qc_model = "gpt-5-mini"
     payload.qc_render = !!qcRender
   }
+  if ((mode || "").toLowerCase() === "hr") {
+    const subs = Array.isArray(hrSubtypes) && hrSubtypes.length ? hrSubtypes : ["policies"]
+    payload.hr_subtypes = subs
+  }
   return payload
 }
 const ChatService = {
   resetMemory: () => api.post("chat/query/reset_memory/"),
-  query: (msg, webSearch, mode, qcTarget, qcChecks, qcRender) =>
-    api.post("chat/query/", buildPayload(msg, webSearch, mode, qcTarget, qcChecks, qcRender)),
-  stream: ({ msg, webSearch, mode, qcTarget, qcChecks, qcRender, onEvent }) => {
+  query: (msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes) =>
+    api.post("chat/query/", buildPayload(msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes)),
+  stream: ({ msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes, onEvent }) => {
     const ctrl = new AbortController()
     const run = async () => {
       try {
         const res = await fetch(abs("chat/query/stream/"), {
           method: "POST",
           headers: authHeaders(),
-          body: JSON.stringify(buildPayload(msg, webSearch, mode, qcTarget, qcChecks, qcRender)),
+          body: JSON.stringify(buildPayload(msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes)),
           signal: ctrl.signal,
           credentials: "include"
         })
