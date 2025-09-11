@@ -42,7 +42,9 @@ export default function ChatBot() {
     setQcRender,
     tick,
     ask,
-    suggestions
+    suggestions,
+    hrSubtypes,
+    setHrSubtypes
   } = useChatBot()
 
   const currentUser = useSelector(s => s.auth.user)
@@ -108,6 +110,8 @@ export default function ChatBot() {
           setQcChecks={setQcChecks}
           qcRender={qcRender}
           setQcRender={setQcRender}
+          hrSubtypes={hrSubtypes}
+          setHrSubtypes={setHrSubtypes}
         />
       </div>
     )
@@ -236,6 +240,8 @@ export default function ChatBot() {
         autoResize={autoResize}
         ask={ask}
         suggestions={suggestions}
+        hrSubtypes={hrSubtypes}
+        setHrSubtypes={setHrSubtypes}
       />
     </div>
   )

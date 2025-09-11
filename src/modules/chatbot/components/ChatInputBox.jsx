@@ -1,6 +1,7 @@
 import React from "react"
 import QCPanel from "@modules/chatbot/components/QCPanel.jsx";
 import HasPermission from "@components/HasPermission.jsx";
+import {toTitleCase} from "@helpers/formatters.js";
 
 const ChatInputBox = ({
   input,
@@ -21,9 +22,13 @@ const ChatInputBox = ({
   qcChecks,
   setQcChecks,
   qcRender,
-  setQcRender
+  setQcRender,
+  hrSubtypes = [],
+  setHrSubtypes
 }) => {
   const padClass = modeSelection === "Quality Control" ? "pb-20" : "pb-16"
+  const toggleSub = s => setHrSubtypes?.(p => p.includes(s) ? p.filter(x => x!==s) : [...p, s])
+  const active = s => hrSubtypes?.includes?.(s)
   return (
     <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-visible shadow-xl ring-2 ring-gray-300">
       <div className={`rounded-t-xl p-2 ${padClass}`}>
@@ -31,7 +36,7 @@ const ChatInputBox = ({
           <textarea
             ref={inputRef}
             rows={1}
-            className="min-h-[7rem] w-full border-none resize-none p-4 text-sm bg-transparent focus:outline-none"
+            className="min-h[7rem] w-full border-none resize-none p-4 text-sm bg-transparent focus:outline-none"
             placeholder="What do you want to know?"
             value={input}
             onChange={e => { setInput(e.target.value); autoResize(e) }}
@@ -78,20 +83,33 @@ const ChatInputBox = ({
               <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-20 text-sm">
                 <button onClick={() => {setModeSelection("Select Source"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Select Source</button>
                 <HasPermission permission='auth.chatbot_export_data'>
-                <button onClick={() => {setModeSelection("Export Data"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Export Data</button>
+                  <button onClick={() => {setModeSelection("Export Data"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Export Data</button>
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_sales_force'>
-                <button onClick={() => {setModeSelection("Salesforce"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Salesforce</button>
+                  <button onClick={() => {setModeSelection("Salesforce"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Salesforce</button>
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_quality_control'>
-                <button onClick={() => {setModeSelection("Quality Control"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
+                  <button onClick={() => {setModeSelection("Quality Control"); setModeOpen(false)}} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
                 </HasPermission>
-                 <HasPermission permission='auth.chatbot_policies'>
-                <button onClick={() => { setModeSelection("HR"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">HR</button>
-                 </HasPermission>
+                <HasPermission permission='auth.chatbot_policies'>
+                  <button onClick={() => { setModeSelection("HR"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">HR</button>
+                </HasPermission>
               </div>
             )}
           </div>
+          {modeSelection === "HR" && (
+            <div className="flex items-center gap-2 ml-2">
+              {["policies","pms","pas"].map(s=>(
+                <button
+                  key={s}
+                  onClick={()=>toggleSub(s)}
+                  className={`px-3 py-1 rounded-full text-xs border ${active(s) ? "bg-indigo/80 text-white border-indigo" : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"}`}
+                >
+                 {toTitleCase(s)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="ml-auto flex items-center gap-2">
           <button onClick={startVoice} className={`h-9 w-9 rounded-full flex items-center justify-center ${listening ? "ring ring-red bg-outline-danger" : "bg-outline-success ti-btn-icon"}`}>

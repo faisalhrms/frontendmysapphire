@@ -109,7 +109,7 @@ const BulkUploadModel = ({closeModal, refreshTable}) => {
                             </div>
                         </div>
                         <div className="ti-modal-footer">
-                            <FormButton isLoading={isSubmitting}/>
+                            <FormButton isLoading={isSubmitting} text="Upload" submitTxt={"Uploading Please Wait..."}/>
                         </div>
                     </form>
                 </div>
