@@ -23,7 +23,7 @@ export default function InteractiveMap({ chain }) {
   }, [])
 
   const cleanName = s => (s || "").replace(/\s*[—–]\s*[^()]+(?=\s*(?:\(|$))/u,"").replace(/\s*\((?:Inhouse|Outsource)\)\s*$/i,"").trim()
-
+  const [top, setTop] = useState(null)
   const data = chain?.data || chain || {}
   const cats = data.unit_categories || []
   const sec = data.sections || {}
@@ -177,28 +177,15 @@ export default function InteractiveMap({ chain }) {
           height: 720,
           transform: `scale(${scale})`,
           transformOrigin: "top left",
-          left: "60px"
+          left: "100px"
         }}
       >
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600">
-          <path
-            d={roadPath}
-            stroke="#3D2808"
-            strokeWidth="48"
-            fill="none"
-            strokeLinejoin="round"
-          />
-          <path
-            d={roadPath}
-            stroke="#e8e8e8"
-            strokeWidth="3"
-            fill="none"
-            strokeDasharray="30,20"
-            strokeDashoffset={-animationOffset}
-            strokeLinecap="round"
-          />
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600" style={{ zIndex: 0 }}>
+          <path d={roadPath} stroke="#3D2808" strokeWidth="48" fill="none" strokeLinejoin="round" />
+          <path d={roadPath} stroke="#e8e8e8" strokeWidth="3" fill="none" strokeDasharray="30,20" strokeDashoffset={-animationOffset} strokeLinecap="round" />
         </svg>
-        <svg className="absolute inset-0 pointer-events-none" width="1400" height="720">
+
+        <svg className="absolute inset-0 pointer-events-none" width="1400" height="720" style={{ zIndex: 1 }}>
           {points.map(p => {
             const hasIn = p.units.some(u => u.hasIn)
             const hasOut = p.units.some(u => u.hasOut)
@@ -217,7 +204,9 @@ export default function InteractiveMap({ chain }) {
           const pos0 = positionsBase[p.id]
           const canCollapse = !!hasToggleByCat[p.cid]
           const shouldShift = canCollapse && expandedCats.has(String(p.cid))
-          const pos = shouldShift ? { left: pos0.left, top: Math.max(0, pos0.top - (expandShift[p.id] || 0)) } : pos0
+          const basePos = shouldShift ? { left: pos0.left, top: Math.max(0, pos0.top - (expandShift[p.id] || 0)) } : pos0
+          const longList = p.units.length > 3
+          const pos = { left: basePos.left, top: longList && basePos.top > 70 ? 70 : basePos.top }
           const hasIn = p.units.some(u => u.hasIn)
           const hasOut = p.units.some(u => u.hasOut)
           const headerClass = hasIn && hasOut ? "" : hasOut ? "!bg-pink/20" : "bg-info/15"
@@ -225,17 +214,21 @@ export default function InteractiveMap({ chain }) {
             hasIn && hasOut
               ? { background: "linear-gradient(90deg, rgb(231 145 188 / 0.2) 0%, rgb(231 145 188 / 0.2) 50%, rgb(73 182 245 / 0.15) 50%, rgb(73 182 245 / 0.15) 100%)" }
               : undefined
+
+          const baseZ = p.id === "fiber" ? 40 : 20
+          const z = top === p.id ? 60 : baseZ
+
           return (
             <div
               key={p.id}
               className="absolute w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
-              style={{ left: pos.left, top: pos.top }}
+              style={{ left: pos.left, top: pos.top, zIndex: z }}
+              onMouseEnter={() => setTop(p.id)}
+              onMouseLeave={() => { if (top === p.id) setTop(null) }}
             >
               <div className={`flex items-center gap-6 p-1 ${headerClass}`} style={headerStyle}>
                 <div className="p-1">{p.icon}</div>
-                <span className="font-bold text-gray-800 dark:text-gray-200 truncate">
-                  {p.name}
-                </span>
+                <span className="font-bold text-gray-800 dark:text-gray-200 truncate">{p.name}</span>
               </div>
               <div className="p-3">
                 <ul className="space-y-2">
@@ -247,30 +240,27 @@ export default function InteractiveMap({ chain }) {
                         <div className="flex justify-between items-center">
                           <span
                             className="text-xs text-gray-800 font-medium dark:text-gray-200 cursor-pointer flex items-center gap-2"
-                            onClick={() => openCanvas(p.cid, u.unitId, u.unitName)}
+                            onClick={() => { setTop(p.id); openCanvas(p.cid, u.unitId, u.unitName) }}
                           >
                             {u.hasIn && <span className="inline-block w-2 h-2 rounded-full" style={{ background: "rgb(73 182 245)" }} />}
                             {u.hasOut && <span className="inline-block w-2 h-2 rounded-full" style={{ background: "rgb(231 145 188)" }} />}
                             <span>{u.unitName}</span>
                           </span>
                           {showToggle && (
-                            <span
-                              className="font-bold text-lg cursor-pointer"
-                              onClick={() => toggle(p.cid, u.unitId)}
-                            >
+                            <span className="font-bold text-lg cursor-pointer" onClick={() => { setTop(p.id); toggle(p.cid, u.unitId) }}>
                               {expanded[key] ? "−" : "+"}
                             </span>
                           )}
                         </div>
                         {expanded[key] && showToggle && (
-                          <div className="table-responsive overflow-hidden">
+                          <div className="table-responsive overflow-auto max-h-80 rounded-md border border-defaultborder/10 mt-2">
                             <table className="table table-hover whitespace-nowrap min-w-full">
                               <tbody>
                                 {u.suppliers.map(s => (
                                   <tr
                                     key={`${s.id}-${s.tag}`}
                                     className="border-t border-inherit border-solid hover:bg-gray-100 dark:hover:bg-light dark:border-defaultborder/10 cursor-pointer"
-                                    onClick={() => openCanvas(p.cid, u.unitId, u.unitName)}
+                                    onClick={() => { setTop(p.id); openCanvas(p.cid, u.unitId, u.unitName) }}
                                   >
                                     <td className="!text-xs !font-normal">
                                       <span className="inline-flex items-center gap-2">
@@ -296,11 +286,8 @@ export default function InteractiveMap({ chain }) {
           )
         })}
       </div>
-      <CertificateCanvas
-        id="hs-overlay-right"
-        unitName={canvasData.unitName}
-        groups={canvasData.groups}
-      />
+
+      <CertificateCanvas id="hs-overlay-right" unitName={canvasData.unitName} groups={canvasData.groups} />
     </div>
   )
 }
