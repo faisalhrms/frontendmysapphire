@@ -1,5 +1,3 @@
-
-
 import { useState, useRef } from 'react';
 import { Globe, Pyramid, Download } from 'lucide-react';
 
@@ -38,9 +36,7 @@ const QRCodeGenerator = () => {
     const qrRef = useRef();
     const [qrText, setQrText] = useState("My QR Text");
     const [logoBackground, setLogoBackground] = useState(false);
-
     const [logoText, setLogoText] = useState("");
-
 
     const { qrCodes, addQRCode, deleteQRCode } = useQRManager();
     const { generateQRDataURL, downloadQR } = useQRGenerator();
@@ -53,8 +49,6 @@ const QRCodeGenerator = () => {
         { id: 'star', name: 'Star', preview: '★★★' },
         { id: 'heart', name: 'Heart', preview: '♥♥♥' },
     ];
-
-
 
     const errorCorrectionLevels = [
         { id: 'L', name: 'Smallest', description: 'Less cluttered-looking pattern', image: 'https://me-qr.com/build/images/H.e9899973.png' },
@@ -70,9 +64,6 @@ const QRCodeGenerator = () => {
         { id: "decorative", name: "Decorative Frame" },
         { id: "gradient", name: "Gradient Frame" },
     ];
-
-
-
 
     const categories = [
         { value: '', label: 'Content Category (optional)' },
@@ -92,17 +83,15 @@ const QRCodeGenerator = () => {
     };
 
     const handleDownloadQR = async () => {
-        const qrOptions = {
-            errorCorrection,
-            size: qrSize,
-            foregroundColor,
-            backgroundColor,
-        };
-
         const qrDataURL = await generateQRDataURL(url, {
-            ...qrOptions,
+            size: qrSize,
+            backgroundColor,
+            foregroundColor,
+            errorCorrection,
+            pattern: selectedPattern,
             type: qrFormat === 'svg' ? 'svg' : `image/${qrFormat}`,
         });
+
         if (!qrDataURL) return;
 
         const qrData = {
@@ -131,29 +120,12 @@ const QRCodeGenerator = () => {
         setCurrentView('input');
     };
 
-    const handleEditQR = (qr) => {
-        setUrl(qr.url);
-        setQrName(qr.name);
-        setCategory(qr.category);
-        setSelectedPattern(qr.customization.pattern);
-        setErrorCorrection(qr.customization.errorCorrection);
-        setForegroundColor(qr.customization.foregroundColor);
-        setBackgroundColor(qr.customization.backgroundColor);
-        setSelectedFrame(qr.customization.frame);
-        setQrSize(qr.customization.size || 200);
-        setQrFormat(qr.customization.format || 'png'); // Set format when editing
-        setCurrentView('customize');
-    };
-
-    const handleDownloadExisting = (qr) => {
-        downloadQR(qr.dataURL, qr.name, qr.customization.format || 'png');
-    };
-
     const qrOptions = {
         size: qrSize,
         backgroundColor,
         foregroundColor,
         errorCorrection,
+        pattern: selectedPattern,
     };
 
     if (currentView === 'customize') {
@@ -210,7 +182,6 @@ const QRCodeGenerator = () => {
                         logo={selectedLogo}
                         logoSize={logoSize}
                         logoBackground={logoBackground}
-
                         logoText={logoText}
                     />
                     <div className="w-full space-y-8">

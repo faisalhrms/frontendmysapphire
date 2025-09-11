@@ -13,7 +13,6 @@ export const MODULE_ROUTES = [
     {
         path: QR_ROUTES.ADD.path,
         component:QrGenerator ,
-
     },
 
 
