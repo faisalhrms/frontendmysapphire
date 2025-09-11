@@ -34,6 +34,24 @@ export const sidebarMenu = [
                 '',
                 APPROVAL_ROUTES.FORM.permission,
             ),
+            generateSidebarItem(
+                "",
+                "sub",
+                "Setups",
+                4,
+                "bx bx-target-lock",
+                "",
+                [
+                    generateSidebarItem(
+                        APPROVAL_ROUTES.SETUP.TYPE.READ.path,
+                        "link",
+                        " Approval Type",
+                        1,
+                        "bx bx-message-square-edit",
+                        APPROVAL_ROUTES.SETUP.TYPE.READ.permission
+                    ),
+                ]
+            ),
         ]
     ),
 ];
