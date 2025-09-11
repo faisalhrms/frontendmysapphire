@@ -53,8 +53,8 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
                   control={control}
                   errors={errors}
                   placeholder="Quality"
-                  apiUrl={`/select/roadmap/qualities?business_unit=${bu}`}
-                  queryKeyBase={`qualities-${bu}`}
+                  apiUrl={`/select/roadmap/qualities?business_unit=${bu}&ref=dashboard`}
+                  queryKeyBase={`qualities-${bu}-dashboard`}
                   preselectedOptions={[]}
                   onSelectChange={(selected) => {
                     setValue('quality', selected ?? null)
@@ -72,8 +72,8 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
                   control={control}
                   errors={errors}
                   placeholder="Process Method"
-                  apiUrl={`/select/roadmap/process-methods?business_unit=${bu}&quality=${watchedQ || ''}`}
-                  queryKeyBase={`pm-${bu}-${watchedQ || ''}`}
+                  apiUrl={`/select/roadmap/process-methods?business_unit=${bu}&quality=${watchedQ || ''}&ref=dashboard`}
+                  queryKeyBase={`pm-${bu}-${watchedQ || ''}-dashboard`}
                   preselectedOptions={[]}
                   onSelectChange={(selected) => {
                     setValue('process_method', selected ?? null)
@@ -90,8 +90,8 @@ const RoadmapFilter = ({ control, setValue, errors = {}, selectedBU, labelCerts 
                   control={control}
                   errors={errors}
                   placeholder="Product"
-                  apiUrl={`/select/roadmap/products?business_unit=${bu}&quality=${watchedQ || ''}&process_method=${watchedPM || ''}`}
-                  queryKeyBase={`pr-${bu}-${watchedQ || ''}-${watchedPM || ''}`}
+                  apiUrl={`/select/roadmap/products?business_unit=${bu}&quality=${watchedQ || ''}&process_method=${watchedPM || ''}&ref=dashboard`}
+                  queryKeyBase={`pr-${bu}-${watchedQ || ''}-${watchedPM || ''}-dashboard`}
                   preselectedOptions={[]}
                   onSelectChange={(selected) => setValue('product', selected ?? null)}
                 />

@@ -9,10 +9,8 @@ const mapRows = rows =>
     item_label: r.unit?.name || '',
     suppliers: r.suppliers?.map(s => s.id) || [],
     suppliersOptions: r.suppliers?.map(s => ({ value: s.id, label: s.name })) || [],
-    dyes_method: r.dyes_method?.id || '',
-    dyes_label: r.dyes_method?.name || '',
-    stitch_type: r.stitch_type?.id || '',
-    stitch_label: r.stitch_type?.name || '',
+    dyes_method: r.dyes_methods?.[0]?.id || r.dyes_method?.id || '',
+    dyes_label: r.dyes_methods?.[0]?.name || r.dyes_method?.name || '',
     sort_order: r.sort_order || 0
   }))
 
