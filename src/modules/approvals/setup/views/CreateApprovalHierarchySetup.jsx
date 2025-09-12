@@ -1,9 +1,9 @@
 import React from 'react';
 import {HardDrive} from 'lucide-react';
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import ApprovalTypeForm from "@modules/approvals/setup/components/ApprovalTypeForm.jsx";
+import ApprovalTypeHierarchyForm from "@modules/approvals/setup/components/ApprovalTypeHierarchyForm.jsx";
 
-const CreateApprovalTypeSetup = () => {
+const CreateApprovalHierarchySetup = () => {
 
     return (
             <>
@@ -12,9 +12,9 @@ const CreateApprovalTypeSetup = () => {
                     description="My Objective - Create Form"
                     icon={HardDrive}
                 />
-                <ApprovalTypeForm />
+                <ApprovalTypeHierarchyForm />
             </>
     );
 };
 
-export default CreateApprovalTypeSetup;
+export default CreateApprovalHierarchySetup;

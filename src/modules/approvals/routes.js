@@ -4,6 +4,9 @@ import DynamicFormApprovalList from "@modules/approvals/dynamiceform/view/Dynami
 import ApprovalTypeSetupDatatable from "@modules/approvals/setup/views/ApprovalTypeSetupDatatable.jsx";
 import CreateApprovalTypeSetup from "@modules/approvals/setup/views/CreateApprovalTypeSetup.jsx";
 import EditApprovalTypeSetup from "@modules/approvals/setup/views/EditApprovalTypeSetup.jsx";
+import ApprovalHierarchySetupDatatable from "@modules/approvals/setup/views/ApprovalHierarchySetupDatatable.jsx";
+import CreateApprovalHierarchySetup from "@modules/approvals/setup/views/CreateApprovalHierarchySetup.jsx";
+import EditApprovalHierarchySetup from "@modules/approvals/setup/views/EditApprovalHierarchySetup.jsx";
 
 const SETUP_PERMISSION = 'approvals.dynamic_hierarchy_management'
 
@@ -32,6 +35,20 @@ export const APPROVAL_ROUTES = {
             },
             EDIT:{
                 path:'/module/approvals/setups/type/edit/:id',
+                permission:SETUP_PERMISSION
+            }
+        },
+        HIERARCHY:{
+            READ: {
+                path: '/module/approvals/setups/hierarchy',
+                permission:SETUP_PERMISSION
+            },
+            ADD:{
+                path:'/module/approvals/setups/hierarchy/create',
+                permission:SETUP_PERMISSION
+            },
+            EDIT:{
+                path:'/module/approvals/setups/hierarchy/edit/:id',
                 permission:SETUP_PERMISSION
             }
         }
@@ -67,6 +84,21 @@ export const MODULE_ROUTES = [
     {
         path: APPROVAL_ROUTES.SETUP.TYPE.EDIT.path,
         component:EditApprovalTypeSetup,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.READ.path,
+        component:ApprovalHierarchySetupDatatable,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.ADD.path,
+        component:CreateApprovalHierarchySetup,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.EDIT.path,
+        component:EditApprovalHierarchySetup,
         permission: SETUP_PERMISSION,
     },
 ];

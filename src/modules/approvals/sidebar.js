@@ -50,6 +50,14 @@ export const sidebarMenu = [
                         "bx bx-message-square-edit",
                         APPROVAL_ROUTES.SETUP.TYPE.READ.permission
                     ),
+                    generateSidebarItem(
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.READ.path,
+                        "link",
+                        " Approval Hierarchy",
+                        2,
+                        "bx bx-message-square-edit",
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.READ.permission
+                    ),
                 ]
             ),
         ]

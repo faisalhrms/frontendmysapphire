@@ -1,10 +1,11 @@
 import React from 'react';
 import {HardDrive} from 'lucide-react';
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import ApprovalTypeForm from "@modules/approvals/setup/components/ApprovalTypeForm.jsx";
+import {useParams} from "react-router-dom";
+import ApprovalTypeHierarchyForm from "@modules/approvals/setup/components/ApprovalTypeHierarchyForm.jsx";
 
-const CreateApprovalTypeSetup = () => {
-
+const EditApprovalHierarchySetup = () => {
+    const { id } = useParams();
     return (
             <>
                 <IconPageHeader
@@ -12,9 +13,10 @@ const CreateApprovalTypeSetup = () => {
                     description="My Objective - Create Form"
                     icon={HardDrive}
                 />
-                <ApprovalTypeForm />
+
+                <ApprovalTypeHierarchyForm editMode={true} hierarchyId={id} />
             </>
     );
 };
 
-export default CreateApprovalTypeSetup;
+export default EditApprovalHierarchySetup;
