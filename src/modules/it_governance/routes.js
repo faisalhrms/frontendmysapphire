@@ -18,6 +18,9 @@ import ITGovernEdit from "@modules/it_governance/views/ITGovernEdit.jsx";
 import ApplicationUniverseList from "@modules/it_governance/views/ApplicationUniverseList.jsx";
 import ApplicationUniverseAdd from "@modules/it_governance/views/ApplicationUniverseAdd.jsx";
 import ApplicationUniverseEdit from "@modules/it_governance/views/ApplicationUniverseEdit.jsx";
+import WarrantyList from "@modules/it_governance/views/WarrantyList.jsx";
+import WarrantyAdd from "@modules/it_governance/views/WarrantyAdd.jsx";
+import WarrantyEdit from "@modules/it_governance/views/WarrantyEdit.jsx";
 
 export const IT_GOVERNANCE_ROUTES = {
     READ: {
@@ -57,6 +60,28 @@ export const IT_GOVERNANCE_ROUTES = {
             permission:"it_governance.change_applicationuniverse"
 
         }
+    },
+    WARRANTY:{
+        READ: {
+            path: '/module/it-governance/warranty',
+            permission:"it_governance.view_applicationuniverse"
+
+        },
+        ADD: {
+            path: '/module/it-governance/warranty/add',
+            permission:"it_governance.add_applicationuniverse"
+
+        },
+        DETAIL: {
+            path: '/module/it-governance/warranty/detail/:id',
+            permission:"it_governance.view_applicationuniverse"
+
+        },
+        EDIT: {
+            path: '/module/it-governance/warranty/edit/:id',
+            permission:"it_governance.change_applicationuniverse"
+
+        }
     }
 
 };
@@ -84,6 +109,18 @@ export const MODULE_ROUTES = [
     {
         path:IT_GOVERNANCE_ROUTES.APPLICATION_UNIVERSE.EDIT.path,
         component:ApplicationUniverseEdit
+    },
+    {
+        path:IT_GOVERNANCE_ROUTES.WARRANTY.READ.path,
+        component:WarrantyList
+    },
+    {
+        path:IT_GOVERNANCE_ROUTES.WARRANTY.ADD.path,
+        component:WarrantyAdd
+    },
+    {
+        path:IT_GOVERNANCE_ROUTES.WARRANTY.EDIT.path,
+        component:WarrantyEdit
     }
 
 ];
