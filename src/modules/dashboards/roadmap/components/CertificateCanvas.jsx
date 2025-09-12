@@ -8,8 +8,8 @@ import stm9 from "@assets/images/road-map/STM-9.png"
 import stm10 from "@assets/images/road-map/STM-10.png"
 
 const mediaByUnit = {
-  "stm-4": { img: stm4, addr: "63/64-KM, Multan Road, Jumber Khurd,Chunian, District Kasur", video: "https://youtu.be/uYB8xy1RB3Y" },
-  "stm-5": { img: stm5, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/uYB8xy1RB3Y" },
+  "stm-4": { img: stm4, addr: "63/64-KM, Multan Road, Jumber Khurd,Chunian, District Kasur", video: "https://youtu.be/HohnsfA40nE?si=pcTGfxSl9T2qJDc2" },
+  "stm-5": { img: stm5, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/L8PCJO2QhvM?si=xiIWCM1EwkYOtHcJ" },
   "stm-6": { img: stm6, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/JHrh59H2GZE" },
   "stm-7": { img: stm7, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/sQqD6sJXyvE" },
   "stm-9": { img: stm9, addr: "1.5-KM, Warburton Road, Feroze Wattoan, Sheikhupura", video: "https://youtu.be/4ABaiJrhDWY" },
