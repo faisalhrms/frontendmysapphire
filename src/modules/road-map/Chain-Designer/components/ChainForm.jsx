@@ -44,7 +44,6 @@ const ChainForm = () => {
                                             name="process_methods"
                                             control={control}
                                             errors={errors}
-                                            clientSideSearch={true}
                                             placeholder="Process Methods"
                                             apiUrl={`/select/roadmap/process-methods?business_unit=${selectedBusinessUnit}`}
                                             queryKeyBase={`process-methods-${selectedBusinessUnit}`}
@@ -56,7 +55,6 @@ const ChainForm = () => {
                                             name="qualities"
                                             control={control}
                                             errors={errors}
-                                            clientSideSearch={true}
                                             placeholder="Qualities"
                                             apiUrl={`/select/roadmap/qualities?business_unit=${selectedBusinessUnit}`}
                                             queryKeyBase={`qualities-${selectedBusinessUnit}`}
@@ -69,7 +67,6 @@ const ChainForm = () => {
                                             isMulti={true}
                                             control={control}
                                             errors={errors}
-                                            clientSideSearch={true}
                                             placeholder="Products"
                                             apiUrl={`/select/roadmap/products?business_unit=${selectedBusinessUnit}`}
                                             queryKeyBase={`products-${selectedBusinessUnit}`}

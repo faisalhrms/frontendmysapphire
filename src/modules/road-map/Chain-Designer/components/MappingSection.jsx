@@ -7,7 +7,6 @@ const makePreset = (row, idKey) =>
     ? [{ value: row[idKey], label: row[`${idKey}_label`] }]
     : []
 
-
 const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, errors, isUnit }) => {
   const { fields, append, remove } = useFieldArray({ control, name: fieldName })
 
@@ -19,8 +18,6 @@ const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, error
         suppliers: [],
         dyes_method: null,
         dyes_label: '',
-        stitch_type: null,
-        stitch_label: '',
         sort_order: 0
       })
   }, [append, fields.length])
@@ -38,8 +35,6 @@ const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, error
               suppliers: [],
               dyes_method: null,
               dyes_label: '',
-              stitch_type: null,
-              stitch_label: '',
               sort_order: fields.length
             })
           }
@@ -78,30 +73,17 @@ const MappingSection = ({ title, fieldName, selectedBusinessUnit, control, error
             />
 
             {isUnit && (
-              <>
-                <FormAsyncSelect
-                  label={false}
-                  name={`${fieldName}.${i}.dyes_method`}
-                  control={control}
-                  errors={errors}
-                  placeholder="Dyes Method"
-                  apiUrl={`/select/roadmap/dyes-methods?business_unit=${selectedBusinessUnit}`}
-                  queryKeyBase={`dyes-${selectedBusinessUnit}-${i}`}
-                  className="flex-1"
-                  preselectedOptions={makePreset(row, 'dyes_method')}
-                />
-                <FormAsyncSelect
-                  label={false}
-                  name={`${fieldName}.${i}.stitch_type`}
-                  control={control}
-                  errors={errors}
-                  placeholder="Stitch Type"
-                  apiUrl={`/select/roadmap/stitch-types?business_unit=${selectedBusinessUnit}`}
-                  queryKeyBase={`stitch-${selectedBusinessUnit}-${i}`}
-                  className="flex-1"
-                  preselectedOptions={makePreset(row, 'stitch_type')}
-                />
-              </>
+              <FormAsyncSelect
+                label={false}
+                name={`${fieldName}.${i}.dyes_method`}
+                control={control}
+                errors={errors}
+                placeholder="Dyes Method"
+                apiUrl={`/select/roadmap/dyes-methods?business_unit=${selectedBusinessUnit}`}
+                queryKeyBase={`dyes-${selectedBusinessUnit}-${i}`}
+                className="flex-1"
+                preselectedOptions={makePreset(row, 'dyes_method')}
+              />
             )}
 
             <button
