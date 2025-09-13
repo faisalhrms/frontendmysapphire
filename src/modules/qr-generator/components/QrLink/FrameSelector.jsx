@@ -99,43 +99,45 @@ const FrameSelector = ({ frames, selectedFrame, onSelect }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Frame</h3>
+        <div className="flex items-center justify-center bg-gray-100">
+            <div className="bg-white rounded-3xl shadow-xl p-8 max-w-4xl w-full dark:text-gray-200 dark:bg-bodybg">
+                <h3 className="text-xl font-bold text-gray-800 mb-4 dark:text-gray-200 dark:bg-bodybg">Frame</h3>
 
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                {/* ❌ Clear Frame Option */}
-                <button
-                    type="button"
-                    onClick={() => onSelect(null)}
-                    className={`relative flex items-center justify-center p-2 rounded-lg border transition-all duration-150
-                        ${!selectedFrame ? "border-purple-500 ring-2 ring-purple-200 bg-purple-50" : "border-gray-200 hover:border-purple-300 bg-white"}
-                    `}
-                    title="Remove Frame"
-                >
-                    <X className="w-6 h-6 text-gray-400" />
-                </button>
-
-                {/* Frame Options */}
-                {frames.map((frame) => (
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                    {/* ❌ Clear Frame Option */}
                     <button
-                        key={frame.id}
                         type="button"
-                        onClick={() => onSelect(frame.id)}
-                        title={frame.name}
-                        aria-pressed={selectedFrame === frame.id}
-                        className={`relative flex items-center justify-center p-2 rounded-lg border transition-all duration-150
-                            ${selectedFrame === frame.id
-                            ? "border-purple-500 ring-2 ring-purple-200 bg-purple-50"
-                            : "border-gray-200 hover:border-purple-300 bg-white"}
-                        `}
+                        onClick={() => onSelect(null)}
+                        className={`relative flex items-center justify-center w-20 h-20 p-2 rounded-lg border transition-all duration-150
+                        ${!selectedFrame ? "border-primary ring-2 ring-primary bg-gray-100" : "border-gray-200 hover:border-primary bg-white"}
+                    `}
+                        title="Remove Frame"
                     >
-                        <div className="w-10 h-10">{renderPreview(frame.id)}</div>
-                        <span className="sr-only">{frame.name}</span>
+                        <X className="w-8 h-8 text-gray-400"/>
                     </button>
-                ))}
+
+                    {/* Frame Options */}
+                    {frames.map((frame) => (
+                        <button
+                            key={frame.id}
+                            type="button"
+                            onClick={() => onSelect(frame.id)}
+                            title={frame.name}
+                            aria-pressed={selectedFrame === frame.id}
+                            className={`relative flex items-center justify-center p-2 w-20 h-20 rounded-lg border transition-all duration-150
+                            ${selectedFrame === frame.id
+                                ? "border-primary ring-2 ring-primary bg-gray-100"
+                                : "border-gray-200 hover:border-primary bg-white"}
+                        `}
+                        >
+                            <div className="w-10 h-10">{renderPreview(frame.id)}</div>
+                            <span className="sr-only">{frame.name}</span>
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
-    );
-};
+            );
+            };
 
-export default FrameSelector;
+            export default FrameSelector;

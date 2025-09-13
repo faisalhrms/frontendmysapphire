@@ -11,12 +11,12 @@ export let sidebarMenu = [
         "",
         [
             generateSidebarItem(
-                QR_ROUTES.ADD.path,
+                QR_ROUTES.LINK.path,
                 "link",
                 "QR Link",
                 1,
                 "bx bx-qr-scan",
-                QR_ROUTES.ADD.permission
+                QR_ROUTES.LINK.permission
             )
         ]
     ),
