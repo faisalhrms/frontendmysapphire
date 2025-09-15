@@ -45,7 +45,7 @@ const fieldSchema = z.object({
 
 export const dynamicFormSchema = z.object({
     title: z.string().min(1, 'Title is required'),
-    image: z.number().optional().nullable(),
+    image: z.coerce.number().nullable(),
     primary_color: z.string().min(1, 'Primary color is required').default('#673ab7'),
     font_family: z
         .string()
