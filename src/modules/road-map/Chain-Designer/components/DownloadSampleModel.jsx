@@ -41,7 +41,7 @@ const DownloadSampleModel = ({closeModal, onDownload}) => {
                 </svg>
               </button>
             </div>
-            <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)]">
+            <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)] min-w-[440px]">
               <div className="grid grid-cols-12 gap-4">
                 <div className="xl:col-span-12 col-span-12">
                   <FormSelect
@@ -57,7 +57,7 @@ const DownloadSampleModel = ({closeModal, onDownload}) => {
               </div>
             </div>
             <div className="ti-modal-footer">
-              <FormButton isLoading={isSubmitting} label="Download"/>
+              <FormButton isLoading={isSubmitting} text="Download" submitTxt="Downloading..."/>
             </div>
           </form>
         </div>

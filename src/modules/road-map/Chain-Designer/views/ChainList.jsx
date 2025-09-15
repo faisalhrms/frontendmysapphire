@@ -86,7 +86,6 @@ const ChainList = () => {
     {Header: 'Unit Categories', accessor: 'unit_categories', Cell: ({value}) => renderGrouped(value)},
     {Header: 'Units', accessor: 'units', Cell: ({value}) => renderGrouped(value)},
     {Header: 'Dyes Methods', accessor: 'dyes_methods', Cell: ({value}) => renderGrouped(value)},
-    {Header: 'Stitch Types', accessor: 'stitch_types', Cell: ({value}) => renderGrouped(value)}
   ]
 
   const buttons = (
