@@ -3,6 +3,9 @@ import { FileText } from "lucide-react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
+import Avatar from "@components/Avatar.jsx";
+import UserWithAvatar from "@components/UserWithAvatar.jsx";
+import {toTitleCase} from "@helpers/formatters.js";
 
 const ApplicationUniverseList = () => {
     const dataTableRef = useRef();
@@ -59,6 +62,53 @@ const ApplicationUniverseList = () => {
             filterable: true,
             filterType: "text",
             filterKey: "company__name",
+        },
+        {
+            Header: 'Status',
+            accessor: 'status',
+            filterable: true,
+            filterType: 'select',
+            filterKey: 'status',
+            filterOptions: [
+                { value: 'approved', label: 'Approved' },
+                { value: 'under_approval', label: 'Under Approval' },
+                { value: 'rejected', label: 'Rejected' },
+            ],
+            Cell: ({ value }) => toTitleCase(value),
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                let bgClass = "";
+                let textClass = "";
+
+                if (value === "under_approval") {
+                    bgClass = "bg-warning/30";
+                    textClass = "text-warning";
+                }
+                else if (value === "approved") {
+                    bgClass = "bg-success/30";
+                    textClass = "text-success";
+                }
+                else if (value === "rejected") {
+                    bgClass = "bg-danger/30";
+                    textClass = "text-danger";
+                }
+                else {
+                    bgClass = "bg-primary/30";
+                    textClass = "text-primary";
+                }
+
+                return {
+                    className: `capitalize px-2 py-1 rounded ${bgClass} ${textClass}`,
+                };
+            },
+        },
+        {
+            Header: 'Pending At',
+            accessor: 'current_approver',
+            disableSortBy: true,
+            Cell: ({value}) => (
+                <UserWithAvatar user={value} />
+            )
         },
         {
             Header: "Created At",
