@@ -11,8 +11,8 @@ const WarrantyEdit = () => {
     return (
         <>
             <IconPageHeader
-                heading="Edit Application Universe"
-                description="Edit Application."
+                heading="Edit Warranty"
+                description="Update coverage details, duration, and related documentation for this warranty."
                 icon={Edit3}
             />
             {warrantyData&&(

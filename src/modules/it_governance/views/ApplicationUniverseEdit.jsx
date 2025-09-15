@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import {Edit3} from "lucide-react";
+import {AppWindow} from "lucide-react";
 import React from "react";
 import ITGovernForm from "@modules/it_governance/components/ITGovernForm.jsx";
 import {useFetchApplicationById} from "@modules/it_governance/hooks/useApplicationUniverseForm.js";
@@ -12,9 +12,9 @@ const ApplicationUniverseEdit = () => {
     return (
         <>
             <IconPageHeader
-                heading="Edit Application Universe"
-                description="Edit Application."
-                icon={Edit3}
+                heading="Edit Application"
+                description="Update details, ownership, and other information for this application in the Application Universe."
+                icon={AppWindow}
             />
             {appData&&(
                 <ApplicationUniverseForm appData={appData} isEditMode={true}/>

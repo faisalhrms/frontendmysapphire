@@ -11,8 +11,8 @@ const ITGovernEdit = () => {
     return (
         <>
             <IconPageHeader
-                heading="Service Level Agreement"
-                description="Service Level Agreement."
+                heading="Edit Service Level Agreement"
+                description="Update the terms, scope, or documentation for this Service Level Agreement."
                 icon={Edit3}
             />
             {slaData&&(
