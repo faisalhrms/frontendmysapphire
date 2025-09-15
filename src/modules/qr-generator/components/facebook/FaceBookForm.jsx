@@ -60,7 +60,7 @@ const FacebookForm = ({
                         }`}
                     />
                 </div>
-                {error && <p className="text-red-500 text-sm">{error}</p>}
+                {error && <p className="text-danger text-sm">{error}</p>}
 
                 <div className="relative">
                     <div className="flex items-center gap-3 p-4 border border-gray-300 rounded-lg bg-white hover:border-gray-400 transition-colors dark:text-gray-200 dark:bg-bodybg ">

@@ -378,7 +378,7 @@ const WhatsAppForm = () => {
                         className="flex-1 px-4 py-3 text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none dark:text-gray-200 dark:bg-bodybg"
                     />
                 </div>
-                {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                {error && <p className="text-danger text-sm mt-1">{error}</p>}
             </div>
 
             <div className="mb-4">
