@@ -8,8 +8,8 @@ const CreateApprovalTypeSetup = () => {
     return (
             <>
                 <IconPageHeader
-                    heading="Objective"
-                    description="My Objective - Create Form"
+                    heading="Approval Type"
+                    description="Create Approval Type"
                     icon={HardDrive}
                 />
                 <ApprovalTypeForm />

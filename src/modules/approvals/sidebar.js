@@ -58,6 +58,14 @@ export const sidebarMenu = [
                         "bx bx-message-square-edit",
                         APPROVAL_ROUTES.SETUP.HIERARCHY.READ.permission
                     ),
+                    generateSidebarItem(
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.APPROVERS.path,
+                        "link",
+                        " Hierarchy Approvers",
+                        3,
+                        "bx bx-message-square-edit",
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.APPROVERS.permission
+                    ),
                 ]
             ),
         ]

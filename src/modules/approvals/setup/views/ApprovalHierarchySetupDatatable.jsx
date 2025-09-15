@@ -70,8 +70,8 @@ const ApprovalHierarchySetupDatatable = () => {
     return (
         <>
             <IconPageHeader
-                heading="Approval Type Setup"
-                description="Configure type of approvals and other things."
+                heading="Approval Hierarchy Setup"
+                description="Configure approval hierarchy and other things."
                 icon={CalendarRange}
             />
             <DataTable

@@ -7,6 +7,7 @@ import EditApprovalTypeSetup from "@modules/approvals/setup/views/EditApprovalTy
 import ApprovalHierarchySetupDatatable from "@modules/approvals/setup/views/ApprovalHierarchySetupDatatable.jsx";
 import CreateApprovalHierarchySetup from "@modules/approvals/setup/views/CreateApprovalHierarchySetup.jsx";
 import EditApprovalHierarchySetup from "@modules/approvals/setup/views/EditApprovalHierarchySetup.jsx";
+import ApprovalHierarchyApproverSetupDatatable from "@modules/approvals/setup/views/ApprovalHierarchyApproverSetupDatatable.jsx";
 
 const SETUP_PERMISSION = 'approvals.dynamic_hierarchy_management'
 
@@ -49,6 +50,10 @@ export const APPROVAL_ROUTES = {
             },
             EDIT:{
                 path:'/module/approvals/setups/hierarchy/edit/:id',
+                permission:SETUP_PERMISSION
+            },
+            APPROVERS:{
+                path:'/module/approvals/setups/hierarchy/approvers',
                 permission:SETUP_PERMISSION
             }
         }
@@ -99,6 +104,11 @@ export const MODULE_ROUTES = [
     {
         path: APPROVAL_ROUTES.SETUP.HIERARCHY.EDIT.path,
         component:EditApprovalHierarchySetup,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.APPROVERS.path,
+        component:ApprovalHierarchyApproverSetupDatatable,
         permission: SETUP_PERMISSION,
     },
 ];

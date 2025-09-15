@@ -9,8 +9,8 @@ const EditApprovalTypeSetup = () => {
     return (
             <>
                 <IconPageHeader
-                    heading="Objective"
-                    description="My Objective - Create Form"
+                    heading="Approval Type"
+                    description="Edit Approval Type"
                     icon={HardDrive}
                 />
 
