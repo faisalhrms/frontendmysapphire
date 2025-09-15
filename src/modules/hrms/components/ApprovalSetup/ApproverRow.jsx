@@ -19,8 +19,6 @@ const ApproverRow = ({
                          fieldsLength
                      }) => {
     const ref = useRef(null);
-    const user = useSelector((state) => state.auth.user);
-    const company_id = user?.employee?.company?.id;
 
     // watch only this approver
     const approver = useWatch({ control, name: `approvers.${index}` });
@@ -41,9 +39,6 @@ const ApproverRow = ({
         }
         return [];
     }, [currentOption]);
-
-    const apiUrl = useMemo(() => `/select/users/?company_id=${company_id}`, [company_id]);
-    const queryKeyBase = useMemo(() => `company_${company_id}_users`, [company_id]);
 
     const [{ isDragging }, drag] = useDrag({
         type: ITEM_TYPE,
@@ -164,10 +159,10 @@ const ApproverRow = ({
                     errors={errors}
                     placeholder={`Select Approver ${index + 1}`}
                     label={false}
-                    apiUrl={apiUrl}
-                    queryKeyBase={queryKeyBase}
+                    apiUrl="/select/users/"
+                    queryKeyBase="users"
                     preselectedOptions={pre}
-                    onOptionChange={handleSelectChange}  // FIXED: Use onOptionChange instead of onChange
+                    onOptionChange={handleSelectChange}
                     isClearable={true}
                 />
             </div>

@@ -4,6 +4,7 @@ import React from "react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import {useYearSetupModal} from "@modules/hrms/hooks/useYearSetupModal.js";
 import YearSetupModal from "@modules/hrms/components/modals/YearSetupModal.jsx";
+import UserWithAvatar from "@components/UserWithAvatar.jsx";
 
 const YearSetup = () => {
     const dataTableRef = React.useRef();
@@ -36,6 +37,10 @@ const YearSetup = () => {
             accessor: 'year',
         },
         {
+            Header: 'Company',
+            accessor: 'company.name',
+        },
+        {
             Header: 'Started Date',
             accessor: 'started_at',
             filterType: 'datetime',
@@ -46,6 +51,13 @@ const YearSetup = () => {
             accessor: 'ended_at',
             filterType: 'datetime',
             filterable: true,
+        },
+        {
+            Header: 'Created by',
+            accessor: 'created_by',
+            Cell: ({value}) => (
+                <UserWithAvatar user={value} />
+            )
         },
         {
             Header: 'Actions',
