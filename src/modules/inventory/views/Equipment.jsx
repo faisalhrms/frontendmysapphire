@@ -3,8 +3,9 @@ import IconTabs from "@components/IconTabs.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import EquipmentList from "@modules/inventory/views/EquipmentList.jsx";
 import EquipmentRepairList from "@modules/inventory/views/EquipmentRepairList.jsx";
-import { HardDrive, Wrench,Monitor } from "lucide-react";
+import { HardDrive, Wrench,Monitor ,Replace } from "lucide-react";
 import {useSearchParams} from "react-router-dom";
+import EquipmentReplaceList from "@modules/inventory/views/EquipmentReplaceList.jsx";
 const DEFAULT_TAB = "equipment_list";
 
 const externalFilters = [
@@ -57,6 +58,14 @@ const Equipment = () => {
                         icon: <Wrench className="text-rose-500" />,
                         content: (
                             <EquipmentRepairList isActive={activeTab === "repair_list"} externalFilters={externalFilters} />
+                        ),
+                    },
+                    {
+                        id: "replace_list",
+                        label: "Replace List",
+                        icon: <Replace  className="text-fuchsia-500" />,
+                        content: (
+                            <EquipmentReplaceList isActive={activeTab === "replace_list"} externalFilters={externalFilters} />
                         ),
                     },
                 ]}

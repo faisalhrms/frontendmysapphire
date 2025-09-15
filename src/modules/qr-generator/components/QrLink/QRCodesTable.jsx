@@ -4,7 +4,7 @@ const QRCodesTable = ({ qrCodes, onEdit, onDelete, onDownload }) => {
     if (qrCodes.length === 0) return null;
 
     return (
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-white p-3 p-md-4 mt-3 mbt-lg-4 text-capitalize rounded-1 shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Your QR Codes</h2>
             <div className="overflow-x-auto">
                 <table className="w-full">

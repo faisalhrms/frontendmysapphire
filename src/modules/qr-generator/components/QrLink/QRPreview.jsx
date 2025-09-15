@@ -1,114 +1,204 @@
-import { useEffect, useRef } from 'react';
-import QRCodeStyling from 'qr-code-styling';
+import React, { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
+import QRCodeStyling from "qr-code-styling";
 
-const QRPreview = ({ url, qrOptions, selectedFrame, logo, logoSize, logoBackground, logoText }) => {
+const QRPreview = ({
+                       url,
+                       qrOptions,
+                       selectedFrame,
+                       logo,
+                       logoSize,
+                       logoBackground,
+                       logoText,
+                       qrRef,
+                       reviewText,
+                       additionalText,
+                   }) => {
     const ref = useRef(null);
     const qrCode = useRef(null);
+    const { state } = useLocation();
+
+
+    const constructWhatsAppLink = () => {
+        if (state?.phoneNumber && state?.country) {
+            const cleanNumber = state.phoneNumber.replace(/\D/g, "");
+            if (cleanNumber.length < 7) return null;
+            const encodedMessage = encodeURIComponent(state.message || "");
+            return `https://wa.me/${state.country.code}${cleanNumber}${state.message ? `?text=${encodedMessage}` : ""}`;
+        }
+        return null;
+    };
+
+
+    const normalizeYouTubeLink = (link) => {
+        if (!link) return null;
+        let normalized = link.trim();
+        if (!normalized.startsWith("http")) {
+            normalized = `https://${normalized}`;
+        }
+        if (normalized.includes("youtube.com/watch?v=")) {
+            const videoId = normalized.split("v=")[1]?.split("&")[0];
+            if (videoId) return `https://youtu.be/${videoId}`;
+        } else if (normalized.includes("youtu.be/")) {
+            return normalized;
+        }
+        return normalized;
+    };
+
+    const getValidLink = () => {
+        let link = url || state?.whatsappLink || constructWhatsAppLink() || state?.facebookLink || state?.youtubeLink;
+        if (state?.youtubeLink) {
+            link = normalizeYouTubeLink(link);
+        }
+        if (!link || !link.startsWith("http")) {
+            link = `https://${link}`;
+        }
+        return link || "https://example.com";
+    };
+
+    const link = getValidLink();
+
+    const qrName = state?.qrName || "qr-code";
+    const category = state?.category || "";
+
+    const getPatternConfig = (pattern) => {
+        switch (pattern) {
+            case "circle":
+                return { type: "dots" };
+            case "rounded":
+                return { type: "rounded" };
+            case "diamond":
+                return { type: "dot" };
+            case "star":
+                return { type: "classy-rounded" };
+            case "heart":
+                return { type: "extra-rounded" };
+            case "square":
+            default:
+                return { type: "square" };
+        }
+    };
 
     useEffect(() => {
-        // Get pattern configuration
-        const getPatternConfig = (pattern) => {
-            switch (pattern) {
-                case 'circle':
-                    return { type: 'dots' };
-                case 'rounded':
-                    return { type: 'rounded' };
-                case 'square':
-                default:
-                    return { type: 'square' };
-            }
-        };
+        if (!link) return;
 
-        // Create QR code with styling
         qrCode.current = new QRCodeStyling({
             width: qrOptions.size || 300,
             height: qrOptions.size || 300,
             type: "canvas",
-            data: url || "https://example.com",
+            data: link,
             dotsOptions: {
-                color: qrOptions.foregroundColor || '#000000',
-                ...getPatternConfig(qrOptions.pattern)
+                color: qrOptions.foregroundColor || "#000000",
+                ...getPatternConfig(qrOptions.pattern),
             },
             backgroundOptions: {
-                color: qrOptions.backgroundColor || '#ffffff',
+                color: qrOptions.backgroundColor || "#ffffff",
             },
             cornersSquareOptions: {
-                color: qrOptions.foregroundColor || '#000000',
-                type: qrOptions.pattern === 'rounded' ? 'extra-rounded' : 'square'
+                color: qrOptions.foregroundColor || "#000000",
+                ...getPatternConfig(qrOptions.pattern),
             },
             cornersDotOptions: {
-                color: qrOptions.foregroundColor || '#000000',
-                type: qrOptions.pattern === 'circle' ? 'dot' : 'square'
+                color: qrOptions.foregroundColor || "#000000",
+                ...getPatternConfig(qrOptions.pattern),
             },
             qrOptions: {
-                errorCorrectionLevel: qrOptions.errorCorrection || 'M'
-            }
+                errorCorrectionLevel: qrOptions.errorCorrection || "Q",
+            },
         });
 
-        // Clear previous QR code and append new one
         if (ref.current) {
-            ref.current.innerHTML = '';
             qrCode.current.append(ref.current);
         }
-    }, [url, qrOptions]);
+
+        if (qrRef) {
+            qrRef.current = qrCode.current;
+        }
+    }, [link, qrOptions]);
+
+    useEffect(() => {
+        if (qrCode.current && link) {
+            const patternConfig = getPatternConfig(qrOptions.pattern);
+            qrCode.current.update({
+                data: link,
+                width: qrOptions.size || 300,
+                height: qrOptions.size || 300,
+                dotsOptions: {
+                    color: qrOptions.foregroundColor || "#000000",
+                    ...patternConfig,
+                },
+                backgroundOptions: {
+                    color: qrOptions.backgroundColor || "#ffffff",
+                },
+                cornersSquareOptions: {
+                    color: qrOptions.foregroundColor || "#000000",
+                    ...patternConfig,
+                },
+                cornersDotOptions: {
+                    color: qrOptions.foregroundColor || "#000000",
+                    ...patternConfig,
+                },
+                qrOptions: {
+                    errorCorrectionLevel: qrOptions.errorCorrection || "Q",
+                },
+            });
+        }
+    }, [link, qrOptions]);
+
+    const frameStyles = {
+        none: "",
+        basic: "p-3 border-4 border-gray-800",
+        rounded: "p-3 border-4 border-gray-800 rounded-xl",
+        decorative: "p-4 border-8 border-dashed border-primary rounded-lg",
+        gradient: "p-3 border-4 rounded-lg border-transparent bg-gradient-to-r from-primary to-pink",
+    };
 
     return (
-        <div className="relative inline-block">
-            <div ref={ref} className="relative z-0"></div>
+        <div className="relative flex flex-col items-center">
+            <div className={`relative inline-block ${frameStyles[selectedFrame || "none"]}`}>
+                <div ref={ref} className="relative z-0"></div>
 
-            {(logo || logoText) && (
-                <div
-                    className="absolute z-10 flex flex-col items-center bg-white justify-center"
-                    style={{
-                        transform: "translate(-50%, -50%)",
-                        top: "50%",
-                        left: "50%",
-                        pointerEvents: "none",
-                        width: `${logoSize}%`,
-                        maxWidth: `${qrOptions.size * 0.3}px`,
-                        borderRadius: logoBackground ? '6px' : '0',
-                        padding: logoBackground ? '6px' : '0',
-                    }}
-                >
-                    {logo && (
-                        <img
-                            src={logo}
-                            alt="QR Logo"
-                            style={{
-                                width: '100%',
-                                height: 'auto',
-                                objectFit: "contain",
-                            }}
-                        />
-                    )}
-
-                    {logoText && (
-                        <span className="font-bold text-xs text-gray-800 bg-white/90 px-2 py-1 rounded mt-1">
-                            {logoText}
-                        </span>
-                    )}
-                </div>
-            )}
-
-            {selectedFrame !== "none" && (
-                <div
-                    className={`absolute inset-0 pointer-events-none z-20 ${
-                        selectedFrame === "basic"
-                            ? "border-4 border-gray-800"
-                            : selectedFrame === "rounded"
-                                ? "border-4 border-gray-800 rounded-xl"
-                                : selectedFrame === "decorative"
-                                    ? "border-8 border-dashed border-purple-500"
-                                    : selectedFrame === "gradient"
-                                        ? "border-8 border-purple-500 rounded-lg"
-                                        : ""
-                    }`}
-                ></div>
-            )}
+                {(logo || logoText) && (
+                    <div
+                        className="absolute z-10 flex flex-col items-center bg-white justify-center"
+                        style={{
+                            transform: "translate(-50%, -50%)",
+                            top: "50%",
+                            left: "50%",
+                            pointerEvents: "none",
+                            width: `${logoSize}%`,
+                            height: `${logoSize}%`,
+                            maxWidth: `${qrOptions.size * 0.25}px`,
+                            maxHeight: `${qrOptions.size * 0.25}px`,
+                            borderRadius: logoBackground ? "6px" : "0",
+                            padding: logoBackground ? "6px" : "0",
+                        }}
+                    >
+                        {logo && (
+                            <img
+                                src={logo}
+                                alt="QR Logo"
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "contain",
+                                }}
+                            />
+                        )}
+                        {logoText && (
+                            <span className="font-bold text-xs text-gray-800 bg-white/90 px-2 py-1 rounded ">
+                                {logoText}
+                            </span>
+                        )}
+                    </div>
+                )}
+            </div>
 
             <div className="text-center space-y-2 mt-8">
-                <p className="text-sm text-gray-600">Scanning will:</p>
-                <p className="font-medium text-purple-600 break-all">{url}</p>
+                <p className="text-[0.875rem]  font-semibold dark:text-gray-200 dark:bg-bodybg">Scanning will open:</p>
+                <p className="font-medium text-purple-600 break-all dark:text-gray-200 dark:bg-bodybg">{link}</p>
+                {reviewText && <p className="text-gray-600 text-sm dark:text-gray-200 dark:bg-bodybg">{reviewText}</p>}
+                {additionalText && <p className="text-gray-500 text-xs dark:text-gray-200 dark:bg-bodybg">{additionalText}</p>}
             </div>
         </div>
     );

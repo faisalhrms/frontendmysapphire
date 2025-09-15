@@ -10,12 +10,16 @@ import EquipmentRepairFormModal from "@modules/inventory/models/EquipmentRepairF
 import {Avatar} from "@mui/material";
 import { ShieldCheck } from "lucide-react";
 import EquipmentDeleteConfirmModal from "@modules/inventory/models/EquipmentDeleteConfirmModal.jsx";
+import EquipmentReplaceFormModal from "@modules/inventory/models/EquipmentReplaceFormModal.jsx";
+import EquipmentReplaceListModal from "@modules/inventory/models/EquipmentReplaceListModal.jsx";
 const EquipmentList = ({ isActive, externalFilters = [] }) => {
     if (!isActive) return null;
     const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
     const [showRepairForm, setShowRepairForm] = useState(false);
     const [showRepairList, setShowRepairList] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showReplaceForm, setShowReplaceForm] = useState(false);
+    const [showReplaceList, setShowReplaceList] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const tableRef = useRef(null);
@@ -32,6 +36,14 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
         setSelectedEquipmentId(id);
         setShowRepairList(true);
     };
+    const openReplaceForm = (id) => {
+        setSelectedEquipmentId(id);
+        setShowReplaceForm(true);
+    };
+    const openReplaceList = (id) => {
+        setSelectedEquipmentId(id);
+        setShowReplaceList(true);
+    };
     const handleConfirmDelete = async () => {
         setIsDeleting(true);
         try {
@@ -40,7 +52,6 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
             setShowDeleteModal(false);
             setDeletingId(null);
 
-            // ✅ refresh table correctly
             tableRef.current?.refetch();
         } catch (error) {
             console.error("Delete failed:", error.message);
@@ -80,6 +91,20 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
                         title="View Repairs"
                     >
                         <i className="ri-list-settings-line"></i>
+                    </button>
+                    <button
+                        className="ti-btn ti-btn-success ti-btn-sm"
+                        onClick={() => openReplaceForm(row.original.id)}
+                        title="Add Replacement"
+                    >
+                        <i className="ri-refresh-line"></i>
+                    </button>
+                    <button
+                        className="ti-btn ti-btn-info ti-btn-sm"
+                        onClick={() => openReplaceList(row.original.id)}
+                        title="View Replacements"
+                    >
+                        <i className="ri-list-check"></i>
                     </button>
                     <button
                         className="ti-btn ti-btn-danger ti-btn-sm"
@@ -324,6 +349,23 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
                     hiddenParameters={externalFilters}
                 />
             )}
+
+            {showReplaceForm && (
+                <EquipmentReplaceFormModal
+                    isOpen={showReplaceForm}
+                    onClose={() => setShowReplaceForm(false)}
+                    equipmentId={selectedEquipmentId}
+                />
+            )}
+            {showReplaceList && (
+                <EquipmentReplaceListModal
+                    isOpen={showReplaceList}
+                    onClose={() => setShowReplaceList(false)}
+                    equipmentId={selectedEquipmentId}
+                    hiddenParameters={externalFilters}
+                />
+            )}
+
             {showDeleteModal && (
                 <EquipmentDeleteConfirmModal
                     isOpen={showDeleteModal}
