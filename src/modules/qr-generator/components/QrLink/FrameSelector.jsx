@@ -108,8 +108,8 @@ const FrameSelector = ({ frames, selectedFrame, onSelect }) => {
                     <button
                         type="button"
                         onClick={() => onSelect(null)}
-                        className={`relative flex items-center justify-center w-20 h-20 p-2 rounded-lg border transition-all duration-150
-                        ${!selectedFrame ? "border-primary ring-2 ring-primary bg-gray-100" : "border-gray-200 hover:border-primary bg-white"}
+                        className={`relative flex items-center justify-center w-20 h-20 p-2 rounded-lg border transition-all duration-150 dark:text-gray-200 dark:bg-bodybg
+                        ${!selectedFrame ? "border-primary ring-2 ring-primary bg-gray-100" : "border-gray-200 hover:border-primary bg-white "}
                     `}
                         title="Remove Frame"
                     >
@@ -124,7 +124,9 @@ const FrameSelector = ({ frames, selectedFrame, onSelect }) => {
                             onClick={() => onSelect(frame.id)}
                             title={frame.name}
                             aria-pressed={selectedFrame === frame.id}
-                            className={`relative flex items-center justify-center p-2 w-20 h-20 rounded-lg border transition-all duration-150
+                            className={`relative flex items-center justify-center p-2 w-20 h-20 rounded-lg border transition-all duration-150 dark:text-gray-200 dark:bg-bodybg
+                            
+                            
                             ${selectedFrame === frame.id
                                 ? "border-primary ring-2 ring-primary bg-gray-100"
                                 : "border-gray-200 hover:border-primary bg-white"}

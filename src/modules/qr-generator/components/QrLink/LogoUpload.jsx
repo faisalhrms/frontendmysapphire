@@ -33,10 +33,11 @@ const LogoUpload = ({
             <div className="bg-white rounded-3xl shadow-xl p-8 max-w-4xl w-full dark:text-gray-200 dark:bg-bodybg">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 dark:text-gray-200 dark:bg-bodybg">Logo & Text</h3>
 
-                {/* Logos Row */}
                 <div className="flex flex-wrap items-center gap-4 mb-4">
                     <div
-                        className={`relative border rounded-lg cursor-pointer p-1 flex items-center justify-center w-20 h-20 ${
+                        className={`relative flex items-center justify-center w-20 h-20 p-2 rounded-lg border transition-all duration-150
+                        border-primary ring-2 ring-primary bg-gray-100 dark:text-gray-200 dark:bg-bodybg
+                     ${
                             !selectedLogo ? "border-primary" : "border-gray-200"
                         }`}
                         onClick={() => onSelectLogo(null)}
@@ -55,7 +56,7 @@ const LogoUpload = ({
                             <img
                                 src={logo}
                                 alt={`Logo ${idx + 1}`}
-                                className="w-10 h-10 object-contain"
+                                className="w-20 h-20 object-contain"
                             />
                             {selectedLogo === logo && (
                                 <CheckCircle className="absolute top-1 right-1 text-purple-500 w-4 h-4"/>
@@ -73,11 +74,10 @@ const LogoUpload = ({
                         value={logoText}
                         onChange={(e) => onLogoTextChange(e.target.value)}
                         placeholder="Enter name to show with logo"
-                        className="w-full p-2 border border-gray-300 rounded-lg"
+                        className="w-full p-2 border border-gray-300 rounded-lg dark:text-gray-200 dark:bg-bodybg"
                     />
                 </div>
 
-                {/* Logo Size & Background */}
                 {selectedLogo && (
                     <div className="mt-4 flex items-center justify-between">
                         <div className="flex items-center">

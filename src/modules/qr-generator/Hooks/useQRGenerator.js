@@ -1,76 +1,3 @@
-// import QRCodeStyling from 'qr-code-styling';
-//
-// const useQRGenerator = () => {
-//     const generateQRDataURL = async (url, options = {}) => {
-//         try {
-//             const getPatternConfig = (pattern) => {
-//                 switch (pattern) {
-//                     case "circle":
-//                         return { type: "dots" };
-//                     case "rounded":
-//                         return { type: "rounded" };
-//                     case "diamond":
-//                         return { type: "classy" };
-//                     case "star":
-//                         return { type: "classy-rounded" };
-//                     case "heart":
-//                         return { type: "rounded" };
-//                     case "square":
-//                     default:
-//                         return { type: "square" };
-//
-//                 }
-//             };
-//
-//             const qrCode = new QRCodeStyling({
-//                 width: options.size || 200,
-//                 height: options.size || 200,
-//                 type: options.type || 'png',
-//                 data: url,
-//                 dotsOptions: {
-//                     color: options.foregroundColor || '#000000',
-//                     ...getPatternConfig(options.pattern)
-//                 },
-//                 backgroundOptions: {
-//                     color: options.backgroundColor || '#ffffff',
-//                 },
-//                 cornersSquareOptions: {
-//                     color: options.foregroundColor || '#000000',
-//                     ...getPatternConfig(options.pattern)
-//                 },
-//                 cornersDotOptions: {
-//                     color: options.foregroundColor || '#000000',
-//                     ...getPatternConfig(options.pattern)
-//                 },
-//                 qrOptions: {
-//                     errorCorrectionLevel: options.errorCorrection || 'M'
-//                 }
-//             });
-//
-//             return new Promise((resolve) => {
-//                 qrCode.getRawData('png').then((buffer) => {
-//                     const blob = new Blob([buffer], { type: 'image/png' });
-//                     const url = URL.createObjectURL(blob);
-//                     resolve(url);
-//                 });
-//             });
-//         } catch (error) {
-//             console.error('Error generating QR code:', error);
-//             return null;
-//         }
-//     };
-//
-//     const downloadQR = (dataURL, filename, format = 'png') => {
-//         const link = document.createElement('a');
-//         link.download = `${filename}.${format}`;
-//         link.href = dataURL;
-//         link.click();
-//     };
-//
-//     return { generateQRDataURL, downloadQR };
-// };
-//
-// export default useQRGenerator;
 import QRCodeStyling from "qr-code-styling";
 
 const useQRGenerator = () => {
@@ -98,6 +25,7 @@ const useQRGenerator = () => {
                 width: options.size || 200,
                 height: options.size || 200,
                 type: options.type || "png",
+
                 data: url,
                 backgroundOptions: {
                     color: options.backgroundColor || "#ffffff",
@@ -132,24 +60,24 @@ const useQRGenerator = () => {
                     const qrImage = new Image();
                     qrImage.onload = () => {
                         const qrSize = options.size || 200;
-                        const textMargin = 70; // Margin for text
                         const padding = 30; // Padding around QR code
+                        const textMargin = options.additionalText ? 70 : 0; // Add space only if text is provided
 
                         const canvas = document.createElement("canvas");
                         const ctx = canvas.getContext("2d");
 
-                        // Adjust canvas size to accommodate frame outside QR
+                        // Set canvas size, include textMargin only if text is provided
                         canvas.width = qrSize + padding * 2;
-                        canvas.height = qrSize + textMargin + padding * 2;
+                        canvas.height = qrSize + padding * 2 + textMargin;
 
-                        // 🟢 Fill full background with white
+                        // Fill full background with white
                         ctx.fillStyle = "#ffffff";
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                        // 🟢 Draw QR code inside padded area
+                        // Draw QR code inside padded area
                         ctx.drawImage(qrImage, padding, padding, qrSize, qrSize);
 
-                        // 🟢 Apply frame outside QR
+                        // Apply frame outside QR
                         if (options.frame !== "none") {
                             const framePadding = padding - 10; // Distance of frame outside QR
                             ctx.lineWidth = 4; // Set thickness of frame
@@ -160,7 +88,7 @@ const useQRGenerator = () => {
                                     ctx.strokeRect(
                                         framePadding, framePadding,
                                         qrSize + padding * 2 - framePadding * 2,
-                                        qrSize + textMargin + padding - framePadding * 2
+                                        qrSize + padding * 2 - framePadding * 2 + textMargin
                                     );
                                     break;
                                 case "rounded":
@@ -169,7 +97,7 @@ const useQRGenerator = () => {
                                     ctx.strokeRect(
                                         framePadding, framePadding,
                                         qrSize + padding * 2 - framePadding * 2,
-                                        qrSize + textMargin + padding - framePadding * 2
+                                        qrSize + padding * 2 - framePadding * 2 + textMargin
                                     );
                                     break;
                                 case "decorative":
@@ -178,7 +106,7 @@ const useQRGenerator = () => {
                                     ctx.strokeRect(
                                         framePadding, framePadding,
                                         qrSize + padding * 2 - framePadding * 2,
-                                        qrSize + textMargin + padding - framePadding * 2
+                                        qrSize + padding * 2 - framePadding * 2 + textMargin
                                     );
                                     break;
                                 case "gradient":
@@ -189,7 +117,7 @@ const useQRGenerator = () => {
                                     ctx.strokeRect(
                                         framePadding, framePadding,
                                         qrSize + padding * 2 - framePadding * 2,
-                                        qrSize + textMargin + padding - framePadding * 2
+                                        qrSize + padding * 2 - framePadding * 2 + textMargin
                                     );
                                     break;
                                 default:
@@ -197,7 +125,7 @@ const useQRGenerator = () => {
                             }
                         }
 
-                        // Draw additional text (black or chosen color)
+                        // Draw additional text if provided
                         if (options.additionalText) {
                             ctx.font = `${options.fontSize || 16}px ${options.font || "Arial"}`;
                             ctx.fillStyle = options.textColor || "#000000";
@@ -205,7 +133,7 @@ const useQRGenerator = () => {
                             ctx.fillText(
                                 options.additionalText,
                                 canvas.width / 2,
-                                qrSize + padding + (textMargin / 2) + (parseInt(options.fontSize) / 2)
+                                qrSize + padding + (textMargin / 2) + (parseInt(options.fontSize) / 2 || 8)
                             );
                         }
 

@@ -31,7 +31,7 @@ export default function TextFormattingUI({
                             value={reviewText || ""}
                             onChange={(e) => onReviewTextChange(e.target.value)}
                             placeholder="additional text..."
-                            className="px-3 py-2 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="px-3 py-2 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:text-gray-200 dark:bg-bodybg"
                         />
 
                         {/* Font Select */}
@@ -39,7 +39,7 @@ export default function TextFormattingUI({
                             <select
                                 value={font || "Arial"}
                                 onChange={(e) => onFontChange(e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary appearance-none pr-8"
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary appearance-none pr-8 dark:text-gray-200 dark:bg-bodybg"
                             >
                                 <option value="Times">Times</option>
                                 <option value="Arial">Arial</option>
@@ -54,7 +54,7 @@ export default function TextFormattingUI({
                             <select
                                 value={fontSize || "16"}
                                 onChange={(e) => onFontSizeChange(e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary appearance-none pr-8"
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary appearance-none pr-8 dark:text-gray-200 dark:bg-bodybg"
                             >
                                 <option value="12">12</option>
                                 <option value="14">14</option>

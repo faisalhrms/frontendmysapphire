@@ -8,14 +8,14 @@ const ColorPicker = ({ label, color, onColorChange }) => (
             type="color"
             value={color}
             onChange={(e) => onColorChange(e.target.value)}
-            className="form-control w-full !rounded-sm border-gray  form-control-color !border-0 block"
+            className="form-control w-full !rounded-sm border-gray  form-control-color !border-0 block dark:text-gray-200 dark:bg-bodybg"
         />
 
         <input
             type="text"
             value={color}
             onChange={(e) => onColorChange(e.target.value)}
-            className="w-28 px-2 py-1 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+            className="w-28 px-2 py-1 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm dark:text-gray-200 dark:bg-bodybg"
         />
     </div>
 );
@@ -41,7 +41,7 @@ const ColorSelector = ({
                     Color</h3>
 
                 <div
-                    className="bg-white  max-w-4xl w-full flex items-center gap-8 dark:text-gray-200 dark:bg-bodybg">
+                    className="bg-white  max-w-4xl w-full flex items-center gap-8 dark:text-gray-200 dark:bg-bodybg" >
                     <ColorPicker
                         label="Foreground"
                         color={foregroundColor}
@@ -54,7 +54,7 @@ const ColorSelector = ({
                     />
 
 
-                    <label className="flex items-center gap-1 text-[0.875rem] mb-1 font-semibold">
+                    <label className="flex items-center gap-1 text-[0.875rem] mb-1 font-semibold ">
                         <input
                             type="checkbox"
                             onChange={(e) => handleTransparentToggle(e.target.checked)}
