@@ -16,7 +16,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 IT_GOVERNANCE_ROUTES.READ.path,
                 'link',
-                'SLA',
+                'Service Level (A)',
                 1,
                 'bx-laptop',
                 IT_GOVERNANCE_ROUTES.READ.permission
@@ -24,14 +24,14 @@ export const sidebarMenu = [
             generateSidebarItem(
                 IT_GOVERNANCE_ROUTES.APPLICATION_UNIVERSE.READ.path,
                 'link',
-                'AU',
+                'Application Universe',
                 1,
                 'bx-laptop',
                 IT_GOVERNANCE_ROUTES.APPLICATION_UNIVERSE.READ.permission            ),
             generateSidebarItem(
                 IT_GOVERNANCE_ROUTES.WARRANTY.READ.path,
                 'link',
-                'W',
+                'Warranty',
                 1,
                 'bx-laptop',
                 IT_GOVERNANCE_ROUTES.WARRANTY.READ.permission

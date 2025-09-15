@@ -35,6 +35,14 @@ export const sidebarMenu = [
                 APPROVAL_ROUTES.FORM.permission,
             ),
             generateSidebarItem(
+                APPROVAL_ROUTES.GLOBAL.path,
+                'link',
+                'Global',
+                4,
+                '',
+                APPROVAL_ROUTES.GLOBAL.permission,
+            ),
+            generateSidebarItem(
                 "",
                 "sub",
                 "Setups",
