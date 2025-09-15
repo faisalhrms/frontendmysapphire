@@ -1,14 +1,16 @@
 import QRCodeGenerator from "@modules/qr-generator/components/QrLink/QRCodeGenerator.jsx";
+
+import {FolderPlus, Pyramid ,QrCode} from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import {Pyramid} from "lucide-react";
 
 const QrGenerator = () => {
     return (
         <div>
+
             <IconPageHeader
-                title="QR Code Generator"
-                description="Create custom QR codes with advanced styling options"
-                icon={Pyramid}
+                heading="QR Generator"
+                description="Create and customize your QR codes easily by filling out the details below."
+                icon={QrCode}
             />
             <QRCodeGenerator />
         </div>
