@@ -146,7 +146,8 @@ const QRPreview = ({
     }, [link, qrOptions]);
 
     const frameStyles = {
-        none: "",
+        null: "",
+        none: "p-3 border-4 border-dashed border-gray-800 ",
         basic: "p-3 border-4 border-gray-800",
         rounded: "p-3 border-4 border-gray-800 rounded-xl",
         decorative: "p-4 border-8 border-dashed border-primary rounded-lg",
@@ -155,21 +156,21 @@ const QRPreview = ({
 
     return (
         <div className="relative flex flex-col items-center">
-            <div className={`relative inline-block ${frameStyles[selectedFrame || "none"]}`}>
+            <div className={`relative inline-block ${frameStyles[selectedFrame || "null"]}`}>
                 <div ref={ref} className="relative z-0"></div>
 
                 {(logo || logoText) && (
                     <div
-                        className="absolute z-10 flex flex-col items-center bg-white justify-center"
+                        className={`absolute z-10 flex flex-col items-center justify-center ${
+                            logoBackground ? "bg-white" : ""
+                        }`}
                         style={{
                             transform: "translate(-50%, -50%)",
                             top: "50%",
                             left: "50%",
                             pointerEvents: "none",
                             width: `${logoSize}%`,
-                            height: `${logoSize}%`,
-                            maxWidth: `${qrOptions.size * 0.25}px`,
-                            maxHeight: `${qrOptions.size * 0.25}px`,
+                            height: '30%',
                             borderRadius: logoBackground ? "6px" : "0",
                             padding: logoBackground ? "6px" : "0",
                         }}
@@ -180,17 +181,19 @@ const QRPreview = ({
                                 alt="QR Logo"
                                 style={{
                                     width: "100%",
-                                    height: "100%",
+                                    height: "70%",
                                     objectFit: "contain",
                                 }}
                             />
                         )}
                         {logoText && (
-                            <span className="font-bold text-xs text-gray-800 bg-white/90 px-2 py-1 rounded ">
-                                {logoText}
-                            </span>
+                            <span className="font-bold text-xs text-gray-800 px-2 py-1 text-center w-full truncate">
+      {logoText}
+    </span>
                         )}
                     </div>
+
+
                 )}
             </div>
 
@@ -198,7 +201,8 @@ const QRPreview = ({
                 <p className="text-[0.875rem]  font-semibold dark:text-gray-200 dark:bg-bodybg">Scanning will open:</p>
                 <p className="font-medium text-purple-600 break-all dark:text-gray-200 dark:bg-bodybg">{link}</p>
                 {reviewText && <p className="text-gray-600 text-sm dark:text-gray-200 dark:bg-bodybg">{reviewText}</p>}
-                {additionalText && <p className="text-gray-500 text-xs dark:text-gray-200 dark:bg-bodybg">{additionalText}</p>}
+                {additionalText &&
+                    <p className="text-gray-500 text-xs dark:text-gray-200 dark:bg-bodybg">{additionalText}</p>}
             </div>
         </div>
     );

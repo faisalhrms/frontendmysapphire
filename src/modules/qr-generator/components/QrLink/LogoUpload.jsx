@@ -1,4 +1,6 @@
 import { CheckCircle, X } from "lucide-react";
+import sapphireb from "@assets/images/company-logos/sapphireb.png";
+import sapphireTextile from "@assets/images/company-logos/sapphireTextile.png";
 
 const LogoUpload = ({
                         logos = [],
@@ -12,8 +14,8 @@ const LogoUpload = ({
                         onLogoTextChange
                     }) => {
     const logoUrls = [
-        "https://be.mysapphire.co/media/uploads/2025/01/10/stm_logo.png",
-        "https://be.mysapphire.co/media/uploads/2025/01/10/srl_logo.jpg",
+        sapphireTextile ,
+        sapphireb,
         "https://me-qr.com/build/images/youTubeLogotype.a0ebc6ae.svg",
         "https://me-qr.com/build/images/faceBookLogotype.dbceffdc.svg",
         "https://me-qr.com/build/images/whatsAppLogotype.a6873f12.svg",
@@ -56,7 +58,9 @@ const LogoUpload = ({
                             <img
                                 src={logo}
                                 alt={`Logo ${idx + 1}`}
-                                className="w-20 h-20 object-contain"
+                                className={`object-contain ${
+                                    logo === sapphireb ? "w-24 h-24" : "w-20 h-20"
+                                }`}
                             />
                             {selectedLogo === logo && (
                                 <CheckCircle className="absolute top-1 right-1 text-purple-500 w-4 h-4"/>
@@ -87,7 +91,7 @@ const LogoUpload = ({
                             <input
                                 type="range"
                                 min="20"
-                                max="200"
+                                max="40"
                                 step="1"
                                 value={logoSize}
                                 onChange={(e) => onLogoSizeChange(Number(e.target.value))}
