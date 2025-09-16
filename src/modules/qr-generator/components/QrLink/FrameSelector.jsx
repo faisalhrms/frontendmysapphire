@@ -14,7 +14,7 @@ const FrameSelector = ({ frames, selectedFrame, onSelect }) => {
                             width="36"
                             height="36"
                             fill="none"
-                            stroke="#E5E7EB"
+                            stroke="#9CA3AF"
                             strokeWidth="2"
                             strokeDasharray="3 4"
                             rx="2"
@@ -104,7 +104,7 @@ const FrameSelector = ({ frames, selectedFrame, onSelect }) => {
                 <h3 className="text-xl font-bold text-gray-800 mb-4 dark:text-gray-200 dark:bg-bodybg">Frame</h3>
 
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                    {/* ❌ Clear Frame Option */}
+
                     <button
                         type="button"
                         onClick={() => onSelect(null)}
