@@ -57,8 +57,8 @@ const LocationSubnetForm = ({ subnetData, isEditMode = false }) => {
                                 control={control}
                                 errors={errors}
                                 placeholder="Select Location"
-                                apiUrl="/select/locations/"
-                                queryKeyBase="locations"
+                                apiUrl="/select/locations-company/"
+                                queryKeyBase="locations_company"
                                 clientSideSearch={false}
                                 preselectedOptions={formatOptions(subnetData, "location", "id", "name")}
                                 isDisabled={isEditMode}
