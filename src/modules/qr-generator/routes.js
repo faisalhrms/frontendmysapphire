@@ -5,9 +5,12 @@ import QRCustomize from "@modules/qr-generator/components/QrLink/QRCustomize.jsx
 export const QR_ROUTES = {
     LINK: {
         path: "/module/qr/qr-link",
+        permission: 'qr.add_qr_link',
+
     },
     CUSTOMIZE: {
         path: "/module/qr/qr-customize",
+        permission: 'qr.create_qr',
     }
 };
 
