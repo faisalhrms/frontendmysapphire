@@ -78,9 +78,10 @@ const useQRGenerator = () => {
                         ctx.drawImage(qrImage, padding, padding, qrSize, qrSize);
 
                         // Apply frame outside QR
-                        if (options.frame !== "none") {
+                        if (options.frame !== "null") {
                             const framePadding = padding - 10; // Distance of frame outside QR
-                            ctx.lineWidth = 4; // Set thickness of frame
+                            ctx.lineWidth = 4;
+                            // Set thickness of frame
 
                             switch (options.frame) {
                                 case "basic":
@@ -91,6 +92,14 @@ const useQRGenerator = () => {
                                         qrSize + padding * 2 - framePadding * 2 + textMargin
                                     );
                                     break;
+                                case "none":
+                                    ctx.strokeStyle = "#42f55a"; // Black border
+                                    ctx.lineJoin = "round";
+                                    ctx.strokeRect(
+                                        framePadding, framePadding,
+                                        qrSize + padding * 2 - framePadding * 2,
+                                        qrSize + padding * 2 - framePadding * 2 + textMargin
+                                    );
                                 case "rounded":
                                     ctx.strokeStyle = "#000000"; // Black border
                                     ctx.lineJoin = "round";

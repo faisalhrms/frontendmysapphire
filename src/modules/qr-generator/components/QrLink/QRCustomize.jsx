@@ -76,7 +76,8 @@ const CustomizeQR = () => {
     ];
 
     const frameOptions = [
-        { id: "none", name: "No Frame" },
+
+        { id: "none", name: "Basic Border" },
         { id: "basic", name: "Basic Border" },
         { id: "rounded", name: "Rounded Border" },
         { id: "decorative", name: "Decorative Frame" },
