@@ -16,7 +16,7 @@ const CustomizeQR = () => {
 
     const initialState = location.state || {};
     const [facebookLink, setFacebookLink] = useState(initialState.facebookLink || "");
-    const [youtubeLink, setyoutubeLink] = useState(initialState.youtubeLink|| "");
+    const [youtubeLink, setYoutubeLink] = useState(initialState.youtubeLink || "");
     const [qrName, setQrName] = useState(initialState.qrName || "");
     const [category, setCategory] = useState(initialState.category || "");
     const [whatsappLink, setWhatsappLink] = useState(initialState.whatsappLink || "");
@@ -27,7 +27,7 @@ const CustomizeQR = () => {
 
     useEffect(() => {
         setFacebookLink(initialState.facebookLink || "");
-        setyoutubeLink(initialState.youtubeLink|| "");
+        setYoutubeLink(initialState.youtubeLink || "");
         setQrName(initialState.qrName || "");
         setCategory(initialState.category || "");
         setWhatsappLink(initialState.whatsappLink || "");
@@ -42,7 +42,8 @@ const CustomizeQR = () => {
     const [foregroundColor, setForegroundColor] = useState("#000000");
     const [backgroundColor, setBackgroundColor] = useState("#ffffff");
     const [selectedFrame, setSelectedFrame] = useState(null);
-    const [logoSize, setLogoSize] = useState(20);
+    const [logoWidth, setLogoWidth] = useState(20); // Updated from logoSize
+    const [logoHeight, setLogoHeight] = useState(20); // New state for logoHeight
     const [qrSize, setQrSize] = useState(300);
     const [qrFormat, setQrFormat] = useState("png");
     const [selectedLogo, setSelectedLogo] = useState(null);
@@ -76,8 +77,7 @@ const CustomizeQR = () => {
     ];
 
     const frameOptions = [
-
-        { id: "none", name: "Basic Border" },
+        { id: "none", name: "round" },
         { id: "basic", name: "Basic Border" },
         { id: "rounded", name: "Rounded Border" },
         { id: "decorative", name: "Decorative Frame" },
@@ -95,7 +95,7 @@ const CustomizeQR = () => {
     };
 
     const handleDownloadQR = async () => {
-        const urlToUse = facebookLink || whatsappLink ||  youtubeLink || url || constructWhatsAppLink() || "https://example.com";
+        const urlToUse = facebookLink || whatsappLink || youtubeLink || url || constructWhatsAppLink() || "https://example.com";
         setError("");
         const qrDataURL = await generateQRDataURL(urlToUse, {
             size: parseInt(qrSize),
@@ -105,7 +105,8 @@ const CustomizeQR = () => {
             pattern: selectedPattern,
             type: qrFormat === "svg" ? "svg" : `image/${qrFormat}`,
             logo: selectedLogo,
-            logoSize,
+            logoWidth, // Updated from logoSize
+            logoHeight, // New prop
             logoBackground,
             logoText,
             frame: selectedFrame,
@@ -127,19 +128,18 @@ const CustomizeQR = () => {
     };
 
     const previewQrOptions = {
-        size: 300,
+        size: 320,
         backgroundColor,
         foregroundColor,
         errorCorrection,
         pattern: selectedPattern,
     };
 
-
     return (
         <div className="relative mx-auto lg:flex lg:gap-8 p-4">
             <button
                 onClick={handleBack}
-                className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 ti-btn ti-btn-primary mb-10 text-white rounded-lg border border-purple-400  hover:bg-primary/80 transition-all duration-200 z-10"
+                className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 ti-btn ti-btn-primary mb-10 text-white rounded-lg border border-purple-400 hover:bg-primary/80 transition-all duration-200 z-10"
             >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -162,7 +162,6 @@ const CustomizeQR = () => {
                     onForegroundChange={setForegroundColor}
                     onBackgroundChange={setBackgroundColor}
                 />
-
                 <TextFormattingUI
                     reviewText={additionalText}
                     onReviewTextChange={setAdditionalText}
@@ -181,29 +180,30 @@ const CustomizeQR = () => {
                     onSelect={setSelectedFrame}
                 />
                 <LogoUpload
-                    logoSize={logoSize}
-                    onLogoSizeChange={setLogoSize}
+                    logoWidth={logoWidth} // Updated from logoSize
+                    onLogoWidthChange={setLogoWidth} // Updated from onLogoSizeChange
+                    logoHeight={logoHeight} // New prop
+                    onLogoHeightChange={setLogoHeight} // New prop
                     selectedLogo={selectedLogo}
                     onSelectLogo={setSelectedLogo}
-                    text={reviewText}
-                    onTextChange={setReviewText}
+                    logoText={logoText} // Updated from text
+                    onLogoTextChange={setLogoText} // Updated from onTextChange
                     logoBackground={logoBackground}
                     onLogoBackgroundChange={setLogoBackground}
-                    logoText={logoText}
-                    onLogoTextChange={setLogoText}
                 />
             </div>
 
             <div className="lg:w-1/3 flex flex-col mt-14 justify-center items-center p-4 space-y-4 mb-20 bg-white dark:text-gray-200 dark:bg-bodybg">
                 {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                 <QRPreview
-                    url={facebookLink || whatsappLink ||  youtubeLink || url || constructWhatsAppLink()}
+                    url={facebookLink || whatsappLink || youtubeLink || url || constructWhatsAppLink()}
                     qrOptions={previewQrOptions}
                     selectedFrame={selectedFrame}
                     qrRef={qrRef}
                     qrFormat={qrFormat}
                     logo={selectedLogo}
-                    logoSize={logoSize}
+                    logoWidth={logoWidth} // Updated from logoSize
+                    logoHeight={logoHeight} // New prop
                     logoBackground={logoBackground}
                     logoText={logoText}
                     reviewText={reviewText}
@@ -219,7 +219,6 @@ const CustomizeQR = () => {
                 >
                     {additionalText}
                 </div>
-
 
                 <div className="w-full space-y-8">
                     <div className="flex flex-col sm:flex-row gap-4">
