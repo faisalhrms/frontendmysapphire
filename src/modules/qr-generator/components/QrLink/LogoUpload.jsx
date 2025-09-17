@@ -43,7 +43,7 @@ const LogoUpload = ({
 
                 <div className="flex flex-wrap items-center gap-4 mb-4">
                     <div
-                        className={`relative flex items-center justify-center w-20 h-20 p-2 rounded-lg border transition-all duration-150 hover:border-primary ${
+                        className={`relative flex items-center justify-center w-20 h-20 p-2 rounded-lg border transition-all duration-150 hover:border-primary dark:text-gray-200 dark:bg-bodybg ${
                             !selectedLogo ? "border-primary ring-2 ring-primary bg-gray-100" : "border-gray-200"
                         }`}
                         onClick={() => onSelectLogo(null)}
