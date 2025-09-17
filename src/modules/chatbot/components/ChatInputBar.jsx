@@ -33,8 +33,8 @@ const ChatInputBar = ({
     "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
   ]).slice(0, 4)
   const pad = modeSelection === "Quality Control" ? "pb-24" : "pb-20"
-  const toggleSub = s => setHrSubtypes?.(p => p.includes(s) ? p.filter(x => x!==s) : [...p, s])
-  const active = s => hrSubtypes?.includes?.(s)
+  const toggleSub = s => setHrSubtypes?.([s])
+  const active = s => hrSubtypes?.[0] === s
   return (
     <div className={`relative w-full max-w-5xl mx-auto bg-white dark:bg-bodybg rounded-xl shadow-xl ring-1 ring-black/5 border border-gray-200 px-6 pt-4 ${pad}`}>
       {modeSelection !== "Quality Control" ? (
