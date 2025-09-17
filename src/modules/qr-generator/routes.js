@@ -6,7 +6,6 @@ export const QR_ROUTES = {
     LINK: {
         path: "/module/qr/qr-link",
         permission: 'user.view_ess_modules',
-
     },
     CUSTOMIZE: {
         path: "/module/qr/qr-customize",

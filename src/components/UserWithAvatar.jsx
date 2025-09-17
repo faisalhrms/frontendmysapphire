@@ -2,6 +2,7 @@ import Avatar from "@components/Avatar.jsx";
 import React from "react";
 
 const UserWithAvatar = ({user}) => {
+    if (!user) return "";
     return (
         <div className="flex items-center">
             <Avatar

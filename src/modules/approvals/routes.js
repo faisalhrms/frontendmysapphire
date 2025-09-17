@@ -8,6 +8,7 @@ import ApprovalHierarchySetupDatatable from "@modules/approvals/setup/views/Appr
 import CreateApprovalHierarchySetup from "@modules/approvals/setup/views/CreateApprovalHierarchySetup.jsx";
 import EditApprovalHierarchySetup from "@modules/approvals/setup/views/EditApprovalHierarchySetup.jsx";
 import ApprovalHierarchyApproverSetupDatatable from "@modules/approvals/setup/views/ApprovalHierarchyApproverSetupDatatable.jsx";
+import GlobalApprovalList from "@modules/approvals/global/view/GlobalApprovalList.jsx";
 
 const SETUP_PERMISSION = 'approvals.dynamic_hierarchy_management'
 
@@ -22,6 +23,10 @@ export const APPROVAL_ROUTES = {
     },
     FORM:{
         path:'/module/approvals/form',
+        permission: 'user.view_ess_modules',
+    },
+    GLOBAL:{
+        path:'/module/approvals/global',
         permission: 'user.view_ess_modules',
     },
     SETUP: {
@@ -75,6 +80,11 @@ export const MODULE_ROUTES = [
         path: APPROVAL_ROUTES.FORM.path,
         component:DynamicFormApprovalList,
         permission: APPROVAL_ROUTES.FORM.permission,
+    },
+    {
+        path: APPROVAL_ROUTES.GLOBAL.path,
+        component:GlobalApprovalList,
+        permission: APPROVAL_ROUTES.GLOBAL.permission,
     },
     {
         path: APPROVAL_ROUTES.SETUP.TYPE.READ.path,

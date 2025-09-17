@@ -54,7 +54,7 @@ const ApprovalTypeForm = ({ editMode = false, approvalTypeId = null }) => {
                                         rows={3}
                                     />
                                 </div>
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="col-span-12">
                                     <FormInput
                                         name="detail_page_url"
                                         control={control}
@@ -63,55 +63,12 @@ const ApprovalTypeForm = ({ editMode = false, approvalTypeId = null }) => {
                                         is_required={true}
                                     />
                                 </div>
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="col-span-12">
                                     <FormInput
                                         name="approval_page_url"
                                         control={control}
                                         errors={errors}
                                         placeholder="Approval Page URL"
-                                        is_required={true}
-                                    />
-                                </div>
-
-                                {/* Email Templates */}
-                                <div className="col-span-12">
-                                    <FormInput
-                                        name="approver_subject_template"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Approver Email Subject"
-                                    />
-                                </div>
-                                <div className="col-span-12">
-                                    <FormRichTextarea
-                                        name="approver_body_template"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Approver Email Body"
-                                        editorOptions={{
-                                            height: 150,
-                                        }}
-                                        is_required={true}
-                                    />
-                                </div>
-                                <div className="col-span-12">
-                                    <FormInput
-                                        name="requester_subject_template"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Requester Email Subject"
-                                        is_required={true}
-                                    />
-                                </div>
-                                <div className="col-span-12">
-                                    <FormRichTextarea
-                                        name="requester_body_template"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder="Requester Email Body"
-                                        editorOptions={{
-                                            height: 150,
-                                        }}
                                         is_required={true}
                                     />
                                 </div>

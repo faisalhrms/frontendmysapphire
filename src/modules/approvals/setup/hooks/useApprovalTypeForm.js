@@ -14,11 +14,6 @@ const formSchema = z.object({
     detail_page_url: z.string().min(1, "Detail page URL is required"),
     approval_page_url: z.string().optional(),
 
-    approver_subject_template: z.string().min(1, "Approver subject is required"),
-    approver_body_template: z.string().min(1, "Approver body is required"),
-    requester_subject_template: z.string().min(1, "Requester subject is required"),
-    requester_body_template: z.string().min(1, "Requester body is required"),
-
     notify_requester: z.boolean(),
     notify_on_all_actions: z.boolean(),
 
@@ -43,10 +38,6 @@ export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
             description: "",
             detail_page_url: "",
             approval_page_url: "",
-            approver_subject_template: "",
-            approver_body_template: "",
-            requester_subject_template: "",
-            requester_body_template: "",
             notify_requester: true,
             notify_on_all_actions: false,
             sla_hours: null,
