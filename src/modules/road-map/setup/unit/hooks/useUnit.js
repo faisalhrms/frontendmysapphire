@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ROADMAP_SETUP } from "@modules/road-map/routes.js";
-import {
-  createUnit,
-  getUnitById,
-  updateUnit
-} from "@modules/road-map/setup/unit/services/UnitService.js";
+import { createUnit, getUnitById, updateUnit } from "@modules/road-map/setup/unit/services/UnitService.js";
 
 export const useUnit = id => {
   const navigate = useNavigate();
@@ -52,29 +48,27 @@ export const useUnit = id => {
           certificateList_label: c.certificate.name,
           optionType: c.status,
           expiryDate: c.expiry_date,
-          attachment: c.certificate.media_id,
+          attachment: c.media_id || c.media?.id || null,
           mediaUrl: c.media?.file_url || ""
         }))
       );
     }
   }, [unit, setValue]);
 
-const onSubmitHandler = async data => {
-  const payload = {
-    ...data,
-    certificates: data.certificates.map(({ certificateList, optionType, expiryDate, attachment }) => ({
-      certificateList,
-      optionType,
-      expiryDate: expiryDate || null,
-      attachment
-    }))
-  }
-
-  if (id) await updateUnit(id, { unit: payload })
-  else await createUnit({ unit: payload })
-
-  navigate(`${ROADMAP_SETUP.READ.path}?tab=unit`)
-}
+  const onSubmitHandler = async data => {
+    const payload = {
+      ...data,
+      certificates: data.certificates.map(({ certificateList, optionType, expiryDate, attachment }) => ({
+        certificateList,
+        optionType,
+        expiryDate: expiryDate || null,
+        attachment: attachment || null
+      }))
+    };
+    if (id) await updateUnit(id, { unit: payload });
+    else await createUnit({ unit: payload });
+    navigate(`${ROADMAP_SETUP.READ.path}?tab=unit`);
+  };
 
   return {
     handleSubmit,
