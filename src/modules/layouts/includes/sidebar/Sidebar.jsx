@@ -22,6 +22,7 @@ const Sidebar = () => {
   const [filteredMenuItems, setFilteredMenuItems] = useState(initialMenuItems);
   const [isSearching, setIsSearching] = useState(false);
 
+
   useEffect(() => {
     setMenuItems(initialMenuItems);
     setFilteredMenuItems(initialMenuItems);
