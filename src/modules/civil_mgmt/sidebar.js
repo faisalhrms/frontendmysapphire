@@ -35,6 +35,14 @@ export const sidebarMenu = [
                 CIVIL_ROUTES.PROJECT.DRAWING.READ.permission,
             ),
             generateSidebarItem(
+                CIVIL_ROUTES.BOQ.READ.path,
+                'link',
+                'Boq',
+                4,
+                '',
+                CIVIL_ROUTES.BOQ.READ.permission,
+            ),
+            generateSidebarItem(
                 "",
                 "sub",
                 "Setups",

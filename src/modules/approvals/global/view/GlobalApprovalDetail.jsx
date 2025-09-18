@@ -234,7 +234,7 @@ const GlobalApprovalDetail = () => {
                                                             {data.approval_type.label} Summary
                                                         </p>
                                                         <p className="text-xs text-slate-600 dark:text-gray-200">
-                                                            Complete {data.approval_type.description.toLowerCase()} documentation
+                                                            Complete {data.approval_type.label.toLowerCase()} documentation
                                                         </p>
                                                     </div>
                                                 </div>

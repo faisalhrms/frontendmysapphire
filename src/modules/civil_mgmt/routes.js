@@ -7,9 +7,12 @@ import CreateCivilProject from "@modules/civil_mgmt/project/views/CreateCivilPro
 import EditCivilProject from "@modules/civil_mgmt/project/views/EditCivilProject.jsx";
 import CivilProjectDrawingDatatable from "@modules/civil_mgmt/project/views/CivilProjectDrawingDatatable.jsx";
 import CivilProjectDrawingDetail from "@modules/civil_mgmt/project/views/CivilProjectDrawingDetail.jsx";
+import CivilBoqDatatable from "@modules/civil_mgmt/boq/views/CivilBoqDatatable.jsx";
+import CreateCivilBoq from "@modules/civil_mgmt/boq/views/CreateCivilBoq.jsx";
 
 const SITE_PERMISSION = 'civil_mgmt.site_management'
 const ITEM_PERMISSION = 'civil_mgmt.item_management'
+const BOQ_PERMISSION = 'civil_mgmt.boq_management'
 
 export const CIVIL_ROUTES = {
     SITE:{
@@ -48,6 +51,20 @@ export const CIVIL_ROUTES = {
                 path: '/module/civil/project/drawing/detail/:id',
             },
         }
+    },
+    BOQ:{
+        READ: {
+            path: '/module/civil/boq',
+            permission:ITEM_PERMISSION
+        },
+        CREATE:{
+            path:'/module/civil/boq/create',
+            permission:ITEM_PERMISSION
+        },
+        EDIT:{
+            path:'/module/civil/boq/edit/:id',
+            permission:ITEM_PERMISSION
+        },
     },
     SETUP: {
         ITEM: {
@@ -101,5 +118,13 @@ export const MODULE_ROUTES = [
     {
         path: CIVIL_ROUTES.PROJECT.DRAWING.DETAIL.path,
         component: CivilProjectDrawingDetail,
+    },
+    {
+        path: CIVIL_ROUTES.BOQ.READ.path,
+        component: CivilBoqDatatable,
+    },
+    {
+        path: CIVIL_ROUTES.BOQ.CREATE.path,
+        component: CreateCivilBoq,
     },
 ];

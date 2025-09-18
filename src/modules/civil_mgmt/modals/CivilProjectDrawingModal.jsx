@@ -41,8 +41,8 @@ const CivilProjectDrawingModal = ({control, errors, isSubmitting, handleSubmit, 
                                         control={control}
                                         errors={errors}
                                         placeholder="Project"
-                                        apiUrl="/select/civil/projects/"
-                                        queryKeyBase="civil_projects"
+                                        apiUrl="/select/civil/projects/?for=drawing"
+                                        queryKeyBase="civil_drawing_projects"
                                         preselectedOptions={formatOptions(formData, 'project_option')}
                                         is_required={true}
                                     />

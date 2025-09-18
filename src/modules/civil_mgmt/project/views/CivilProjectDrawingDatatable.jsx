@@ -1,5 +1,5 @@
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import {Package, Edit} from "lucide-react";
+import {Package, Edit, Eye} from "lucide-react";
 import React from "react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import UserWithAvatar from "@components/UserWithAvatar.jsx";
@@ -50,17 +50,40 @@ const CivilProjectDrawingDatatable = () => {
             Cell: ({ value }) => (value ? `V ${value}` : ""),
         },
         {
+            Header: 'Files',
+            accessor: 'files',
+            disableSortBy: true,
+            Cell: ({ row }) => {
+                const files = row.original.files;
+                return (
+                    <div className="flex space-x-2">
+                        {files.map(file => (
+                            <a
+                                key={file.id}
+                                href={file.file_url}
+                                target="_blank"
+                                className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                                <Eye className="h-3 w-3 mr-1"/>
+                                View
+                            </a>
+                        ))}
+                    </div>
+                );
+            },
+        },
+        {
             Header: 'Status',
             accessor: 'status',
             filterable: true,
             filterType: 'select',
             filterKey: 'status',
             filterOptions: [
-                { value: 'approved', label: 'Approved' },
-                { value: 'under_approval', label: 'Under Approval' },
-                { value: 'rejected', label: 'Rejected' },
+                {value: 'approved', label: 'Approved'},
+                {value: 'under_approval', label: 'Under Approval'},
+                {value: 'rejected', label: 'Rejected'},
             ],
-            Cell: ({ value }) => toTitleCase(value),
+            Cell: ({value}) => toTitleCase(value),
             getCellProps: (cellInfo) => {
                 const value = cellInfo.value;
                 let bgClass = "";
@@ -69,16 +92,13 @@ const CivilProjectDrawingDatatable = () => {
                 if (value === "under_approval") {
                     bgClass = "bg-warning/30";
                     textClass = "text-warning";
-                }
-                else if (value === "approved") {
+                } else if (value === "approved") {
                     bgClass = "bg-success/30";
                     textClass = "text-success";
-                }
-                else if (value === "rejected") {
+                } else if (value === "rejected") {
                     bgClass = "bg-danger/30";
                     textClass = "text-danger";
-                }
-                else {
+                } else {
                     bgClass = "bg-primary/30";
                     textClass = "text-primary";
                 }
