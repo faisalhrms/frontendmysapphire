@@ -476,6 +476,7 @@ export const transparentHeader = (dispatch) => {
     localStorage.setItem("ynexHeader", "transparent");
 };
 
+
 export const primaryColor1 = (dispatch) => {
     dispatch(setTheme({
         "colorPrimaryRgb": "58, 88, 146",
@@ -674,7 +675,6 @@ export const Themebackgroundcolor = ({ dispatch }) => {
         </div>
     );
 };
-
 export const Reset = (dispatch) => {
     Vertical(dispatch);
     dispatch(setTheme({
@@ -707,12 +707,45 @@ export const Reset = (dispatch) => {
             class: ""
         }
     }));
-    localStorage.clear();
+
+    // Clear only theme-related localStorage keys
+    localStorage.removeItem("ynexdarktheme");
+    localStorage.removeItem("ynexlighttheme");
+    localStorage.removeItem("ynexltr");
+    localStorage.removeItem("ynexrtl");
+    localStorage.removeItem("ynexlayout");
+    localStorage.removeItem("ynexnavstyles");
+    localStorage.removeItem("ynexverticalstyles");
+    localStorage.removeItem("ynexregular");
+    localStorage.removeItem("ynexclassic");
+    localStorage.removeItem("ynexmodern");
+    localStorage.removeItem("ynexfullwidth");
+    localStorage.removeItem("ynexboxed");
+    localStorage.removeItem("ynexmenufixed");
+    localStorage.removeItem("ynexmenuscrollable");
+    localStorage.removeItem("ynexheaderfixed");
+    localStorage.removeItem("ynexheaderscrollable");
+    localStorage.removeItem("bgimage1");
+    localStorage.removeItem("bgimage2");
+    localStorage.removeItem("bgimage3");
+    localStorage.removeItem("bgimage4");
+    localStorage.removeItem("bgimage5");
+    localStorage.removeItem("primaryRGB");
+    localStorage.removeItem("primaryRGB1");
+    localStorage.removeItem("darkBgRGB");
+    localStorage.removeItem("bodyBgRGB");
+    localStorage.removeItem("Light");
+    localStorage.removeItem("inputBorder");
+    localStorage.removeItem("dynamiccolor");
+    localStorage.removeItem("ynexMenu");
+    localStorage.removeItem("ynexHeader");
+
     const icon = document.getElementById("switcher-default-menu");
-    if(icon){
-        icon.checked=true
+    if (icon) {
+        icon.checked = true;
     }
 };
+
 export const Reset1 = (dispatch) => {
     Vertical(dispatch);
     dispatch(setTheme({
@@ -741,15 +774,44 @@ export const Reset1 = (dispatch) => {
             class: ""
         }
     }));
-    localStorage.clear();
+
+    // Clear only theme-related localStorage keys
+    localStorage.removeItem("ynexdarktheme");
+    localStorage.removeItem("ynexlighttheme");
+    localStorage.removeItem("ynexltr");
+    localStorage.removeItem("ynexrtl");
+    localStorage.removeItem("ynexlayout");
+    localStorage.removeItem("ynexnavstyles");
+    localStorage.removeItem("ynexverticalstyles");
+    localStorage.removeItem("ynexregular");
+    localStorage.removeItem("ynexclassic");
+    localStorage.removeItem("ynexmodern");
+    localStorage.removeItem("ynexfullwidth");
+    localStorage.removeItem("ynexboxed");
+    localStorage.removeItem("ynexmenufixed");
+    localStorage.removeItem("ynexmenuscrollable");
+    localStorage.removeItem("ynexheaderfixed");
+    localStorage.removeItem("ynexheaderscrollable");
+    localStorage.removeItem("bgimage1");
+    localStorage.removeItem("bgimage2");
+    localStorage.removeItem("bgimage3");
+    localStorage.removeItem("bgimage4");
+    localStorage.removeItem("bgimage5");
+    localStorage.removeItem("primaryRGB");
+    localStorage.removeItem("primaryRGB1");
+    localStorage.removeItem("darkBgRGB");
+    localStorage.removeItem("bodyBgRGB");
+    localStorage.removeItem("Light");
+    localStorage.removeItem("inputBorder");
+    localStorage.removeItem("dynamiccolor");
+    localStorage.removeItem("ynexMenu");
+    localStorage.removeItem("ynexHeader");
+
     const icon = document.getElementById("switcher-default-menu");
-    if(icon){
-        icon.checked=true
+    if (icon) {
+        icon.checked = true;
     }
-
-
 };
-
 
 export const LocalStorageBackup = (dispatch) => {
     // Check and apply layout direction

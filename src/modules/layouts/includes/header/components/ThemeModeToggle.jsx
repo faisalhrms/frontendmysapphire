@@ -35,7 +35,8 @@ const ThemeModeToggle = () => {
         <div className="header-element header-theme-mode hidden !items-center sm:block !py-[1rem]" onClick={toggleDarkMode}>
             <Link aria-label="anchor"
                   className="hs-dark-mode-active:hidden flex hs-dark-mode group flex-shrink-0 justify-center items-center gap-2  rounded-full font-medium transition-all text-xs dark:bg-bgdark dark:hover:bg-black/20 dark:text-[#8c9097] dark:text-white/50 dark:hover:text-white dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
-                  to="#" data-hs-theme-click-value="dark">
+                  to="#" data-hs-theme-click-value="dar
+                  k">
                 <i className="bx bx-moon header-link-icon"></i>
             </Link>
             <Link aria-label="anchor"

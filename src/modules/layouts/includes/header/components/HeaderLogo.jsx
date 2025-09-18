@@ -4,7 +4,7 @@ import desktopLogo from '@assets/images/brand-logos/desktop-logo.svg';
 import toggleLogo from '@assets/images/brand-logos/toggle-logo.png';
 import desktopDark from '@assets/images/brand-logos/desktop-dark.svg';
 import toggleDark from '@assets/images/brand-logos/toggle-dark.png';
-import desktopWhite from '@assets/images/brand-logos/desktop-white.png';
+import desktopWhite from '@assets/images/brand-logos/desktop-white.svg';
 import toggleWhite from '@assets/images/brand-logos/toggle-white.png';
 import {DASHBOARD_ROUTES} from "@modules/dashboards/routes.js";
 
