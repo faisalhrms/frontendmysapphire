@@ -10,6 +10,7 @@ export default function useChatBot() {
   const [isWebSearch, setIsWebSearch] = useState(false)
   const [modeSelection, setModeSelection] = useState("Select Source")
   const [modeOpen, setModeOpen] = useState(false)
+  const [hrSubtypes, setHrSubtypes] = useState(["policies"])
 
   const defaultSuggestions = [
     "Top 10 exporters of Bed by value_usd last 12 months bar chart",
@@ -198,7 +199,7 @@ export default function useChatBot() {
         modeSelection === "Export Data" ? "export" :
         modeSelection === "Salesforce" ? "salesforce" :
         modeSelection === "Quality Control" ? "qc" :
-        modeSelection === "Policies" ? "policies" : ""
+        modeSelection === "HR" ? "hr" : ""
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
@@ -212,7 +213,7 @@ export default function useChatBot() {
       modeSelection === "Export Data" ? "export" :
       modeSelection === "Salesforce" ? "salesforce" :
       modeSelection === "Quality Control" ? "qc" :
-      modeSelection === "Policies" ? "policies" : ""
+      modeSelection === "HR" ? "hr" : ""
 
     streamCtrlRef.current = ChatService.stream({
       msg,
@@ -221,6 +222,7 @@ export default function useChatBot() {
       qcTarget,
       qcChecks,
       qcRender,
+      hrSubtypes,
       onEvent: ev => {
         const i = botIdxRef.current
         if (i < 0) return
@@ -312,6 +314,7 @@ export default function useChatBot() {
     setQcTarget("https://pk.sapphireonline.pk")
     setQcChecks(defaultChecks)
     setQcRender(true)
+    setHrSubtypes(["policies"])
     botIdxRef.current = -1
     setSuggestions(defaultSuggestions)
     if (inputRef.current) autoResize(inputRef.current)
@@ -367,6 +370,8 @@ export default function useChatBot() {
     autoResize,
     tick,
     ask,
-    suggestions
+    suggestions,
+    hrSubtypes,
+    setHrSubtypes
   }
 }

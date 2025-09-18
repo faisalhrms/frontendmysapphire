@@ -34,6 +34,48 @@ export const sidebarMenu = [
                 '',
                 APPROVAL_ROUTES.FORM.permission,
             ),
+            generateSidebarItem(
+                APPROVAL_ROUTES.GLOBAL.path,
+                'link',
+                'Global',
+                4,
+                '',
+                APPROVAL_ROUTES.GLOBAL.permission,
+            ),
+            generateSidebarItem(
+                "",
+                "sub",
+                "Setups",
+                4,
+                "bx bx-target-lock",
+                "",
+                [
+                    generateSidebarItem(
+                        APPROVAL_ROUTES.SETUP.TYPE.READ.path,
+                        "link",
+                        " Approval Type",
+                        1,
+                        "bx bx-message-square-edit",
+                        APPROVAL_ROUTES.SETUP.TYPE.READ.permission
+                    ),
+                    generateSidebarItem(
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.READ.path,
+                        "link",
+                        " Approval Hierarchy",
+                        2,
+                        "bx bx-message-square-edit",
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.READ.permission
+                    ),
+                    generateSidebarItem(
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.APPROVERS.path,
+                        "link",
+                        " Hierarchy Approvers",
+                        3,
+                        "bx bx-message-square-edit",
+                        APPROVAL_ROUTES.SETUP.HIERARCHY.APPROVERS.permission
+                    ),
+                ]
+            ),
         ]
     ),
 ];

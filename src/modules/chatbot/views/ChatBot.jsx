@@ -13,6 +13,7 @@ import TypingIndicator from "@modules/chatbot/components/TypingIndicator.jsx"
 import LiveScanLCD from "@modules/chatbot/components/LiveScan.jsx"
 import QCReport from "@modules/chatbot/components/QCReport.jsx"
 import ExportExcelButton from "@modules/chatbot/components/ExportExcelButton.jsx"
+import ChatService from "@modules/chatbot/services/ChatService.js"
 
 export default function ChatBot() {
   const {
@@ -41,7 +42,9 @@ export default function ChatBot() {
     setQcRender,
     tick,
     ask,
-    suggestions
+    suggestions,
+    hrSubtypes,
+    setHrSubtypes
   } = useChatBot()
 
   const currentUser = useSelector(s => s.auth.user)
@@ -49,6 +52,10 @@ export default function ChatBot() {
   const dockRef = useRef(null)
   const [dockH, setDockH] = useState(140)
   const hasLoadingBot = useMemo(() => messages.some(m => m.type === "bot" && m.loading), [messages])
+
+  useEffect(() => {
+    ChatService.resetMemory()
+  }, [])
 
   useEffect(() => {
     if (!dockRef.current) return
@@ -103,6 +110,8 @@ export default function ChatBot() {
           setQcChecks={setQcChecks}
           qcRender={qcRender}
           setQcRender={setQcRender}
+          hrSubtypes={hrSubtypes}
+          setHrSubtypes={setHrSubtypes}
         />
       </div>
     )
@@ -231,6 +240,8 @@ export default function ChatBot() {
         autoResize={autoResize}
         ask={ask}
         suggestions={suggestions}
+        hrSubtypes={hrSubtypes}
+        setHrSubtypes={setHrSubtypes}
       />
     </div>
   )

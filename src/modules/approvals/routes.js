@@ -1,7 +1,16 @@
 import TaskApprovalList from '@modules/approvals/task/views/TaskApprovalList.jsx';
 import ObjectiveApprovalList from "@modules/approvals/objective/views/ObjectiveApprovalList.jsx";
 import DynamicFormApprovalList from "@modules/approvals/dynamiceform/view/DynamicFormApprovalList.jsx";
+import ApprovalTypeSetupDatatable from "@modules/approvals/setup/views/ApprovalTypeSetupDatatable.jsx";
+import CreateApprovalTypeSetup from "@modules/approvals/setup/views/CreateApprovalTypeSetup.jsx";
+import EditApprovalTypeSetup from "@modules/approvals/setup/views/EditApprovalTypeSetup.jsx";
+import ApprovalHierarchySetupDatatable from "@modules/approvals/setup/views/ApprovalHierarchySetupDatatable.jsx";
+import CreateApprovalHierarchySetup from "@modules/approvals/setup/views/CreateApprovalHierarchySetup.jsx";
+import EditApprovalHierarchySetup from "@modules/approvals/setup/views/EditApprovalHierarchySetup.jsx";
+import ApprovalHierarchyApproverSetupDatatable from "@modules/approvals/setup/views/ApprovalHierarchyApproverSetupDatatable.jsx";
+import GlobalApprovalList from "@modules/approvals/global/view/GlobalApprovalList.jsx";
 
+const SETUP_PERMISSION = 'approvals.dynamic_hierarchy_management'
 
 export const APPROVAL_ROUTES = {
     TASK: {
@@ -16,6 +25,44 @@ export const APPROVAL_ROUTES = {
         path:'/module/approvals/form',
         permission: 'user.view_ess_modules',
     },
+    GLOBAL:{
+        path:'/module/approvals/global',
+        permission: 'user.view_ess_modules',
+    },
+    SETUP: {
+        TYPE:{
+            READ: {
+                path: '/module/approvals/setups/type',
+                permission:SETUP_PERMISSION
+            },
+            ADD:{
+                path:'/module/approvals/setups/type/create',
+                permission:SETUP_PERMISSION
+            },
+            EDIT:{
+                path:'/module/approvals/setups/type/edit/:id',
+                permission:SETUP_PERMISSION
+            }
+        },
+        HIERARCHY:{
+            READ: {
+                path: '/module/approvals/setups/hierarchy',
+                permission:SETUP_PERMISSION
+            },
+            ADD:{
+                path:'/module/approvals/setups/hierarchy/create',
+                permission:SETUP_PERMISSION
+            },
+            EDIT:{
+                path:'/module/approvals/setups/hierarchy/edit/:id',
+                permission:SETUP_PERMISSION
+            },
+            APPROVERS:{
+                path:'/module/approvals/setups/hierarchy/approvers',
+                permission:SETUP_PERMISSION
+            }
+        }
+    }
 };
 
 export const MODULE_ROUTES = [
@@ -33,5 +80,45 @@ export const MODULE_ROUTES = [
         path: APPROVAL_ROUTES.FORM.path,
         component:DynamicFormApprovalList,
         permission: APPROVAL_ROUTES.FORM.permission,
+    },
+    {
+        path: APPROVAL_ROUTES.GLOBAL.path,
+        component:GlobalApprovalList,
+        permission: APPROVAL_ROUTES.GLOBAL.permission,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.TYPE.READ.path,
+        component:ApprovalTypeSetupDatatable,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.TYPE.ADD.path,
+        component:CreateApprovalTypeSetup,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.TYPE.EDIT.path,
+        component:EditApprovalTypeSetup,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.READ.path,
+        component:ApprovalHierarchySetupDatatable,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.ADD.path,
+        component:CreateApprovalHierarchySetup,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.EDIT.path,
+        component:EditApprovalHierarchySetup,
+        permission: SETUP_PERMISSION,
+    },
+    {
+        path: APPROVAL_ROUTES.SETUP.HIERARCHY.APPROVERS.path,
+        component:ApprovalHierarchyApproverSetupDatatable,
+        permission: SETUP_PERMISSION,
     },
 ];

@@ -47,14 +47,12 @@ const EquipmentAuditList = () => {
             accessor: "created_at",
             filterType: 'date',
             filterable: true,
-            Cell: ({ value }) => (value ? formatDate(value) : "N/A"),
         },
         {
             Header: "Updated At",
             accessor: "updated_at",
             filterType: 'date',
             filterable: true,
-            Cell: ({ value }) => (value ? formatDate(value) : ""),
         }
     ];
 
