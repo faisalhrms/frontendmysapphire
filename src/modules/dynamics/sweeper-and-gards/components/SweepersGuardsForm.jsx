@@ -8,6 +8,7 @@ import FormButton from "@components/form/FormButton.jsx";
 import SubFormSection from "@components/form/SubFormSection.jsx";
 
 import { useSweeperGuardForm } from "@modules/dynamics/sweeper-and-gards/hooks/useSweeperGuardFormHook.js";
+import sweeperGuardSchema from "@modules/dynamics/sweeper-and-gards/schemas/sweeperGuardSchema.js";
 
 const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
     const {
@@ -18,7 +19,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
         clearErrors,
         formState: { errors, isSubmitting },
     } = useForm({
-        // resolver: zodResolver(sweeperGuardSchema),
+         resolver: zodResolver(sweeperGuardSchema),
         defaultValues: {
             store_id: sgData?.store?.id || null,
             num_of_guards: sgData?.num_of_guards || 0,

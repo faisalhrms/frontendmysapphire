@@ -5,6 +5,7 @@ import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { DYNAMICS_ROUTES } from "@modules/dynamics/routes.js";
 import {formatDate} from "@helpers/dateTime.js";
+import UserWithAvatar from "@components/UserWithAvatar.jsx";
 
 const SweepersGuardsList = () => {
     const dataTableRef = useRef();
@@ -78,10 +79,37 @@ const SweepersGuardsList = () => {
                 value != null ? value.toLocaleString() : "N/A",
         },
         {
+            Header: "Created By",
+            accessor: "created_by",
+            filterable: true,
+            filterType: "text",
+            filterKey: "created_by__full_name",
+            // Keep UI rendering the object (avatar + name)
+            Cell: ({ value }) => <UserWithAvatar user={value} />,
+            excelFormat: (val) => {
+                if (!val) return "";
+                return val.email || val.full_name || (typeof val === 'object' ? JSON.stringify(val) : String(val));
+            },
+        }
+,
+
+        {
             Header: "Created At",
             accessor: "created_at",
             filterType: "date",
             filterable: true,
+        },
+        {
+            Header: "Updated By",
+            accessor: "updated_by",
+            filterable: true,
+            filterType: "text",
+            filterKey: "updated_by__full_name",
+            Cell: ({ value }) => <UserWithAvatar user={value} />,
+            excelFormat: (val) => {
+                if (!val) return "";
+                return val.email || val.full_name || (typeof val === 'object' ? JSON.stringify(val) : String(val));
+            },
         },
         {
             Header: "Updated At",
