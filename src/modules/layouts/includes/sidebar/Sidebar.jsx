@@ -4,7 +4,7 @@ import logo1 from "@assets/images/brand-logos/desktop-logo.svg";
 import logo2 from "@assets/images/brand-logos/toggle-logo.png";
 import logo3 from "@assets/images/brand-logos/desktop-dark.svg";
 import logo4 from "@assets/images/brand-logos/toggle-dark.png";
-import logo5 from "@assets/images/brand-logos/desktop-white.png";
+import logo5 from "@assets/images/brand-logos/desktop-white.svg";
 import logo6 from "@assets/images/brand-logos/toggle-white.png";
 import SimpleBar from 'simplebar-react';
 import {useDispatch, useSelector} from "react-redux";
@@ -812,7 +812,7 @@ const Sidebar = () => {
                           top: '50%',
                           transform: 'translateY(-50%)',
                           height: '18px',
-                          color: '#f5fcf7'
+                          color: '#6b7280',
                         }}
                     />
 
@@ -830,7 +830,7 @@ const Sidebar = () => {
                           outline: 'none',
                           fontSize: '0.875rem',
                           backgroundColor: 'transparent',
-                          color: '#f5fcf7'
+                          color: '#b8b9ba',
                         }}
                     />
                   </div>
