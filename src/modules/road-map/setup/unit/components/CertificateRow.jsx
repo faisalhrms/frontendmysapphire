@@ -57,7 +57,10 @@ export default function CertificateRow({
           queryKeyBase={`certificate-types-${selectedBU}-${index}`}
           className="flex-1"
           preselectedOptions={makePreset(row, "certificateType")}
-          onSelectChange={() => setValue(`certificates.${index}.certificateList`, null)}
+          onSelectChange={() => {
+            setValue(`certificates.${index}.certificateList`, null);
+            setValue(`certificates.${index}.attachment`, null);
+          }}
         />
         <FormAsyncSelect
           label={false}
@@ -69,6 +72,7 @@ export default function CertificateRow({
           queryKeyBase={`certificates-${selectedBU}-${certificateType || "none"}-${index}`}
           className="flex-1"
           preselectedOptions={makePreset(row, "certificateList")}
+          onSelectChange={() => setValue(`certificates.${index}.attachment`, null)}
         />
         <FormSelect
           label={false}

@@ -27,8 +27,8 @@ const ChatInputBox = ({
   setHrSubtypes
 }) => {
   const padClass = modeSelection === "Quality Control" ? "pb-20" : "pb-16"
-  const toggleSub = s => setHrSubtypes?.(p => p.includes(s) ? p.filter(x => x!==s) : [...p, s])
-  const active = s => hrSubtypes?.includes?.(s)
+  const toggleSub = s => setHrSubtypes?.([s])
+  const active = s => hrSubtypes?.[0] === s
   return (
     <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-visible shadow-xl ring-2 ring-gray-300">
       <div className={`rounded-t-xl p-2 ${padClass}`}>
