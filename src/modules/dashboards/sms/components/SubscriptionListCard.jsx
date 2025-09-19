@@ -102,7 +102,7 @@ const SubscriptionListCard = ({ totalCount, title, items, color, enableSearch = 
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 text-center dark:text-gray-400 mt-10 mb-10 text-2xl font-bold">No results found</p>
+                        <p className="text-gray-500 text-center dark:text-gray-400  text-2xl font-bold">No results found</p>
                     )}
                 </div>
             </div>
