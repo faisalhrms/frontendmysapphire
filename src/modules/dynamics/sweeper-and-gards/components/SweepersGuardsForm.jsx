@@ -8,6 +8,7 @@ import FormButton from "@components/form/FormButton.jsx";
 import SubFormSection from "@components/form/SubFormSection.jsx";
 
 import { useSweeperGuardForm } from "@modules/dynamics/sweeper-and-gards/hooks/useSweeperGuardFormHook.js";
+import sweeperGuardSchema from "@modules/dynamics/sweeper-and-gards/schemas/sweeperGuardSchema.js";
 
 const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
     const {
@@ -18,7 +19,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
         clearErrors,
         formState: { errors, isSubmitting },
     } = useForm({
-        // resolver: zodResolver(sweeperGuardSchema),
+         resolver: zodResolver(sweeperGuardSchema),
         defaultValues: {
             store_id: sgData?.store?.id || null,
             num_of_guards: sgData?.num_of_guards || 0,
@@ -65,6 +66,21 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
         );
     }, [categoryDesigns]);
 
+    const positiveIntegerInputProps = () => ({
+        onKeyDown: (e) => {
+            // Block minus, plus, and 'e'/'E' for scientific notation
+            if (["-", "+", "e", "E"].includes(e.key)) {
+                e.preventDefault();
+            }
+        },
+        onInput: (e) => {
+            // Remove accidental negatives or decimals
+            if (e.target.value < 0) e.target.value = 0;
+            if (!Number.isInteger(Number(e.target.value))) {
+                e.target.value = Math.floor(e.target.value);
+            }
+        },
+    })
     // Validation effects
     useEffect(() => {
         if (leasedAreaTotal > 0 && totalLeasedArea > leasedAreaTotal) {
@@ -101,6 +117,8 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
 
     const isCategoryDesignDisabled =
         !storeCapacityTotal || storeCapacityTotal <= 0 || !hangingCapacityTotal || hangingCapacityTotal <= 0;
+    const isSubmitDisabled =
+        isSubmitting || (categoryDesigns?.length ?? 0) === 0;
 
     const remainingLeasedArea = leasedAreaTotal - totalLeasedArea;
     const remainingStoreCapacity = storeCapacityTotal - totalCategoryDesigns;
@@ -144,27 +162,38 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                 />
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="num_of_guards" type="number" control={control} errors={errors}
+                                <FormInput name="num_of_guards"
+                                           {...positiveIntegerInputProps()}
+                                           type="number" control={control} errors={errors}
                                            is_required={true} placeholder="Approved Guards"/>
                             </div>
                             <div className="col-span-4">
-                                <FormInput name="num_of_sweepers" type="number" control={control} errors={errors}
+                                <FormInput name="num_of_sweepers"
+                                           {...positiveIntegerInputProps()}
+                                           type="number" control={control} errors={errors}
                                            is_required={true} placeholder="Approved Sweepers"/>
                             </div>
                             <div className="col-span-3">
-                                <FormInput name="num_of_stock_helpers" type="number" control={control} errors={errors}
+                                <FormInput name="num_of_stock_helpers"
+                                           {...positiveIntegerInputProps()}
+                                           type="number" control={control} errors={errors}
                                            is_required={true} placeholder="Approved Stock Helpers"/>
                             </div>
                             <div className="col-span-3">
-                                <FormInput name="store_capacity_total" type="number" control={control} errors={errors}
+                                <FormInput name="store_capacity_total"
+                                           {...positiveIntegerInputProps()}
+                                           type="number" control={control} errors={errors}
                                            is_required={true} placeholder="Store Capacity Total"/>
                             </div>
                             <div className="col-span-3">
-                                <FormInput name="leased_area_total" type="number" control={control} errors={errors}
+                                <FormInput name="leased_area_total"
+                                           {...positiveIntegerInputProps()}
+                                           type="number" control={control} errors={errors}
                                            is_required={true} placeholder="Leased Area Total"/>
                             </div>
                             <div className="col-span-3">
-                                <FormInput name="hanging_capacity_total" type="number" control={control} errors={errors}
+                                <FormInput name="hanging_capacity_total"  {...positiveIntegerInputProps()}
+                                           type="number" control={control} errors={errors}
                                            is_required={true} placeholder="Hanging Capacity Total"/>
                             </div>
                         </div>
@@ -176,7 +205,8 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                     {isCategoryDesignDisabled && (
                         <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
                             <p className="text-sm text-amber-800">
-                                Please enter both "Store Capacity Total" and "Hanging Capacity Total" first to add category designs.
+                                Please enter both "Store Capacity Total" and "Hanging Capacity Total" first to add
+                                category designs.
                             </p>
                         </div>
                     )}
@@ -243,6 +273,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                             errors={errors}
                                             is_required={true}
                                             type="number"
+                                            {...positiveIntegerInputProps()}
                                             placeholder="Pieces"
                                             className="w-full"
                                             max={remainingStoreCapacity + (parseFloat(categoryDesigns?.[idx]?.design_pieces) || 0)}
@@ -264,6 +295,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                             errors={errors}
                                             is_required={true}
                                             type="number"
+                                            {...positiveIntegerInputProps()}
                                             placeholder="Area"
                                             className="w-full"
                                             max={remainingLeasedArea + (parseFloat(categoryDesigns?.[idx]?.area_sq_feet) || 0)}
@@ -284,6 +316,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                             control={control}
                                             errors={errors}
                                             is_required={true}
+                                            {...positiveIntegerInputProps()}
                                             type="number"
                                             placeholder="Hanging"
                                             className="w-full"
@@ -352,7 +385,12 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                     <div className="flex justify-between items-center mt-4">
                         <button
                             type="button"
-                            onClick={() => appendCategory({category: null, design_pieces: 0, area_sq_feet: 0, hanging_capacity: 0})}
+                            onClick={() => appendCategory({
+                                category: null,
+                                design_pieces: 0,
+                                area_sq_feet: 0,
+                                hanging_capacity: 0
+                            })}
                             className={`ti-btn ti-btn-secondary ti-btn-md ${isCategoryDesignDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                             title={isCategoryDesignDisabled ? "Enter Store Capacity Total & Hanging Capacity Total first" : "Add a new category design"}
                             disabled={isCategoryDesignDisabled}
@@ -366,9 +404,13 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                 <div className="flex justify-end">
                     <FormButton
                         isLoading={isSubmitting}
-                        label={isEditMode ? "Update Sweepers & Guards" : "Create Sweepers & Guards"}
+                        disabled={isSubmitDisabled}
+                        className={`m-2 ${isSubmitDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                        text={isEditMode ? "Update Changes" : "Save Changes"}
                     />
                 </div>
+
+
             </form>
         </div>
     );
