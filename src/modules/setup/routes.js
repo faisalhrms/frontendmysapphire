@@ -7,6 +7,7 @@ import SrTypesEdit from '@modules/setup/views/SrTypesEdit.jsx';
 import EmailSetupList from "@modules/setup/views/EmailSetup.jsx";
 import EmailSetupCreate from "@modules/setup/views/EmailSetupCreate.jsx";
 import EmailSetupEdit from "@modules/setup/views/EmailSetupEdit.jsx";
+import ApprovalHirarchy from "@modules/setup/views/ApprovalHirarchy.jsx";
 
 export const SETUP_ROUTES = {
     COMPANY: {
@@ -51,6 +52,13 @@ export const SETUP_ROUTES = {
             permission: 'setups.change_emailsetup',
         }
 
+    },
+    APPROVA:{
+        READ:{
+            path:'/module/setup/approval-hierarchy',
+            permission: 'user.view_company',
+
+        }
     }
 };
 
@@ -99,5 +107,10 @@ export const MODULE_ROUTES = [
         path:SETUP_ROUTES.EMAIL.EDIT.path,
         component:EmailSetupEdit,
         permission: SETUP_ROUTES.EMAIL.EDIT.permission,
+    },
+    {
+        path:SETUP_ROUTES.APPROVA.READ.path,
+        component:ApprovalHirarchy,
+        permission: SETUP_ROUTES.APPROVA.READ.permission,
     }
 ];

@@ -13,7 +13,8 @@ const SubscriptionListCard = ({ totalCount, title, items, color, enableSearch = 
 
     return (
         <div className="xl:col-span-6 col-span-12 flex-grow">
-            <div className="box custom-box">
+            <div className="box">
+            <div className="box overflow-hidden h-full flex flex-col shadow-xl">
 
                 <div className={`box-header ${color} flex items-center justify-between gap-2`}>
 
@@ -42,10 +43,10 @@ const SubscriptionListCard = ({ totalCount, title, items, color, enableSearch = 
                     {filteredItems?.length > 0 ? (
                         filteredItems.map((item, index) => (
                             <div key={index}
-                                 className="bg-gray-200 dark:bg-gray-800/50 rounded-xl p-2 border border-gray-400 relative">
+                                 className="bg-gray-200 dark:bg-gray-800/50 rounded-xl p-1 border border-gray-400 relative">
                                 <div className="flex items-center justify-between">
                                     <div className="flex-grow">
-                                        <h3 className="font-bold text-lg text-gray-900 dark:text-white ">
+                                        <h3 className="text-base font-medium leading-snug text-gray-900 dark:text-white ">
                                             {item.name}
                                         </h3>
 
@@ -80,7 +81,7 @@ const SubscriptionListCard = ({ totalCount, title, items, color, enableSearch = 
                                         <div className="mt-1">
                                             {item.days_left !== null && item.days_left < 0 ? (
                                                 <>
-                                                    <p className="text-danger font-bold text-sm">
+                                                    <p className="text-danger font-bold text-sx">
                                                         {Math.abs(item.days_left)} Days
                                                     </p>
                                                     <p className="text-danger font-bold text-xs">Over Due</p>
@@ -101,9 +102,10 @@ const SubscriptionListCard = ({ totalCount, title, items, color, enableSearch = 
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">No results found</p>
+                        <p className="text-gray-500 text-center dark:text-gray-400  text-2xl font-bold">No results found</p>
                     )}
                 </div>
+            </div>
             </div>
         </div>
     );

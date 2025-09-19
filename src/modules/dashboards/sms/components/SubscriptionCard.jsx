@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const subscriptionIcons = {
-  "Total Active": "https://be.mysapphire.co/media/uploads/2025/09/03/total_active.png",
+  "Total Active": "https://be.mysapphire.co/media/uploads/2025/09/19/8215492.png",
   "Paid": "https://be.mysapphire.co/media/uploads/2025/09/03/paid_icon.png",
-  "Free": "https://be.mysapphire.co/media/uploads/2025/09/03/free_icon.png",
+  "Free": "https://be.mysapphire.co/media/uploads/2025/09/19/8993563.png",
   "Canceled (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/03/cancelled_icon.png",
-  "New (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/03/new_icon.png",
+  "New (YTD)": "https://be.mysapphire.co/media/uploads/2025/09/19/new_icon.png",
 };
 
 const subscriptionColors = {
@@ -38,10 +38,10 @@ const SubscriptionCard = ({ subscriptionData, route }) => {
               className="w-12 h-12"
           />
           <div>
-            <h3 className="font-bold text-sm text-gray-900 dark:text-white ">
+            <h3 className="text-base font-medium leading-snug text-gray-900 dark:text-white ">
               {subscriptionData.name}
             </h3>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-xl font-bold text-gray-900 dark:text-white">
               {subscriptionData.totalSubscriptions ?? 0}
             </p>
           </div>

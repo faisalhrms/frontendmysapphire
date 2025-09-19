@@ -78,10 +78,10 @@ const FacebookForm = ({
                     <button
                         disabled={!facebookLink.trim() || error}
                         onClick={handleCustomize}
-                        className={`py-3 px-6 rounded-lg font-semibold flex justify-between items-center bg-gray-200 text-gray-500 cursor-not-allowed  ${
+                        className={`py-3 px-6 rounded-lg font-semibold flex justify-between items-center   ${
                             facebookLink.trim() && !error
-                                ? "bg-primary text-white hover:bg-primary/80"
-                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                ? 'bg-primary text-white hover:bg-primary'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                     >
                         Customize & Download QR
