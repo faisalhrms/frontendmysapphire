@@ -35,8 +35,8 @@ export const VendorBasicBarChart = ({ data }) => {
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: "45%",
-                endingShape: "rounded",
+                columnWidth: "50%",
+                borderRadius: 4,
                 distributed: true,
                 dataLabels: { position: "top" },
             },
@@ -58,7 +58,7 @@ export const VendorBasicBarChart = ({ data }) => {
                 trim: false,
                 style: {
                     fontSize: "12px",
-                    fontWeight: 600,
+                    fontWeight: 400,
                     letterSpacing: 1,
                     lineHeight: 1.8,
                     whiteSpace: "normal",
@@ -68,12 +68,16 @@ export const VendorBasicBarChart = ({ data }) => {
             },
         },
         yaxis: {
+            min: 0,
+            max: 8,
+            tickAmount: 5,
             labels: {
-                style: { fontSize: "12px", fontWeight: 600 },
+                style: { fontSize: "12px", fontWeight: 400 },
                 formatter: val => Math.floor(val),
             },
-            title: { style: { fontSize: "13px", fontWeight: 600 } },
+            title: { style: { fontSize: "13px", fontWeight: 400 } },
         },
+
         colors: vendorColors,
         legend: { show: false },
         grid: {
@@ -94,7 +98,7 @@ export const VendorBasicBarChart = ({ data }) => {
     const chartWidth = Math.max(filteredData.length * 160, 700);
 
     return (
-        <div className="box custom-box">
+        <div className="box overflow-hidden h-full flex flex-col shadow-xl">
             <div className="box-header bg-warning/10 flex items-center justify-between">
                 <div className="box-title dark:text-white">
                     Subscription Count by Vendor

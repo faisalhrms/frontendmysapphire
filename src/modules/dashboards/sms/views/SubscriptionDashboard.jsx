@@ -59,6 +59,7 @@ const SubscriptionDashboard = () => {
             <div className="grid grid-cols-12 gap-x-6 ">
 
                 <div className="xl:col-span-4 col-span-12 flex-grow  ">
+
                     <SubscriptionListCard
                         color="bg-secondary/10"
                         title="Active Subscriptions"
@@ -89,7 +90,7 @@ const SubscriptionDashboard = () => {
             </div>
             <div className="grid grid-cols-12 gap-x-6">
                 <div className="xl:col-span-4 col-span-12 flex-grow  ">
-                    <div className="box">
+                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
                         <div className="box-header bg-primary/10">
                             <div className="box-title dark:text-white">Subscription Count by Status</div>
                         </div>
@@ -102,7 +103,7 @@ const SubscriptionDashboard = () => {
                 </div>
 
                 <div className="xl:col-span-8 col-span-12 flex-grow ">
-                    <div className="box custom-box">
+                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
                         <div className="box-header bg-secondary/10">
                             <div className="box-title dark:text-white">Subscription Count by Department</div>
                         </div>
@@ -113,9 +114,9 @@ const SubscriptionDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-x-6  ">
+            <div className="grid grid-cols-12 gap-x-6  mt-8 ">
                 <div className="xl:col-span-5 col-span-12 flex-grow  ">
-                    <div className="box">
+                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
                         <div className="box-header bg-green/10">
                             <div className="box-title dark:text-white">Monthly Spending</div>
                         </div>
@@ -127,9 +128,9 @@ const SubscriptionDashboard = () => {
                     </div>
                 </div>
                 <div className="xl:col-span-7 col-span-12 flex-grow  ">
-                    <div className="box custom-box">
+                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
                         <div className="box-header bg-primary/10">
-                            <div className="box-title dark:text-white">Subscription Spending by department</div>
+                            <div className="box-title dark:text-white">Subscription Spending by Department</div>
                         </div>
                         <div className="box-body">
                             <BasicLineChart data={lineChartData}/>
@@ -137,7 +138,7 @@ const SubscriptionDashboard = () => {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-12 gap-x-6">
+            <div className="grid grid-cols-12 gap-x-6 mt-8 mb-8">
                 <div className="xl:col-span-12 col-span-12 flex-grow ">
                     <VendorBasicBarChart data={countByVendor}/>
                 </div>
