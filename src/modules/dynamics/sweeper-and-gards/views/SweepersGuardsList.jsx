@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { DYNAMICS_ROUTES } from "@modules/dynamics/routes.js";
 import {formatDate} from "@helpers/dateTime.js";
 import UserWithAvatar from "@components/UserWithAvatar.jsx";
+import {formatAmountWithCommas} from "@helpers/formatters.js";
 
 const SweepersGuardsList = () => {
     const dataTableRef = useRef();
@@ -49,7 +50,7 @@ const SweepersGuardsList = () => {
             Header: "Category",
             accessor: "category",
             filterable: true,
-            filterType: "number",
+            filterType: "text",
             filterKey: "category",
         },
         {
@@ -58,7 +59,10 @@ const SweepersGuardsList = () => {
             filterable: true,
             filterType: "number",
             filterKey: "design_pieces",
-            Cell: ({ value }) => (value != null ? value.toLocaleString() : "N/A"),
+            Cell: ({ value }) =>
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(val),
         },
         {
             Header: "Area (sq ft)",
@@ -68,6 +72,7 @@ const SweepersGuardsList = () => {
             filterKey: "area_sq_feet",
             Cell: ({ value }) =>
                 value ? `${parseFloat(value).toLocaleString()} sq ft` : "N/A",
+            excelFormat: (val) => (val == null ? "" : Number(parseFloat(val))),
         },
         {
             Header: "Hanging Capacity",
@@ -77,7 +82,71 @@ const SweepersGuardsList = () => {
             filterKey: "hanging_capacity",
             Cell: ({ value }) =>
                 value != null ? value.toLocaleString() : "N/A",
+            excelFormat: (val) => (val == null ? "" : Number(val)),
         },
+
+        // ---- ADDED PARENT SUMMARY FIELDS ----
+        {
+            Header: "Guards",
+            accessor: "num_of_guards",
+            filterable: true,
+            filterType: "number",
+            filterKey: "num_of_guards",
+            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            excelFormat: (val) => (val == null ? "" : Number(val)),
+        },
+        {
+            Header: "Sweepers",
+            accessor: "num_of_sweepers",
+            filterable: true,
+            filterType: "number",
+            filterKey: "num_of_sweepers",
+            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            excelFormat: (val) => (val == null ? "" : Number(val)),
+        },
+        {
+            Header: "Stock Helpers",
+            accessor: "num_of_stock_helpers",
+            filterable: true,
+            filterType: "number",
+            filterKey: "num_of_stock_helpers",
+            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            excelFormat: (val) => (val == null ? "" : Number(val)),
+        },
+        {
+            Header: "Leased Area (total)",
+            accessor: "leased_area_total",
+            filterable: true,
+            filterType: "number",
+            filterKey: "leased_area_total",
+            Cell: ({ value }) =>
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(parseFloat(val)),
+        },
+        {
+            Header: "Store Capacity (total)",
+            accessor: "store_capacity_total",
+            filterable: true,
+            filterType: "number",
+            filterKey: "store_capacity_total",
+            Cell: ({ value }) =>
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(parseFloat(val)),
+        },
+        {
+            Header: "Hanging Capacity (total)",
+            accessor: "hanging_capacity_total",
+            filterable: true,
+            filterType: "number",
+            filterKey: "hanging_capacity_total",
+            Cell: ({ value }) =>
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(parseFloat(val)),
+        },
+        // ---- metadata columns ----
         {
             Header: "Created By",
             accessor: "created_by",
@@ -90,9 +159,7 @@ const SweepersGuardsList = () => {
                 if (!val) return "";
                 return val.email || val.full_name || (typeof val === 'object' ? JSON.stringify(val) : String(val));
             },
-        }
-,
-
+        },
         {
             Header: "Created At",
             accessor: "created_at",
@@ -117,8 +184,6 @@ const SweepersGuardsList = () => {
             filterType: "date",
             filterable: true,
         },
-
-
     ];
 
     const buttons = (

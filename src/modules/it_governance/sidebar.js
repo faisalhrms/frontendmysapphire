@@ -10,7 +10,7 @@ export const sidebarMenu = [
         'sub',
         'IT Governance',
         6,
-        'bx-box',
+        'bx-shield-quarter',
         '',
         [
             generateSidebarItem(

@@ -15,6 +15,7 @@ import userEditSchema from "@modules/user/schemas/userEditSchema.js";
 import { usePasswordPolicy } from "@hooks/passPolicyHooks.js";
 import PassPolicy from "@components/PassPolicy.jsx";
 import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
+import HasPermission from "@components/HasPermission.jsx";
 
 const UserForm = ({ userData }) => {
     const {
@@ -263,6 +264,7 @@ const UserForm = ({ userData }) => {
                                 </div>
 
                                 {/* Superuser Checkbox */}
+                                <HasPermission permission='auth.super_user'>
                                 <div className="xl:col-span-6 col-span-12">
                                     <FormCheckbox
                                         name="is_superuser"
@@ -271,6 +273,7 @@ const UserForm = ({ userData }) => {
                                         errors={errors}
                                     />
                                 </div>
+                                </HasPermission>
 
                                 {/* Send Email On Update Checkbox */}
                                 <div className="xl:col-span-6 col-span-12">
