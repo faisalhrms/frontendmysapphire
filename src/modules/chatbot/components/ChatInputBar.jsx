@@ -1,7 +1,6 @@
 import React from "react"
 import QCPanel from "@modules/chatbot/components/QCPanel.jsx"
-import HasPermission from "@components/HasPermission.jsx";
-import {toTitleCase} from "@helpers/formatters.js";
+import HasPermission from "@components/HasPermission.jsx"
 
 const ChatInputBar = ({
   input,
@@ -113,13 +112,13 @@ const ChatInputBar = ({
         </div>
         {modeSelection === "HR" && (
           <div className="flex items-center gap-2 ml-2">
-            {["policies","pms","pas"].map(s=>(
+            {["policies","pms","pas","employee"].map(s=>(
               <button
                 key={s}
                 onClick={()=>toggleSub(s)}
                 className={`px-3 py-1 rounded-full text-xs border ${active(s) ? "bg-indigo/80 text-white border-indigo" : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"}`}
               >
-                {toTitleCase(s)}
+                {s.toUpperCase()}
               </button>
             ))}
           </div>
