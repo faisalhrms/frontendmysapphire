@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import PageHeader from '@modules/layouts/includes/PageHeader';
 import DataTable from "@components/datatable/DataTable.jsx";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { getBadgeClasses } from "@helpers/badges.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import Phone from "@mui/icons-material/Phone";
@@ -11,6 +11,7 @@ import useFilters from "@hooks/useFilters.js";
 import OtherUserListFilter from "@modules/user/components/OtherUserListFilter.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import {HardDrive} from "lucide-react";
+import HasPermission from "@components/HasPermission.jsx";
 
 const OtherUserList = () => {
 
@@ -45,6 +46,28 @@ const OtherUserList = () => {
 
     const columns = [
         {
+            Header: 'Actions',
+            accessor: 'id',
+            disableSortBy: true,
+            Cell: ({ value }) => (
+                <HasPermission permission="user.change_user">
+                    <div className="flex space-x-2">
+                        <Link
+                            to={`/module/users/others/edit/${value}`}
+                        >
+                            <button
+                                className="ti-btn ti-btn-primary ti-btn-sm"
+                                title="Edit User"
+                            >
+                                <i className="ri-edit-line"></i>
+                            </button>
+                        </Link>
+                    </div>
+                </HasPermission>
+            ),
+
+        },
+        {
             Header: 'Name',
             accessor: 'full_name',
             Cell: ({ row }) => (
@@ -74,7 +97,7 @@ const OtherUserList = () => {
         },
         {
             Header: 'Phone',
-            accessor: 'customer.phone',
+            accessor: 'phone',
             Cell: ({ value }) => (
                 <div className="flex items-center space-x-2">
                     <Phone className="icon-grey" />

@@ -35,6 +35,15 @@ export const sidebarMenu = [
                 'bx-laptop',
                 SETUP_ROUTES.EMAIL.READ.permission
 
+            ),
+            generateSidebarItem(
+                SETUP_ROUTES.APPROVA.READ.path,
+                'link',
+                'Approval Hirarchy ',
+                6,
+                'bx-laptop',
+                SETUP_ROUTES.APPROVA.READ.permission
+
             )
         ]
     )

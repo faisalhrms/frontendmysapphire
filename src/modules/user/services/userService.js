@@ -38,10 +38,31 @@ export const updateUser = async (id, userData) => {
         throw new Error(error.response?.data?.message || 'An error occurred while updating the user.');
     }
 };
+export const updateOtherUser = async (id, userData) => {
+
+    try {
+        const response = await api.put(`/users/${id}/other-update/`, userData);
+        Notify.success(response.data.message);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+        throw new Error(error.response?.data?.message || 'An error occurred while updating the user.');
+    }
+};
+
 
 export const getUserById = async (id) => {
     try {
         const response = await api.get(`/users/${id}/detail/`);
+        return response.data.data;
+    } catch (error) {
+        Notify.error(error.response?.data?.message);
+    }
+};
+
+export const getOtherUserById = async (id) => {
+    try {
+        const response = await api.get(`/users/${id}/other-user-detail/`);
         return response.data.data;
     } catch (error) {
         Notify.error(error.response?.data?.message);

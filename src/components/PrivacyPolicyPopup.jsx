@@ -59,9 +59,9 @@ export default function PrivacyPolicyPopup({primaryColor}) {
 
     const DataSettings = () => (
         <div className="space-y-6">
-            <div className="text-center pb-4 border-b border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Data Collection Preferences</h3>
-                <p className="text-sm text-gray-600">Choose what information you're comfortable sharing</p>
+            <div className="text-center pb-4 border-b border-gray-100 dark:text-gray-200 dark:bg-bodybg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 ">Data Collection Preferences</h3>
+                <p className="text-sm text-gray-600 ">Choose what information you're comfortable sharing</p>
             </div>
 
             <div className="space-y-4">
@@ -97,8 +97,8 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                                 <item.icon className={`h-5 w-5 ${item.iconColor}`} />
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 mb-1">{item.title}</h4>
-                                <p className="text-sm text-gray-600 leading-relaxed">{item.description}</p>
+                                <h4 className="font-medium text-gray-900 mb-1 dark:text-gray-200 dark:bg-bodybg">{item.title}</h4>
+                                <p className="text-sm text-gray-600 leading-relaxed dark:text-gray-200 dark:bg-bodybg">{item.description}</p>
                             </div>
                         </div>
                         <div className="ml-4 flex-shrink-0">
@@ -144,7 +144,7 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                     {/* Popup */}
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 pointer-events-none">
                         <div className="w-full max-w-4xl pointer-events-auto h-full sm:h-auto max-h-[95vh] sm:max-h-[90vh] flex flex-col">
-                            <div className="rounded-lg bg-white shadow-2xl transform transition-all duration-500 ease-out animate-slide-up h-full sm:h-auto sm:max-h-[90vh] flex flex-col mt-4 mb-4 sm:mt-0 sm:mb-0">
+                            <div className="rounded-lg bg-white shadow-2xl transform transition-all duration-500 ease-out animate-slide-up h-full sm:h-auto sm:max-h-[90vh] flex flex-col mt-4 mb-4 sm:mt-0 sm:mb-0 dark:text-gray-200 dark:bg-bodybg">
                                 {/* Header */}
                                 <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 flex-shrink-0">
                                     <div className="flex items-center space-x-3">
@@ -152,8 +152,8 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                                             <Shield className="h-5 w-5 text-info"/>
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-semibold text-gray-900">Privacy & Data Collection</h3>
-                                            <p className="text-sm text-gray-500">Control your data sharing preferences</p>
+                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg ">Privacy & Data Collection</h3>
+                                            <p className="text-sm text-gray-500 dark:text-gray-200 dark:bg-bodybg ">Control your data sharing preferences</p>
                                         </div>
                                     </div>
                                     <button
@@ -174,12 +174,12 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                                                     <MapPin className="h-6 w-6 text-success"/>
                                                 </div>
                                                 <div className="flex-1">
-                                                    <h4 className="font-semibold text-gray-900 mb-3">We'd like to access your location</h4>
-                                                    <p className="text-gray-700 leading-relaxed mb-4">
+                                                    <h4 className="font-semibold text-gray-900 mb-3 dark:text-gray-200 dark:bg-bodybg ">We'd like to access your location</h4>
+                                                    <p className="text-gray-700 leading-relaxed mb-4 dark:text-gray-200 dark:bg-bodybg">
                                                         To provide you with personalized experiences and location-based features, we may collect:
                                                     </p>
-                                                    <ul className="space-y-2 text-sm text-gray-600">
-                                                        <li className="flex items-center gap-2">
+                                                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg ">
+                                                        <li className="flex items-center gap-2 ">
                                                             <div className="w-1.5 h-1.5 bg-success rounded-full"></div>
                                                             Your approximate location for local content and services
                                                         </li>
@@ -195,8 +195,8 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                                                 </div>
                                             </div>
 
-                                            <div className="bg-gray-50 rounded-lg p-4">
-                                                <p className="text-sm text-gray-600">
+                                            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                                                <p className="text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">
                                                     Your privacy is important to us. Read our{' '}
                                                     <Link
                                                         to="/privacy-policy"
@@ -217,7 +217,7 @@ export default function PrivacyPolicyPopup({primaryColor}) {
                                 </div>
 
                                 {/* Actions */}
-                                <div className="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 bg-gray-50 rounded-b-2xl flex-shrink-0">
+                                <div className="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 bg-gray-50 rounded-b-2xl flex-shrink-0 dark:text-gray-200 dark:bg-bodybg">
                                     <button
                                         onClick={() => setShowDetails(!showDetails)}
                                         style={defaultStyle}

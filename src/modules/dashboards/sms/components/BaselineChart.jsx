@@ -43,7 +43,7 @@ export const BasicLineChart = ({ data }) => {
                 trim: false,
                 style: {
                     fontSize: "12px",
-                    fontWeight: 600,
+                    fontWeight: 400,
                     letterSpacing: 1,
                     lineHeight: 1.8,
                 },

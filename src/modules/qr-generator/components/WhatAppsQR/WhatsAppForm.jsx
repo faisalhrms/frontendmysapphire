@@ -411,10 +411,10 @@ const WhatsAppForm = () => {
                 <button
                     onClick={handleCustomizeClick}
                     disabled={!phoneNumber.trim() || error}
-                    className={`py-3 px-6 rounded-lg font-semibold flex justify-between items-center ${
+                    className={`py-3 px-6 rounded-lg font-semibold flex justify-between items-center  ${
                         phoneNumber.trim() && !error
-                            ? "bg-primary text-white hover:bg-primary/80"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            ? 'bg-primary text-white hover:bg-primary'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
                 >
                     Customize & Download QR

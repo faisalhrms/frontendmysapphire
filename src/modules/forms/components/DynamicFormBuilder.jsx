@@ -853,7 +853,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                                                     </div>
                                                                 </div>
                                                                 {['select', 'radio', 'checkbox'].includes(fieldType) && (
-                                                                    <div className="border border-gray-400 rounded-lg p-4 mt-4 bg-white">
+                                                                    <div className="border border-gray-400 rounded-lg p-4 mt-4 bg-white dark:text-gray-200 dark:bg-bodybg">
                                                                         <OptionsRepeater
                                                                             fieldIndex={index}
                                                                             control={control}
