@@ -152,6 +152,7 @@ Background Image
   --gray:	134 153 163;
   --yellow:	255 193 2;
   --facebook:	59 89 152;
+  --linkedin: 0 119 181;
   --twitter:	0 172 238;
   --github:	51 51 51;
   --google:	207 78 67;
@@ -9517,6 +9518,18 @@ input.gridjs-input {
 .ti-btn-facebook:hover, .ti-btn-facebook:focus, .ti-btn-facebook:active {
   @apply bg-facebook text-white border border-solid border-facebook !important;
 }
+
+.ti-btn-linkedin {
+  @apply bg-linkedin text-white border border-solid border-linkedin;
+}
+
+.ti-btn-linkedin:hover,
+.ti-btn-linkedin:focus,
+.ti-btn-linkedin:active {
+  @apply bg-linkedin text-white border border-solid border-linkedin !important;
+}
+
+
 
 .ti-btn-google {
   @apply bg-google text-white border border-solid border-google;

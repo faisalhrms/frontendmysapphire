@@ -20,7 +20,6 @@ const useQRGenerator = () => {
                         return { type: "square" };
                 }
             };
-
             const qrCode = new QRCodeStyling({
                 width: options.size || 200,
                 height: options.size || 200,
@@ -53,7 +52,8 @@ const useQRGenerator = () => {
                     const qrImage = new Image();
                     qrImage.onload = async () => {
                         const qrSize = options.size || 200;
-                        const basePadding = 30;
+                        // Base padding: 30px for additionalText, 10px otherwise
+                        const basePadding = options.additionalText ? 30 : 10;
 
                         const logoWidth = options.logo ? (options.logoWidth || 50) : 0;
                         const logoHeight = options.logo ? (options.logoHeight || 50) : 0;
@@ -79,7 +79,11 @@ const useQRGenerator = () => {
                             totalVerticalSpaceNeeded = (logoBottom + 10) - qrSize / 2;
                         }
 
-                        const calculatedTotalHeight = qrSize + (basePadding * 2) + Math.max(0, totalVerticalSpaceNeeded);
+                        // Add explicit space for additionalText
+                        const additionalTextSpace = options.additionalText ? (options.fontSize || 16) * 1.2 + 20 : 0;
+
+                        // Calculate total canvas height
+                        const calculatedTotalHeight = qrSize + (basePadding * 2) + Math.max(0, totalVerticalSpaceNeeded) + additionalTextSpace;
 
                         const canvas = document.createElement("canvas");
                         const ctx = canvas.getContext("2d");
@@ -126,19 +130,20 @@ const useQRGenerator = () => {
                             ctx.font = `${additionalTextFontSize}px ${options.font || "Arial"}`;
                             ctx.fillStyle = options.textColor || "#000000";
                             ctx.textAlign = "center";
-                            ctx.fillText(options.additionalText, canvas.width / 2, canvas.height - basePadding + (parseInt(additionalTextFontSize) / 2 || 8) - 10);
+                            // Position text at the bottom with proper spacing
+                            const textY = canvas.height - basePadding + (additionalTextFontSize / 2) - 5;
+                            ctx.fillText(options.additionalText, canvas.width / 2, textY);
                         }
 
                         if (options.logo) {
                             const logoImg = new Image();
                             logoImg.crossOrigin = "anonymous";
                             logoImg.onload = () => {
-                                // Calculate the best fit for the logo
                                 let finalLogoWidth = logoWidth;
                                 let finalLogoHeight = logoHeight;
                                 const aspectRatio = logoImg.width / logoImg.height;
 
-                                if (options.logoContain) { // Fit logo within the specified box
+                                if (options.logoContain) {
                                     if (aspectRatio > logoWidth / logoHeight) {
                                         finalLogoHeight = logoWidth / aspectRatio;
                                     } else {
@@ -235,4 +240,3 @@ const useQRGenerator = () => {
 };
 
 export default useQRGenerator;
-

@@ -14,6 +14,9 @@ import LiveScanLCD from "@modules/chatbot/components/LiveScan.jsx"
 import QCReport from "@modules/chatbot/components/QCReport.jsx"
 import ExportExcelButton from "@modules/chatbot/components/ExportExcelButton.jsx"
 import ChatService from "@modules/chatbot/services/ChatService.js"
+import { PMS_ROUTES } from "@modules/project-management/routes.js"
+import EmployeeCard from "@modules/chatbot/components/EmployeeCard.jsx"
+import EmployeeCandidates from "@modules/chatbot/components/EmployeeCandidates.jsx"
 
 export default function ChatBot() {
   const {
@@ -77,13 +80,33 @@ export default function ChatBot() {
     if (!nearBottom()) return
     cancelAnimationFrame(rafScroll.current)
     rafScroll.current = requestAnimationFrame(() => {
-      c.scrollTo({ top: c.scrollHeight, behavior: "smooth" })
+      c.scrollTop = c.scrollHeight
     })
   }, [nearBottom])
 
   useEffect(() => { scrollToBottom() }, [])
   useEffect(() => { scrollToBottom() }, [messages.length])
   useEffect(() => { scrollToBottom() }, [tick, isThinking, isWebSearch])
+
+  const handleLLMLinkClick = useCallback(e => {
+    const a = e.target.closest('a[data-pms-kind][data-pms-id]')
+    if (!a) return
+    if (!(hrSubtypes || []).includes("pms")) return
+    e.preventDefault()
+    const kind = a.getAttribute("data-pms-kind")
+    const id = a.getAttribute("data-pms-id")
+    let url = null
+    if (kind === "project") url = `/module/projects/detail/${id}`
+    if (kind === "task") url = PMS_ROUTES.TASK.DETAIL.path.replace(":id", id)
+    if (url) window.open(url, "_blank", "noopener,noreferrer")
+  }, [hrSubtypes])
+
+  const handlePickEmployee = useCallback((x) => {
+    setModeSelection("HR")
+    setHrSubtypes?.(["employee"])
+    const q = x.emp_code ? `employee ${x.emp_code}` : `employee ${x.full_name}`
+    ask(q)
+  }, [ask, setHrSubtypes, setModeSelection])
 
   if (!isBotActive) {
     return (
@@ -131,8 +154,8 @@ export default function ChatBot() {
       </div>
 
       <div className="flex-1 min-h-0 overflow-hidden">
-        <PerfectScrollbar className="h-full" containerRef={ref => (psContainerRef.current = ref)} style={{scrollBehavior:"smooth"}}>
-          <ul className="px-16 py-4 space-y-6" style={{paddingBottom: dockH + 24}}>
+        <PerfectScrollbar className="h-full" containerRef={ref => (psContainerRef.current = ref)}>
+          <ul className="px-16 py-4 space-y-6" style={{paddingBottom: dockH + 24}} onClick={handleLLMLinkClick}>
             {messages.map((m, i) => (
               m.type === "bot"
                 ? (
@@ -170,16 +193,18 @@ export default function ChatBot() {
                       {m.error ? (
                         <div className="text-xs text-red-600 mt-1">{m.error}</div>
                       ) : (
-                        <>
+                        <div className={`${m.loading ? "min-h-[148px]" : ""}`}>
                           <div className="flex justify-end mb-1">
                             {!m.chart && /<(table|ol|ul)/i.test(m.html || "") ? <ExportExcelButton html={m.html} /> : null}
                           </div>
                           {m.mode === "qc" && !m.loading ? <QCReport result={m.qc} html={m.html} llm={m.qcLlm} /> : null}
                           {m.chart ? <ChartBox spec={m.chart} ask={ask} /> : null}
+                          {m.employee ? <EmployeeCard userData={m.employee} /> : null}
+                          {m.employee_candidates ? <EmployeeCandidates items={m.employee_candidates} onPick={handlePickEmployee} /> : null}
                           {m.html && m.mode !== "qc"
-                            ? <div className={`main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none ${m.loading ? "streaming" : ""}`} dangerouslySetInnerHTML={{ __html: m.html }} />
+                            ? <div className={`main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none ${m.loading ? "streaming" : ""}`} style={{overflowAnchor:"none"}} dangerouslySetInnerHTML={{ __html: m.html }} />
                             : null}
-                        </>
+                        </div>
                       )}
                     </div>
                   </li>
