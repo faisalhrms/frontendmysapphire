@@ -58,9 +58,7 @@ const PublicDynamicFormHeader = ({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     title={link.platform}
-                                    className={`ti-btn ti-btn-icon ti-btn-${link.platform} ti-btn-wave ${
-                                        link.platform !== "linkedin" ? "!rounded-full" : ""
-                                    }`}
+                                    className={`ti-btn ti-btn-icon ti-btn-${link.platform} ti-btn-wave !rounded-full `}
 
                                 >
                                     <i className={getPlatformIconClass(link.platform)}></i>
