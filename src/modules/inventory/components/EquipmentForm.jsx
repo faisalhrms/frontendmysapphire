@@ -129,7 +129,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         errors={errors}
                                         placeholder="Physical Location"
                                         apiUrl="/select/equipment/locations/"
-                                        queryKeyBase="locations"
+                                        queryKeyBase="physical-locations"
                                         clientSideSearch={false}
                                         preselectedOptions={formatOptions(
                                             equipmentData,

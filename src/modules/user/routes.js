@@ -8,6 +8,7 @@ import OtherUserList from "@modules/user/views/OtherUserList.jsx";
 import OtherUserCreate from "@modules/user/views/OtherUserCreate.jsx";
 import OtherUserEdit from "@modules/user/views/OtherUserEdit.jsx";
 import UserManagementCreate from "@modules/user/views/UserManagementCreate.jsx";
+import OtherUserAdd from "@modules/user/views/OtherUserAdd.jsx";
 export const USER_ROUTES = {
     READ: {
         path: '/module/users',
@@ -45,7 +46,7 @@ export const USER_ROUTES = {
             permission: 'user.add_user',
         },
         EDIT:{
-            path:'/module/users/others/:id',
+            path:'/module/users/others/edit/:id',
             permission: 'user.change_user',
         },
     }
@@ -87,7 +88,7 @@ export const MODULE_ROUTES = [
     },
     {
         path: USER_ROUTES.OTHER_USER.CREATE.path,
-        component: OtherUserCreate,
+        component: OtherUserAdd,
         permission: USER_ROUTES.OTHER_USER.CREATE.permission,
     },
     {
