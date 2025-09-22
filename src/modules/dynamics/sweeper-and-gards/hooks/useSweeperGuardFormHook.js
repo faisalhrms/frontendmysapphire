@@ -44,6 +44,18 @@ const fetchSweeperGuardById = async (id) => {
     }
 };
 
+export const downloadSweepersGuardsReport = async () => {
+    try {
+        const response = await api.get(
+            "/dynamics/sweepers-and-guards/download-pdf/",
+            { responseType: "blob" }   // no params
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 // ---------------- Hooks ---------------- //
 
 export const useFetchSweeperGuardById = (id) => {
