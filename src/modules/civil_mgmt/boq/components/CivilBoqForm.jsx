@@ -10,6 +10,7 @@ import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import { useQuery } from "@tanstack/react-query";
 import api from "@config/axiosConfig.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
+import FormToggle from "@components/form/FormToggle.jsx";
 
 const useCategories = () => {
     return useQuery({
@@ -141,7 +142,7 @@ const SelectedItemsTable = ({items, onUpdateQuantity, onUpdateRate, onRemove}) =
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
                                     <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs font-mono rounded-md">
-                                        {item.code}
+                                        {item.item_no}
                                     </span>
                                     <span className="font-semibold text-sm text-gray-900 truncate">{item.name}</span>
                                 </div>
@@ -152,8 +153,8 @@ const SelectedItemsTable = ({items, onUpdateQuantity, onUpdateRate, onRemove}) =
                                     <label className="text-xs font-medium text-gray-500">Quantity</label>
                                     <input
                                         type="number"
-                                        step="0.01"
-                                        min="0.01"
+                                        step="1"
+                                        min="1"
                                         value={item.quantity || ''}
                                         onChange={(e) => onUpdateQuantity(index, parseFloat(e.target.value) || 0)}
                                         className={`w-20 px-2 py-1.5 text-sm border rounded-md focus:ring-2 focus:ring-primary focus:border-primary
@@ -246,7 +247,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
     const handleAddItem = (item) => {
         const newItem = {
             item: item.id,
-            code: item.item_no,
+            item_no: item.item_no,
             name: item.name,
             unit: item.unit,
             quantity: 1,
@@ -300,7 +301,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                 </div>
                                 <div className="p-6">
                                     <div className="grid grid-cols-12 gap-6">
-                                        <div className="col-span-12">
+                                        <div className="col-span-10">
                                             <FormAsyncSelect
                                                 name="project"
                                                 control={control}
@@ -310,6 +311,17 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                                 queryKeyBase="civil_boq_projects"
                                                 preselectedOptions={formatOptions(formData, 'project_option')}
                                                 is_required={true}
+                                                isDisabled={editMode}
+                                            />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <FormToggle
+                                                label={true}
+                                                placeholder="Is finalized"
+                                                name="is_finalized"
+                                                control={control}
+                                                errors={errors}
+                                                toggleClasses="text-left"
                                             />
                                         </div>
                                         <div className="xl:col-span-6 col-span-12">
@@ -361,7 +373,8 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <h3 className="text-lg font-semibold text-gray-900">BOQ Items</h3>
-                                            <p className="text-sm text-gray-600 mt-1">Manage quantities and rates for selected items</p>
+                                            <p className="text-sm text-gray-600 mt-1">Manage quantities and rates for
+                                                selected items</p>
                                         </div>
                                         <div className="text-right">
                                             <div className="text-sm text-gray-500">Total Value</div>
@@ -378,11 +391,6 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                         onUpdateRate={handleUpdateRate}
                                         onRemove={handleRemoveItem}
                                     />
-                                    {errors.items && (
-                                        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                            <p className="text-red-600 text-sm font-medium">{errors.items.message}</p>
-                                        </div>
-                                    )}
                                 </div>
                                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl">
                                     <div className="flex justify-end">

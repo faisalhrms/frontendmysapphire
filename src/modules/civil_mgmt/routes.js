@@ -9,10 +9,17 @@ import CivilProjectDrawingDatatable from "@modules/civil_mgmt/project/views/Civi
 import CivilProjectDrawingDetail from "@modules/civil_mgmt/project/views/CivilProjectDrawingDetail.jsx";
 import CivilBoqDatatable from "@modules/civil_mgmt/boq/views/CivilBoqDatatable.jsx";
 import CreateCivilBoq from "@modules/civil_mgmt/boq/views/CreateCivilBoq.jsx";
+import EditCivilBoq from "@modules/civil_mgmt/boq/views/EditCivilBoq.jsx";
+import CivilBoqDetail from "@modules/civil_mgmt/boq/views/CivilBoqDetail.jsx";
+import CivilBoqTenderDatatable from "@modules/civil_mgmt/tender/views/CivilBoqTenderDatatable.jsx";
+import CreateCivilBoqTender from "@modules/civil_mgmt/tender/views/CreateCivilBoqTender.jsx";
+import EditCivilBoqTender from "@modules/civil_mgmt/tender/views/EditCivilBoqTender.jsx";
+import CivilBoqTenderDetail from "@modules/civil_mgmt/tender/views/CivilBoqTenderDetail.jsx";
 
 const SITE_PERMISSION = 'civil_mgmt.site_management'
 const ITEM_PERMISSION = 'civil_mgmt.item_management'
 const BOQ_PERMISSION = 'civil_mgmt.boq_management'
+const TENDER_PERMISSION = 'civil_mgmt.tender_management'
 
 export const CIVIL_ROUTES = {
     SITE:{
@@ -64,6 +71,28 @@ export const CIVIL_ROUTES = {
         EDIT:{
             path:'/module/civil/boq/edit/:id',
             permission:ITEM_PERMISSION
+        },
+        DETAIL:{
+            path:'/module/civil/boq/detail/:id',
+            permission:ITEM_PERMISSION
+        },
+    },
+    TENDER:{
+        READ: {
+            path: '/module/civil/tender',
+            permission:TENDER_PERMISSION
+        },
+        CREATE:{
+            path:'/module/civil/tender/create',
+            permission:TENDER_PERMISSION
+        },
+        EDIT:{
+            path:'/module/civil/tender/edit/:id',
+            permission:TENDER_PERMISSION
+        },
+        DETAIL:{
+            path:'/module/civil/tender/detail/:id',
+            permission:TENDER_PERMISSION
         },
     },
     SETUP: {
@@ -126,5 +155,29 @@ export const MODULE_ROUTES = [
     {
         path: CIVIL_ROUTES.BOQ.CREATE.path,
         component: CreateCivilBoq,
+    },
+    {
+        path: CIVIL_ROUTES.BOQ.EDIT.path,
+        component: EditCivilBoq,
+    },
+    {
+        path: CIVIL_ROUTES.BOQ.DETAIL.path,
+        component: CivilBoqDetail,
+    },
+    {
+        path: CIVIL_ROUTES.TENDER.READ.path,
+        component: CivilBoqTenderDatatable,
+    },
+    {
+        path: CIVIL_ROUTES.TENDER.CREATE.path,
+        component: CreateCivilBoqTender,
+    },
+    {
+        path: CIVIL_ROUTES.TENDER.EDIT.path,
+        component: EditCivilBoqTender,
+    },
+    {
+        path: CIVIL_ROUTES.TENDER.DETAIL.path,
+        component: CivilBoqTenderDetail,
     },
 ];

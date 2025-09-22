@@ -7,6 +7,7 @@ import {formatDate} from "@helpers/dateTime.js";
 import CivilProjectDrawingModal from "@modules/civil_mgmt/modals/CivilProjectDrawingModal.jsx";
 import {useCivilProjectDrawingModal} from "@modules/civil_mgmt/project/hooks/useCivilProjectDrawingModal.js";
 import {toTitleCase} from "@helpers/formatters.js";
+import DatatableFilesList from "@components/datatable/DatatableFilesList.jsx";
 
 const CivilProjectDrawingDatatable = () => {
     const dataTableRef = React.useRef();
@@ -53,22 +54,9 @@ const CivilProjectDrawingDatatable = () => {
             Header: 'Files',
             accessor: 'files',
             disableSortBy: true,
-            Cell: ({ row }) => {
-                const files = row.original.files;
+            Cell: ({ value }) => {
                 return (
-                    <div className="flex space-x-2">
-                        {files.map(file => (
-                            <a
-                                key={file.id}
-                                href={file.file_url}
-                                target="_blank"
-                                className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            >
-                                <Eye className="h-3 w-3 mr-1"/>
-                                View
-                            </a>
-                        ))}
-                    </div>
+                    <DatatableFilesList files={value} />
                 );
             },
         },

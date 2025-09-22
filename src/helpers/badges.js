@@ -69,6 +69,7 @@ const statusStyles = {
     near_completion: txtWarning,
     under_approval: txtSecondary,
     half_completed: txtPrimary,
+    draft: txtPrimary,
     open: txtSecondary,
     closed:txtDanger,
     not_started: txtSecondary,
@@ -97,6 +98,7 @@ const statusStyles = {
     available_in_inventory:txtSuccess,
     high: txtDanger,
     low: txtSuccess,
+    awarded: txtSuccess,
     medium: txtWarning,
     blocked:warning,
     waiting_for_pr: txtPrimary,
@@ -105,6 +107,7 @@ const statusStyles = {
     waiting_for_quotation: txtSecondary,
     waiting_for_acknowledgement: txtSuccess,
     waiting_for_approval: txtDanger,
+    cancelled: txtDanger,
 
 
 };

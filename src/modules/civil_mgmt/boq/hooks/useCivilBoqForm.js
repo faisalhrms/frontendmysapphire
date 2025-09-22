@@ -8,12 +8,12 @@ import { useNavigate } from "react-router-dom";
 
 const itemSchema = z.object({
     item: z.number().min(1, "Item is required"),
-    quantity: z.number().min(0.01, "Quantity must be greater than 0"),
+    quantity: z.number().min(1, "Quantity must be greater than 0"),
     rate: z.number().min(0.01, "Rate must be greater than 0"),
 });
 
 const formSchema = z.object({
-    project: z.number().min(1, "Project is required"),
+    project: z.coerce.number().min(1, "Project is required"),
     title: z.string().min(1, "Title is required"),
     description: z.string().optional(),
     version: z.number().min(1).default(1),
@@ -58,7 +58,6 @@ export function useCivilBoqForm(editMode = false, boqId = null) {
     }, [editMode, boqId, reset]);
 
     const onSubmit = async (values) => {
-        console.log(values)
         setIsSubmitting(true);
         try {
             const url = editMode && boqId ? `/civil/boq/${boqId}/` : `/civil/boq/`;

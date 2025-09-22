@@ -43,10 +43,18 @@ export const sidebarMenu = [
                 CIVIL_ROUTES.BOQ.READ.permission,
             ),
             generateSidebarItem(
+                CIVIL_ROUTES.TENDER.READ.path,
+                'link',
+                'Tender',
+                5,
+                '',
+                CIVIL_ROUTES.TENDER.READ.permission,
+            ),
+            generateSidebarItem(
                 "",
                 "sub",
                 "Setups",
-                4,
+                6,
                 "bx bx-target-lock",
                 "",
                 [

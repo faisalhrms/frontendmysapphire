@@ -355,19 +355,28 @@ const DatatableAdvanceFilters = ({
         <div className="border rounded p-4 mb-4 bg-gray-50">
             <div className="flex items-center justify-between mb-3">
                 <h6 className="font-semibold">Advanced Filters</h6>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     <button
                         type="button"
-                        className="btn btn-sm btn-primary"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 active:bg-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 ease-in-out"
                         onClick={applyFilters}
                     >
-                        Apply Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+                        <i className="ri-filter-3-line text-sm"></i>
+                        Apply Filters
+                        {activeFiltersCount > 0 && (
+                            <span
+                                className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-blue-600 bg-white rounded-full ml-1">
+                {activeFiltersCount}
+            </span>
+                        )}
                     </button>
+
                     <button
                         type="button"
-                        className="btn btn-sm btn-secondary"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 active:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 ease-in-out"
                         onClick={clearAllFilters}
                     >
+                        <i className="ri-close-circle-line text-sm"></i>
                         Clear All
                     </button>
                 </div>
