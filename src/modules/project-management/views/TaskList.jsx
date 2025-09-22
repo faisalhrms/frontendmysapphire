@@ -239,47 +239,13 @@ const TaskList = () => {
 
         },
         {Header: "Aging", accessor: "aging", disableSortBy: true, filterable: false, excelColumnType: 'number', width: 150},
-        // {
-        //     Header: "Timeline Group",
-        //     accessor: "time_line_group",
-        //     disableSortBy: true,
-        //     filterable: false,
-        //     getCellProps: (cellInfo) => {
-        //         const value = cellInfo.value;
-        //         let bgClass = "bg-info";
-        //         if (value.includes("Delayed")) {
-        //             bgClass = "bg-red";
-        //         } else {
-        //             switch (value) {
-        //                 case "Advance":
-        //                     bgClass = "bg-success";
-        //                     break;
-        //                 case "On Time":
-        //                     bgClass = "bg-green";
-        //                     break;
-        //                 case "Between 1 – 5 days":
-        //                     bgClass = "bg-yellow";
-        //                     break;
-        //                 case "Between 6 – 16 days":
-        //                     bgClass = "bg-orange";
-        //                     break;
-        //                 case "More than 16 days":
-        //                     bgClass = "bg-danger";
-        //                     break;
-        //             }}
-        //
-        //         return {
-        //             className: `text-white ${bgClass}`,
-        //         };
-        //     },
-        // },
         {
             Header: "Timeline Group",
             accessor: "time_line_group",
             disableSortBy: true,
             filterable: false,
             getCellProps: (cellInfo) => {
-                const value = cellInfo.value || ""; // ✅ ensure string
+                const value = cellInfo.value || "";
                 let bgClass = "bg-info";
 
                 if (typeof value === "string" && value.includes("Delayed")) {

@@ -15,11 +15,14 @@ import CivilBoqTenderDatatable from "@modules/civil_mgmt/tender/views/CivilBoqTe
 import CreateCivilBoqTender from "@modules/civil_mgmt/tender/views/CreateCivilBoqTender.jsx";
 import EditCivilBoqTender from "@modules/civil_mgmt/tender/views/EditCivilBoqTender.jsx";
 import CivilBoqTenderDetail from "@modules/civil_mgmt/tender/views/CivilBoqTenderDetail.jsx";
+import CivilVendorTenderDatatable from "@modules/civil_mgmt/bidding/views/CivilVendorTenderDatatable.jsx";
+import CivilVendorTenderDetail from "@modules/civil_mgmt/bidding/views/CivilVendorTenderDetail.jsx";
 
 const SITE_PERMISSION = 'civil_mgmt.site_management'
 const ITEM_PERMISSION = 'civil_mgmt.item_management'
 const BOQ_PERMISSION = 'civil_mgmt.boq_management'
 const TENDER_PERMISSION = 'civil_mgmt.tender_management'
+const VENDOR_PERMISSION = 'civil_mgmt.vendor_tender_management'
 
 export const CIVIL_ROUTES = {
     SITE:{
@@ -94,6 +97,17 @@ export const CIVIL_ROUTES = {
             path:'/module/civil/tender/detail/:id',
             permission:TENDER_PERMISSION
         },
+    },
+    VENDOR:{
+        TENDER: {
+            path: '/module/civil/vendor/tender',
+            permission:VENDOR_PERMISSION
+        },
+        BIDDING: {
+            path: '/module/civil/vendor/tender/:id',
+            permission:VENDOR_PERMISSION
+        },
+
     },
     SETUP: {
         ITEM: {
@@ -179,5 +193,13 @@ export const MODULE_ROUTES = [
     {
         path: CIVIL_ROUTES.TENDER.DETAIL.path,
         component: CivilBoqTenderDetail,
+    },
+    {
+        path: CIVIL_ROUTES.VENDOR.TENDER.path,
+        component: CivilVendorTenderDatatable,
+    },
+    {
+        path: CIVIL_ROUTES.VENDOR.BIDDING.path,
+        component: CivilVendorTenderDetail,
     },
 ];

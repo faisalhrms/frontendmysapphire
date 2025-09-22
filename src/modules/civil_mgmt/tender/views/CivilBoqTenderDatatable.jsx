@@ -1,15 +1,13 @@
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import {Edit, HardHat} from "lucide-react";
+import {HardHat} from "lucide-react";
 import React from "react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import {formatDate} from "@helpers/dateTime.js";
 import UserWithAvatar from "@components/UserWithAvatar.jsx";
 import {Link} from "react-router-dom";
-import {priorities, projectStatuses} from "@modules/project-management/services/projectService.js";
-import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
-import {getBadgeClasses, getStatusClasses} from "@helpers/badges.js";
+import {toTitleCase} from "@helpers/formatters.js";
+import {getStatusClasses} from "@helpers/badges.js";
 import AvatarList from "@components/AvatarList.jsx";
-import {projectCurrency} from "@modules/civil_mgmt/project/hooks/useCivilProjectForm.js";
 import {boqTenderStatuses} from "@modules/civil_mgmt/tender/hooks/useCivilBoqTenderForm.js";
 
 const CivilBoqTenderDatatable = () => {
@@ -81,14 +79,16 @@ const CivilBoqTenderDatatable = () => {
             excelStyleMap: {
                 draft:    { label: 'DRAFT',     bgColor: '#F57C00', textColor: '#FFFFFF' },
                 open:     { label: 'OPEN',  bgColor: '#388E3C', textColor: '#FFFFFF' },
-                awarded:      { label: 'AWARDED',       bgColor: '#2E7D32', textColor: '#FFFFFF' },
-                canceled:       { label: 'CANCELLED',       bgColor: '#D32F2F', textColor: '#FFFFFF' },
+                awarded:  { label: 'AWARDED',       bgColor: '#2E7D32', textColor: '#FFFFFF' },
+                canceled: { label: 'CANCELLED',       bgColor: '#D32F2F', textColor: '#FFFFFF' },
             },
-            Cell: ({ row }) => (
-                <div className={`min-w-[200px]`}>
-                    <p className={getStatusClasses(row.original.status)}>{toTitleCase(row.original.status)}</p>
-                </div>
-            ),
+            Cell: ({ value }) => toTitleCase(value),
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                return {
+                    className: getStatusClasses(value),
+                };
+            },
         },
         {
             Header: 'Vendors',

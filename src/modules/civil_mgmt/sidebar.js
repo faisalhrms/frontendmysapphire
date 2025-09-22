@@ -53,8 +53,26 @@ export const sidebarMenu = [
             generateSidebarItem(
                 "",
                 "sub",
-                "Setups",
+                "Vendor",
                 6,
+                "bx bx-target-lock",
+                "",
+                [
+                    generateSidebarItem(
+                        CIVIL_ROUTES.VENDOR.TENDER.path,
+                        "link",
+                        " Open Tenders",
+                        1,
+                        "bx bx-message-square-edit",
+                        CIVIL_ROUTES.VENDOR.TENDER.permission
+                    ),
+                ]
+            ),
+            generateSidebarItem(
+                "",
+                "sub",
+                "Setups",
+                7,
                 "bx bx-target-lock",
                 "",
                 [
