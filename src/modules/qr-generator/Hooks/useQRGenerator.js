@@ -20,7 +20,6 @@ const useQRGenerator = () => {
                         return { type: "square" };
                 }
             };
-
             const qrCode = new QRCodeStyling({
                 width: options.size || 200,
                 height: options.size || 200,
@@ -53,7 +52,8 @@ const useQRGenerator = () => {
                     const qrImage = new Image();
                     qrImage.onload = async () => {
                         const qrSize = options.size || 200;
-                        const basePadding = 30;
+                        const basePadding = (options.additionalText || options.logoText) ? 30 : 0;
+
 
                         const logoWidth = options.logo ? (options.logoWidth || 50) : 0;
                         const logoHeight = options.logo ? (options.logoHeight || 50) : 0;
