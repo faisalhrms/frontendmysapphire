@@ -137,20 +137,23 @@ export default function InteractiveMap({ chain }) {
 
   const [canvasData, setCanvasData] = useState({ unitName: "", groups: {} })
 
-  const openCanvas = (cid, uid, unitName) => {
-    const rows = rowsByCat[cid] || []
-    const row = rows.find(r => r.unit.id === uid) || {}
-    const certs = row.certificates || []
-    const groups = certs.reduce((acc, c) => {
-      const type = c.certificate.certificate_type.name.toUpperCase()
-      if (!acc[type]) acc[type] = []
-      acc[type].push(c)
-      return acc
-    }, {})
-    setCanvasData({ unitName: cleanName(unitName), groups })
-    const el = document.getElementById("hs-overlay-right")
-    if (el) window.HSOverlay.open(el)
-  }
+const openCanvas = (cid, uid, unitName, supplier) => {
+  const rows = rowsByCat[cid] || []
+  const row = rows.find(r => r.unit.id === uid) || {}
+  const unitCerts = row.certificates || []
+  const supplierCerts = supplier ? (supplier.certificates || []) : (row.suppliers || []).flatMap(s => s.certificates || [])
+  const all = supplier ? supplierCerts : [...unitCerts, ...supplierCerts]
+  const groups = all.reduce((acc, c) => {
+    const type = String(c.certificate?.certificate_type?.name || "").toUpperCase() || "OTHER"
+    if (!acc[type]) acc[type] = []
+    acc[type].push(c)
+    return acc
+  }, {})
+  setCanvasData({ unitName: supplier ? `${cleanName(unitName)} • ${supplier.name}` : cleanName(unitName), groups })
+  const el = document.getElementById("hs-overlay-right")
+  if (el) window.HSOverlay.open(el)
+}
+
 
   const wrapperRef = useRef(null)
   const [scale, setScale] = useState(1)
@@ -240,7 +243,7 @@ export default function InteractiveMap({ chain }) {
                         <div className="flex justify-between items-center">
                           <span
                             className="text-xs text-gray-800 font-medium dark:text-gray-200 cursor-pointer flex items-center gap-2"
-                            onClick={() => { setTop(p.id); openCanvas(p.cid, u.unitId, u.unitName) }}
+                            onClick={() => { setTop(p.id); openCanvas(p.cid, u.unitId, u.unitName,null) }}
                           >
                             {u.hasIn && <span className="inline-block w-2 h-2 rounded-full" style={{ background: "rgb(73 182 245)" }} />}
                             {u.hasOut && <span className="inline-block w-2 h-2 rounded-full" style={{ background: "rgb(231 145 188)" }} />}
@@ -260,7 +263,7 @@ export default function InteractiveMap({ chain }) {
                                   <tr
                                     key={`${s.id}-${s.tag}`}
                                     className="border-t border-inherit border-solid hover:bg-gray-100 dark:hover:bg-light dark:border-defaultborder/10 cursor-pointer"
-                                    onClick={() => { setTop(p.id); openCanvas(p.cid, u.unitId, u.unitName) }}
+                                    onClick={() => { setTop(p.id); openCanvas(p.cid, u.unitId, u.unitName, s) }}
                                   >
                                     <td className="!text-xs !font-normal">
                                       <span className="inline-flex items-center gap-2">

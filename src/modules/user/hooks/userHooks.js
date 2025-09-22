@@ -1,5 +1,11 @@
 import {useNavigate} from "react-router-dom";
-import {createOtherUser, createUser, getUserById, updateUser} from "@modules/user/services/userService.js";
+import {
+    createOtherUser,
+    createUser,
+    getOtherUserById,
+    getUserById,
+    updateUser
+} from "@modules/user/services/userService.js";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -44,6 +50,27 @@ export const useUser = (id) => {
 
     return { userData };
 }
+
+
+export const useOtherUser = (id) => {
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const data = await getOtherUserById(id);
+                setUserData(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error.message);
+            }
+        };
+
+        fetchUser();
+    }, [id]);
+
+    return { userData };
+}
+
 
 export const useOtherUserModal = () => {
     const [isUserModalOpen, setIsModalOpen] = useState(false);

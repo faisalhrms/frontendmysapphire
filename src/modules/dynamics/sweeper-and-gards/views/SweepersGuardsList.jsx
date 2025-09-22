@@ -4,6 +4,9 @@ import DataTable from "@components/datatable/DataTable.jsx";
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { DYNAMICS_ROUTES } from "@modules/dynamics/routes.js";
+import {formatDate} from "@helpers/dateTime.js";
+import UserWithAvatar from "@components/UserWithAvatar.jsx";
+import {formatAmountWithCommas} from "@helpers/formatters.js";
 
 const SweepersGuardsList = () => {
     const dataTableRef = useRef();
@@ -11,24 +14,30 @@ const SweepersGuardsList = () => {
     const columns = [
         {
             Header: "Actions",
-            accessor: "id",
+            accessor: "id",          // keep accessor for table keying
             disableSortBy: true,
-            Cell: ({ row }) => (
-                <div className="flex justify-center space-x-2">
-                    <Link to={`/module/dynamics/forms/sweepers-and-guards/edit/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-primary ti-btn-sm">
-                            <i className="ri-edit-line" />
-                        </button>
-                    </Link>
-                </div>
-            ),
+            Cell: ({ row }) => {
+                const parentId = row.original.sweeper_guard_id; // ✅ parent SweeperAndGuard id
+                return (
+                    <div className="flex justify-center space-x-2">
+                        <Link
+                            to={`/module/dynamics/forms/sweepers-and-guards/edit/${parentId}`}
+                        >
+                            <button className="ti-btn ti-btn-primary ti-btn-sm">
+                                <i className="ri-edit-line" />
+                            </button>
+                        </Link>
+                    </div>
+                );
+            },
         },
+
         {
             Header: "Store Code",
             accessor: "store.store_code",
             filterable: true,
             filterType: "text",
-            filterKey: "store__store_code", // ✅ for backend filtering
+            filterKey: "store__store_code",
         },
         {
             Header: "Store Name",
@@ -38,53 +47,142 @@ const SweepersGuardsList = () => {
             filterKey: "store__store_name",
         },
         {
-            Header: "Number of Guards",
+            Header: "Category",
+            accessor: "category",
+            filterable: true,
+            filterType: "text",
+            filterKey: "category",
+        },
+        {
+            Header: "Design Pieces",
+            accessor: "design_pieces",
+            filterable: true,
+            filterType: "number",
+            filterKey: "design_pieces",
+            Cell: ({ value }) =>
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(val),
+        },
+        {
+            Header: "Area (sq ft)",
+            accessor: "area_sq_feet",
+            filterable: true,
+            filterType: "number",
+            filterKey: "area_sq_feet",
+            Cell: ({ value }) =>
+                value ? `${parseFloat(value).toLocaleString()} sq ft` : "N/A",
+            excelFormat: (val) => (val == null ? "" : Number(parseFloat(val))),
+        },
+        {
+            Header: "Hanging Capacity",
+            accessor: "hanging_capacity",
+            filterable: true,
+            filterType: "number",
+            filterKey: "hanging_capacity",
+            Cell: ({ value }) =>
+                value != null ? value.toLocaleString() : "N/A",
+            excelFormat: (val) => (val == null ? "" : Number(val)),
+        },
+
+        // ---- ADDED PARENT SUMMARY FIELDS ----
+        {
+            Header: "Guards",
             accessor: "num_of_guards",
             filterable: true,
             filterType: "number",
             filterKey: "num_of_guards",
+            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            excelFormat: (val) => (val == null ? "" : Number(val)),
         },
         {
-            Header: "Number of Sweepers",
+            Header: "Sweepers",
             accessor: "num_of_sweepers",
             filterable: true,
             filterType: "number",
             filterKey: "num_of_sweepers",
+            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            excelFormat: (val) => (val == null ? "" : Number(val)),
         },
         {
-            Header: "Leased Area (sq ft)",
+            Header: "Stock Helpers",
+            accessor: "num_of_stock_helpers",
+            filterable: true,
+            filterType: "number",
+            filterKey: "num_of_stock_helpers",
+            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            excelFormat: (val) => (val == null ? "" : Number(val)),
+        },
+        {
+            Header: "Leased Area (total)",
             accessor: "leased_area_total",
             filterable: true,
             filterType: "number",
             filterKey: "leased_area_total",
             Cell: ({ value }) =>
-                value ? `${parseFloat(value).toLocaleString()} sq ft` : "N/A",
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(parseFloat(val)),
         },
         {
-            Header: "Store Capacity",
+            Header: "Store Capacity (total)",
             accessor: "store_capacity_total",
             filterable: true,
             filterType: "number",
             filterKey: "store_capacity_total",
-            Cell: ({ value }) => (value ? value.toLocaleString() : "N/A"),
+            Cell: ({ value }) =>
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(parseFloat(val)),
         },
         {
-            Header: "Hanging Capacity",
+            Header: "Hanging Capacity (total)",
             accessor: "hanging_capacity_total",
             filterable: true,
             filterType: "number",
             filterKey: "hanging_capacity_total",
-            Cell: ({ value }) => (value ? value.toLocaleString() : "N/A"),
-
+            Cell: ({ value }) =>
+                value != null ? formatAmountWithCommas(value) : "N/A",
+            excelFormat: (val) =>
+                val == null ? "" : Number(parseFloat(val)),
+        },
+        // ---- metadata columns ----
+        {
+            Header: "Created By",
+            accessor: "created_by",
+            filterable: true,
+            filterType: "text",
+            filterKey: "created_by__full_name",
+            // Keep UI rendering the object (avatar + name)
+            Cell: ({ value }) => <UserWithAvatar user={value} />,
+            excelFormat: (val) => {
+                if (!val) return "";
+                return val.email || val.full_name || (typeof val === 'object' ? JSON.stringify(val) : String(val));
+            },
         },
         {
             Header: "Created At",
             accessor: "created_at",
-            filterable: true,
             filterType: "date",
-            filterKey: "created_at",
-            Cell: ({ value }) =>
-                value ? new Date(value).toLocaleDateString() : "N/A",
+            filterable: true,
+        },
+        {
+            Header: "Updated By",
+            accessor: "updated_by",
+            filterable: true,
+            filterType: "text",
+            filterKey: "updated_by__full_name",
+            Cell: ({ value }) => <UserWithAvatar user={value} />,
+            excelFormat: (val) => {
+                if (!val) return "";
+                return val.email || val.full_name || (typeof val === 'object' ? JSON.stringify(val) : String(val));
+            },
+        },
+        {
+            Header: "Updated At",
+            accessor: "updated_at",
+            filterType: "date",
+            filterable: true,
         },
     ];
 

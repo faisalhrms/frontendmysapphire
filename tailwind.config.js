@@ -82,6 +82,7 @@ theme: {
       indigo:"rgb(var(--indigo))",
       yellow:"rgb(var(--yellow))",
       facebook:"rgb(var(--facebook))",
+      linkedin: "rgb(var(--linkedin))",
       twitter:"rgb(var(--twitter))",
       github:"rgb(var(--github))",
       google:"rgb(var(--google))",

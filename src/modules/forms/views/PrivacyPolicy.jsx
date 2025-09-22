@@ -110,16 +110,16 @@ const PrivacyPolicy = () => {
                                     <div className="p-6 text-muted">
                                         <div className="mb-6">
                                             <h6 className="font-bold pb-3 text-default opacity-[0.8]">
-                                                <span className="terms-heading">Privacy Policy </span>
+                                                <span className="terms-heading dark:text-gray-200 dark:bg-bodybg">Privacy Policy </span>
                                             </h6>
 
-                                            <p className="opacity-[0.7] mb-6">
+                                            <p className="opacity-[0.7] mb-6 dark:text-gray-200 dark:bg-bodybg">
                                                 This privacy policy explains how we collect, use, and protect your personal information when you use our services. The policy is applicable globally.
                                             </p>
                                         </div>
 
                                         {content.map((section, index) => (
-                                            <div key={index} className="mb-6">
+                                            <div key={index} className="mb-6 dark:text-gray-200 dark:bg-bodybg">
                                                 <p className="font-semibold text-muted mb-3 text-[.875rem] opacity-[0.8] ">
                                                     {section.title}
                                                 </p>

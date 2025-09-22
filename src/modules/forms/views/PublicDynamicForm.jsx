@@ -13,6 +13,7 @@ import {getDynamicButtonStyle, hexToRgb} from "@helpers/styles.js";
 import PhoneInputForDynamicForm, { COUNTRIES } from "@modules/forms/components/PhoneInputForDynamicForm.jsx";
 import PrivacyPolicyPopup from "@components/PrivacyPolicyPopup.jsx";
 import Notify from "@helpers/toastNotifications.js";
+import {useSelector} from "react-redux";
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 const validatePhoneNumber = (value, field) => {
     if (!value) {
@@ -49,6 +50,7 @@ const loadFontFamily = (fontFamily) => {
         document.head.appendChild(link);
     }
 };
+
 const createFormSchema = (fields) => {
     const schemaObject = {};
     fields.forEach((step) => {
@@ -165,6 +167,7 @@ export default function PublicDynamicForm() {
     const { defaultStyle, hoverStyle } = getDynamicButtonStyle(primaryColor, true);
 
     const navigate = useNavigate();
+
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_API_BASE_URL}/forms/${slug}/public`)
@@ -396,7 +399,7 @@ export default function PublicDynamicForm() {
 
         if (field.field_type === "hidden") return null;
 
-        const commonInputClass = `w-full max-w-md px-0 py-2 border-0 border-b-2 ${
+        const commonInputClass = `w-full max-w-md px-0 py-2 border-0 border-b-2 dark:text-gray-200 dark:bg-bodybg  ${
             errors[fieldName] ? "border-danger focus:border-danger" : "border-gray-300 focus:border-[var(--primary)]"
         } focus:outline-none bg-transparent text-sm placeholder-gray-400 transition-colors duration-200`;
 
@@ -415,7 +418,7 @@ export default function PublicDynamicForm() {
 
         return (
             <div
-                className={`bg-white rounded-lg border ${
+                className={`bg-white rounded-lg border dark:text-gray-200 dark:bg-bodybg ${
                     errors[fieldName] ? "border-danger" : "border-gray-200"
                 } p-6`}
                 style={{
@@ -425,7 +428,7 @@ export default function PublicDynamicForm() {
                     ...(errors[fieldName] ? {} : { "--default-border": hexPrimaryColor }),
                 }}
             >
-                <label className="block text-sm font-normal text-gray-700 mb-1 line-height-1">
+                <label className="block text-sm font-normal text-gray-700 mb-1 line-height-1 dark:text-gray-200 dark:bg-bodybg">
                     {field.label} {field.required && <span className="text-danger">*</span>}
                     {field.short_description &&
                         <>
@@ -633,7 +636,7 @@ export default function PublicDynamicForm() {
     if (isSubmitted) {
         return (
             <div className="min-h-screen bg-[#f0f2ff] py-8 px-4">
-                <div className="max-w-2xl mx-auto">
+                <div className="max-w-2xl mx-auto ">
                     <PublicDynamicFormHeader
                         title={formConfig.title}
                         description={`${formConfig.success_message || 'Thank you for your submission! We have received your form successfully.'}`}
@@ -648,7 +651,7 @@ export default function PublicDynamicForm() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f0f2ff] py-8 px-4"
+        <div className="min-h-screen bg-[#f0f2ff] py-8 px-4 "
              style={{
                  fontFamily,
                  backgroundColor: formConfig.image?.file_url ? "transparent" : "#f0f2ff",
@@ -674,7 +677,7 @@ export default function PublicDynamicForm() {
                         <div key={fieldName}>{renderField(fieldName)}</div>
                     ))}
 
-                    <div className="bg-white rounded-lg border border-gray-200 p-6"
+                    <div className="bg-white rounded-lg border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg"
                          style={{
                              "--primary": primaryColor,
                          }}
@@ -732,7 +735,7 @@ export default function PublicDynamicForm() {
                 </form>
             </div>
             {formConfig?.require_captcha && isCaptchaTriggered && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 ">
                     <div className="bg-white rounded-xl p-6 max-w-sm w-full relative"
                          style={{
                              "--primary": primaryColor,

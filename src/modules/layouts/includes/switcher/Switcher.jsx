@@ -513,7 +513,7 @@ const Switcher = () => {
                           ele.target.querySelector("input").click();
                         }
                       }}>
-                        <switcherData.Themebackgroundcolor theme={local_variable} actionfunction={dispatch} />
+                        <switcherData.Themebackgroundcolor theme={local_variable} dispatch={dispatch}/>
                       </button>
 
                     </div>

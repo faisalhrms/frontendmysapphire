@@ -1,16 +1,16 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-// import "@css/inlay/inalay.css";
-
 import sapphireb from "@assets/images/company-logos/sapphireb.png";
 import sapphirew from "@assets/images/company-logos/sapphirew.png";
 import iconsblack from "@assets/images/company-logos/iconsblack.png";
 import iconswhite from "@assets/images/company-logos/iconswhite.png";
+import useDarkMode from "@redux/common/useDarkMode.js";
 
 export default function PublicInlay() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [isDark, setIsDark] = useState(false);
     const scrollRef = useRef(null);
+    const isDark = useDarkMode();
+
 
     const productImages = [
         "https://be.mysapphire.co/media/uploads/2025/08/20/1.JPG",
@@ -22,34 +22,6 @@ export default function PublicInlay() {
         "https://be.mysapphire.co/media/uploads/2025/08/20/7.JPG",
         "https://be.mysapphire.co/media/uploads/2025/08/20/8.JPG",
     ];
-
-    useEffect(() => {
-        const root = document.documentElement;
-        const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-        if (isSystemDark) {
-            root.classList.add("dark");
-            setIsDark(true);
-        } else {
-            root.classList.remove("dark");
-            setIsDark(false);
-        }
-
-        const mq = window.matchMedia("(prefers-color-scheme: dark)");
-        const handler = (e) => {
-            if (e.matches) {
-                root.classList.add("dark");
-                setIsDark(true);
-            } else {
-                root.classList.remove("dark");
-                setIsDark(false);
-            }
-        };
-        mq.addEventListener("change", handler);
-
-        return () => mq.removeEventListener("change", handler);
-    }, []);
-
 
     const nextImage = () => {
         const newIndex = (currentImageIndex + 1) % productImages.length;
@@ -79,17 +51,16 @@ export default function PublicInlay() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
             <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
 
+
                 <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-950 order-2 lg:order-1">
                     <div className="relative w-full flex flex-col items-center">
 
                         <div className="flex flex-col items-center mb-6 lg:hidden mt-4">
-                            {/* Fixed logo display */}
                             <img
-                                src={isDark ? sapphirew : sapphireb }
+                                src={isDark ? sapphirew : sapphireb}
                                 alt="Logo"
-                                style={{width: 200}}
+                                className="h-10"
                             />
-
                             <p className="gotham-medium text-sm tracking-widest mt-2 text-black dark:text-white font-bold">
                                 DAILY
                             </p>
@@ -129,55 +100,16 @@ export default function PublicInlay() {
                                 <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200"/>
                             </button>
                         </div>
-
-                        <div className="flex justify-center mt-4 space-x-2">
-                            {productImages.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => {
-                                        setCurrentImageIndex(index);
-                                        scrollToImage(index);
-                                    }}
-                                    className={` ${
-                                        index === currentImageIndex
-                                            ? ""
-                                            : ""
-                                    }`}
-                                ></button>
-                            ))}
-                        </div>
                     </div>
 
-                    <div className="block lg:hidden w-full px-6 py-4  border-gray-200 dark:border-gray-950">
-                        <div className="space-y-2 text-sm text-gray-800 dark:text-gray-200 max-w-md mx-auto text-left">
-                            <div className="flex justify-between">
-                                <span>Printed Zari Lawn Shirt</span>
-                                <span className="gotham-medium">3.00m</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Printed Blended Chiffon Dupatta</span>
-                                <span className="gotham-medium">2.50m</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Dyed Embroidered Cotton Trouser</span>
-                                <span className="gotham-medium">2pc</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Embroidered Neckline</span>
-                                <span className="gotham-medium">1pc</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="w-full px-6 py-4  border-gray-200 dark:border-gray-700">
+                    <div className="w-full px-6 py-4 border-gray-200 dark:border-gray-700">
                         <h3 className="text-center text-sm text-black dark:text-white gotham-medium mb-2">
                             CARE INSTRUCTIONS
                         </h3>
                         <div className="flex justify-center mb-4">
-                            {/* Fixed icons display */}
                             <img
                                 src={isDark ? iconswhite : iconsblack}
-                                alt={isDark? "Care Icons Dark" : "Care Icons"}
+                                alt="Care Icons"
                                 className="w-20"
                             />
                         </div>
@@ -194,13 +126,13 @@ export default function PublicInlay() {
                     </div>
                 </div>
 
+
                 <div className="flex flex-col justify-between p-10 order-1 lg:order-2 hidden lg:flex">
                     <div>
                         <div className="flex flex-col items-center mb-10">
-                            {/* Fixed logo display for desktop */}
                             <img
                                 src={isDark ? sapphirew : sapphireb}
-                                alt={isDark ? "Logo Dark" : "Logo"}
+                                alt="Logo"
                                 className="h-10"
                             />
                             <p className="gotham-medium text-sm tracking-widest mt-2 text-black dark:text-white">

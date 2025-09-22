@@ -22,7 +22,8 @@ export const otherUserSchema = z.object({
         .string()
         .min(6, { message: "Password must be at least 6 characters long" })
         .max(50, { message: "Password must not exceed 50 characters" })
-        .optional(),
+        .optional()
+        .or(z.literal('')),
 
     is_active: z.boolean({
         required_error: "The 'is_active' field is required",
@@ -38,6 +39,7 @@ export const otherUserSchema = z.object({
         .optional(),
     full_name: z.string().min(1, "Full name is required"),
     email: z.string().email("Invalid email address"),
+    phone: z.string().optional(),
     group_ids: z
         .array(z.number().positive({ message: "Group IDs must be positive numbers" })).optional(),
 });

@@ -1,7 +1,6 @@
 import React from "react"
-import QCPanel from "@modules/chatbot/components/QCPanel.jsx";
-import HasPermission from "@components/HasPermission.jsx";
-import {toTitleCase} from "@helpers/formatters.js";
+import QCPanel from "@modules/chatbot/components/QCPanel.jsx"
+import HasPermission from "@components/HasPermission.jsx"
 
 const ChatInputBox = ({
   input,
@@ -27,8 +26,8 @@ const ChatInputBox = ({
   setHrSubtypes
 }) => {
   const padClass = modeSelection === "Quality Control" ? "pb-20" : "pb-16"
-  const toggleSub = s => setHrSubtypes?.(p => p.includes(s) ? p.filter(x => x!==s) : [...p, s])
-  const active = s => hrSubtypes?.includes?.(s)
+  const toggleSub = s => setHrSubtypes?.([s])
+  const active = s => hrSubtypes?.[0] === s
   return (
     <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-visible shadow-xl ring-2 ring-gray-300">
       <div className={`rounded-t-xl p-2 ${padClass}`}>
@@ -99,13 +98,13 @@ const ChatInputBox = ({
           </div>
           {modeSelection === "HR" && (
             <div className="flex items-center gap-2 ml-2">
-              {["policies","pms","pas"].map(s=>(
+              {["policies","pms","pas","employee"].map(s=>(
                 <button
                   key={s}
                   onClick={()=>toggleSub(s)}
                   className={`px-3 py-1 rounded-full text-xs border ${active(s) ? "bg-indigo/80 text-white border-indigo" : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"}`}
                 >
-                 {toTitleCase(s)}
+                 {s.toUpperCase()}
                 </button>
               ))}
             </div>

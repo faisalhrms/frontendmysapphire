@@ -55,7 +55,7 @@ export const useSupplier = id => {
           certificateList_label:  c.certificate.name,
           optionType:             c.status,
           expiryDate:             c.expiry_date,
-          attachment:             c.media_id,
+          attachment:             c.media_id || c.media?.id || null,
           mediaUrl:               c.media?.file_url || ""
 
         }))
