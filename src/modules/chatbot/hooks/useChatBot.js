@@ -11,14 +11,12 @@ export default function useChatBot() {
   const [modeSelection, setModeSelection] = useState("Select Source")
   const [modeOpen, setModeOpen] = useState(false)
   const [hrSubtypes, setHrSubtypes] = useState(["policies"])
-
   const defaultSuggestions = [
     "Top 10 exporters of Bed by value_usd last 12 months bar chart",
     "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
     "Yearly classification-wise split of bed linen exports in value USD"
   ]
   const [suggestions, setSuggestions] = useState(defaultSuggestions)
-
   const defaultChecks = ["status_code","title","meta_description","h1","canonical","viewport","html_lang","open_graph","twitter_card","robots","sitemap","images_alt_ratio","ecommerce","ecom_schema","ecom_add_to_cart","ecom_prices","ecom_plp","ecom_cart","ecom_search","security_headers","broken_links"]
   const [qcTarget, setQcTarget] = useState("https://pk.sapphireonline.pk")
   const [qcChecks, setQcChecks] = useState(defaultChecks)
@@ -29,11 +27,15 @@ export default function useChatBot() {
   const recorderRef = useRef(null)
   const mediaStreamRef = useRef(null)
   const chunksRef = useRef([])
-  const voiceModeRef = useRef(null)
   const streamCtrlRef = useRef(null)
   const botIdxRef = useRef(-1)
   const rafTickRef = useRef(0)
   const [tick, setTick] = useState(0)
+  const pendingHtmlRef = useRef("")
+  const tagDepthRef = useRef(0)
+  const flushTimerRef = useRef(0)
+  const lastFlushTsRef = useRef(0)
+  const FLUSH_MIN_MS = 90
 
   const autoResize = useCallback((eOrEl, maxHeight = 240) => {
     const el = eOrEl?.target || eOrEl
@@ -174,21 +176,55 @@ export default function useChatBot() {
     }
   }
 
-  const startVoice = async () => {
-    if (listening) {
-      if (voiceModeRef.current === "speech") stopSpeechRecognition()
-      else if (voiceModeRef.current === "record") stopRecording()
-      return
+  const scheduleFlush = (i) => {
+    if (flushTimerRef.current) return
+    const now = performance.now()
+    const delay = Math.max(0, FLUSH_MIN_MS - (now - lastFlushTsRef.current))
+    flushTimerRef.current = window.setTimeout(() => {
+      flushTimerRef.current = 0
+      if (tagDepthRef.current > 0) { scheduleFlush(i); return }
+      const p = pendingHtmlRef.current
+      if (!p) return
+      pendingHtmlRef.current = ""
+      lastFlushTsRef.current = performance.now()
+      setMessages(prev => {
+        const c = [...prev]
+        if (!c[i]) return prev
+        c[i] = { ...c[i], html: (c[i].html || "") + p }
+        return c
+      })
+      if (!rafTickRef.current) {
+        rafTickRef.current = requestAnimationFrame(() => {
+          setTick(t => t + 1)
+          rafTickRef.current = 0
+        })
+      }
+    }, delay)
+  }
+
+  const onDeltaChunk = (i, text) => {
+    for (let k = 0; k < text.length; k++) {
+      const ch = text[k]
+      if (ch === "<") tagDepthRef.current += 1
+      if (ch === ">") tagDepthRef.current = Math.max(0, tagDepthRef.current - 1)
     }
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-    if (isSafari) {
-      if (await startRecording()) { voiceModeRef.current = "record"; return }
-      setMessages(p => [...p, { type: "bot", text: "Voice input not supported. Use Chrome or give microphone access over HTTPS.", time: new Date() }])
-      return
+    pendingHtmlRef.current += text
+    scheduleFlush(i)
+  }
+
+  const flushAll = (i) => {
+    if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
+    const p = pendingHtmlRef.current
+    pendingHtmlRef.current = ""
+    tagDepthRef.current = 0
+    if (p) {
+      setMessages(prev => {
+        const c = [...prev]
+        if (!c[i]) return prev
+        c[i] = { ...c[i], html: (c[i].html || "") + p }
+        return c
+      })
     }
-    if (startSpeechRecognition()) { voiceModeRef.current = "speech"; return }
-    if (await startRecording()) { voiceModeRef.current = "record"; return }
-    setMessages(p => [...p, { type: "bot", text: "Voice input not supported. Use Chrome or give microphone access over HTTPS.", time: new Date() }])
   }
 
   const startStream = (msg) => {
@@ -208,12 +244,15 @@ export default function useChatBot() {
       botIdxRef.current = next.length - 1
       return next
     })
-
     const mode =
       modeSelection === "Export Data" ? "export" :
       modeSelection === "Salesforce" ? "salesforce" :
       modeSelection === "Quality Control" ? "qc" :
       modeSelection === "HR" ? "hr" : ""
+    pendingHtmlRef.current = ""
+    tagDepthRef.current = 0
+    lastFlushTsRef.current = 0
+    if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
 
     streamCtrlRef.current = ChatService.stream({
       msg,
@@ -234,17 +273,7 @@ export default function useChatBot() {
             return c
           })
         } else if (ev.type === "delta") {
-          setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
-            c[i] = { ...c[i], html: (c[i].html || "") + ev.text }
-            return c
-          })
-          if (!rafTickRef.current) {
-            rafTickRef.current = requestAnimationFrame(() => {
-              setTick(t => t + 1)
-              rafTickRef.current = 0
-            })
-          }
+          onDeltaChunk(i, ev.text || "")
         } else if (ev.type === "chart") {
           setMessages(prev => {
             const c = [...prev]; if (!c[i]) return prev
@@ -263,7 +292,20 @@ export default function useChatBot() {
             c[i] = { ...c[i], qcLlm: ev.html }
             return c
           })
+        } else if (ev.type === "employee") {
+          setMessages(prev => {
+            const c = [...prev]; if (!c[i]) return prev
+            c[i] = { ...c[i], employee: ev.data, employee_candidates: null }
+            return c
+          })
+        } else if (ev.type === "employee_candidates") {
+          setMessages(prev => {
+            const c = [...prev]; if (!c[i]) return prev
+            c[i] = { ...c[i], employee_candidates: ev.items, employee: null }
+            return c
+          })
         } else if (ev.type === "final") {
+          flushAll(i)
           setMessages(prev => {
             const c = [...prev]; if (!c[i]) return prev
             c[i] = { ...c[i], html: normalizeHtml(ev.html), latestStatus: null }
@@ -273,6 +315,7 @@ export default function useChatBot() {
           const items = Array.isArray(ev.items) ? ev.items.slice(0, 4) : []
           if (items.length) setSuggestions(items)
         } else if (ev.type === "error") {
+          flushAll(i)
           setIsThinking(false)
           setMessages(prev => {
             const c = [...prev]; if (!c[i]) return prev
@@ -280,6 +323,7 @@ export default function useChatBot() {
             return c
           })
         } else if (ev.type === "done") {
+          flushAll(i)
           setIsThinking(false)
           setMessages(prev => {
             const c = [...prev]; if (!c[i]) return prev
@@ -318,6 +362,9 @@ export default function useChatBot() {
     botIdxRef.current = -1
     setSuggestions(defaultSuggestions)
     if (inputRef.current) autoResize(inputRef.current)
+    pendingHtmlRef.current = ""
+    tagDepthRef.current = 0
+    if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
   }
 
   const handleSend = () => {
@@ -336,6 +383,8 @@ export default function useChatBot() {
       try { stopSpeechRecognition() } catch {}
       try { stopRecording() } catch {}
       try { streamCtrlRef.current?.abort() } catch {}
+      try { cancelAnimationFrame(rafTickRef.current) } catch {}
+      if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
     }
   }, [stopSpeechRecognition])
 
@@ -365,7 +414,7 @@ export default function useChatBot() {
     handleSend,
     handleReset,
     toggleWebSearch,
-    startVoice,
+    startVoice: startSpeechRecognition,
     stopSpeechRecognition,
     autoResize,
     tick,
