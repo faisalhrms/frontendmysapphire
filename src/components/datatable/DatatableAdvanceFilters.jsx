@@ -352,7 +352,7 @@ const DatatableAdvanceFilters = ({
 
     const activeFiltersCount = Object.keys(localFilters).length;
     return (
-        <div className="border rounded p-4 mb-4 bg-gray-50">
+        <div className="border rounded p-4 mb-4 bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
             <div className="flex items-center justify-between mb-3">
                 <h6 className="font-semibold">Advanced Filters</h6>
                 <div className="flex gap-2">
