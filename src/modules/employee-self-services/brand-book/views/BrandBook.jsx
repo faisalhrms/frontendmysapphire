@@ -10,7 +10,6 @@ import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { BookOpen, FileText } from "lucide-react";
 import PdfModalViewer from "@modules/policies/components/PdfModalViewer.jsx";
 
-// Dynamically import all jpg files in that folder
 const images = import.meta.glob(
     "/src/assets/images/brand-book/*.jpg",
     { eager: true }
@@ -21,21 +20,20 @@ const slideImages = Object.keys(images)
     .map((key) => images[key].default || images[key]);
 
 export default function BrandBook() {
-    // 🔑 modal state
     const [modal, setModal] = useState({ open: false, fileId: null });
 
-    const openPdf = () => setModal({ open: true, fileId: 53 });
+    const openPdf = () => setModal({ open: true, fileId: 1248 });
 
     return (
         <>
             <IconPageHeader
-                heading="BrandBook"
+                heading="Brand Book"
                 description="View complete SAPPHIRE Brand Book pages or open the full PDF."
                 icon={BookOpen}
             >
                 <button
                     type="button"
-                    onClick={openPdf}                 // ⬅️ open the modal
+                    onClick={openPdf}
                     title="View Brand Book in PDF"
                     className="inline-flex items-center gap-2 px-4 py-2
                      rounded-full bg-slate-700 text-white text-sm font-medium
@@ -43,7 +41,7 @@ export default function BrandBook() {
                      transition-colors duration-200 shadow-sm"
                 >
                     <FileText className="w-5 h-5" />
-                    BrandBook&nbsp;PDF
+                    Read Brand Book
                 </button>
             </IconPageHeader>
 
@@ -68,7 +66,6 @@ export default function BrandBook() {
                 </Swiper>
             </div>
 
-            {/* 🔽 PDF modal viewer */}
             <PdfModalViewer
                 isOpen={modal.open}
                 fileId={modal.fileId}
