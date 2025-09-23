@@ -16,6 +16,9 @@ import {
     Send,
     Target,
     XCircle,
+    Paperclip,
+    FileText,
+    Eye
 } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { useParams } from "react-router-dom";
@@ -24,7 +27,10 @@ import api from "@config/axiosConfig.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import EmptyState from "@components/EmptyState.jsx";
 
-// Memoized ItemRow component outside of main component to prevent recreation
+import PdfModalViewer from "@modules/policies/components/PdfModalViewer.jsx";
+import {useSecureFileViewer} from "@modules/media/hooks/mediaHooks.js";
+
+
 const ItemRow = React.memo(({
                                 item,
                                 index,
@@ -102,6 +108,35 @@ const ItemRow = React.memo(({
     );
 });
 
+const FileItem = React.memo(({ fileId, onView, type, index }) => {
+    const getFileIcon = (type) => {
+        if (type === 'Drawing') {
+            return <Grid3X3 size={16} className="text-gray-500" />;
+        } else {
+            return <FileText size={16} className="text-gray-500" />;
+        }
+    };
+
+    return (
+        <div
+            onClick={() => onView(fileId)}
+            className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all duration-150 cursor-pointer group"
+        >
+            <div className="w-8 h-8 bg-gray-100 rounded-md flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                {getFileIcon(type)}
+            </div>
+            <div className="flex-1 min-w-0">
+                <span className="text-sm font-medium text-gray-900 truncate">
+                    {type} {index + 1}
+                </span>
+            </div>
+            <Eye size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+    );
+});
+
+FileItem.displayName = 'FileItem';
+
 ItemRow.displayName = 'ItemRow';
 
 const CivilVendorTenderDetail = () => {
@@ -112,6 +147,7 @@ const CivilVendorTenderDetail = () => {
     const [inputErrors, setInputErrors] = useState({});
 
     const { id } = useParams();
+    const { fileState, showFile, hideFile } = useSecureFileViewer();
 
     const { data: boqData, isLoading, error } = useQuery({
         queryKey: ["civil-vendor-tender-detail", id],
@@ -304,6 +340,66 @@ const CivilVendorTenderDetail = () => {
         ));
     }, [boqData?.boq?.items, vendorRates, inputErrors, handleRateChange, formatAmountWithCommas]);
 
+    const FilesSection = React.memo(({ title, fileIds, icon, emptyMessage, type }) => {
+        if (!fileIds || fileIds.length === 0) {
+            return (
+                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center gap-4">
+                        <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                            {icon}
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+                            <p className="text-gray-600">Project {type.toLowerCase()}</p>
+                        </div>
+                    </div>
+                    <div className="p-16 text-center">
+                        <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-6">
+                            {icon}
+                        </div>
+                        <h4 className="text-xl font-bold text-gray-900 mb-2">No {title} Available</h4>
+                        <p className="text-gray-600">{emptyMessage}</p>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                            {icon}
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+                            <p className="text-gray-600">{fileIds.length} {type.toLowerCase()}{fileIds.length !== 1 ? 's' : ''} available</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg border border-blue-200">
+                        <Paperclip size={16} />
+                        <span className="font-semibold">{fileIds.length} Files</span>
+                    </div>
+                </div>
+                <div className="p-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {fileIds.map((fileId, index) => (
+                            <FileItem
+                                key={fileId}
+                                fileId={fileId}
+                                index={index}
+                                onView={showFile}
+                                type={type}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    });
+
+    FilesSection.displayName = 'FilesSection';
+
     const SubmitModal = React.memo(() => {
         if (!showSubmitModal) return null;
 
@@ -435,42 +531,63 @@ const CivilVendorTenderDetail = () => {
             <div className="mx-auto pb-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <StatCard
-                        icon={<Package2 size={24} />}
+                        icon={<Package2 size={24}/>}
                         label="Total Items"
                         value={boqData.boq?.items?.length || 0}
                         sublabel="Construction items"
                     />
                     <StatCard
-                        icon={<DollarSign size={24} />}
+                        icon={<DollarSign size={24}/>}
                         label="Original Amount"
                         value={`PKR ${formatAmountWithCommas(boqData.boq?.total_amount || 0)}`}
                         sublabel="Project cost"
                     />
                     <StatCard
-                        icon={<Target size={24} />}
+                        icon={<Target size={24}/>}
                         label="Your Amount"
                         value={`PKR ${formatAmountWithCommas(calculateTotalAmount)}`}
                         sublabel="Your proposal"
                     />
                     <StatCard
-                        icon={<Clock size={24} />}
+                        icon={<Clock size={24}/>}
                         label="Days Remaining"
                         value={daysRemaining !== null ? (isExpired ? "Expired" : daysRemaining) : "N/A"}
                         sublabel="Until deadline"
+                    />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <FilesSection
+                        title="Project Drawings"
+                        fileIds={boqData.boq.project_drawing_files || []}
+                        icon={<Grid3X3 size={20}/>}
+                        emptyMessage="No project drawings have been uploaded for this tender."
+                        type="Drawing"
+                    />
+
+                    <FilesSection
+                        title="Tender Attachments"
+                        fileIds={boqData.attachments || []}
+                        icon={<Paperclip size={20}/>}
+                        emptyMessage="No tender attachments have been uploaded for this tender."
+                        type="Document"
                     />
                 </div>
 
                 <div className="grid grid-cols-12 gap-8">
                     <div className="col-span-12 space-y-8">
                         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center justify-between">
+                            <div
+                                className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
-                                        <Grid3X3 size={20} />
+                                    <div
+                                        className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                                        <Grid3X3 size={20}/>
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900">BOQ Items - Enter Your Rates</h3>
-                                        <p className="text-gray-600">Enter your competitive rates for each construction item</p>
+                                        <h3 className="text-xl font-bold text-gray-900">BOQ Items - Enter Your
+                                            Rates</h3>
+                                        <p className="text-gray-600">Enter your competitive rates for each construction
+                                            item</p>
                                     </div>
                                 </div>
 
@@ -480,7 +597,7 @@ const CivilVendorTenderDetail = () => {
                                             onClick={handleSaveRates}
                                             className="text-success bg-success/10 hover:bg-success hover:text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                                         >
-                                            <Save size={18} />
+                                            <Save size={18}/>
                                             Save Rates
                                         </button>
                                     )}
@@ -490,14 +607,15 @@ const CivilVendorTenderDetail = () => {
                                             onClick={() => setShowSubmitModal(true)}
                                             className="text-primary bg-primary/10 hover:bg-primary hover:text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                                         >
-                                            <Send size={20} />
+                                            <Send size={20}/>
                                             Submit Tender
                                         </button>
                                     )}
 
                                     {!canSubmit && (
-                                        <div className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 rounded-lg border">
-                                            {isExpired ? <AlertTriangle size={18} /> : <CheckCircle size={18} />}
+                                        <div
+                                            className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 rounded-lg border">
+                                            {isExpired ? <AlertTriangle size={18}/> : <CheckCircle size={18}/>}
                                             <span className="font-medium">
                                                 {isExpired ? "Submission Closed" : boqData.status !== "open" ? "Tender Closed" : "Not Submittable"}
                                             </span>
@@ -513,7 +631,9 @@ const CivilVendorTenderDetail = () => {
                                             <thead className="bg-gray-50 border-b border-gray-200">
                                             <tr>
                                                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">#</th>
-                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Item Details</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Item
+                                                    Details
+                                                </th>
                                                 <th className="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Unit</th>
                                                 <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider">Quantity</th>
                                                 <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider">Rate</th>
@@ -526,15 +646,20 @@ const CivilVendorTenderDetail = () => {
                                         </table>
                                     </div>
 
-                                    <div className="px-8 py-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-gray-200">
+                                    <div
+                                        className="px-8 py-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-gray-200">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="flex items-center gap-6 px-6 py-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+                                            <div
+                                                className="flex items-center gap-6 px-6 py-4 bg-white border border-gray-200 rounded-xl shadow-sm">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 rounded-lg flex items-center justify-center">
-                                                        <Calculator size={20} />
+                                                    <div
+                                                        className="w-10 h-10 bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 rounded-lg flex items-center justify-center">
+                                                        <Calculator size={20}/>
                                                     </div>
                                                     <div>
-                                                        <div className="text-lg font-bold text-gray-900">Original Total</div>
+                                                        <div className="text-lg font-bold text-gray-900">Original
+                                                            Total
+                                                        </div>
                                                         <div className="text-sm text-gray-500">Project estimate</div>
                                                     </div>
                                                 </div>
@@ -543,13 +668,16 @@ const CivilVendorTenderDetail = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-6 px-6 py-4 bg-white border-2 border-blue-300 rounded-xl shadow-lg">
+                                            <div
+                                                className="flex items-center gap-6 px-6 py-4 bg-white border-2 border-blue-300 rounded-xl shadow-lg">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 rounded-lg flex items-center justify-center">
-                                                        <Target size={20} />
+                                                    <div
+                                                        className="w-10 h-10 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 rounded-lg flex items-center justify-center">
+                                                        <Target size={20}/>
                                                     </div>
                                                     <div>
-                                                        <div className="text-lg font-bold text-blue-900">Your Total</div>
+                                                        <div className="text-lg font-bold text-blue-900">Your Total
+                                                        </div>
                                                         <div className="text-sm text-blue-600">Your proposal</div>
                                                     </div>
                                                 </div>
@@ -562,8 +690,9 @@ const CivilVendorTenderDetail = () => {
                                 </>
                             ) : (
                                 <div className="p-16 text-center">
-                                    <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-6">
-                                        <Package2 className="w-10 h-10 text-gray-400" />
+                                    <div
+                                        className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-6">
+                                        <Package2 className="w-10 h-10 text-gray-400"/>
                                     </div>
                                     <h4 className="text-xl font-bold text-gray-900 mb-2">No Items Found</h4>
                                     <p className="text-gray-600">This tender doesn't have any BOQ items yet.</p>
@@ -574,7 +703,12 @@ const CivilVendorTenderDetail = () => {
                 </div>
             </div>
 
-            <SubmitModal />
+            <SubmitModal/>
+            <PdfModalViewer
+                isOpen={fileState.isVisible}
+                fileId={fileState.fileId}
+                onClose={hideFile}
+            />
         </div>
     );
 };
