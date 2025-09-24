@@ -117,15 +117,15 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, needHea
                                     {selectedUsers.map((user) => (
                                         <div
                                             key={user.id}
-                                            className="inline-flex items-center px-2 py-1 bg-gray-200 rounded-full"
+                                            className="inline-flex items-center px-2 py-1  border border-gray-50 bg-primary/10 rounded-full dark:text-gray-200 dark:bg-bodybg"
                                         >
                                             <Avatar avatar={user.avatar} size="sm"
                                                     full_name={user.full_name || 'N/A'}
                                             />
-                                            <span className="ml-2">{user.email}</span>
+                                            <span className="ml-2 text-primary">{user.email}</span>
                                             <button
                                                 type="button"
-                                                className="ml-2 text-red-500"
+                                                className="ml-4 mr-2 text-primary"
                                                 onClick={() => handleRemoveUser(user.id)}
                                             >
                                                 x
@@ -154,13 +154,14 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, needHea
                                         />
                                         {showSuggestions && (
                                             <div
-                                                className={`absolute bg-white shadow-lg rounded-md z-10 max-h-32 w-72 overflow-y-auto top-[-200%] mt-2`}
+
+                                                className={`absolute bg-white shadow-lg p-2 rounded-md z-10 max-h-48 w-72 overflow-y-auto bottom-full mb-2 dark:text-gray-200 dark:bg-bodybg`}
                                             >
                                                 {suggestions.length > 0 ? (
                                                     suggestions.map((user, index) => (
                                                         <div
                                                             key={user.id}
-                                                            className={`flex items-center p-2 cursor-pointer hover:bg-gray-100 text-sm ${
+                                                            className={`flex items-center p-2 cursor-pointer  hover:bg-primary/10  dark:text-gray-200 dark:bg-bodybg text-sm ${
                                                                 highlightedIndex === index ? "bg-gray-200" : ""
                                                             }`}
                                                             onClick={() => handleSuggestionClick(user)}
@@ -168,7 +169,7 @@ const Discussion = ({ title = "Discussions", getEndPoint, storeEndPoint, needHea
                                                             <Avatar avatar={user.avatar} size="sm"
                                                                     full_name={user.full_name || 'N/A'}/>
                                                             <div className="ml-2">
-                                                                <div className="text-gray-500">{user.email}</div>
+                                                                <div className="text-primary ">{user.email}</div>
                                                             </div>
                                                         </div>
                                                     ))
