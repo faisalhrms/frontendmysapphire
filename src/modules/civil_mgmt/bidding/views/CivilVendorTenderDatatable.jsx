@@ -16,18 +16,11 @@ const CivilVendorTenderDatatable = () => {
             accessor: 'id',
             disableSortBy: true,
             Cell: ({ row }) => {
-                const { id, status } = row.original;
+                const { tender } = row.original;
                 return (
                     <div className="flex justify-center space-x-2">
-                        {status === "draft" && (
-                            <Link to={`/module/civil/tender/edit/${id}`}
-                                  title="Edit BOQ"
-                                  className="ti-btn ti-btn-primary ti-btn-sm">
-                                <i className="ri-edit-line"></i>
-                            </Link>
-                        )}
                         <Link
-                            to={`/module/civil/vendor/tender/${id}`}
+                            to={`/module/civil/vendor/tender/${tender.id}`}
                             title="View BOQ"
                             className="ti-btn ti-btn-success ti-btn-sm">
                             <i className="ri-eye-line"></i>
@@ -37,37 +30,31 @@ const CivilVendorTenderDatatable = () => {
             },
         },
         {
-            Header: 'Project',
-            accessor: 'boq.project.name',
-        },
-        {
-            Header: 'BOQ #',
-            accessor: 'boq.boq_no',
-        },
-        {
             Header: 'Title',
-            accessor: 'title',
-            filterType: 'text',
-            filterable: true,
+            accessor: 'tender.title',
+        },
+        {
+            Header: 'Proposal Status',
+            accessor: 'status',
         },
         {
             Header: "Started At",
-            accessor: "started_at",
+            accessor: "tender.started_at",
             Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
         },
         {
             Header: "Closed At",
-            accessor: "ended_at",
+            accessor: "tender.ended_at",
             Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy") : ""),
-            getCellProps: (cellInfo) => {
-                return {
-                    className: `text-danger bg-danger/10`,
-                };
-            },
+        },
+        {
+            Header: "Submitted At",
+            accessor: "submitted_at",
+            Cell: ({ value }) => (value ? formatDate(value, "MMM dd, yyyy - HH:mm") : ""),
         },
         {
             Header: "Attachments",
-            accessor: "attachments",
+            accessor: "tender.attachments",
             width: 400,
             Cell: ({value}) => {
                 return (

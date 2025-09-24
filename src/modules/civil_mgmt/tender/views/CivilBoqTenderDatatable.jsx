@@ -28,6 +28,12 @@ const CivilBoqTenderDatatable = () => {
                             </Link>
                         )}
                         <Link
+                            to={`/module/civil/tender/comparison/${id}`}
+                            title="View BOQ"
+                            className="ti-btn ti-btn-success ti-btn-sm">
+                            <i className="ri-eye-line"></i>
+                        </Link>
+                        <Link
                             to={`/module/civil/tender/detail/${id}`}
                             title="View BOQ"
                             className="ti-btn ti-btn-success ti-btn-sm">

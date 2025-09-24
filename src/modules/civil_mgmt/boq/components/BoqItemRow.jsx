@@ -20,7 +20,7 @@ const BoqItemRow = ({item, index}) => {
                 </div>
             </td>
             <td className="px-4 py-4 text-center">
-                <span className="inline-flex px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded border border-blue-200">
+                <span className="inline-flex px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded border border-blue-200">
                     {item.unit}
                 </span>
             </td>

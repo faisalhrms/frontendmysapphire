@@ -64,6 +64,10 @@ const CivilBoqDatatable = () => {
             filterable: true,
         },
         {
+            Header: 'Currency',
+            accessor: 'currency',
+        },
+        {
             Header: 'Total amount',
             accessor: 'total_amount',
             filterable: true,

@@ -2,9 +2,6 @@ import SiteDatatable from "@modules/civil_mgmt/site/views/SiteDatatable.jsx";
 import CreateSite from "@modules/civil_mgmt/site/views/CreateSite.jsx";
 import EditSite from "@modules/civil_mgmt/site/views/EditSite.jsx";
 import ItemSetupDatatable from "@modules/civil_mgmt/setup/ItemSetupDatatable.jsx";
-import CivilProjectDatatable from "@modules/civil_mgmt/project/views/CivilProjectDatatable.jsx";
-import CreateCivilProject from "@modules/civil_mgmt/project/views/CreateCivilProject.jsx";
-import EditCivilProject from "@modules/civil_mgmt/project/views/EditCivilProject.jsx";
 import CivilProjectDrawingDatatable from "@modules/civil_mgmt/project/views/CivilProjectDrawingDatatable.jsx";
 import CivilProjectDrawingDetail from "@modules/civil_mgmt/project/views/CivilProjectDrawingDetail.jsx";
 import CivilBoqDatatable from "@modules/civil_mgmt/boq/views/CivilBoqDatatable.jsx";
@@ -17,6 +14,7 @@ import EditCivilBoqTender from "@modules/civil_mgmt/tender/views/EditCivilBoqTen
 import CivilBoqTenderDetail from "@modules/civil_mgmt/tender/views/CivilBoqTenderDetail.jsx";
 import CivilVendorTenderDatatable from "@modules/civil_mgmt/bidding/views/CivilVendorTenderDatatable.jsx";
 import CivilVendorTenderDetail from "@modules/civil_mgmt/bidding/views/CivilVendorTenderDetail.jsx";
+import CivilTenderComparisonDetail from "@modules/civil_mgmt/tender/views/CivilTenderComparisonDetail.jsx";
 
 const SITE_PERMISSION = 'civil_mgmt.site_management'
 const ITEM_PERMISSION = 'civil_mgmt.item_management'
@@ -40,18 +38,6 @@ export const CIVIL_ROUTES = {
         }
     },
     PROJECT:{
-        READ: {
-            path: '/module/civil/project',
-            permission:'civil_mgmt.view_civilproject'
-        },
-        CREATE:{
-            path:'/module/civil/project/create',
-            permission:'civil_mgmt.add_civilproject'
-        },
-        EDIT:{
-            path:'/module/civil/project/edit/:id',
-            permission:'civil_mgmt.change_civilproject'
-        },
         DRAWING:{
             READ: {
                 path: '/module/civil/project/drawing',
@@ -97,6 +83,10 @@ export const CIVIL_ROUTES = {
             path:'/module/civil/tender/detail/:id',
             permission:TENDER_PERMISSION
         },
+        COMPARISON:{
+            path:'/module/civil/tender/comparison/:id',
+            permission:TENDER_PERMISSION
+        },
     },
     VENDOR:{
         TENDER: {
@@ -132,21 +122,6 @@ export const MODULE_ROUTES = [
         path: CIVIL_ROUTES.SITE.EDIT.path,
         component: EditSite,
         permission: SITE_PERMISSION,
-    },
-    {
-        path: CIVIL_ROUTES.PROJECT.READ.path,
-        component: CivilProjectDatatable,
-        permission: CIVIL_ROUTES.PROJECT.READ.permission,
-    },
-    {
-        path: CIVIL_ROUTES.PROJECT.CREATE.path,
-        component: CreateCivilProject,
-        permission: CIVIL_ROUTES.PROJECT.CREATE.permission,
-    },
-    {
-        path: CIVIL_ROUTES.PROJECT.EDIT.path,
-        component: EditCivilProject,
-        permission: CIVIL_ROUTES.PROJECT.EDIT.permission,
     },
     {
         path: CIVIL_ROUTES.SETUP.ITEM.path,
@@ -193,6 +168,10 @@ export const MODULE_ROUTES = [
     {
         path: CIVIL_ROUTES.TENDER.DETAIL.path,
         component: CivilBoqTenderDetail,
+    },
+    {
+        path: CIVIL_ROUTES.TENDER.COMPARISON.path,
+        component: CivilTenderComparisonDetail,
     },
     {
         path: CIVIL_ROUTES.VENDOR.TENDER.path,

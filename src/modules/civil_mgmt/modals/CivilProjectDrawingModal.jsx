@@ -5,7 +5,6 @@ import FormSelect from "@components/form/FormSelect.jsx";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import {formatOptions} from "@helpers/formatters.js";
-import {projectCurrency} from "@modules/civil_mgmt/project/hooks/useCivilProjectForm.js";
 import {projectDrawingTypes} from "@modules/civil_mgmt/project/hooks/useCivilProjectDrawingModal.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 

@@ -19,14 +19,6 @@ export const sidebarMenu = [
                 CIVIL_ROUTES.SITE.READ.permission,
             ),
             generateSidebarItem(
-                CIVIL_ROUTES.PROJECT.READ.path,
-                'link',
-                'Project',
-                2,
-                '',
-                CIVIL_ROUTES.PROJECT.READ.permission,
-            ),
-            generateSidebarItem(
                 CIVIL_ROUTES.PROJECT.DRAWING.READ.path,
                 'link',
                 'Drawing',

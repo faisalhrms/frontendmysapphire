@@ -6,6 +6,14 @@ import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 import { useNavigate } from "react-router-dom";
 
+export const boqCurrency = [
+    { value: 'PKR', label: 'Pakistani Rupee (PKR)' },
+    { value: 'USD', label: 'US Dollar (USD)' },
+    { value: 'EUR', label: 'Euro (EUR)' },
+    { value: 'GBP', label: 'British Pound (GBP)' },
+    { value: 'AED', label: 'UAE Dirham (AED)' },
+];
+
 const itemSchema = z.object({
     item: z.number().min(1, "Item is required"),
     quantity: z.number().min(1, "Quantity must be greater than 0"),
@@ -18,6 +26,7 @@ const formSchema = z.object({
     description: z.string().optional(),
     version: z.number().min(1).default(1),
     is_finalized: z.boolean().default(false),
+    currency: z.string().min(1, "Currency is required"),
     attachments: z.array(z.number()).optional(),
     items: z.array(itemSchema).min(1, "At least one item is required"),
 });
@@ -34,6 +43,7 @@ export function useCivilBoqForm(editMode = false, boqId = null) {
             description: "",
             version: 1,
             is_finalized: false,
+            currency: "PKR",
             attachments: [],
             items: [],
         },

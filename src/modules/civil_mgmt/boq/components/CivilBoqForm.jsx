@@ -4,13 +4,14 @@ import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import {HardDrive, PlusCircle, Search, X, Package2, Calculator, ShoppingCart, Check} from "lucide-react";
-import {useCivilBoqForm} from "@modules/civil_mgmt/boq/hooks/useCivilBoqForm.js";
+import {boqCurrency, useCivilBoqForm} from "@modules/civil_mgmt/boq/hooks/useCivilBoqForm.js";
 import {formatAmountWithCommas, formatOptions} from "@helpers/formatters.js";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import { useQuery } from "@tanstack/react-query";
 import api from "@config/axiosConfig.js";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormToggle from "@components/form/FormToggle.jsx";
+import FormSelect from "@components/form/FormSelect.jsx";
 
 const useCategories = () => {
     return useQuery({
@@ -114,7 +115,7 @@ const ItemCard = ({ item, onAdd, isAdded }) => (
     </div>
 );
 
-const SelectedItemsTable = ({items, onUpdateQuantity, onUpdateRate, onRemove}) => (
+const SelectedItemsTable = ({items, onUpdateQuantity, onUpdateRate, onRemove, currency}) => (
     <div className="space-y-4">
         <div className="flex items-center gap-2 mb-4">
             <div className="p-2 bg-primary/10 text-primary rounded-lg">
@@ -204,7 +205,7 @@ const SelectedItemsTable = ({items, onUpdateQuantity, onUpdateRate, onRemove}) =
                             <span className="font-semibold text-gray-900">Grand Total</span>
                         </div>
                         <span className="text-xl font-bold text-blue-600">
-                            {formatAmountWithCommas(items.reduce((sum, item) => sum + ((item.quantity || 0) * (item.rate || 0)), 0))}
+                            {`${currency} ${formatAmountWithCommas(items.reduce((sum, item) => sum + ((item.quantity || 0) * (item.rate || 0)), 0))}`}
                         </span>
                     </div>
                 </div>
@@ -231,6 +232,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
     const [selectedItems, setSelectedItems] = useState([]);
 
     const formItems = watch('items') || [];
+    const formCurrency = watch('currency') || 'PKR';
 
     useEffect(() => {
         if (formItems.length !== selectedItems.length) {
@@ -301,7 +303,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                 </div>
                                 <div className="p-6">
                                     <div className="grid grid-cols-12 gap-6">
-                                        <div className="col-span-10">
+                                        <div className="col-span-12">
                                             <FormAsyncSelect
                                                 name="project"
                                                 control={control}
@@ -314,17 +316,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                                 isDisabled={editMode}
                                             />
                                         </div>
-                                        <div className="col-span-2">
-                                            <FormToggle
-                                                label={true}
-                                                placeholder="Is finalized"
-                                                name="is_finalized"
-                                                control={control}
-                                                errors={errors}
-                                                toggleClasses="text-left"
-                                            />
-                                        </div>
-                                        <div className="xl:col-span-6 col-span-12">
+                                        <div className="col-span-12">
                                             <FormInput
                                                 name="title"
                                                 control={control}
@@ -334,6 +326,15 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                             />
                                         </div>
                                         <div className="xl:col-span-6 col-span-12">
+                                            <FormSelect
+                                                name="currency"
+                                                control={control}
+                                                errors={errors}
+                                                options={boqCurrency}
+                                                placeholder="Currency"
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-4 col-span-12">
                                             <FormInput
                                                 name="version"
                                                 type="number"
@@ -341,6 +342,16 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                                 errors={errors}
                                                 placeholder="Version Number"
                                                 is_required={true}
+                                            />
+                                        </div>
+                                        <div className="xl:col-span-2 col-span-12">
+                                            <FormToggle
+                                                label={true}
+                                                placeholder="Is finalized"
+                                                name="is_finalized"
+                                                control={control}
+                                                errors={errors}
+                                                toggleClasses="text-left"
                                             />
                                         </div>
                                         <div className="col-span-12">
@@ -379,7 +390,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                         <div className="text-right">
                                             <div className="text-sm text-gray-500">Total Value</div>
                                             <div className="text-lg font-bold text-blue-600">
-                                                {formatAmountWithCommas(selectedItems.reduce((sum, item) => sum + ((item.quantity || 0) * (item.rate || 0)), 0))}
+                                                 {`${formCurrency}  ${formatAmountWithCommas(selectedItems.reduce((sum, item) => sum + ((item.quantity || 0) * (item.rate || 0)), 0))}`}
                                             </div>
                                         </div>
                                     </div>
@@ -390,6 +401,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                         onUpdateQuantity={handleUpdateQuantity}
                                         onUpdateRate={handleUpdateRate}
                                         onRemove={handleRemoveItem}
+                                        currency={formCurrency}
                                     />
                                 </div>
                                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl">

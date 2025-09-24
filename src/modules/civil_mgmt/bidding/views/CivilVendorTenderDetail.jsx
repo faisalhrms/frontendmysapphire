@@ -12,13 +12,13 @@ import {
     Loader2,
     MapPin,
     Package2,
-    Save,
     Send,
     Target,
     XCircle,
     Paperclip,
     FileText,
-    Eye
+    Eye,
+    MessageSquare
 } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { useParams } from "react-router-dom";
@@ -29,7 +29,10 @@ import EmptyState from "@components/EmptyState.jsx";
 
 import PdfModalViewer from "@modules/policies/components/PdfModalViewer.jsx";
 import {useSecureFileViewer} from "@modules/media/hooks/mediaHooks.js";
-
+import BoqStatCard from "@modules/civil_mgmt/boq/components/BoqStatCard.jsx";
+import Notify from "@helpers/toastNotifications.js";
+import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
+import {formatDate} from "@helpers/dateTime.js";
 
 const ItemRow = React.memo(({
                                 item,
@@ -38,16 +41,20 @@ const ItemRow = React.memo(({
                                 vendorAmount,
                                 hasError,
                                 onRateChange,
-                                formatAmountWithCommas
+                                formatAmountWithCommas,
+                                currency,
+                                isReadOnly = false
                             }) => {
     const handleInputChange = useCallback((e) => {
-        onRateChange(item.id, e.target.value, item.quantity);
-    }, [item.id, item.quantity, onRateChange]);
+        if (!isReadOnly) {
+            onRateChange(item.id, e.target.value, item.quantity);
+        }
+    }, [item.id, item.quantity, onRateChange, isReadOnly]);
 
     return (
-        <tr className="border-b border-gray-50 hover:bg-blue-50/30 transition-colors group">
+        <tr className="border-b border-gray-50 hover:bg-primary/10 transition-colors group">
             <td className="px-6 py-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 text-sm font-semibold rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-8 h-8 bg-primary/10 text-primary text-sm font-medium rounded flex items-center justify-center">
                     {index + 1}
                 </div>
             </td>
@@ -61,7 +68,7 @@ const ItemRow = React.memo(({
                 </div>
             </td>
             <td className="px-6 py-4 text-center">
-                <span className="inline-flex px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg border border-blue-200">
+                <span className="inline-flex px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg border border-blue-200">
                     {item.unit}
                 </span>
             </td>
@@ -71,36 +78,44 @@ const ItemRow = React.memo(({
             <td className="px-6 py-4">
                 <div className="space-y-2">
                     <div className="text-xs text-gray-500 text-right">
-                        Original: PKR {formatAmountWithCommas(item.rate)}
+                        Original: {currency} {formatAmountWithCommas(item.rate)}
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-600 whitespace-nowrap">Your Rate:</span>
-                        <input
-                            type="number"
-                            value={vendorRate}
-                            onChange={handleInputChange}
-                            placeholder="Enter rate"
-                            className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-                                hasError
-                                    ? "!border-red"
-                                    : "border-gray-300 hover:border-gray-400"
-                            }`}
-                        />
+                        <span className="text-xs text-gray-600 whitespace-nowrap">
+                            {isReadOnly ? "Your Rate:" : "Your Rate:"}
+                        </span>
+                        {isReadOnly ? (
+                            <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-900">
+                                {formatAmountWithCommas(vendorRate || 0)}
+                            </div>
+                        ) : (
+                            <input
+                                type="number"
+                                value={vendorRate}
+                                onChange={handleInputChange}
+                                placeholder="Enter rate"
+                                className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+                                    hasError
+                                        ? "!border-red"
+                                        : "border-gray-300 hover:border-gray-400"
+                                }`}
+                            />
+                        )}
                     </div>
-                    {hasError && (
-                        <div className="text-xs text-red text-center mt-1">
+                    {hasError && !isReadOnly && (
+                        <p className="text-xs text-red text-center mt-1">
                             Rate is required
-                        </div>
+                        </p>
                     )}
                 </div>
             </td>
             <td className="px-6 py-4">
                 <div className="text-right space-y-1">
                     <div className="text-xs text-gray-500">
-                        Original: PKR {formatAmountWithCommas(item.amount)}
+                        Original: {currency} {formatAmountWithCommas(item.amount)}
                     </div>
                     <div className={`font-bold ${vendorAmount > 0 ? "text-blue-600" : "text-gray-400"}`}>
-                        PKR {formatAmountWithCommas(vendorAmount)}
+                        {currency} {formatAmountWithCommas(vendorAmount)}
                     </div>
                 </div>
             </td>
@@ -136,15 +151,14 @@ const FileItem = React.memo(({ fileId, onView, type, index }) => {
 });
 
 FileItem.displayName = 'FileItem';
-
 ItemRow.displayName = 'ItemRow';
 
 const CivilVendorTenderDetail = () => {
     const [showSubmitModal, setShowSubmitModal] = useState(false);
     const [submitNotes, setSubmitNotes] = useState("");
-    const [vendorRates, setVendorRates] = useState({});
-    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [vendorRates, setVendorRates] = useState([]);
     const [inputErrors, setInputErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { id } = useParams();
     const { fileState, showFile, hideFile } = useSecureFileViewer();
@@ -162,122 +176,148 @@ const CivilVendorTenderDetail = () => {
         refetchOnWindowFocus: true,
     });
 
-    const isSubmitting = false;
-
-    // Stable reference for formatAmountWithCommas
-    const formatAmountWithCommas = useCallback((amount) => {
-        return new Intl.NumberFormat("en-PK").format(amount);
-    }, []);
+    // Check if tender is already submitted
+    const isSubmitted = useMemo(() => boqData?.status === "submitted", [boqData?.status]);
 
     useEffect(() => {
-        if (boqData?.boq?.items) {
-            const initialRates = {};
-            const initialErrors = {};
-            boqData.boq.items.forEach((item) => {
-                initialRates[item.id] = { rate: "", amount: 0 };
-                initialErrors[item.id] = false;
-            });
-            setVendorRates(initialRates);
-            setInputErrors(initialErrors);
+        if (boqData?.tender?.boq?.items) {
+            if (isSubmitted && boqData?.items) {
+                // If submitted, use the submitted vendor rates
+                const submittedRates = boqData.tender.boq.items.map(boqItem => {
+                    const submittedItem = boqData.items.find(item => item.item_id === boqItem.id);
+                    return {
+                        item: boqItem.id,
+                        rate: submittedItem?.rate || 0,
+                        amount: submittedItem?.amount || 0
+                    };
+                });
+                setVendorRates(submittedRates);
+            } else {
+                // If not submitted, initialize empty rates
+                const initialRates = boqData.tender.boq.items.map(item => ({
+                    item: item.id,
+                    rate: "",
+                    amount: 0
+                }));
+                setVendorRates(initialRates);
+
+                const initialErrors = {};
+                boqData.tender.boq.items.forEach((item) => {
+                    initialErrors[item.id] = false;
+                });
+                setInputErrors(initialErrors);
+            }
         }
-    }, [boqData?.boq?.items]);
+    }, [boqData?.tender.boq?.items, boqData?.items, isSubmitted]);
 
-    // Stable rate change handler - this is the key fix
-    const handleRateChange = useCallback((itemId, newRate, quantity) => {
-        const rate = parseFloat(newRate) || 0;
-        const amount = rate * quantity;
-        const isEmpty = !newRate || newRate.trim() === "";
+    const handleRateChange = useCallback((itemId, rate, quantity) => {
+        if (isSubmitted) return; // Don't allow changes if submitted
 
-        // Batch state updates to prevent multiple re-renders
-        setVendorRates((prev) => ({
-            ...prev,
-            [itemId]: { rate: newRate, amount },
-        }));
+        const parsedRate = parseFloat(rate) || 0;
+        const amount = +(parsedRate * quantity).toFixed(2);
 
-        setInputErrors((prev) => ({
-            ...prev,
-            [itemId]: isEmpty,
-        }));
+        setVendorRates(prev => {
+            const existingIndex = prev.findIndex(r => r.item === itemId);
 
-        setHasUnsavedChanges(true);
-    }, []); // Empty dependency array since we're using functional updates
-
-    const calculateTotalAmount = useMemo(() => {
-        return Object.values(vendorRates).reduce(
-            (total, item) => total + (item.amount || 0),
-            0
-        );
-    }, [vendorRates]);
-
-    // Validation function to check if all rates are filled
-    const validateAllRates = useCallback(() => {
-        if (!boqData?.boq?.items) return true;
-
-        const errors = {};
-        let hasErrors = false;
-
-        boqData.boq.items.forEach((item) => {
-            const rate = vendorRates[item.id]?.rate || "";
-            const isEmpty = !rate || rate.trim() === "";
-            errors[item.id] = isEmpty;
-            if (isEmpty) hasErrors = true;
+            if (existingIndex !== -1) {
+                const updated = [...prev];
+                updated[existingIndex] = { item: itemId, rate: parsedRate, amount };
+                return updated;
+            } else {
+                return [...prev, { item: itemId, rate: parsedRate, amount }];
+            }
         });
 
-        setInputErrors(errors);
-        return !hasErrors;
-    }, [boqData?.boq?.items, vendorRates]);
+        setInputErrors(prev => ({
+            ...prev,
+            [itemId]: parsedRate <= 0
+        }));
+    }, [isSubmitted]);
 
-    const handleSaveRates = useCallback(() => {
-        if (validateAllRates()) {
-            console.log("Saving rates:", vendorRates);
-            setHasUnsavedChanges(false);
-        } else {
-            alert("Please fill in all rate fields before saving.");
+    const calculateTotalAmount = useMemo(() => {
+        return vendorRates.reduce((total, item) => total + (item.amount || 0), 0);
+    }, [vendorRates]);
+
+    const allRatesFilled = useMemo(() => {
+        if (!boqData?.tender.boq?.items) return false;
+        if (isSubmitted) return true; // If submitted, consider all rates filled
+
+        return boqData.tender.boq.items.every(item => {
+            const vendorRate = vendorRates.find(vr => vr.item === item.id);
+            return vendorRate && vendorRate.rate > 0;
+        });
+    }, [boqData?.tender.boq?.items, vendorRates, isSubmitted]);
+
+    const handleSubmitTender = useCallback(async () => {
+        if (!allRatesFilled || isSubmitted) {
+            Notify.error("Please fill in all rate fields before submitting.")
+            return;
         }
-    }, [vendorRates, validateAllRates]);
 
-    const handleSubmitTender = useCallback(() => {
-        if (validateAllRates()) {
-            console.log("Submitting tender with rates:", {
+        setIsSubmitting(true);
+        try {
+            const submitData = {
                 notes: submitNotes,
-                vendorRates,
-            });
+                vendor_rates: vendorRates
+            };
+
+            await api.post(
+                `/civil/vendor/tenders/${id}/submit/`,
+                submitData
+            );
+
+            Notify.success("Tender submitted successfully!");
+
             setShowSubmitModal(false);
-        } else {
-            alert("Please fill in all rate fields before submitting.");
+        } catch (error) {
+            if (error.response && error.response.data.message) {
+                Notify.error( error.response.data.message);
+            } else {
+                Notify.error('An error occurred.');
+            }
+        } finally {
+            setIsSubmitting(false);
         }
-    }, [submitNotes, vendorRates, validateAllRates]);
+    }, [id, submitNotes, vendorRates, allRatesFilled, isSubmitted]);
 
     const getDaysRemaining = useCallback(() => {
-        if (!boqData?.ended_at) return null;
-        const endDate = new Date(boqData.ended_at);
+        if (!boqData?.tender.ended_at) return null;
+        const endDate = new Date(boqData.tender.ended_at);
         const now = new Date();
         const diffTime = endDate - now;
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    }, [boqData?.ended_at]);
+    }, [boqData?.tender.ended_at]);
 
     const getStatusColor = useCallback((status) => {
         switch (status) {
-            case "open":
-                return "bg-emerald-50 text-emerald-700 border-emerald-200";
-            case "closed":
-                return "bg-red-50 text-red-700 border-red-200";
+            case "invited":
+                return "bg-warning/10 text-warning border-warning";
             case "submitted":
-                return "bg-blue-50 text-blue-700 border-blue-200";
+                return "bg-primary/10 text-primary border-primary";
+            case "rejected":
+                return "bg-danger/10 text-danger border-danger";
+            case "awarded":
+                return "bg-success/10 text-success border-success";
             default:
                 return "bg-gray-50 text-gray-700 border-gray-200";
         }
     }, []);
 
-    // Memoize these calculations
     const daysRemaining = useMemo(() => getDaysRemaining(), [getDaysRemaining]);
     const isExpired = useMemo(() => daysRemaining !== null && daysRemaining < 0, [daysRemaining]);
     const canSubmit = useMemo(() =>
-            boqData?.is_submit_able && !isExpired && boqData?.status === "open",
-        [boqData?.is_submit_able, boqData?.status, isExpired]
+            boqData?.is_submit_able && !isExpired && (boqData?.status === "invited" || boqData?.status === "under_negotiation") && allRatesFilled && !isSubmitted,
+        [boqData?.is_submit_able, boqData?.status, isExpired, allRatesFilled, isSubmitted]
     );
 
-    // Memoized StatusBadge component
+    const getVendorRateForItem = useCallback((itemId) => {
+        const vendorRate = vendorRates.find(vr => vr.item === itemId);
+        return {
+            rate: vendorRate?.rate || "",
+            amount: vendorRate?.amount || 0
+        };
+    }, [vendorRates]);
+
     const StatusBadge = React.memo(({ status }) => (
         <div
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border ${getStatusColor(
@@ -286,59 +326,42 @@ const CivilVendorTenderDetail = () => {
         >
             <div
                 className={`w-2 h-2 rounded-full ${
-                    status === "open"
-                        ? "bg-emerald-500"
-                        : status === "closed"
-                            ? "bg-red-500"
-                            : "bg-blue-500"
+                    status === "invited"
+                        ? "bg-warning"
+                        : status === "submitted"
+                            ? "bg-primary"
+                            : status === "rejected"
+                                ? "bg-danger"
+                                : "bg-success"
                 }`}
             ></div>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {toTitleCase(status)}
         </div>
     ));
 
     StatusBadge.displayName = 'StatusBadge';
 
-    // Memoized StatCard component
-    const StatCard = React.memo(({ icon, label, value, sublabel, trend }) => (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-200 hover:shadow-lg transition-all duration-300 group">
-            <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 text-primary bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                    {icon}
-                </div>
-                {trend && (
-                    <div className="text-xs text-success font-medium bg-success/10 px-2 py-1 rounded">
-                        {trend}
-                    </div>
-                )}
-            </div>
-            <div className="space-y-1">
-                <div className="text-sm font-medium text-gray-600">{label}</div>
-                <div className="text-2xl font-bold text-gray-900">{value}</div>
-                {sublabel && <div className="text-xs text-gray-500">{sublabel}</div>}
-            </div>
-        </div>
-    ));
-
-    StatCard.displayName = 'StatCard';
-
-    // Memoized table rows
     const tableRows = useMemo(() => {
-        if (!boqData?.boq?.items) return [];
+        if (!boqData?.tender.boq?.items) return [];
 
-        return boqData.boq.items.map((item, index) => (
-            <ItemRow
-                key={item.id}
-                item={item}
-                index={index}
-                vendorRate={vendorRates[item.id]?.rate || ""}
-                vendorAmount={vendorRates[item.id]?.amount || 0}
-                hasError={inputErrors[item.id]}
-                onRateChange={handleRateChange}
-                formatAmountWithCommas={formatAmountWithCommas}
-            />
-        ));
-    }, [boqData?.boq?.items, vendorRates, inputErrors, handleRateChange, formatAmountWithCommas]);
+        return boqData.tender.boq.items.map((item, index) => {
+            const vendorRate = getVendorRateForItem(item.id);
+            return (
+                <ItemRow
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    vendorRate={vendorRate.rate}
+                    vendorAmount={vendorRate.amount}
+                    hasError={inputErrors[item.id]}
+                    onRateChange={handleRateChange}
+                    formatAmountWithCommas={formatAmountWithCommas}
+                    currency={boqData.tender.boq?.currency}
+                    isReadOnly={isSubmitted}
+                />
+            );
+        });
+    }, [boqData?.tender.boq?.items, getVendorRateForItem, inputErrors, handleRateChange, formatAmountWithCommas, isSubmitted]);
 
     const FilesSection = React.memo(({ title, fileIds, icon, emptyMessage, type }) => {
         if (!fileIds || fileIds.length === 0) {
@@ -400,6 +423,46 @@ const CivilVendorTenderDetail = () => {
 
     FilesSection.displayName = 'FilesSection';
 
+    const SubmissionDetails = React.memo(() => {
+        if (!isSubmitted) return null;
+
+        return (
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center gap-4">
+                    <div className="w-12 h-12 bg-success/10 text-success rounded-xl flex items-center justify-center">
+                        <CheckCircle size={20} />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-gray-900">Submission Details</h3>
+                        <p className="text-gray-600">Your tender has been successfully submitted</p>
+                    </div>
+                </div>
+                <div className="p-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+                            <Clock size={20} className="text-gray-500" />
+                            <div>
+                                <div className="font-semibold text-gray-900">Submitted At</div>
+                                <div className="text-sm text-gray-600">{boqData.submitted_at}</div>
+                            </div>
+                        </div>
+                        {boqData.notes && (
+                            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+                                <MessageSquare size={20} className="text-gray-500 mt-0.5" />
+                                <div>
+                                    <div className="font-semibold text-gray-900">Notes</div>
+                                    <div className="text-sm text-gray-600">{boqData.notes}</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    });
+
+    SubmissionDetails.displayName = 'SubmissionDetails';
+
     const SubmitModal = React.memo(() => {
         if (!showSubmitModal) return null;
 
@@ -408,7 +471,7 @@ const CivilVendorTenderDetail = () => {
                 <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
                     <div className="p-6 border-b border-gray-200">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
                                 <Send size={20} />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900">Submit Tender</h3>
@@ -417,46 +480,46 @@ const CivilVendorTenderDetail = () => {
                     </div>
 
                     <div className="p-6 space-y-4">
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <h4 className="font-semibold text-blue-900 mb-2">Proposal Summary</h4>
-                            <div className="text-sm text-blue-800">
+                        <div className="bg-blue-50 border border-gray-400 rounded-lg p-4">
+                            <h4 className="font-semibold text-primary mb-2">Proposal Summary</h4>
+                            <div className="text-sm text-primary">
                                 <div className="flex justify-between mb-1">
                                     <span>Total Items:</span>
-                                    <span className="font-semibold">{boqData?.boq?.items?.length || 0}</span>
+                                    <span className="font-semibold">{boqData?.tender.boq?.items?.length || 0}</span>
                                 </div>
                                 <div className="flex justify-between mb-1">
                                     <span>Your Total Amount:</span>
                                     <span className="font-bold">
-                                        PKR {formatAmountWithCommas(calculateTotalAmount)}
+                                        {boqData?.tender.boq?.currency} {formatAmountWithCommas(calculateTotalAmount)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Original Amount:</span>
-                                    <span>PKR {formatAmountWithCommas(boqData?.boq?.total_amount || 0)}</span>
+                                    <span>{boqData?.tender.boq?.currency} {formatAmountWithCommas(boqData?.tender.boq?.total_amount || 0)}</span>
                                 </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Additional Notes (Optional)
-                            </label>
-                            <textarea
-                                value={submitNotes}
-                                onChange={(e) => setSubmitNotes(e.target.value)}
-                                placeholder="Add any additional comments or notes for your submission..."
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                rows={4}
-                            />
+                            <div>
+                                <label className="block text-xs text-gray-700 mb-1 mt-6">
+                                    Additional Notes (Optional)
+                                </label>
+                                <textarea
+                                    value={submitNotes}
+                                    onChange={(e) => setSubmitNotes(e.target.value)}
+                                    placeholder="Add any additional comments or notes for your submission..."
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                                    rows={4}
+                                />
+                            </div>
                         </div>
 
                         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                             <div className="flex items-start gap-3">
-                                <AlertTriangle size={20} className="text-amber-600 mt-0.5" />
+                                <AlertTriangle size={20} className="text-amber-600 mt-0.5"/>
                                 <div>
                                     <h4 className="font-medium text-amber-900">Important Notice</h4>
                                     <p className="text-sm text-amber-800 mt-1">
-                                        Once submitted, you cannot modify your rates or tender. Please review all details carefully.
+                                        Once submitted, you cannot modify your rates or proposal. Please review all
+                                        details carefully.
                                     </p>
                                 </div>
                             </div>
@@ -473,7 +536,7 @@ const CivilVendorTenderDetail = () => {
                         <button
                             onClick={handleSubmitTender}
                             disabled={isSubmitting}
-                            className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50"
+                            className="flex-1 bg-primary/10 text-primary hover:text-white hover:bg-primary px-4 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50"
                         >
                             {isSubmitting ? (
                                 <>
@@ -504,13 +567,13 @@ const CivilVendorTenderDetail = () => {
     return (
         <div>
             <IconPageHeader
-                heading={<h1 className="text-3xl font-bold">{boqData.title}</h1>}
+                heading={<h1 className="text-3xl font-bold">{boqData.tender.title}</h1>}
                 description={
                     <div className="flex items-center gap-2 text-sm">
                         <MapPin size={16} />
-                        <span className="text-gray-500">{boqData.boq?.site?.name}</span>
+                        <span className="text-gray-500">{boqData.tender.boq?.site?.name}</span>
                         <span>→</span>
-                        <span className="text-gray-600">{boqData.boq?.project?.name}</span>
+                        <span className="text-gray-600">{boqData.tender.boq?.project?.name}</span>
                     </div>
                 }
                 icon={HardDrive}
@@ -519,8 +582,8 @@ const CivilVendorTenderDetail = () => {
                         <div className="flex items-center gap-2">
                             <Calendar size={16} className="text-gray-400" />
                             <span className="text-sm text-gray-600">
-                                {new Date(boqData.started_at).toLocaleDateString()} -{" "}
-                                {new Date(boqData.ended_at).toLocaleDateString()}
+                                {formatDate(boqData.tender.started_at, "MMM dd, yyyy")} -{" "}
+                                {formatDate(boqData.tender.ended_at, "MMM dd, yyyy")}
                             </span>
                         </div>
                         <StatusBadge status={boqData.status} />
@@ -530,35 +593,36 @@ const CivilVendorTenderDetail = () => {
 
             <div className="mx-auto pb-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <StatCard
+                    <BoqStatCard
                         icon={<Package2 size={24}/>}
                         label="Total Items"
-                        value={boqData.boq?.items?.length || 0}
+                        value={boqData.tender.boq?.items?.length || 0}
                         sublabel="Construction items"
                     />
-                    <StatCard
+                    <BoqStatCard
                         icon={<DollarSign size={24}/>}
                         label="Original Amount"
-                        value={`PKR ${formatAmountWithCommas(boqData.boq?.total_amount || 0)}`}
+                        value={`${boqData.tender.boq?.currency} ${formatAmountWithCommas(boqData.tender.boq?.total_amount || 0)}`}
                         sublabel="Project cost"
                     />
-                    <StatCard
+                    <BoqStatCard
                         icon={<Target size={24}/>}
                         label="Your Amount"
-                        value={`PKR ${formatAmountWithCommas(calculateTotalAmount)}`}
+                        value={`${boqData.tender.boq?.currency} ${formatAmountWithCommas(calculateTotalAmount)}`}
                         sublabel="Your proposal"
                     />
-                    <StatCard
+                    <BoqStatCard
                         icon={<Clock size={24}/>}
                         label="Days Remaining"
                         value={daysRemaining !== null ? (isExpired ? "Expired" : daysRemaining) : "N/A"}
                         sublabel="Until deadline"
                     />
                 </div>
+                {isSubmitted && <SubmissionDetails />}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <FilesSection
                         title="Project Drawings"
-                        fileIds={boqData.boq.project_drawing_files || []}
+                        fileIds={boqData.tender.boq.project_drawing_files || []}
                         icon={<Grid3X3 size={20}/>}
                         emptyMessage="No project drawings have been uploaded for this tender."
                         type="Drawing"
@@ -566,7 +630,7 @@ const CivilVendorTenderDetail = () => {
 
                     <FilesSection
                         title="Tender Attachments"
-                        fileIds={boqData.attachments || []}
+                        fileIds={boqData.tender.attachments || []}
                         icon={<Paperclip size={20}/>}
                         emptyMessage="No tender attachments have been uploaded for this tender."
                         type="Document"
@@ -592,17 +656,7 @@ const CivilVendorTenderDetail = () => {
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    {hasUnsavedChanges && (
-                                        <button
-                                            onClick={handleSaveRates}
-                                            className="text-success bg-success/10 hover:bg-success hover:text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                                        >
-                                            <Save size={18}/>
-                                            Save Rates
-                                        </button>
-                                    )}
-
-                                    {canSubmit && (
+                                    {canSubmit ? (
                                         <button
                                             onClick={() => setShowSubmitModal(true)}
                                             className="text-primary bg-primary/10 hover:bg-primary hover:text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
@@ -610,21 +664,23 @@ const CivilVendorTenderDetail = () => {
                                             <Send size={20}/>
                                             Submit Tender
                                         </button>
-                                    )}
-
-                                    {!canSubmit && (
+                                    ) : (
                                         <div
                                             className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 rounded-lg border">
-                                            {isExpired ? <AlertTriangle size={18}/> : <CheckCircle size={18}/>}
+                                            {isExpired ? <AlertTriangle size={18}/> :
+                                                !allRatesFilled ? <AlertTriangle size={18}/> :
+                                                    <CheckCircle size={18}/>}
                                             <span className="font-medium">
-                                                {isExpired ? "Submission Closed" : boqData.status !== "open" ? "Tender Closed" : "Not Submittable"}
+                                                {isExpired ? "Submission Closed" :
+                                                    !allRatesFilled ? "Fill All Rates" :
+                                                        boqData.status !== "invited" ? "Proposal Submitted" : "Not Submittable"}
                                             </span>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            {boqData.boq?.items?.length > 0 ? (
+                            {boqData.tender.boq?.items?.length > 0 ? (
                                 <>
                                     <div className="overflow-x-auto">
                                         <table className="w-full">
@@ -653,7 +709,7 @@ const CivilVendorTenderDetail = () => {
                                                 className="flex items-center gap-6 px-6 py-4 bg-white border border-gray-200 rounded-xl shadow-sm">
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className="w-10 h-10 bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 rounded-lg flex items-center justify-center">
+                                                        className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
                                                         <Calculator size={20}/>
                                                     </div>
                                                     <div>
@@ -664,7 +720,7 @@ const CivilVendorTenderDetail = () => {
                                                     </div>
                                                 </div>
                                                 <div className="text-2xl font-bold text-gray-600">
-                                                    PKR {formatAmountWithCommas(boqData.boq?.total_amount || 0)}
+                                                    {boqData.tender.boq?.currency} {formatAmountWithCommas(boqData.tender.boq?.total_amount || 0)}
                                                 </div>
                                             </div>
 
@@ -672,7 +728,7 @@ const CivilVendorTenderDetail = () => {
                                                 className="flex items-center gap-6 px-6 py-4 bg-white border-2 border-blue-300 rounded-xl shadow-lg">
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className="w-10 h-10 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 rounded-lg flex items-center justify-center">
+                                                        className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
                                                         <Target size={20}/>
                                                     </div>
                                                     <div>
@@ -682,7 +738,7 @@ const CivilVendorTenderDetail = () => {
                                                     </div>
                                                 </div>
                                                 <div className="text-2xl font-bold text-blue-600">
-                                                    PKR {formatAmountWithCommas(calculateTotalAmount)}
+                                                    {boqData.tender.boq?.currency} {formatAmountWithCommas(calculateTotalAmount)}
                                                 </div>
                                             </div>
                                         </div>

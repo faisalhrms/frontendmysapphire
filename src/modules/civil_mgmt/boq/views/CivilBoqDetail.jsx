@@ -96,7 +96,7 @@ const CivilBoqDetail = () => {
         </div>
     );
 
-    const ItemRow = ({ item, index }) => (
+    const ItemRow = ({ item, index, currency }) => (
         <tr className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
             <td className="px-4 py-4 text-sm">
                 <div className="w-6 h-6 bg-primary/10 text-primary text-xs font-medium rounded flex items-center justify-center">
@@ -206,7 +206,7 @@ const CivilBoqDetail = () => {
                     <StatCard
                         icon={<DollarSign size={20} />}
                         label="Total Amount"
-                        value={formatAmountWithCommas(boqData.total_amount || 0)}
+                        value={`${boqData.currency} ${formatAmountWithCommas(boqData.total_amount || 0)}`}
                         sublabel="Project cost"
                     />
                     <StatCard
@@ -218,7 +218,7 @@ const CivilBoqDetail = () => {
                     <StatCard
                         icon={<BarChart3 size={20} />}
                         label="Avg. Item Cost"
-                        value={boqData.items?.length ? formatAmountWithCommas(Math.round((boqData.total_amount || 0) / boqData.items.length)) : '0'}
+                        value={boqData.items?.length ?  boqData.currency + ' ' + formatAmountWithCommas(Math.round((boqData.total_amount || 0) / boqData.items.length)) : '0'}
                         sublabel="Per item average"
                     />
                 </div>
@@ -274,7 +274,7 @@ const CivilBoqDetail = () => {
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-100">
                                             {boqData.items.map((item, index) => (
-                                                <ItemRow key={item.id} item={item} index={index}/>
+                                                <ItemRow key={item.id} item={item} index={index} currency={boqData.currency} />
                                             ))}
                                             </tbody>
                                         </table>
@@ -296,7 +296,7 @@ const CivilBoqDetail = () => {
                                                     </div>
                                                 </div>
                                                 <div className="text-xl font-bold text-primary">
-                                                    {formatAmountWithCommas(boqData.total_amount || 0)}
+                                                    {boqData.currency} {formatAmountWithCommas(boqData.total_amount || 0)}
                                                 </div>
                                             </div>
                                         </div>
