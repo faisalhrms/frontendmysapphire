@@ -106,7 +106,7 @@ const ChatInputBar = ({
               </HasPermission>
                 <HasPermission permission='auth.chatbot_asset_audit'>
                 <button onClick={() => { setModeSelection("Assets Audit"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Assets Audit</button>
-                </HasPermission>
+              </HasPermission>
               <HasPermission permission='auth.chatbot_policies'>
                 <button onClick={() => { setModeSelection("HR"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">HR</button>
               </HasPermission>

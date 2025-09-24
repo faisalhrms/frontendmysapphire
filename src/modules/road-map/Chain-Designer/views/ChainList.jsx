@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 import DataTable from '@components/datatable/DataTable.jsx'
 import PageHeader from '@modules/layouts/includes/PageHeader.jsx'
 import ConfirmDeleteModal from '@modules/beirholm-bi/components/ConfirmDeleteModal.jsx'
-import {deleteChain, downloadChainSample} from '@modules/road-map/Chain-Designer/services/ChainService.js'
+import {deleteChain, downloadChainSample, downloadSupplyChain} from '@modules/road-map/Chain-Designer/services/ChainService.js'
 import {CHAIN_DESIGNER} from '@modules/road-map/routes.js'
 import BulkUploadModel from '@modules/road-map/Chain-Designer/components/BulkUploadModel.jsx'
 import DownloadSampleModel from "@modules/road-map/Chain-Designer/components/DownloadSampleModel.jsx";
@@ -35,11 +35,15 @@ const ChainList = () => {
   const [loadingActions, setLoadingActions] = useState({})
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
+  const [isSupplyModalOpen, setIsSupplyModalOpen] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
 
   const openUploadModal = () => setIsUploadModalOpen(true)
   const closeUploadModal = () => setIsUploadModalOpen(false)
   const openDownloadModal = () => setIsDownloadModalOpen(true)
   const closeDownloadModal = () => setIsDownloadModalOpen(false)
+  const openSupplyModal = () => setIsSupplyModalOpen(true)
+  const closeSupplyModal = () => setIsSupplyModalOpen(false)
   const refreshTable = () => setTableKey(Date.now())
 
   const openConfirmModal = id => {
@@ -95,6 +99,15 @@ const ChainList = () => {
           <i className="ri-add-line font-semibold align-middle"></i>
         </Link>
         <button
+          type="button"
+          onClick={openSupplyModal}
+          disabled={isDownloading}
+          className="ti-btn ti-btn-success !py-1 !px-2 !text-[0.75rem]"
+          title="Download Supply Chain Report"
+        >
+          <i className={`bi bi-file-earmark-excel ${isDownloading ? "spin" : ""}`}></i>
+        </button>
+        <button
           className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]"
           onClick={openDownloadModal}
           title="Download Excel Template"
@@ -124,6 +137,19 @@ const ChainList = () => {
           closeModal={closeDownloadModal}
           onDownload={async bu => {
             await downloadChainSample(bu)
+          }}
+        />
+      )}
+      {isSupplyModalOpen && (
+        <DownloadSampleModel
+          closeModal={closeSupplyModal}
+          onDownload={async bu => {
+            setIsDownloading(true)
+            try {
+              await downloadSupplyChain(bu)
+            } finally {
+              setIsDownloading(false)
+            }
           }}
         />
       )}
