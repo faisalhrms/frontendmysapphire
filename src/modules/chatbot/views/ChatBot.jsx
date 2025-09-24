@@ -202,7 +202,7 @@ export default function ChatBot() {
                           {m.employee ? <EmployeeCard userData={m.employee} /> : null}
                           {m.employee_candidates ? <EmployeeCandidates items={m.employee_candidates} onPick={handlePickEmployee} /> : null}
                           {m.html && m.mode !== "qc"
-                            ? <div className={`main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none ${m.loading ? "streaming" : ""}`} style={{overflowAnchor:"none"}} dangerouslySetInnerHTML={{ __html: m.html }} />
+                            ? <div className={`main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none overflow-x-auto ${m.loading ? "streaming" : ""}`} style={{overflowAnchor:"none"}} dangerouslySetInnerHTML={{ __html: m.html }} />
                             : null}
                         </div>
                       )}
