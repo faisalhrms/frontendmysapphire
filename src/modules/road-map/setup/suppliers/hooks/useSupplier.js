@@ -63,11 +63,22 @@ export const useSupplier = id => {
     }
   }, [supplier, setValue]);
 
-  const onSubmitHandler = async data => {
-    if (id) await updateSupplier(id, { supplier: data });
-    else   await createSupplier({ supplier: data });
-    navigate(`${ROADMAP_SETUP.READ.path}?tab=supplier`);
+
+const onSubmitHandler = async data => {
+  const payload = {
+    ...data,
+    certificates: (data.certificates || []).map(({ certificateList, optionType, expiryDate, attachment }) => ({
+      certificateList,
+      optionType,
+      expiryDate: expiryDate || null,
+      attachment: attachment || null
+    }))
   };
+  if (id) await updateSupplier(id, { supplier: payload });
+  else await createSupplier({ supplier: payload });
+  navigate(`${ROADMAP_SETUP.READ.path}?tab=supplier`);
+};
+
 
   return {
     handleSubmit,

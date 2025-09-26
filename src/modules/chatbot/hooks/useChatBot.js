@@ -235,7 +235,8 @@ export default function useChatBot() {
         modeSelection === "Export Data" ? "export" :
         modeSelection === "Salesforce" ? "salesforce" :
         modeSelection === "Quality Control" ? "qc" :
-        modeSelection === "HR" ? "hr" : ""
+        modeSelection === "HR" ? "hr" :
+        modeSelection === "Assets Audit" ? "hr" : ""
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
@@ -248,7 +249,8 @@ export default function useChatBot() {
       modeSelection === "Export Data" ? "export" :
       modeSelection === "Salesforce" ? "salesforce" :
       modeSelection === "Quality Control" ? "qc" :
-      modeSelection === "HR" ? "hr" : ""
+      modeSelection === "HR" ? "hr" :
+      modeSelection === "Assets Audit" ? "assets" : ""
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
     lastFlushTsRef.current = 0
