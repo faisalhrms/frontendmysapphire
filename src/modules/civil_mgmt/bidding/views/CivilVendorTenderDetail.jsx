@@ -163,7 +163,7 @@ const CivilVendorTenderDetail = () => {
     const { id } = useParams();
     const { fileState, showFile, hideFile } = useSecureFileViewer();
 
-    const { data: boqData, isLoading, error } = useQuery({
+    const { data: boqData, isLoading, error, refetch } = useQuery({
         queryKey: ["civil-vendor-tender-detail", id],
         queryFn: async () => {
             const { data } = await api.get(`/civil/vendor/tenders/${id}/`);
@@ -176,13 +176,11 @@ const CivilVendorTenderDetail = () => {
         refetchOnWindowFocus: true,
     });
 
-    // Check if tender is already submitted
     const isSubmitted = useMemo(() => boqData?.status === "submitted", [boqData?.status]);
 
     useEffect(() => {
         if (boqData?.tender?.boq?.items) {
             if (isSubmitted && boqData?.items) {
-                // If submitted, use the submitted vendor rates
                 const submittedRates = boqData.tender.boq.items.map(boqItem => {
                     const submittedItem = boqData.items.find(item => item.item_id === boqItem.id);
                     return {
@@ -193,7 +191,6 @@ const CivilVendorTenderDetail = () => {
                 });
                 setVendorRates(submittedRates);
             } else {
-                // If not submitted, initialize empty rates
                 const initialRates = boqData.tender.boq.items.map(item => ({
                     item: item.id,
                     rate: "",
@@ -211,7 +208,7 @@ const CivilVendorTenderDetail = () => {
     }, [boqData?.tender.boq?.items, boqData?.items, isSubmitted]);
 
     const handleRateChange = useCallback((itemId, rate, quantity) => {
-        if (isSubmitted) return; // Don't allow changes if submitted
+        if (isSubmitted) return;
 
         const parsedRate = parseFloat(rate) || 0;
         const amount = +(parsedRate * quantity).toFixed(2);
@@ -240,7 +237,7 @@ const CivilVendorTenderDetail = () => {
 
     const allRatesFilled = useMemo(() => {
         if (!boqData?.tender.boq?.items) return false;
-        if (isSubmitted) return true; // If submitted, consider all rates filled
+        if (isSubmitted) return true;
 
         return boqData.tender.boq.items.every(item => {
             const vendorRate = vendorRates.find(vr => vr.item === item.id);
@@ -265,9 +262,8 @@ const CivilVendorTenderDetail = () => {
                 `/civil/vendor/tenders/${id}/submit/`,
                 submitData
             );
-
+            await refetch();
             Notify.success("Tender submitted successfully!");
-
             setShowSubmitModal(false);
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -462,101 +458,6 @@ const CivilVendorTenderDetail = () => {
     });
 
     SubmissionDetails.displayName = 'SubmissionDetails';
-
-    const SubmitModal = React.memo(() => {
-        if (!showSubmitModal) return null;
-
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
-                    <div className="p-6 border-b border-gray-200">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
-                                <Send size={20} />
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900">Submit Tender</h3>
-                        </div>
-                        <p className="text-gray-600">Review your proposal before submission</p>
-                    </div>
-
-                    <div className="p-6 space-y-4">
-                        <div className="bg-blue-50 border border-gray-400 rounded-lg p-4">
-                            <h4 className="font-semibold text-primary mb-2">Proposal Summary</h4>
-                            <div className="text-sm text-primary">
-                                <div className="flex justify-between mb-1">
-                                    <span>Total Items:</span>
-                                    <span className="font-semibold">{boqData?.tender.boq?.items?.length || 0}</span>
-                                </div>
-                                <div className="flex justify-between mb-1">
-                                    <span>Your Total Amount:</span>
-                                    <span className="font-bold">
-                                        {boqData?.tender.boq?.currency} {formatAmountWithCommas(calculateTotalAmount)}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span>Original Amount:</span>
-                                    <span>{boqData?.tender.boq?.currency} {formatAmountWithCommas(boqData?.tender.boq?.total_amount || 0)}</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-xs text-gray-700 mb-1 mt-6">
-                                    Additional Notes (Optional)
-                                </label>
-                                <textarea
-                                    value={submitNotes}
-                                    onChange={(e) => setSubmitNotes(e.target.value)}
-                                    placeholder="Add any additional comments or notes for your submission..."
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                                    rows={4}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                            <div className="flex items-start gap-3">
-                                <AlertTriangle size={20} className="text-amber-600 mt-0.5"/>
-                                <div>
-                                    <h4 className="font-medium text-amber-900">Important Notice</h4>
-                                    <p className="text-sm text-amber-800 mt-1">
-                                        Once submitted, you cannot modify your rates or proposal. Please review all
-                                        details carefully.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="p-6 bg-gray-50 rounded-b-2xl flex gap-3">
-                        <button
-                            onClick={() => setShowSubmitModal(false)}
-                            className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSubmitTender}
-                            disabled={isSubmitting}
-                            className="flex-1 bg-primary/10 text-primary hover:text-white hover:bg-primary px-4 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50"
-                        >
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 size={18} className="animate-spin" />
-                                    Submitting...
-                                </>
-                            ) : (
-                                <>
-                                    <CheckCircle size={18} />
-                                    Confirm Submit
-                                </>
-                            )}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    });
-
-    SubmitModal.displayName = 'SubmitModal';
 
     if (isLoading) return <LoadingSpinner />;
     if (error)
@@ -759,7 +660,96 @@ const CivilVendorTenderDetail = () => {
                 </div>
             </div>
 
-            <SubmitModal/>
+            {
+                showSubmitModal &&
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+                        <div className="p-6 border-b border-gray-200">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div
+                                    className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                                    <Send size={20}/>
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900">Submit Tender</h3>
+                            </div>
+                            <p className="text-gray-600">Review your proposal before submission</p>
+                        </div>
+
+                        <div className="p-6 space-y-4">
+                            <div className="bg-blue-50 border border-gray-400 rounded-lg p-4">
+                                <h4 className="font-semibold text-primary mb-2">Proposal Summary</h4>
+                                <div className="text-sm text-primary">
+                                    <div className="flex justify-between mb-1">
+                                        <span>Total Items:</span>
+                                        <span className="font-semibold">{boqData?.tender.boq?.items?.length || 0}</span>
+                                    </div>
+                                    <div className="flex justify-between mb-1">
+                                        <span>Your Total Amount:</span>
+                                        <span className="font-bold">
+                                        {boqData?.tender.boq?.currency} {formatAmountWithCommas(calculateTotalAmount)}
+                                    </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Original Amount:</span>
+                                        <span>{boqData?.tender.boq?.currency} {formatAmountWithCommas(boqData?.tender.boq?.total_amount || 0)}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs text-gray-700 mb-1 mt-6">
+                                        Additional Notes (Optional)
+                                    </label>
+                                    <textarea
+                                        value={submitNotes}
+                                        onChange={(e) => setSubmitNotes(e.target.value)}
+                                        placeholder="Add any additional comments or notes for your submission..."
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                                        rows={4}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                                <div className="flex items-start gap-3">
+                                    <AlertTriangle size={20} className="text-amber-600 mt-0.5"/>
+                                    <div>
+                                        <h4 className="font-medium text-amber-900">Important Notice</h4>
+                                        <p className="text-sm text-amber-800 mt-1">
+                                            Once submitted, you cannot modify your rates or proposal. Please review all
+                                            details carefully.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-6 bg-gray-50 rounded-b-2xl flex gap-3">
+                            <button
+                                onClick={() => setShowSubmitModal(false)}
+                                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmitTender}
+                                disabled={isSubmitting}
+                                className="flex-1 bg-primary/10 text-primary hover:text-white hover:bg-primary px-4 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 size={18} className="animate-spin"/>
+                                        Submitting...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CheckCircle size={18}/>
+                                        Confirm Submit
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
             <PdfModalViewer
                 isOpen={fileState.isVisible}
                 fileId={fileState.fileId}
