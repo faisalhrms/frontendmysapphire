@@ -1,6 +1,5 @@
-import { useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import {ChevronLeft, ChevronRight, XCircle} from "lucide-react";
+import { ChevronLeft, ChevronRight, XCircle } from "lucide-react";
 import sapphireb from "@assets/images/company-logos/sapphireb.png";
 import sapphirew from "@assets/images/company-logos/sapphirew.png";
 import iconsblack from "@assets/images/company-logos/iconsblack.png";
@@ -9,10 +8,14 @@ import useDarkMode from "@redux/common/useDarkMode.js";
 import { products } from "@modules/inlay/ProductData/productData.js";
 import EmptyState from "@components/EmptyState.jsx";
 
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+
 export default function PublicInlay() {
     const { code } = useParams();
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const scrollRef = useRef(null);
     const isDark = useDarkMode();
 
     const product = products[code];
@@ -31,7 +34,6 @@ export default function PublicInlay() {
                     }
                 />
             </div>
-
         );
     }
 
@@ -49,33 +51,11 @@ export default function PublicInlay() {
             return getNum(a) - getNum(b);
         })
         .map((path) => allImages[path].default);
-    const nextImage = () => {
-        const newIndex = (currentImageIndex + 1) % productImages.length;
-        setCurrentImageIndex(newIndex);
-        scrollToImage(newIndex);
-    };
-
-    const prevImage = () => {
-        const newIndex =
-            (currentImageIndex - 1 + productImages.length) % productImages.length;
-        setCurrentImageIndex(newIndex);
-        scrollToImage(newIndex);
-    };
-
-    const scrollToImage = (index) => {
-        if (scrollRef.current) {
-            const container = scrollRef.current;
-            const child = container.children[index];
-            container.scrollTo({
-                left: child.offsetLeft,
-                behavior: "smooth",
-            });
-        }
-    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
             <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
+
                 <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-950 order-2 lg:order-1">
                     <div className="relative w-full flex flex-col items-center">
                         <div className="flex flex-col items-center mb-6 lg:hidden mt-4">
@@ -90,37 +70,33 @@ export default function PublicInlay() {
                             </h2>
                         </div>
 
-                        <div className="relative w-full">
-                            <div
-                                ref={scrollRef}
-                                className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide bg-white dark:bg-gray-950"
-                            >
-                                {productImages.map((src, index) => (
+                        <Swiper
+                            modules={[Autoplay, Navigation]}
+                            autoplay={{ delay: 2500, disableOnInteraction: false }}
+                            loop={true}
+                            navigation={{
+                                nextEl: ".custom-next",
+                                prevEl: ".custom-prev",
+                            }}
+                            className="w-full"
+                        >
+                            {productImages.map((src, index) => (
+                                <SwiperSlide key={index}>
                                     <img
-                                        key={index}
                                         src={src}
                                         alt={`Slide ${index + 1}`}
-                                        className="w-full flex-shrink-0 snap-center object-contain"
-                                        onLoad={() => {
-                                            if (index === currentImageIndex) scrollToImage(index);
-                                        }}
+                                        className="w-full object-contain"
                                     />
-                                ))}
-                            </div>
+                                </SwiperSlide>
+                            ))}
 
-                            <button
-                                onClick={prevImage}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full"
-                            >
+                            <button className="custom-prev absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
                                 <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200" />
                             </button>
-                            <button
-                                onClick={nextImage}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full"
-                            >
+                            <button className="custom-next absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
                                 <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
                             </button>
-                        </div>
+                        </Swiper>
                     </div>
 
                     <div className="w-full px-6 py-4 border-gray-200 dark:border-gray-700">
@@ -168,7 +144,6 @@ export default function PublicInlay() {
                                 </div>
                             ))}
                         </div>
-
                     </div>
                 </div>
             </div>
