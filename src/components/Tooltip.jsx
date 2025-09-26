@@ -9,10 +9,11 @@ const Tooltip = ({ id, tooltipContent, children }) => {
         {children}
       </span>
       <ReactTooltip
-        className="z-[9999]" 
-        id={id} 
-        place="top"
-        effect="float" 
+        className="z-[9999]"
+        id={id}
+        place="right-start"
+        effect="float"
+
         content={tooltipContent} 
       />
     </>

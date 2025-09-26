@@ -11,7 +11,7 @@ const Avatar = ({
                     id = null,
                     backgroundColor = ""
                 }) => {
-    const bgColors = ['ti-btn-primary', 'ti-btn-success', 'ti-btn-warning', 'ti-btn-danger', 'ti-btn-info'];
+    const bgColors = [' bg-primary'];
 
     const getRandomColor = (colorArray) => {
         const randomIndex = Math.floor(Math.random() * colorArray.length);

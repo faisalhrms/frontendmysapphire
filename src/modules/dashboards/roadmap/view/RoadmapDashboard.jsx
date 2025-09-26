@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import RoadmapFilter from '@modules/dashboards/roadmap/components/RoadmapFilter.jsx'
@@ -7,6 +7,7 @@ import { roadmapFiltersSchema } from '@modules/dashboards/roadmap/schema/filters
 import InteractiveMap from '@modules/dashboards/roadmap/components/InteractiveMap.jsx'
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { LineSquiggle } from "lucide-react";
+import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
 const asId = v => (v && typeof v === 'object' && 'value' in v ? v.value : v ?? '')
 
@@ -15,10 +16,13 @@ const RoadmapDashboard = () => {
     control,
     handleSubmit,
     setValue,
+    clearErrors,
     watch,
     formState: { errors }
   } = useForm({
     resolver: zodResolver(roadmapFiltersSchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
     defaultValues: {
       business_unit: '',
       quality: null,
@@ -29,35 +33,39 @@ const RoadmapDashboard = () => {
 
   const values = watch()
 
-  const filters = useMemo(() => ({
+  const draftFilters = useMemo(() => ({
     business_unit : values.business_unit || '',
     quality       : asId(values.quality) || '',
     process_method: asId(values.process_method) || '',
     product       : asId(values.product) || ''
   }), [values])
 
-  const { data, isLoading, error, refetch } = useFetchWithFilters(
+  const [appliedFilters, setAppliedFilters] = useState(null)
+
+  const { data, isLoading, error } = useFetchWithFilters(
     '/chain/dashboard-chain/',
-    filters,
-    { enabled: false }
+    appliedFilters || {},
+    { enabled: !!appliedFilters }
   )
 
-  const onSubmit = () => refetch()
+  const onSubmit = () => setAppliedFilters(draftFilters)
 
-  const payload      = data?.data || data
-  const labelCerts   = payload?.quality_detail?.label_certificates || []
+  const payload    = data?.data || data
+  const labelCerts = payload?.quality_detail?.label_certificates || []
   const tds_file   = payload?.quality_detail?.tds_pdf_url || ""
+
   return (
     <div>
-        <IconPageHeader
-            heading="RoadMap Dashboard"
-            description="RoadMap Sourcing: Your Supply Chain at a Glance"
-            icon={LineSquiggle}
-        />
+      <IconPageHeader
+        heading="RoadMap Dashboard"
+        description="RoadMap Sourcing: Your Supply Chain at a Glance"
+        icon={LineSquiggle}
+      />
       <form onSubmit={handleSubmit(onSubmit)}>
         <RoadmapFilter
           control={control}
           setValue={setValue}
+          clearErrors={clearErrors}
           errors={errors}
           selectedBU={values.business_unit}
           labelCerts={labelCerts}
@@ -66,7 +74,7 @@ const RoadmapDashboard = () => {
       </form>
 
       {isLoading && (
-        <div className="p-8 text-center text-sm text-gray-500">Loading…</div>
+         <LoadingSpinner />
       )}
       {!isLoading && error && (
         <div className="p-8 text-center text-sm text-red-500">Failed to load.</div>

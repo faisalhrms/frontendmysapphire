@@ -49,13 +49,22 @@ export const sidebarMenu = [
                 'Policies',
                 "bx-book-bookmark",
                 5,
-                 '',
+                 SELF_SERVICES_ROUTES.SERVICES.POLICIES.path
+            ),
+            ,
+            generateSidebarItem(
+                SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.path,
+                'link',
+                'Brand Book',
+                6,
+                "bx bx-message-square-edit",
+                SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission,
             ),
             generateSidebarItem(
                 "",
                 "sub",
                 "PAS",
-                6,
+                7,
                 "bx bx-target-lock",
                 "",
                 [

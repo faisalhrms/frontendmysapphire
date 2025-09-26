@@ -1,37 +1,48 @@
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { BookOpenText  } from "lucide-react";
 import DataTable from "@components/datatable/DataTable.jsx";
-import React, { useRef } from "react";
+import React, {useRef, useState} from "react";
 import { Link } from "react-router-dom";
 import { DYNAMICS_ROUTES } from "@modules/dynamics/routes.js";
 import {formatDate} from "@helpers/dateTime.js";
 import UserWithAvatar from "@components/UserWithAvatar.jsx";
 import {formatAmountWithCommas} from "@helpers/formatters.js";
+import {downloadSweepersGuardsReport} from "@modules/dynamics/sweeper-and-gards/hooks/useSweeperGuardFormHook.js";
 
 const SweepersGuardsList = () => {
     const dataTableRef = useRef();
+    const [isDownloading, setIsDownloading] = useState(false);
 
+    const downloadPDF = async () => {
+        try {
+            setIsDownloading(true);
+            const pdfData = await downloadSweepersGuardsReport(); // ✅ no filters
+            const blob = new Blob([pdfData], { type: "application/pdf" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "sweepers_and_guards.pdf";
+            link.click();
+        } catch (error) {
+            console.error("Error downloading PDF:", error);
+        } finally {
+            setIsDownloading(false);
+        }
+    };
     const columns = [
         {
             Header: "Actions",
-            accessor: "id",          // keep accessor for table keying
+            accessor: "id",          // key for react-table
             disableSortBy: true,
-            Cell: ({ row }) => {
-                const parentId = row.original.sweeper_guard_id; // ✅ parent SweeperAndGuard id
-                return (
-                    <div className="flex justify-center space-x-2">
-                        <Link
-                            to={`/module/dynamics/forms/sweepers-and-guards/edit/${parentId}`}
-                        >
-                            <button className="ti-btn ti-btn-primary ti-btn-sm">
-                                <i className="ri-edit-line" />
-                            </button>
-                        </Link>
-                    </div>
-                );
-            },
+            Cell: ({ row }) => (
+                <div className="flex justify-center space-x-2">
+                    <Link to={`/module/dynamics/forms/sweepers-and-guards/edit/${row.original.id}`}>
+                        <button className="ti-btn ti-btn-primary ti-btn-sm">
+                            <i className="ri-edit-line" />
+                        </button>
+                    </Link>
+                </div>
+            ),
         },
-
         {
             Header: "Store Code",
             accessor: "store.store_code",
@@ -47,52 +58,13 @@ const SweepersGuardsList = () => {
             filterKey: "store__store_name",
         },
         {
-            Header: "Category",
-            accessor: "category",
-            filterable: true,
-            filterType: "text",
-            filterKey: "category",
-        },
-        {
-            Header: "Design Pieces",
-            accessor: "design_pieces",
-            filterable: true,
-            filterType: "number",
-            filterKey: "design_pieces",
-            Cell: ({ value }) =>
-                value != null ? formatAmountWithCommas(value) : "N/A",
-            excelFormat: (val) =>
-                val == null ? "" : Number(val),
-        },
-        {
-            Header: "Area (sq ft)",
-            accessor: "area_sq_feet",
-            filterable: true,
-            filterType: "number",
-            filterKey: "area_sq_feet",
-            Cell: ({ value }) =>
-                value ? `${parseFloat(value).toLocaleString()} sq ft` : "N/A",
-            excelFormat: (val) => (val == null ? "" : Number(parseFloat(val))),
-        },
-        {
-            Header: "Hanging Capacity",
-            accessor: "hanging_capacity",
-            filterable: true,
-            filterType: "number",
-            filterKey: "hanging_capacity",
-            Cell: ({ value }) =>
-                value != null ? value.toLocaleString() : "N/A",
-            excelFormat: (val) => (val == null ? "" : Number(val)),
-        },
-
-        // ---- ADDED PARENT SUMMARY FIELDS ----
-        {
             Header: "Guards",
             accessor: "num_of_guards",
             filterable: true,
             filterType: "number",
             filterKey: "num_of_guards",
-            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            Cell: ({ value }) =>
+                value != null ? Number(value).toLocaleString() : "N/A",
             excelFormat: (val) => (val == null ? "" : Number(val)),
         },
         {
@@ -101,7 +73,8 @@ const SweepersGuardsList = () => {
             filterable: true,
             filterType: "number",
             filterKey: "num_of_sweepers",
-            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            Cell: ({ value }) =>
+                value != null ? Number(value).toLocaleString() : "N/A",
             excelFormat: (val) => (val == null ? "" : Number(val)),
         },
         {
@@ -110,7 +83,8 @@ const SweepersGuardsList = () => {
             filterable: true,
             filterType: "number",
             filterKey: "num_of_stock_helpers",
-            Cell: ({ value }) => (value != null ? Number(value).toLocaleString() : "N/A"),
+            Cell: ({ value }) =>
+                value != null ? Number(value).toLocaleString() : "N/A",
             excelFormat: (val) => (val == null ? "" : Number(val)),
         },
         {
@@ -146,18 +120,17 @@ const SweepersGuardsList = () => {
             excelFormat: (val) =>
                 val == null ? "" : Number(parseFloat(val)),
         },
-        // ---- metadata columns ----
         {
             Header: "Created By",
             accessor: "created_by",
             filterable: true,
             filterType: "text",
             filterKey: "created_by__full_name",
-            // Keep UI rendering the object (avatar + name)
             Cell: ({ value }) => <UserWithAvatar user={value} />,
             excelFormat: (val) => {
                 if (!val) return "";
-                return val.email || val.full_name || (typeof val === 'object' ? JSON.stringify(val) : String(val));
+                return val.email || val.full_name ||
+                    (typeof val === "object" ? JSON.stringify(val) : String(val));
             },
         },
         {
@@ -175,7 +148,8 @@ const SweepersGuardsList = () => {
             Cell: ({ value }) => <UserWithAvatar user={value} />,
             excelFormat: (val) => {
                 if (!val) return "";
-                return val.email || val.full_name || (typeof val === 'object' ? JSON.stringify(val) : String(val));
+                return val.email || val.full_name ||
+                    (typeof val === "object" ? JSON.stringify(val) : String(val));
             },
         },
         {
@@ -187,12 +161,25 @@ const SweepersGuardsList = () => {
     ];
 
     const buttons = (
-        <Link
-            to={DYNAMICS_ROUTES.ADD.path}
-            className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-        >
-            <i className="ri-add-line font-semibold align-middle"></i> Add New Entry
-        </Link>
+        <div className="flex gap-2">
+            <button
+                type="button"
+                onClick={downloadPDF}
+                disabled={isDownloading}
+                className="ti-btn ti-btn-success !py-1 !px-2 !text-[0.75rem]"
+            >
+                <i className={`bi bi-file-earmark-pdf ${isDownloading ? "spin" : ""}`}></i>
+            </button>
+
+            <Link
+                to={DYNAMICS_ROUTES.ADD.path}
+                className="whitespace-nowrap ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+            >
+                <i className="ri-add-line font-semibold align-middle"></i> Add New Entry
+            </Link>
+
+
+        </div>
     );
 
     return (
@@ -200,7 +187,7 @@ const SweepersGuardsList = () => {
             <IconPageHeader
                 heading="Sweepers and Guards Management"
                 description="Manage sweepers and guards data, store details, and capacity usage."
-                icon={BookOpenText }
+                icon={BookOpenText}
             />
             <DataTable
                 ref={dataTableRef}
