@@ -18,7 +18,12 @@ import {
     Paperclip,
     FileText,
     Eye,
-    MessageSquare
+    MessageSquare,
+    Zap,
+    Award,
+    UserCheck,
+    TrendingUp,
+    AlertCircle
 } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { useParams } from "react-router-dom";
@@ -31,8 +36,157 @@ import PdfModalViewer from "@modules/policies/components/PdfModalViewer.jsx";
 import {useSecureFileViewer} from "@modules/media/hooks/mediaHooks.js";
 import BoqStatCard from "@modules/civil_mgmt/boq/components/BoqStatCard.jsx";
 import Notify from "@helpers/toastNotifications.js";
-import {formatAmountWithCommas, toTitleCase} from "@helpers/formatters.js";
+import {formatAmountWithCommas} from "@helpers/formatters.js";
 import {formatDate} from "@helpers/dateTime.js";
+
+const TENDER_STATUS_CONFIG = {
+    draft: {
+        label: "Draft",
+        color: "bg-slate-600",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-slate-50 to-slate-100/50",
+        borderColor: "border-slate-200/60",
+        icon: FileText,
+        iconBg: "bg-slate-600",
+        description: "Tender documentation in preparation phase",
+        priority: "medium",
+        progressPercentage: 15
+    },
+    open: {
+        label: "Open for Bidding",
+        color: "bg-emerald-600",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-emerald-50 to-emerald-100/50 animate-pulse",
+        borderColor: "border-emerald-200/60",
+        icon: Zap,
+        iconBg: "bg-emerald-600",
+        description: "Active procurement accepting qualified proposals",
+        priority: "high",
+        progressPercentage: 50
+    },
+    awarded: {
+        label: "Awarded",
+        color: "bg-emerald-700",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-emerald-50 to-emerald-100/50",
+        borderColor: "border-emerald-200/60",
+        icon: Award,
+        iconBg: "bg-emerald-700",
+        description: "Contract successfully awarded to selected vendor",
+        priority: "completed",
+        progressPercentage: 100
+    },
+    cancelled: {
+        label: "Cancelled",
+        color: "bg-orange-600",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-orange-50 to-orange-100/50",
+        borderColor: "border-orange-200/60",
+        icon: XCircle,
+        iconBg: "bg-orange-600",
+        description: "Procurement process terminated",
+        priority: "cancelled",
+        progressPercentage: 0
+    }
+};
+const USER_STATUS_CONFIG = {
+    invited: {
+        label: "Invited",
+        color: "bg-violet-600",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-violet-50 to-violet-100/50 animate-pulse",
+        borderColor: "border-violet-200/60",
+        icon: UserCheck,
+        iconBg: "bg-violet-600",
+        description: "Exclusive invitation to participate in tender",
+        priority: "action-required",
+        progressPercentage: 20
+    },
+    submitted: {
+        label: "Submitted",
+        color: "bg-info",
+        textColor: "text-white",
+        cardGradient: "bg-info/10",
+        borderColor: "border-info/10",
+        icon: CheckCircle,
+        iconBg: "bg-info",
+        description: "Proposal successfully submitted for evaluation",
+        priority: "pending",
+        progressPercentage: 60
+    },
+    under_negotiation: {
+        label: "Under Negotiation",
+        color: "bg-amber-600",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-amber-50 to-amber-100/50 animate-pulse",
+        borderColor: "border-amber-200/60",
+        icon: MessageSquare,
+        iconBg: "bg-amber-600",
+        description: "Terms and conditions under active discussion",
+        priority: "active",
+        progressPercentage: 80
+    },
+    withdrawn: {
+        label: "Withdrawn",
+        color: "bg-slate-500",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-slate-50 to-slate-100/50",
+        borderColor: "border-slate-200/60",
+        icon: XCircle,
+        iconBg: "bg-slate-500",
+        description: "Proposal voluntarily withdrawn from consideration",
+        priority: "inactive",
+        progressPercentage: 0
+    },
+    rejected: {
+        label: "Not Selected",
+        color: "bg-rose-600",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-rose-50 to-rose-100/50",
+        borderColor: "border-rose-200/60",
+        icon: XCircle,
+        iconBg: "bg-rose-600",
+        description: "Proposal not selected for this procurement",
+        priority: "closed",
+        progressPercentage: 0
+    },
+    awarded: {
+        label: "Contract Awarded",
+        color: "bg-emerald-700",
+        textColor: "text-white",
+        cardGradient: "bg-gradient-to-br from-emerald-50 to-emerald-100/50",
+        borderColor: "border-emerald-200/60",
+        icon: Award,
+        iconBg: "bg-emerald-700",
+        description: "Congratulations! Contract successfully secured",
+        priority: "won",
+        progressPercentage: 100
+    }
+};
+const PriorityIndicator = ({ priority }) => {
+    const priorityConfig = {
+        high: { color: "bg-orange-500", pulse: "animate-pulse", icon: AlertCircle },
+        "action-required": { color: "bg-violet-500", pulse: "animate-pulse", icon: Clock },
+        active: { color: "bg-amber-500", pulse: "animate-pulse", icon: MessageSquare },
+        medium: { color: "bg-indigo-500", pulse: "", icon: FileText },
+        pending: { color: "bg-indigo-500", pulse: "", icon: Clock },
+        completed: { color: "bg-emerald-600", pulse: "", icon: Award },
+        won: { color: "bg-emerald-700", pulse: "", icon: Award },
+        closed: { color: "bg-slate-400", pulse: "", icon: XCircle },
+        cancelled: { color: "bg-orange-500", pulse: "", icon: XCircle },
+        inactive: { color: "bg-slate-400", pulse: "", icon: XCircle }
+    };
+
+    const config = priorityConfig[priority] || priorityConfig.medium;
+    const IconComponent = config.icon;
+
+    return (
+        <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${config.color} ${config.pulse}`} />
+            <IconComponent size={12} className={`${config.color.replace('bg-', 'text-')} opacity-70`} />
+        </div>
+    );
+};
 
 const ItemRow = React.memo(({
                                 item,
@@ -43,16 +197,17 @@ const ItemRow = React.memo(({
                                 onRateChange,
                                 formatAmountWithCommas,
                                 currency,
-                                isReadOnly = false
+                                canEdit = false,
+                                previousRate = null
                             }) => {
     const handleInputChange = useCallback((e) => {
-        if (!isReadOnly) {
+        if (canEdit) {
             onRateChange(item.id, e.target.value, item.quantity);
         }
-    }, [item.id, item.quantity, onRateChange, isReadOnly]);
+    }, [item.id, item.quantity, onRateChange, canEdit]);
 
     return (
-        <tr className="border-b border-gray-50 hover:bg-primary/10 transition-colors group">
+        <tr className="border-b border-gray-50 hover:bg-primary/5 transition-colors group">
             <td className="px-6 py-4">
                 <div className="w-8 h-8 bg-primary/10 text-primary text-sm font-medium rounded flex items-center justify-center">
                     {index + 1}
@@ -80,15 +235,16 @@ const ItemRow = React.memo(({
                     <div className="text-xs text-gray-500 text-right">
                         Original: {currency} {formatAmountWithCommas(item.rate)}
                     </div>
+                    {previousRate && previousRate !== vendorRate && (
+                        <div className="text-xs text-orange-600 text-right">
+                            Previous: {formatAmountWithCommas(previousRate)}
+                        </div>
+                    )}
                     <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-600 whitespace-nowrap">
-                            {isReadOnly ? "Your Rate:" : "Your Rate:"}
+                            Your Rate:
                         </span>
-                        {isReadOnly ? (
-                            <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-900">
-                                {formatAmountWithCommas(vendorRate || 0)}
-                            </div>
-                        ) : (
+                        {canEdit ? (
                             <input
                                 type="number"
                                 value={vendorRate}
@@ -97,13 +253,17 @@ const ItemRow = React.memo(({
                                 className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                                     hasError
                                         ? "!border-red"
-                                        : "border-gray-300 hover:border-gray-400"
+                                        : "border-gray-300 hover:border-gray-400 bg-white"
                                 }`}
                             />
+                        ) : (
+                            <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-900">
+                                {formatAmountWithCommas(vendorRate || 0)}
+                            </div>
                         )}
                     </div>
-                    {hasError && !isReadOnly && (
-                        <p className="text-xs text-red text-center mt-1">
+                    {hasError && canEdit && (
+                        <p className="text-xs text-danger text-center mt-1">
                             Rate is required
                         </p>
                     )}
@@ -114,7 +274,7 @@ const ItemRow = React.memo(({
                     <div className="text-xs text-gray-500">
                         Original: {currency} {formatAmountWithCommas(item.amount)}
                     </div>
-                    <div className={`font-bold ${vendorAmount > 0 ? "text-blue-600" : "text-gray-400"}`}>
+                    <div className={`font-bold ${vendorAmount > 0 ? "text-dark" : "text-gray-400"}`}>
                         {currency} {formatAmountWithCommas(vendorAmount)}
                     </div>
                 </div>
@@ -176,11 +336,46 @@ const CivilVendorTenderDetail = () => {
         refetchOnWindowFocus: true,
     });
 
-    const isSubmitted = useMemo(() => boqData?.status === "submitted", [boqData?.status]);
+    const getDaysRemaining = useCallback(() => {
+        if (!boqData?.tender.ended_at) return null;
+        const endDate = new Date(boqData.tender.ended_at);
+        const now = new Date();
+        const diffTime = endDate - now;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }, [boqData?.tender.ended_at]);
+
+    const getVendorRateForItem = useCallback((itemId) => {
+        const vendorRate = vendorRates.find(vr => vr.item === itemId);
+        return {
+            rate: vendorRate?.rate || "",
+            amount: vendorRate?.amount || 0
+        };
+    }, [vendorRates]);
+
+    const tenderStatus = boqData?.tender?.status || 'draft';
+    const userStatus = boqData?.status || 'invited';
+    const tenderConfig = TENDER_STATUS_CONFIG[tenderStatus];
+    const userConfig = USER_STATUS_CONFIG[userStatus];
+
+    const hasSubmittedRates = useMemo(() =>
+            boqData?.items && boqData.items.length > 0,
+        [boqData?.items]
+    );
+
+    const canEditRates = useMemo(() => {
+        const tenderIsOpen = tenderStatus === 'open';
+        const userCanEdit = ['invited', 'under_negotiation'].includes(userStatus);
+        const notExpired = getDaysRemaining() > 0;
+
+        return tenderIsOpen && userCanEdit && notExpired;
+    }, [tenderStatus, userStatus]);
+
+    const isNegotiationPeriod = userStatus === 'under_negotiation';
+    const hasSubmitted = ['submitted', 'under_negotiation', 'rejected', 'awarded'].includes(userStatus);
 
     useEffect(() => {
         if (boqData?.tender?.boq?.items) {
-            if (isSubmitted && boqData?.items) {
+            if (hasSubmittedRates) {
                 const submittedRates = boqData.tender.boq.items.map(boqItem => {
                     const submittedItem = boqData.items.find(item => item.item_id === boqItem.id);
                     return {
@@ -205,10 +400,10 @@ const CivilVendorTenderDetail = () => {
                 setInputErrors(initialErrors);
             }
         }
-    }, [boqData?.tender.boq?.items, boqData?.items, isSubmitted]);
+    }, [boqData?.tender.boq?.items, boqData?.items, hasSubmittedRates]);
 
     const handleRateChange = useCallback((itemId, rate, quantity) => {
-        if (isSubmitted) return;
+        if (!canEditRates) return;
 
         const parsedRate = parseFloat(rate) || 0;
         const amount = +(parsedRate * quantity).toFixed(2);
@@ -229,7 +424,7 @@ const CivilVendorTenderDetail = () => {
             ...prev,
             [itemId]: parsedRate <= 0
         }));
-    }, [isSubmitted]);
+    }, [canEditRates]);
 
     const calculateTotalAmount = useMemo(() => {
         return vendorRates.reduce((total, item) => total + (item.amount || 0), 0);
@@ -237,17 +432,26 @@ const CivilVendorTenderDetail = () => {
 
     const allRatesFilled = useMemo(() => {
         if (!boqData?.tender.boq?.items) return false;
-        if (isSubmitted) return true;
+        if (hasSubmittedRates && !canEditRates) return true;
 
         return boqData.tender.boq.items.every(item => {
             const vendorRate = vendorRates.find(vr => vr.item === item.id);
             return vendorRate && vendorRate.rate > 0;
         });
-    }, [boqData?.tender.boq?.items, vendorRates, isSubmitted]);
+    }, [boqData?.tender.boq?.items, vendorRates, hasSubmittedRates, canEditRates]);
+
+    const canSubmit = useMemo(() => {
+        if (!boqData?.is_submit_able) return false;
+        if (tenderStatus !== 'open') return false;
+        if (!['invited', 'under_negotiation'].includes(userStatus)) return false;
+        if (getDaysRemaining() <= 0) return false;
+
+        return allRatesFilled;
+    }, [boqData?.is_submit_able, tenderStatus, userStatus, allRatesFilled]);
 
     const handleSubmitTender = useCallback(async () => {
-        if (!allRatesFilled || isSubmitted) {
-            Notify.error("Please fill in all rate fields before submitting.")
+        if (!allRatesFilled || !canSubmit) {
+            Notify.error("Please fill in all rate fields before submitting.");
             return;
         }
 
@@ -263,85 +467,94 @@ const CivilVendorTenderDetail = () => {
                 submitData
             );
             await refetch();
-            Notify.success("Tender submitted successfully!");
+            Notify.success(isNegotiationPeriod ? "Proposal updated successfully!" : "Tender submitted successfully!");
             setShowSubmitModal(false);
         } catch (error) {
             if (error.response && error.response.data.message) {
-                Notify.error( error.response.data.message);
+                Notify.error(error.response.data.message);
             } else {
                 Notify.error('An error occurred.');
             }
         } finally {
             setIsSubmitting(false);
         }
-    }, [id, submitNotes, vendorRates, allRatesFilled, isSubmitted]);
+    }, [id, submitNotes, vendorRates, allRatesFilled, canSubmit, isNegotiationPeriod]);
 
-    const getDaysRemaining = useCallback(() => {
-        if (!boqData?.tender.ended_at) return null;
-        const endDate = new Date(boqData.tender.ended_at);
-        const now = new Date();
-        const diffTime = endDate - now;
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    }, [boqData?.tender.ended_at]);
-
-    const getStatusColor = useCallback((status) => {
-        switch (status) {
-            case "invited":
-                return "bg-warning/10 text-warning border-warning";
-            case "submitted":
-                return "bg-primary/10 text-primary border-primary";
-            case "rejected":
-                return "bg-danger/10 text-danger border-danger";
-            case "awarded":
-                return "bg-success/10 text-success border-success";
-            default:
-                return "bg-gray-50 text-gray-700 border-gray-200";
-        }
-    }, []);
 
     const daysRemaining = useMemo(() => getDaysRemaining(), [getDaysRemaining]);
     const isExpired = useMemo(() => daysRemaining !== null && daysRemaining < 0, [daysRemaining]);
-    const canSubmit = useMemo(() =>
-            boqData?.is_submit_able && !isExpired && (boqData?.status === "invited" || boqData?.status === "under_negotiation") && allRatesFilled && !isSubmitted,
-        [boqData?.is_submit_able, boqData?.status, isExpired, allRatesFilled, isSubmitted]
-    );
 
-    const getVendorRateForItem = useCallback((itemId) => {
-        const vendorRate = vendorRates.find(vr => vr.item === itemId);
-        return {
-            rate: vendorRate?.rate || "",
-            amount: vendorRate?.amount || 0
-        };
-    }, [vendorRates]);
+    const StatusBadge = React.memo(({ config }) => {
+        const StatusIcon = config.icon;
 
-    const StatusBadge = React.memo(({ status }) => (
-        <div
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border ${getStatusColor(
-                status
-            )}`}
-        >
-            <div
-                className={`w-2 h-2 rounded-full ${
-                    status === "invited"
-                        ? "bg-warning"
-                        : status === "submitted"
-                            ? "bg-primary"
-                            : status === "rejected"
-                                ? "bg-danger"
-                                : "bg-success"
-                }`}
-            ></div>
-            {toTitleCase(status)}
+        return (
+            <div className={`
+            inline-flex items-center gap-2 px-4 py-2.5 rounded-lg shadow-sm
+            ${config.color} ${config.textColor}
+            font-medium text-sm tracking-wide
+            transition-all duration-200 hover:shadow-md hover:scale-105
+            border border-white/20
+        `}>
+                <StatusIcon size={16} strokeWidth={2} />
+                <span>{config.label}</span>
+            </div>
+        );
+    });
+
+    const StatusDescription = React.memo(({ description, config }) => (
+        <div className="space-y-4">
+            <StatusBadge config={config} />
+            <p className="text-slate-700 leading-relaxed font-medium">{description}</p>
+            <div className="flex items-center gap-4 pt-3 border-t border-slate-200/50">
+                <div className="flex items-center gap-2">
+                    <TrendingUp size={14} className="text-slate-500" />
+                    <span className="text-xs text-slate-600 font-medium">Progress Tracking</span>
+                </div>
+                <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+                    <div
+                        className={`h-full ${config.color} rounded-full transition-all duration-1000 ease-out shadow-sm`}
+                        style={{ width: `${config.progressPercentage}%` }}
+                    />
+                </div>
+                <span className="text-xs font-semibold text-slate-600 min-w-[3rem] text-right">
+                {config.progressPercentage}%
+            </span>
+            </div>
         </div>
     ));
 
-    StatusBadge.displayName = 'StatusBadge';
+    const StatusCard = ({ config, type }) => (
+        <div className={`
+        relative p-6 rounded-xl shadow-sm border transition-all duration-300
+        ${config.cardGradient} ${config.borderColor}
+        hover:shadow-lg hover:-translate-y-1
+    `}>
+            <div className="absolute top-4 right-4">
+                <PriorityIndicator priority={config.priority} />
+            </div>
+            <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${config.iconBg} shadow-sm`}>
+                        <config.icon size={20} className="text-white" />
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-slate-800">{config.label}</h3>
+                        <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">
+                            {type} Status
+                        </p>
+                    </div>
+                </div>
+                <StatusDescription description={config.description} config={config} />
+            </div>
+        </div>
+    );
 
     const tableRows = useMemo(() => {
         if (!boqData?.tender.boq?.items) return [];
 
         return boqData.tender.boq.items.map((item, index) => {
             const vendorRate = getVendorRateForItem(item.id);
+
             return (
                 <ItemRow
                     key={item.id}
@@ -353,11 +566,11 @@ const CivilVendorTenderDetail = () => {
                     onRateChange={handleRateChange}
                     formatAmountWithCommas={formatAmountWithCommas}
                     currency={boqData.tender.boq?.currency}
-                    isReadOnly={isSubmitted}
+                    canEdit={canEditRates}
                 />
             );
         });
-    }, [boqData?.tender.boq?.items, getVendorRateForItem, inputErrors, handleRateChange, formatAmountWithCommas, isSubmitted]);
+    }, [boqData?.tender.boq?.items, getVendorRateForItem, inputErrors, handleRateChange, formatAmountWithCommas, canEditRates]);
 
     const FilesSection = React.memo(({ title, fileIds, icon, emptyMessage, type }) => {
         if (!fileIds || fileIds.length === 0) {
@@ -420,7 +633,7 @@ const CivilVendorTenderDetail = () => {
     FilesSection.displayName = 'FilesSection';
 
     const SubmissionDetails = React.memo(() => {
-        if (!isSubmitted) return null;
+        if (!hasSubmitted) return null;
 
         return (
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
@@ -430,7 +643,9 @@ const CivilVendorTenderDetail = () => {
                     </div>
                     <div>
                         <h3 className="text-xl font-bold text-gray-900">Submission Details</h3>
-                        <p className="text-gray-600">Your tender has been successfully submitted</p>
+                        <p className="text-gray-600">
+                            {isNegotiationPeriod ? "Your proposal is under negotiation" : "Your tender has been submitted"}
+                        </p>
                     </div>
                 </div>
                 <div className="p-8">
@@ -438,8 +653,12 @@ const CivilVendorTenderDetail = () => {
                         <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
                             <Clock size={20} className="text-gray-500" />
                             <div>
-                                <div className="font-semibold text-gray-900">Submitted At</div>
-                                <div className="text-sm text-gray-600">{boqData.submitted_at}</div>
+                                <div className="font-semibold text-gray-900">
+                                    {isNegotiationPeriod ? "Last Updated" : "Submitted At"}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    {boqData.submitted_at || "N/A"}
+                                </div>
                             </div>
                         </div>
                         {boqData.notes && (
@@ -452,6 +671,19 @@ const CivilVendorTenderDetail = () => {
                             </div>
                         )}
                     </div>
+                    {isNegotiationPeriod && (
+                        <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                            <div className="flex items-start gap-3">
+                                <AlertTriangle size={20} className="text-orange-600 mt-0.5" />
+                                <div>
+                                    <h4 className="font-medium text-orange-900">Negotiation Period</h4>
+                                    <p className="text-sm text-orange-800 mt-1">
+                                        You can update your rates during the negotiation period. Make sure to resubmit your updated proposal.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -460,10 +692,8 @@ const CivilVendorTenderDetail = () => {
     SubmissionDetails.displayName = 'SubmissionDetails';
 
     if (isLoading) return <LoadingSpinner />;
-    if (error)
-        return <EmptyState icon={XCircle} heading="Unable to Load BOQ" description={error?.message} />;
-    if (!boqData)
-        return <EmptyState icon={Package2} heading="BOQ Not Found" description="The requested BOQ could not be located in our system" />;
+    if (error) return <EmptyState icon={XCircle} heading="Unable to Load Tender" description={error?.message} />;
+    if (!boqData) return <EmptyState icon={Package2} heading="Tender Not Found" description="The requested Tender could not be located in our system" />;
 
     return (
         <div>
@@ -479,20 +709,31 @@ const CivilVendorTenderDetail = () => {
                 }
                 icon={HardDrive}
                 children={
-                    <div className="flex items-center gap-4 mt-2">
-                        <div className="flex items-center gap-2">
-                            <Calendar size={16} className="text-gray-400" />
-                            <span className="text-sm text-gray-600">
+                    <>
+                        <div className="flex items-center gap-4 mt-4">
+                            <div className="flex items-center gap-2">
+                                <Calendar size={16} className="text-gray-400"/>
+                                <span className="text-sm text-gray-600">
                                 {formatDate(boqData.tender.started_at, "MMM dd, yyyy")} -{" "}
                                 {formatDate(boqData.tender.ended_at, "MMM dd, yyyy")}
                             </span>
+                            </div>
                         </div>
-                        <StatusBadge status={boqData.status} />
-                    </div>
+                    </>
                 }
             />
 
             <div className="mx-auto pb-6 space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <StatusCard
+                        config={tenderConfig}
+                        type="Tender"
+                    />
+                    <StatusCard
+                        config={userConfig}
+                        type="User"
+                    />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <BoqStatCard
                         icon={<Package2 size={24}/>}
@@ -519,7 +760,6 @@ const CivilVendorTenderDetail = () => {
                         sublabel="Until deadline"
                     />
                 </div>
-                {isSubmitted && <SubmissionDetails />}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <FilesSection
                         title="Project Drawings"
@@ -677,10 +917,10 @@ const CivilVendorTenderDetail = () => {
 
                         <div className="p-6 space-y-4">
                             <div className="bg-blue-50 border border-gray-400 rounded-lg p-4">
-                                <h4 className="font-semibold text-primary mb-2">Proposal Summary</h4>
+                            <h4 className="font-semibold text-primary mb-2">Proposal Summary</h4>
                                 <div className="text-sm text-primary">
                                     <div className="flex justify-between mb-1">
-                                        <span>Total Items:</span>
+                                    <span>Total Items:</span>
                                         <span className="font-semibold">{boqData?.tender.boq?.items?.length || 0}</span>
                                     </div>
                                     <div className="flex justify-between mb-1">

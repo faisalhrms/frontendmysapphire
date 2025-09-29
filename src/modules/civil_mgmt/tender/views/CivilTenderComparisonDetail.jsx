@@ -21,7 +21,7 @@ import {
     Download,
     Mail,
     Phone,
-    Building, XCircle, Package2,
+    Building, XCircle, Package2, RefreshCw,
 } from "lucide-react";
 import {useQuery} from "@tanstack/react-query";
 import api from "@config/axiosConfig.js";
@@ -29,6 +29,8 @@ import {useParams} from "react-router-dom";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import EmptyState from "@components/EmptyState.jsx";
 import Notify from "@helpers/toastNotifications.js";
+import {formatDate} from "@helpers/dateTime.js";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 
 const CivilTenderComparisonDetail = () => {
     const [activeTab, setActiveTab] = useState("overview");
@@ -203,16 +205,6 @@ const CivilTenderComparisonDetail = () => {
         }).format(amount);
     };
 
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
-
     const getStatusColor = (status) => {
         switch (status) {
             case "submitted":
@@ -380,11 +372,6 @@ const CivilTenderComparisonDetail = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
                                     <h3 className="font-bold text-gray-900">{submission.vendor.full_name}</h3>
-                                    {isLowest && (
-                                        <span className="bg-success/10 text-success text-xs px-2 py-1 rounded-full font-medium">
-                                            Lowest Bid
-                                        </span>
-                                    )}
                                 </div>
                                 <div className="flex items-center gap-4 text-sm text-gray-600">
                                     <div className="flex items-center gap-1">
@@ -397,10 +384,14 @@ const CivilTenderComparisonDetail = () => {
                                             <span>{submission.vendor.phone}</span>
                                         </div>
                                     )}
+                                    {isLowest && (
+                                        <span className="bg-success/10 text-success text-xs px-2 py-1 rounded-full font-medium">
+                                        Lowest Bid
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
-
                         <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(submission.status)}`}>
                             {submission.status.replace('_', ' ').toUpperCase()}
                         </div>
@@ -431,7 +422,7 @@ const CivilTenderComparisonDetail = () => {
                             <div className="text-sm text-gray-600">Submitted</div>
                             {submission.submitted_at ? (
                                 <div className="text-sm font-medium text-gray-900">
-                                    {formatDate(submission.submitted_at)}
+                                    {formatDate(submission.submitted_at, "dd, MMM yyyy - HH:mm")}
                                 </div>
                             ) : (
                                 <div className="text-sm text-gray-500">
@@ -749,19 +740,17 @@ const CivilTenderComparisonDetail = () => {
     );
 
     return (
-        <div className="min-h-screen">
-            {/* Header */}
-            <div className="border-b border-gray-200 shadow-sm">
-                <div className="mx-auto px-6 py-8">
+        <>
+            <div className="mx-auto py-8">
                     <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4">
                             <div
                                 className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
                                 <HardDrive size={32}/>
                             </div>
                             <div>
                                 <div className="flex items-center gap-2 mb-2">
-                                    <h1 className="text-3xl font-bold text-gray-900">{mockTenderData.title}</h1>
+                                    <h3 className="text-3xl font-bold text-gray-900">{mockTenderData.title}</h3>
                                     <span className="bg-info/10 text-info px-3 py-1 rounded-full text-sm font-medium">
                                             {mockTenderData.status.toUpperCase()}
                                         </span>
@@ -784,8 +773,6 @@ const CivilTenderComparisonDetail = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="flex space-x-8">
@@ -810,8 +797,7 @@ const CivilTenderComparisonDetail = () => {
                     </div>
                 </div>
             </div>
-
-            <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="max-w-7xl mx-auto py-8">
                 {activeTab === "overview" && (
                     <div className="space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1287,7 +1273,7 @@ const CivilTenderComparisonDetail = () => {
                 </div>
             </div>
             )}
-        </div>
+        </>
     );
 };
 

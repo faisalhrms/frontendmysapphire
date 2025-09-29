@@ -17,7 +17,7 @@ import "swiper/css/navigation";
 export default function PublicInlay() {
     const { code } = useParams();
     const isDark = useDarkMode();
-
+    console.log(isDark)
     const product = products[code];
 
     if (!product) {

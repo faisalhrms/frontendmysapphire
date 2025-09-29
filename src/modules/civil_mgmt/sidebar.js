@@ -53,7 +53,7 @@ export const sidebarMenu = [
                     generateSidebarItem(
                         CIVIL_ROUTES.VENDOR.TENDER.path,
                         "link",
-                        " Open Tenders",
+                        " Tenders",
                         1,
                         "bx bx-message-square-edit",
                         CIVIL_ROUTES.VENDOR.TENDER.permission

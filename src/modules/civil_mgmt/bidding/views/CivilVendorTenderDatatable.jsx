@@ -1,11 +1,12 @@
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import {Eye, HardHat} from "lucide-react";
-import React, {useState} from "react";
+import React from "react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import {formatDate} from "@helpers/dateTime.js";
 import {Link} from "react-router-dom";
 import PdfModalViewer from "@modules/policies/components/PdfModalViewer.jsx";
 import {useSecureFileViewer} from "@modules/media/hooks/mediaHooks.js";
+import {toTitleCase} from "@helpers/formatters.js";
 
 const CivilVendorTenderDatatable = () => {
     const { fileState, showFile, hideFile } = useSecureFileViewer();
@@ -21,9 +22,9 @@ const CivilVendorTenderDatatable = () => {
                     <div className="flex justify-center space-x-2">
                         <Link
                             to={`/module/civil/vendor/tender/${tender.id}`}
-                            title="View BOQ"
-                            className="ti-btn ti-btn-success ti-btn-sm">
-                            <i className="ri-eye-line"></i>
+                            title="View Tender"
+                            className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-emerald-500 hover:bg-emerald-600">
+                            View
                         </Link>
                     </div>
                 );
@@ -36,6 +37,29 @@ const CivilVendorTenderDatatable = () => {
         {
             Header: 'Proposal Status',
             accessor: 'status',
+            Cell: ({ value }) => (
+                toTitleCase(value)
+            ),
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value || "";
+                let bgClass;
+                    switch (value) {
+                        case "rejected":
+                            bgClass = "bg-danger";
+                            break;
+                        case "awarded":
+                            bgClass = "bg-green";
+                            break;
+                        case "submitted":
+                            bgClass = "bg-yellow";
+                            break;
+                        default:
+                            bgClass = "bg-info";
+                }
+                return {
+                    className: `text-white ${bgClass}`,
+                };
+            },
         },
         {
             Header: "Started At",
@@ -81,8 +105,8 @@ const CivilVendorTenderDatatable = () => {
     return (
         <>
             <IconPageHeader
-                heading="Civil Management System - Vendor - Open Tenders"
-                description="Manage civil projects, track progress, assign managers, and collaborate with team members."
+                heading="Civil Management System - Vendor - Tenders"
+                description="Vendors can view active tenders, submit proposals and track submission status."
                 icon={HardHat}
             />
             <DataTable

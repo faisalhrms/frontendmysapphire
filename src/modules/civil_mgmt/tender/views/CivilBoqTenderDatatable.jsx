@@ -16,6 +16,7 @@ const CivilBoqTenderDatatable = () => {
             Header: 'Actions',
             accessor: 'id',
             disableSortBy: true,
+            width: 350,
             Cell: ({ row }) => {
                 const { id, status } = row.original;
                 return (
@@ -23,21 +24,23 @@ const CivilBoqTenderDatatable = () => {
                         {status === "draft" && (
                             <Link to={`/module/civil/tender/edit/${id}`}
                                   title="Edit BOQ"
-                                  className="ti-btn ti-btn-primary ti-btn-sm">
-                                <i className="ri-edit-line"></i>
+                                  className="px-3 py-1 text-xs text-white rounded-full bg-primary">
+                                Edit
                             </Link>
                         )}
-                        <Link
+                        {status !== "draft" && (
+                            <Link
                             to={`/module/civil/tender/comparison/${id}`}
-                            title="View BOQ"
-                            className="ti-btn ti-btn-success ti-btn-sm">
-                            <i className="ri-eye-line"></i>
+                            title="View Comparison Report"
+                            className="px-3 py-1 text-xs text-white rounded-full bg-info">
+                            View Comparison Report
                         </Link>
+                        )}
                         <Link
                             to={`/module/civil/tender/detail/${id}`}
-                            title="View BOQ"
-                            className="ti-btn ti-btn-success ti-btn-sm">
-                            <i className="ri-eye-line"></i>
+                            title="View Tender Detail"
+                            className="px-3 py-1 text-xs text-white rounded-full bg-success">
+                            View Tender Detail
                         </Link>
                     </div>
                 );
@@ -148,7 +151,7 @@ const CivilBoqTenderDatatable = () => {
         <>
             <IconPageHeader
                 heading="Civil Management System - BOQ - Tenders"
-                description="Manage civil projects, track progress, assign managers, and collaborate with team members."
+                description="Create and manage tenders with detailed BOQs, invite vendors, review proposals, and monitor tender progress."
                 icon={HardHat}
             />
             <DataTable

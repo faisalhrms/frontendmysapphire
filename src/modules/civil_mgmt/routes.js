@@ -51,19 +51,19 @@ export const CIVIL_ROUTES = {
     BOQ:{
         READ: {
             path: '/module/civil/boq',
-            permission:ITEM_PERMISSION
+            permission:BOQ_PERMISSION
         },
         CREATE:{
             path:'/module/civil/boq/create',
-            permission:ITEM_PERMISSION
+            permission:BOQ_PERMISSION
         },
         EDIT:{
             path:'/module/civil/boq/edit/:id',
-            permission:ITEM_PERMISSION
+            permission:BOQ_PERMISSION
         },
         DETAIL:{
             path:'/module/civil/boq/detail/:id',
-            permission:ITEM_PERMISSION
+            permission:BOQ_PERMISSION
         },
     },
     TENDER:{

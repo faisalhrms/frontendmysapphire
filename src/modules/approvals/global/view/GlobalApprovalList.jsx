@@ -57,7 +57,7 @@ const GlobalApprovalList = () => {
                     </button>
 
                     <Link
-                        to={`/module/approvals/detail/${row.original.id}`}
+                        to={row.original.detail_url}
                         className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
                         title="View"
                     >

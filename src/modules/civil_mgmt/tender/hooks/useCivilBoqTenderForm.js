@@ -70,7 +70,7 @@ export function useCivilBoqTenderForm(editMode = false, tenderId = null) {
 
             const { data } = await method(url, values);
             Notify.success(data.message || "Tender saved successfully");
-            // navigate(`/module/civil/tenders`);
+            navigate(`/module/civil/tender`);
         } catch (error) {
             Notify.error(error.response?.data?.message || "Failed to save tender.");
         } finally {
