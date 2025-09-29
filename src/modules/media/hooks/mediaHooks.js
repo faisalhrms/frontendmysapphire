@@ -1,6 +1,5 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import {useQuery} from '@tanstack/react-query';
-import debounce from 'lodash.debounce';
 import {getMediaFileById, getMediaFiles, uploadMediaFiles} from "@modules/media/services/MediaService.js";
 import api from "@config/axiosConfig.js";
 export const useMediaFiles = (page = 1, size = 8, search, type) => {
@@ -52,6 +51,30 @@ export const useMediaFileUpload = () => {
         uploading,
     };
 };
+/**
+ * Hook to manage secure file viewer modal state
+ */
+export function useSecureFileViewer() {
+    const [fileState, setFileState] = useState({
+        isVisible: false,
+        fileId: null,
+    });
+
+    const showFile = useCallback((fileId) => {
+        setFileState({ isVisible: true, fileId });
+    }, []);
+
+    const hideFile = useCallback(() => {
+        setFileState({ isVisible: false, fileId: null });
+    }, []);
+
+    return {
+        fileState,
+        showFile,
+        hideFile,
+    };
+}
+
 
 export const useSecureMedia = (fileId, isOpen) => {
     const [blobUrl, setBlobUrl] = useState(null);

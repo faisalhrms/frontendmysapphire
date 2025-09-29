@@ -23,10 +23,12 @@ const projectMemberSchema = z.object({
 const projectSchema = z
     .object({
         for_customer: z.boolean().default(false),
+        for_civil: z.boolean().default(false),
         requires_approval: z.boolean().default(false),
         customer_id: z.number().nullable().default(null),
         company_id: z.number().nullable().default(null),
         department_id: z.number().nullable().default(null),
+        site: z.coerce.number().nullable().default(null),
         name: z
             .string()
             .min(1, "Project name is required")
@@ -64,6 +66,17 @@ const projectSchema = z
         {
             message: "Customer is required",
             path: ["customer_id"],
+        }
+    ).refine(
+        (data) => {
+            if (data.for_civil) {
+                return data.site !== null;
+            }
+            return true;
+        },
+        {
+            message: "Site is required",
+            path: ["site"],
         }
     );
 
