@@ -45,6 +45,7 @@ export const CIVIL_ROUTES = {
             },
             DETAIL: {
                 path: '/module/civil/project/drawing/detail/:id',
+                permission:'civil_mgmt.view_civilprojectdrawing'
             },
         }
     },
@@ -136,49 +137,61 @@ export const MODULE_ROUTES = [
     {
         path: CIVIL_ROUTES.PROJECT.DRAWING.DETAIL.path,
         component: CivilProjectDrawingDetail,
+        permission: CIVIL_ROUTES.PROJECT.DRAWING.DETAIL.permission,
     },
     {
         path: CIVIL_ROUTES.BOQ.READ.path,
         component: CivilBoqDatatable,
+        permission: CIVIL_ROUTES.BOQ.READ.permission,
     },
     {
         path: CIVIL_ROUTES.BOQ.CREATE.path,
         component: CreateCivilBoq,
+        permission: CIVIL_ROUTES.BOQ.CREATE.permission,
     },
     {
         path: CIVIL_ROUTES.BOQ.EDIT.path,
         component: EditCivilBoq,
+        permission: CIVIL_ROUTES.BOQ.EDIT.permission,
     },
     {
         path: CIVIL_ROUTES.BOQ.DETAIL.path,
         component: CivilBoqDetail,
+        permission: CIVIL_ROUTES.BOQ.DETAIL.permission,
     },
     {
         path: CIVIL_ROUTES.TENDER.READ.path,
         component: CivilBoqTenderDatatable,
+        permission: CIVIL_ROUTES.TENDER.READ.permission,
     },
     {
         path: CIVIL_ROUTES.TENDER.CREATE.path,
         component: CreateCivilBoqTender,
+        permission: CIVIL_ROUTES.TENDER.CREATE.permission,
     },
     {
         path: CIVIL_ROUTES.TENDER.EDIT.path,
         component: EditCivilBoqTender,
+        permission: CIVIL_ROUTES.TENDER.EDIT.permission,
     },
     {
         path: CIVIL_ROUTES.TENDER.DETAIL.path,
         component: CivilBoqTenderDetail,
+        permission: CIVIL_ROUTES.TENDER.DETAIL.permission,
     },
     {
         path: CIVIL_ROUTES.TENDER.COMPARISON.path,
         component: CivilTenderComparisonDetail,
+        permission: CIVIL_ROUTES.TENDER.COMPARISON.permission,
     },
     {
         path: CIVIL_ROUTES.VENDOR.TENDER.path,
         component: CivilVendorTenderDatatable,
+        permission: CIVIL_ROUTES.VENDOR.TENDER.permission,
     },
     {
         path: CIVIL_ROUTES.VENDOR.BIDDING.path,
         component: CivilVendorTenderDetail,
+        permission: CIVIL_ROUTES.VENDOR.BIDDING.permission,
     },
 ];
