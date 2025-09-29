@@ -1,105 +1,102 @@
-import { useState, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { ChevronLeft, ChevronRight, XCircle } from "lucide-react";
 import sapphireb from "@assets/images/company-logos/sapphireb.png";
 import sapphirew from "@assets/images/company-logos/sapphirew.png";
 import iconsblack from "@assets/images/company-logos/iconsblack.png";
 import iconswhite from "@assets/images/company-logos/iconswhite.png";
 import useDarkMode from "@redux/common/useDarkMode.js";
+import { products } from "@modules/inlay/ProductData/productData.js";
+import EmptyState from "@components/EmptyState.jsx";
+
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 export default function PublicInlay() {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const scrollRef = useRef(null);
+    const { code } = useParams();
     const isDark = useDarkMode();
 
+    const product = products[code];
 
-    const productImages = [
-        "https://be.mysapphire.co/media/uploads/2025/08/20/1.JPG",
-        "https://be.mysapphire.co/media/uploads/2025/08/20/2.JPG",
-        "https://be.mysapphire.co/media/uploads/2025/08/20/3.JPG",
-        "https://be.mysapphire.co/media/uploads/2025/08/20/4.JPG",
-        "https://be.mysapphire.co/media/uploads/2025/08/20/5.JPG",
-        "https://be.mysapphire.co/media/uploads/2025/08/20/6.JPG",
-        "https://be.mysapphire.co/media/uploads/2025/08/20/7.JPG",
-        "https://be.mysapphire.co/media/uploads/2025/08/20/8.JPG",
-    ];
+    if (!product) {
+        return (
+            <div className="min-h-screen flex items-center justify-center px-4">
+                <EmptyState
+                    icon={XCircle}
+                    heading="Product Not Found"
+                    description={
+                        <>
+                            We couldn’t find a product for code:{" "}
+                            <span className="font-mono font-bold">{code}</span>
+                        </>
+                    }
+                />
+            </div>
+        );
+    }
 
-    const nextImage = () => {
-        const newIndex = (currentImageIndex + 1) % productImages.length;
-        setCurrentImageIndex(newIndex);
-        scrollToImage(newIndex);
-    };
+    const allImages = import.meta.glob("@assets/images/inlay-images/*.jpg", {
+        eager: true,
+    });
 
-    const prevImage = () => {
-        const newIndex =
-            (currentImageIndex - 1 + productImages.length) % productImages.length;
-        setCurrentImageIndex(newIndex);
-        scrollToImage(newIndex);
-    };
-
-    const scrollToImage = (index) => {
-        if (scrollRef.current) {
-            const container = scrollRef.current;
-            const child = container.children[index];
-            container.scrollTo({
-                left: child.offsetLeft,
-                behavior: "smooth",
-            });
-        }
-    };
+    const productImages = Object.keys(allImages)
+        .filter((path) => path.includes(code))
+        .sort((a, b) => {
+            const getNum = (p) => {
+                const match = p.match(/-(\d+)\.JPG$/);
+                return match ? parseInt(match[1], 10) : 0;
+            };
+            return getNum(a) - getNum(b);
+        })
+        .map((path) => allImages[path].default);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
             <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
 
-
                 <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-950 order-2 lg:order-1">
                     <div className="relative w-full flex flex-col items-center">
-
                         <div className="flex flex-col items-center mb-6 lg:hidden mt-4">
                             <img
                                 src={isDark ? sapphirew : sapphireb}
                                 alt="Logo"
                                 className="h-10"
                             />
-                            <p className="gotham-medium text-sm tracking-widest mt-2 text-black dark:text-white font-bold">
-                                DAILY
-                            </p>
+
                             <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 mt-3 leading-tight font-bold">
-                                3 PIECE - EMBROIDERED <br/> ZARI LAWN SUIT
+                                {product.name}
                             </h2>
                         </div>
 
-                        <div className="relative w-full">
-                            <div
-                                ref={scrollRef}
-                                className="w-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide bg-white dark:bg-gray-950"
-                            >
-                                {productImages.map((src, index) => (
+                        <Swiper
+                            modules={[Autoplay, Navigation]}
+                            autoplay={{ delay: 2500, disableOnInteraction: false }}
+                            loop={true}
+                            navigation={{
+                                nextEl: ".custom-next",
+                                prevEl: ".custom-prev",
+                            }}
+                            className="w-full"
+                        >
+                            {productImages.map((src, index) => (
+                                <SwiperSlide key={index}>
                                     <img
-                                        key={index}
                                         src={src}
                                         alt={`Slide ${index + 1}`}
-                                        className="w-full flex-shrink-0 snap-center object-contain"
-                                        onLoad={() => {
-                                            if (index === currentImageIndex) scrollToImage(index);
-                                        }}
+                                        className="w-full object-contain"
                                     />
-                                ))}
-                            </div>
+                                </SwiperSlide>
+                            ))}
 
-                            <button
-                                onClick={prevImage}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full"
-                            >
-                                <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200"/>
+                            <button className="custom-prev absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
+                                <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200" />
                             </button>
-                            <button
-                                onClick={nextImage}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full"
-                            >
-                                <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200"/>
+                            <button className="custom-next absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
+                                <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
                             </button>
-                        </div>
+                        </Swiper>
                     </div>
 
                     <div className="w-full px-6 py-4 border-gray-200 dark:border-gray-700">
@@ -126,7 +123,6 @@ export default function PublicInlay() {
                     </div>
                 </div>
 
-
                 <div className="flex flex-col justify-between p-10 order-1 lg:order-2 hidden lg:flex">
                     <div>
                         <div className="flex flex-col items-center mb-10">
@@ -135,34 +131,21 @@ export default function PublicInlay() {
                                 alt="Logo"
                                 className="h-10"
                             />
-                            <p className="gotham-medium text-sm tracking-widest mt-2 text-black dark:text-white">
-                                DAILY
-                            </p>
                         </div>
-                        <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 mb-10 leading-tight">
-                            3 PIECE - EMBROIDERED <br /> ZARI LAWN SUIT
+
+                        <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 mb-10 leading-tight whitespace-pre-line">
+                            {product.name}
                         </h2>
                         <div className="space-y-3 gotham-normal text-sm text-gray-800 dark:text-gray-200">
-                            <div className="flex justify-between">
-                                <span>Printed Zari Lawn Shirt</span>
-                                <span className="gotham-medium">3.00m</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Printed Blended Chiffon Dupatta</span>
-                                <span className="gotham-medium">2.50m</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Dyed Embroidered Cotton Trouser</span>
-                                <span className="gotham-medium">2pc</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Embroidered Neckline</span>
-                                <span className="gotham-medium">1pc</span>
-                            </div>
+                            {product.description.map((item, idx) => (
+                                <div className="flex justify-between" key={idx}>
+                                    <span>{item.label}</span>
+                                    <span className="font-bold">{item.value}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );

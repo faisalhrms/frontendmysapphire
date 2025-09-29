@@ -50,6 +50,10 @@ export const downloadChainSample = async (business_unit) => {
   await downloadFile(url, `chain_mapping_template_${business_unit}.xlsx`)
 }
 
+export const downloadSupplyChain = async (business_unit) => {
+  const url = `/chain/download-supplychain/?business_unit=${encodeURIComponent(business_unit)}`
+  await downloadFile(url, `SupplyChain_${business_unit}.xlsx`)
+}
 
 export const uploadChainBulkFD = async (formData) => {
   try {
