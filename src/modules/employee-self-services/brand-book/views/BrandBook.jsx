@@ -45,7 +45,7 @@ export default function BrandBook() {
                 </button>
             </IconPageHeader>
 
-            <div className="w-full max-w-5xl mx-auto pb-10">
+            <div className="w-full mx-auto pb-10">
                 <Swiper
                     modules={[Pagination, Navigation, Autoplay]}
                     pagination={{ clickable: true }}
