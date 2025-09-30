@@ -39,6 +39,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
     }, [projectData, setValue]);
 
     const forCustomer = useWatch({ control, name: "for_customer" });
+    const forCivil = useWatch({ control, name: "for_civil" });
     const company = useWatch({ control, name: "company_id" });
     const department = useWatch({ control, name: "department_id" });
     return (
@@ -101,6 +102,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Project Name"
+                                        is_required={true}
                                     />
                                 </div>
                                 <div
@@ -113,6 +115,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         apiUrl="/select/users/"
                                         queryKeyBase="users"
                                         preselectedOptions={formatOptionsWithConcatenation(projectData, 'manager', 'id', ['full_name', 'email'])}
+                                        is_required={true}
                                     />
                                 </div>
                                 <div
@@ -123,6 +126,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="Start Date"
+                                        is_required={true}
                                     />
                                 </div>
                                 <div
@@ -133,6 +137,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         control={control}
                                         errors={errors}
                                         placeholder="End Date"
+                                        is_required={true}
                                     />
                                 </div>
                                 <div className='xl:col-span-6 col-span-12'>
@@ -160,6 +165,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                                         errors={errors}
                                         placeholder="Description"
                                         rows={5}
+                                        is_required={true}
                                     />
                                 </div>
                                 <div className="col-span-12">
@@ -191,6 +197,40 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                     </div>
                 </div>
                 <div className="xxl:col-span-4 xl:col-span-4 lg:col-span-4 sm:col-span-4 col-span-12 sticky top-0 self-start ">
+                    <HasPermission permission='pms.manage_civil_project'>
+                        <div className="box">
+                            <div className="box-header items-center">
+                                <span className="box-title">For Civil <span
+                                    className="text-rose-500 pl-1"> *</span></span>
+                                <div className="ml-auto">
+                                    <FormToggle
+                                        toggleClasses="text-right"
+                                        name="for_civil"
+                                        control={control}
+                                        errors={errors}
+                                    />
+                                </div>
+                            </div>
+
+                            {
+                                forCivil && (
+                                    <div className="box-body">
+                                        <FormAsyncSelect
+                                            name="site"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Project Site"
+                                            apiUrl="/select/civil/sites/"
+                                            queryKeyBase="civil_sites"
+                                            preselectedOptions={formatOptions(projectData, 'site_option')}
+                                            is_required={true}
+                                            label={false}
+                                        />
+                                    </div>
+                                )
+                            }
+                        </div>
+                    </HasPermission>
                     <HasPermission permission='pms.manage_customer_project'>
                         <div className="box">
                             <div className="box-header">
@@ -208,7 +248,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                     </HasPermission>
                     <div className="box">
                         <div className="box-header">
-                            <div className="box-title"> Members</div>
+                            <div className="box-title"> Members <span className="text-rose-500 pl-1"> *</span></div>
                         </div>
                         <div className="box-body">
                             <ProjectMembers data={projectData} control={control} errors={errors}/>
@@ -216,7 +256,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                     </div>
                     <div className="box">
                         <div className="box-header">
-                            <div className="box-title"> Tags</div>
+                            <div className="box-title"> Tags <span className="text-rose-500 pl-1"> *</span></div>
                         </div>
                         <div className="box-body">
                             <FormAsyncSelect
@@ -236,7 +276,7 @@ const ProjectForm = ({ projectData, isEditMode = false }) => {
                     </div>
                     <div className="box">
                         <div className="box-header">
-                            <div className="box-title"> Status</div>
+                            <div className="box-title"> Status <span className="text-rose-500 pl-1"> *</span></div>
                         </div>
                         <div className="box-body">
                             <ProjectStatusDropdown
