@@ -1,4 +1,4 @@
-import { Package, RefreshCw, Maximize2 } from "lucide-react";
+import { Package } from "lucide-react";
 
 const IconPageHeader = ({
                             heading = "Default Heading",
@@ -15,7 +15,7 @@ const IconPageHeader = ({
                         <h3 className="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.125rem] font-semibold">
                             {heading}
                         </h3>
-                        <p className="text-sm text-slate-600">{description}</p>
+                        <div className="text-sm text-slate-600">{description}</div>
                     </div>
                 </div>
                     {children}

@@ -7,6 +7,13 @@ import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 const EquipmentAuditList = () => {
     const columns = [
         {
+            Header: "Company",
+            accessor: "location_subnet.company.name",
+            filterType: "text",
+            filterable: true,
+            filterKey: "location_subnet__location__company__name",
+        },
+        {
             Header: "Location",
             accessor: "location_subnet.location.name",
             filterType: 'text',
