@@ -7,7 +7,7 @@ import {
     FileText, Camera, Loader2, ShieldAlert
 } from "lucide-react";
 
-const PdfModalViewer = ({ isOpen, fileId, onClose }) => {
+const PdfModalViewer = ({ isOpen, fileId, onClose, isConfidential = true }) => {
     const { blobUrl, mimeType, loading } = useSecureMedia(fileId, isOpen);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [zoom, setZoom] = useState(100);
@@ -86,9 +86,12 @@ const PdfModalViewer = ({ isOpen, fileId, onClose }) => {
                         </div>
                     ) : blobUrl ? (
                         <div className="h-full w-full overflow-auto relative">
-                            <div className="absolute inset-0 pointer-events-none opacity-10 text-6xl font-bold flex items-center justify-center text-gray-700 select-none z-[49]">
-                                CONFIDENTIAL
-                            </div>
+                            {
+                                isConfidential &&
+                                <div className="absolute inset-0 pointer-events-none opacity-10 text-6xl font-bold flex items-center justify-center text-gray-700 select-none z-[49]">
+                                    CONFIDENTIAL
+                                </div>
+                            }
                             {isImage ? (
                                 <div className="flex justify-center items-center h-full p-4">
                                     <img
