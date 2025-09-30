@@ -189,6 +189,7 @@ export default function BrandBook() {
                 isOpen={modal.open}
                 fileId={modal.fileId}
                 onClose={() => setModal({ open: false, fileId: null })}
+                isConfidential={false}
             />
         </div>
     );
