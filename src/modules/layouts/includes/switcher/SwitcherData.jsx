@@ -1081,7 +1081,7 @@ export function Light(dispatch) {
         "bodyBg": "",
         "inputBorder": "",
         "Light": "",
-        "dataMenuStyles": "dark",  
+        "dataMenuStyles": "light",
     }));
 
     localStorage.setItem("ynexlighttheme", "light");

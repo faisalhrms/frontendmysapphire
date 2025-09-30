@@ -43,7 +43,7 @@ function App() {
                         htmlAttributes={{
                             'lang': 'en',
                             'dir': 'ltr',
-                            'data-menu-styles': 'dark',
+                            'data-menu-styles': 'light',
                             'class': 'light',
                             'data-nav-layout': 'vertical',
                             'data-header-styles': 'light',

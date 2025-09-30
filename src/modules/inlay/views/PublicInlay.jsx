@@ -8,9 +8,8 @@ import useDarkMode from "@redux/common/useDarkMode.js";
 import { products } from "@modules/inlay/ProductData/productData.js";
 import EmptyState from "@components/EmptyState.jsx";
 
-
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Navigation } from "swiper/modules"; // Removed Autoplay
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -56,6 +55,7 @@ export default function PublicInlay() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
             <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
 
+                {/* Left Section */}
                 <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-950 order-2 lg:order-1">
                     <div className="relative w-full flex flex-col items-center">
                         <div className="flex flex-col items-center mb-6 lg:hidden mt-4">
@@ -71,8 +71,7 @@ export default function PublicInlay() {
                         </div>
 
                         <Swiper
-                            modules={[Autoplay, Navigation]}
-                            autoplay={{ delay: 2500, disableOnInteraction: false }}
+                            modules={[Navigation]} // No Autoplay
                             loop={true}
                             navigation={{
                                 nextEl: ".custom-next",
@@ -123,6 +122,7 @@ export default function PublicInlay() {
                     </div>
                 </div>
 
+                {/* Right Section */}
                 <div className="flex flex-col justify-between p-10 order-1 lg:order-2 hidden lg:flex">
                     <div>
                         <div className="flex flex-col items-center mb-10">
