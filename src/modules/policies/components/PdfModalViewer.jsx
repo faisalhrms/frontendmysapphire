@@ -42,13 +42,13 @@ const PdfModalViewer = ({ isOpen, fileId, onClose, isConfidential = true }) => {
         <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex justify-center items-center select-none">
             <div className={`bg-white rounded-lg shadow-2xl relative transition-all duration-300 flex flex-col ${isFullscreen ? 'w-full h-full rounded-none' : 'w-[95%] h-[95%] max-w-7xl'}`}>
                 {/* Header */}
-                <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50">
+                <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50  dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center space-x-3">
-                        <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-lg">
-                            {isImage ? <Camera className="h-4 w-4 text-primary" /> : <FileText className="h-4 w-4 text-primary" />}
+                        <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-lg dark:text-gray-200 dark:bg-bodybg">
+                            {isImage ? <Camera className="h-4 w-4 text-primary dark:text-gray-200 dark:bg-bodybg" /> : <FileText className="h-4 w-4 text-primary dark:text-gray-200 dark:bg-bodybg" />}
                         </div>
                         <div>
-                            <h3 className="font-semibold text-gray-900">Secure Document Viewer</h3>
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Secure Document Viewer</h3>
                             <p className="text-sm text-gray-500">{isImage ? 'Image File' : 'PDF Document'}</p>
                         </div>
                     </div>
@@ -71,14 +71,14 @@ const PdfModalViewer = ({ isOpen, fileId, onClose, isConfidential = true }) => {
                         <button onClick={toggleFullscreen} className="p-2 hover:bg-gray-100 rounded-lg" title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
                             {isFullscreen ? <Minimize2 className="h-4 w-4 text-gray-600" /> : <Maximize2 className="h-4 w-4 text-gray-600" />}
                         </button>
-                        <button onClick={onClose} className="p-2 hover:bg-red-100 rounded-lg" title="Close">
-                            <X className="h-4 w-4 text-red-600" />
+                        <button onClick={onClose} className="p-2 hover:bg-danger/10 rounded-lg" title="Close">
+                            <X className="h-4 w-4 text-red" />
                         </button>
                     </div>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 h-[calc(100%-73px-41px)] relative overflow-hidden bg-gray-100">
+                <div className="flex-1 h-[calc(100%-73px-41px)] relative overflow-hidden bg-gray-100  dark:text-gray-200 dark:bg-bodybg">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center h-full">
                             <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-4" />
@@ -111,15 +111,15 @@ const PdfModalViewer = ({ isOpen, fileId, onClose, isConfidential = true }) => {
                     ) : (
                         <div className="flex flex-col items-center justify-center h-full text-center p-4">
                             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">Failed to load document</h3>
-                            <p className="text-gray-600">The document could not be loaded. Please try again.</p>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2  dark:text-gray-200 dark:bg-bodybg">Failed to load document</h3>
+                            <p className="text-gray-600  dark:text-gray-200 dark:bg-bodybg">The document could not be loaded. Please try again.</p>
                             <button onClick={onClose} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Close</button>
                         </div>
                     )}
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-t border-gray-200 text-sm text-gray-600">
+                <div className="flex justify-between items-center px-4 py-2 bg-gray-50 border-t border-gray-200 text-sm text-gray-600  dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center space-x-2 text-red-600 font-medium">
                         <ShieldAlert className="h-4 w-4" />
                         <span>Secure Mode Enabled</span>
