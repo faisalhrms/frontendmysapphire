@@ -54,6 +54,45 @@ export default function EquipmentReplaceListModal({
             filterType: 'date'
         },
         {
+            Header: 'Status',
+            accessor: 'status',
+            filterable: true,
+            filterType: 'select',
+            filterKey: 'status',
+            filterOptions: [
+                { value: 'approved', label: 'Approved' },
+                { value: 'under_approval', label: 'Under Approval' },
+                { value: 'rejected', label: 'Rejected' },
+            ],
+            Cell: ({ value }) => toTitleCase(value),
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                let bgClass = "";
+                let textClass = "";
+
+                if (value === "under_approval") {
+                    bgClass = "bg-warning/30";
+                    textClass = "text-warning";
+                }
+                else if (value === "approved") {
+                    bgClass = "bg-success/30";
+                    textClass = "text-success";
+                }
+                else if (value === "rejected") {
+                    bgClass = "bg-danger/30";
+                    textClass = "text-danger";
+                }
+                else {
+                    bgClass = "bg-primary/30";
+                    textClass = "text-primary";
+                }
+
+                return {
+                    className: `capitalize px-2 py-1 rounded ${bgClass} ${textClass}`,
+                };
+            },
+        },
+        {
             Header: 'Reason',
             accessor: 'reason_for_replacement',
             Cell: ({ value }) => value || 'N/A',
@@ -99,22 +138,28 @@ export default function EquipmentReplaceListModal({
             filterType: 'datetime'
         },
         {
-            Header: 'Actions',
-            accessor: 'id',
+            Header: "Actions",
+            accessor: "id",
             disableSortBy: true,
-            Cell: ({ value }) => (
-                <button
-                    onClick={() => {
-                        setSelectedReplaceId(value);
-                        setIsFormOpen(true);
-                    }}
-                    title="Edit Replacement"
-                    className="ti-btn ti-btn-primary ti-btn-sm"
-                >
-                    <i className="ri-edit-line" />
-                </button>
-            )
-        }
+            Cell: ({ row }) => {
+                const status = row.original.status;
+                const isDisabled = status === "approved" || status === "under_approval";
+
+                return (
+                    <div className="flex justify-center space-x-2">
+                        <button
+                            className={`ti-btn ti-btn-primary ti-btn-sm ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                            onClick={() => !isDisabled && handleEditClick(row.original.id)}
+                            title={isDisabled ? "Editing Disabled" : "Edit Replacement"}
+                            disabled={isDisabled}
+                        >
+                            <i className="ri-edit-line" />
+                        </button>
+                    </div>
+                );
+            },
+        },
+
     ];
 
     return (
