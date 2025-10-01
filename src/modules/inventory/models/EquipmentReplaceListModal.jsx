@@ -138,27 +138,30 @@ export default function EquipmentReplaceListModal({
             filterType: 'datetime'
         },
         {
-            Header: "Actions",
-            accessor: "id",
+            Header: 'Actions',
+            accessor: 'id',
             disableSortBy: true,
-            Cell: ({ row }) => {
+            Cell: ({ row, value }) => {
                 const status = row.original.status;
                 const isDisabled = status === "approved" || status === "under_approval";
 
                 return (
-                    <div className="flex justify-center space-x-2">
-                        <button
-                            className={`ti-btn ti-btn-primary ti-btn-sm ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                            onClick={() => !isDisabled && handleEditClick(row.original.id)}
-                            title={isDisabled ? "Editing Disabled" : "Edit Replacement"}
-                            disabled={isDisabled}
-                        >
-                            <i className="ri-edit-line" />
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => {
+                            if (!isDisabled) {
+                                setSelectedReplaceId(value);
+                                setIsFormOpen(true);
+                            }
+                        }}
+                        title={isDisabled ? "Editing Disabled" : "Edit Replacement"}
+                        className={`ti-btn ti-btn-primary ti-btn-sm ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                        disabled={isDisabled}
+                    >
+                        <i className="ri-edit-line" />
+                    </button>
                 );
             },
-        },
+        }
 
     ];
 
