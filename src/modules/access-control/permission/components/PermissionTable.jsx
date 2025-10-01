@@ -118,7 +118,7 @@ const PermissionTable = ({ columns, data, isSubmitting, onUpdatePermissions, onS
                                                 }
                                                 className="sr-only"
                                             />
-                                            <div className="block w-12 h-6 bg-gray-400 rounded-full"></div>
+                                            <div className="block w-12 h-6 bg-gray-500 rounded-full"></div>
                                             <div
                                                 className={`dot absolute left-1 top-1 w-4 h-4 rounded-full transition 
                         ${allChecked ? "translate-x-6 bg-success" : "bg-white"}`}
