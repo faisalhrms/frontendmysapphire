@@ -19,7 +19,6 @@ import {
     UserCheck,
     LogIn,
     LogOut,
-    Building2,
     Award
 } from 'lucide-react';
 import api from "@config/axiosConfig.js";
@@ -33,6 +32,7 @@ const AnalyticsDashboard = () => {
     const [period, setPeriod] = useState('today');
     const [selectedPage, setSelectedPage] = useState('/module/ess/brand-book');
     const [selectedCompany, setSelectedCompany] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
 
     // Fetch dashboard data
     const { data: dashboardData, isLoading: dashboardLoading, refetch: refetchDashboard } = useQuery({
@@ -69,10 +69,13 @@ const AnalyticsDashboard = () => {
 
     // Fetch user overview data
     const { data: userOverviewData, isLoading: userOverviewLoading, refetch: refetchUserOverview } = useQuery({
-        queryKey: ['analytics-user-overview', period, selectedCompany],
+        queryKey: ['analytics-user-overview', period, selectedCompany, selectedUser],
         queryFn: async () => {
             const companyParam = selectedCompany ? `&company_id=${selectedCompany}` : '';
-            const response = await api.get(`analytics/user-overview/?period=${period}${companyParam}`);
+            const userParam = selectedUser ? `&user_id=${selectedUser}` : '';
+            const response = await api.get(
+                `analytics/user-overview/?period=${period}${companyParam}${userParam}`
+            );
             return response.data.data;
         },
         enabled: activeTab === 'users',
@@ -788,10 +791,16 @@ const AnalyticsDashboard = () => {
                 {company_breakdown && company_breakdown.length > 0 && (
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                         <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center space-x-2">
-                                <Building2 className="w-5 h-5 text-info" />
                                 <h3 className="text-lg font-semibold text-gray-900">Company Breakdown</h3>
-                            </div>
+                            {
+                                selectedCompany &&
+                                <button
+                                    onClick={() => setSelectedCompany(null)}
+                                    className="p-2 hover:bg-danger/10 rounded-lg transition-colors"
+                                >
+                                    <XCircle className="w-4 h-4 text-red"/>
+                                </button>
+                            }
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full">
@@ -807,7 +816,7 @@ const AnalyticsDashboard = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                 {company_breakdown.map((company, index) => (
-                                    <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={index} className={`hover:bg-gray-50 transition-colors ${selectedCompany === company.company_id ? 'bg-primary/10' : ''}`}>
                                         <td className="px-4 py-3 text-sm font-medium text-gray-900">{company.company_name}</td>
                                         <td className="px-4 py-3 text-sm text-gray-600">{company.total_users}</td>
                                         <td className="px-4 py-3 text-sm text-gray-600">{company.total_sessions}</td>
@@ -831,9 +840,17 @@ const AnalyticsDashboard = () => {
 
                 {/* Top Users */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center space-x-2 mb-6">
-                        <Award className="w-5 h-5 text-warning" />
+                    <div className="flex items-center justify-between space-x-2 mb-6">
                         <h3 className="text-lg font-semibold text-gray-900">Most Active Users</h3>
+                        {
+                            selectedUser &&
+                            <button
+                                onClick={() => setSelectedUser(null)}
+                                className="p-2 hover:bg-danger/10 rounded-lg transition-colors"
+                            >
+                                <XCircle className="w-4 h-4 text-red"/>
+                            </button>
+                        }
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full">
@@ -850,9 +867,17 @@ const AnalyticsDashboard = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                             {top_users?.map((user, index) => (
-                                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                <tr key={index} className={`hover:bg-gray-50 transition-colors ${selectedUser === user.user_id ? 'bg-primary/10' : ''}`}>
                                     <td className="px-4 py-3">
-                                        <div className="text-sm font-medium text-gray-900">{user.full_name}</div>
+                                        <div className="text-sm font-medium text-gray-900">
+                                            {user.full_name}
+                                            <button
+                                                onClick={() => setSelectedUser(user.user_id)}
+                                                className="ml-2 text-xs px-3 py-1 bg-info/10 text-info rounded-full hover:bg-info hover:text-white transition-colors"
+                                            >
+                                                View Details
+                                            </button>
+                                        </div>
                                         <div className="text-xs text-gray-500">{user.email}</div>
                                     </td>
                                     <td className="px-4 py-3 text-sm text-gray-600">{user.company || 'N/A'}</td>
