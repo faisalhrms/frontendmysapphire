@@ -13,8 +13,6 @@ const ThemeModeToggle = () => {
             "class": newClass,
             "dataHeaderStyles": newClass,
             "dataMenuStyles": theme.dataNavLayout === 'horizontal' ? newClass === 'dark' ? 'light' : 'dark' : newClass === 'dark' ? 'dark' : 'light',
-            "colorPrimary" : newClass === 'dark' ? '212, 175, 55' : '26, 26, 26',
-            "colorPrimaryRgb" : newClass === 'dark' ? '212, 175, 55' : '26, 26, 26',
         }));
 
         if (newClass !== 'dark') {

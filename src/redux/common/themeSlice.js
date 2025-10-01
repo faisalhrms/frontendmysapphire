@@ -18,7 +18,7 @@ const initialState = {
     loader: "enable",
     iconOverlay: "",
     colorPrimaryRgb: "26, 26, 26",
-    colorPrimary: "26, 26, 26",
+    colorPrimary: "26 26 26",
     bodyBg: "",
     Light: "",
     darkBg: "",
