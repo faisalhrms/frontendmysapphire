@@ -115,6 +115,14 @@ export const sidebarMenu = [
                 '',
                 DASHBOARD_ROUTES.ROAD_MAP_DASHBOARD.permission
             ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.ANALYTICS.path,
+                'link',
+                'Analytics Dashboard',
+                14,
+                '',
+                DASHBOARD_ROUTES.ANALYTICS.permission
+            ),
 
         ]
     ),

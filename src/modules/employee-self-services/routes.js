@@ -41,7 +41,7 @@ export const SELF_SERVICES_ROUTES = {
         },
         POLICIES:{
             path: '/module/ess/policies',
-             permission:'auth.view_public_policies'
+            permission:'user.view_ess_modules'
         },
         OBJECTIVES:{
             LIST: {

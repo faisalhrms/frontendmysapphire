@@ -11,6 +11,7 @@ import Sidebar from "@modules/layouts/includes/sidebar/Sidebar.jsx";
 import Footer from "@modules/layouts/includes/Footer.jsx";
 import TabToTop from "@modules/layouts/includes/TabToTop.jsx";
 import DeleteModal from "@components/modals/DeleteModal.jsx";
+import useAnalyticsTracker from "@hooks/useAnalyticsTracker.js";
 
 function App() {
     const isAuthenticated = useIsAuthenticated();
@@ -30,6 +31,9 @@ function App() {
             dispatch(setPermissions(permissions));
         }
     }, [permissions, isLoading, dispatch]);
+
+    useAnalyticsTracker();
+
 
     if (isLoading) {
         return <LoadingSpinner />;
