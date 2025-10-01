@@ -16,15 +16,11 @@ const GrantPermission = () => {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmittingLoading] = useState(false);
 
+
   const COLUMNS = useMemo(() => [
-    {
-      Header: 'Permissions',
-      accessor: 'roleWithPermissions',
-    },
-    {
-      Header: 'Control',
-      accessor: 'checkboxes',
-    },
+    { Header: 'Permissions', accessor: 'codename' },
+    { Header: 'Description', accessor: 'name' },
+    { Header: 'Action', accessor: 'checkboxes' },
   ], []);
 
   useEffect(() => {
@@ -36,8 +32,6 @@ const GrantPermission = () => {
           getAssignedPermissions(id),
         ]);
 
-
-
         const formattedAssignedPermissions = Array.isArray(assignedPermissionsData)
             ? assignedPermissionsData.reduce((acc, { id, codename }) => {
               acc[id] = { codename, checked: false };
@@ -45,8 +39,10 @@ const GrantPermission = () => {
             }, {})
             : {};
 
-        const formattedPermissions = formatPermissions(permissionsList, formattedAssignedPermissions);
-
+        const formattedPermissions = formatPermissions(
+            permissionsList,
+            formattedAssignedPermissions
+        );
 
         setPermissions(formattedPermissions);
       } catch (err) {
@@ -65,8 +61,8 @@ const GrantPermission = () => {
 
       const selectedPermissionIds = permissions.flatMap(permissionGroup =>
           Object.keys(permissionGroup.roleWithPermissions.permissions)
-              .filter(id => permissionGroup.roleWithPermissions.permissions[id].checked)
-              .map(id => parseInt(id))
+              .filter(pid => permissionGroup.roleWithPermissions.permissions[pid].checked)
+              .map(pid => parseInt(pid))
       );
 
       await AssignPermissionsToRole(id, selectedPermissionIds);
@@ -85,10 +81,7 @@ const GrantPermission = () => {
   const formatPermissions = (data, assignedPermissions) => {
     const groupedPermissions = data.reduce((acc, permission) => {
       const { id, name, codename } = permission;
-
-      // Extract app name (part before first dot)
       const appName = codename.split('.')[0];
-
       if (!acc[appName]) acc[appName] = [];
       acc[appName].push({ id, name, codename });
       return acc;
@@ -97,13 +90,20 @@ const GrantPermission = () => {
     return Object.keys(groupedPermissions).map(appName => ({
       roleWithPermissions: {
         roleName: appName.toUpperCase(),
-        permissions: groupedPermissions[appName].reduce((acc, { id, name, codename }) => {
-          acc[id] = {
-            name: `${codename} (${name})`,  // Display as "codename (name)"
-            checked: !!(assignedPermissions[id] && assignedPermissions[id].codename === codename),
-          };
-          return acc;
-        }, {}),
+        permissions: groupedPermissions[appName].reduce(
+            (acc, { id, name, codename }) => {
+              acc[id] = {
+                codename,
+                name: name || '-',
+                checked: !!(
+                    assignedPermissions[id] &&
+                    assignedPermissions[id].codename === codename
+                ),
+              };
+              return acc;
+            },
+            {}
+        ),
       },
     }));
   };
@@ -117,23 +117,25 @@ const GrantPermission = () => {
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red">{error}</div>;
   }
 
   return (
       <>
-        <PageHeader currentpage="Grant Permissions" activepage="Role" mainpage="Grant Permissions" />
+        <PageHeader
+            currentpage="Grant Permissions"
+            activepage="Role"
+            mainpage="Grant Permissions"
+        />
         <div className="box w-full max-h-4xl p-8 mx-auto">
-          <div className="box-body">
-            <div className="overflow-hidden">
-              <PermissionTable
-                  columns={COLUMNS}
-                  data={permissions}
-                  isSubmitting={isSubmitting}
-                  onUpdatePermissions={handleUpdatePermissions}
-                  onSavePermissions={handleSavePermissions}
-              />
-            </div>
+          <div className="overflow-hidden">
+            <PermissionTable
+                columns={COLUMNS}
+                data={permissions}
+                isSubmitting={isSubmitting}
+                onUpdatePermissions={handleUpdatePermissions}
+                onSavePermissions={handleSavePermissions}
+            />
           </div>
         </div>
       </>
