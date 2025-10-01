@@ -13,7 +13,14 @@ import {
     Tablet,
     RefreshCw,
     FileText,
-    FolderPlus, XCircle
+    XCircle,
+    Target,
+    UserPlus,
+    UserCheck,
+    LogIn,
+    LogOut,
+    Building2,
+    Award
 } from 'lucide-react';
 import api from "@config/axiosConfig.js";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
@@ -23,8 +30,9 @@ import EmptyState from "@components/EmptyState.jsx";
 
 const AnalyticsDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
-    const [period, setPeriod] = useState('7d');
-    const [selectedPage, setSelectedPage] = useState('/');
+    const [period, setPeriod] = useState('today');
+    const [selectedPage, setSelectedPage] = useState('/module/ess/brand-book');
+    const [selectedCompany, setSelectedCompany] = useState(null);
 
     // Fetch dashboard data
     const { data: dashboardData, isLoading: dashboardLoading, refetch: refetchDashboard } = useQuery({
@@ -56,6 +64,18 @@ const AnalyticsDashboard = () => {
             return response.data.data;
         },
         enabled: activeTab === 'pages',
+        refetchInterval: 60000,
+    });
+
+    // Fetch user overview data
+    const { data: userOverviewData, isLoading: userOverviewLoading, refetch: refetchUserOverview } = useQuery({
+        queryKey: ['analytics-user-overview', period, selectedCompany],
+        queryFn: async () => {
+            const companyParam = selectedCompany ? `&company_id=${selectedCompany}` : '';
+            const response = await api.get(`analytics/user-overview/?period=${period}${companyParam}`);
+            return response.data.data;
+        },
+        enabled: activeTab === 'users',
         refetchInterval: 60000,
     });
 
@@ -209,7 +229,7 @@ const AnalyticsDashboard = () => {
                         <h3 className="text-lg font-semibold text-gray-900 mb-6">Device Breakdown</h3>
                         <div className="space-y-3">
                             {dashboardData.device_stats.map((device, index) => {
-                                const DeviceIcon = device.device_type === 'desktop' ? Monitor : device.device_type === 'mobile' ? Smartphone : Tablet;
+                                const DeviceIcon = device.device_type === 'Desktop' ? Monitor : device.device_type === 'Mobile' ? Smartphone : Tablet;
                                 const total = dashboardData.device_stats.reduce((sum, d) => sum + d.count, 0);
                                 const percentage = ((device.count / total) * 100).toFixed(1);
                                 return (
@@ -485,6 +505,390 @@ const AnalyticsDashboard = () => {
         );
     };
 
+    const UserOverviewTab = () => {
+        if (userOverviewLoading) return <LoadingSpinner />;
+        if (!userOverviewData) return <EmptyState icon={Users} heading="User Overview" description="No user data available" />;
+
+        const { overview, engagement, top_users, company_breakdown, activity_timeline, user_journey,
+            session_quality, top_pages_by_users, retention, peak_hours, user_types } = userOverviewData;
+
+        return (
+            <div className="space-y-6">
+                {/* Key Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <StatCard
+                        title="Total Users"
+                        value={overview?.total_users?.value}
+                        change={overview?.total_users?.change}
+                        icon={Users}
+                    />
+                    <StatCard
+                        title="Total Sessions"
+                        value={overview?.total_sessions?.value}
+                        change={overview?.total_sessions?.change}
+                        icon={Activity}
+                    />
+                    <StatCard
+                        title="Page Views"
+                        value={overview?.total_page_views?.value}
+                        icon={Eye}
+                    />
+                    <StatCard
+                        title="Avg. Session Duration"
+                        value={`${overview?.avg_session_duration?.value}s`}
+                        change={overview?.avg_session_duration?.change}
+                        icon={Clock}
+                    />
+                    <StatCard
+                        title="Pages per Session"
+                        value={overview?.avg_pages_per_session?.value}
+                        icon={FileText}
+                    />
+                    <StatCard
+                        title="Engagement Rate"
+                        value={`${overview?.engagement_rate?.value}%`}
+                        icon={Target}
+                        subtitle="Sessions > 30s"
+                    />
+                </div>
+
+                {/* User Types & Retention */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">New vs Returning Users</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between p-4 bg-success/10 border-success rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                    <UserPlus className="w-6 h-6 text-success" />
+                                    <span className="font-medium text-gray-900">New Users</span>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-2xl font-bold text-gray-900">{user_types?.new_users}</p>
+                                    <p className="text-xs text-gray-500">{user_types?.new_user_percentage}%</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between p-4 bg-info/10 border-info rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                    <UserCheck className="w-6 h-6 text-blue-600" />
+                                    <span className="font-medium text-gray-900">Returning Users</span>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-2xl font-bold text-gray-900">{user_types?.returning_users}</p>
+                                    <p className="text-xs text-gray-500">{100 - (user_types?.new_user_percentage || 0)}%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">User Retention</h3>
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">First Period Users</span>
+                                <span className="font-semibold text-gray-900">{retention?.first_period_users}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Second Period Users</span>
+                                <span className="font-semibold text-gray-900">{retention?.second_period_users}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Retained Users</span>
+                                <span className="font-semibold text-gray-900">{retention?.retained_users}</span>
+                            </div>
+                            <div className="pt-4 border-t border-gray-200">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-medium text-gray-900">Retention Rate</span>
+                                    <span className="text-2xl font-bold text-primary">{retention?.retention_rate}%</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-3">
+                                    <div
+                                        className="bg-primary h-3 rounded-full transition-all duration-300"
+                                        style={{ width: `${retention?.retention_rate}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Activity Timeline */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-semibold text-gray-900">User Activity Timeline</h3>
+                        <button
+                            onClick={() => refetchUserOverview()}
+                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                            <RefreshCw className="w-4 h-4 text-gray-600" />
+                        </button>
+                    </div>
+                    {activity_timeline && activity_timeline.length > 0 ? (
+                        <ResponsiveContainer width="100%" height={300}>
+                            <AreaChart data={activity_timeline}>
+                                <defs>
+                                    <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                                    </linearGradient>
+                                    <linearGradient id="colorEvents" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                                <XAxis dataKey={activity_timeline[0]?.date ? "date" : "time"} stroke="#6B7280" fontSize={12} />
+                                <YAxis stroke="#6B7280" fontSize={12} />
+                                <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px' }} />
+                                <Legend />
+                                <Area type="monotone" dataKey="unique_users" stroke="#3B82F6" fillOpacity={1} fill="url(#colorUsers)" name="Unique Users" />
+                                <Area type="monotone" dataKey="total_events" stroke="#10B981" fillOpacity={1} fill="url(#colorEvents)" name="Total Events" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    ) : (
+                        <p className="text-gray-500 text-sm text-center py-8">No activity data available</p>
+                    )}
+                </div>
+
+                {/* Engagement Metrics & Session Quality */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Engagement Metrics</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <span className="text-sm font-medium text-gray-700">Events per Session</span>
+                                <span className="text-xl font-bold text-gray-900">{engagement?.events_per_session}</span>
+                            </div>
+                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <span className="text-sm font-medium text-gray-700">Sessions per User</span>
+                                <span className="text-xl font-bold text-gray-900">{engagement?.sessions_per_user}</span>
+                            </div>
+                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <span className="text-sm font-medium text-gray-700">Avg. Active Days</span>
+                                <span className="text-xl font-bold text-gray-900">{engagement?.avg_active_days}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Session Quality</h3>
+                        <div className="space-y-4">
+                            <div className="p-4 bg-success/10 rounded-lg border border-success">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-medium text-success">Quality Sessions</span>
+                                    <span className="text-lg font-bold text-success">{session_quality?.quality_sessions}</span>
+                                </div>
+                                <div className="w-full bg-success/10 rounded-full h-2">
+                                    <div
+                                        className="bg-success h-2 rounded-full"
+                                        style={{ width: `${session_quality?.quality_rate}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-xs text-success mt-1">{session_quality?.quality_rate}% of total</p>
+                            </div>
+                            <div className="p-4 bg-danger/10 rounded-lg border border-danger">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-medium text-danger">Bounce Sessions</span>
+                                    <span className="text-lg font-bold text-danger">{session_quality?.bounce_sessions}</span>
+                                </div>
+                                <div className="w-full bg-danger/10 rounded-full h-2">
+                                    <div
+                                        className="bg-danger h-2 rounded-full"
+                                        style={{ width: `${session_quality?.bounce_rate}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-xs text-danger mt-1">{session_quality?.bounce_rate}% of total</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Peak Activity Hours */}
+                {peak_hours && peak_hours.length > 0 && (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Peak Activity Hours</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <BarChart data={peak_hours}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB"/>
+                                <XAxis dataKey="hour" stroke="#6B7280" fontSize={12}/>
+                                <YAxis stroke="#6B7280" fontSize={12}/>
+                                <Tooltip/>
+                                <Legend />
+                                <Bar dataKey="sessions" fill="#3B82F6" radius={[8, 8, 0, 0]} name="Sessions"/>
+                                <Bar dataKey="users" fill="#10B981" radius={[8, 8, 0, 0]} name="Users"/>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* User Journey */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div className="flex items-center space-x-2 mb-4">
+                            <LogIn className="w-5 h-5 text-success" />
+                            <h3 className="text-lg font-semibold text-gray-900">Top Entry Pages</h3>
+                        </div>
+                        <div className="space-y-2">
+                            {user_journey?.entry_pages?.slice(0, 8).map((page, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <p className="text-sm font-medium text-gray-900 truncate flex-1">{page.page_path}</p>
+                                    <span className="ml-4 px-3 py-1 bg-success/10 text-success rounded-full text-xs font-semibold">
+                                        {page.entries}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div className="flex items-center space-x-2 mb-4">
+                            <LogOut className="w-5 h-5 text-danger" />
+                            <h3 className="text-lg font-semibold text-gray-900">Top Exit Pages</h3>
+                        </div>
+                        <div className="space-y-2">
+                            {user_journey?.exit_pages?.slice(0, 8).map((page, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <p className="text-sm font-medium text-gray-900 truncate flex-1">{page.page_path}</p>
+                                    <span className="ml-4 px-3 py-1 bg-danger/10 text-danger rounded-full text-xs font-semibold">
+                                        {page.exits}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Top Pages by Users */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Most Popular Pages</h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Page</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unique Users</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Views</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avg. Time</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                            {top_pages_by_users?.slice(0, 10).map((page, index) => (
+                                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                    <td className="px-4 py-3 text-sm text-gray-900 truncate max-w-xs">{page.page_path}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{page.unique_users}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{page.total_views}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{page.avg_time ? `${page.avg_time.toFixed(1)}s` : 'N/A'}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Company Breakdown */}
+                {company_breakdown && company_breakdown.length > 0 && (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center space-x-2">
+                                <Building2 className="w-5 h-5 text-info" />
+                                <h3 className="text-lg font-semibold text-gray-900">Company Breakdown</h3>
+                            </div>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Users</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sessions</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Page Views</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avg. Duration</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                {company_breakdown.map((company, index) => (
+                                    <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-4 py-3 text-sm font-medium text-gray-900">{company.company_name}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-600">{company.total_users}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-600">{company.total_sessions}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-600">{company.total_page_views}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-600">{company.avg_duration}s</td>
+                                        <td className="px-4 py-3">
+                                            <button
+                                                onClick={() => setSelectedCompany(company.company_id)}
+                                                className="text-xs px-3 py-1 bg-info/10 text-info rounded-full hover:bg-info hover:text-white transition-colors"
+                                            >
+                                                View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {/* Top Users */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div className="flex items-center space-x-2 mb-6">
+                        <Award className="w-5 h-5 text-warning" />
+                        <h3 className="text-lg font-semibold text-gray-900">Most Active Users</h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sessions</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Page Views</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Events</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avg. Duration</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Active</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                            {top_users?.map((user, index) => (
+                                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                    <td className="px-4 py-3">
+                                        <div className="text-sm font-medium text-gray-900">{user.full_name}</div>
+                                        <div className="text-xs text-gray-500">{user.email}</div>
+                                    </td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{user.company || 'N/A'}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{user.total_sessions}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{user.total_page_views}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{user.total_events}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{user.avg_duration}s</td>
+                                    <td className="px-4 py-3 text-xs text-gray-500">
+                                        {user.last_active ? new Date(user.last_active).toLocaleString() : 'N/A'}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Event Types Distribution */}
+                {engagement?.event_types && engagement.event_types.length > 0 && (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Event Types Distribution</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={engagement.event_types}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB"/>
+                                <XAxis dataKey="name" stroke="#6B7280" fontSize={12}/>
+                                <YAxis stroke="#6B7280" fontSize={12}/>
+                                <Tooltip/>
+                                <Bar dataKey="count" fill="#8B5CF6" radius={[8, 8, 0, 0]}/>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     return (
         <div className="min-h-screen">
             <div className="mx-auto">
@@ -516,7 +920,8 @@ const AnalyticsDashboard = () => {
                                 }`}
                             >
                                 <span>Real-time</span>
-                                {realtimeData && <span className="w-2 h-2 bg-success rounded-full animate-pulse"></span>}
+                                {realtimeData &&
+                                    <span className="w-2 h-2 bg-success rounded-full animate-pulse"></span>}
                             </button>
                             <button
                                 onClick={() => setActiveTab('pages')}
@@ -528,9 +933,20 @@ const AnalyticsDashboard = () => {
                             >
                                 Pages
                             </button>
+                            <button
+                                onClick={() => setActiveTab('users')}
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    activeTab === 'users'
+                                        ? 'bg-primary/10 text-primary'
+                                        : 'text-gray-600 hover:bg-gray-50'
+                                }`}
+                            >
+                                Users
+                            </button>
+
                         </div>
 
-                        {(activeTab === 'overview' || activeTab === 'pages') && (
+                        {(activeTab === 'overview' || activeTab === 'pages' || activeTab === 'users') && (
                             <div className="flex space-x-2">
                                 {['today', 'yesterday', '7d', '30d', '90d', '1y'].map((p) => (
                                     <button
@@ -563,6 +979,7 @@ const AnalyticsDashboard = () => {
                         {activeTab === 'overview' && <OverviewTab />}
                         {activeTab === 'realtime' && <RealtimeTab />}
                         {activeTab === 'pages' && <PagesTab />}
+                        {activeTab === 'users' && <UserOverviewTab />}
                     </div>
                 </div>
             </div>
