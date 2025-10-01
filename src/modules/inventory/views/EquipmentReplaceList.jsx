@@ -19,18 +19,25 @@ const EquipmentReplaceList = ({ isActive, externalFilters = [] }) => {
             Header: "Actions",
             accessor: "id",
             disableSortBy: true,
-            Cell: ({ row }) => (
-                <div className="flex justify-center space-x-2">
-                    <button
-                        className="ti-btn ti-btn-primary ti-btn-sm"
-                        onClick={() => handleEditClick(row.original.id)}
-                        title="Edit Replacement"
-                    >
-                        <i className="ri-edit-line" />
-                    </button>
-                </div>
-            ),
+            Cell: ({ row }) => {
+                const status = row.original.status;
+                const isDisabled = status === "approved" || status === "underapproval";
+
+                return (
+                    <div className="flex justify-center space-x-2">
+                        <button
+                            className={`ti-btn ti-btn-primary ti-btn-sm ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                            onClick={() => !isDisabled && handleEditClick(row.original.id)}
+                            title={isDisabled ? "Editing Disabled" : "Edit Replacement"}
+                            disabled={isDisabled}
+                        >
+                            <i className="ri-edit-line" />
+                        </button>
+                    </div>
+                );
+            },
         },
+
         {
             Header: "Equipment Code",
             accessor: "equipment.code",
@@ -58,6 +65,45 @@ const EquipmentReplaceList = ({ isActive, externalFilters = [] }) => {
             accessor: "replaced_by.full_name",
             Cell: ({ row }) =>
                 row.original.replaced_by?.full_name || "N/A",
+        },
+        {
+            Header: 'Status',
+            accessor: 'status',
+            filterable: true,
+            filterType: 'select',
+            filterKey: 'status',
+            filterOptions: [
+                { value: 'approved', label: 'Approved' },
+                { value: 'under_approval', label: 'Under Approval' },
+                { value: 'rejected', label: 'Rejected' },
+            ],
+            Cell: ({ value }) => toTitleCase(value),
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                let bgClass = "";
+                let textClass = "";
+
+                if (value === "under_approval") {
+                    bgClass = "bg-warning/30";
+                    textClass = "text-warning";
+                }
+                else if (value === "approved") {
+                    bgClass = "bg-success/30";
+                    textClass = "text-success";
+                }
+                else if (value === "rejected") {
+                    bgClass = "bg-danger/30";
+                    textClass = "text-danger";
+                }
+                else {
+                    bgClass = "bg-primary/30";
+                    textClass = "text-primary";
+                }
+
+                return {
+                    className: `capitalize px-2 py-1 rounded ${bgClass} ${textClass}`,
+                };
+            },
         },
         {
             Header: "Reason",
