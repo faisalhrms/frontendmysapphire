@@ -13,6 +13,7 @@ import SalesDashboard from "@modules/dashboards/rd/views/SalesDashboard.jsx";
 import {BEIRHOLM_BI_ROUTES} from "@modules/beirholm-bi/routes.js";
 import RoadMap from "@modules/dashboards/roadmap/view/RoadMap.jsx";
 import EquipmentAuditDashboard from "@modules/dashboards/eq-aud/views/EquipmentAuditDashboard.jsx";
+import AnalyticsDashboard from "@modules/dashboards/analytics/views/AnalyticsDashboard.jsx";
 export const DASHBOARD_ROUTES = {
     PROJECT: {
         path: '/dashboards/project-management-system',
@@ -72,7 +73,10 @@ export const DASHBOARD_ROUTES = {
     },
     EQUIPMENT_AUDIT_DASHBOARD: {
         path: '/dashboards/assets-audit',
-
+    },
+    ANALYTICS: {
+        path: '/dashboards/analytics',
+        permission: 'auth.analytics_dashboard'
     }
 
 };
@@ -136,12 +140,16 @@ export const MODULE_ROUTES = [
         path:DASHBOARD_ROUTES.SALES_DASHBOARD.path,
         component:SalesDashboard,
          permission: DASHBOARD_ROUTES.SALES_DASHBOARD.permission,
-
     },
     {
         path: DASHBOARD_ROUTES.ROAD_MAP_DASHBOARD.path,
         component: RoadMap,
         permission: DASHBOARD_ROUTES.ROAD_MAP_DASHBOARD.permission
+    },
+    {
+        path:DASHBOARD_ROUTES.ANALYTICS.path,
+        component:AnalyticsDashboard,
+        permission: DASHBOARD_ROUTES.ANALYTICS.permission
     },
     {
         path:DASHBOARD_ROUTES.EQUIPMENT_AUDIT_DASHBOARD.path,
