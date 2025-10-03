@@ -1,4 +1,3 @@
-// services/CorrectionRulesService.js
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
@@ -68,6 +67,50 @@ export const downloadErrorCorrection = async () => {
     return response.data;
   } catch (error) {
     Notify.error(error.response?.data?.message || "Failed to download Error Correction");
+    throw error;
+  }
+};
+
+export const downloadCorrectionTemplate = async () => {
+  try {
+    const { data } = await api.get("error/correction/rule/template/download/", { responseType: "blob" });
+    return data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to download template");
+    throw error;
+  }
+};
+
+export const uploadCorrectionUpdates = async (file) => {
+  try {
+    const form = new FormData();
+    form.append("file", file);
+    const { data } = await api.post("error/correction/rule/upload-updates/", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data?.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to upload updates");
+    throw error;
+  }
+};
+
+export const getUploadUpdatesStatus = async (jobId) => {
+  try {
+    const { data } = await api.get(`error/correction/rule/upload-updates/status/${jobId}/`);
+    return data?.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to fetch update status");
+    throw error;
+  }
+};
+
+export const getActiveUploadUpdatesJob = async () => {
+  try {
+    const { data } = await api.get("error/correction/rule/upload-updates/active/");
+    return data?.data;
+  } catch (error) {
+    Notify.error(error.response?.data?.message || "Failed to fetch active job");
     throw error;
   }
 };
