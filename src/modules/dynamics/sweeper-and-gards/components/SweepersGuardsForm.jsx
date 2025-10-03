@@ -131,8 +131,8 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                 {/* Basic Info Section */}
                 <div className="col-span-12">
                     <div className="box shadow-md rounded-lg">
-                        <div className="box-header bg-gray-100 p-4 rounded-t-lg">
-                            <div className="box-title text-lg font-semibold">Basic Information</div>
+                        <div className="box-header bg-gray-100 p-4 rounded-t-lg dark:text-gray-200 dark:bg-bodybg">
+                            <div className="box-title text-lg font-semibold dark:text-gray-200 dark:bg-bodybg">Basic Information</div>
                         </div>
                         <div className="box-body p-6 grid grid-cols-12 gap-6">
                             <div className="col-span-4">
@@ -216,22 +216,22 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                         </div>
                     )}
                     <div className="relative">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                        <table className="min-w-full divide-y divide-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                            <thead className="bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg ">
                                     Category
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                     Design Pieces
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                     Area Sq. Feet
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                     Hanging Capacity
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                     Actions
                                 </th>
                             </tr>
@@ -346,14 +346,14 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                             </tbody>
 
                             {/* Totals + Remaining Row */}
-                            <tfoot className="bg-gray-50 font-semibold">
+                            <tfoot className="bg-gray-50 font-semibold dark:text-gray-200 dark:bg-bodybg">
                             <tr>
-                                <td className="px-6 py-3 text-right">Totals:</td>
-                                <td className="px-6 py-3">
+                                <td className="px-6 py-3 text-right dark:text-gray-200 dark:bg-bodybg">Totals:</td>
+                                <td className="px-6 py-3 dark:text-gray-200 dark:bg-bodybg">
                                     {totalCategoryDesigns}
                                     {storeCapacityTotal > 0 && (
                                         <div
-                                            className={`text-sm ${remainingStoreCapacity < 0 ? "text-red-600" : "text-gray-600"}`}>
+                                            className={`text-sm ${remainingStoreCapacity < 0 ? "text-redti-modal-content bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative" : "text-gray-600"}`}>
                                             Remaining: {remainingStoreCapacity}
                                         </div>
                                     )}
@@ -362,7 +362,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                     {totalLeasedArea}
                                     {leasedAreaTotal > 0 && (
                                         <div
-                                            className={`text-sm ${remainingLeasedArea < 0 ? "text-red-600" : "text-gray-600"}`}>
+                                            className={`text-sm ${remainingLeasedArea < 0 ? "text-red" : "text-gray-600"}`}>
                                             Remaining: {remainingLeasedArea}
                                         </div>
                                     )}
@@ -371,7 +371,7 @@ const SweepersGuardsForm = ({ sgData = {}, isEditMode = false }) => {
                                     {totalHangingCapacity}
                                     {hangingCapacityTotal > 0 && (
                                         <div
-                                            className={`text-sm ${remainingHangingCapacity < 0 ? "text-red-600" : "text-gray-600"}`}>
+                                            className={`text-sm ${remainingHangingCapacity < 0 ? "text-red" : "text-gray-600"}`}>
                                             Remaining: {remainingHangingCapacity}
                                         </div>
                                     )}
