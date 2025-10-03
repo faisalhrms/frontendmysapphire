@@ -77,9 +77,9 @@ const PermissionModal = ({ isOpen, onClose, permission }) => {
       <>
         {isOpen && (
             <div className="hs-overlay fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm z-50">
-              <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative">
+              <div className="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative dark:text-gray-200 dark:bg-bodybg">
                 <div className="ti-modal-content">
-                  <div className="ti-modal-header flex justify-between items-center border-b border-gray-200 pb-2 mb-4">
+                  <div className="ti-modal-header flex justify-between items-center border-b border-gray-200 pb-2 mb-4 dark:text-gray-200 dark:bg-bodybg">
                     <h6 className="text-lg font-bold">
                       {permission ? 'Edit Permission' : 'Create Permission'}
                     </h6>

@@ -23,7 +23,7 @@ const UserManagementList = () => {
 
     return (
         <>
-            <div className="p-3">
+            <div className="p-3 dark:text-gray-200 dark:bg-bodybg">
                 <div className="box">
                     <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
                         <UserManagementTable users={users}/> {/* Passing the users to the UserManagementTable */}
