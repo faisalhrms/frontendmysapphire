@@ -7,6 +7,7 @@ import UserOverviewTab from "@modules/dashboards/analytics/components/UserOvervi
 import PagesTab from "@modules/dashboards/analytics/components/PagesTab.jsx";
 import RealtimeTab from "@modules/dashboards/analytics/components/RealtimeTab.jsx";
 import OverviewTab from "@modules/dashboards/analytics/components/OverViewTab.jsx";
+import IPAddressAnalyticsTab from "@modules/dashboards/analytics/components/IPAddressAnalyticsTab.jsx";
 
 const AnalyticsDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
@@ -14,6 +15,7 @@ const AnalyticsDashboard = () => {
     const [selectedPage, setSelectedPage] = useState('/module/ess/brand-book');
     const [selectedCompany, setSelectedCompany] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedIp, setSelectedIp] = useState(null);
 
     const { data: dashboardData, isLoading: dashboardLoading, refetch: refetchDashboard } = useQuery({
         queryKey: ['analytics-dashboard', period],
@@ -56,6 +58,20 @@ const AnalyticsDashboard = () => {
             return response.data.data;
         },
         enabled: activeTab === 'users',
+        refetchInterval: 60000,
+    });
+
+    const { data: ipAddressOverviewData, isLoading: ipAddressOverviewLoading, refetch: refetchIpAddressOverview } = useQuery({
+        queryKey: ['analytics-ip-address', period, selectedCompany, selectedIp],
+        queryFn: async () => {
+            const companyParam = selectedCompany ? `&company_id=${selectedCompany}` : '';
+            const ipParam = selectedIp ? `&ip_address=${selectedIp}` : '';
+            const response = await api.get(
+                `analytics/ip-address/?period=${period}${companyParam}${ipParam}`
+            );
+            return response.data.data;
+        },
+        enabled: activeTab === 'ip-address',
         refetchInterval: 60000,
     });
 
@@ -113,9 +129,19 @@ const AnalyticsDashboard = () => {
                             >
                                 Users
                             </button>
+                            <button
+                                onClick={() => setActiveTab('ip-address')}
+                                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    activeTab === 'ip-address'
+                                        ? 'bg-primary/10 text-primary'
+                                        : 'text-gray-600 hover:bg-gray-50'
+                                }`}
+                            >
+                                IP address
+                            </button>
                         </div>
 
-                        {(activeTab === 'overview' || activeTab === 'pages' || activeTab === 'users') && (
+                        {(activeTab === 'overview' || activeTab === 'pages' || activeTab === 'users' || activeTab === 'ip-address') && (
                             <div className="flex space-x-2">
                                 {['today', 'yesterday', '7d', '30d', '90d', '1y'].map((p) => (
                                     <button
@@ -179,6 +205,15 @@ const AnalyticsDashboard = () => {
                                 setSelectedCompany={setSelectedCompany}
                                 selectedUser={selectedUser}
                                 setSelectedUser={setSelectedUser}
+                            />
+                        )}
+                        {activeTab === 'ip-address' && (
+                            <IPAddressAnalyticsTab
+                                ipData={ipAddressOverviewData}
+                                ipLoading={ipAddressOverviewLoading}
+                                refetchIPData={refetchIpAddressOverview}
+                                selectedIP={selectedIp}
+                                setSelectedIP={setSelectedIp}
                             />
                         )}
                     </div>
