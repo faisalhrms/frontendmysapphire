@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Users, Activity, Eye, Clock, FileText, Target, UserPlus, UserCheck, LogIn, LogOut, RefreshCw, XCircle } from 'lucide-react';
-import StatCard from './StatCard';
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import EmptyState from "@components/EmptyState.jsx";
+import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
 
 const UserOverviewTab = ({ userOverviewData, userOverviewLoading, refetchUserOverview, selectedCompany, setSelectedCompany, selectedUser, setSelectedUser }) => {
     if (userOverviewLoading) return <LoadingSpinner />;
