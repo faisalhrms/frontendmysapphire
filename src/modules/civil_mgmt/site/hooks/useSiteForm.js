@@ -9,9 +9,15 @@ import {dateSchema} from "@helpers/schema.js";
 
 const formSchema = z.object({
     name: z.string().min(1, "Site name is required"),
-    address: z.string().optional(),
-    latitude: z.union([z.number(), z.string()]).optional(),
-    longitude: z.union([z.number(), z.string()]).optional(),
+    address: z.string().min(1, "Address is required"),
+    latitude: z.union([z.number(), z.string()]).refine(
+        (val) => val !== "" && val !== null && val !== undefined,
+        { message: "Latitude is required" }
+    ),
+    longitude: z.union([z.number(), z.string()]).refine(
+        (val) => val !== "" && val !== null && val !== undefined,
+        { message: "Longitude is required" }
+    ),
     ended_at: dateSchema('ended_at', true),
 });
 

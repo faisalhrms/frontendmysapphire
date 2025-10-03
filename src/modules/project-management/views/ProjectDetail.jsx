@@ -13,6 +13,9 @@ import ProjectActivityLog from "@modules/project-management/components/project/P
 import ProjectOverviewTab from "@modules/project-management/components/project/ProjectOverviewTab.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { FolderKanban } from "lucide-react";
+import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import ProjectSiteDetail from "@modules/project-management/components/project/ProjectSiteDetail.jsx";
+import ProjectDrawingAttachment from "@modules/project-management/components/project/ProjectDrawingAttachment.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -92,15 +95,23 @@ const ProjectDetail = () => {
                                 <ProjectAdditionalDetail project={projectData}/>
                               </div>
                               <div className="rounded-lg">
+                                <ProjectSiteDetail site={projectData.site}/>
+                              </div>
+
+                              <div className="rounded-lg">
                                 <ProjectTeam users={projectData.users}/>
                               </div>
-                                  <div className="rounded-lg">
-                                    <ProjectAttachment
-                                        attachments={projectData.attachments}
-                                        Id={projectData.id}
-                                        projectUsers={projectData.users}
-                                    />
-                                  </div>
+                              <div className="rounded-lg">
+                                <ProjectAttachment
+                                    attachments={projectData.attachments}
+                                    Id={projectData.id}
+                                    projectUsers={projectData.users}
+                                />
+                              </div>
+                              <div className="rounded-lg">
+                                <ProjectDrawingAttachment drawings={projectData.project_drawings} />
+
+                              </div>
                             </div>
                           </div>
                       ),
