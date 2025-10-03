@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store from '@redux/store.jsx';
-
+import {logout} from "@modules/auth/redux/authSlice.js";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -34,6 +34,7 @@ api.interceptors.response.use(
         const code = response.status;
 
         if (code === 401) {
+            store.dispatch(logout());
             window.location.href = '/';
             return Promise.reject(new Error('Unauthorized. Redirecting to login.'));
         }
