@@ -133,8 +133,8 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
                                                 <th
                                                     key={headerKey}
                                                     {...columnProps}
-                                                    className={`text-start align-middle px-4 py-2 border-b ${
-                                                        columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
+                                                    className={`text-start align-middle px-4 py-2 border-b dark:text-gray-200 dark:bg-bodybg ${
+                                                        columnIndex === 0 ? "sticky left-0 bg-white z-10 dark:text-gray-200 dark:bg-bodybg  " : ""
                                                     }`}
                                                 >
                                                     {column.render('Header')}
@@ -158,7 +158,7 @@ const EquipmentSiteWiseReportTable = ({ apiUrl, title = 'Equipment Site Wise Rep
                                                     key={cellKey}
                                                     {...cellProps}
                                                     className={`px-4 py-2 border-b ${
-                                                        columnIndex === 0 ? "sticky left-0 bg-white z-10" : ""
+                                                        columnIndex === 0 ? "sticky left-0 bg-white z-10 dark:text-gray-200 dark:bg-bodybg " : ""
                                                     }`}
                                                 >
                                                     {cell.render('Cell')}
