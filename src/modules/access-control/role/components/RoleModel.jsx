@@ -50,10 +50,10 @@ const RoleModal = ({ isOpen, onClose, role }) => {
   return (
     <div className="hs-overlay fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm z-50" 
          onClick={(e) => e.target.classList.contains('hs-overlay') && e.stopPropagation()}>
-      <div className="ti-modal-content bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative">
+      <div className="ti-modal-content bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative dark:text-gray-200 dark:bg-bodybg">
         <form onSubmit={handleRoleSubmit}>
           <div className="mt-4 border-b border-gray-200 pb-4">
-            <label htmlFor="input-role" className="block text-sm font-medium text-gray-700">Role</label>
+            <label htmlFor="input-role" className="block text-sm font-medium text-gray-700 dark:text-gray-200 dark:bg-bodybg">Role</label>
             <input
               type="text"
               className="form-control block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"

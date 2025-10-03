@@ -711,8 +711,8 @@ export const Reset = (dispatch) => {
         dataMenuPosition: "fixed",
         dataHeaderPosition: "fixed",
         iconOverlay: "",
-        colorPrimaryRgb: "26, 26, 26",
-        colorPrimary: "26 26 26",
+        colorPrimaryRgb: "224, 216, 49",
+        colorPrimary: "224, 216, 49",
         bodyBg: "",
         Light: "",
         darkBg: "",
@@ -749,6 +749,11 @@ export const Reset = (dispatch) => {
     localStorage.removeItem("bgimage3");
     localStorage.removeItem("bgimage4");
     localStorage.removeItem("bgimage5");
+    localStorage.removeItem("bodyBgRGB");
+    localStorage.removeItem("darkBgRGB");
+    localStorage.removeItem("Light");
+    localStorage.removeItem("inputBorder");
+    localStorage.removeItem("dynamiccolor");
 
 
     const icon = document.getElementById("switcher-default-menu");

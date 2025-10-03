@@ -46,10 +46,11 @@ const DataSanitizationList = () => {
     } = useFilters(
         useMemo(
             () => ({
-                initialFilters: [
-                    {name: "from_month"},
-                    {name: "to_month"},
-                ],
+              initialFilters: [
+                { name: "product_country" },
+                { name: "data_category" },
+                { name: "months", defaultValue: [] },
+              ],
             }),
             []
         )
@@ -126,12 +127,19 @@ const DataSanitizationList = () => {
             setBulkProcessing(false);
         }
     };
+
+    const normalizeExportFilters = useCallback(() => ({
+    product_country: filters?.product_country?.value ?? filters?.product_country ?? null,
+    data_category: filters?.data_category?.value ?? filters?.data_category ?? null,
+    months: (filters?.months || []).map(m => m?.value ?? m).filter(Boolean),
+  }), [filters]);
+
     const downloadBulkCleanData = async () => {
         const fileIds = selectedRows.length > 0 ? selectedRows.map((row) => row.id) : [];
         const key = "downloadBulkClean";
         setLoadingActions((prev) => ({...prev, [key]: true}));
         try {
-            await DataSanitizeService.downloadBulkCleanFile(fileIds);
+            await DataSanitizeService.downloadBulkCleanFile(fileIds, normalizeExportFilters());
         } catch (err) {
             console.error(err);
         } finally {
