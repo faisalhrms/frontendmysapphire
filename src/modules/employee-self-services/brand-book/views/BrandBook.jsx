@@ -61,44 +61,6 @@ export default function BrandBook() {
                         </button>
                     </div>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-                    <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-indigo to-info rounded-xl">
-                                <BookOpen className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                                <div className="text-3xl font-bold text-slate-900 dark:text-white">{slideImages.length}</div>
-                                <div className="text-sm text-slate-600 dark:text-slate-400">Total Pages</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-purple to-pink rounded-xl">
-                                <Palette className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                                <div className="text-3xl font-bold text-slate-900 dark:text-white">2025</div>
-                                <div className="text-sm text-slate-600 dark:text-slate-400">Latest Version</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl">
-                                <Eye className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                                <div className="text-3xl font-bold text-slate-900 dark:text-white">HD</div>
-                                <div className="text-sm text-slate-600 dark:text-slate-400">High Quality</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">

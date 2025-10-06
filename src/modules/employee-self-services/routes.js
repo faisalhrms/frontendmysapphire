@@ -65,7 +65,7 @@ export const SELF_SERVICES_ROUTES = {
         ,
         BRAND_BOOK:{
             path: "/module/ess/brand-book",
-            permission:"auth.view_brandbook"
+            permission:"user.view_ess_modules"
 
         }
 

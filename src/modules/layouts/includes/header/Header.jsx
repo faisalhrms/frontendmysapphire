@@ -1,14 +1,12 @@
 import { Fragment } from 'react';
-import {Link} from "react-router-dom";
 import HeaderLogo from "./components/HeaderLogo.jsx";
 import SidebarToggle from "./components/SidebarToggle.jsx";
 import ThemeModeToggle from "./components/ThemeModeToggle.jsx";
 import FullScreenToggle from "./components/FullScreenToggle.jsx";
 import ProfileMenu from "./components/ProfileMenu.jsx";
 import ThemeSwitcher from "./components/ThemeSwitcher.jsx";
-import HeaderNotifications from "./components/HeaderNotifications.jsx";
 import { SELF_SERVICES_ROUTES } from "@modules/employee-self-services/routes.js";
-import BrandBookLink from "@modules/layouts/includes/header/components/BrandBookLink.jsx"; // adjust import
+import BrandBookLink from "@modules/layouts/includes/header/components/BrandBookLink.jsx";
 
 const Header = () => {
     return (
@@ -24,7 +22,7 @@ const Header = () => {
                                 <ThemeModeToggle/>
                                 <BrandBookLink
                                     to={SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.path}
-                                    title="BrandBook"
+                                    title="View Brand Book"
                                 />
                                 <FullScreenToggle/>
                                 <ProfileMenu/>
