@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const BrandBookLink = ({ to, title = "BrandBook" }) => {
+const BrandBookLink = ({ to, title = "View Brand Book" }) => {
     return (
         <div className="header-element header-brandbook py-[1rem] md:px-[0.65rem] px-2">
             <Link
