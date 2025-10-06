@@ -4,6 +4,7 @@ import "@assets/css/custom/attachment-card.css";
 import { formatDate } from "@helpers/dateTime.js";
 
 const ProjectDrawingAttachment = ({ drawings = [] }) => {
+    if (!drawings) return null;
     return (
         <div className="box">
             {/* Header */}
