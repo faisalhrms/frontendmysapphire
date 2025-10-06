@@ -11,7 +11,7 @@ const ProjectDrawingAttachment = ({ drawings = [] }) => {
                 <div className="box-title">
                     Project Drawings{" "}
                     <span className="badge bg-primary/10 !rounded-full text-primary ms-1">
-                        {drawings.length}
+                        {drawings?.length}
                     </span>
                 </div>
             </div>
