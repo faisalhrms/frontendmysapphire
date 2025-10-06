@@ -44,6 +44,7 @@ const SiteForm = ({ editMode = false, siteId = null }) => {
                                             control={control}
                                             errors={errors}
                                             placeholder="Latitude"
+                                            is_required={true}
                                         />
                                     </div>
                                     <div className="xl:col-span-6 col-span-12">
@@ -52,6 +53,7 @@ const SiteForm = ({ editMode = false, siteId = null }) => {
                                             control={control}
                                             errors={errors}
                                             placeholder="Longitude"
+                                            is_required={true}
                                         />
                                     </div>
                                     <div className="col-span-12">
@@ -61,6 +63,7 @@ const SiteForm = ({ editMode = false, siteId = null }) => {
                                             errors={errors}
                                             placeholder="Address"
                                             rows={3}
+                                            is_required={true}
                                         />
                                     </div>
                                     <div className="col-span-12">

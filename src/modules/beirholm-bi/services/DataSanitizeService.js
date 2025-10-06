@@ -141,23 +141,25 @@ const deleteFile = async (fileId) => {
     }
 };
 
-const downloadBulkCleanFile = async (fileIds = []) => {
-    const {data, headers} = await api.post(
-        "/correction/file/clean/download/bulk/",
-        {file_ids: fileIds},
-        {responseType: "blob"}
-    );
-    const cd = headers["content-disposition"] || "";
-    const m = cd.match(/filename\*=UTF-8''([^;]+)|filename[^=]*=\s*"?([^";]+)"?/i);
-    const name = m ? decodeURIComponent(m[1] || m[2]) : fileIds.length ? "bulk_clean_data.zip" : "all_clean_data.csv";
-    const url = URL.createObjectURL(data);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+const downloadBulkCleanFile = async (fileIds = [], exportFilters = {}) => {
+  const payload = {
+    file_ids: fileIds,
+    months: exportFilters.months || [],
+    product_country: exportFilters.product_country || null,
+    data_category: exportFilters.data_category || null,
+  };
+  const { data, headers } = await api.post("/correction/file/clean/download/bulk/", payload, { responseType: "blob" });
+  const cd = headers["content-disposition"] || "";
+  const m = cd.match(/filename\*=UTF-8''([^;]+)|filename[^=]*=\s*"?([^";]+)"?/i);
+  const name = m ? decodeURIComponent(m[1] || m[2]) : fileIds.length ? "bulk_clean_data.zip" : "all_clean_data.csv";
+  const url = URL.createObjectURL(data);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 };
 
 
