@@ -13,7 +13,6 @@ import ProjectActivityLog from "@modules/project-management/components/project/P
 import ProjectOverviewTab from "@modules/project-management/components/project/ProjectOverviewTab.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { FolderKanban } from "lucide-react";
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import ProjectSiteDetail from "@modules/project-management/components/project/ProjectSiteDetail.jsx";
 import ProjectDrawingAttachment from "@modules/project-management/components/project/ProjectDrawingAttachment.jsx";
 
