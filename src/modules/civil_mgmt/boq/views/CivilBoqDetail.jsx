@@ -84,15 +84,15 @@ const CivilBoqDetail = () => {
     );
 
     const StatCard = ({ icon, label, value, sublabel }) => (
-        <div className="bg-white border border-gray-200 rounded-lg p-5 hover:border-primary/20 hover:shadow-sm transition-all duration-200">
+        <div className="bg-white border border-gray-200 rounded-lg p-5 hover:border-primary/20 hover:shadow-sm transition-all duration-200 dark:text-gray-200 dark:bg-bodybg">
             <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center border border-gray-200 justify-center dark:text-gray-200 dark:bg-bodybg">
                     {icon}
                 </div>
-                <div className="text-sm font-medium text-gray-600">{label}</div>
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-200 dark:bg-bodybg">{label}</div>
             </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
-            {sublabel && <div className="text-xs text-gray-500">{sublabel}</div>}
+            <div className="text-2xl font-bold text-gray-900 mb-1 dark:text-gray-200 dark:bg-bodybg">{value}</div>
+            {sublabel && <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">{sublabel}</div>}
         </div>
     );
 
@@ -105,11 +105,11 @@ const CivilBoqDetail = () => {
             </td>
             <td className="px-4 py-4">
                 <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-mono rounded border">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-gray-100 text-gray-700 border border-gray-200 text-xs font-mono rounded  dark:text-gray-200 dark:bg-bodybg">
                         <Hash size={10} />
                         {item.item_no}
                     </div>
-                    <div className="font-medium text-sm text-gray-900">{item.name}</div>
+                    <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">{item.name}</div>
                 </div>
             </td>
             <td className="px-4 py-4 text-center">
@@ -117,13 +117,13 @@ const CivilBoqDetail = () => {
                     {item.unit}
                 </span>
             </td>
-            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900">
+            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                 {item.quantity.toLocaleString()}
             </td>
-            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900">
+            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                 {formatAmountWithCommas(item.rate)}
             </td>
-            <td className="px-4 py-4 text-right text-sm font-semibold text-gray-900">
+            <td className="px-4 py-4 text-right text-sm font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                 {formatAmountWithCommas(item.amount)}
             </td>
         </tr>
@@ -134,14 +134,14 @@ const CivilBoqDetail = () => {
         const fileSizeKB = (attachment.file_size / 1024).toFixed(1);
 
         return (
-            <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-primary/20 hover:bg-gray-50/50 transition-all duration-200 group">
+            <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-primary/20 hover:bg-gray-50/50 transition-all duration-200 group dark:text-gray-200 dark:bg-bodybg">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     isImage ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600'
                 }`}>
                     <FileText size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm text-gray-900 truncate">
+                    <div className="font-medium text-sm text-gray-900 truncate ">
                         {attachment.file_name}.{attachment.file_extension}
                     </div>
                     <div className="text-xs text-gray-500">
@@ -235,12 +235,12 @@ const CivilBoqDetail = () => {
                                                 <Grid3X3 size={16}/>
                                             </div>
                                             <div>
-                                                <h3 className="font-semibold text-gray-900">BOQ Items</h3>
-                                                <p className="text-sm text-gray-600">Construction items breakdown</p>
+                                                <h3 className="font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">BOQ Items</h3>
+                                                <p className="text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">Construction items breakdown</p>
                                             </div>
                                         </div>
                                         <div
-                                            className="px-3 py-1 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700">
+                                            className="px-3 py-1 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 dark:bg-bodybg">
                                             {boqData.items?.length || 0} items
                                         </div>
                                     </div>
@@ -250,29 +250,29 @@ const CivilBoqDetail = () => {
                                 <>
                                     <div className="overflow-x-auto">
                                         <table className="w-full">
-                                            <thead className="bg-gray-50 border-b border-gray-200">
+                                            <thead className="bg-gray-50 border-b border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                             <tr>
-                                                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg ">
                                                     #
                                                 </th>
-                                                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                                     Item Details
                                                 </th>
-                                                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                                     Unit
                                                 </th>
-                                                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                                     Quantity
                                                 </th>
-                                                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                                     Rate
                                                 </th>
-                                                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                                                     Amount
                                                 </th>
                                             </tr>
                                             </thead>
-                                            <tbody className="bg-white divide-y divide-gray-100">
+                                            <tbody className="bg-white divide-y divide-gray-100 dark:text-gray-200 dark:bg-bodybg">
                                             {boqData.items.map((item, index) => (
                                                 <ItemRow key={item.id} item={item} index={index} currency={boqData.currency} />
                                             ))}
@@ -281,18 +281,18 @@ const CivilBoqDetail = () => {
                                     </div>
 
                                     {/* Grand Total */}
-                                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                         <div className="flex justify-end">
                                             <div
-                                                className="flex items-center gap-4 px-4 py-3 bg-white border border-gray-200 rounded-lg">
+                                                className="flex items-center gap-4 px-4 py-3 bg-white border border-gray-200 rounded-l dark:text-gray-200 dark:bg-bodybg">
                                                 <div className="flex items-center gap-2">
                                                     <div
-                                                        className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                                                        className="w-8 h-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                                         <Calculator size={16}/>
                                                     </div>
                                                     <div>
-                                                        <div className="font-semibold text-gray-900">Grand Total</div>
-                                                        <div className="text-xs text-gray-500">Final amount</div>
+                                                        <div className="font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Grand Total</div>
+                                                        <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">Final amount</div>
                                                     </div>
                                                 </div>
                                                 <div className="text-xl font-bold text-primary">
@@ -319,13 +319,13 @@ const CivilBoqDetail = () => {
                     <div className="col-span-12 lg:col-span-4 space-y-6 sticky top-0 self-start">
                         {boqData.site && (
                             <div className="box">
-                                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between">
+                                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between dark:text-gray-200 dark:bg-bodybg">
                                     <h6>Site Information</h6>
                                 </div>
                                 <div className="p-4 space-y-4">
                                     <div>
-                                        <div className="font-medium text-sm text-gray-900">{boqData.site.name}</div>
-                                        <div className="text-xs text-gray-500">{boqData.site.address}</div>
+                                        <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">{boqData.site.name}</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">{boqData.site.address}</div>
                                     </div>
 
                                     {/* Map */}
@@ -355,7 +355,7 @@ const CivilBoqDetail = () => {
                         )}
 
                         <div className="box">
-                            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between">
+                            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between dark:text-gray-200 dark:bg-bodybg">
                                 <h6>Project Information</h6>
                             </div>
                             <div className="p-4 space-y-4">
@@ -365,10 +365,10 @@ const CivilBoqDetail = () => {
                                         <Building2 size={16}/>
                                     </div>
                                     <div>
-                                        <div className="font-medium text-sm text-gray-900">
+                                        <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                             {boqData.project?.name || 'No Project'}
                                         </div>
-                                        <div className="text-xs text-gray-500">Project Name</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">Project Name</div>
                                     </div>
                                 </div>
 
@@ -379,8 +379,8 @@ const CivilBoqDetail = () => {
                                     </div>
                                     <div>
                                         <div
-                                            className="font-medium text-sm text-gray-900">Version {boqData.version}</div>
-                                        <div className="text-xs text-gray-500">BOQ Version</div>
+                                            className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">Version {boqData.version}</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">BOQ Version</div>
                                     </div>
                                 </div>
 
@@ -396,10 +396,10 @@ const CivilBoqDetail = () => {
                                         }
                                     </div>
                                     <div>
-                                        <div className="font-medium text-sm text-gray-900">
+                                        <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                             {boqData.is_finalized ? 'Finalized' : 'Draft'}
                                         </div>
-                                        <div className="text-xs text-gray-500">Status</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">Status</div>
                                     </div>
                                 </div>
                             </div>
@@ -407,9 +407,9 @@ const CivilBoqDetail = () => {
 
                         {boqData.attachments && boqData.attachments.length > 0 && (
                             <div className="box">
-                                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Paperclip size={16} className="text-gray-600"/>
+                                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between dark:text-gray-200 dark:bg-bodybg">
+                                    <div className="flex items-center gap-2 dark:text-gray-200 dark:bg-bodybg">
+                                        <Paperclip size={16} className="text-gray-600 dark:text-gray-200 dark:bg-bodybg"/>
                                         <h6>Attachments</h6>
                                         <div
                                             className="px-2 py-0.5 bg-white border border-gray-200 rounded text-xs font-medium text-gray-700">
