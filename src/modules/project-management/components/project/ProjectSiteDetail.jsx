@@ -6,7 +6,7 @@ const ProjectSiteDetail = ({ site }) => {
     return (
         <div className="box">
             {/* Header */}
-            <div className="box-header justify-between">
+            <div className="box-header justify-between ">
                 <div className="box-title">Site Information</div>
             </div>
 

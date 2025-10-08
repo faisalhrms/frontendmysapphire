@@ -17,7 +17,7 @@ const BoqSiteCard = ({site = null}) => {
     return (
         site && (
             <div className="box">
-                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between">
+                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center gap-2">
                         <MapPin size={16} className="text-gray-600"/>
                         <h6>Site Information</h6>

@@ -217,13 +217,13 @@ const ItemRow = React.memo(({
     return (
         <tr className="border-b border-gray-50 hover:bg-primary/5 transition-colors group">
             <td className="px-6 py-4">
-                <div className="w-8 h-8 bg-primary/10 text-primary text-sm font-medium rounded flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary/10 text-primary text-sm font-medium rounded flex items-center justify-center  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                     {index + 1}
                 </div>
             </td>
             <td className="px-6 py-4">
                 <div className="space-y-1">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-mono rounded-lg border">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-mono rounded-lg border  border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                         <Hash size={12} />
                         {item.item_no}
                     </div>
@@ -246,11 +246,11 @@ const ItemRow = React.memo(({
                 </div>
             </td>
             <td className="px-6 py-4 text-center">
-                <span className="inline-flex px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg border border-blue-200 whitespace-nowrap">
+                <span className="inline-flex px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg border border-blue-200 whitespace-nowrap  border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                     {item.unit}
                 </span>
             </td>
-            <td className="px-6 py-4 text-right font-semibold text-gray-900">
+            <td className="px-6 py-4 text-right font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
             {item.quantity.toLocaleString()}
             </td>
             <td className="px-6 py-4">
@@ -261,7 +261,7 @@ const ItemRow = React.memo(({
                         </div>
                     )}
                     <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-600 whitespace-nowrap">
+                        <span className="text-xs text-gray-600 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg">
                             Your Rate:
                         </span>
                         {canEdit ? (
@@ -270,7 +270,7 @@ const ItemRow = React.memo(({
                                 value={vendorRate}
                                 onChange={handleInputChange}
                                 placeholder="Enter rate"
-                                className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+                                className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-colors dark:text-gray-200 dark:bg-bodybg ${
                                     hasError
                                         ? "!border-red-500"
                                         : "border-gray-300 hover:border-gray-400 bg-white"
@@ -312,17 +312,17 @@ const FileItem = React.memo(({ fileId, onView, type, index }) => {
     return (
         <div
             onClick={() => onView(fileId)}
-            className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all duration-150 cursor-pointer group"
+            className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all duration-150 cursor-pointer group  dark:text-gray-200 dark:bg-bodybg"
         >
-            <div className="w-8 h-8 bg-gray-100 rounded-md flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+            <div className="w-8 h-8 bg-gray-100 rounded-md flex items-center justify-center  transition-colors border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                 {getFileIcon(type)}
             </div>
             <div className="flex-1 min-w-0">
-                <span className="text-sm font-medium text-gray-900 truncate">
+                <span className="text-sm font-medium text-gray-900 truncate dark:text-gray-200 dark:bg-bodybg">
                     {type} {index + 1}
                 </span>
             </div>
-            <Eye size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Eye size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity border border-gray-200  dark:text-gray-200 dark:bg-bodybg" />
         </div>
     );
 });
@@ -592,37 +592,37 @@ const CivilVendorTenderDetail = () => {
     const FilesSection = React.memo(({ title, fileIds, icon, emptyMessage, type }) => {
         if (!fileIds || fileIds.length === 0) {
             return (
-                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                     <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center gap-4">
                         <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                             {icon}
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-                            <p className="text-gray-600">Project {type.toLowerCase()}</p>
+                            <h3 className="text-xl font-bold ">{title}</h3>
+                            <p className=" ">Project {type.toLowerCase()}</p>
                         </div>
                     </div>
                     <div className="p-16 text-center">
-                        <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-6">
+                        <div className="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-6 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                             {icon}
                         </div>
-                        <h4 className="text-xl font-bold text-gray-900 mb-2">No {title} Available</h4>
-                        <p className="text-gray-600">{emptyMessage}</p>
+                        <h4 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-200 dark:bg-bodybg">No {title} Available</h4>
+                        <p className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">{emptyMessage}</p>
                     </div>
                 </div>
             );
         }
 
         return (
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                 <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                             {icon}
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-                            <p className="text-gray-600">{fileIds.length} {type.toLowerCase()}{fileIds.length !== 1 ? 's' : ''} available</p>
+                            <h3 className="text-xl font-bold ">{title}</h3>
+                            <p className="">{fileIds.length} {type.toLowerCase()}{fileIds.length !== 1 ? 's' : ''} available</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg border border-blue-200">
@@ -653,7 +653,7 @@ const CivilVendorTenderDetail = () => {
         if (!hasSubmitted) return null;
 
         return (
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                 <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center gap-4">
                     <div className="w-12 h-12 bg-success/10 text-success rounded-xl flex items-center justify-center">
                         <CheckCircle size={20} />
@@ -792,7 +792,7 @@ const CivilVendorTenderDetail = () => {
 
                 <div className="grid grid-cols-12 gap-8">
                     <div className="col-span-12 space-y-8">
-                        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                             <div
                                 className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
@@ -801,9 +801,9 @@ const CivilVendorTenderDetail = () => {
                                         <Grid3X3 size={20}/>
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-900">BOQ Items - Enter Your
+                                        <h3 className="text-xl font-bold ">BOQ Items - Enter Your
                                             Rates</h3>
-                                        <p className="text-gray-600">Enter your competitive rates for each construction
+                                        <p className="">Enter your competitive rates for each construction
                                             item</p>
                                     </div>
                                 </div>
@@ -819,7 +819,7 @@ const CivilVendorTenderDetail = () => {
                                         </button>
                                     ) : (
                                         <div
-                                            className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 rounded-lg border">
+                                            className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 rounded-lg border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                             {isExpired ? <AlertTriangle size={18}/> :
                                                 !allRatesFilled ? <AlertTriangle size={18}/> :
                                                     <CheckCircle size={18}/>}
@@ -837,19 +837,19 @@ const CivilVendorTenderDetail = () => {
                                 <>
                                     <div className="overflow-x-auto">
                                         <table className="w-full">
-                                            <thead className="bg-gray-50 border-b border-gray-200">
+                                            <thead className="bg-gray-50 border-b border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                             <tr>
-                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">#</th>
-                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Item
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">#</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Item
                                                     Details
                                                 </th>
-                                                <th className="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">Unit</th>
-                                                <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider">Quantity</th>
-                                                <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider">Rate</th>
-                                                <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider">Amount</th>
+                                                <th className="px-6 py-4 text-center text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Unit</th>
+                                                <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Quantity</th>
+                                                <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Rate</th>
+                                                <th className="px-6 py-4 text-right text-sm font-bold text-gray-700 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Amount</th>
                                             </tr>
                                             </thead>
-                                            <tbody className="bg-white">
+                                            <tbody className="bg-white dark:text-gray-200 dark:bg-bodybg">
                                             {tableRows}
                                             </tbody>
                                         </table>
@@ -859,16 +859,16 @@ const CivilVendorTenderDetail = () => {
                                         className="px-8 py-6 border-t border-gray-200">
                                         <div className="flex justify-end">
                                             <div
-                                                className="flex items-center gap-6 px-6 py-4 bg-white border-2 border-blue-300 rounded-xl shadow-lg">
+                                                className="flex items-center gap-6 px-6 py-4 bg-white border-2 border-blue-300 rounded-xl shadow-lg dark:text-gray-200 dark:bg-bodybg">
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                                                        className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center border border-gray-200 dark:text-gray-200 dark:bg-bodybg" >
                                                         <Target size={20}/>
                                                     </div>
                                                     <div>
-                                                        <div className="text-lg font-bold text-blue-900">Your Total
+                                                        <div className="text-lg font-bold text-blue-900 dark:text-gray-200 dark:bg-bodybg">Your Total
                                                         </div>
-                                                        <div className="text-sm text-blue-600">Your proposal</div>
+                                                        <div className="text-sm text-blue-600 dark:text-gray-200 dark:bg-bodybg">Your proposal</div>
                                                     </div>
                                                 </div>
                                                 <div className="text-2xl font-bold text-blue-600">
@@ -900,7 +900,7 @@ const CivilVendorTenderDetail = () => {
                         <div className="p-6 border-b border-gray-200">
                             <div className="flex items-center gap-3 mb-2">
                                 <div
-                                    className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                                    className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center ">
                                     <Send size={20}/>
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900">Submit Tender</h3>

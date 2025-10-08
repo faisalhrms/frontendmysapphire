@@ -319,9 +319,9 @@ const CivilTenderComparisonDetail = () => {
     };
 
     const StatCard = ({ icon, label, value, sublabel, trend }) => (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm dark:text-gray-200 dark:bg-bodybg">
             <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center ">
                     {icon}
                 </div>
                 {trend && (
@@ -334,9 +334,9 @@ const CivilTenderComparisonDetail = () => {
                 )}
             </div>
             <div className="space-y-1">
-                <div className="text-2xl font-bold text-gray-900">{value}</div>
-                <div className="text-sm text-gray-600">{label}</div>
-                {sublabel && <div className="text-xs text-gray-500">{sublabel}</div>}
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg">{value}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">{label}</div>
+                {sublabel && <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">{sublabel}</div>}
             </div>
         </div>
     );
@@ -347,12 +347,12 @@ const CivilTenderComparisonDetail = () => {
         const isLowest = hasSubmission && stats.hasSubmissions && submission.total_amount === stats.lowestAmount;
 
         return (
-            <div className={`border rounded-xl shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md ${
+            <div className={`border rounded-xl shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md dark:text-gray-200 dark:bg-bodybg ${
                 isLowest ? 'border-success bg-success/10' : 'border-gray-200 bg-white'
             }`}>
                 <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 dark:text-gray-200 dark:bg-bodybg">
                             <div className="relative">
                                 {submission.vendor.avatar?.small_url ? (
                                     <img
@@ -371,11 +371,11 @@ const CivilTenderComparisonDetail = () => {
                             </div>
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                    <h3 className="font-bold text-gray-900">{submission.vendor.full_name}</h3>
+                                    <h3 className="font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg">{submission.vendor.full_name}</h3>
                                 </div>
                                 <div className="flex items-center gap-4 text-sm text-gray-600">
                                     <div className="flex items-center gap-1">
-                                        <Award size={14} className="text-primary" />
+                                        <Award size={14} className="text-primary dark:text-gray-200 dark:bg-bodybg" />
                                         <span>{submission.awarded_tenders} awarded</span>
                                     </div>
                                     {submission.vendor.phone && (
@@ -392,17 +392,17 @@ const CivilTenderComparisonDetail = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(submission.status)}`}>
+                        <div className={`px-3 py-1 rounded-full text-xs font-medium border  border-gray-200 dark:text-gray-200 dark:bg-bodybg ${getStatusColor(submission.status)}`}>
                             {submission.status.replace('_', ' ').toUpperCase()}
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="space-y-1">
-                            <div className="text-sm text-gray-600">Bid Amount</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">Bid Amount</div>
                             {hasSubmission ? (
                                 <>
-                                    <div className="text-2xl font-bold text-gray-900">
+                                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg ">
                                         {formatAmount(submission.total_amount)}
                                     </div>
                                     <div className={`text-sm font-medium ${
@@ -412,24 +412,24 @@ const CivilTenderComparisonDetail = () => {
                                     </div>
                                 </>
                             ) : (
-                                <div className="text-gray-500">
+                                <div className="text-gray-500 dark:text-gray-200 dark:bg-bodybg">
                                     Not submitted yet
                                 </div>
                             )}
                         </div>
 
                         <div className="space-y-1">
-                            <div className="text-sm text-gray-600">Submitted</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">Submitted</div>
                             {submission.submitted_at ? (
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                     {formatDate(submission.submitted_at, "dd, MMM yyyy - HH:mm")}
                                 </div>
                             ) : (
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-gray-500 dark:text-gray-200 dark:bg-bodybg">
                                     Pending submission
                                 </div>
                             )}
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">
                                 <Mail size={12} />
                                 <span>{submission.vendor.email}</span>
                             </div>
@@ -438,8 +438,8 @@ const CivilTenderComparisonDetail = () => {
 
                     {submission.notes && (
                         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                            <div className="text-xs text-gray-600 mb-1">Vendor Notes</div>
-                            <div className="text-sm text-gray-800">{submission.notes}</div>
+                            <div className="text-xs text-gray-600 mb-1 dark:text-gray-200 dark:bg-bodybg">Vendor Notes</div>
+                            <div className="text-sm text-gray-800 dark:text-gray-200 dark:bg-bodybg">{submission.notes}</div>
                         </div>
                     )}
 
@@ -484,13 +484,13 @@ const CivilTenderComparisonDetail = () => {
                         )}
 
                         {submission.status === "invited" && (
-                            <div className="flex-1 px-4 py-2 bg-gray-100 text-gray-500 rounded-lg text-sm text-center">
+                            <div className="flex-1 px-4 py-2 bg-gray-100 text-gray-500 rounded-lg text-sm text-center  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 Awaiting vendor response
                             </div>
                         )}
 
                         {submission.status === "awarded" && (
-                            <div className="flex-1 px-4 py-2 bg-success-gradient rounded-lg text-sm text-center font-medium">
+                            <div className="flex-1 px-4 py-2 bg-success-gradient rounded-lg text-sm text-center font-medium border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <Award size={16} className="inline mr-2" />
                                 Contract Awarded
                             </div>
@@ -502,9 +502,9 @@ const CivilTenderComparisonDetail = () => {
     };
 
     const FilterPanel = () => (
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-6">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-6 dark:text-gray-200 dark:bg-bodybg">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Filters</h3>
                 <div className="flex items-center gap-3">
                         <span className="text-sm text-gray-500">
                             {getActiveFiltersCount()} filter{getActiveFiltersCount() !== 1 ? 's' : ''} active
@@ -520,11 +520,11 @@ const CivilTenderComparisonDetail = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200 dark:bg-bodybg">Status</label>
                     <select
                         value={filters.status}
                         onChange={(e) => handleFilterChange('status', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary dark:text-gray-200 dark:bg-bodybg"
                     >
                         <option value="all">All Statuses</option>
                         <option value="invited">Invited</option>
@@ -536,11 +536,11 @@ const CivilTenderComparisonDetail = () => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Bid Amount Range</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200 dark:bg-bodybg">Bid Amount Range</label>
                     <select
                         value={filters.amountRange}
                         onChange={(e) => handleFilterChange('amountRange', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary dark:text-gray-200 dark:bg-bodybg"
                     >
                         <option value="all">All Amounts</option>
                         <option value="under_2500000">Under Rs. 2,500,000</option>
@@ -551,11 +551,11 @@ const CivilTenderComparisonDetail = () => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-200 dark:bg-bodybg">Experience Level</label>
                     <select
                         value={filters.awardedTenders}
                         onChange={(e) => handleFilterChange('awardedTenders', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-gray-200 dark:bg-bodybg"
                     >
                         <option value="all">All Experience Levels</option>
                         <option value="under_50">New Contractors (&lt; 50 tenders)</option>
@@ -576,15 +576,15 @@ const CivilTenderComparisonDetail = () => {
     );
 
     const ComparisonTable = () => (
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:text-gray-200 dark:bg-bodybg">
             <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-gray-900">Vendor Comparison</h3>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Vendor Comparison</h3>
                     <div className="flex items-center gap-3">
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary min-w-40"
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary min-w-40 dark:text-gray-200 dark:bg-bodybg"
                         >
                             <option value="total_amount">Sort by Amount</option>
                             <option value="vendor_name">Sort by Name</option>
@@ -603,36 +603,36 @@ const CivilTenderComparisonDetail = () => {
 
             <div className="overflow-x-auto">
                 <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-50 dark:text-gray-200 dark:bg-bodybg">
                     <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                             Vendor
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                             Bid Amount
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                             Variance
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                             Awards
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                             Status
                         </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">
                             Actions
                         </th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                     {sortedVendors.map((submission, index) => {
                         const hasSubmission = submission.total_amount !== null && submission.total_amount !== undefined;
                         const variance = hasSubmission ? getVariancePercentage(submission.total_amount, mockTenderData.boq.total_amount) : null;
                         const isLowest = hasSubmission && stats.hasSubmissions && submission.total_amount === stats.lowestAmount;
 
                         return (
-                            <tr key={submission.id} className={`hover:bg-gray-50 ${isLowest ? 'bg-success/10' : ''}`}>
+                            <tr key={submission.id} className={` ${isLowest ? 'bg-success/10' : ''}`}>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
                                         <div className="relative mr-4">
@@ -653,7 +653,7 @@ const CivilTenderComparisonDetail = () => {
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <div className="text-sm font-medium text-gray-900">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                                     {submission.vendor.full_name}
                                                 </div>
                                                 {isLowest && (
@@ -662,7 +662,7 @@ const CivilTenderComparisonDetail = () => {
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="text-sm text-gray-500 flex items-center gap-2">
+                                            <div className="text-sm text-gray-500 flex items-center gap-2 dark:text-gray-200 dark:bg-bodybg">
                                                 <Award size={12} className="text-primary" />
                                                 {submission.awarded_tenders} tenders awarded
                                             </div>
@@ -670,9 +670,9 @@ const CivilTenderComparisonDetail = () => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">
+                                    <div className="text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                         {hasSubmission ? formatAmount(submission.total_amount) :
-                                            <span className="text-gray-500 italic">Not submitted</span>
+                                            <span className="text-gray-500 italic dark:text-gray-200 dark:bg-bodybg">Not submitted</span>
                                         }
                                     </div>
                                 </td>
@@ -684,17 +684,17 @@ const CivilTenderComparisonDetail = () => {
                                             {variance > 0 ? '+' : ''}{variance}%
                                         </div>
                                     ) : (
-                                        <span className="text-gray-500 italic">N/A</span>
+                                        <span className="text-gray-500 italic dark:text-gray-200 dark:bg-bodybg">N/A</span>
                                     )}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center gap-1">
                                         <Award size={14} className="text-primary" />
-                                        <span className="text-sm text-gray-900">{submission.awarded_tenders}</span>
+                                        <span className="text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">{submission.awarded_tenders}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(submission.status)}`}>
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full border border-gray-200 dark:text-gray-200 dark:bg-bodybg ${getStatusColor(submission.status)}`}>
                                         {submission.status.replace('_', ' ').toUpperCase()}
                                     </span>
                                 </td>
@@ -724,10 +724,10 @@ const CivilTenderComparisonDetail = () => {
                                         </button>
                                     )}
                                     {submission.status === "invited" && (
-                                        <span className="text-gray-500 italic">Pending</span>
+                                        <span className="text-gray-500 italic dark:text-gray-200 dark:bg-bodybg">Pending</span>
                                     )}
                                     {submission.status === "awarded" && (
-                                        <span className="text-success font-medium">Awarded</span>
+                                        <span className="text-success font-medium dark:text-gray-200 dark:bg-bodybg">Awarded</span>
                                     )}
                                 </td>
                             </tr>
@@ -774,7 +774,7 @@ const CivilTenderComparisonDetail = () => {
                     </div>
                 </div>
             <div className="bg-white border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-6">
+                <div className="max-w-7xl mx-auto px-6 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex space-x-8">
                         {[
                             {id: "overview", label: "Overview", icon: BarChart3},
@@ -797,10 +797,10 @@ const CivilTenderComparisonDetail = () => {
                     </div>
                 </div>
             </div>
-            <div className="max-w-7xl mx-auto py-8">
+            <div className="max-w-7xl mx-auto py-8 ">
                 {activeTab === "overview" && (
                     <div className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 dark:text-gray-200 dark:bg-bodybg">
                             <StatCard
                                 icon={<Users size={24}/>}
                                 label="Total Vendors"
@@ -829,13 +829,13 @@ const CivilTenderComparisonDetail = () => {
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+                            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div
-                                        className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                                        className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center border border-gray-200 dark:text-gray-200 dark:bg-bodybg ">
                                         <BarChart3 size={20}/>
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-900">Bid Analysis</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Bid Analysis</h3>
                                 </div>
 
                                 <div className="space-y-4">
@@ -870,30 +870,30 @@ const CivilTenderComparisonDetail = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+                            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div
                                         className="w-10 h-10 bg-success/10 text-success rounded-lg flex items-center justify-center">
                                         <CheckCircle size={20}/>
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-900">Status Summary</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Status Summary</h3>
                                 </div>
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Invited:</span>
-                                        <span className="font-semibold text-gray-600">{stats.invitedCount}</span>
+                                        <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Invited:</span>
+                                        <span className="font-semibold text-gray-600 ">{stats.invitedCount}</span>
                                     </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Submitted:</span>
+                                    <div className="flex justify-between items-center ">
+                                        <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Submitted:</span>
                                         <span className="font-semibold text-info">{stats.submittedCount}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Under Negotiation:</span>
+                                        <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Under Negotiation:</span>
                                         <span className="font-semibold text-amber-600">{stats.negotiationCount}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Response Rate:</span>
+                                        <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Response Rate:</span>
                                         <span className="font-semibold text-success">
                                                 {stats.totalVendors > 0 ? Math.round((stats.submittedCount / stats.totalVendors) * 100) : 0}%
                                             </span>
@@ -902,21 +902,21 @@ const CivilTenderComparisonDetail = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-xl shadow-sm dark:text-gray-200 dark:bg-bodybg">
                             <div className="p-6 border-b border-gray-200">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-bold text-gray-900">
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                         {stats.hasSubmissions ? "Top 3 Proposals" : "Invited Vendors"}
                                     </h3>
                                     <button
                                         onClick={() => setActiveTab("vendors")}
-                                        className="text-primary hover:underline font-medium"
+                                        className="text-primary hover:underline font-medium "
                                     >
                                         View All {stats.hasSubmissions ? "Proposals" : "Vendors"} →
                                     </button>
                                 </div>
                             </div>
-                            <div className="p-6">
+                            <div className="p-6 ">
                                 {sortedVendors.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         {sortedVendors.slice(0, 3).map((submission, index) => (
@@ -928,7 +928,7 @@ const CivilTenderComparisonDetail = () => {
                                                     </div>
                                                     <div>
                                                         <div
-                                                            className="font-semibold text-gray-900">{submission.vendor.full_name}</div>
+                                                            className="font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">{submission.vendor.full_name}</div>
                                                         <div className="text-xs text-gray-500 flex items-center gap-1">
                                                             <Award size={10} className="text-primary"/>
                                                             {submission.awarded_tenders} tenders
@@ -937,7 +937,7 @@ const CivilTenderComparisonDetail = () => {
                                                 </div>
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-sm">
-                                                        <span className="text-gray-600">Status:</span>
+                                                        <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Status:</span>
                                                         <span className={`font-semibold ${
                                                             submission.status === 'awarded' ? 'text-success' :
                                                                 submission.status === 'submitted' ? 'text-primary' :
@@ -970,7 +970,7 @@ const CivilTenderComparisonDetail = () => {
                 {activeTab === "vendors" && (
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold text-gray-900">Vendor Proposals</h2>
+                            <h2 className="text-2xl font-bold dark:text-gray-200 dark:bg-bodybg">Vendor Proposals</h2>
                             <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <Search size={16}
@@ -980,7 +980,7 @@ const CivilTenderComparisonDetail = () => {
                                         placeholder="Search vendors..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-gray-200 dark:bg-bodybg"
                                     />
                                 </div>
                                 <button
@@ -1040,7 +1040,7 @@ const CivilTenderComparisonDetail = () => {
                 {activeTab === "comparison" && (
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold text-gray-900">Detailed Comparison</h2>
+                            <h2 className="text-2xl font-bold dark:text-gray-200 dark:bg-bodybg">Detailed Comparison</h2>
                             <button
                                 className="flex items-center gap-2 px-4 py-2 bg-info/10 text-info hover:text-white rounded-lg hover:bg-info">
                                 <Download size={16}/>
@@ -1071,7 +1071,7 @@ const CivilTenderComparisonDetail = () => {
                                             ))}
                                         </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        <tbody className="bg-white divide-y divide-gray-20 dark:text-gray-200 dark:bg-bodybg0">
                                         {mockTenderData.boq.items.map((item) => (
                                             <tr key={item.id} className="hover:bg-gray-50">
                                                 <td className="px-6 py-4">

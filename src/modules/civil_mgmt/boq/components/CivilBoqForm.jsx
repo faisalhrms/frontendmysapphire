@@ -41,7 +41,7 @@ const useItems = (categoryId, searchTerm = '') => {
 
 const CategoryCard = ({ category, isActive, onClick }) => (
     <div
-        className={`group relative p-4 rounded-xl cursor-pointer border transition-all duration-300 hover:shadow-md ${
+        className={`group relative p-4 rounded-xl cursor-pointer border transition-all duration-300 hover:shadow-md dark:text-gray-200 dark:bg-bodybg ${
             isActive
                 ? 'border-primary shadow-sm'
                 : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
@@ -50,16 +50,16 @@ const CategoryCard = ({ category, isActive, onClick }) => (
     >
         <div className="flex items-start justify-between">
             <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className={`p-2 rounded-lg ${isActive ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600 group-hover:bg-gray-200'}`}>
+                <div className="flex items-center gap-3 mb-2 dark:text-gray-200 dark:bg-bodybg">
+                    <div className={`p-2 rounded-lg ${isActive ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600   border border-gray-200 dark:text-gray-200 dark:bg-bodybg'}`}>
                         <Package2 size={16} />
                     </div>
-                    <h4 className={`font-semibold text-sm ${isActive ? 'text-primary' : 'text-gray-900'}`}>
+                    <h4 className={`font-semibold text-sm dark:text-gray-200 dark:bg-bodybg ${isActive ? 'text-primary' : 'text-gray-900'}`}>
                         {category.name}
                     </h4>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full dark:text-gray-200 dark:bg-bodybg  border border-gray-200 ${
                         isActive
                             ? 'bg-primary/10 text-primary'
                             : 'bg-gray-100 text-gray-600'
@@ -73,29 +73,29 @@ const CategoryCard = ({ category, isActive, onClick }) => (
 );
 
 const ItemCard = ({ item, onAdd, isAdded }) => (
-    <div className="group bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-gray-300 transition-all duration-200">
+    <div className="group bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-gray-300 transition-all duration-200 dark:text-gray-200 dark:bg-bodybg">
         <div className="p-4">
             <div className="flex justify-between items-start">
                 <div className="flex-1 pr-3">
                     <div className="flex items-center gap-2 mb-2">
-                        <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs font-mono rounded-md border">
+                        <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs font-mono rounded-md border dark:text-gray-200 dark:bg-bodybg">
                             {item.item_no}
                         </span>
                         <span className="inline-block w-2 h-2 bg-primary rounded-full"></span>
                     </div>
-                    <h5 className="font-semibold text-sm text-gray-900 mb-1">{item.name}</h5>
+                    <h5 className="font-semibold text-sm text-gray-900 mb-1 dark:text-gray-200 dark:bg-bodybg">{item.name}</h5>
                     {item.description && (
-                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2 dark:text-gray-200 dark:bg-bodybg">{item.description}</p>
                     )}
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
-                            <span className="text-xs font-medium text-gray-500">Unit:</span>
-                            <span className="text-xs font-semibold text-gray-700">{item.unit}</span>
+                            <span className="text-xs font-medium text-gray-500 dark:text-gray-200 dark:bg-bodybg">Unit:</span>
+                            <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 dark:bg-bodybg">{item.unit}</span>
                         </div>
                         {item.rate && (
                             <div className="flex items-center gap-1">
-                                <span className="text-xs font-medium text-gray-500">Rate:</span>
-                                <span className="text-xs font-semibold text-green-600">${item.rate}</span>
+                                <span className="text-xs font-medium text-gray-500 dark:text-gray-200 dark:bg-bodybg">Rate:</span>
+                                <span className="text-xs font-semibold text-green-600 dark:text-gray-200 dark:bg-bodybg">${item.rate}</span>
                             </div>
                         )}
                     </div>
@@ -121,19 +121,19 @@ const SelectedItemsTable = ({items, onUpdateQuantity, onUpdateRate, onRemove, cu
             <div className="p-2 bg-primary/10 text-primary rounded-lg">
                 <ShoppingCart size={16}/>
             </div>
-            <h3 className="font-semibold text-gray-900">Selected Items</h3>
-            <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Selected Items</h3>
+            <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs border border-gray-200 font-medium rounded-full dark:text-gray-200 dark:bg-bodybg">
                 {items.length} items
             </span>
         </div>
 
         {items.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                <div className="p-3 bg-gray-100 text-gray-400 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                <div className="p-3 bg-gray-100 text-gray-400 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                     <Package2 size={24} />
                 </div>
-                <p className="text-gray-600 font-medium mb-1">No items selected</p>
-                <p className="text-sm text-gray-500">Choose items from the categories panel</p>
+                <p className="text-gray-600 font-medium mb-1 dark:text-gray-200 dark:bg-bodybg">No items selected</p>
+                <p className="text-sm text-gray-500 dark:text-gray-200 dark:bg-bodybg">Choose items from the categories panel</p>
             </div>
         ) : (
             <div className="space-y-3">
@@ -296,10 +296,10 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-12 gap-x-6 min-h-screen pb-6">
                         <div className="col-span-12 lg:col-span-8">
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="px-6 py-4 border-b border-gray-200">
-                                    <h3 className="text-lg font-semibold text-gray-900">BOQ Information</h3>
-                                    <p className="text-sm text-gray-600 mt-1">Enter the basic details for your bill of quantities</p>
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">BOQ Information</h3>
+                                    <p className="text-sm text-gray-600 mt-1 dark:text-gray-200 dark:bg-bodybg">Enter the basic details for your bill of quantities</p>
                                 </div>
                                 <div className="p-6">
                                     <div className="grid grid-cols-12 gap-6">
@@ -379,17 +379,17 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                             </div>
 
                             {/* Selected Items Card */}
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="px-6 py-4 border-b border-gray-200">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h3 className="text-lg font-semibold text-gray-900">BOQ Items</h3>
-                                            <p className="text-sm text-gray-600 mt-1">Manage quantities and rates for
+                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">BOQ Items</h3>
+                                            <p className="text-sm text-gray-600 mt-1 dark:text-gray-200 dark:bg-bodybg">Manage quantities and rates for
                                                 selected items</p>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-sm text-gray-500">Total Value</div>
-                                            <div className="text-lg font-bold text-blue-600">
+                                            <div className="text-sm text-gray-500 dark:text-gray-200 dark:bg-bodybg">Total Value</div>
+                                            <div className="text-lg font-bold text-blue-600 dark:text-gray-200 dark:bg-bodybg">
                                                  {`${formCurrency}  ${formatAmountWithCommas(selectedItems.reduce((sum, item) => sum + ((item.quantity || 0) * (item.rate || 0)), 0))}`}
                                             </div>
                                         </div>
@@ -404,7 +404,7 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                                         currency={formCurrency}
                                     />
                                 </div>
-                                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl">
+                                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl dark:text-gray-200 dark:bg-bodybg">
                                     <div className="flex justify-end">
                                         <FormButton isLoading={isSubmitting} />
                                     </div>
@@ -412,20 +412,20 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
                             </div>
                         </div>
                         <div className="col-span-12 lg:col-span-4">
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="px-6 py-4 border-b border-gray-200">
-                                    <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
-                                    <p className="text-sm text-gray-600 mt-1">Select a category to browse items</p>
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Categories</h3>
+                                    <p className="text-sm text-gray-600 mt-1 dark:text-gray-200 dark:bg-bodybg">Select a category to browse items</p>
                                 </div>
                                 <div className="p-4">
-                                    <div className="relative mb-4">
-                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                                    <div className="relative mb-4 dark:text-gray-200 dark:bg-bodybg">
+                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 " size={18} />
                                         <input
                                             type="text"
                                             placeholder="Search categories..."
                                             value={categorySearch}
                                             onChange={(e) => setCategorySearch(e.target.value)}
-                                            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-gray-50 focus:bg-white transition-colors"
+                                            className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-gray-50 focus:bg-white transition-colors dark:text-gray-200 dark:bg-bodybg"
                                         />
                                     </div>
 
@@ -456,20 +456,20 @@ const CivilBoqForm = ({ editMode = false, boqId = null }) => {
 
                             {/* Items Panel */}
                             {selectedCategory && (
-                                <div className="bg-white rounded-xl shadow-sm border border-gray-200 sticky top-4">
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-200 sticky top-4 dark:text-gray-200 dark:bg-bodybg">
                                     <div className="px-6 py-4 border-b border-gray-200">
-                                        <h3 className="text-lg font-semibold text-gray-900">{selectedCategory.name}</h3>
-                                        <p className="text-sm text-gray-600 mt-1">Add items to your BOQ</p>
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">{selectedCategory.name}</h3>
+                                        <p className="text-sm text-gray-600 mt-1 dark:text-gray-200 dark:bg-bodybg">Add items to your BOQ</p>
                                     </div>
                                     <div className="p-4">
-                                        <div className="relative mb-4">
+                                        <div className="relative mb-4 dark:text-gray-200 dark:bg-bodybg">
                                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                                             <input
                                                 type="text"
                                                 placeholder="Search items..."
                                                 value={itemSearch}
                                                 onChange={(e) => setItemSearch(e.target.value)}
-                                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-gray-50 focus:bg-white transition-colors"
+                                                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-gray-50 focus:bg-white transition-colors dark:text-gray-200 dark:bg-bodybg"
                                             />
                                         </div>
 
