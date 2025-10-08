@@ -123,7 +123,14 @@ export const sidebarMenu = [
                 '',
                 DASHBOARD_ROUTES.ANALYTICS.permission
             ),
-
+            generateSidebarItem(
+                DASHBOARD_ROUTES.CIVIL_DASHBOARD.path,
+                'link',
+                'Civil Dashboard',
+                15,
+                '',
+                DASHBOARD_ROUTES.CIVIL_DASHBOARD.permission
+            ),
         ]
     ),
 ];
