@@ -17,7 +17,7 @@ import IconTabs from "@components/IconTabs.jsx";
 import ProjectActivityLog from "@modules/project-management/components/project/ProjectActivityLog.jsx";
 import ProjectOverviewTab from "@modules/project-management/components/project/ProjectOverviewTab.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import { FolderKanban, MapPin } from "lucide-react";
+import { FolderKanban,Building } from "lucide-react";
 import ProjectSiteDetail from "@modules/project-management/components/project/ProjectSiteDetail.jsx";
 import ProjectDrawingAttachment from "@modules/project-management/components/project/ProjectDrawingAttachment.jsx";
 import ProjectSiteOverView from "@modules/project-management/components/project/ProjectSiteOverView.jsx";
@@ -165,7 +165,7 @@ const ProjectDetail = () => {
                           {
                             id: "site_overview",
                             label: "Civil Overview",
-                            icon: <MapPin />, // ✅ Lucide icon for clarity
+                            icon: <Building />, // ✅ Lucide icon for clarity
                             content: (
                                 <>
                                   {activeTab !== "site_overview" ? null : (
