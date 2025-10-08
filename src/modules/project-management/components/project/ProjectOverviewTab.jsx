@@ -1,9 +1,10 @@
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import ProjectUserSummaryStats from "@modules/project-management/components/project/ProjectUserSummaryStats.jsx";
 import ProjectSummaryStats from "@modules/project-management/components/project/ProjectSummaryStats.jsx";
 import ProjectTaskStatusStats from "@modules/project-management/components/project/ProjectTaskStatusStats.jsx";
 import ProjectTaskMonthlyStats from "@modules/project-management/components/project/ProjectTaskMonthlyStats.jsx";
 import React from "react";
+import ProjectUserSummaryStatsReChart
+    from "@modules/project-management/components/project/ProjectUserSummaryStatsReChart.jsx";
 
 const ProjectOverviewTab = ({statsFetching, statistics}) => {
     return(
@@ -94,7 +95,7 @@ const ProjectOverviewTab = ({statsFetching, statistics}) => {
                             </div>
                         </div>
                         <div className="xl:col-span-9 sm:col-span-9 2xl:col-span-8 col-span-12">
-                            <ProjectUserSummaryStats
+                            <ProjectUserSummaryStatsReChart
                                 summary={statistics.user_summary}
                                 statsFetching={statsFetching}
                                 height={450}
