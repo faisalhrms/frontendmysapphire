@@ -62,7 +62,7 @@ const ProjectsMilestonesTasksList = () => {
                             <div className="box-body">
                                 {data.map((project) => (
                                     <React.Fragment key={project.id}>
-                                    <span className="flex flex-nowrap items-center space-x-1 mb-4 ml-4">
+                                    <span className="flex flex-nowrap items-center space-x-1 m-4">
                                         <h4 className="text-[1.4rem] text-defaulttextcolor">
                                             <Link to={PMS_ROUTES.PROJECT.DETAIL.path.replace(':id', project.id)}>
                                                 {project.name}
