@@ -4,7 +4,12 @@ import ProjectSummary from "@modules/project-management/components/project/Proje
 import ProjectAdditionalDetail from "@modules/project-management/components/project/ProjectAdditionalDetail.jsx";
 import ProjectAttachment from "@modules/project-management/components/project/ProjectAttachment.jsx";
 import ProjectTree from "@modules/project-management/components/project/ProjectTree.jsx";
-import { useProject, useProjectMilestonesWithTasks, useProjectStatistics, useUploadProjectModal } from "@modules/project-management/hooks/projectHooks.js";
+import {
+  useProject,
+  useProjectMilestonesWithTasks,
+  useProjectStatistics,
+  useUploadProjectModal,
+} from "@modules/project-management/hooks/projectHooks.js";
 import ProjectTeam from "@modules/project-management/components/project/ProjectTeam.jsx";
 import Discussion from "@components/Discussion.jsx";
 import UploadModal from "@modules/project-management/components/model/UploadModal.jsx";
@@ -12,17 +17,23 @@ import IconTabs from "@components/IconTabs.jsx";
 import ProjectActivityLog from "@modules/project-management/components/project/ProjectActivityLog.jsx";
 import ProjectOverviewTab from "@modules/project-management/components/project/ProjectOverviewTab.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import { FolderKanban } from "lucide-react";
+import { FolderKanban,Building } from "lucide-react";
 import ProjectSiteDetail from "@modules/project-management/components/project/ProjectSiteDetail.jsx";
 import ProjectDrawingAttachment from "@modules/project-management/components/project/ProjectDrawingAttachment.jsx";
+import ProjectSiteOverView from "@modules/project-management/components/project/ProjectSiteOverView.jsx";
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const { projectData } = useProject(id);
   const { milestones, isLoading, refetch } = useProjectMilestonesWithTasks(id);
-  const { statistics, statsFetching, statsRefetch, statsError } = useProjectStatistics(id, 6, { enabled: false });
-  const [activeTab, setActiveTab] = useState('summary');
+  const {
+    statistics,
+    statsFetching,
+    statsRefetch,
+  } = useProjectStatistics(id, 6, { enabled: false });
+  const [activeTab, setActiveTab] = useState("summary");
   const [importType, setImportType] = useState("M");
+
   const {
     openUploadModal,
     closeUploadModal,
@@ -53,6 +64,7 @@ const ProjectDetail = () => {
             description="Overview of the project details, milestones, and tasks."
             icon={FolderKanban}
         />
+
         {projectData && (
             <div className="col-span-12 lg:col-span-9 xl:col-span-9 sm:col-span-9 2xl:col-span-8 min-h-screen">
               <IconTabs
@@ -69,18 +81,19 @@ const ProjectDetail = () => {
                                   handleUploadModal={handleUploadModal}
                               />
 
-                                <ProjectTree
-                                    projectId={projectData.id}
-                                    projectStatus={projectData.status}
-                                    approval={projectData.requires_approval}
-                                    startedAt={projectData.started_at}
-                                    endedAt={projectData.ended_at}
-                                    projectUsers={projectData.users}
-                                    milestones={milestones}
-                                    isLoading={isLoading}
-                                    refetch={refetch}
-                                    handleUploadModal={handleUploadModal}
-                                />
+                              <ProjectTree
+                                  projectId={projectData.id}
+                                  projectStatus={projectData.status}
+                                  approval={projectData.requires_approval}
+                                  startedAt={projectData.started_at}
+                                  endedAt={projectData.ended_at}
+                                  projectUsers={projectData.users}
+                                  milestones={milestones}
+                                  isLoading={isLoading}
+                                  refetch={refetch}
+                                  handleUploadModal={handleUploadModal}
+                              />
+
                               <Discussion
                                   title="Project Discussions"
                                   storeEndPoint={`/pms/projects/${id}/discussion/`}
@@ -89,17 +102,19 @@ const ProjectDetail = () => {
                               />
                             </div>
 
-                            <div className="xl:col-span-3 sm:col-span-3  col-span-12 sticky top-0 self-start">
+                            <div className="xl:col-span-3 sm:col-span-3 col-span-12 sticky top-0 self-start">
                               <div className="rounded-lg">
-                                <ProjectAdditionalDetail project={projectData}/>
-                              </div>
-                              <div className="rounded-lg">
-                                <ProjectSiteDetail site={projectData.site}/>
+                                <ProjectAdditionalDetail project={projectData} />
                               </div>
 
                               <div className="rounded-lg">
-                                <ProjectTeam users={projectData.users}/>
+                                <ProjectSiteDetail site={projectData.site} />
                               </div>
+
+                              <div className="rounded-lg">
+                                <ProjectTeam users={projectData.users} />
+                              </div>
+
                               <div className="rounded-lg">
                                 <ProjectAttachment
                                     attachments={projectData.attachments}
@@ -107,9 +122,11 @@ const ProjectDetail = () => {
                                     projectUsers={projectData.users}
                                 />
                               </div>
-                              <div className="rounded-lg">
-                                <ProjectDrawingAttachment drawings={projectData.project_drawings} />
 
+                              <div className="rounded-lg">
+                                <ProjectDrawingAttachment
+                                    drawings={projectData.project_drawings}
+                                />
                               </div>
                             </div>
                           </div>
@@ -120,7 +137,10 @@ const ProjectDetail = () => {
                       label: "Overview",
                       icon: <i className="bx bx-bar-chart"></i>,
                       content: (
-                          <ProjectOverviewTab statistics={statistics} statsFetching={statsFetching} />
+                          <ProjectOverviewTab
+                              statistics={statistics}
+                              statsFetching={statsFetching}
+                          />
                       ),
                     },
                     {
@@ -129,14 +149,37 @@ const ProjectDetail = () => {
                       icon: <i className="ri-history-line"></i>,
                       content: (
                           <>
-                            {
-                                activeTab !== 'activities'
-                                ? null :
-                                    <ProjectActivityLog id={projectData.id} activeTab={activeTab} projectName={projectData.name} />
-                            }
+                            {activeTab !== "activities" ? null : (
+                                <ProjectActivityLog
+                                    id={projectData.id}
+                                    activeTab={activeTab}
+                                    projectName={projectData.name}
+                                />
+                            )}
                           </>
                       ),
                     },
+                    // ✅ Conditionally add Site Overview tab only if site.id exists
+                    ...(projectData?.site?.id
+                        ? [
+                          {
+                            id: "site_overview",
+                            label: "Civil Overview",
+                            icon: <Building />, // ✅ Lucide icon for clarity
+                            content: (
+                                <>
+                                  {activeTab !== "site_overview" ? null : (
+                                      <ProjectSiteOverView
+                                          id={projectData.id}
+                                          activeTab={activeTab}
+                                          projectName={projectData.name}
+                                      />
+                                  )}
+                                </>
+                            ),
+                          },
+                        ]
+                        : []),
                   ]}
                   onTabChange={handleTabChange}
               />
