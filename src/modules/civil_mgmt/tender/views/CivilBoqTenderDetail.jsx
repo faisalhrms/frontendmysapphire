@@ -104,8 +104,8 @@ const CivilTenderDetail = () => {
     };
 
     const VendorCard = ({ vendor }) => (
-        <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-primary/20 hover:bg-gray-50/50 transition-all duration-200">
-            <div className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+        <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-primary/20 hover:bg-gray-50/50 transition-all duration-200 dark:text-gray-200 dark:bg-bodybg">
+            <div className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center ">
                 {vendor.avatar ? (
                     <img
                         src={vendor.avatar.small_url || vendor.avatar.file_url}
@@ -117,10 +117,10 @@ const CivilTenderDetail = () => {
                 )}
             </div>
             <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm text-gray-900 truncate">
+                <div className="font-medium text-sm text-gray-900 truncate dark:text-gray-200 dark:bg-bodybg">
                     {vendor.full_name}
                 </div>
-                <div className="text-xs text-gray-500 flex items-center gap-1">
+                <div className="text-xs text-gray-500 flex items-center gap-1 dark:text-gray-200 dark:bg-bodybg">
                     <Mail size={10} />
                     {vendor.email}
                 </div>
@@ -183,7 +183,7 @@ const CivilTenderDetail = () => {
 
                     <div className="col-span-12 lg:col-span-4 space-y-6 sticky top-0 self-start">
                         <div className="box">
-                            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between">
+                            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between dark:text-gray-200 dark:bg-bodybg">
                                 <div className="flex items-center gap-2">
                                     <Handshake size={16} className="text-gray-600"/>
                                     <h6>Tender Information</h6>
@@ -209,8 +209,8 @@ const CivilTenderDetail = () => {
                                         </div>
                                         <div>
                                             <div
-                                                className="font-medium text-sm text-gray-900">{tenderData.ended_at}</div>
-                                            <div className="text-xs text-gray-500">End Date</div>
+                                                className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">{tenderData.ended_at}</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">End Date</div>
                                         </div>
                                     </div>
 
@@ -221,8 +221,8 @@ const CivilTenderDetail = () => {
                                         </div>
                                         <div>
                                             <div
-                                                className="font-medium text-sm text-gray-900">{getStatusConfig(tenderData.status).label}</div>
-                                            <div className="text-xs text-gray-500">Status</div>
+                                                className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">{getStatusConfig(tenderData.status).label}</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">Status</div>
                                         </div>
                                     </div>
                                 </div>
@@ -230,11 +230,11 @@ const CivilTenderDetail = () => {
 
                             {tenderData.vendors && tenderData.vendors.length > 0 && (
                             <div className="box">
-                                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between">
+                                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between dark:text-gray-200 dark:bg-bodybg">
                                     <div className="flex items-center gap-2">
-                                        <Users size={16} className="text-gray-600"/>
+                                        <Users size={16} className="text-gray-600 dark:text-gray-200 dark:bg-bodybg"/>
                                         <h6>Invited Vendors</h6>
-                                        <div className="px-2 py-0.5 bg-white border border-gray-200 rounded text-xs font-medium text-gray-700">
+                                        <div className="px-2 py-0.5 bg-white border border-gray-200 rounded text-xs font-medium text-gray-700 dark:text-gray-200 dark:bg-bodybg">
                                             {tenderData.vendors.length}
                                         </div>
                                     </div>
@@ -252,7 +252,7 @@ const CivilTenderDetail = () => {
                        <BoqSiteCard site={tenderData.boq?.site}  />
 
                         <div className="box">
-                            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between">
+                            <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 box-header justify-between dark:text-gray-200 dark:bg-bodybg">
                                 <div className="flex items-center gap-2">
                                     <Target size={16} className="text-gray-600"/>
                                     <h6>Project Information</h6>
@@ -265,10 +265,10 @@ const CivilTenderDetail = () => {
                                             <Building2 size={16}/>
                                         </div>
                                         <div>
-                                            <div className="font-medium text-sm text-gray-900">
+                                            <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                                 {tenderData.boq?.project?.name || 'No Project'}
                                             </div>
-                                            <div className="text-xs text-gray-500">Project Name</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">Project Name</div>
                                         </div>
                                     </div>
 
@@ -278,10 +278,10 @@ const CivilTenderDetail = () => {
                                             <FileText size={16}/>
                                         </div>
                                         <div>
-                                            <div className="font-medium text-sm text-gray-900">
+                                            <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                                 {tenderData.boq?.title || 'No BOQ'}
                                             </div>
-                                            <div className="text-xs text-gray-500">BOQ Title</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">BOQ Title</div>
                                         </div>
                                     </div>
 
@@ -297,10 +297,10 @@ const CivilTenderDetail = () => {
                                             }
                                         </div>
                                         <div>
-                                            <div className="font-medium text-sm text-gray-900">
+                                            <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                                 {tenderData.boq?.is_finalized ? 'Finalized' : 'Draft'}
                                             </div>
-                                            <div className="text-xs text-gray-500">BOQ Status</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">BOQ Status</div>
                                         </div>
                                     </div>
                                 </div>

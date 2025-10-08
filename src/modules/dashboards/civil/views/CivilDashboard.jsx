@@ -229,25 +229,25 @@ const CivilDashboard = () => {
         });
     };
     const MetricCard = ({ icon: Icon, label, value, change, changeType = 'neutral', subtitle }) => (
-        <div className="bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-shadow">
+        <div className="bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-shadow dark:text-gray-200 dark:bg-bodybg">
             <div className="flex items-start justify-between mb-3">
-                <div className="p-2 bg-gray-50 rounded-lg">
-                    <Icon className="text-gray-600" size={18} />
+                <div className="p-2 bg-gray-50 rounded-lg border border-gray-200dark:text-gray-200 dark:bg-bodybg">
+                    <Icon className="text-gray-600 dark:text-gray-200 dark:bg-bodybg" size={18} />
                 </div>
                 {change && (
                     <span className={`text-xs font-medium px-2 py-1 rounded ${
                         changeType === 'positive' ? 'bg-success/10 text-success' :
                             changeType === 'negative' ? 'bg-danger/10 text-danger' :
-                                'bg-gray-100 text-gray-600'
+                                'bg-gray-100 text-gray-600 '
                     }`}>
                         {change}
                     </span>
                 )}
             </div>
             <div className="space-y-1">
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{label}</p>
-                <p className="text-2xl font-semibold text-gray-900">{value}</p>
-                {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide dark:text-gray-200 dark:bg-bodybg">{label}</p>
+                <p className="text-2xl font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">{value}</p>
+                {subtitle && <p className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">{subtitle}</p>}
             </div>
         </div>
     );
@@ -255,15 +255,15 @@ const CivilDashboard = () => {
     const SiteCard = ({ site }) => (
         <div
             onClick={() => setSelectedSite(site)}
-            className="group bg-white border border-gray-100 rounded-xl p-5 hover:border-primary/30 hover:shadow-md transition-all cursor-pointer"
+            className="group bg-white border border-gray-100 rounded-xl p-5 hover:border-primary/30 hover:shadow-md transition-all cursor-pointer dark:text-gray-200 dark:bg-bodybg"
         >
             <div className="flex items-start justify-between mb-4">
                 <div className="flex-1 min-w-0 pr-3">
-                    <h3 className="text-base font-semibold text-gray-900 mb-1 truncate group-hover:text-primary transition-colors">
+                    <h3 className="text-base font-semibold text-gray-900 mb-1 truncate group-hover:text-primary transition-colors dark:text-gray-200 dark:bg-bodybg">
                         {site.name}
                     </h3>
                     {site.address && (
-                        <p className="text-xs text-gray-500 line-clamp-1">
+                        <p className="text-xs text-gray-500 line-clamp-1 dark:text-gray-200 dark:bg-bodybg">
                             {site.address}
                         </p>
                     )}
@@ -275,14 +275,14 @@ const CivilDashboard = () => {
 
             <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="space-y-1">
-                    <div className="text-xs text-gray-500 font-medium">Projects</div>
-                    <div className="text-lg font-semibold text-gray-900">
-                        {site.active_projects}<span className="text-sm text-gray-400 font-normal">/{site.total_projects}</span>
+                    <div className="text-xs text-gray-500 font-medium dark:text-gray-200 dark:bg-bodybg">Projects</div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
+                        {site.active_projects}<span className="text-sm text-gray-400 font-normal dark:text-gray-200 dark:bg-bodybg">/{site.total_projects}</span>
                     </div>
                 </div>
                 <div className="space-y-1 text-right">
-                    <div className="text-xs text-gray-500 font-medium">Progress</div>
-                    <div className="text-lg font-semibold text-primary">
+                    <div className="text-xs text-gray-500 font-medium dark:text-gray-200 dark:bg-bodybg">Progress</div>
+                    <div className="text-lg font-semibold text-primary dark:text-gray-200 dark:bg-bodybg">
                         {site.completion_rate}%
                     </div>
                 </div>
@@ -290,12 +290,12 @@ const CivilDashboard = () => {
 
             <div className="space-y-2 mb-3">
                 <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-500 font-medium">Tasks Completed</span>
-                    <span className="font-semibold text-gray-900">{site.completed_tasks}/{site.total_tasks}</span>
+                    <span className="text-gray-500 font-medium dark:text-gray-200 dark:bg-bodybg">Tasks Completed</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">{site.completed_tasks}/{site.total_tasks}</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                     <div
-                        className="h-full bg-primary rounded-full transition-all duration-500"
+                        className="h-full bg-primary rounded-full transition-all duration-500 dark:text-gray-200 dark:bg-bodybg"
                         style={{ width: `${site.completion_rate}%` }}
                     />
                 </div>
@@ -308,7 +308,7 @@ const CivilDashboard = () => {
                 </div>
             )}
 
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:text-gray-200 dark:bg-bodybg">
                 <span className={`text-xs font-medium ${site.is_active ? 'text-success' : 'text-gray-400'}`}>
                     {site.is_active ? '● Active' : '○ Closed'}
                 </span>
@@ -382,27 +382,27 @@ const CivilDashboard = () => {
 
                 {/* Financial Overview */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                    <div className="bg-white border border-gray-100 rounded-xl p-6">
+                    <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-base font-semibold text-gray-900">Budget Overview</h3>
-                            <DollarSign className="text-gray-400" size={20}/>
+                            <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Budget Overview</h3>
+                            <DollarSign className="text-gray-400 dark:text-gray-200 dark:bg-bodybg" size={20}/>
                         </div>
                         <div className="space-y-4">
                             <div>
                                 <div className="flex justify-between items-baseline mb-2">
-                                    <span className="text-xs text-gray-500 font-medium">Total Budget</span>
-                                    <span className="text-lg font-semibold text-gray-900">
+                                    <span className="text-xs text-gray-500 font-medium  dark:text-gray-200 dark:bg-bodybg">Total Budget</span>
+                                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                         {(selectedSite.total_budget / 1000000).toFixed(2)}M
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-baseline mb-2">
-                                    <span className="text-xs text-gray-500 font-medium">Total Spent</span>
-                                    <span className="text-lg font-semibold text-primary">
+                                    <span className="text-xs text-gray-500 font-medium dark:text-gray-200 dark:bg-bodybg">Total Spent</span>
+                                    <span className="text-lg font-semibold text-primary ">
                                         {(selectedSite.total_spent / 1000000).toFixed(2)}M
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-baseline">
-                                    <span className="text-xs text-gray-500 font-medium">Remaining</span>
+                                    <span className="text-xs text-gray-500 font-medium dark:text-gray-200 dark:bg-bodybg">Remaining</span>
                                     <span className="text-lg font-semibold text-success">
                                         {((selectedSite.total_budget - selectedSite.total_spent) / 1000000).toFixed(2)}M
                                     </span>
@@ -410,7 +410,7 @@ const CivilDashboard = () => {
                             </div>
                             <div className="pt-4 border-t border-gray-100">
                                 <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs text-gray-500 font-medium">Utilization</span>
+                                    <span className="text-xs text-gray-500 font-medium dark:text-gray-200 dark:bg-bodybg">Utilization</span>
                                     <span
                                         className="text-sm font-semibold text-gray-900">{selectedSite.budget_utilization}%</span>
                                 </div>
@@ -428,8 +428,8 @@ const CivilDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white border border-gray-100 rounded-xl p-6">
-                        <h3 className="text-base font-semibold text-gray-900 mb-6">Task Progress</h3>
+                    <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
+                        <h3 className="text-base font-semibold text-gray-900 mb-6 dark:text-gray-200 dark:bg-bodybg">Task Progress</h3>
                         <ResponsiveContainer width="100%" height={180}>
                             <PieChart>
                                 <Pie
@@ -448,20 +448,20 @@ const CivilDashboard = () => {
                             </PieChart>
                         </ResponsiveContainer>
                         <div className="flex items-center justify-center gap-6 mt-4">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 dark:text-gray-200 dark:bg-bodybg">
                                 <div className="w-3 h-3 rounded-full bg-success"></div>
-                                <span className="text-xs text-gray-600">Completed: {selectedSite.completed_tasks}</span>
+                                <span className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Completed: {selectedSite.completed_tasks}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-gray-200"></div>
                                 <span
-                                    className="text-xs text-gray-600">Remaining: {selectedSite.total_tasks - selectedSite.completed_tasks}</span>
+                                    className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Remaining: {selectedSite.total_tasks - selectedSite.completed_tasks}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white border border-gray-100 rounded-xl p-6">
-                        <h3 className="text-base font-semibold text-gray-900 mb-6">Projects Status</h3>
+                    <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
+                        <h3 className="text-base font-semibold text-gray-900 mb-6 dark:text-gray-200 dark:bg-bodybg">Projects Status</h3>
                         <ResponsiveContainer width="100%" height={180}>
                             <PieChart>
                                 <Pie
@@ -482,29 +482,29 @@ const CivilDashboard = () => {
                         <div className="flex items-center justify-center gap-6 mt-4">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-primary"></div>
-                                <span className="text-xs text-gray-600">Active: {selectedSite.active_projects}</span>
+                                <span className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Active: {selectedSite.active_projects}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-success"></div>
                                 <span
-                                    className="text-xs text-gray-600">Completed: {selectedSite.completed_projects}</span>
+                                    className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Completed: {selectedSite.completed_projects}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Budget Spending Chart */}
-                <div className="bg-white border border-gray-100 rounded-xl p-6">
+                <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-base font-semibold text-gray-900">Budget Allocation vs Spending</h3>
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Budget Allocation vs Spending</h3>
                         <div className="flex items-center gap-4 text-xs">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded bg-primary/20"></div>
-                                <span className="text-gray-600">Allocated</span>
+                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Allocated</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded bg-success/20"></div>
-                                <span className="text-gray-600">Spent</span>
+                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Spent</span>
                             </div>
                         </div>
                     </div>
@@ -604,7 +604,7 @@ const CivilDashboard = () => {
                         >
                             <Popup>
                                 <div className="p-2">
-                                    <h4 className="font-semibold text-gray-900 text-sm mb-2">{selectedSite.name}</h4>
+                                    <h4 className="font-semibold text-gray-900 text-sm mb-2 ">{selectedSite.name}</h4>
                                     <div className="space-y-1 text-xs">
                                         <div className="flex justify-between">
                                             <span className="text-gray-500">Health:</span>
@@ -641,9 +641,9 @@ const CivilDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {detailData.projects.map(project => (
                     <div key={project.id}
-                         className="bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-all">
+                         className="bg-white border border-gray-100 rounded-xl p-5 hover:shadow-sm transition-all dark:text-gray-200 dark:bg-bodybg">
                         <div className="flex items-start justify-between mb-4">
-                            <h4 className="font-semibold text-gray-900 text-sm flex-1 pr-2">{project.name}</h4>
+                            <h4 className="font-semibold text-gray-900 text-sm flex-1 pr-2 dark:text-gray-200 dark:bg-bodybg">{project.name}</h4>
                             <span className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                                 project.status === 'completed' ? 'bg-success/10 text-success' :
                                     project.status === 'active' ? 'bg-primary/10 text-primary' :
@@ -668,15 +668,15 @@ const CivilDashboard = () => {
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
-                                <div className="bg-gray-50 rounded-lg p-3">
-                                    <div className="text-xs text-gray-500 mb-1 font-medium">Milestones</div>
-                                    <div className="text-lg font-semibold text-gray-900">
+                                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                                    <div className="text-xs text-gray-500 mb-1 font-medium dark:text-gray-200 dark:bg-bodybg">Milestones</div>
+                                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                         {project.completed_milestones}<span className="text-sm text-gray-400">/{project.total_milestones}</span>
                                     </div>
                                 </div>
-                                <div className="bg-gray-50 rounded-lg p-3">
-                                    <div className="text-xs text-gray-500 mb-1 font-medium">Tasks</div>
-                                    <div className="text-lg font-semibold text-gray-900">
+                                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                                    <div className="text-xs text-gray-500 mb-1 font-medium dark:text-gray-200 dark:bg-bodybg">Tasks</div>
+                                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                         {project.completed_tasks}<span className="text-sm text-gray-400">/{project.total_tasks}</span>
                                     </div>
                                 </div>
@@ -752,17 +752,17 @@ const CivilDashboard = () => {
                     />
                 </div>
 
-                <div className="bg-white border border-gray-100 rounded-xl p-6">
+                <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-base font-semibold text-gray-900">Budget Analysis</h3>
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Budget Analysis</h3>
                         <div className="flex items-center gap-4 text-xs">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded bg-primary/20"></div>
-                                <span className="text-gray-600">Budget</span>
+                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Budget</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded bg-success/20"></div>
-                                <span className="text-gray-600">Spent</span>
+                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Spent</span>
                             </div>
                         </div>
                     </div>
@@ -792,33 +792,33 @@ const CivilDashboard = () => {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+                <div className="bg-white border border-gray-100 rounded-xl overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                     <div className="px-6 py-4 border-b border-gray-100">
-                        <h3 className="text-base font-semibold text-gray-900">BOQ Details</h3>
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">BOQ Details</h3>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">BOQ No</th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Project</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Budget</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Spent</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Variance</th>
-                                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Utilization</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">BOQ No</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Project</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Budget</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Spent</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Variance</th>
+                                <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Utilization</th>
                             </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-gray-100 dark:text-gray-200 dark:bg-bodybg">
                             {boqs.map((boq) => (
-                                <tr key={boq.id} className="hover:bg-gray-50 transition-colors">
+                                <tr key={boq.id} className="hover:bg-gray-50 transition-colors dark:text-gray-200 dark:bg-bodybg">
                                     <td className="px-6 py-4">
-                                        <span className="font-medium text-gray-900 text-sm">{boq.boq_no}</span>
+                                        <span className="font-medium text-gray-900 text-sm dark:text-gray-200 dark:bg-bodybg">{boq.boq_no}</span>
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-gray-600">{boq.project_name}</td>
-                                    <td className="px-6 py-4 text-right text-sm font-medium text-gray-900">
+                                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">{boq.project_name}</td>
+                                    <td className="px-6 py-4 text-right text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                         {boq.currency} {boq.budget.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-sm font-medium text-gray-900">
+                                    <td className="px-6 py-4 text-right text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                                         {boq.currency} {boq.awarded_amount.toLocaleString()}
                                     </td>
                                     <td className={`px-6 py-4 text-right text-sm font-semibold ${
@@ -871,8 +871,8 @@ const CivilDashboard = () => {
         return (
             <div className="space-y-5">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <div className="bg-white border border-gray-100 rounded-xl p-6">
-                        <h3 className="text-base font-semibold text-gray-900 mb-4">Status Distribution</h3>
+                    <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
+                        <h3 className="text-base font-semibold text-gray-900 mb-4 dark:text-gray-200 dark:bg-bodybg">Status Distribution</h3>
                         <ResponsiveContainer width="100%" height={280}>
                             <PieChart>
                                 <Pie
@@ -902,15 +902,15 @@ const CivilDashboard = () => {
                             {statusData.map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-xs">
                                     <div className="w-3 h-3 rounded" style={{ backgroundColor: STATUS_COLORS[idx] }}></div>
-                                    <span className="text-gray-600">{item.name}</span>
-                                    <span className="font-semibold text-gray-900 ml-auto">{item.value}</span>
+                                    <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">{item.name}</span>
+                                    <span className="font-semibold text-gray-900 ml-auto dark:text-gray-200 dark:bg-bodybg">{item.value}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="bg-white border border-gray-100 rounded-xl p-6">
-                        <h3 className="text-base font-semibold text-gray-900 mb-4">Priority Distribution</h3>
+                    <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
+                        <h3 className="text-base font-semibold text-gray-900 mb-4 dark:text-gray-200 dark:bg-bodybg">Priority Distribution</h3>
                         <ResponsiveContainer width="100%" height={280}>
                             <PieChart>
                                 <Pie
@@ -940,8 +940,8 @@ const CivilDashboard = () => {
                             {priorityData.map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-xs">
                                     <div className="w-3 h-3 rounded" style={{ backgroundColor: PRIORITY_COLORS[idx] }}></div>
-                                    <span className="text-gray-600">{item.name}</span>
-                                    <span className="font-semibold text-gray-900 ml-auto">{item.value}</span>
+                                    <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">{item.name}</span>
+                                    <span className="font-semibold text-gray-900 ml-auto dark:text-gray-200 dark:bg-bodybg">{item.value}</span>
                                 </div>
                             ))}
                         </div>
@@ -949,32 +949,32 @@ const CivilDashboard = () => {
                 </div>
 
                 {overdue_tasks.length > 0 && (
-                    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+                    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                         <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3 bg-danger/5">
                             <AlertCircle className="text-danger" size={20} />
-                            <h3 className="text-base font-semibold text-gray-900">
+                            <h3 className="text-base font-semibold ">
                                 Overdue Tasks ({overdue_tasks.length})
                             </h3>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50">
+                                <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Task</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Milestone</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Project</th>
-                                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Priority</th>
-                                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Due Date</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Task</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Milestone</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Project</th>
+                                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Priority</th>
+                                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase dark:text-gray-200 dark:bg-bodybg">Due Date</th>
                                 </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                 {overdue_tasks.map((task) => (
-                                    <tr key={task.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={task.id} className="hover:bg-gray-50 transition-colors dark:text-gray-200 dark:bg-bodybg">
                                         <td className="px-6 py-4">
-                                            <span className="font-medium text-gray-900 text-sm">{task.name}</span>
+                                            <span className="font-medium text-gray-900 text-sm dark:text-gray-200 dark:bg-bodybg">{task.name}</span>
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{task.milestone__name}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">{task.milestone__project__name}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">{task.milestone__name}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">{task.milestone__project__name}</td>
                                         <td className="px-6 py-4 text-center">
                                                 <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
                                                     task.priority === 'high' ? 'bg-danger/10 text-danger' :
@@ -1015,16 +1015,16 @@ const CivilDashboard = () => {
                     icon={Building2}
                     children={
                         <>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 ">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 "
                                             size={16}/>
                                     <input
                                         type="text"
                                         placeholder="Search sites..."
                                         value={filters.searchQuery}
                                         onChange={(e) => setFilters(prev => ({...prev, searchQuery: e.target.value}))}
-                                        className="pl-9 pr-9 py-2 border border-gray-200 rounded-lg bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all w-64"
+                                        className="pl-9 pr-9 py-2 border border-gray-200 rounded-lg bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all w-64 dark:text-gray-200 dark:bg-bodybg"
                                     />
                                     {filters.searchQuery && (
                                         <button
@@ -1039,7 +1039,7 @@ const CivilDashboard = () => {
                                 <select
                                     value={filters.status}
                                     onChange={(e) => setFilters(prev => ({...prev, status: e.target.value}))}
-                                    className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                    className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-gray-200 dark:bg-bodybg"
                                 >
                                     <option value="all">All Sites</option>
                                     <option value="active">Active Only</option>
@@ -1047,8 +1047,8 @@ const CivilDashboard = () => {
                                 </select>
 
                                 <button
-                                    className="p-2 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">
-                                    <RefreshCw size={16} className="text-gray-600"/>
+                                    className="p-2 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors dark:text-gray-200 dark:bg-bodybg ">
+                                    <RefreshCw size={16} className="text-gray-600 dark:text-gray-200 dark:bg-bodybg"/>
                                 </button>
                             </div>
                         </>
@@ -1324,7 +1324,7 @@ const CivilDashboard = () => {
           transform: translateY(0);
         }
       `}</style>
-                        <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm"
+                        <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm  "
                              style={{height: '600px'}}>
                             <MapContainer
                                 center={[31.5204, 74.3587]}
@@ -1501,9 +1501,9 @@ const CivilDashboard = () => {
                         {/* Sites Grid */}
                         <div>
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-semibold text-gray-900">All Sites</h2>
+                                <h2 className="text-lg font-semibold ">All Sites</h2>
                                 <span
-                                    className="text-sm text-gray-500">{filteredSites.length} {filteredSites.length === 1 ? 'site' : 'sites'}</span>
+                                    className="text-sm ">{filteredSites.length} {filteredSites.length === 1 ? 'site' : 'sites'}</span>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {loading ? (
@@ -1525,7 +1525,7 @@ const CivilDashboard = () => {
                 ) : (
                     <>
                         {/* Site Detail Header */}
-                        <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+                        <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm dark:text-gray-200 dark:bg-bodybg">
                             <button
                                 onClick={() => setSelectedSite(null)}
                                 className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm mb-4 transition-colors group"
@@ -1536,9 +1536,9 @@ const CivilDashboard = () => {
 
                             <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedSite.name}</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-200 dark:bg-bodybg">{selectedSite.name}</h2>
                                     {selectedSite.address && (
-                                        <p className="text-sm text-gray-500 flex items-start gap-2">
+                                        <p className="text-sm text-gray-500 flex items-start gap-2 dark:text-gray-200 dark:bg-bodybg">
                                             <MapPin size={16} className="flex-shrink-0 mt-0.5"/>
                                             <span>{selectedSite.address}</span>
                                         </p>
@@ -1559,10 +1559,10 @@ const CivilDashboard = () => {
                                             <button
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id)}
-                                                className={`flex items-center gap-2 px-5 py-3 font-medium text-sm transition-all whitespace-nowrap ${
+                                                className={`flex items-center gap-2 px-5 py-3 font-medium text-sm transition-all whitespace-nowrap  ${
                                                     activeTab === tab.id
-                                                        ? 'text-primary border-b-2 border-primary'
-                                                        : 'text-gray-600 hover:text-gray-900'
+                                                        ? 'text-primary border-b-2 border-primary '
+                                                        : 'text-gray-600 hover:text-gray-900 dark:text-gray-200 dark:bg-bodybg'
                                                 }`}
                                             >
                                                 <Icon size={16}/>

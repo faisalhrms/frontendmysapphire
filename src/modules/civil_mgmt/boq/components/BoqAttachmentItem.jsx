@@ -6,14 +6,14 @@ const BoqAttachmentItem = ({attachment}) => {
     const fileSizeKB = (attachment.file_size / 1024).toFixed(1);
 
     return (
-        <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-primary/20 hover:bg-gray-50/50 transition-all duration-200 group">
+        <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-primary/20 hover:bg-gray-50/50 transition-all duration-200 group dark:text-gray-200 dark:bg-bodybg">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                 isImage ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600'
             }`}>
                 <FileText size={16} />
             </div>
             <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm text-gray-900 truncate">
+                <div className="font-medium text-sm text-gray-900 truncate dark:text-gray-200 dark:bg-bodybg">
                     {attachment.file_name}.{attachment.file_extension}
                 </div>
                 <div className="text-xs text-gray-500">
