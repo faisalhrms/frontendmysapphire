@@ -896,27 +896,27 @@ const CivilVendorTenderDetail = () => {
             {
                 showSubmitModal &&
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full dark:text-gray-200 dark:bg-bodybg">
                         <div className="p-6 border-b border-gray-200">
                             <div className="flex items-center gap-3 mb-2">
                                 <div
-                                    className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center ">
+                                    className="w-10 h-10 bg-primary/10 text-primary rounded-lg flex items-center justify-center  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                     <Send size={20}/>
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900">Submit Tender</h3>
+                                <h3 className="text-xl font-bold ">Submit Tender</h3>
                             </div>
-                            <p className="text-gray-600">Review your proposal before submission</p>
+                            <p className="">Review your proposal before submission</p>
                         </div>
 
                         <div className="p-6 space-y-4">
-                            <div className="bg-blue-50 border border-gray-400 rounded-lg p-4">
-                            <h4 className="font-semibold text-primary mb-2">Proposal Summary</h4>
+                            <div className="bg-blue-50  rounded-lg p-4 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                            <h4 className="font-semibold text-primary mb-2 dark:text-gray-200 dark:bg-bodybg" >Proposal Summary</h4>
                                 <div className="text-sm text-primary">
-                                    <div className="flex justify-between mb-1">
+                                    <div className="flex justify-between mb-1 dark:text-gray-200 dark:bg-bodybg">
                                     <span>Total Items:</span>
                                         <span className="font-semibold">{boqData?.tender.boq?.items?.length || 0}</span>
                                     </div>
-                                    <div className="flex justify-between mb-1">
+                                    <div className="flex justify-between mb-1 dark:text-gray-200 dark:bg-bodybg">
                                         <span>Your Total Amount:</span>
                                         <span className="font-bold">
                                         {boqData?.tender.boq?.currency} {formatAmountWithCommas(calculateTotalAmount)}
@@ -924,14 +924,14 @@ const CivilVendorTenderDetail = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs text-gray-700 mb-1 mt-6">
+                                    <label className="block text-xs text-gray-700 mb-1 mt-6 dark:text-gray-200 dark:bg-bodybg">
                                         Additional Notes (Optional)
                                     </label>
                                     <textarea
                                         value={submitNotes}
                                         onChange={(e) => setSubmitNotes(e.target.value)}
                                         placeholder="Add any additional comments or notes for your submission..."
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none  dark:text-gray-200 dark:bg-bodybg"
                                         rows={4}
                                     />
                                 </div>
@@ -951,7 +951,7 @@ const CivilVendorTenderDetail = () => {
                             </div>
                         </div>
 
-                        <div className="p-6 bg-gray-50 rounded-b-2xl flex gap-3">
+                        <div className="p-6 bg-gray-50 rounded-b-2xl flex gap-3 dark:text-gray-200 dark:bg-bodybg">
                             <button
                                 onClick={() => setShowSubmitModal(false)}
                                 className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
@@ -961,7 +961,7 @@ const CivilVendorTenderDetail = () => {
                             <button
                                 onClick={handleSubmitTender}
                                 disabled={isSubmitting}
-                                className="flex-1 bg-primary/10 text-primary hover:text-white hover:bg-primary px-4 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50"
+                                className="flex-1 bg-primary/10 text-primary hover:text-white hover:bg-primary px-4 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg"
                             >
                                 {isSubmitting ? (
                                     <>
