@@ -4,7 +4,7 @@ import {prioritiesEnum, statusEnum} from "@modules/project-management/schemas/pr
 
 const milestoneSchema = z.object({
     name: z.string().min(1, "Milestone name is required").max(255, "Milestone name must be at most 255 characters long"),
-    description: z.string().min(10, "Description must be at least 10 characters long"),
+    description: z.string().max(1000, "Description must be at least 10 characters long").optional(),
     started_at: dateSchema('Started'),
     ended_at: dateSchema('Ended'),
     status: statusEnum.default("not_started"),

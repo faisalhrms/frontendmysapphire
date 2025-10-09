@@ -249,7 +249,6 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                             </div>
                         </div>
 
-                        {/* Expanded Tasks Section */}
                         {milestone.children.length > 0 && openMilestones[milestone.id] && (
                             <div className="border-t border-gray-200 dark:border-neutral-700">
                                 <div className="p-4 bg-gray-50/50 dark:bg-neutral-950/30">
@@ -261,6 +260,8 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                         milestoneLaunch={milestone.ended_at}
                                         startedAt={milestone.started_at}
                                         endedAt={milestone.ended_at}
+                                        projectId={milestone.project_id}
+                                        milestoneId={milestone.id}
                                         openTaskModal={openTaskModal}
                                         refetch={refetch}
                                         openTaskOverdueModal={openTaskOverdueModal}

@@ -7,6 +7,7 @@ import TaskDetailModalPortal from "@modules/project-management/components/task/T
 import TaskTableRow from "@modules/project-management/components/task/TaskTableRow.jsx";
 import TaskTableHeader from "@modules/project-management/components/task/TaskTableHeader.jsx";
 import {useForm} from "react-hook-form";
+import TaskQuickAdd from "@modules/project-management/components/task/TaskQuickAdd.jsx";
 
 const TaskTable = ({
                        projectStatus,
@@ -17,6 +18,8 @@ const TaskTable = ({
                        milestoneLaunch,
                        startedAt = null,
                        endedAt = null,
+                       projectId = null,
+                       milestoneId = null,
                        isChild = false,
                        refetch,
                        openTaskOverdueModal,
@@ -43,6 +46,7 @@ const TaskTable = ({
     } = useTaskDetailModal();
 
     const userId = useSelector((state) => state.auth.user?.id);
+    const currentUser = useSelector((state) => state.auth.user)
     const projectUser = useMemo(() => {
         if (!viewOnly) {
             return projectUsers.find((user) => user.id === userId);
@@ -131,7 +135,20 @@ const heightFilter = (val)=>{
 
     return (
         <>
-
+            {!viewOnly && !isChild && (
+                <TaskQuickAdd
+                    milestoneId={milestoneId}
+                    projectId={projectId}
+                    startedAt={startedAt}
+                    endedAt={endedAt}
+                    projectUsers={projectUsers}
+                    onTaskCreated={refetch}
+                    teams={tasks[0]?.teams}
+                    tags={tasks[0]?.tags}
+                    currentUser={currentUser}
+                    heightFilter={heightFilter}
+                />
+            )}
             <div className={`table-responsive task-table overflow-hidden transition-all duration-300 ${
                 height ? 'min-h-[600px]' : 'min-h-[100px]'
             }`}>

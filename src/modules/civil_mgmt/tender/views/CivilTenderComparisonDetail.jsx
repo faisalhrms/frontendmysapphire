@@ -392,7 +392,7 @@ const CivilTenderComparisonDetail = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={`px-3 py-1 rounded-full text-xs font-medium border  border-gray-200 dark:text-gray-200 dark:bg-bodybg ${getStatusColor(submission.status)}`}>
+                        <div className={`px-3 py-1 rounded-full text-xs font-medium border  border-gray-200 ${getStatusColor(submission.status)}`}>
                             {submission.status.replace('_', ' ').toUpperCase()}
                         </div>
                     </div>
@@ -421,7 +421,7 @@ const CivilTenderComparisonDetail = () => {
                         <div className="space-y-1">
                             <div className="text-sm text-gray-600 dark:text-gray-200 dark:bg-bodybg">Submitted</div>
                             {submission.submitted_at ? (
-                                <div className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
+                                <div className="text-sm font-medium ">
                                     {formatDate(submission.submitted_at, "dd, MMM yyyy - HH:mm")}
                                 </div>
                             ) : (
@@ -437,7 +437,7 @@ const CivilTenderComparisonDetail = () => {
                     </div>
 
                     {submission.notes && (
-                        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <div className="mb-6 p-4 bg-gray-50 rounded-lg  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                             <div className="text-xs text-gray-600 mb-1 dark:text-gray-200 dark:bg-bodybg">Vendor Notes</div>
                             <div className="text-sm text-gray-800 dark:text-gray-200 dark:bg-bodybg">{submission.notes}</div>
                         </div>
@@ -447,7 +447,7 @@ const CivilTenderComparisonDetail = () => {
                         {hasSubmission && (
                             <button
                                 onClick={() => setActiveTab("comparison")}
-                                className={`flex-1 px-4 py-2 border rounded-lg font-medium transition-colors text-sm ${isLowest ? 'bg-white hover:bg-gray-400' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+                                className={`flex-1 px-4 py-2 border rounded-lg font-medium transition-colors text-sm dark:text-gray-200 dark:bg-bodybg ${isLowest ? 'bg-white hover:bg-gray-400' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                             >
                                 <Eye size={16} className="inline mr-2" />
                                 View Details
@@ -653,7 +653,7 @@ const CivilTenderComparisonDetail = () => {
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <div className="text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg">
+                                                <div className="text-sm font-medium ">
                                                     {submission.vendor.full_name}
                                                 </div>
                                                 {isLowest && (
@@ -662,7 +662,7 @@ const CivilTenderComparisonDetail = () => {
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="text-sm text-gray-500 flex items-center gap-2 dark:text-gray-200 dark:bg-bodybg">
+                                            <div className="text-sm  flex items-center gap-2 ">
                                                 <Award size={12} className="text-primary" />
                                                 {submission.awarded_tenders} tenders awarded
                                             </div>
@@ -670,7 +670,7 @@ const CivilTenderComparisonDetail = () => {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">
+                                    <div className="text-sm ">
                                         {hasSubmission ? formatAmount(submission.total_amount) :
                                             <span className="text-gray-500 italic dark:text-gray-200 dark:bg-bodybg">Not submitted</span>
                                         }
@@ -690,7 +690,7 @@ const CivilTenderComparisonDetail = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center gap-1">
                                         <Award size={14} className="text-primary" />
-                                        <span className="text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">{submission.awarded_tenders}</span>
+                                        <span className="text-sm ">{submission.awarded_tenders}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -724,10 +724,10 @@ const CivilTenderComparisonDetail = () => {
                                         </button>
                                     )}
                                     {submission.status === "invited" && (
-                                        <span className="text-gray-500 italic dark:text-gray-200 dark:bg-bodybg">Pending</span>
+                                        <span className=" italic ">Pending</span>
                                     )}
                                     {submission.status === "awarded" && (
-                                        <span className="text-success font-medium dark:text-gray-200 dark:bg-bodybg">Awarded</span>
+                                        <span className="text-success font-medium ">Awarded</span>
                                     )}
                                 </td>
                             </tr>
@@ -800,7 +800,7 @@ const CivilTenderComparisonDetail = () => {
             <div className="max-w-7xl mx-auto py-8 ">
                 {activeTab === "overview" && (
                     <div className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 dark:text-gray-200 dark:bg-bodybg">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             <StatCard
                                 icon={<Users size={24}/>}
                                 label="Total Vendors"
@@ -970,7 +970,7 @@ const CivilTenderComparisonDetail = () => {
                 {activeTab === "vendors" && (
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold dark:text-gray-200 dark:bg-bodybg">Vendor Proposals</h2>
+                            <h2 className="text-2xl font-bold ">Vendor Proposals</h2>
                             <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <Search size={16}
@@ -1040,7 +1040,7 @@ const CivilTenderComparisonDetail = () => {
                 {activeTab === "comparison" && (
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold dark:text-gray-200 dark:bg-bodybg">Detailed Comparison</h2>
+                            <h2 className="text-2xl font-bold ">Detailed Comparison</h2>
                             <button
                                 className="flex items-center gap-2 px-4 py-2 bg-info/10 text-info hover:text-white rounded-lg hover:bg-info">
                                 <Download size={16}/>
@@ -1051,16 +1051,16 @@ const CivilTenderComparisonDetail = () => {
                         <ComparisonTable/>
 
                         {stats.hasSubmissions && (
-                            <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
+                            <div className="bg-white border border-gray-200 rounded-xl shadow-sm dark:text-gray-200 dark:bg-bodybg">
                                 <div className="p-6 border-b border-gray-200">
-                                    <h3 className="text-lg font-bold text-gray-900">Item-wise Rate Comparison</h3>
+                                    <h3 className="text-lg font-bold ">Item-wise Rate Comparison</h3>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full">
-                                        <thead className="bg-gray-50">
+                                        <thead className="bg-gray-50 dark:text-gray-200 dark:bg-bodybg border border-gray-200">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
-                                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Original
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase">Item</th>
+                                            <th className="px-6 py-3 text-center text-xs font-medium  uppercase">Original
                                                 Rate
                                             </th>
                                             {sortedVendors.filter(v => v.total_amount !== null).map((vendor) => (
@@ -1071,19 +1071,19 @@ const CivilTenderComparisonDetail = () => {
                                             ))}
                                         </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-20 dark:text-gray-200 dark:bg-bodybg0">
+                                        <tbody className="bg-white divide-y divide-gray-20 dark:text-gray-200 dark:bg-bodybg">
                                         {mockTenderData.boq.items.map((item) => (
                                             <tr key={item.id} className="hover:bg-gray-50">
                                                 <td className="px-6 py-4">
                                                     <div>
-                                                        <div className="font-medium text-gray-900">{item.name}</div>
+                                                        <div className="font-medium ">{item.name}</div>
                                                         <div
-                                                            className="text-sm text-gray-500">{item.item_no} | {item.quantity} {item.unit}</div>
+                                                            className="text-sm ">{item.item_no} | {item.quantity} {item.unit}</div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <div
-                                                        className="font-semibold text-gray-900">{formatAmount(item.rate, mockTenderData.boq.currency)}</div>
+                                                        className="font-semibold ">{formatAmount(item.rate, mockTenderData.boq.currency)}</div>
                                                 </td>
                                                 {sortedVendors.filter(v => v.total_amount !== null).map((vendor) => {
                                                     const vendorItem = vendor.items.find(vi => vi.item_id === item.id);
