@@ -661,7 +661,7 @@ export default function PublicDynamicForm() {
                      : isDark
                          ? "#000000"
                          : "#f0f2ff", 
-                 color: isDark ? "#f9fafb" : "#000000",
+                 // color: isDark ? "#f9fafb" : "#000000",
                  backgroundImage: formConfig.image?.file_url
                      ? `url('${formConfig.image.file_url}')`
                      : "none",
