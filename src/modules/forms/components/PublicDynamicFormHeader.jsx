@@ -35,7 +35,7 @@ const PublicDynamicFormHeader = ({
 
     return (<div className="bg-white rounded-lg border border-gray-200 mb-3 dark:text-gray-200 dark:bg-bodybg"
                  style={{ fontFamily }}>
-            <div className="border-t-8 rounded-t-lg dark:text-gray-200 dark:bg-bodybg" style={{borderTopColor: color}}>
+            <div className="border-t-8 rounded-t-lg " style={{borderTopColor: color}}>
                 <div className="p-6">
                     <div className="mb-4 flex justify-center">
                         <img
