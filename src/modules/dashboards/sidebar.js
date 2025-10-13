@@ -131,6 +131,14 @@ export const sidebarMenu = [
                 '',
                 DASHBOARD_ROUTES.CIVIL_DASHBOARD.permission
             ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.EXPORT_DATA_HEALTH.path,
+                'link',
+                'Export Data Health',
+                16,
+                '',
+                DASHBOARD_ROUTES.EXPORT_DATA_HEALTH.permission
+            ),
         ]
     ),
 ];
