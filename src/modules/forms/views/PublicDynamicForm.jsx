@@ -14,6 +14,7 @@ import PhoneInputForDynamicForm, { COUNTRIES } from "@modules/forms/components/P
 import PrivacyPolicyPopup from "@components/PrivacyPolicyPopup.jsx";
 import Notify from "@helpers/toastNotifications.js";
 import {useSelector} from "react-redux";
+import useDarkModeForm from "@redux/common/useDarkModeForm.js";
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 const validatePhoneNumber = (value, field) => {
     if (!value) {
@@ -235,6 +236,7 @@ export default function PublicDynamicForm() {
         }
         return defaults;
     };
+    const isDark = useDarkModeForm();
 
     const formSchema = formConfig ? createFormSchema(formConfig.fields) : z.object({});
     const {
@@ -654,7 +656,12 @@ export default function PublicDynamicForm() {
         <div className="min-h-screen bg-[#f0f2ff] py-8 px-4 "
              style={{
                  fontFamily,
-                 backgroundColor: formConfig.image?.file_url ? "transparent" : "#f0f2ff",
+                 backgroundColor: formConfig.image?.file_url
+                     ? "transparent"
+                     : isDark
+                         ? "#000000"
+                         : "#f0f2ff", 
+                 // color: isDark ? "#f9fafb" : "#000000",
                  backgroundImage: formConfig.image?.file_url
                      ? `url('${formConfig.image.file_url}')`
                      : "none",

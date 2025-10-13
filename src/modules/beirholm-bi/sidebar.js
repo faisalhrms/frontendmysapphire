@@ -61,6 +61,15 @@ export const sidebarMenu = [
             ),
 
             generateSidebarItem(
+                BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_LIST.path,
+                'link',
+                'Data Health Flow',
+                7,
+                '',
+                BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_LIST.permission
+            ),
+
+            generateSidebarItem(
                 BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
                 'link',
                 'Competitor Analysis',

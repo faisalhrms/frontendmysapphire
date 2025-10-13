@@ -10,6 +10,8 @@ import ExchangeRateList from "@modules/beirholm-bi/views/ExchangeRateList.jsx";
 import ExchangeRateForm from "@modules/beirholm-bi/components/ExchangeRateForm.jsx";
 import DataMappingRuleList from "@modules/beirholm-bi/views/DataMappingRuleList.jsx";
 import DataMappingRuleForm from "@modules/beirholm-bi/components/DataMappingRuleForm.jsx";
+import DataHealthRulesetEditor from "@modules/beirholm-bi/components/DataHealthRulesetEditor.jsx";
+import DataHealthRulesetList from "@modules/beirholm-bi/views/DataHealthRulesetList.jsx";
 
 
 export const BEIRHOLM_BI_ROUTES = {
@@ -66,6 +68,23 @@ export const BEIRHOLM_BI_ROUTES = {
         path: '/module/beirholm/bi/mapping-rule/add',
         permission: 'beirholm_bi.add_data_mapping_rule'
     },
+
+    DATA_HEALTH_FLOW_CREATE: {
+        path: '/module/beirholm-bi/health/add',
+        permission: 'beirholm_bi.add_beirholm_data_health_ruleset'
+    },
+
+    DATA_HEALTH_FLOW_LIST: {
+        path: '/module/beirholm-bi/health',
+        permission: 'beirholm_bi.view_beirholm_data_health_ruleset'
+    },
+
+    DATA_HEALTH_FLOW_EDIT: {
+        path: '/module/beirholm-bi/health/:id',
+        permission: 'beirholm_bi.change_beirholm_data_health_ruleset'
+    },
+
+
 
 };
 
@@ -132,5 +151,22 @@ export const MODULE_ROUTES = [
         path: BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_CREATE.path,
         component: DataMappingRuleForm,
         permission: BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_CREATE.permission
+    },
+    {
+        path: BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_CREATE.path,
+        component: DataHealthRulesetEditor,
+        permission: BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_CREATE.permission
+    },
+
+    {
+        path: BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_EDIT.path,
+        component: DataHealthRulesetEditor,
+        permission: BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_EDIT.permission
+    },
+
+    {
+        path: BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_LIST.path,
+        component: DataHealthRulesetList,
+        permission: BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_LIST.permission
     },
 ];
