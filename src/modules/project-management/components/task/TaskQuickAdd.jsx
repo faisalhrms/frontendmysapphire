@@ -315,7 +315,7 @@ const TaskQuickAdd = ({
                     </button>
 
                     <div className="flex-1 flex items-center gap-2">
-                        <i className="ri-add-line text-info text-lg flex-shrink-0" />
+                        <i className="ri-add-line text-success text-lg flex-shrink-0" />
                         <input
                             ref={quickInputRef}
                             type="text"
@@ -496,7 +496,7 @@ const TaskQuickAdd = ({
             )}
 
             {showExpandedForm && (
-                <div className="p-4 bg-primary-50/30 dark:bg-primary-900/10 border-t-2 border-info">
+                <div className="p-4 bg-primary-50/30 dark:bg-primary-900/10 border-t-2 border-primary">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-12 gap-3">
                             <div className="col-span-12">

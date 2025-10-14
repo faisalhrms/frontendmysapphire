@@ -187,7 +187,7 @@ const ProjectTree = ({ projectId, projectStatus, approval, startedAt, endedAt, p
             </div>
           </div>
 
-          <div className="box-body">
+          <div className="box-body !pl-0">
             {isLoading ? (
                 <LoadingSpinner/>
             ) : (
