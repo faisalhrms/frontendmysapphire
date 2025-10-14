@@ -315,7 +315,7 @@ const TaskQuickAdd = ({
                     </button>
 
                     <div className="flex-1 flex items-center gap-2">
-                        <i className="ri-add-line text-info text-lg flex-shrink-0" />
+                        <i className="ri-add-line text-success text-lg flex-shrink-0" />
                         <input
                             ref={quickInputRef}
                             type="text"
