@@ -31,7 +31,6 @@ const CorrectionRulesForm = () => {
         await onSubmit();
         navigate(BEIRHOLM_BI_ROUTES.CORRECTION_RULE_READ.path);
     };
-console.log(initialData)
     return (
         <div>
             <PageHeader

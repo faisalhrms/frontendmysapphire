@@ -54,7 +54,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.SR.path,
                 'link',
-                'SR Dashboard',
+                'Service Request',
                 6,
                 '',
                 DASHBOARD_ROUTES.SR.permission,
@@ -62,7 +62,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.Equipment.path,
                 'link',
-                'Assets Dashboard',
+                'Assets',
                 7,
                 '',
                 DASHBOARD_ROUTES.Equipment.permission,
@@ -70,7 +70,7 @@ export const sidebarMenu = [
                 generateSidebarItem(
                     DASHBOARD_ROUTES.EQUIPMENT_AUDIT_DASHBOARD.path,
                     'link',
-                    'Assets Audit Dashboard',
+                    'Assets Audit ',
                     8,
                     '',
                     DASHBOARD_ROUTES.Equipment.permission,
@@ -78,7 +78,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.CEO.path,
                 'link',
-                'CEO Dashboard',
+                'CEO ',
                 9,
                 '',
                DASHBOARD_ROUTES.CEO.permission,
@@ -86,7 +86,7 @@ export const sidebarMenu = [
                 generateSidebarItem(
                     DASHBOARD_ROUTES.URP.path,
                     'link',
-                    'URP Dashboard',
+                    'User Roles Permission',
                     10,
                     '',
                     DASHBOARD_ROUTES.URP.permission
@@ -102,7 +102,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.SALES_DASHBOARD.path,
                 'link',
-                'Sales Dashboard',
+                'Sales ',
                 12,
                 '',
                 DASHBOARD_ROUTES.SALES_DASHBOARD.permission,
@@ -110,7 +110,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.ROAD_MAP_DASHBOARD.path,
                 'link',
-                'RoadMap Dashboard',
+                'RoadMap',
                 13,
                 '',
                 DASHBOARD_ROUTES.ROAD_MAP_DASHBOARD.permission
@@ -118,7 +118,7 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.ANALYTICS.path,
                 'link',
-                'Analytics Dashboard',
+                'Users Analytics',
                 14,
                 '',
                 DASHBOARD_ROUTES.ANALYTICS.permission
@@ -126,10 +126,18 @@ export const sidebarMenu = [
             generateSidebarItem(
                 DASHBOARD_ROUTES.CIVIL_DASHBOARD.path,
                 'link',
-                'Civil Dashboard',
+                'Civil',
                 15,
                 '',
                 DASHBOARD_ROUTES.CIVIL_DASHBOARD.permission
+            ),
+            generateSidebarItem(
+                DASHBOARD_ROUTES.EXPORT_DATA_HEALTH.path,
+                'link',
+                'Export Data Health',
+                16,
+                '',
+                DASHBOARD_ROUTES.EXPORT_DATA_HEALTH.permission
             ),
         ]
     ),

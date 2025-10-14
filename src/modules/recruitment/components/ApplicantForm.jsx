@@ -157,7 +157,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                 <div className="col-span-12">
                     {/* Personal & Application Info */}
                     <div className="box shadow-md rounded-lg">
-                        <div className="box-header bg-gray-100 p-4 rounded-t-lg">
+                        <div className="box-header bg-gray-100 p-4 rounded-t-lg dark:text-gray-200 dark:bg-bodybg">
                             <div className="box-title text-lg font-semibold">Personal Info</div>
                         </div>
                         <div className="box-body p-6">
@@ -199,7 +199,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                     </div>
 
                                 <div className="box shadow-md rounded-lg">
-                                    <div className="box-header bg-gray-100 p-4 rounded-t-lg">
+                                    <div className="box-header bg-gray-100 p-4 rounded-t-lg dark:text-gray-200 dark:bg-bodybg">
                                         <div className="box-title text-lg font-semibold">Applicant Info</div>
                                     </div>
                                     <div className="box-body p-6">
@@ -360,17 +360,17 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                     <SubFormSection title="Qualifications" className="mt-6">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                                <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Years
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Degree</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Institution</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg">Years
                                         Completed
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-200 dark:bg-bodybg"></th>
                                 </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="bg-white divide-y divide-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 {qualFields.map((item, idx) => (
                                     <tr key={item.id} className="hover:bg-gray-100">
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -418,7 +418,7 @@ const ApplicantForm = ({ applicantData, isEditMode = false }) => {
                                 <SubFormSection title="Work Experiences" className="mt-6">
                                     <div className="overflow-x-auto">
                                         <table className="min-w-full divide-y divide-gray-200">
-                                            <thead className="bg-gray-50">
+                                            <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
                                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>

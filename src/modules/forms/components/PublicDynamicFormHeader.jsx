@@ -3,6 +3,7 @@ import sapphirew from "@assets/images/company-logos/sapphirew.png";
 import sapphireb from "@assets/images/company-logos/sapphireb.png";
 
 import useDarkMode from "@redux/common/useDarkMode.js";
+import useDarkModeForm from "@redux/common/useDarkModeForm.js";
 
 
 const PublicDynamicFormHeader = ({
@@ -30,11 +31,11 @@ const PublicDynamicFormHeader = ({
         };
         return remixMap[platform] || 'ri-links-line';
     }
-    const isDark = useDarkMode();
+    const isDark = useDarkModeForm();
 
     return (<div className="bg-white rounded-lg border border-gray-200 mb-3 dark:text-gray-200 dark:bg-bodybg"
                  style={{ fontFamily }}>
-            <div className="border-t-8 rounded-t-lg dark:text-gray-200 dark:bg-bodybg" style={{borderTopColor: color}}>
+            <div className="border-t-8 rounded-t-lg " style={{borderTopColor: color}}>
                 <div className="p-6">
                     <div className="mb-4 flex justify-center">
                         <img
