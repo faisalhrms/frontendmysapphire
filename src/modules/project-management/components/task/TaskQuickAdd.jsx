@@ -496,7 +496,7 @@ const TaskQuickAdd = ({
             )}
 
             {showExpandedForm && (
-                <div className="p-4 bg-primary-50/30 dark:bg-primary-900/10 border-t-2 border-info">
+                <div className="p-4 bg-primary-50/30 dark:bg-primary-900/10 border-t-2 border-primary">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="grid grid-cols-12 gap-3">
                             <div className="col-span-12">

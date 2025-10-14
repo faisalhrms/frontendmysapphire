@@ -74,10 +74,12 @@ const TaskTableRow = ({
                 return (
                     <td>
                         <EditableCompletionDate
+                            key={`${task.id}-${task.completed_at || ''}`}
                             task={task}
                             control={control}
                             errors={errors}
-                            minDate={startedAt}
+                            minDate={task.started_at}
+                            refetch={refetch}
                         />
                     </td>
                 );

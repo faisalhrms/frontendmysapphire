@@ -21,11 +21,11 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
 
     const getStatusConfig = (status) => {
         const configs = {
-            not_started: { dot: 'bg-gray', text: 'text-gray', icon: 'ri-time-line' },
-            active: { dot: 'bg-info', text: 'text-info', icon: 'ri-play-circle-fill' },
-            on_hold: { dot: 'bg-warning', text: 'text-warning', icon: 'ri-pause-circle-fill' },
-            completed: { dot: 'bg-success', text: 'text-success', icon: 'ri-checkbox-circle-fill' },
-            archived: { dot: 'bg-danger', text: 'text-danger', icon: 'ri-archive-fill' }
+            not_started: { ring: 'ring-gray-400', dot: 'bg-gray', text: 'text-gray', icon: 'ri-time-line' },
+            active: { ring: 'ring-sky-500 animate-pulse', dot: 'bg-info', text: 'text-info', icon: 'ri-play-circle-fill' },
+            on_hold: { ring: 'ring-amber-400', dot: 'bg-warning', text: 'text-warning', icon: 'ri-pause-circle-fill' },
+            completed: { ring: 'ring-green', dot: 'bg-success', text: 'text-success', icon: 'ri-checkbox-circle-fill' },
+            archived: { ring: 'ring-red', dot: 'bg-danger', text: 'text-danger', icon: 'ri-archive-fill' }
         };
         return configs[status] || configs.not_started;
     };
@@ -57,7 +57,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
 
                             {/* Status Dot */}
                             <div
-                                className={`absolute w-3 h-3 rounded-full ${statusConfig.dot} border-2 ring-4 ring-white dark:ring-neutral-900 z-10`}
+                                className={`absolute w-3 h-3 rounded-full ${statusConfig.dot} ${statusConfig.ring} ring-4 border-2 border-white z-10`}
                                 style={{
                                     top: '28px',
                                     left: '50%',
@@ -205,7 +205,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                                          tooltipContent="Upload">
                                                                     <button
                                                                         onClick={() => handleUploadModal(milestone.id, 'T')}
-                                                                        className="w-7 h-7 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900 rounded text-blue-600 dark:text-blue-400 transition-colors">
+                                                                        className="w-7 h-7 flex items-center justify-center hover:bg-info/10 rounded text-info dark:text-info-400 transition-colors">
                                                                         <i className="ri-upload-2-line text-base"></i>
                                                                     </button>
                                                                 </Tooltip>
@@ -220,13 +220,11 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                                             </Tooltip>
                                                         </HasProjectPermission>
 
-                                                        <HasProjectPermission globalPermission='pms.delete_project'
-                                                                              users={projectUsers}>
-                                                            <Tooltip id={`delete-${milestone.id}`}
-                                                                     tooltipContent="Delete">
+                                                        <HasProjectPermission globalPermission='pms.delete_project' users={projectUsers}>
+                                                            <Tooltip id={`delete-${milestone.id}`} tooltipContent="Delete">
                                                                 <button
                                                                     onClick={() => handleDeleteClick(`/pms/milestones/${milestone.id}/delete/`, milestone.name, refetch)}
-                                                                    className="w-7 h-7 flex items-center justify-center hover:bg-red-100 dark:hover:bg-red-900 rounded text-red-600 dark:text-red-400 transition-colors">
+                                                                    className="w-7 h-7 flex items-center justify-center hover:bg-danger/10 rounded text-danger dark:text-danger-400 transition-colors">
                                                                     <i className="ri-delete-bin-line text-base"></i>
                                                                 </button>
                                                             </Tooltip>

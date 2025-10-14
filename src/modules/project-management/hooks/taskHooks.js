@@ -14,6 +14,7 @@ import taskOverdueSchema from "@modules/project-management/schemas/taskOverdueSc
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 import useBodyScrollLock from "@hooks/useBodyScrollLock.js";
+import {convertToDateTime, convertToDateTimeEnd} from "@helpers/dateTime.js";
 
 
 const useTaskForm = (isEditMode) => {
@@ -78,8 +79,8 @@ export const useTaskModal = (refetch) => {
         description: "",
         parent: parent,
         requires_approval: approval,
-        start_date: "",
-        end_date: ""
+        started_at: convertToDateTime(startedAt),
+        ended_at: convertToDateTimeEnd(endedAt),
       });
     }
 

@@ -22,7 +22,7 @@ function CompletionDateConfirmModal({
 
     const handleConfirm = () => {
         if (onConfirm) onConfirm(input);
-        if (onClose) onClose(false); // Close after confirm
+        if (onClose) onClose(false);
     };
 
     const closeModal = () => {
@@ -79,11 +79,11 @@ function CompletionDateConfirmModal({
                                     >
                                         {isSubmitting ? (
                                             <>
-                        <span
-                            aria-label="loading"
-                            className="ti-spinner !w-[1rem] !h-[1rem] text-white"
-                            role="status"
-                        ></span>
+                                                <span
+                                                    aria-label="loading"
+                                                    className="ti-spinner !w-[1rem] !h-[1rem] text-white"
+                                                    role="status"
+                                                ></span>
                                                 <span>Loading...</span>
                                             </>
                                         ) : (

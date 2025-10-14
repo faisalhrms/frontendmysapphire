@@ -6,7 +6,7 @@ import { updateTaskCompletionDate } from "@modules/project-management/services/t
 import { useHasPermission } from "@modules/auth/hooks/authHooks.js";
 import CompletionDateConfirmModal from "@modules/project-management/components/model/CompletionDateConfirmModal.jsx";
 
-const EditableCompletionDate = ({ task, control, errors, minDate }) => {
+const EditableCompletionDate = ({ task, control, errors, minDate, refetch }) => {
     const [localValue, setLocalValue] = useState(task.completed_at);
     const [pendingValue, setPendingValue] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -20,7 +20,8 @@ const EditableCompletionDate = ({ task, control, errors, minDate }) => {
             setIsSubmitting(true);
             await updateTaskCompletionDate(task.id, value);
             setLocalValue(value);
-            setShowConfirmModal(false); // close after success
+            setShowConfirmModal(false);
+            refetch()
         } catch (error) {
             console.error("Failed to update completion date:", error);
         } finally {
@@ -30,22 +31,22 @@ const EditableCompletionDate = ({ task, control, errors, minDate }) => {
     };
 
     if (!isEditable) {
-        // Read-only mode
         return formatDate(localValue, "MMM dd, yyyy") || "";
     }
 
-    // ✅ Ensure only date format (YYYY-MM-DD)
     const formatForInput = (dateString) => {
         if (!dateString) return "";
-        return new Date(dateString).toISOString().split("T")[0];
+        return dateString.split("T")[0];
     };
 
     const min = formatForInput(minDate);
+    const max = new Date().toISOString().split("T")[0];
 
     return (
         <>
             <Controller
                 name={`completed_at_${task.id}`}
+                key={task.id + (task.completed_at || '')}
                 control={control}
                 defaultValue={formatForInput(localValue)}
                 render={({ field }) => {
@@ -59,7 +60,8 @@ const EditableCompletionDate = ({ task, control, errors, minDate }) => {
                                     errors[`completed_at_${task.id}`] ? "!border-red" : ""
                                 }`}
                                 value={inputValue}
-                                min={min}   // ✅ only min enforced
+                                min={min}
+                                max={max}
                                 onChange={(e) => {
                                     field.onChange(e.target.value);
                                     if (e.target.value !== localValue) {
@@ -90,7 +92,7 @@ const EditableCompletionDate = ({ task, control, errors, minDate }) => {
             {/* Confirmation Modal */}
             <CompletionDateConfirmModal
                 isOpen={showConfirmModal}
-                isSubmitting={isSubmitting}   // ✅ pass loading state
+                isSubmitting={isSubmitting}
                 onConfirm={() => handleSave(pendingValue)}
                 onClose={() => {
                     setShowConfirmModal(false);
