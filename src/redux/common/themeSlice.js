@@ -25,6 +25,7 @@ const initialState = {
     inputBorder: "",
     bgImg: "",
     iconText: "",
+    chartType: "bar",
     body: {
         class: ""
     }

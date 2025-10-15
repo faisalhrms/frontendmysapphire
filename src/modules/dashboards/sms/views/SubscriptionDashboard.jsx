@@ -1,151 +1,402 @@
-import React from "react";
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import SubscriptionCard from "@modules/dashboards/sms/components/SubscriptionCard.jsx";
+import React, { useState, useMemo } from "react";
 import {
-    useCountByDepartment,
-    useCountByVendor,
-    useSubscriptionCharts, useUpcomingRenewals
-} from "@modules/dashboards/sms/hooks/subscriptionHook.js";
-import SubscriptionListCard from "@modules/dashboards/sms/components/SubscriptionListCard.jsx";
-import { useSubscriptionSummary, useActiveAndPendingSubscriptions } from "@modules/dashboards/sms/hooks/subscriptionHook.js";
-import {PieChart} from "@modules/dashboards/sms/components/PieChart.jsx";
+    DollarSign, CreditCard, TrendingUp, TrendingDown,
+    Calendar, AlertCircle, Package, Users, Bell,
+    RefreshCw, BarChart3, PieChart, Activity, CheckCircle
+} from "lucide-react";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import { SUBSCRIPTION_ROUTES } from "@modules/subscription/routes.js";
-import {BasicBarChart} from "@modules/dashboards/sms/components/BasicBarChart.jsx";
-import {VendorBasicBarChart} from "@modules/dashboards/sms/components/VendorBasicBarChart.jsx";
-import MonthlySpendingChart from "@modules/dashboards/sms/components/MonthlySpendingChart.jsx";
-import {BasicLineChart} from "@modules/dashboards/sms/components/BaselineChart.jsx";
+import useSubscriptionDashboard from "@modules/dashboards/sms/hooks/subscriptionHook.js";
+import ReChart from "@components/charts/ReChart.jsx";
+import {DEFAULT_CHART_COLORS} from "@helpers/styles.js";
 
 const SubscriptionDashboard = () => {
-    const { summaryData, loading: summaryLoading } = useSubscriptionSummary();
-    const { activeSubscriptions, pendingSubscriptions, loading: subscriptionsLoading } = useActiveAndPendingSubscriptions();
-    const { lineChartData, donutChartData, loading: chartsLoading } = useSubscriptionCharts();
-    const { countByDepartment, loading: departmentLoading } = useCountByDepartment();
-    const { countByVendor, loading: vendorLoading } = useCountByVendor();
-    const { upcomingRenewals, loading } = useUpcomingRenewals(10);
-    if (summaryLoading || subscriptionsLoading || chartsLoading) {
-        return <LoadingSpinner/>;
+    const { dashboardData, loading, refreshData } = useSubscriptionDashboard();
+    const [selectedMetric, setSelectedMetric] = useState("by_vendor");
+
+    const COLORS = DEFAULT_CHART_COLORS
+
+    const metrics = [
+        { key: "by_vendor", label: "Vendors", icon: Package },
+        { key: "by_status", label: "Status", icon: Activity },
+        { key: "by_type", label: "Types", icon: PieChart },
+        { key: "by_payment_cycle", label: "Payment Cycles", icon: Calendar },
+        { key: "by_payment_method", label: "Payment Methods", icon: CreditCard },
+        { key: "by_department", label: "Departments", icon: Users },
+        { key: "by_payment_status", label: "Payment Status", icon: CheckCircle },
+    ];
+
+    const summary = useMemo(() => dashboardData?.summary ?? null, [dashboardData]);
+    const costTrends = useMemo(() => dashboardData?.cost_trends ?? null, [dashboardData]);
+    const upcomingRenewals = useMemo(() => dashboardData?.upcoming_renewals ?? [], [dashboardData]);
+    const monthlySpending = useMemo(() => dashboardData?.monthly_spending ?? [], [dashboardData]);
+    const topSpending = useMemo(() => dashboardData?.top_spending ?? [], [dashboardData]);
+
+    const currentData = useMemo(() => {
+        if (!dashboardData || !dashboardData[selectedMetric]) return [];
+        return dashboardData[selectedMetric];
+    }, [dashboardData, selectedMetric]);
+
+    const total = useMemo(
+        () => currentData.reduce((sum, item) => sum + (Number(item.value) || 0), 0),
+        [currentData]
+    );
+
+    if (loading) {
+        return <LoadingSpinner />;
     }
 
-    const subscriptionRoutesMap = {
-        "Total Active": `${SUBSCRIPTION_ROUTES.READ.path}?filter=total-active`,
-        "Paid": `${SUBSCRIPTION_ROUTES.READ.path}?filter=paid`,
-        "Free": `${SUBSCRIPTION_ROUTES.READ.path}?filter=free`,
-        "Canceled (YTD)": `${SUBSCRIPTION_ROUTES.READ.path}?filter=canceled`,
-        "New (YTD)": `${SUBSCRIPTION_ROUTES.READ.path}?filter=new`,
-    };
-
     return (
-        <>
-            <PageHeader
-                currentpage="Subscription Dashboard"
-                activepage="Dashboard"
-                mainpage="Subscription"
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
-                {summaryData.map((data, index) => {
-                    const route = subscriptionRoutesMap[data.name] || SUBSCRIPTION_ROUTES.READ.path;
+        <div className="space-y-8 max-w-7xl mx-auto pb-8 px-4 lg:px-0">
+            <IconPageHeader
+                heading="Subscription Dashboard"
+                description="Comprehensive subscription analytics and cost management insights"
+                icon={BarChart3}
+                headerClasses='font-bold text-[2rem]'
+            >
+                <button
+                    onClick={refreshData}
+                    className="p-2.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                >
+                    <RefreshCw size={18} className="text-gray-600 dark:text-gray-300" />
+                </button>
+            </IconPageHeader>
 
-                    return (
-                        <SubscriptionCard
-                            key={index}
-                            subscriptionData={data}
-                            route={route}
-                        />
-                    );
-                })}
-            </div>
-
-            <div className="grid grid-cols-12 gap-x-6 ">
-
-                <div className="xl:col-span-4 col-span-12 flex-grow  ">
-
-                    <SubscriptionListCard
-                        color="bg-secondary/10"
-                        title="Active Subscriptions"
-                        totalCount={activeSubscriptions.totalCount}
-                        items={activeSubscriptions.items}
-                        enableSearch={true}
+            {/* Summary Stats */}
+            {summary && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatCard
+                        icon={Package}
+                        title="Total Subscriptions"
+                        value={summary.total_subscriptions || 0}
+                        change={`${summary.active_subscriptions || 0} active`}
+                        trend="up"
+                    />
+                    <StatCard
+                        icon={DollarSign}
+                        title="Monthly Cost"
+                        value={`${(summary.total_monthly_cost || 0).toLocaleString()}`}
+                        change={`${(summary.total_annual_cost || 0).toLocaleString()} yearly`}
+                    />
+                    <StatCard
+                        icon={Calendar}
+                        title="Upcoming Renewals"
+                        value={summary.upcoming_renewals || 0}
+                        change={`${summary.expiring_soon || 0} expiring soon`}
+                        trend={summary.expiring_soon > 0 ? "down" : "up"}
+                    />
+                    <StatCard
+                        icon={AlertCircle}
+                        title="Overdue Payments"
+                        value={summary.overdue_payments || 0}
+                        change={`${summary.total_vendors || 0} vendors`}
+                        trend={summary.overdue_payments > 0 ? "down" : "up"}
                     />
                 </div>
-                <div className="xl:col-span-4 col-span-8 flex-grow">
-                    <SubscriptionListCard
-                        color="bg-purple/10"
-                        title="Pending Subscriptions"
-                        totalCount={pendingSubscriptions.totalCount}
-                        items={pendingSubscriptions.items}
-                        
-                    />
-                </div>
+            )}
 
-                <div className="xl:col-span-4 col-span-8 flex-grow">
-                    <SubscriptionListCard
-                        color="bg-orange/10"
-                        title="Upcoming Renewals (Next 10 Days)"
-                        totalCount={upcomingRenewals.totalCount}
-                        items={upcomingRenewals.items}
-                    />
-
-                </div>
-            </div>
-            <div className="grid grid-cols-12 gap-x-6">
-                <div className="xl:col-span-4 col-span-12 flex-grow  ">
-                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                        <div className="box-header bg-primary/10">
-                            <div className="box-title dark:text-white">Subscription Count by Status</div>
+            {/* Cost Trends & Recent Activity */}
+            {costTrends && (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cost Trends</h3>
+                            {costTrends.trend === 'up' ? (
+                                <TrendingUp className="text-danger" size={24} />
+                            ) : costTrends.trend === 'down' ? (
+                                <TrendingDown className="text-success" size={24} />
+                            ) : (
+                                <Activity className="text-gray-500" size={24} />
+                            )}
                         </div>
-                        <div className="box-body overflow-hidden">
-                            <div className="leads-source-chart flex items-center justify-center">
-                                <PieChart data={donutChartData.status_counts}/>
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{costTrends.current_month.label}</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    {(costTrends.current_month.total || 0).toLocaleString()}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    {costTrends.current_month.count} transactions
+                                </p>
+                            </div>
+                            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{costTrends.last_month.label}</p>
+                                <p className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+                                    {(costTrends.last_month.total || 0).toLocaleString()}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    {costTrends.last_month.count} transactions
+                                </p>
+                            </div>
+                            <div className={`flex items-center gap-2 pt-2 ${
+                                costTrends.change_percentage > 0 ? 'text-danger' :
+                                    costTrends.change_percentage < 0 ? 'text-success' : 'text-gray-600'
+                            }`}>
+                                {costTrends.change_percentage > 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                                <span className="text-sm font-medium">
+                                    {Math.abs(costTrends.change_percentage)}% vs last month
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
+                            <Bell className="inline mr-2" size={20} />
+                            Upcoming Renewals
+                        </h3>
+                        <div className="space-y-3 max-h-[280px] overflow-y-auto pr-2">
+                            {upcomingRenewals.slice(0, 5).map((renewal, index) => (
+                                <div
+                                    key={renewal.id}
+                                    className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md transition-all dark:bg-gray-800 dark:border-gray-700"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="font-medium text-gray-900 dark:text-white">{renewal.name}</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">{renewal.vendor}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-semibold text-gray-900 dark:text-white">
+                                                {renewal.currency} ${renewal.amount.toLocaleString()}
+                                            </p>
+                                            <p className={`text-xs font-medium ${
+                                                renewal.days_until <= 7 ? 'text-danger' :
+                                                    renewal.days_until <= 30 ? 'text-orange-600' : 'text-gray-600'
+                                            }`}>
+                                                In {renewal.days_until} days
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {upcomingRenewals.length === 0 && (
+                                <p className="text-sm text-gray-500 text-center py-8 dark:text-gray-400">
+                                    No upcoming renewals
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Distribution Charts */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                    <div className="flex flex-wrap gap-2">
+                        {metrics.map((metric) => {
+                            const Icon = metric.icon;
+                            const active = selectedMetric === metric.key;
+                            return (
+                                <button
+                                    key={metric.key}
+                                    onClick={() => setSelectedMetric(metric.key)}
+                                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                        active
+                                            ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                            : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                    }`}
+                                >
+                                    <Icon size={18} />
+                                    {metric.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Chart */}
+                        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
+                                {metrics.find((m) => m.key === selectedMetric)?.label} Distribution
+                            </h3>
+                            <ReChart
+                                data={currentData}
+                            />
+                        </div>
+
+                        {/* Top Items */}
+                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Items</h3>
+                            <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
+                                {currentData.slice(0, 10).map((item, index) => {
+                                    const value = Number(item.value) || 0;
+                                    const pct = total ? ((value / total) * 100) : 0;
+                                    const percentage = pct.toFixed(1);
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-800"
+                                        >
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-sm font-medium text-gray-900 truncate pr-4 dark:text-white">
+                                                    {item.name}
+                                                </span>
+                                                <span className="text-sm font-semibold text-primary">{value}</span>
+                                            </div>
+                                            {item.cost !== undefined && (
+                                                <p className="text-xs text-gray-600 mb-2 dark:text-gray-400">
+                                                    Monthly: {item.cost.toLocaleString()}
+                                                </p>
+                                            )}
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex-1 bg-gray-200 rounded-full h-2.5 overflow-hidden dark:bg-gray-700">
+                                                    <div
+                                                        className="h-full rounded-full transition-all duration-500"
+                                                        style={{
+                                                            width: `${percentage}%`,
+                                                            backgroundColor: COLORS[index % COLORS.length],
+                                                        }}
+                                                    />
+                                                </div>
+                                                <span className="text-xs font-medium text-gray-600 dark:text-gray-400 min-w-[50px] text-right">
+                                                    {percentage}%
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {currentData.length === 0 && (
+                                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                                        No data available for this metric.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="xl:col-span-8 col-span-12 flex-grow ">
-                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                        <div className="box-header bg-secondary/10">
-                            <div className="box-title dark:text-white">Subscription Count by Department</div>
+                {/* Detailed Table */}
+                <div className="p-6">
+                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                        <div className="p-5 border-b border-gray-200 dark:border-gray-700">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                Detailed {metrics.find((m) => m.key === selectedMetric)?.label} Data
+                            </h3>
                         </div>
-                        <div className="box-body">
-                            <BasicBarChart data={countByDepartment}/>
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-max">
+                                <thead className="bg-gray-50 dark:bg-gray-900">
+                                <tr>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Count</th>
+                                    {currentData.some(item => item.cost !== undefined) && (
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Monthly Cost</th>
+                                    )}
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Percentage</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Visual</th>
+                                </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                                {currentData.map((item, index) => {
+                                    const value = Number(item.value) || 0;
+                                    const percentage = total ? ((value / total) * 100).toFixed(1) : "0.0";
+                                    return (
+                                        <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{index + 1}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{item.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{value}</td>
+                                            {currentData.some(i => i.cost !== undefined) && (
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                    {item.cost !== undefined ? `${item.cost.toLocaleString()}` : 'N/A'}
+                                                </td>
+                                            )}
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{percentage}%</td>
+                                            <td className="px-6 py-4">
+                                                <div className="w-40 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                                    <div
+                                                        className="h-2.5 rounded-full transition-all duration-500"
+                                                        style={{
+                                                            width: `${percentage}%`,
+                                                            backgroundColor: COLORS[index % COLORS.length],
+                                                        }}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                                {currentData.length === 0 && (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400">
+                                            No data available for this metric.
+                                        </td>
+                                    </tr>
+                                )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-x-6  mt-8 ">
-                <div className="xl:col-span-5 col-span-12 flex-grow  ">
-                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                        <div className="box-header bg-green/10">
-                            <div className="box-title dark:text-white">Monthly Spending</div>
-                        </div>
-                        <div className="box-body overflow-hidden">
-                            <div className="leads-source-chart">
-                                <MonthlySpendingChart/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="xl:col-span-7 col-span-12 flex-grow  ">
-                    <div className="box overflow-hidden h-full flex flex-col shadow-xl">
-                        <div className="box-header bg-primary/10">
-                            <div className="box-title dark:text-white">Subscription Spending by Department</div>
-                        </div>
-                        <div className="box-body">
-                            <BasicLineChart data={lineChartData}/>
+            {/* Monthly Spending Trend */}
+            {monthlySpending.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
+                        <TrendingUp className="inline mr-2" size={20} />
+                        Monthly Spending Trend (Last 12 Months)
+                    </h3>
+                    <div className="overflow-x-auto">
+                        <div className="min-w-[600px]">
+                            <ReChart
+                                data={monthlySpending.map(item => ({
+                                    name: item.month,
+                                    value: item.amount
+                                }))}
+                                dimensions={{
+                                    height: 300
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="grid grid-cols-12 gap-x-6 mt-8 mb-8">
-                <div className="xl:col-span-12 col-span-12 flex-grow ">
-                    <VendorBasicBarChart data={countByVendor}/>
+            )}
+
+            {/* Top Spending Subscriptions */}
+            {topSpending.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
+                        <DollarSign className="inline mr-2" size={20} />
+                        Top 10 Subscriptions by Cost
+                    </h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-max">
+                            <thead className="bg-gray-50 dark:bg-gray-900">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Subscription</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Vendor</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Payment Cycle</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Monthly Cost</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Annual Cost</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                            {topSpending.map((sub, index) => (
+                                <tr key={sub.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{index + 1}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{sub.name}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{sub.vendor}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{sub.payment_cycle}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
+                                        {sub.currency} {sub.monthly_cost.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        {sub.currency} {sub.annual_cost.toLocaleString()}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-
-
-        </>
+            )}
+        </div>
     );
 };
 
