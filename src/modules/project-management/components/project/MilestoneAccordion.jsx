@@ -41,14 +41,14 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                     <div key={milestone.id} className="relative pb-6" style={{ paddingLeft: '60px' }}>
 
                         {/* Left: Tree Structure Column - Absolutely Positioned */}
-                        <div className="absolute left-0 top-0 bottom-0 flex flex-col items-center" style={{ width: '60px' }}>
+                        <div className="absolute left-0 top-0 bottom-0  flex flex-col items-center z-0"  style={{ width: '60px' }}>
 
                             {/* Top Vertical Line (from previous milestone) */}
                             {!isFirst && (
                                 <div
                                     className="absolute left-1/2 w-0.5 bg-[#c4c4c4] dark:bg-neutral-600"
                                     style={{
-                                        top: '-24px',
+                                        top: '-23px',
                                         height: '52px',
                                         transform: 'translateX(-1px)'
                                     }}
@@ -59,7 +59,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                             <div
                                 className={`absolute w-3 h-3 rounded-full ${statusConfig.dot} ${statusConfig.ring} ring-4 border-2 border-white z-10`}
                                 style={{
-                                    top: '28px',
+                                    top: '24px',
                                     left: '50%',
                                     transform: 'translateX(-50%)'
                                 }}
@@ -69,7 +69,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                             <div
                                 className="absolute h-0.5 bg-[#c4c4c4] dark:bg-neutral-600"
                                 style={{
-                                    top: '30px',
+                                    top: '28px',
                                     left: '50%',
                                     width: '30px',
                                     transform: 'translateY(1px)'
@@ -176,13 +176,13 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
 
                                             {/* Right: Avatar & Actions */}
                                             <div className="flex items-center gap-3">
-                                                <Tooltip id={`creator-${milestone.id}`}
-                                                         tooltipContent={milestone?.created_by?.full_name || 'N/A'}>
+                                                {/*<Tooltip id={`creator-${milestone.id}`}*/}
+                                                {/*         tooltipContent={milestone?.created_by?.full_name || 'N/A'}>*/}
                                                     <Avatar
                                                         avatar={milestone?.created_by?.avatar}
                                                         full_name={milestone?.created_by?.full_name || 'N/A'}
                                                     />
-                                                </Tooltip>
+                                                {/*</Tooltip>*/}
 
                                                 {!viewOnly && (
                                                     <div className="flex items-center gap-0.5">
