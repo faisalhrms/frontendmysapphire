@@ -17,6 +17,7 @@ import api from "@config/axiosConfig.js";
 import {toTitleCase} from "@helpers/formatters.js";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import {formatDate, formatDateTimeLocal} from "@helpers/dateTime.js";
+import ReChart from "@components/charts/ReChart.jsx";
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
@@ -321,11 +322,8 @@ const CivilDashboard = () => {
         if (!selectedSite) return null;
 
         const budgetData = [
-            {
-                name: 'Budget',
-                allocated: selectedSite.total_budget,
-                spent: selectedSite.total_spent
-            }
+            { name: 'Budget', value: selectedSite.total_budget },
+            { name: 'Spent', value: selectedSite.total_spent }
         ];
 
         const progressData = [
@@ -430,66 +428,26 @@ const CivilDashboard = () => {
 
                     <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                         <h3 className="text-base font-semibold text-gray-900 mb-6 dark:text-gray-200 dark:bg-bodybg">Task Progress</h3>
-                        <ResponsiveContainer width="100%" height={180}>
-                            <PieChart>
-                                <Pie
-                                    data={progressData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={50}
-                                    outerRadius={70}
-                                    paddingAngle={2}
-                                    dataKey="value"
-                                >
-                                    <Cell fill={COLORS.completed}/>
-                                    <Cell fill={COLORS.remaining}/>
-                                </Pie>
-                                <Tooltip/>
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="flex items-center justify-center gap-6 mt-4">
-                            <div className="flex items-center gap-2 dark:text-gray-200 dark:bg-bodybg">
-                                <div className="w-3 h-3 rounded-full bg-success"></div>
-                                <span className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Completed: {selectedSite.completed_tasks}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-gray-200"></div>
-                                <span
-                                    className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Remaining: {selectedSite.total_tasks - selectedSite.completed_tasks}</span>
-                            </div>
-                        </div>
+                        <ReChart
+                            data={progressData}
+                            dimensions={{height: 220}}
+                            chartConfig={{
+                                bar: { margin: { bottom: 0, left: 0 } },
+                                line: { margin: { bottom: 0 } },
+                            }}
+                        />
                     </div>
 
                     <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                         <h3 className="text-base font-semibold text-gray-900 mb-6 dark:text-gray-200 dark:bg-bodybg">Projects Status</h3>
-                        <ResponsiveContainer width="100%" height={180}>
-                            <PieChart>
-                                <Pie
-                                    data={projectsData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={50}
-                                    outerRadius={70}
-                                    paddingAngle={2}
-                                    dataKey="value"
-                                >
-                                    <Cell fill={COLORS.active}/>
-                                    <Cell fill={COLORS.completedProjects}/>
-                                </Pie>
-                                <Tooltip/>
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="flex items-center justify-center gap-6 mt-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-primary"></div>
-                                <span className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Active: {selectedSite.active_projects}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-success"></div>
-                                <span
-                                    className="text-xs text-gray-600 dark:text-gray-200 dark:bg-bodybg">Completed: {selectedSite.completed_projects}</span>
-                            </div>
-                        </div>
+                        <ReChart
+                            data={projectsData}
+                            dimensions={{height: 220}}
+                            chartConfig={{
+                                bar: { margin: { bottom: 0 } },
+                                line: { margin: { bottom: 0 } },
+                            }}
+                        />
                     </div>
                 </div>
 
@@ -497,36 +455,12 @@ const CivilDashboard = () => {
                 <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Budget Allocation vs Spending</h3>
-                        <div className="flex items-center gap-4 text-xs">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-primary/20"></div>
-                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Allocated</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-success/20"></div>
-                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Spent</span>
-                            </div>
-                        </div>
                     </div>
-                    <ResponsiveContainer width="100%" height={200}>
-                        <BarChart data={budgetData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false}/>
-                            <XAxis dataKey="name" tick={{fill: '#6b7280', fontSize: 11}}
-                                   axisLine={{stroke: '#e5e7eb'}}/>
-                            <YAxis tick={{fill: '#6b7280', fontSize: 11}} axisLine={{stroke: '#e5e7eb'}}/>
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'white',
-                                    border: '1px solid #e5e7eb',
-                                    borderRadius: '8px',
-                                    fontSize: '12px'
-                                }}
-                                formatter={(value) => `${(value / 1000000).toFixed(2)}M`}
-                            />
-                            <Bar dataKey="allocated" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Allocated"/>
-                            <Bar dataKey="spent" fill="#10b981" radius={[4, 4, 0, 0]} name="Spent"/>
-                        </BarChart>
-                    </ResponsiveContainer>
+                    <ReChart data={budgetData}
+                             chartConfig={{
+                                bar: { margin: { bottom: 0 } },
+                                line: { margin: { bottom: 0 } },
+                    }} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -755,16 +689,6 @@ const CivilDashboard = () => {
                 <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-base font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">Budget Analysis</h3>
-                        <div className="flex items-center gap-4 text-xs">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-primary/20"></div>
-                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Budget</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-success/20"></div>
-                                <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">Spent</span>
-                            </div>
-                        </div>
                     </div>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={chartData}>
@@ -873,78 +797,24 @@ const CivilDashboard = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                         <h3 className="text-base font-semibold text-gray-900 mb-4 dark:text-gray-200 dark:bg-bodybg">Status Distribution</h3>
-                        <ResponsiveContainer width="100%" height={280}>
-                            <PieChart>
-                                <Pie
-                                    data={statusData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={90}
-                                    paddingAngle={2}
-                                    dataKey="value"
-                                >
-                                    {statusData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={STATUS_COLORS[index % STATUS_COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'white',
-                                        border: '1px solid #e5e7eb',
-                                        borderRadius: '8px',
-                                        fontSize: '12px'
-                                    }}
-                                />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="grid grid-cols-2 gap-3 mt-4">
-                            {statusData.map((item, idx) => (
-                                <div key={idx} className="flex items-center gap-2 text-xs">
-                                    <div className="w-3 h-3 rounded" style={{ backgroundColor: STATUS_COLORS[idx] }}></div>
-                                    <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">{item.name}</span>
-                                    <span className="font-semibold text-gray-900 ml-auto dark:text-gray-200 dark:bg-bodybg">{item.value}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <ReChart
+                            data={statusData}
+                            chartConfig={{
+                                bar: { margin: { bottom: 20, left: 0, right: 0 } },
+                                line: { margin: { bottom: 20 } },
+                            }}
+                        />
                     </div>
 
                     <div className="bg-white border border-gray-100 rounded-xl p-6 dark:text-gray-200 dark:bg-bodybg">
                         <h3 className="text-base font-semibold text-gray-900 mb-4 dark:text-gray-200 dark:bg-bodybg">Priority Distribution</h3>
-                        <ResponsiveContainer width="100%" height={280}>
-                            <PieChart>
-                                <Pie
-                                    data={priorityData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={90}
-                                    paddingAngle={2}
-                                    dataKey="value"
-                                >
-                                    {priorityData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={PRIORITY_COLORS[index % PRIORITY_COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'white',
-                                        border: '1px solid #e5e7eb',
-                                        borderRadius: '8px',
-                                        fontSize: '12px'
-                                    }}
-                                />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="grid grid-cols-2 gap-3 mt-4">
-                            {priorityData.map((item, idx) => (
-                                <div key={idx} className="flex items-center gap-2 text-xs">
-                                    <div className="w-3 h-3 rounded" style={{ backgroundColor: PRIORITY_COLORS[idx] }}></div>
-                                    <span className="text-gray-600 dark:text-gray-200 dark:bg-bodybg">{item.name}</span>
-                                    <span className="font-semibold text-gray-900 ml-auto dark:text-gray-200 dark:bg-bodybg">{item.value}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <ReChart
+                            data={priorityData}
+                            chartConfig={{
+                                bar: { margin: { bottom: 0 } },
+                                line: { margin: { bottom: 0 } },
+                            }}
+                        />
                     </div>
                 </div>
 
