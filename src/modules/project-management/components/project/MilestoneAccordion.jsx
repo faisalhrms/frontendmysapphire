@@ -59,7 +59,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                             <div
                                 className={`absolute w-3 h-3 rounded-full ${statusConfig.dot} ${statusConfig.ring} ring-4 border-2 border-white z-10`}
                                 style={{
-                                    top: '23px',
+                                    top: '24px',
                                     left: '50%',
                                     transform: 'translateX(-50%)'
                                 }}
