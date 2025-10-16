@@ -1,31 +1,56 @@
-// useEquipmentAuditHook.js
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
 export const useEquipmentAudit = () => {
-    const [auditData, setAuditData] = useState([]);
+    const [auditData, setAuditData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchAuditData = async () => {
-            try {
-                const response = await api.get("/dashboard/equipment-audits/");
-                setAuditData(response.data.data || []);
-            } catch (error) {
-                Notify.error(
-                    error.response?.data?.message ||
-                    "Error fetching equipment audit data"
-                );
-                setAuditData([]);
-            } finally {
-                setLoading(false);
+    const fetchAuditData = useCallback(async (showNotification = false) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await api.get("/dashboard/equipment-audits/");
+
+            if (response.data.status) {
+                setAuditData(response.data.data || {});
+
+                if (showNotification) {
+                    Notify.success("Dashboard refreshed successfully");
+                }
+            } else {
+                throw new Error(response.data.message || "Failed to fetch data");
             }
-        };
+        } catch (error) {
+            const errorMessage = error.response?.data?.message ||
+                error.message ||
+                "Error fetching equipment audit data";
 
-        fetchAuditData();
+            setError(errorMessage);
+            Notify.error(errorMessage);
+            setAuditData({});
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    return { auditData, loading };
+    // Initial data fetch
+    useEffect(() => {
+        fetchAuditData(false);
+    }, [fetchAuditData]);
+
+    // Refresh function with notification
+    const refreshData = useCallback(() => {
+        fetchAuditData(true);
+    }, [fetchAuditData]);
+
+    return {
+        auditData,
+        loading,
+        error,
+        refreshData
+    };
 };
