@@ -48,7 +48,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                                 <div
                                     className="absolute left-1/2 w-0.5 bg-[#c4c4c4] dark:bg-neutral-600"
                                     style={{
-                                        top: '-24px',
+                                        top: '-23px',
                                         height: '52px',
                                         transform: 'translateX(-1px)'
                                     }}
@@ -59,7 +59,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                             <div
                                 className={`absolute w-3 h-3 rounded-full ${statusConfig.dot} ${statusConfig.ring} ring-4 border-2 border-white z-10`}
                                 style={{
-                                    top: '24px',
+                                    top: '23px',
                                     left: '50%',
                                     transform: 'translateX(-50%)'
                                 }}
@@ -69,7 +69,7 @@ const MilestoneAccordion = ({ milestones, projectStatus, projectUsers, openMiles
                             <div
                                 className="absolute h-0.5 bg-[#c4c4c4] dark:bg-neutral-600"
                                 style={{
-                                    top: '30px',
+                                    top: '28px',
                                     left: '50%',
                                     width: '30px',
                                     transform: 'translateY(1px)'
