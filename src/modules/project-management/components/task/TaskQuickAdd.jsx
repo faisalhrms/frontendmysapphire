@@ -370,7 +370,7 @@ const TaskQuickAdd = ({
                         </button>
 
                         {showUserDropdown && (
-                            <div className="absolute right-0 top-full mt-1 w-80 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-xl z-50 overflow-hidden flex flex-col">
+                            <div className="absolute right-0 top-full z-10 mt-1 w-80 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-xl  overflow-hidden flex flex-col">
                                 <div className="p-3 border-b border-gray-200 dark:border-neutral-700">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
