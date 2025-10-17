@@ -70,27 +70,26 @@ const SubscriptionDashboard = () => {
                         icon={Package}
                         title="Total Subscriptions"
                         value={summary.total_subscriptions || 0}
-                        change={`${summary.active_subscriptions || 0} active`}
-                        trend="up"
+                        subtitle={`${summary.active_subscriptions || 0} active`}
                     />
                     <StatCard
                         icon={DollarSign}
                         title="Monthly Cost"
                         value={`${(summary.total_monthly_cost || 0).toLocaleString()}`}
-                        change={`${(summary.total_annual_cost || 0).toLocaleString()} yearly`}
+                        subtitle={`${(summary.total_annual_cost || 0).toLocaleString()} yearly`}
                     />
                     <StatCard
                         icon={Calendar}
                         title="Upcoming Renewals"
                         value={summary.upcoming_renewals || 0}
-                        change={`${summary.expiring_soon || 0} expiring soon`}
+                        subtitle={`${summary.expiring_soon || 0} expiring soon`}
                         trend={summary.expiring_soon > 0 ? "down" : "up"}
                     />
                     <StatCard
                         icon={AlertCircle}
                         title="Overdue Payments"
                         value={summary.overdue_payments || 0}
-                        change={`${summary.total_vendors || 0} vendors`}
+                        subtitle={`${summary.total_vendors || 0} vendors`}
                         trend={summary.overdue_payments > 0 ? "down" : "up"}
                     />
                 </div>
@@ -211,7 +210,7 @@ const SubscriptionDashboard = () => {
                         {/* Chart */}
                         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
-                                {metrics.find((m) => m.key === selectedMetric)?.label} Distribution
+                                {metrics.find((m) => m.key === selectedMetric)?.label}
                             </h3>
                             <ReChart
                                 data={currentData}
