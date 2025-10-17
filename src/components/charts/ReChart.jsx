@@ -37,7 +37,8 @@ const CustomTooltip = ({ active, payload, label }) => {
         const displayLabel = dataPoint?.name || label;
 
         return (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3 min-w-[150px]">
+            <div className="bg-white  border border-gray-200  rounded-lg shadow-lg p-3 min-w-[150px] dark:text-gray-200 dark:bg-bodybg
+">
                 <p className="font-semibold text-gray-900 dark:text-white mb-2 border-b pb-1">
                     {displayLabel}
                 </p>
@@ -70,7 +71,7 @@ const CustomLegend = ({ payload }) => {
     return (
         <div className="flex flex-wrap justify-center gap-3 mt-4 px-4">
             {payload.map((entry, index) => (
-                <div key={index} className="flex items-center gap-2 px-3 py-1 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div key={index} className="flex items-center gap-2 px-3 py-1 bg-gray-50 dark:text-gray-200 dark:bg-bodybg rounded-lg">
                     <div
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: entry.color }}
@@ -161,8 +162,8 @@ export default function ReChart({
 
     if (!processedData || processedData.length === 0) {
         return (
-            <div className="flex items-center justify-center h-64 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                <div className="text-center">
+            <div className="flex items-center justify-center h-64 bg-gray-50  rounded-lg border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
+                <div className="text-center ">
                     <div className="text-gray-400 dark:text-gray-500 text-4xl mb-3">📊</div>
                     <p className="text-gray-500 dark:text-gray-400 font-medium">No chart data available</p>
                     <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Please provide data to display the chart</p>
@@ -439,7 +440,7 @@ export default function ReChart({
 
             default:
                 return (
-                    <div className="flex items-center justify-center h-full">
+                    <div className="flex items-center justify-center h-full ">
                         <div className="text-center">
                             <div className="text-gray-400 dark:text-gray-500 text-3xl mb-2">❓</div>
                             <p className="text-gray-500 dark:text-gray-400 font-medium">Unsupported Chart Type</p>

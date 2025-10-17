@@ -57,7 +57,7 @@ const SubscriptionDashboard = () => {
             >
                 <button
                     onClick={refreshData}
-                    className="p-2.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                    className="p-2.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors shadow-sm dark:text-gray-200 dark:bg-bodybg dark:hover:bg-gray-700"
                 >
                     <RefreshCw size={18} className="text-gray-600 dark:text-gray-300" />
                 </button>
@@ -99,7 +99,7 @@ const SubscriptionDashboard = () => {
             {/* Cost Trends & Recent Activity */}
             {costTrends && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cost Trends</h3>
                             {costTrends.trend === 'up' ? (
@@ -141,7 +141,7 @@ const SubscriptionDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                    <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
                             <Bell className="inline mr-2" size={20} />
                             Upcoming Renewals
@@ -182,7 +182,7 @@ const SubscriptionDashboard = () => {
             )}
 
             {/* Distribution Charts */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200  dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
                     <div className="flex flex-wrap gap-2">
                         {metrics.map((metric) => {
@@ -195,7 +195,7 @@ const SubscriptionDashboard = () => {
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                         active
                                             ? "bg-primary/10 text-primary border-primary/30 shadow-md"
-                                            : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                            : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md  dark:text-gray-200 dark:bg-bodybg"
                                     }`}
                                 >
                                     <Icon size={18} />
@@ -206,10 +206,10 @@ const SubscriptionDashboard = () => {
                     </div>
                 </div>
 
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="p-6 border-b border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Chart */}
-                        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
                                 {metrics.find((m) => m.key === selectedMetric)?.label} Distribution
                             </h3>
@@ -219,7 +219,7 @@ const SubscriptionDashboard = () => {
                         </div>
 
                         {/* Top Items */}
-                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Items</h3>
                             <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
                                 {currentData.slice(0, 10).map((item, index) => {
@@ -229,7 +229,7 @@ const SubscriptionDashboard = () => {
                                     return (
                                         <div
                                             key={index}
-                                            className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-800"
+                                            className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all dark:text-gray-200 dark:bg-bodybg"
                                         >
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-sm font-medium text-gray-900 truncate pr-4 dark:text-white">
@@ -271,7 +271,7 @@ const SubscriptionDashboard = () => {
 
                 {/* Detailed Table */}
                 <div className="p-6">
-                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow dark:text-gray-200 dark:bg-bodybg">
                         <div className="p-5 border-b border-gray-200 dark:border-gray-700">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                 Detailed {metrics.find((m) => m.key === selectedMetric)?.label} Data
@@ -279,7 +279,7 @@ const SubscriptionDashboard = () => {
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-max">
-                                <thead className="bg-gray-50 dark:bg-gray-900">
+                                <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <tr>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
@@ -307,7 +307,7 @@ const SubscriptionDashboard = () => {
                                             )}
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{percentage}%</td>
                                             <td className="px-6 py-4">
-                                                <div className="w-40 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                                <div className="w-40 bg-gray-300 rounded-full h-2.5 dark:bg-gray-800">
                                                     <div
                                                         className="h-2.5 rounded-full transition-all duration-500"
                                                         style={{
@@ -336,7 +336,7 @@ const SubscriptionDashboard = () => {
 
             {/* Monthly Spending Trend */}
             {monthlySpending.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
                         <TrendingUp className="inline mr-2" size={20} />
                         Monthly Spending Trend (Last 12 Months)
@@ -359,14 +359,14 @@ const SubscriptionDashboard = () => {
 
             {/* Top Spending Subscriptions */}
             {topSpending.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg ">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
                         <DollarSign className="inline mr-2" size={20} />
                         Top 10 Subscriptions by Cost
                     </h3>
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-max">
-                            <thead className="bg-gray-50 dark:bg-gray-900">
+                            <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                             <tr>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Subscription</th>
@@ -376,7 +376,7 @@ const SubscriptionDashboard = () => {
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Annual Cost</th>
                             </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700 border border-gray-200">
                             {topSpending.map((sub, index) => (
                                 <tr key={sub.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{index + 1}</td>
