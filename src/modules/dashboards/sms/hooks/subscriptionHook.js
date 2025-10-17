@@ -1,163 +1,60 @@
-// subscriptionHooks.js
+import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'react-toastify';
+import api from "@config/axiosConfig.js";
 
-import { useState, useEffect } from 'react';
-import {
-    getSubscriptionSummary,
-    getActiveAndPendingSubscriptions,
-    getChartData, getMonthlySpend, getCountByDepartment, getCountByVendor, getUpcomingRenewals
-} from '@modules/dashboards/sms/services/subscriptionService.js';
-
-export const useSubscriptionSummary = () => {
-    const [summaryData, setSummaryData] = useState([]);
+/**
+ * Custom hook to fetch subscription dashboard analytics
+ * @returns {Object} { dashboardData, loading, error, refreshData }
+ */
+export const useSubscriptionDashboard = () => {
+    const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchSummary = async () => {
-            try {
-                const data = await getSubscriptionSummary();
-                setSummaryData(data);
-            } catch (error) {
-            } finally {
-                setLoading(false);
+    /**
+     * Fetch dashboard data from API
+     */
+    const fetchDashboardData = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await api.get('dashboard/subscriptions/analytics/');
+
+            if (response.data) {
+                setDashboardData(response.data);
             }
-        };
-
-        fetchSummary();
+        } catch (err) {
+            const errorMessage = err.response?.data?.message ||
+                err.response?.data?.error ||
+                'Failed to fetch dashboard data';
+            setError(errorMessage);
+            toast.error(errorMessage);
+            console.error('Dashboard fetch error:', err);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
-    return { summaryData, loading };
-};
+    /**
+     * Refresh dashboard data
+     */
+    const refreshData = useCallback(() => {
+        toast.info('Refreshing dashboard...');
+        fetchDashboardData();
+    }, [fetchDashboardData]);
 
-export const useActiveAndPendingSubscriptions = () => {
-    const [activeSubscriptions, setActiveSubscriptions] = useState([]);
-    const [pendingSubscriptions, setPendingSubscriptions] = useState([]);
-    const [loading, setLoading] = useState(true);
-
+    // Fetch data on mount
     useEffect(() => {
-        const fetchSubscriptions = async () => {
-            try {
-                const data = await getActiveAndPendingSubscriptions();
-                setActiveSubscriptions(data.activeSubscriptions);
-                setPendingSubscriptions(data.pendingSubscriptions);
-            } catch (error) {
-            } finally {
-                setLoading(false);
-            }
-        };
+        fetchDashboardData();
+    }, [fetchDashboardData]);
 
-        fetchSubscriptions();
-    }, []);
-
-    return { activeSubscriptions, pendingSubscriptions, loading };
+    return {
+        dashboardData,
+        loading,
+        error,
+        refreshData
+    };
 };
 
-export const useSubscriptionCharts = () => {
-    const [lineChartData, setLineChartData] = useState([]);
-    const [donutChartData, setDonutChartData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchChartData = async () => {
-            try {
-                const data = await getChartData();
-                setLineChartData(data.lineChartData);
-                setDonutChartData(data.donutChartData);
-            } catch (error) {
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchChartData();
-    }, []);
-
-    return { lineChartData, donutChartData, loading };
-};
-export const useMonthlySpend = () => {
-    const [monthlySpend, setMonthlySpend] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchMonthlySpend = async () => {
-            try {
-                const data = await getMonthlySpend();
-                setMonthlySpend(data);
-            } catch (error) {
-
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchMonthlySpend();
-    }, []);
-
-    return { monthlySpend, loading };
-};
-
-export const useCountByDepartment = () => {
-    const [countByDepartment, setCountByDepartment] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getCountByDepartment();
-                setCountByDepartment(data);
-            } catch (error) {
-
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    return { countByDepartment, loading };
-};
-
-export const useCountByVendor = () => {
-    const [countByVendor, setCountByVendor] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getCountByVendor();
-                setCountByVendor(data);
-            } catch (error) {
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    return { countByVendor, loading };
-};
-export const useUpcomingRenewals = (days = 10) => {
-    const [upcomingRenewals, setUpcomingRenewals] = useState({ totalCount: 0, items: [] });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchRenewals = async () => {
-            try {
-                const data = await getUpcomingRenewals(days);
-                setUpcomingRenewals({
-                    totalCount: data.totalCount || 0,
-                    items: Array.isArray(data.items) ? data.items : [],
-                });
-            } catch (error) {
-                setUpcomingRenewals({ totalCount: 0, items: [] });
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchRenewals();
-    }, [days]);
-
-    return { upcomingRenewals, loading };
-};
+export default useSubscriptionDashboard;

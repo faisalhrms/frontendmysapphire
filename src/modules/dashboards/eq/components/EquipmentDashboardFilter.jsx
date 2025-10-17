@@ -25,7 +25,7 @@ const EquipmentDashboardFilter = ({ control, errors, onClear }) => {
 
     const handleCompanySelect = useCallback((id) => {
         setCompany(id);
-        setDepartment(null); // Reset department when company changes
+        setDepartment(null);
     }, []);
 
     const handleDepartmentSelect = useCallback((id) => {
@@ -44,21 +44,10 @@ const EquipmentDashboardFilter = ({ control, errors, onClear }) => {
         setEquipmentType(selected);
     }, []);
 
-    const handleStatusSelect = useCallback((selected) => {
-        setStatus(selected);
-    }, []);
-
-    const handleCustodianSelect = useCallback((selected) => {
-        setCustodian(selected);
-    }, []);
-
     return (
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-6 mt-6 border-t border-gray-200 pt-4 dark:border-gray-700 overflow-x-auto">
             <div className="col-span-12">
-                <div className="box custom-box">
-                    <div className="box-body p-4">
                         <div className="flex items-center justify-between gap-4">
-
                             <div className="flex items-center gap-4 flex-1">
                                 <UserCompanyDropdown
                                     control={control}
@@ -99,15 +88,7 @@ const EquipmentDashboardFilter = ({ control, errors, onClear }) => {
                                     onTypeSelect={handleTypeSelect}
                                 />
                             </div>
-
-
-
-
-
                             <FilterButton />
-                            {/*<FilterClearButton onClick={onClear} />*/}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

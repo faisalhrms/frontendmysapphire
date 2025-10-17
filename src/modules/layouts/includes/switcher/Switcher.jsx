@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 import Themeprimarycolor, * as switcherData from '@modules/layouts/includes/switcher/SwitcherData.jsx';
 import { Link } from 'react-router-dom';
+import ChartSelector from "@modules/layouts/includes/switcher/ChartSelector.jsx";
 
 const Switcher = () => {
   const dispatch = useDispatch();
@@ -121,226 +122,302 @@ const Switcher = () => {
               </div>
 
 
-
-            <div>
-              <p className="switcher-style-head">Directions:</p>
-              <div className="grid grid-cols-3  switcher-style">
-                <div className="flex items-center">
-                  <input type="radio" name="direction" className="ti-form-radio" id="switcher-ltr" checked={local_variable.dir === "ltr"} onChange={_e => { }}
-                    onClick={() => { switcherData.Ltr(dispatch); }} />
-                  <label htmlFor="switcher-ltr" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">LTR</label>
-                </div>
-                <div className="flex items-center">
-                  <input type="radio" name="direction" className="ti-form-radio" id="switcher-rtl" checked={local_variable.dir === "rtl"} onChange={_e => { }}
-                    onClick={() => { switcherData.Rtl(dispatch); }} />
-                  <label htmlFor="switcher-rtl" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">RTL</label>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="switcher-style-head">Navigation Styles:</p>
-              <div className="grid grid-cols-3  switcher-style">
-                <div className="flex items-center">
-                  <input type="radio" name="navigation-style" className="ti-form-radio" id="switcher-vertical" checked={local_variable.dataNavLayout === "vertical"} onChange={_e => { }}
-                    onClick={() => switcherData.Vertical(dispatch)} />
-                  <label htmlFor="switcher-vertical"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Vertical</label>
-                </div>
-                <div className="flex items-center">
-                  <input type="radio" name="navigation-style" className="ti-form-radio" id="switcher-horizontal" checked={local_variable.dataNavLayout === "horizontal"} onChange={_e => { }}
-                    onClick={() => switcherData.HorizontalClick(dispatch)} />
-                  <label htmlFor="switcher-horizontal"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Horizontal</label>
+              <div>
+                <p className="switcher-style-head">Directions:</p>
+                <div className="grid grid-cols-3  switcher-style">
+                  <div className="flex items-center">
+                    <input type="radio" name="direction" className="ti-form-radio" id="switcher-ltr"
+                           checked={local_variable.dir === "ltr"} onChange={_e => {
+                    }}
+                           onClick={() => {
+                             switcherData.Ltr(dispatch);
+                           }}/>
+                    <label htmlFor="switcher-ltr"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">LTR</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input type="radio" name="direction" className="ti-form-radio" id="switcher-rtl"
+                           checked={local_variable.dir === "rtl"} onChange={_e => {
+                    }}
+                           onClick={() => {
+                             switcherData.Rtl(dispatch);
+                           }}/>
+                    <label htmlFor="switcher-rtl"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">RTL</label>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div>
-              <p className="switcher-style-head">Navigation Menu Style:</p>
-              <div className="grid grid-cols-2 gap-2 switcher-style">
-                <div className="flex">
-                  <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio" id="switcher-menu-click"
-                    checked={local_variable.dataNavStyle === "menu-click"} onChange={_e => { }}
-                    onClick={() => switcherData.Menuclick(dispatch)} />
-                  <label htmlFor="switcher-menu-click" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Menu
-                    Click</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio" id="switcher-menu-hover" checked={local_variable.dataNavStyle === "menu-hover"} onChange={_e => { }}
-                    onClick={() => switcherData.MenuHover(dispatch)} />
-                  <label htmlFor="switcher-menu-hover" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Menu
-                    Hover</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio" id="switcher-icon-click" checked={local_variable.dataNavStyle === "icon-click"} onChange={_e => { }}
-                    onClick={() => switcherData.IconClick(dispatch)} />
-                  <label htmlFor="switcher-icon-click" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Icon
-                    Click</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio" id="switcher-icon-hover"
-                    checked={local_variable.dataNavStyle === "icon-hover"} onChange={_e => { }}
-                    onClick={() => switcherData.IconHover(dispatch)} />
-                  <label htmlFor="switcher-icon-hover" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Icon
-                    Hover</label>
+              <div>
+                <p className="switcher-style-head">Navigation Styles:</p>
+                <div className="grid grid-cols-3  switcher-style">
+                  <div className="flex items-center">
+                    <input type="radio" name="navigation-style" className="ti-form-radio" id="switcher-vertical"
+                           checked={local_variable.dataNavLayout === "vertical"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.Vertical(dispatch)}/>
+                    <label htmlFor="switcher-vertical"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Vertical</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input type="radio" name="navigation-style" className="ti-form-radio" id="switcher-horizontal"
+                           checked={local_variable.dataNavLayout === "horizontal"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.HorizontalClick(dispatch)}/>
+                    <label htmlFor="switcher-horizontal"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Horizontal</label>
+                  </div>
                 </div>
               </div>
-              <div className="px-4 text-secondary text-xs"><b className="me-2 inline-flex">Note:</b>Works same for both Vertical and
-                Horizontal
-              </div>
-            </div>
-            <div className=" sidemenu-layout-styles">
-              <p className="switcher-style-head">Sidemenu Layout Syles:</p>
-              <div className="grid grid-cols-2 gap-2 switcher-style">
-                <div className="flex">
-                  <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio" id="switcher-default-menu"
-                  defaultChecked
-                     onChange={_e => { }}
-                    onClick={() => switcherData.Defaultmenu(dispatch)} />
-                  <label htmlFor="switcher-default-menu"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Default
-                    Menu</label>
+              <div>
+                <p className="switcher-style-head">Navigation Menu Style:</p>
+                <div className="grid grid-cols-2 gap-2 switcher-style">
+                  <div className="flex">
+                    <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio"
+                           id="switcher-menu-click"
+                           checked={local_variable.dataNavStyle === "menu-click"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.Menuclick(dispatch)}/>
+                    <label htmlFor="switcher-menu-click"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Menu
+                      Click</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio"
+                           id="switcher-menu-hover" checked={local_variable.dataNavStyle === "menu-hover"}
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.MenuHover(dispatch)}/>
+                    <label htmlFor="switcher-menu-hover"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Menu
+                      Hover</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio"
+                           id="switcher-icon-click" checked={local_variable.dataNavStyle === "icon-click"}
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.IconClick(dispatch)}/>
+                    <label htmlFor="switcher-icon-click"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Icon
+                      Click</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="navigation-data-menu-styles" className="ti-form-radio"
+                           id="switcher-icon-hover"
+                           checked={local_variable.dataNavStyle === "icon-hover"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.IconHover(dispatch)}/>
+                    <label htmlFor="switcher-icon-hover"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Icon
+                      Hover</label>
+                  </div>
                 </div>
-                <div className="flex">
-                  <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio" id="switcher-closed-menu" checked={local_variable.dataVerticalStyle === "closed"} onChange={_e => { }}
-                    onClick={() => switcherData.Closedmenu(dispatch)} />
-                  <label htmlFor="switcher-closed-menu" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">
-                    Closed
-                    Menu</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio" id="switcher-icontext-menu" checked={local_variable.dataVerticalStyle === "icontext"} onChange={_e => { }}
-                    onClick={() => switcherData.iconTextfn(dispatch)} />
-                  <label htmlFor="switcher-icontext-menu" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Icon
-                    Text</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio" id="switcher-icon-overlay"
-                    onClick={() => switcherData.iconOverayFn(dispatch)} />
-                  <label htmlFor="switcher-icon-overlay" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Icon
-                    Overlay</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio" id="switcher-detached" checked={local_variable.dataVerticalStyle === "detached"} onChange={_e => { }}
-                    onClick={() => switcherData.DetachedFn(dispatch)} />
-                  <label htmlFor="switcher-detached"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Detached</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio" id="switcher-double-menu" checked={local_variable.dataVerticalStyle === "doublemenu"} onChange={_e => { }}
-                    onClick={() => switcherData.DoubletFn(dispatch)} />
-                  <label htmlFor="switcher-double-menu" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Double
-                    Menu</label>
-                </div>
-              </div>
-              <div className="px-4 text-secondary text-xs"><b className="me-2 inline-flex">Note:</b>Navigation menu styles won't work
-                here.</div>
-            </div>
-            <div>
-              <p className="switcher-style-head">Page Styles:</p>
-              <div className="grid grid-cols-3  switcher-style">
-                <div className="flex">
-                  <input type="radio" name="data-page-styles" className="ti-form-radio" id="switcher-regular" checked={local_variable.dataPageStyle === "regular"} onChange={_e => { }}
-                    onClick={() => switcherData.Regular(dispatch)} />
-                  <label htmlFor="switcher-regular"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Regular</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="data-page-styles" className="ti-form-radio" id="switcher-classic" checked={local_variable.dataPageStyle === "classic"} onChange={_e => { }}
-                    onClick={() => switcherData.Classic(dispatch)} />
-                  <label htmlFor="switcher-classic"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Classic</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="data-page-styles" className="ti-form-radio" id="switcher-modern" checked={local_variable.dataPageStyle === "modern"} onChange={_e => { }} onClick={() => switcherData.Modern(dispatch)} />
-                  <label htmlFor="switcher-modern"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold"> Modern</label>
+                <div className="px-4 text-secondary text-xs"><b className="me-2 inline-flex">Note:</b>Works same for
+                  both Vertical and
+                  Horizontal
                 </div>
               </div>
-            </div>
-            <div>
-              <p className="switcher-style-head">Layout Width Styles:</p>
-              <div className="grid grid-cols-3 switcher-style">
-                <div className="flex">
-                  <input type="radio" name="layout-width" className="ti-form-radio" id="switcher-full-width" checked={local_variable.dataWidth === "fullwidth"} onChange={_e => { }}
-                    onClick={() => switcherData.Fullwidth(dispatch)} />
-                  <label htmlFor="switcher-full-width"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">FullWidth</label>
+              <div className=" sidemenu-layout-styles">
+                <p className="switcher-style-head">Sidemenu Layout Syles:</p>
+                <div className="grid grid-cols-2 gap-2 switcher-style">
+                  <div className="flex">
+                    <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio"
+                           id="switcher-default-menu"
+                           defaultChecked
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.Defaultmenu(dispatch)}/>
+                    <label htmlFor="switcher-default-menu"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Default
+                      Menu</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio"
+                           id="switcher-closed-menu" checked={local_variable.dataVerticalStyle === "closed"}
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.Closedmenu(dispatch)}/>
+                    <label htmlFor="switcher-closed-menu"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">
+                      Closed
+                      Menu</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio"
+                           id="switcher-icontext-menu" checked={local_variable.dataVerticalStyle === "icontext"}
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.iconTextfn(dispatch)}/>
+                    <label htmlFor="switcher-icontext-menu"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Icon
+                      Text</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio"
+                           id="switcher-icon-overlay"
+                           onClick={() => switcherData.iconOverayFn(dispatch)}/>
+                    <label htmlFor="switcher-icon-overlay"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Icon
+                      Overlay</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio" id="switcher-detached"
+                           checked={local_variable.dataVerticalStyle === "detached"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.DetachedFn(dispatch)}/>
+                    <label htmlFor="switcher-detached"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Detached</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="sidemenu-layout-styles" className="ti-form-radio"
+                           id="switcher-double-menu" checked={local_variable.dataVerticalStyle === "doublemenu"}
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.DoubletFn(dispatch)}/>
+                    <label htmlFor="switcher-double-menu"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Double
+                      Menu</label>
+                  </div>
                 </div>
-                <div className="flex">
-                  <input type="radio" name="layout-width" className="ti-form-radio" id="switcher-boxed" checked={local_variable.dataWidth === "boxed"} onChange={_e => { }}
-                    onClick={() => switcherData.Boxed(dispatch)} />
-                  <label htmlFor="switcher-boxed" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Boxed</label>
+                <div className="px-4 text-secondary text-xs"><b className="me-2 inline-flex">Note:</b>Navigation menu
+                  styles won't work
+                  here.
                 </div>
               </div>
-            </div>
-            <div>
-              <p className="switcher-style-head">Menu Positions:</p>
-              <div className="grid grid-cols-3  switcher-style">
-                <div className="flex">
-                  <input type="radio" name="data-menu-positions" className="ti-form-radio" id="switcher-menu-fixed"
-                    checked={local_variable.dataMenuPosition === "fixed"} onChange={_e => { }}
-                    onClick={() => switcherData.FixedMenu(dispatch)} />
-                  <label htmlFor="switcher-menu-fixed"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Fixed</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="data-menu-positions" className="ti-form-radio" id="switcher-menu-scroll" checked={local_variable.dataMenuPosition === "scrollable"} onChange={_e => { }}
-                    onClick={() => switcherData.scrollMenu(dispatch)} />
-                  <label htmlFor="switcher-menu-scroll"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Scrollable </label>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="switcher-style-head">Header Positions:</p>
-              <div className="grid grid-cols-3 switcher-style">
-                <div className="flex">
-                  <input type="radio" name="data-header-positions" className="ti-form-radio" id="switcher-header-fixed" checked={local_variable.dataHeaderPosition === "fixed"} onChange={_e => { }}
-                    onClick={() => switcherData.Headerpostionfixed(dispatch)} />
-                  <label htmlFor="switcher-header-fixed" className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">
-                    Fixed</label>
-                </div>
-                <div className="flex">
-                  <input type="radio" name="data-header-positions" className="ti-form-radio" id="switcher-header-scroll" checked={local_variable.dataHeaderPosition === "scrollable"} onChange={_e => { }}
-                    onClick={() => switcherData.Headerpostionscroll(dispatch)} />
-                  <label htmlFor="switcher-header-scroll"
-                    className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Scrollable
-                  </label>
+              <div>
+                <p className="switcher-style-head">Page Styles:</p>
+                <div className="grid grid-cols-3  switcher-style">
+                  <div className="flex">
+                    <input type="radio" name="data-page-styles" className="ti-form-radio" id="switcher-regular"
+                           checked={local_variable.dataPageStyle === "regular"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.Regular(dispatch)}/>
+                    <label htmlFor="switcher-regular"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Regular</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="data-page-styles" className="ti-form-radio" id="switcher-classic"
+                           checked={local_variable.dataPageStyle === "classic"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.Classic(dispatch)}/>
+                    <label htmlFor="switcher-classic"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Classic</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="data-page-styles" className="ti-form-radio" id="switcher-modern"
+                           checked={local_variable.dataPageStyle === "modern"} onChange={_e => {
+                    }} onClick={() => switcherData.Modern(dispatch)}/>
+                    <label htmlFor="switcher-modern"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold"> Modern</label>
+                  </div>
                 </div>
               </div>
-            </div>
+              <div>
+                <p className="switcher-style-head">Layout Width Styles:</p>
+                <div className="grid grid-cols-3 switcher-style">
+                  <div className="flex">
+                    <input type="radio" name="layout-width" className="ti-form-radio" id="switcher-full-width"
+                           checked={local_variable.dataWidth === "fullwidth"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.Fullwidth(dispatch)}/>
+                    <label htmlFor="switcher-full-width"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">FullWidth</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="layout-width" className="ti-form-radio" id="switcher-boxed"
+                           checked={local_variable.dataWidth === "boxed"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.Boxed(dispatch)}/>
+                    <label htmlFor="switcher-boxed"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Boxed</label>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="switcher-style-head">Menu Positions:</p>
+                <div className="grid grid-cols-3  switcher-style">
+                  <div className="flex">
+                    <input type="radio" name="data-menu-positions" className="ti-form-radio" id="switcher-menu-fixed"
+                           checked={local_variable.dataMenuPosition === "fixed"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.FixedMenu(dispatch)}/>
+                    <label htmlFor="switcher-menu-fixed"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Fixed</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="data-menu-positions" className="ti-form-radio" id="switcher-menu-scroll"
+                           checked={local_variable.dataMenuPosition === "scrollable"} onChange={_e => {
+                    }}
+                           onClick={() => switcherData.scrollMenu(dispatch)}/>
+                    <label htmlFor="switcher-menu-scroll"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Scrollable </label>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="switcher-style-head">Header Positions:</p>
+                <div className="grid grid-cols-3 switcher-style">
+                  <div className="flex">
+                    <input type="radio" name="data-header-positions" className="ti-form-radio"
+                           id="switcher-header-fixed" checked={local_variable.dataHeaderPosition === "fixed"}
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.Headerpostionfixed(dispatch)}/>
+                    <label htmlFor="switcher-header-fixed"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">
+                      Fixed</label>
+                  </div>
+                  <div className="flex">
+                    <input type="radio" name="data-header-positions" className="ti-form-radio"
+                           id="switcher-header-scroll" checked={local_variable.dataHeaderPosition === "scrollable"}
+                           onChange={_e => {
+                           }}
+                           onClick={() => switcherData.Headerpostionscroll(dispatch)}/>
+                    <label htmlFor="switcher-header-scroll"
+                           className="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Scrollable
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <ChartSelector />
           </div>
           <div id="switcher-2" className="hidden" role="tabpanel" aria-labelledby="switcher-item-2">
             <div className="theme-colors">
               <p className="switcher-style-head">Menu Colors:</p>
               <div className="flex switcher-style space-x-3 rtl:space-x-reverse">
                 <div className="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
-                  <input className="hs-tooltip-toggle ti-form-radio color-input color-white" type="radio" name="menu-colors"
-                    checked={local_variable.dataMenuStyles === "light"} onChange={_e => { }}
-                    id="switcher-menu-light" onClick={() => switcherData.lightMenu(dispatch)} />
+                  <input className="hs-tooltip-toggle ti-form-radio color-input color-white" type="radio"
+                         name="menu-colors"
+                         checked={local_variable.dataMenuStyles === "light"} onChange={_e => {
+                  }}
+                         id="switcher-menu-light" onClick={() => switcherData.lightMenu(dispatch)}/>
                   <span
-                    className="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
-                    role="tooltip">
+                      className="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+                      role="tooltip">
                     Light Menu
                   </span>
                 </div>
                 <div className="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
-                  <input className="hs-tooltip-toggle ti-form-radio color-input color-dark" type="radio" name="menu-colors"
-                    checked={local_variable.dataMenuStyles === "dark"} onChange={_e => { }}
-                    id="switcher-menu-dark" onClick={() => switcherData.darkMenu(dispatch)} />
+                  <input className="hs-tooltip-toggle ti-form-radio color-input color-dark" type="radio"
+                         name="menu-colors"
+                         checked={local_variable.dataMenuStyles === "dark"} onChange={_e => {
+                  }}
+                         id="switcher-menu-dark" onClick={() => switcherData.darkMenu(dispatch)}/>
                   <span
-                    className="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
-                    role="tooltip">
+                      className="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+                      role="tooltip">
                     Dark Menu
                   </span>
                 </div>
                 <div className="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
-                  <input className="hs-tooltip-toggle ti-form-radio color-input color-primary" type="radio" name="menu-colors"
-                    checked={local_variable.dataMenuStyles === "color"} onChange={_e => { }}
-                    id="switcher-menu-primary" onClick={() => switcherData.colorMenu(dispatch)} />
+                  <input className="hs-tooltip-toggle ti-form-radio color-input color-primary" type="radio"
+                         name="menu-colors"
+                         checked={local_variable.dataMenuStyles === "color"} onChange={_e => {
+                  }}
+                         id="switcher-menu-primary" onClick={() => switcherData.colorMenu(dispatch)}/>
                   <span
-                    className="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
-                    role="tooltip">
+                      className="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+                      role="tooltip">
                     Color Menu
                   </span>
                 </div>

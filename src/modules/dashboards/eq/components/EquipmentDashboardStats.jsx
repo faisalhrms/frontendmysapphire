@@ -1,80 +1,62 @@
-import React, {useCallback, useState} from "react";
-import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import EquipmentStatusCard from "@modules/dashboards/eq/components/EquipmentStatusCard.jsx";
-import EquipmentAnalysisCard from "@modules/dashboards/eq/components/EquipmentAnalysisCard.jsx";
-import RecentEquipmentCard from "@modules/dashboards/eq/components/RecentEquipmentCard.jsx";
-import EquipmentSummaryStats from "@modules/dashboards/eq/components/EquipmentSummaryStats.jsx";
-import EquipmentDepartmentStats from "@modules/dashboards/eq/components/EquipmentDepartmentStats.jsx";
-import EquipmentTableCard from "@modules/dashboards/eq/components/EquipmentTableCard.jsx";
-import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
-import EquipmentSiteStats from "@modules/dashboards/eq/components/EquipmentSiteStats.jsx";
-import EquipmentSummaryCard from "@modules/dashboards/eq/components/EquipmentSummaryCard.jsx";
-import EquipmentTypeChart from "@modules/dashboards/eq/components/EquipmentTypeChart.jsx";
-import EquipmentValueStats from "@modules/dashboards/eq/components/EquipmentValueStats.jsx";
-import {equipmentColumns} from "@modules/dashboards/eq/helpers/equipmentColumns.jsx";
-import GraphDataModal from "@modules/dashboards/eq/components/GraphDataModal.jsx";
-
-const EquipmentDashboardStats = ({ filters }) => {
-    const { data: mainData, isLoading: mainLoading } = useFetchWithFilters('/dashboard/equipment/statistics/', filters);
-    const { data: statusData, isLoading: statusLoading } = useFetchWithFilters('/dashboard/equipment/status-stats/', filters);
-
-    const [modalOpen, setModalOpen] = useState(false);
-    const [modalParams, setModalParams] = useState({});
-
-    const handleCardClick = useCallback((status) => {
-        setModalParams({ status, company_id: filters.company_id });
-        setModalOpen(true);
-    }, [filters]);
-
-    if (mainLoading || statusLoading) return <LoadingSpinner />;
-
-    return (
-        <>
-            {/* Status Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
-                {Array.isArray(statusData) && statusData.map((item, index) => (
-                    <EquipmentStatusCard
-                        key={index}
-                        item={item}
-                        currentFilters={filters}
-                        onCardClick={handleCardClick}
-                    />
-                ))}
-            </div>
-
-            {/* Analysis, Recent Equipments, and Summary */}
-            <div className="grid grid-cols-12 gap-x-6 mt-4">
-                <div className="xl:col-span-12 col-span-12">
-                    <EquipmentSummaryCard filters={filters} />
-                </div>
-                <div className="xl:col-span-12 col-span-12">
-                    <EquipmentTypeChart filters={filters} />
-                </div>
-                <div className="xl:col-span-6 col-span-12">
-                    <EquipmentAnalysisCard filters={filters} />
-                </div>
-                <div className="xl:col-span-6 col-span-12">
-                    <EquipmentDepartmentStats filters={filters} />
-                </div>
-                <div className="xl:col-span-6 col-span-12">
-                    <EquipmentSiteStats filters={filters} />
-                </div>
-                <div className="xl:col-span-6 col-span-12">
-                    <EquipmentValueStats filters={filters} />
-                </div>
-            </div>
-            <GraphDataModal
-                isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                title={`Equipments: ${modalParams.status}`}
-                apiEndpoint="/equipments/datatable/"
-                queryParams={modalParams}
-                columns={equipmentColumns}
-                addButton={null}
-            />
-        </>
-    );
-};
-
-
-export default React.memo(EquipmentDashboardStats);
+// import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+// import React, { useState, useMemo } from "react";
+// import {
+//     Package, TrendingUp, TrendingDown, Calendar, AlertCircle,
+//     DollarSign, Activity, Shield, Wrench, Users, MapPin,
+//     BarChart3, RefreshCw, Clock, Layers, Bell, Grid, Building2,
+//     User, Award
+// } from "lucide-react";
+// import LoadingSpinner from "@components/LoadingSpinner.jsx";
+// import ReChart from "@components/charts/ReChart.jsx";
+// import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
+// import {DEFAULT_CHART_COLORS} from "@helpers/styles.js";
+//
+// const EquipmentDashboardStats = ({ filters }) => {
+//     const { data: dashboardData, isLoading } = useFetchWithFilters('/dashboard/equipment/', filters);
+//     const [activeTab, setActiveTab] = useState("overview");
+//     const [selectedMetric, setSelectedMetric] = useState("by_type");
+//
+//     const COLORS = DEFAULT_CHART_COLORS;
+//
+//     const metrics = [
+//         { key: "by_type", label: "Equipment Types", icon: Layers},
+//         { key: "by_status", label: "Status", icon: Activity, chartType: "pie" },
+//         { key: "by_department", label: "Departments", icon: Users, chartType: "bar" },
+//         { key: "by_site", label: "Sites", icon: MapPin, chartType: "bar" },
+//         { key: "by_location", label: "Physical Location", icon: MapPin, chartType: "bar" },
+//         { key: "value_analytics", label: "Value Ranges", icon: DollarSign, chartType: "pie" },
+//         { key: "warranty_status", label: "Warranty Status", icon: Shield, chartType: "pie" },
+//         { key: "age_distribution", label: "Age Distribution", icon: Calendar, chartType: "bar" }
+//     ];
+//
+//     const summary = useMemo(() => dashboardData?.summary ?? null, [dashboardData]);
+//     const costTrends = useMemo(() => dashboardData?.cost_trends ?? null, [dashboardData]);
+//     const repairAnalytics = useMemo(() => dashboardData?.repair_analytics ?? null, [dashboardData]);
+//     const expiringWarranties = useMemo(() => dashboardData?.expiring_warranties ?? [], [dashboardData]);
+//     const recentEquipment = useMemo(() => dashboardData?.recent_equipment ?? [], [dashboardData]);
+//     const monthlyPurchases = useMemo(() => dashboardData?.monthly_purchases ?? [], [dashboardData]);
+//     const topEquipmentTypes = useMemo(() => dashboardData?.top_equipment_types ?? [], [dashboardData]);
+//     const custodianAnalysis = useMemo(() => dashboardData?.custodian_analysis ?? [], [dashboardData]);
+//     const byStatus = useMemo(() => dashboardData?.by_status ?? [], [dashboardData]);
+//     const byDepartment = useMemo(() => dashboardData?.by_department ?? [], [dashboardData]);
+//     const bySite = useMemo(() => dashboardData?.by_site ?? [], [dashboardData]);
+//
+//     const currentData = useMemo(() => {
+//         if (!dashboardData || !dashboardData[selectedMetric]) return [];
+//         return dashboardData[selectedMetric];
+//     }, [dashboardData, selectedMetric]);
+//
+//     const total = useMemo(
+//         () => currentData.reduce((sum, item) => sum + (Number(item.value) || 0), 0),
+//         [currentData]
+//     );
+//
+//     if (isLoading) {
+//         return <LoadingSpinner />;
+//     }
+//
+//     return (
+//     );
+// };
+//
+// export default EquipmentDashboardStats;

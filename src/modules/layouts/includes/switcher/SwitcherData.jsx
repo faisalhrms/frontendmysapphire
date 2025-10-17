@@ -17,6 +17,50 @@ export function Dark(dispatch) {
     localStorage.removeItem('darkBgRGB');
 }
 
+// chartActions.js
+export const chartSetup = {
+    ChartBar: (dispatch) => {
+        dispatch(setTheme({ chartType: "bar" }));
+        localStorage.setItem("ynexChartType", "bar");
+    },
+    ChartPie: (dispatch) => {
+        dispatch(setTheme({ chartType: "pie" }));
+        localStorage.setItem("ynexChartType", "pie");
+    },
+    ChartLine: (dispatch) => {
+        dispatch(setTheme({ chartType: "line" }));
+        localStorage.setItem("ynexChartType", "line");
+    },
+    ChartArea: (dispatch) => {
+        dispatch(setTheme({ chartType: "area" }));
+        localStorage.setItem("ynexChartType", "area");
+    },
+    ChartScatter: (dispatch) => {
+        dispatch(setTheme({ chartType: "scatter" }));
+        localStorage.setItem("ynexChartType", "scatter");
+    },
+    ChartRadar: (dispatch) => {
+        dispatch(setTheme({ chartType: "radar" }));
+        localStorage.setItem("ynexChartType", "radar");
+    },
+    ChartComposed: (dispatch) => {
+        dispatch(setTheme({ chartType: "composed" }));
+        localStorage.setItem("ynexChartType", "composed");
+    },
+    ChartRadial: (dispatch) => {
+        dispatch(setTheme({ chartType: "radial" }));
+        localStorage.setItem("ynexChartType", "radial");
+    },
+    ChartTreemap: (dispatch) => {
+        dispatch(setTheme({ chartType: "treemap" }));
+        localStorage.setItem("ynexChartType", "treemap");
+    },
+    ChartFunnel: (dispatch) => {
+        dispatch(setTheme({ chartType: "funnel" }));
+        localStorage.setItem("ynexChartType", "funnel");
+    }
+};
+
 export function Light(dispatch) {
     dispatch(setTheme({
         "class": "light",
@@ -754,7 +798,7 @@ export const Reset = (dispatch) => {
     localStorage.removeItem("Light");
     localStorage.removeItem("inputBorder");
     localStorage.removeItem("dynamiccolor");
-
+    localStorage.removeItem("ynexChartType");
 
     const icon = document.getElementById("switcher-default-menu");
     if (icon) {
@@ -975,6 +1019,8 @@ export const LocalStorageBackup = (dispatch) => {
         }
     }
 
+
+
     const darkBgRGB = localStorage.darkBgRGB;
     if (!localStorage.bodyBgRGB || !localStorage.darkBgRGB || !localStorage.Light || !localStorage.inputBorder) {
         switch (darkBgRGB) {
@@ -996,5 +1042,27 @@ export const LocalStorageBackup = (dispatch) => {
             default:
                 break;
         }
+    }
+};
+
+export const initializeChartType = (dispatch) => {
+    const savedChartType = localStorage.getItem("ynexChartType");
+    const chartTypes = {
+        bar: chartSetup.ChartBar,
+        pie: chartSetup.ChartPie,
+        line: chartSetup.ChartLine,
+        area: chartSetup.ChartArea,
+        scatter: chartSetup.ChartScatter,
+        radar: chartSetup.ChartRadar,
+        composed: chartSetup.ChartComposed,
+        radial: chartSetup.ChartRadial,
+        treemap: chartSetup.ChartTreemap,
+        funnel: chartSetup.ChartFunnel,
+    };
+
+    if (savedChartType && chartTypes[savedChartType]) {
+        chartTypes[savedChartType](dispatch);
+    } else {
+        chartSetup.ChartBar(dispatch);
     }
 };

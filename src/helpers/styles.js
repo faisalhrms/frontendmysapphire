@@ -219,3 +219,30 @@ export const hexToRgb = (hex) => {
 
     return `${r} ${g} ${b}`;
 }
+
+const generateExtendedColors = (baseCount = 50, totalCount = 200) => {
+    // Start with some carefully chosen base colors
+    const baseColors = [
+        "#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#6366f1",
+        "#f97316", "#06b6d4", "#14b8a6", "#84cc16", "#a855f7", "#ef4444",
+        "#1e40af", "#7e22ce", "#be185d", "#d97706", "#047857", "#4f46e5",
+        "#ea580c", "#0e7490", "#0f766e", "#65a30d", "#7c3aed", "#dc2626"
+    ];
+
+    const colors = [...baseColors];
+    const goldenRatio = 0.618033988749895;
+
+    // Generate additional colors using HSL for better distribution
+    for (let i = colors.length; i < totalCount; i++) {
+        const hue = (i * goldenRatio * 360) % 360;
+        // Vary saturation and lightness for more visual interest
+        const saturation = 65 + Math.random() * 30; // 65-95%
+        const lightness = 40 + Math.random() * 35; // 40-75%
+
+        colors.push(`hsl(${Math.round(hue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`);
+    }
+
+    return colors;
+};
+
+export const DEFAULT_CHART_COLORS = generateExtendedColors(24, 200);
