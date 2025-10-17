@@ -122,7 +122,7 @@ const EquipmentDashboard = () => {
     return (
         <div className="space-y-6 pb-8 pt-8">
             <div
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
@@ -154,7 +154,7 @@ const EquipmentDashboard = () => {
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                     activeTab === tab.id
                                         ? "bg-primary/10 text-primary border-primary/30 shadow-md"
-                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md  dark:text-gray-200 dark:bg-bodybg"
                                 }`}
                             >
                                 <Icon size={18}/>
@@ -200,7 +200,7 @@ const EquipmentDashboard = () => {
                             {/* Cost Trends */}
                             {costTrends && (
                                 <div
-                                    className="bg-primary-gradient rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                    className="bg-primary-gradient rounded-lg shadow-sm border border-gray-200  p-6 dark:text-gray-200 dark:bg-bodybg">
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="text-lg font-semibold text-white-900">Cost
                                             Trends</h3>
@@ -244,7 +244,8 @@ const EquipmentDashboard = () => {
 
                             {/* Warranties */}
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg
+">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                                     <Shield size={20}/>
                                     Warranty Status
@@ -276,7 +277,8 @@ const EquipmentDashboard = () => {
                             {/* Repairs */}
                             {repairAnalytics && (
                                 <div
-                                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg
+">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                                         <Wrench size={20}/>
                                         Repair Overview
@@ -325,7 +327,7 @@ const EquipmentDashboard = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Top Equipment Types */}
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                                     <Layers size={20}/>
                                     Top Equipment Types
@@ -333,7 +335,7 @@ const EquipmentDashboard = () => {
                                 <div className="space-y-3">
                                     {topEquipmentTypes.slice(0, 8).map((type, idx) => (
                                         <div key={idx}
-                                             className="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                                             className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg dark:text-gray-200 dark:bg-bodybg">
                                             <div className="flex-1">
                                                 <p className="font-medium text-gray-900 dark:text-white text-sm">{type.name}</p>
                                                 <p className="text-xs text-gray-600 dark:text-gray-400">PKR {(type.cost / 1000).toFixed(0)}K</p>
@@ -346,7 +348,7 @@ const EquipmentDashboard = () => {
 
                             {/* Top Sites */}
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                                     <MapPin size={20}/>
                                     Top Sites by Equipment
@@ -354,7 +356,7 @@ const EquipmentDashboard = () => {
                                 <div className="space-y-3">
                                     {bySite.slice(0, 8).map((site, idx) => (
                                         <div key={idx}
-                                             className="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                                             className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                             <div className="flex-1">
                                                 <p className="font-medium text-gray-900 dark:text-white text-sm">{site.name}</p>
                                                 <p className="text-xs text-gray-600 dark:text-gray-400">PKR {(site.cost / 1000).toFixed(0)}K</p>
@@ -369,7 +371,7 @@ const EquipmentDashboard = () => {
                         {/* Monthly Purchases Trend */}
                         {monthlyPurchases.length > 0 && (
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                                     <TrendingUp size={20}/>
                                     Monthly Purchases Trend
@@ -387,7 +389,7 @@ const EquipmentDashboard = () => {
                 {activeTab === "analytics" && (
                     <div className="space-y-6">
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                            className="bg-white rounded-lg shadow-sm  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                             <div
                                 className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
                                 <div className="flex flex-wrap gap-2">
@@ -401,7 +403,7 @@ const EquipmentDashboard = () => {
                                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                                     active
                                                         ? "bg-primary/10 text-primary border-primary/30 shadow-md"
-                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md  dark:text-gray-200 dark:bg-bodybg"
                                                 }`}
                                             >
                                                 <Icon size={18}/>
@@ -415,7 +417,7 @@ const EquipmentDashboard = () => {
                             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                     <div
-                                        className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md dark:bg-gray-800 dark:border-gray-700">
+                                        className="lg:col-span-2 bg-white  rounded-xl p-5 shadow-md border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
                                             {metrics.find((m) => m.key === selectedMetric)?.label}
                                         </h3>
@@ -423,7 +425,7 @@ const EquipmentDashboard = () => {
                                     </div>
 
                                     <div
-                                        className="bg-white border border-gray-200 rounded-xl p-5 shadow-md dark:bg-gray-700 dark:border-gray-600">
+                                        className="bg-white border border-gray-200 rounded-xl p-5 shadow-md dark:text-gray-200 dark:bg-bodybg">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top
                                             Items</h3>
                                         <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
@@ -432,7 +434,7 @@ const EquipmentDashboard = () => {
                                                 const percentage = total ? ((value / total) * 100).toFixed(1) : 0;
                                                 return (
                                                     <div key={index}
-                                                         className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                                                         className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-200 dark:bg-bodybg">
                                                         <div className="flex items-center justify-between mb-2">
                                                         <span
                                                             className="text-sm font-medium text-gray-900 truncate pr-4 dark:text-white">
@@ -472,7 +474,7 @@ const EquipmentDashboard = () => {
 
                             <div className="p-6">
                                 <div
-                                    className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md dark:bg-gray-700 dark:border-gray-600">
+                                    className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md dark:text-gray-200 dark:bg-bodybg">
                                     <div className="p-5 border-b border-gray-200 dark:border-gray-600">
                                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                             Detailed {metrics.find((m) => m.key === selectedMetric)?.label} Data
@@ -480,7 +482,7 @@ const EquipmentDashboard = () => {
                                     </div>
                                     <div className="overflow-x-auto">
                                         <table className="w-full min-w-max">
-                                            <thead className="bg-gray-50 dark:bg-gray-800">
+                                            <thead className="bg-gray-50  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                             <tr>
                                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
@@ -550,7 +552,7 @@ const EquipmentDashboard = () => {
                         </div>
 
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Most Repaired
                                 Equipment Types</h3>
                             <div className="h-[400px]">
@@ -560,12 +562,12 @@ const EquipmentDashboard = () => {
                         </div>
 
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Repair Status
                                 Breakdown</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {repairAnalytics.by_status.map((status, idx) => (
-                                    <div key={idx} className="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+                                    <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{status.name}</p>
                                         <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{status.value}</p>
                                     </div>
@@ -600,12 +602,12 @@ const EquipmentDashboard = () => {
                         </div>
 
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Custodians by
                                 Equipment Count</h3>
                             <div className="overflow-x-auto">
                                 <table className="w-full min-w-max">
-                                    <thead className="bg-gray-50 dark:bg-gray-700">
+                                    <thead className="bg-gray-50  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
@@ -638,7 +640,7 @@ const EquipmentDashboard = () => {
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Equipment
                                     Distribution by Custodian</h3>
                                 <div className="space-y-3">
@@ -646,7 +648,7 @@ const EquipmentDashboard = () => {
                                         const totalEquipment = custodianAnalysis.reduce((sum, c) => sum + c.value, 0);
                                         const percentage = ((custodian.value / totalEquipment) * 100).toFixed(1);
                                         return (
-                                            <div key={idx} className="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                                            <div key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <div className="flex-1">
                                                         <p className="text-sm font-medium text-gray-900 dark:text-white">{custodian.name}</p>
@@ -673,7 +675,7 @@ const EquipmentDashboard = () => {
                             </div>
 
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Value
                                     Holders</h3>
                                 <div className="space-y-3">
@@ -681,7 +683,7 @@ const EquipmentDashboard = () => {
                                         .sort((a, b) => b.cost - a.cost)
                                         .slice(0, 10)
                                         .map((custodian, idx) => (
-                                            <div key={idx} className="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                                            <div key={idx} className="p-3 bg-gray-50 rounded-lg dark:text-gray-200 dark:bg-bodybg border border-gray-200">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex-1">
                                                         <p className="text-sm font-medium text-gray-900 dark:text-white">{custodian.name}</p>
@@ -702,14 +704,14 @@ const EquipmentDashboard = () => {
                 {/* Recent Equipment - Shown on all tabs */}
                 {recentEquipment.length > 0 && activeTab === "overview" && (
                     <div
-                        className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                        className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                             <Package size={20}/>
                             Recently Added Equipment
                         </h3>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-max">
-                                <thead className="bg-gray-50 dark:bg-gray-700">
+                                <thead className="bg-gray-50  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <tr>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Code</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Description</th>
