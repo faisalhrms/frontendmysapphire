@@ -76,7 +76,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="forms/:slug" element={<PublicDynamicForm />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/inlay/:code" element={<PublicInlay />} />
-                            <Route path="transfer-order-details-delivery/:sdn_id" element={<ToDetailPage />} />
+                            <Route path="transfer-order/delivery/detail/:sdn_id" element={<ToDetailPage />} />
                         </Route>
 
                         {/* Error Page */}
