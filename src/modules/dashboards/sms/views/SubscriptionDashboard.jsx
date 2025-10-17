@@ -76,21 +76,43 @@ const SubscriptionDashboard = () => {
                         icon={DollarSign}
                         title="Monthly Cost"
                         value={`${(summary.total_monthly_cost || 0).toLocaleString()}`}
-                        subtitle={`${(summary.total_annual_cost || 0).toLocaleString()} yearly`}
+                        subtitle={`${((summary.total_annual_cost || 0) / 1000000).toFixed(1)}M yearly`}
                     />
                     <StatCard
                         icon={Calendar}
                         title="Upcoming Renewals"
                         value={summary.upcoming_renewals || 0}
                         subtitle={`${summary.expiring_soon || 0} expiring soon`}
-                        trend={summary.expiring_soon > 0 ? "down" : "up"}
                     />
                     <StatCard
                         icon={AlertCircle}
                         title="Overdue Payments"
                         value={summary.overdue_payments || 0}
                         subtitle={`${summary.total_vendors || 0} vendors`}
-                        trend={summary.overdue_payments > 0 ? "down" : "up"}
+                    />
+                    <StatCard
+                        icon={TrendingUp}
+                        title="Average Cost"
+                        value={`${(summary.average_cost || 0).toLocaleString()}`}
+                        subtitle="Per subscription"
+                    />
+                    <StatCard
+                        icon={CreditCard}
+                        title="Payment Status"
+                        value={summary.paid_count || 0}
+                        subtitle={`${summary.pending_count || 0} pending`}
+                    />
+                    <StatCard
+                        icon={Activity}
+                        title="Recent Activity"
+                        value={summary.recent_transactions || 0}
+                        subtitle={`${(summary.recent_spending || 0).toLocaleString()} spent`}
+                    />
+                    <StatCard
+                        icon={Users}
+                        title="Total Vendors"
+                        value={summary.total_vendors || 0}
+                        subtitle={`${summary.active_subscriptions || 0} subscriptions`}
                     />
                 </div>
             )}
@@ -98,51 +120,62 @@ const SubscriptionDashboard = () => {
             {/* Cost Trends & Recent Activity */}
             {costTrends && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cost Trends</h3>
-                            {costTrends.trend === 'up' ? (
-                                <TrendingUp className="text-danger" size={24} />
-                            ) : costTrends.trend === 'down' ? (
-                                <TrendingDown className="text-success" size={24} />
-                            ) : (
-                                <Activity className="text-gray-500" size={24} />
-                            )}
-                        </div>
-                        <div className="space-y-4">
-                            <div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">{costTrends.current_month.label}</p>
-                                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                    {(costTrends.current_month.total || 0).toLocaleString()}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {costTrends.current_month.count} transactions
-                                </p>
+                    <div
+                        className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg shadow-lg p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    Cost Trends
+                                </h3>
+                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                    {costTrends.trend === 'up' ? (
+                                        <TrendingUp className="text-white" size={24}/>
+                                    ) : costTrends.trend === 'down' ? (
+                                        <TrendingDown className="text-white" size={24}/>
+                                    ) : (
+                                        <Activity className="text-white" size={24}/>
+                                    )}
+                                </div>
                             </div>
-                            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                                <p className="text-sm text-gray-600 dark:text-gray-400">{costTrends.last_month.label}</p>
-                                <p className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-                                    {(costTrends.last_month.total || 0).toLocaleString()}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {costTrends.last_month.count} transactions
-                                </p>
-                            </div>
-                            <div className={`flex items-center gap-2 pt-2 ${
-                                costTrends.change_percentage > 0 ? 'text-danger' :
-                                    costTrends.change_percentage < 0 ? 'text-success' : 'text-gray-600'
-                            }`}>
-                                {costTrends.change_percentage > 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                                <span className="text-sm font-medium">
-                                    {Math.abs(costTrends.change_percentage)}% vs last month
-                                </span>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-sm text-white">{costTrends.current_month.label}</p>
+                                    <p className="text-4xl font-bold text-white">
+                                        {(costTrends.current_month.total || 0).toLocaleString()}
+                                    </p>
+                                    <p className="text-xs text-white">
+                                        {costTrends.current_month.count} transactions
+                                    </p>
+                                </div>
+                                <div
+                                    className="pt-4 border-t border-white/30 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                                    <p className="text-sm text-white">{costTrends.last_month.label}</p>
+                                    <p className="text-2xl font-bold text-white">
+                                        {(costTrends.last_month.total || 0).toLocaleString()}
+                                    </p>
+                                    <p className="text-xs text-white">
+                                        {costTrends.last_month.count} transactions
+                                    </p>
+                                </div>
+                                <div className={`flex items-center gap-2 pt-2 bg-white/10 p-2 rounded-lg ${
+                                    costTrends.change_percentage > 0 ? 'text-danger' :
+                                        costTrends.change_percentage < 0 ? 'text-success' : 'text-white'
+                                }`}>
+                                    {costTrends.change_percentage > 0 ? <TrendingUp size={16}/> :
+                                        <TrendingDown size={16}/>}
+                                    <span className="text-sm font-medium">
+                                        {Math.abs(costTrends.change_percentage)}% vs last month
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
+                    <div
+                        className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-bodybg dark:border-gray-700">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
-                            <Bell className="inline mr-2" size={20} />
+                            <Bell className="inline mr-2" size={20}/>
                             Upcoming Renewals
                         </h3>
                         <div className="space-y-3 max-h-[280px] overflow-y-auto pr-2">

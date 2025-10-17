@@ -199,115 +199,136 @@ const EquipmentDashboard = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Cost Trends */}
                             {costTrends && (
-                                <div
-                                    className="bg-primary-gradient rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-white-900">Cost
-                                            Trends</h3>
-                                        {costTrends.trend === 'up' ? (
-                                            <TrendingUp className="text-danger" size={24}/>
-                                        ) : (
-                                            <TrendingDown className="text-success" size={24}/>
-                                        )}
-                                    </div>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-white-600">{costTrends.current_month.label}</p>
-                                            <p className="text-2xl font-bold text-white-900">
-                                                PKR {(costTrends.current_month.total || 0).toLocaleString()}
-                                            </p>
-                                            <p className="text-xs text-white-500">
-                                                {costTrends.current_month.count} purchases
-                                            </p>
+                                <div className="bg-gradient-to-br from-black to-blue rounded-lg shadow-lg p-6 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-36 h-36 bg-white/10 rounded-full -ml-16 -mt-16"></div>
+                                    <div className="relative z-10">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                                Cost Trends
+                                            </h3>
+                                            <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                                {costTrends.trend === 'up' ? (
+                                                    <TrendingUp className="text-white" size={24}/>
+                                                ) : (
+                                                    <TrendingDown className="text-white" size={24}/>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="pt-4 border-t border-white-200">
-                                            <p className="text-sm text-white-600">{costTrends.last_month.label}</p>
-                                            <p className="text-xl font-semibold text-white-700">
-                                                PKR {(costTrends.last_month.total || 0).toLocaleString()}
-                                            </p>
-                                            <p className="text-xs text-white-500">
-                                                {costTrends.last_month.count} purchases
-                                            </p>
-                                        </div>
-                                        <div className={`flex items-center gap-2 pt-2 ${
-                                            costTrends.trend === 'up' ? 'text-success' : 'text-danger'
-                                        }`}>
-                                            {costTrends.trend === 'up' ? <TrendingUp size={16}/> :
-                                                <TrendingDown size={16}/>}
-                                            <span className="text-sm font-medium">
-                                            {Math.abs(costTrends.change_percentage)}% vs last month
-                                        </span>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <p className="text-sm text-white">{costTrends.current_month.label}</p>
+                                                <p className="text-4xl font-bold text-white">
+                                                    PKR {(costTrends.current_month.total || 0).toLocaleString()}
+                                                </p>
+                                                <p className="text-xs text-white">
+                                                    {costTrends.current_month.count} purchases
+                                                </p>
+                                            </div>
+                                            <div className="pt-4 border-t border-white/30 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                                                <p className="text-sm text-white">{costTrends.last_month.label}</p>
+                                                <p className="text-2xl font-bold text-white">
+                                                    PKR {(costTrends.last_month.total || 0).toLocaleString()}
+                                                </p>
+                                                <p className="text-xs text-white">
+                                                    {costTrends.last_month.count} purchases
+                                                </p>
+                                            </div>
+                                            <div className={`flex items-center gap-2 pt-2 bg-white/10 p-2 rounded-lg ${
+                                                costTrends.trend === 'up' ? 'text-success' : 'text-danger'
+                                            }`}>
+                                                {costTrends.trend === 'up' ? <TrendingUp size={16}/> : <TrendingDown size={16}/>}
+                                                <span className="text-sm font-medium">
+                                                    {Math.abs(costTrends.change_percentage)}% vs last month
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             )}
 
                             {/* Warranties */}
-                            <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
-                                    <Shield size={20}/>
-                                    Warranty Status
-                                </h3>
-                                <div className="space-y-4">
-                                    <div
-                                        className="flex items-center justify-between p-3 bg-success/10 border border-success rounded-lg">
-                                        <span
-                                            className="text-sm font-medium text-gray-900 dark:text-white">Active</span>
-                                        <span
-                                            className="text-lg font-bold text-success">{summary.total_equipment - summary.expired_warranties - summary.expiring_soon}</span>
+                            <div className="bg-gradient-to-br from-black to-green rounded-lg shadow-lg border border-blue-300 p-6 relative overflow-hidden">
+                                <div
+                                    className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                                <div className="relative z-10">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                            Warranty Status
+                                        </h3>
+                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                            <Shield className="text-white" size={24}/>
+                                        </div>
                                     </div>
-                                    <div
-                                        className="flex items-center justify-between p-3 bg-warning/10 border border-warning rounded-lg">
-                                        <span className="text-sm font-medium text-gray-900 dark:text-white">Expiring Soon</span>
-                                        <span
-                                            className="text-lg font-bold text-warning">{summary.expiring_soon || 0}</span>
-                                    </div>
-                                    <div
-                                        className="flex items-center justify-between p-3 bg-danger/10 border border-danger rounded-lg">
-                                        <span
-                                            className="text-sm font-medium text-gray-900 dark:text-white">Expired</span>
-                                        <span
-                                            className="text-lg font-bold text-danger">{summary.expired_warranties || 0}</span>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <p className="text-sm text-white">Active Warranties</p>
+                                            <p className="text-4xl font-bold text-white">
+                                                {summary.total_equipment - summary.expired_warranties - summary.expiring_soon}
+                                            </p>
+                                            <p className="text-xs text-white">Currently protected</p>
+                                        </div>
+                                        <div className="pt-4 border-t border-white/30 grid grid-cols-2 gap-4">
+                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                                                <p className="text-xs text-white">Expiring Soon</p>
+                                                <p className="text-2xl font-bold text-white">{summary.expiring_soon || 0}</p>
+                                            </div>
+                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                                                <p className="text-xs text-white">Expired</p>
+                                                <p className="text-2xl font-bold text-white">{summary.expired_warranties || 0}</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className="flex items-center gap-2 pt-2 text-white bg-white/10 p-2 rounded-lg">
+                                            <Shield size={16}/>
+                                            <span className="text-sm font-medium">
+                                                {((summary.total_equipment - summary.expired_warranties) / summary.total_equipment * 100).toFixed(0)}% coverage rate
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Repairs */}
                             {repairAnalytics && (
-                                <div
-                                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
-                                        <Wrench size={20}/>
-                                        Repair Overview
-                                    </h3>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">Total Repairs</p>
-                                            <p className="text-3xl font-bold text-gray-900 dark:text-white">{repairAnalytics.total_repairs}</p>
-                                        </div>
-                                        <div
-                                            className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                                            <div>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400">Open</p>
-                                                <p className="text-lg font-bold text-danger">{repairAnalytics.open_repairs}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400">Closed</p>
-                                                <p className="text-lg font-bold text-success">{repairAnalytics.closed_repairs}</p>
+                                <div className="bg-gradient-to-br from-purple to-pink rounded-lg shadow-lg p-6 relative overflow-hidden">
+                                    <div
+                                        className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full -ml-20 -mb-20"></div>
+                                    <div className="relative z-10">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                                Repair Overview
+                                            </h3>
+                                            <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                                <Wrench className="text-white" size={24}/>
                                             </div>
                                         </div>
-                                        <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                                            <p className="text-xs text-gray-600 dark:text-gray-400">Total Cost</p>
-                                            <p className="text-xl font-bold text-gray-900 dark:text-white">
-                                                PKR {((repairAnalytics.total_cost || 0) / 1000).toFixed(0)}K
-                                            </p>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <p className="text-sm text-white">Total Repairs</p>
+                                                <p className="text-4xl font-bold text-white">{repairAnalytics.total_repairs}</p>
+                                                <p className="text-xs text-white">All-time service records</p>
+                                            </div>
+                                            <div className="pt-4 border-t border-white/30 grid grid-cols-2 gap-4">
+                                                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                                                    <p className="text-xs  text-white">Open Cases</p>
+                                                    <p className="text-2xl font-bold text-white">{repairAnalytics.open_repairs}</p>
+                                                </div>
+                                                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                                                    <p className="text-xs text-white">Completed</p>
+                                                    <p className="text-2xl font-bold text-white">{repairAnalytics.closed_repairs}</p>
+                                                </div>
+                                            </div>
+                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                                                <p className="text-xs text-white">Total Investment</p>
+                                                <p className="text-2xl font-bold text-white">
+                                                    PKR {((repairAnalytics.total_cost || 0) / 1000).toFixed(0)}K
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             )}
                         </div>
-
                         {/* Quick Stats */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {byStatus.slice(0, 4).map((status, idx) => (
@@ -323,45 +344,61 @@ const EquipmentDashboard = () => {
 
                         {/* Top Equipment & Sites */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Top Equipment Types */}
+                            {/* Top Equipment Types - Simple */}
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
-                                    <Layers size={20}/>
-                                    Top Equipment Types
-                                </h3>
-                                <div className="space-y-3">
-                                    {topEquipmentTypes.slice(0, 8).map((type, idx) => (
-                                        <div key={idx}
-                                             className="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
-                                            <div className="flex-1">
-                                                <p className="font-medium text-gray-900 dark:text-white text-sm">{type.name}</p>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400">PKR {(type.cost / 1000).toFixed(0)}K</p>
+                                className="bg-primary-gradient rounded-xl shadow-lg p-6 relative overflow-hidden">
+                                <div
+                                    className="absolute top-0 right-0 w-28 h-28 bg-white/10 rounded-full -mr-14 -mt-14"></div>
+
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <Layers className="text-white" size={24}/>
+                                        <h3 className="text-lg font-semibold text-white">Top Equipment Types</h3>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {topEquipmentTypes.slice(0, 8).map((type, idx) => (
+                                            <div key={idx}
+                                                 className="bg-white/10 p-3 rounded-lg backdrop-blur-sm border border-white/20">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex-1">
+                                                        <p className="text-sm font-medium text-white truncate">{type.name}</p>
+                                                        <p className="text-xs text-white">PKR {(type.cost / 1000).toFixed(0)}K</p>
+                                                    </div>
+                                                    <span className="text-lg font-bold text-white">{type.value}</span>
+                                                </div>
                                             </div>
-                                            <span className="text-lg font-bold">{type.value}</span>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Top Sites */}
+                            {/* Top Sites by Equipment - Simple */}
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
-                                    <MapPin size={20}/>
-                                    Top Sites by Equipment
-                                </h3>
-                                <div className="space-y-3">
-                                    {bySite.slice(0, 8).map((site, idx) => (
-                                        <div key={idx}
-                                             className="flex items-center justify-between p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
-                                            <div className="flex-1">
-                                                <p className="font-medium text-gray-900 dark:text-white text-sm">{site.name}</p>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400">PKR {(site.cost / 1000).toFixed(0)}K</p>
+                                className="bg-gradient-to-br from-black to-green rounded-xl shadow-lg p-6 relative overflow-hidden">
+                                <div
+                                    className="absolute top-0 right-0 w-28 h-28 bg-white/10 rounded-full -mr-14 -mt-14"></div>
+
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <MapPin className="text-white" size={24}/>
+                                        <h3 className="text-lg font-semibold text-white">Top Sites by Equipment</h3>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {bySite.slice(0, 8).map((site, idx) => (
+                                            <div key={idx}
+                                                 className="bg-white/10 p-3 rounded-lg backdrop-blur-sm border border-white/20">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex-1">
+                                                        <p className="text-sm font-medium text-white truncate">{site.name}</p>
+                                                        <p className="text-xs text-white">PKR {(site.cost / 1000).toFixed(0)}K</p>
+                                                    </div>
+                                                    <span className="text-lg font-bold text-white">{site.value}</span>
+                                                </div>
                                             </div>
-                                            <span className="text-lg font-bold">{site.value}</span>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -374,7 +411,7 @@ const EquipmentDashboard = () => {
                                     <TrendingUp size={20}/>
                                     Monthly Purchases Trend
                                 </h3>
-                                <div className="h-[350px]">
+                                <div className="h-[450px]">
                                     <ReChart data={monthlyPurchases} dimensions={{height: 450, bottom: 0}}
                                              colors={COLORS}/>
                                 </div>
@@ -383,31 +420,31 @@ const EquipmentDashboard = () => {
                     </div>
                 )}
 
-                {/* Analytics Tab */}
-                {activeTab === "analytics" && (
-                    <div className="space-y-6">
+            {/* Analytics Tab */}
+            {activeTab === "analytics" && (
+                <div className="space-y-6">
+                    <div
+                        className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                            <div
-                                className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
-                                <div className="flex flex-wrap gap-2">
-                                    {metrics.map((metric) => {
-                                        const Icon = metric.icon;
-                                        const active = selectedMetric === metric.key;
-                                        return (
-                                            <button
-                                                key={metric.key}
-                                                onClick={() => setSelectedMetric(metric.key)}
-                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
-                                                    active
-                                                        ? "bg-primary/10 text-primary border-primary/30 shadow-md"
-                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
-                                                }`}
-                                            >
-                                                <Icon size={18}/>
-                                                {metric.label}
-                                            </button>
-                                        );
+                            className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                            <div className="flex flex-wrap gap-2">
+                                {metrics.map((metric) => {
+                                    const Icon = metric.icon;
+                                    const active = selectedMetric === metric.key;
+                                    return (
+                                        <button
+                                            key={metric.key}
+                                            onClick={() => setSelectedMetric(metric.key)}
+                                            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                active
+                                                    ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                    : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                            }`}
+                                        >
+                                            <Icon size={18}/>
+                                            {metric.label}
+                                        </button>
+                                    );
                                     })}
                                 </div>
                             </div>
@@ -553,180 +590,382 @@ const EquipmentDashboard = () => {
                             className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Most Repaired
                                 Equipment Types</h3>
-                            <div className="h-[400px]">
+                            <div className="h-[470px]">
                                 <ReChart data={repairAnalytics.most_repaired_types}
                                          dimensions={{height: 470, bottom: 0}} colors={COLORS}/>
                             </div>
                         </div>
 
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Repair Status
-                                Breakdown</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {repairAnalytics.by_status.map((status, idx) => (
-                                    <div key={idx} className="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-                                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{status.name}</p>
-                                        <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{status.value}</p>
+                            className="bg-gradient-to-br from-black to-red rounded-xl shadow-lg p-6 relative overflow-hidden">
+                            {/* Background Elements */}
+                            <div
+                                className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-18 -mt-18"></div>
+                            <div
+                                className="absolute bottom-0 left-0 w-28 h-28 bg-white/5 rounded-full -mb-14 -ml-14"></div>
+
+                            <div className="relative z-10">
+                                {/* Header with Key Metrics */}
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                            <Wrench className="text-white" size={24}/>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white">Repair Analytics</h3>
+                                            <p className="text-sm text-white">Complete repair overview</p>
+                                        </div>
                                     </div>
-                                ))}
+                                    <div className="text-right">
+                                        <p className="text-sm text-white">Total Repairs</p>
+                                        <p className="text-2xl font-bold text-white">{repairAnalytics.total_repairs || 0}</p>
+                                    </div>
+                                </div>
+
+                                {/* Status Breakdown */}
+                                <div className="mb-6">
+                                    <h4 className="text-lg font-semibold text-white mb-4">Status Breakdown</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {repairAnalytics.by_status.map((status, idx) => {
+                                            const percentage = repairAnalytics.total_repairs ? ((status.value / repairAnalytics.total_repairs) * 100).toFixed(1) : 0;
+
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/20 hover:border-white/30 transition-all duration-300 group"
+                                                >
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <p className="text-sm font-semibold text-white uppercase tracking-wide">
+                                                            {status.name}
+                                                        </p>
+                                                        <div className="bg-white/20 px-2 py-1 rounded-full">
+                                                            <span
+                                                                className="text-xs font-bold text-white">{percentage}%</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <p className="text-3xl font-bold text-white group-hover:text-amber-100 transition-colors">
+                                                        {status.value}
+                                                    </p>
+
+                                                    <div className="w-full bg-white/20 rounded-full h-2 mt-2">
+                                                        <div
+                                                            className="h-2 rounded-full bg-white transition-all duration-500"
+                                                            style={{width: `${percentage}%`}}
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Key Metrics Grid */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                    <div
+                                        className="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20 text-center">
+                                        <p className="text-sm text-white">Total Cost</p>
+                                        <p className="text-lg font-bold text-white">PKR {((repairAnalytics.total_cost || 0) / 1000).toFixed(0)}K</p>
+                                    </div>
+                                    <div
+                                        className="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20 text-center">
+                                        <p className="text-sm text-white">Avg Cost</p>
+                                        <p className="text-lg font-bold text-white">PKR {Math.round(repairAnalytics.average_cost || 0).toLocaleString()}</p>
+                                    </div>
+                                    <div
+                                        className="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20 text-center">
+                                        <p className="text-sm text-white">Avg Turnaround</p>
+                                        <p className="text-lg font-bold text-white">{repairAnalytics.average_turnaround || 0} days</p>
+                                    </div>
+                                    <div
+                                        className="bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20 text-center">
+                                        <p className="text-sm text-white">Completion Rate</p>
+                                        <p className="text-lg font-bold text-white">
+                                            {repairAnalytics.total_repairs ? Math.round((repairAnalytics.closed_repairs / repairAnalytics.total_repairs) * 100) : 0}%
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Most Repaired Types */}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-white mb-4">Most Repaired Equipment</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                                        {repairAnalytics.most_repaired_types.slice(0, 5).map((type, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="bg-white/10 p-3 rounded-lg backdrop-blur-sm border border-white/20 hover:border-white/30 transition-all duration-300 group text-center"
+                                            >
+                                                <p className="text-sm font-semibold text-white truncate mb-1">
+                                                    {type.name}
+                                                </p>
+                                                <p className="text-xl font-bold text-white group-hover:text-amber-100 transition-colors">
+                                                    {type.value}
+                                                </p>
+                                                <p className="text-xs text-white mt-1">
+                                                    PKR {((type.cost || 0) / 1000).toFixed(0)}K
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Show remaining count if there are more than 5 */}
+                                    {repairAnalytics.most_repaired_types.length > 5 && (
+                                        <div className="text-center mt-3">
+                                            <p className="text-sm text-white">
+                                                +{repairAnalytics.most_repaired_types.length - 5} more equipment types
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* Custodians Tab */}
-                {activeTab === "custodians" && (
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <StatCard
-                                icon={Users}
-                                title="Total Custodians"
-                                value={custodianAnalysis.length}
-                                subtitle="Assigned equipment holders"
-                            />
-                            <StatCard
-                                icon={Package}
-                                title="Assigned Equipment"
-                                value={summary.total_equipment - summary.unassigned_equipment}
-                                subtitle={`${summary.unassigned_equipment} unassigned`}
-                            />
-                            <StatCard
-                                icon={Award}
-                                title="Top Custodian"
-                                value={custodianAnalysis[0]?.value || 0}
-                                subtitle={custodianAnalysis[0]?.name || "N/A"}
-                            />
-                        </div>
+            {/* Custodians Tab */}
+            {activeTab === "custodians" && (
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <StatCard
+                            icon={Users}
+                            title="Total Custodians"
+                            value={summary.total_custodians}
+                            subtitle="Assigned equipment holders"
+                        />
+                        <StatCard
+                            icon={Package}
+                            title="Assigned Equipment"
+                            value={summary.total_equipment - summary.unassigned_equipment}
+                            subtitle={`${summary.unassigned_equipment} unassigned`}
+                        />
+                        <StatCard
+                            icon={Award}
+                            title="Top Custodian"
+                            value={custodianAnalysis[0]?.value || 0}
+                            subtitle={custodianAnalysis[0]?.name || "N/A"}
+                        />
+                    </div>
 
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Equipment Distribution by Custodian */}
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Custodians by
-                                Equipment Count</h3>
-                            <div className="overflow-x-auto">
-                                <table className="w-full min-w-max">
-                                    <thead className="bg-gray-50 dark:bg-gray-700">
-                                    <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Department</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Equipment
-                                            Count
-                                        </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Total
-                                            Value
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                                    {custodianAnalysis.map((custodian, idx) => (
-                                        <tr key={idx}
-                                            className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{idx + 1}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{custodian.name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{custodian.department}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold">{custodian.value}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                                {custodian.cost > 0 ? `PKR ${(custodian.cost / 1000).toFixed(0)}K` : ''}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            className="bg-gradient-to-br from-blue to-indigo rounded-xl shadow-lg p-6 relative overflow-hidden">
+                            {/* Background Elements */}
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Equipment
-                                    Distribution by Custodian</h3>
-                                <div className="space-y-3">
+                                className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                            <div
+                                className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -mb-12 -ml-12"></div>
+
+                            <div className="relative z-10">
+                                {/* Header */}
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                            <Users className="text-white" size={24}/>
+                                        </div>
+                                        Top Equipment Distribution
+                                    </h3>
+                                    <div className="text-right">
+                                        <p className="text-sm text-white">Total Custodians</p>
+                                        <p className="text-2xl font-bold text-white">{custodianAnalysis.length}</p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                                     {custodianAnalysis.slice(0, 10).map((custodian, idx) => {
                                         const totalEquipment = custodianAnalysis.reduce((sum, c) => sum + c.value, 0);
                                         const percentage = ((custodian.value / totalEquipment) * 100).toFixed(1);
+
                                         return (
-                                            <div key={idx} className="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
-                                                <div className="flex items-center justify-between mb-2">
+                                            <div key={idx}
+                                                 className="bg-white/10 rounded-lg p-4 backdrop-blur-sm border border-white/20 hover:border-white/30 transition-all duration-300 group">
+                                                <div className="flex items-center justify-between mb-3">
                                                     <div className="flex-1">
-                                                        <p className="text-sm font-medium text-gray-900 dark:text-white">{custodian.name}</p>
-                                                        <p className="text-xs text-gray-600 dark:text-gray-400">{custodian.department}</p>
+                                                        <p className="text-sm font-semibold text-white truncate">{custodian.name}</p>
+                                                        <p className="text-xs text-blue-200 truncate text-white">{custodian.department}</p>
                                                     </div>
+                                                    <div className="text-right">
                                                     <span
-                                                        className="text-sm font-bold text-primary">{custodian.value}</span>
+                                                        className="text-lg font-bold text-white bg-white/10 px-2 py-1 rounded-full border border-white/20">
+                                                        {custodian.value}
+                                                    </span>
+                                                    </div>
                                                 </div>
+
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className="flex-1 bg-gray-200 rounded-full h-2 dark:bg-gray-600">
+                                                        className="flex-1 bg-white/20 rounded-full h-2 overflow-hidden">
                                                         <div
-                                                            className="h-2 rounded-full bg-primary transition-all"
+                                                            className="h-2 rounded-full bg-white transition-all duration-500"
                                                             style={{width: `${percentage}%`}}
                                                         />
                                                     </div>
                                                     <span
-                                                        className="text-xs text-gray-600 dark:text-gray-400">{percentage}%</span>
+                                                        className="text-xs font-bold text-white min-w-[40px] text-right">
+                                                        {percentage}%
+                                                    </span>
                                                 </div>
                                             </div>
                                         );
                                     })}
                                 </div>
-                            </div>
 
+                                {/* Footer */}
+                                <div className="mt-4 pt-4 border-t border-white/20">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-white">Total Equipment</span>
+                                        <span className="font-bold text-white">
+                                            {custodianAnalysis.reduce((sum, c) => sum + c.value, 0)} units
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Top Value Holders */}
+                        <div
+                            className="bg-gradient-to-br from-emerald-600 to-black rounded-xl shadow-lg p-6 relative overflow-hidden">
+                            {/* Background Elements */}
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Value
-                                    Holders</h3>
-                                <div className="space-y-3">
+                                className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                            <div
+                                className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -mb-12 -ml-12"></div>
+
+                            <div className="relative z-10">
+                                {/* Header */}
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                            <Award className="text-white" size={24}/>
+                                        </div>
+                                        Top Value Holders
+                                    </h3>
+                                    <div className="text-right">
+                                        <p className="text-sm text-emerald-200">Total Value</p>
+                                        <p className="text-2xl font-bold text-white">
+                                            PKR {(custodianAnalysis.reduce((sum, c) => sum + c.cost, 0) / 1000000).toFixed(1)}M
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                                     {[...custodianAnalysis]
                                         .sort((a, b) => b.cost - a.cost)
                                         .slice(0, 10)
                                         .map((custodian, idx) => (
-                                            <div key={idx} className="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                                            <div key={idx}
+                                                 className="bg-white/10 rounded-lg p-4 backdrop-blur-sm border border-white/20 hover:border-white/30 transition-all duration-300 group">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex-1">
-                                                        <p className="text-sm font-medium text-gray-900 dark:text-white">{custodian.name}</p>
-                                                        <p className="text-xs text-gray-600 dark:text-gray-400">{custodian.value} equipment</p>
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <div
+                                                                className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center border border-white/30">
+                                                                <span
+                                                                    className="text-xs font-bold text-white">{idx + 1}</span>
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-semibold text-white truncate">{custodian.name}</p>
+                                                                <p className="text-xs text-emerald-200 truncate">{custodian.department}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-4 text-xs">
+                                                        <span
+                                                            className="text-emerald-200 bg-white/10 px-2 py-1 rounded-full border border-white/20">
+                                                            {custodian.value} equipment
+                                                        </span>
+                                                        </div>
                                                     </div>
-                                                    <span className="text-sm font-bold">
-                                                    {custodian.cost > 0 ? `PKR ${(custodian.cost / 1000).toFixed(0)}K` : ''}
-                                                </span>
+                                                    <div className="text-right">
+                                                        <p className="text-lg font-bold text-white">
+                                                            PKR {(custodian.cost / 1000).toFixed(0)}K
+                                                        </p>
+                                                        <p className="text-xs text-emerald-200">
+                                                            {custodian.cost > 0 ? `${((custodian.cost / custodianAnalysis.reduce((sum, c) => sum + c.cost, 0)) * 100).toFixed(1)}% of total` : 'No value'}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
                                 </div>
+
+                                {/* Footer */}
+                                <div className="mt-4 pt-4 border-t border-white/20">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-emerald-200">Avg. Value per Custodian</span>
+                                        <span className="font-bold text-white">
+                                            PKR {Math.round(custodianAnalysis.reduce((sum, c) => sum + c.cost, 0) / custodianAnalysis.length).toLocaleString()}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                )}
-
-                {/* Recent Equipment - Shown on all tabs */}
-                {recentEquipment.length > 0 && activeTab === "overview" && (
-                    <div
-                        className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
-                            <Package size={20}/>
-                            Recently Added Equipment
-                        </h3>
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Custodians by
+                            Equipment Count</h3>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-max">
                                 <thead className="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Code</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Description</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Type</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Status</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Price</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Custodian</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Department</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Equipment
+                                        Count
+                                    </th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Total
+                                        Value
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                                {recentEquipment.slice(0, 10).map((eq) => (
-                                    <tr key={eq.id}
-                                        className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{eq.code}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{eq.description}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{eq.type}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                {custodianAnalysis.map((custodian, idx) => (
+                                    <tr key={idx}
+                                        className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{idx + 1}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{custodian.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{custodian.department}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold">{custodian.value}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
+                                            {custodian.cost > 0 ? `PKR ${(custodian.cost / 1000).toFixed(0)}K` : ''}
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Recent Equipment - Shown on all tabs */}
+            {recentEquipment.length > 0 && activeTab === "overview" && (
+                <div
+                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
+                        <Package size={20}/>
+                        Recently Added Equipment
+                    </h3>
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-max">
+                            <thead className="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Code</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Description</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Type</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Status</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Price</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Custodian</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                            {recentEquipment.slice(0, 10).map((eq) => (
+                                <tr key={eq.id}
+                                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{eq.code}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{eq.description}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{eq.type}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
                                         <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                                             eq.status === 'Functional' ? 'bg-success/10 text-success' :
                                                 eq.status === 'Faulty' ? 'bg-danger/10 text-danger' :
@@ -734,18 +973,18 @@ const EquipmentDashboard = () => {
                                         }`}>
                                             {eq.status}
                                         </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
-                                            {eq.price > 0 ? `PKR ${(eq.price / 1000).toFixed(0)}K` : ''}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{eq.custodian}</td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
+                                        {eq.price > 0 ? `PKR ${(eq.price / 1000).toFixed(0)}K` : ''}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{eq.custodian}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
                     </div>
-                )}
+                </div>
+            )}
         </div>
     );
 }
