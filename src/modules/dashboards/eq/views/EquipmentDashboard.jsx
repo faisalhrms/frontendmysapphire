@@ -130,8 +130,7 @@ const EquipmentDashboard = () => {
                                 <BarChart3 size={28}/>
                             </div>
                             <div>
-                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Equipment Asset
-                                    Dashboard</h1>
+                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Equipment Asset Dashboard</h1>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive equipment
                                     analytics and asset management insights</p>
                             </div>
@@ -193,6 +192,15 @@ const EquipmentDashboard = () => {
                                 value={summary.total_types || 0}
                                 subtitle={`${summary.unassigned_equipment || 0} unassigned`}
                             />
+                            {byStatus.slice(0, 4).map((status, idx) => (
+                                <StatCard
+                                    key={idx}
+                                    icon={Activity}
+                                    title={status.name}
+                                    value={status.value}
+                                    subtitle={`PKR ${(status.cost / 1000).toFixed(0)}K`}
+                                />
+                            ))}
                         </div>
 
                         {/* Cost Trends & Alerts */}
@@ -328,18 +336,6 @@ const EquipmentDashboard = () => {
                                     </div>
                                 </div>
                             )}
-                        </div>
-                        {/* Quick Stats */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {byStatus.slice(0, 4).map((status, idx) => (
-                                <StatCard
-                                    key={idx}
-                                    icon={Activity}
-                                    title={status.name}
-                                    value={status.value}
-                                    subtitle={`PKR ${(status.cost / 1000).toFixed(0)}K`}
-                                />
-                            ))}
                         </div>
 
                         {/* Top Equipment & Sites */}
@@ -597,7 +593,7 @@ const EquipmentDashboard = () => {
                         </div>
 
                         <div
-                            className="bg-gradient-to-br from-black to-red rounded-xl shadow-lg p-6 relative overflow-hidden">
+                            className="bg-gradient-to-br from-black to-blue rounded-xl shadow-lg p-6 relative overflow-hidden">
                             {/* Background Elements */}
                             <div
                                 className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-18 -mt-18"></div>
@@ -644,7 +640,7 @@ const EquipmentDashboard = () => {
                                                         </div>
                                                     </div>
 
-                                                    <p className="text-3xl font-bold text-white group-hover:text-amber-100 transition-colors">
+                                                    <p className="text-3xl font-bold text-white group-hover:text-danger transition-colors">
                                                         {status.value}
                                                     </p>
 
