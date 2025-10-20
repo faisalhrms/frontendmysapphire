@@ -215,7 +215,7 @@ const SubscriptionDashboard = () => {
 
             {/* Distribution Charts */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 ">
                     <div className="flex flex-wrap gap-2">
                         {metrics.map((metric) => {
                             const Icon = metric.icon;
@@ -227,7 +227,7 @@ const SubscriptionDashboard = () => {
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                         active
                                             ? "bg-primary/10 text-primary border-primary/30 shadow-md"
-                                            : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                            : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300  dark:text-gray-200 dark:bg-bodybg"
                                     }`}
                                 >
                                     <Icon size={18} />
@@ -241,7 +241,7 @@ const SubscriptionDashboard = () => {
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Chart */}
-                        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
                                 {metrics.find((m) => m.key === selectedMetric)?.label}
                             </h3>
@@ -251,7 +251,7 @@ const SubscriptionDashboard = () => {
                         </div>
 
                         {/* Top Items */}
-                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-shadow dark:text-gray-200 dark:bg-bodybg">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Items</h3>
                             <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
                                 {currentData.slice(0, 10).map((item, index) => {
@@ -261,7 +261,7 @@ const SubscriptionDashboard = () => {
                                     return (
                                         <div
                                             key={index}
-                                            className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-800"
+                                            className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all dark:text-gray-200 dark:bg-bodybg"
                                         >
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-sm font-medium text-gray-900 truncate pr-4 dark:text-white">
@@ -303,7 +303,7 @@ const SubscriptionDashboard = () => {
 
                 {/* Detailed Table */}
                 <div className="p-6">
-                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
+                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow dark:text-gray-200 dark:bg-bodybg">
                         <div className="p-5 border-b border-gray-200 dark:border-gray-700">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                 Detailed {metrics.find((m) => m.key === selectedMetric)?.label} Data
@@ -311,7 +311,7 @@ const SubscriptionDashboard = () => {
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-max">
-                                <thead className="bg-gray-50 dark:bg-gray-900">
+                                <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <tr>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
@@ -398,7 +398,8 @@ const SubscriptionDashboard = () => {
                     </h3>
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-max">
-                            <thead className="bg-gray-50 dark:bg-gray-900">
+                            <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg
+">
                             <tr>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Subscription</th>

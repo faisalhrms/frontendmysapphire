@@ -19,6 +19,7 @@ import ResetPassView from "@modules/auth/views/ResetPassView.jsx";
 import PublicDynamicForm from "@modules/forms/views/PublicDynamicForm.jsx";
 import PrivacyPolicy from "@modules/forms/views/PrivacyPolicy.jsx";
 import PublicInlay from "@modules/inlay/views/PublicInlay.jsx";
+import ToDetailPage from "@modules/public/views/ToDetailPage.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -75,6 +76,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="forms/:slug" element={<PublicDynamicForm />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/inlay/:code" element={<PublicInlay />} />
+                            <Route path="transfer-order/delivery/detail/:sdn_id" element={<ToDetailPage />} />
                         </Route>
 
                         {/* Error Page */}
