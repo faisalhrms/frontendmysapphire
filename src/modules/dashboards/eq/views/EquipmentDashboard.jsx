@@ -122,7 +122,8 @@ const EquipmentDashboard = () => {
     return (
         <div className="space-y-6 pb-8 pt-8">
             <div
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg
+">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
@@ -130,8 +131,7 @@ const EquipmentDashboard = () => {
                                 <BarChart3 size={28}/>
                             </div>
                             <div>
-                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Equipment Asset
-                                    Dashboard</h1>
+                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Equipment Asset Dashboard</h1>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive equipment
                                     analytics and asset management insights</p>
                             </div>
@@ -154,7 +154,7 @@ const EquipmentDashboard = () => {
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                     activeTab === tab.id
                                         ? "bg-primary/10 text-primary border-primary/30 shadow-md"
-                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
                                 }`}
                             >
                                 <Icon size={18}/>
@@ -193,6 +193,15 @@ const EquipmentDashboard = () => {
                                 value={summary.total_types || 0}
                                 subtitle={`${summary.unassigned_equipment || 0} unassigned`}
                             />
+                            {byStatus.slice(0, 4).map((status, idx) => (
+                                <StatCard
+                                    key={idx}
+                                    icon={Activity}
+                                    title={status.name}
+                                    value={status.value}
+                                    subtitle={`PKR ${(status.cost / 1000).toFixed(0)}K`}
+                                />
+                            ))}
                         </div>
 
                         {/* Cost Trends & Alerts */}
@@ -329,18 +338,6 @@ const EquipmentDashboard = () => {
                                 </div>
                             )}
                         </div>
-                        {/* Quick Stats */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {byStatus.slice(0, 4).map((status, idx) => (
-                                <StatCard
-                                    key={idx}
-                                    icon={Activity}
-                                    title={status.name}
-                                    value={status.value}
-                                    subtitle={`PKR ${(status.cost / 1000).toFixed(0)}K`}
-                                />
-                            ))}
-                        </div>
 
                         {/* Top Equipment & Sites */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -406,7 +403,8 @@ const EquipmentDashboard = () => {
                         {/* Monthly Purchases Trend */}
                         {monthlyPurchases.length > 0 && (
                             <div
-                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg
+">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                                     <TrendingUp size={20}/>
                                     Monthly Purchases Trend
@@ -424,7 +422,8 @@ const EquipmentDashboard = () => {
             {activeTab === "analytics" && (
                 <div className="space-y-6">
                     <div
-                        className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        className="bg-white rounded-lg shadow-sm border border-gray-200 dark:text-gray-200 dark:bg-bodybg
+">
                         <div
                             className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
                             <div className="flex flex-wrap gap-2">
@@ -438,7 +437,7 @@ const EquipmentDashboard = () => {
                                             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                                 active
                                                     ? "bg-primary/10 text-primary border-primary/30 shadow-md"
-                                                    : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                                                    : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
                                             }`}
                                         >
                                             <Icon size={18}/>
@@ -452,7 +451,8 @@ const EquipmentDashboard = () => {
                             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                     <div
-                                        className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md dark:bg-gray-800 dark:border-gray-700">
+                                        className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-md dark:text-gray-200 dark:bg-bodybg
+">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">
                                             {metrics.find((m) => m.key === selectedMetric)?.label}
                                         </h3>
@@ -460,7 +460,8 @@ const EquipmentDashboard = () => {
                                     </div>
 
                                     <div
-                                        className="bg-white border border-gray-200 rounded-xl p-5 shadow-md dark:bg-gray-700 dark:border-gray-600">
+                                        className="bg-white border border-gray-200 rounded-xl p-5 shadow-md dark:text-gray-200 dark:bg-bodybg
+">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top
                                             Items</h3>
                                         <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
@@ -469,7 +470,8 @@ const EquipmentDashboard = () => {
                                                 const percentage = total ? ((value / total) * 100).toFixed(1) : 0;
                                                 return (
                                                     <div key={index}
-                                                         className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                                                         className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-200 dark:bg-bodybg
+">
                                                         <div className="flex items-center justify-between mb-2">
                                                         <span
                                                             className="text-sm font-medium text-gray-900 truncate pr-4 dark:text-white">
@@ -509,7 +511,8 @@ const EquipmentDashboard = () => {
 
                             <div className="p-6">
                                 <div
-                                    className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md dark:bg-gray-700 dark:border-gray-600">
+                                    className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md dark:text-gray-200 dark:bg-bodybg
+">
                                     <div className="p-5 border-b border-gray-200 dark:border-gray-600">
                                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                             Detailed {metrics.find((m) => m.key === selectedMetric)?.label} Data
@@ -517,7 +520,7 @@ const EquipmentDashboard = () => {
                                     </div>
                                     <div className="overflow-x-auto">
                                         <table className="w-full min-w-max">
-                                            <thead className="bg-gray-50 dark:bg-gray-800">
+                                            <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                             <tr>
                                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
@@ -587,7 +590,8 @@ const EquipmentDashboard = () => {
                         </div>
 
                         <div
-                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg
+">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Most Repaired
                                 Equipment Types</h3>
                             <div className="h-[470px]">
@@ -597,7 +601,7 @@ const EquipmentDashboard = () => {
                         </div>
 
                         <div
-                            className="bg-gradient-to-br from-black to-red rounded-xl shadow-lg p-6 relative overflow-hidden">
+                            className="bg-gradient-to-br from-black to-blue rounded-xl shadow-lg p-6 relative overflow-hidden">
                             {/* Background Elements */}
                             <div
                                 className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-18 -mt-18"></div>
@@ -644,7 +648,7 @@ const EquipmentDashboard = () => {
                                                         </div>
                                                     </div>
 
-                                                    <p className="text-3xl font-bold text-white group-hover:text-amber-100 transition-colors">
+                                                    <p className="text-3xl font-bold text-white group-hover:text-danger transition-colors">
                                                         {status.value}
                                                     </p>
 
@@ -900,12 +904,13 @@ const EquipmentDashboard = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg
+">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white">Top Custodians by
                             Equipment Count</h3>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-max">
-                                <thead className="bg-gray-50 dark:bg-gray-700">
+                                <thead className="bg-gray-50  border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                 <tr>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">#</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Name</th>
@@ -941,14 +946,14 @@ const EquipmentDashboard = () => {
             {/* Recent Equipment - Shown on all tabs */}
             {recentEquipment.length > 0 && activeTab === "overview" && (
                 <div
-                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
+                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 dark:text-white flex items-center gap-2">
                         <Package size={20}/>
                         Recently Added Equipment
                     </h3>
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-max">
-                            <thead className="bg-gray-50 dark:bg-gray-700">
+                            <thead className="bg-gray-50 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                             <tr>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Code</th>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-300">Description</th>
