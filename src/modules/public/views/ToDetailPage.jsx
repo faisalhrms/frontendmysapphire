@@ -66,7 +66,7 @@ export default function ToDetailPage() {
                 {/* Breadcrumb */}
                 <div className="mb-4">
                     <nav className={`flex items-center gap-2 text-sm ${isDark ? 'text-gray-400' : ''}`}>
-                        <a href="/transfer-orders" className="text-primary hover:text-primary transition-colors">Delivery Details</a>
+                        <a href="/transfer-orders" className="text-primary hover:text-primary transition-colors">Delivery Note Details</a>
                         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
@@ -81,10 +81,10 @@ export default function ToDetailPage() {
                     <div className="flex items-start justify-between flex-wrap gap-4">
                         <div>
                             <h1 className={`text-2xl font-bold mb-1 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
-                                Delivery Details
+                                Delivery Note Details
                             </h1>
                             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                View delivery details information
+                                View delivery note details information
                             </p>
                         </div>
                     </div>
@@ -117,45 +117,57 @@ export default function ToDetailPage() {
                         {/* Summary Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                             {/* Unique Transfer Orders */}
-                            <div className={`rounded-lg shadow-sm border p-4 ${isDark ? 'dark:text-gray-200 dark:bg-bodybg border border-gray-200 bg-gray-50' : 'bg-white border-gray-200'}`}>
+                            <div
+                                className={`rounded-lg shadow-sm border p-4 ${isDark ? 'dark:text-gray-200 dark:bg-bodybg border border-gray-200 bg-gray-50' : 'bg-white border-gray-200'}`}>
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-primary/50 rounded-lg">
-                                        <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    <div className="p-2 bg-emerald-100 rounded-lg">
+                                        <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                         </svg>
                                     </div>
                                     <div>
-                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Unique Transfer Orders</p>
+                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Delivery
+                                            Note</p>
+                                        <p className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{data?.delivery_note_no ?? '-'}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/* Delivery Note */}
+                            <div
+                                className={`rounded-lg shadow-sm border p-4 ${isDark ? 'dark:text-gray-200 dark:bg-bodybg border border-gray-200 bg-gray-50' : 'bg-white border-gray-200'}`}>
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-primary/50 rounded-lg">
+                                        <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Unique
+                                            Transfer Orders</p>
                                         <p className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{uniqueTransferOrders}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Delivery Note */}
-                            <div className={`rounded-lg shadow-sm border p-4 ${isDark ? 'dark:text-gray-200 dark:bg-bodybg border border-gray-200 bg-gray-50' : 'bg-white border-gray-200'}`}>
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-emerald-100 rounded-lg">
-                                        <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Delivery Note</p>
-                                        <p className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{data?.delivery_note_no ?? '-'}</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Total Items */}
-                            <div className={`rounded-lg shadow-sm border p-4 ${isDark ? 'dark:text-gray-200 dark:bg-bodybg border border-gray-200 bg-gray-50' : 'bg-white border-gray-200'}`}>
+                            <div
+                                className={`rounded-lg shadow-sm border p-4 ${isDark ? 'dark:text-gray-200 dark:bg-bodybg border border-gray-200 bg-gray-50' : 'bg-white border-gray-200'}`}>
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-pink/50 rounded-lg">
-                                        <svg className="w-5 h-5 text-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                        <svg className="w-5 h-5 text-pink" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                         </svg>
                                     </div>
                                     <div>
-                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Total Items</p>
+                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Total Unique SKU</p>
                                         <p className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{items.length}</p>
                                     </div>
                                 </div>
@@ -170,7 +182,7 @@ export default function ToDetailPage() {
                                         </svg>
                                     </div>
                                     <div>
-                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Total Quantity</p>
+                                        <p className={`text-xs uppercase tracking-wide font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Total SKU Quantity</p>
                                         <p className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{totalQuantity}</p>
                                     </div>
                                 </div>
