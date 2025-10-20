@@ -34,7 +34,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         const displayLabel = dataPoint?.name || label;
 
         return (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3 min-w-[150px]">
+            <div className="bg-white  border border-gray-200  dark:text-gray-200 dark:bg-bodybg rounded-lg shadow-lg p-3 min-w-[150px]">
                 <p className="font-semibold text-gray-900 dark:text-white mb-2 border-b pb-1">
                     {displayLabel}
                 </p>
