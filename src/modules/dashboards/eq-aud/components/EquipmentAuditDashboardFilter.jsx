@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import FilterButton from "@components/form/FilterButton.jsx";
-import LocationDropdown from "@modules/dashboards/eq-aud/components/LocationDropdown.jsx";
+import LocationDropdown from "@modules/dashboards/eq-aud/components/LocationDropDown.jsx";
 import CompanyDropdown from "@components/dropdowns/CompanyDropdown.jsx";
 import LocationSubnetDropDown from "@modules/dashboards/eq-aud/components/LocationSubnetDropDown.jsx";
 
