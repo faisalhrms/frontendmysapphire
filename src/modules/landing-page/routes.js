@@ -3,7 +3,7 @@ import LandingPage from "@modules/landing-page/views/LandingPage.jsx";
 
 export const landing_ROUTES = {
     ABOUT_US: {
-        path: '/about-us',
+        path: '/module/ess/about-us',
     },
 };
 
