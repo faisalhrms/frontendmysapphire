@@ -34,3 +34,18 @@ export const getMailboxes = async () => {
   const rows = data.rows || []
   return Array.from(new Set(rows.map(r => r.mailbox_email).filter(Boolean)))
 }
+
+export const matchCustomerItems = async ({ quality_code, design, color, width }) => {
+  const params = {}
+  if (quality_code) params.quality_code = quality_code
+  if (design) params.design = design
+  if (color) params.color = color
+  if (width) params.width = width
+  const res = await api.get(`${ROOT}/customer-items/match/`, { params })
+  return Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
+}
+
+export const saveAirjetCosting = async (payload) => {
+  const res = await api.post(`${ROOT}/airjet-costings/`, payload)
+  return res.data?.data || res.data
+}

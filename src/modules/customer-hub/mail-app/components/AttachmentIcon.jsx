@@ -1,4 +1,3 @@
-// @modules/beirholm-hub/components/AttachmentIcon.jsx
 export const AttachmentIcon = ({ kind }) => {
   if (kind === "excel")
     return (
