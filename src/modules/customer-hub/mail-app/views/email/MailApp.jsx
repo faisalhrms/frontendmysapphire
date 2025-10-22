@@ -157,7 +157,7 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
 
             <div className="p-4">
               <div className="input-group">
-                <input type="text" className="form-control !bg-light !border-0 !rounded-s-md" placeholder="Search Email" />
+                <input type="text" className="form-control !bg-light !border-0 !rounded-s-md" placeholder="Search Order" />
                 <button aria-label="button" className="ti-btn ti-btn-light !rounded-s-none !mb-0" type="button">
                   <i className="ri-search-line text-[#8c9097] dark:text-white/50" />
                 </button>
