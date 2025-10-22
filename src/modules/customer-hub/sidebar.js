@@ -34,6 +34,14 @@ export let sidebarMenu = [
                 "bx bx-message-square-edit",
                 CUSTOMER_HUB_ROUTES.EMAIL.MAIL_LIST.permission
             ),
+            generateSidebarItem(
+                CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.path,
+                "link",
+                "Integrations",
+                1,
+                "bx bx-message-square-edit",
+                CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.permission
+            ),
 
         ]
     ),

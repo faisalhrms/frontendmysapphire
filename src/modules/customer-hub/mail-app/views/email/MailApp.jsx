@@ -5,7 +5,7 @@ import { useCustomerHubMail } from "@modules/customer-hub/mail-app/hooks/useMail
 import { fileKind, resolveCidHtml, sanitizeHtml, truncateWords } from "@modules/customer-hub/mail-app/services/MailAppUtils.js"
 import { AttachmentIcon } from "@modules/customer-hub/mail-app/components/AttachmentIcon.jsx"
 import Avatar from "@components/Avatar.jsx"
-import { Inbox, ChevronDown, Mail as MailIcon, FileSignature,Calculator,FileSpreadsheet } from "lucide-react"
+import { Inbox, ChevronDown, Mail as MailIcon, FileSignature,Calculator,FileSpreadsheet,ClipboardList } from "lucide-react"
 import ExtractionGrid from "@modules/customer-hub/mail-app/components/ExtractionGrid.jsx"
 import AgreementPlacementForm from "@modules/customer-hub/mail-app/components/AgreementPlacementForm.jsx"
 import CompactHeader from "@modules/customer-hub/mail-app/components/CompactHeader.jsx"
@@ -26,12 +26,18 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
       label: "Original Email",
       icon: <MailIcon size={16} />,
       content: (
-        <div className="space-y-6">
-          <div className="prose max-w-none dark:prose-invert">
-            <div className="text-[.875rem] [&_img]:max-w-full [&_img]:h-auto" dangerouslySetInnerHTML={{ __html: sanitizeHtml(resolvedHtml || "") }} />
+        <div className="flex flex-col min-h-0 max-h-[65vh] sm:max-h-[70vh]">
+          <div className="flex-1 overflow-y-auto pr-1">
+            <div className="prose max-w-none dark:prose-invert">
+              <div
+                className="text-[.875rem] break-words whitespace-pre-wrap [&_img]:max-w-full [&_img]:h-auto [&_table]:w-full [&_table]:table-auto"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(resolvedHtml || "") }}
+              />
+            </div>
           </div>
+
           {(selectedMessage?.attachments?.length ?? 0) > 0 && (
-            <div>
+            <div className="pt-4">
               <div className="flex justify-between items-center">
                 <span className="text-[.875rem] font-semibold dark:!text-defaulttextcolor/70">
                   <i className="ri-attachment-2 me-1 align-middle" /> Attachments ({selectedMessage.attachments.length})
@@ -39,8 +45,14 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
               </div>
               <div className="mt-2 flex items-center flex-wrap">
                 {selectedMessage.attachments.map((a) => (
-                  <a key={a.id} href={a.url || "#"} target="_blank" rel="noreferrer" className="mail-attachment mb-1 me-2">
-                    <div className="attachment-icon">
+                  <a
+                    key={a.id}
+                    href={a.url || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mail-attachment mb-1 me-2"
+                  >
+                    <div className="w-8 h-8 text-[2rem] me-2">
                       <AttachmentIcon kind={fileKind(a)} />
                     </div>
                     <div className="leading-none">
@@ -55,6 +67,7 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
         </div>
       ),
     },
+
     {
       id: "tab-extracted",
       label: "Extracted Info",
@@ -81,7 +94,7 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
         </div>
       ),
     },
-    {
+     {
       id: "tab-costing",
       label: "Airjet Costing",
       icon: <Calculator size={16} />,
@@ -90,7 +103,17 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
             <InfoAlert/>
         </div>
       ),
-    }
+    },
+    {
+      id: "tab-pr",
+      label: "PR Generation",
+      icon: <ClipboardList size={16} />,
+      content: (
+        <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
+          <InfoAlert/>
+        </div>
+      ),
+    },
   ]
 
   return (
@@ -134,7 +157,7 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
 
             <div className="p-4">
               <div className="input-group">
-                <input type="text" className="form-control !bg-light !border-0 !rounded-s-md" placeholder="Search Email" />
+                <input type="text" className="form-control !bg-light !border-0 !rounded-s-md" placeholder="Search Order" />
                 <button aria-label="button" className="ti-btn ti-btn-light !rounded-s-none !mb-0" type="button">
                   <i className="ri-search-line text-[#8c9097] dark:text-white/50" />
                 </button>

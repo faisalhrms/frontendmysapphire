@@ -15,6 +15,8 @@ import WeavingParameterForm
     from "@modules/customer-hub/master-data/WeavingParameter/components/WeavingParameterForm.jsx";
 import QualityWeavingList from "@modules/customer-hub/master-data/QualityWeaving/views/QualityWeavingList.jsx";
 import QualityWeavingForm from "@modules/customer-hub/master-data/QualityWeaving/components/QualityWeavingForm.jsx";
+import IntegrationsForm from "@modules/customer-hub/integrations/components/IntegrationsForm.jsx";
+import IntegrationView from "@modules/customer-hub/integrations/views/IntegrationView.jsx";
 
 
 export const CUSTOMER_HUB_ROUTES = {
@@ -31,8 +33,13 @@ export const CUSTOMER_HUB_ROUTES = {
             path: "/module/customer/hub/mail/settings",
             permission: 'customer_hub.add_customer_hub_email_config',
         },
-
     },
+    INTEGRATIONS: {
+        HOME: {
+            path: "/module/customer/hub/integrations",
+            permission: "customer_hub.view_integrations"
+        }
+    }
 };
 
 export const AIRJET_COSTING = {
@@ -182,5 +189,10 @@ export const MODULE_ROUTES = [
         path: QUALITY_WEAVING.CREATE.path,
         component: QualityWeavingForm,
         permission: QUALITY_WEAVING.CREATE.permission,
+    },
+    {
+        path: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.path,
+        component: IntegrationView,
+        permission: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.permission,
     },
 ];
