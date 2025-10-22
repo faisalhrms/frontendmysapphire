@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Briefcase, Users, CreditCard, FileText, Heart, Target, Zap, Shield, Coffee, Award, Sparkles, QrCode, Package, ArrowRight, LogIn } from 'lucide-react';
 import logo from "@assets/images/brand-logos/desktop-white.svg";
+import {useNavigate} from "react-router-dom";
 
 export default function AboutUs() {
     const [isVisible, setIsVisible] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const heroRef = useRef(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         setIsVisible(true);
@@ -106,6 +109,7 @@ export default function AboutUs() {
                             e.currentTarget.style.transform = 'scale(1)';
                             e.currentTarget.style.border = 'none';
                         }}
+                        onClick={() => navigate(`${import.meta.env.BASE_URL}`)}
                     >
                         <LogIn className="w-4 h-4" />
                         Login to Portal
