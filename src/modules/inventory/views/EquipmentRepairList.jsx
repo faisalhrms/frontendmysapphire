@@ -3,6 +3,7 @@ import DataTable from "@components/datatable/DataTable.jsx";
 import { formatAmountWithCommas, toTitleCase } from "@helpers/formatters.js";
 import EquipmentRepairFormWrapper from "@modules/inventory/models/components/EquipmentRepairFormWrapper.jsx";
 import {getBadgeClasses} from "@helpers/badges.js";
+import {Link} from "react-router-dom";
 
 const EquipmentRepairList = ({ isActive, externalFilters = [] }) => {
     if (!isActive) return null;
@@ -28,6 +29,12 @@ const EquipmentRepairList = ({ isActive, externalFilters = [] }) => {
                     >
                         <i className="ri-edit-line" />
                     </button>
+
+                    <Link to={`/module/asset/repair/detail/${row.original.id}`}>
+                        <button className="ti-btn ti-btn-info ti-btn-sm">
+                            <i className="ri-eye-line"></i>
+                        </button>
+                    </Link>
                 </div>
             ),
         },

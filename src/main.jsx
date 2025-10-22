@@ -20,6 +20,7 @@ import PublicDynamicForm from "@modules/forms/views/PublicDynamicForm.jsx";
 import PrivacyPolicy from "@modules/forms/views/PrivacyPolicy.jsx";
 import PublicInlay from "@modules/inlay/views/PublicInlay.jsx";
 import ToDetailPage from "@modules/public/views/ToDetailPage.jsx";
+import CartonDetailPage from "@modules/carton/view/CartonDetailPage.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -77,6 +78,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/inlay/:code" element={<PublicInlay />} />
                             <Route path="transfer-order/delivery/detail/:sdn_id" element={<ToDetailPage />} />
+                            <Route path="transfer-order/carton/detail/:id" element={<CartonDetailPage/>} />
                         </Route>
 
                         {/* Error Page */}
