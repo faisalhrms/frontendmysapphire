@@ -198,7 +198,7 @@ const PhoneInputForDynamicForm = ({ value = '', onChange, hasError, className, p
 
                     {/* Dropdown */}
                     {isDropdownOpen && (
-                        <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-hidden">
+                        <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                             {/* Search */}
                             <div className="p-3 border-b border-gray-200">
                                 <input
@@ -206,7 +206,7 @@ const PhoneInputForDynamicForm = ({ value = '', onChange, hasError, className, p
                                     placeholder="Search countries..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm dark:text-gray-200 dark:bg-bodybg"
                                 />
                             </div>
 
@@ -217,7 +217,7 @@ const PhoneInputForDynamicForm = ({ value = '', onChange, hasError, className, p
                                         key={country.code}
                                         type="button"
                                         onClick={() => handleCountrySelect(country)}
-                                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between transition-colors ${
+                                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between transition-colors dark:text-gray-200 dark:bg-bodybg ${
                                             selectedCountry.code === country.code ? 'bg-blue-50 text-blue-600' : ''
                                         }`}
                                     >

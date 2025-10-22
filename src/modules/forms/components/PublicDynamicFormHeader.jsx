@@ -76,7 +76,7 @@ const PublicDynamicFormHeader = ({
                                 <span>Step {currentStep + 1} of {steps.length}</span>
                                 <span>{steps?.[currentStep]?.title}</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2 dark:text-gray-200 dark:bg-bodybg">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
                                 <div
                                     className="h-2 rounded-full transition-all duration-300"
                                     style={{
