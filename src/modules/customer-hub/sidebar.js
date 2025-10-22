@@ -1,5 +1,5 @@
 import {generateSidebarItem} from "@helpers/formatters.js";
-import {CUSTOMER_HUB_ROUTES} from "@modules/customer-hub/routes.js";
+import {CUSTOMER_HUB_ROUTES, MASTER_DATA} from "@modules/customer-hub/routes.js";
 
 export let sidebarMenu = [
     generateSidebarItem(
@@ -11,30 +11,28 @@ export let sidebarMenu = [
         "",
         [
             generateSidebarItem(
-                "",
-                "sub",
-                "Email",
+                CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.path,
+                "link",
+                'Customer Orders',
                 1,
-                "bx bx-target-lock",
-                "",
-                [
-                    generateSidebarItem(
-                        CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.path,
-                        "link",
-                        "Mail App",
-                        1,
-                        "bx bx-message-square-edit",
-                        CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.permission
-                    ),
-                    generateSidebarItem(
-                        CUSTOMER_HUB_ROUTES.EMAIL.MAIL_LIST.path,
-                        "link",
-                        "Mail Settings",
-                        1,
-                        "bx bx-message-square-edit",
-                        CUSTOMER_HUB_ROUTES.EMAIL.MAIL_LIST.permission
-                    ),
-                ]
+                "bx bx-message-square-edit",
+                CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.permission
+            ),
+            generateSidebarItem(
+                MASTER_DATA.READ.path,
+                'link',
+                'Master Data',
+                1,
+                "bx bx-message-square-edit",
+                MASTER_DATA.READ.permission
+            ),
+            generateSidebarItem(
+                CUSTOMER_HUB_ROUTES.EMAIL.MAIL_LIST.path,
+                "link",
+                "Mail Settings",
+                1,
+                "bx bx-message-square-edit",
+                CUSTOMER_HUB_ROUTES.EMAIL.MAIL_LIST.permission
             ),
 
         ]
