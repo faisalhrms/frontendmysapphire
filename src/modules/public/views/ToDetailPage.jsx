@@ -22,7 +22,7 @@ export default function ToDetailPage() {
 
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_API_BASE_URL}/public/transfer-order-details/`,
+                    `${import.meta.env.VITE_API_BASE_URL}/public/transfer-order/delivery/details/`,
                     {
                         params: { sdn_id: sdnId },
                         withCredentials: false,
