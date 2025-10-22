@@ -20,6 +20,7 @@ import PublicDynamicForm from "@modules/forms/views/PublicDynamicForm.jsx";
 import PrivacyPolicy from "@modules/forms/views/PrivacyPolicy.jsx";
 import PublicInlay from "@modules/inlay/views/PublicInlay.jsx";
 import ToDetailPage from "@modules/public/views/ToDetailPage.jsx";
+import AboutUs from "@modules/public/views/AboutUs.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -70,6 +71,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                     <Routes>
                         <Route path={`${import.meta.env.BASE_URL}`} element={<Authentication />}>
                             <Route index element={<Login />} />
+                            <Route path="about-us" element={<AboutUs />} />
                             <Route path="resetpassword" element={<ForgotPassView />} />
                             <Route path="resetpassword/:uidb64/:token" element={<ForgotPassView />} />
                             <Route path="vcard/profile/:id" element={<VCardProfile />} />
