@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react"
 import dayjs from "dayjs"
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
-import { getExtractionsByEmail, getThreadMessages, getThreadsPage, markRead, getMailboxes } from "@modules/customer-hub/services/CustomerHubMailService.js"
+import { getExtractionsByEmail, getThreadMessages, getThreadsPage, markRead, getMailboxes } from "@modules/customer-hub/mail-app/services/CustomerHubMailService.js"
 
 export const useCustomerHubMail = (mailbox) => {
   const qc = useQueryClient()
