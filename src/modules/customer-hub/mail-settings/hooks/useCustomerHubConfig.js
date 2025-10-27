@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
-import { createHubConfig, getCurrentHubConfig, getHubConfig, updateHubConfig } from "@modules/customer-hub/mail-app/services/CustomerHubConfigService.js";
+import { createHubConfig, getCurrentHubConfig, getHubConfig, updateHubConfig } from "@modules/customer-hub/mail-settings/services/CustomerHubConfigService.js";
 
 const looksLikeRegex = s => /[\\[\]().^$+?{|}]/.test(String(s || ''))
 const isOurSubjectRegex = s => /\\b/.test(s || '') || /\\s\+/.test(s || '') || /\.\*/.test(s || '')

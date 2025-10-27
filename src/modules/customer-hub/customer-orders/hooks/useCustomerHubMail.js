@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react"
 import dayjs from "dayjs"
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
-import { getExtractionsByEmail, getThreadMessages, getThreadsPage, markRead, getMailboxes } from "@modules/customer-hub/mail-app/services/CustomerHubMailService.js"
+import { getExtractionsByEmail, getThreadMessages, getThreadsPage, markRead, getMailboxes } from "@modules/customer-hub/customer-orders/services/CustomerHubMailService.js"
 
 export const useCustomerHubMail = (mailbox) => {
   const qc = useQueryClient()
@@ -13,6 +13,7 @@ export const useCustomerHubMail = (mailbox) => {
   const [messages, setMessages] = useState([])
   const [selectedMessageId, setSelectedMessageId] = useState(null)
   const [extractions, setExtractions] = useState([])
+  const [extractionsLoading, setExtractionsLoading] = useState(false)
   const limit = 20
   const { ref: sentinelRef, inView } = useInView({ threshold: 0.1, triggerOnce: false })
 
@@ -104,17 +105,18 @@ export const useCustomerHubMail = (mailbox) => {
     }
   }, [mailbox, messagesByThread, fetchThreadMessages, patchThreads])
 
-  useEffect(() => {
-    const run = async () => {
-      if (!selectedMessageId) {
-        setExtractions([])
-        return
-      }
-      const ext = await getExtractionsByEmail(selectedMessageId, mailbox)
+  const loadExtractions = useCallback(async (emailId) => {
+    if (!emailId) return
+    setExtractionsLoading(true)
+    try {
+      const ext = await getExtractionsByEmail(emailId, mailbox)
       setExtractions(ext)
+    } finally {
+      setExtractionsLoading(false)
     }
-    run()
-  }, [selectedMessageId, mailbox])
+  }, [mailbox])
+
+  const clearExtractions = useCallback(() => setExtractions([]), [])
 
   const selectedMessage = useMemo(() => messages.find((x) => x.id === selectedMessageId) || null, [messages, selectedMessageId])
   const formatThreadTime = (iso) => dayjs(iso).format("h:mm A")
@@ -138,6 +140,9 @@ export const useCustomerHubMail = (mailbox) => {
     formatThreadTime,
     formatFileSize,
     extractions,
+    loadExtractions,
+    clearExtractions,
+    extractionsLoading,
     sentinelRef,
     hasNextPage,
     isFetchingNextPage,

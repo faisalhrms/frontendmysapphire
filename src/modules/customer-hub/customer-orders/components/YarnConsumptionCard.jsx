@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 
 const Row = ({ label, value, last }) => (
   <div className={`${last ? "" : "border-b dark:border-defaultborder/20"} grid grid-cols-2 items-center`}>
@@ -39,6 +39,10 @@ const round = (n, d = 2) => Number((isFinite(n) ? n : 0).toFixed(d))
 const YarnConsumptionCard = ({ item, totalMeters, onTotalMetersChange, widthInches, widthCm, onComputed }) => {
   const [meters, setMeters] = useState(totalMeters || "")
   const [rejPct, setRejPct] = useState(10)
+  const onComputedRef = useRef(onComputed)
+  const prevPayloadRef = useRef(null)
+
+  useEffect(() => { onComputedRef.current = onComputed }, [onComputed])
   useEffect(() => { setMeters(totalMeters || "") }, [totalMeters])
 
   const epi = toNum(item?.ends)
@@ -92,8 +96,13 @@ const YarnConsumptionCard = ({ item, totalMeters, onTotalMetersChange, widthInch
   const totalWithRej = useMemo(() => round(warpWithRej + weftWithRej, 2), [warpWithRej, weftWithRej])
 
   useEffect(() => {
-    onComputed && onComputed({ warpReq, weftReq, warpWithRej, weftWithRej, totalWithRej, rejPct, widthIn })
-  }, [warpReq, weftReq, warpWithRej, weftWithRej, totalWithRej, rejPct, widthIn, onComputed])
+    const payload = { warpReq, weftReq, warpWithRej, weftWithRej, totalWithRej, rejPct, widthIn }
+    const same = JSON.stringify(prevPayloadRef.current) === JSON.stringify(payload)
+    if (!same) {
+      prevPayloadRef.current = payload
+      if (onComputedRef.current) onComputedRef.current(payload)
+    }
+  }, [warpReq, weftReq, warpWithRej, weftWithRej, totalWithRej, rejPct, widthIn])
 
   return (
     <div className="rounded-2xl border bg-white shadow-md dark:bg-bodybg dark:border-defaultborder/20">
@@ -114,7 +123,6 @@ const YarnConsumptionCard = ({ item, totalMeters, onTotalMetersChange, widthInch
             <input type="number" min={0} value={meters} onChange={(e) => { const v = e.target.value; setMeters(v); onTotalMetersChange && onTotalMetersChange(v) }} className="form-control !h-10 !py-2.5 !px-3 text-[.92rem]" placeholder="0" />
           </div>
         </div>
-
         <div className="lg:col-span-5 grid gap-3 content-start">
           <div className="rounded-xl border p-4 shadow-sm bg-white dark:bg-bodybg dark:border-defaultborder/20">
             <div className="text-[.75rem] uppercase tracking-wide text-[#6b7280] dark:text-white/60 mb-3">Bags</div>
@@ -131,7 +139,6 @@ const YarnConsumptionCard = ({ item, totalMeters, onTotalMetersChange, widthInch
               </div>
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-3">
             <Stat label="GSM" value={gsm} />
             <Stat label="Cover Factor" value={coverFactor} />

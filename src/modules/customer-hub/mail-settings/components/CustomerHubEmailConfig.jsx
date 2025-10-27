@@ -6,7 +6,7 @@ import FormInput from '@components/form/FormInput.jsx'
 import FormToggle from '@components/form/FormToggle.jsx'
 import FormSelect from '@components/form/FormSelect.jsx'
 import FormTextarea from '@components/form/FormTextarea.jsx'
-import { useCustomerHubConfig } from "@modules/customer-hub/mail-app/hooks/useCustomerHubConfig.js";
+import { useCustomerHubConfig } from "@modules/customer-hub/mail-settings/hooks/useCustomerHubConfig.js";
 
 const typeOptions = [
   {value:'str', label:'str'},

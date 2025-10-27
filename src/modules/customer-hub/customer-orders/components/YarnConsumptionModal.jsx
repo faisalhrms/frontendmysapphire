@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { createPortal } from "react-dom"
-import YarnConsumptionCard from "@modules/customer-hub/mail-app/components/YarnConsumptionCard.jsx"
+import YarnConsumptionCard from "@modules/customer-hub/customer-orders/components/YarnConsumptionCard.jsx"
 
 const YarnConsumptionModal = ({ open, onClose, item, totalMeters, onTotalMetersChange, widthInches, widthCm, onComputed }) => {
   useEffect(() => {

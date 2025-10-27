@@ -1,31 +1,59 @@
-import React, { Fragment, useMemo, useState } from "react"
+import React, { Fragment, useMemo, useState, useEffect } from "react"
 import dayjs from "dayjs"
-import mail from "@assets/images/icon/mail.svg"
-import { useCustomerHubMail } from "@modules/customer-hub/mail-app/hooks/useMailData.js"
-import { fileKind, resolveCidHtml, sanitizeHtml, truncateWords } from "@modules/customer-hub/mail-app/services/MailAppUtils.js"
-import { AttachmentIcon } from "@modules/customer-hub/mail-app/components/AttachmentIcon.jsx"
+import mail from "@assets/images/icon/viewicon.svg"
 import Avatar from "@components/Avatar.jsx"
-import { Inbox, ChevronDown, Mail as MailIcon, FileSignature,Calculator,FileSpreadsheet,ClipboardList } from "lucide-react"
-import ExtractionGrid from "@modules/customer-hub/mail-app/components/ExtractionGrid.jsx"
-import AgreementPlacementForm from "@modules/customer-hub/mail-app/components/AgreementPlacementForm.jsx"
-import CompactHeader from "@modules/customer-hub/mail-app/components/CompactHeader.jsx"
-import IconTabs from "@components/IconTabs.jsx"
-import InfoAlert from "../../../../../InfoAlert.jsx";
+import LoadingSpinner from "@components/LoadingSpinner.jsx"
+import { Inbox, ChevronDown, Mail as MailIcon, FileSignature, Calculator, FileSpreadsheet, ClipboardList } from "lucide-react"
+import InfoAlert from "../../../../InfoAlert.jsx"
+import { useCustomerHubMail } from "@modules/customer-hub/customer-orders/hooks/useCustomerHubMail.js"
+import { fileKind, resolveCidHtml, sanitizeHtml, truncateWords } from "@modules/customer-hub/customer-orders/services/MailAppUtils.js"
+import { AttachmentIcon } from "@modules/customer-hub/customer-orders/components/AttachmentIcon.jsx"
+import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/AgreementPlacementForm.jsx"
+import CompactHeader from "@modules/customer-hub/customer-orders/components/CompactHeader.jsx"
+import ExtractionGrid from "@modules/customer-hub/customer-orders/components/ExtractionGrid.jsx"
+import NavTabs from "@modules/customer-hub/customer-orders/components/NavTabs.jsx"
+import AirjetCostingBaseSection from "@modules/customer-hub/customer-orders/components/AirjetCostingBaseSection.jsx"
 
-const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.pk" }) => {
+const ExtractedInfoPanel = ({ active, selectedMessage, latestExtraction, loadExtractions, loading }) => {
+  useEffect(() => {
+    if (!active) return
+    if (!latestExtraction && selectedMessage?.id) loadExtractions(selectedMessage.id)
+  }, [active, selectedMessage?.id, latestExtraction, loadExtractions])
+  if (!active) return null
+  if (loading) return <div className="py-6"><LoadingSpinner /></div>
+  if (!latestExtraction) return <div className="text-sm text-[#8c9097]">No extracted fields</div>
+  return <ExtractionGrid data={latestExtraction} />
+}
+
+const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.pk" }) => {
   const [mailbox, setMailbox] = useState(initialMailbox)
   const [pickerOpen, setPickerOpen] = useState(false)
-  const { mailboxes, threads, selectedKey, selectThread, selectMessageInThread, selectedMessage, expanded, toggleThreadExpand, messagesByThread, formatThreadTime, formatFileSize, extractions, sentinelRef, hasNextPage, isFetchingNextPage } = useCustomerHubMail(mailbox)
-
+  const { mailboxes, threads, selectedKey, selectThread, selectMessageInThread, selectedMessage, expanded, toggleThreadExpand, messagesByThread, formatThreadTime, formatFileSize, extractions, loadExtractions, extractionsLoading, clearExtractions, sentinelRef, hasNextPage, isFetchingNextPage } = useCustomerHubMail(mailbox)
+  const [activeTab, setActiveTab] = useState("tab-email")
   const resolvedHtml = useMemo(() => resolveCidHtml(selectedMessage?.raw_html || "", selectedMessage?.attachments || []), [selectedMessage])
   const latestExtraction = useMemo(() => (extractions?.length ? extractions[0]?.data || null : null), [extractions])
 
+  useEffect(() => {
+    clearExtractions()
+    if (selectedMessage?.id) loadExtractions(selectedMessage.id)
+  }, [selectedMessage?.id, clearExtractions, loadExtractions])
+
+  useEffect(() => {
+    if ((activeTab === "tab-agreement" || activeTab === "tab-costing") && selectedMessage?.id && !latestExtraction && !extractionsLoading) loadExtractions(selectedMessage.id)
+  }, [activeTab, selectedMessage?.id, latestExtraction, loadExtractions, extractionsLoading])
+
   const tabs = [
-    {
-      id: "tab-email",
-      label: "Original Email",
-      icon: <MailIcon size={16} />,
-      content: (
+    { id: "tab-email", label: "Original Email", icon: <MailIcon />, color: "sky" },
+    { id: "tab-extracted", label: "Extracted Info", icon: <FileSpreadsheet />, color: "violet" },
+    { id: "tab-agreement", label: "Agreement Placement", icon: <FileSignature />, color: "amber" },
+    { id: "tab-costing", label: "Airjet Costing", icon: <Calculator />, color: "emerald" },
+    { id: "tab-pr", label: "PR Generation", icon: <ClipboardList />, color: "rose" },
+  ]
+
+  const renderActiveContent = () => {
+    if (!selectedMessage) return null
+    if (activeTab === "tab-email") {
+      return (
         <div className="flex flex-col min-h-0 max-h-[65vh] sm:max-h-[70vh]">
           <div className="flex-1 overflow-y-auto pr-1">
             <div className="prose max-w-none dark:prose-invert">
@@ -35,7 +63,6 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
               />
             </div>
           </div>
-
           {(selectedMessage?.attachments?.length ?? 0) > 0 && (
             <div className="pt-4">
               <div className="flex justify-between items-center">
@@ -45,19 +72,13 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
               </div>
               <div className="mt-2 flex items-center flex-wrap">
                 {selectedMessage.attachments.map((a) => (
-                  <a
-                    key={a.id}
-                    href={a.url || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mail-attachment mb-1 me-2"
-                  >
+                  <a key={a.id} href={a.url || "#"} target="_blank" rel="noreferrer" className="mail-attachment mb-1 me-2">
                     <div className="w-8 h-8 text-[2rem] me-2">
                       <AttachmentIcon kind={fileKind(a)} />
                     </div>
                     <div className="leading-none">
                       <p className="mb-1 attachment-name truncate dark:border-defaultborder/10">{a.name}</p>
-                      <p className="mb-0 text-[.6875rem] text-[#8c9097] dark:text-white/50">{formatFileSize(a.size_bytes)}</p>
+                      <p className="mb-0 text-[.6875rem] text-[#8c9097] dark:text:white/50">{formatFileSize(a.size_bytes)}</p>
                     </div>
                   </a>
                 ))}
@@ -65,22 +86,24 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
             </div>
           )}
         </div>
-      ),
-    },
-
-    {
-      id: "tab-extracted",
-      label: "Extracted Info",
-      icon: <FileSpreadsheet size={16} />,
-      content: latestExtraction ? <ExtractionGrid data={latestExtraction} /> : <div className="text-sm text-[#8c9097]">No extracted fields</div>,
-    },
-    {
-      id: "tab-agreement",
-      label: "Agreement Placement",
-      icon: <FileSignature size={16} />,
-      content: (
+      )
+    }
+    if (activeTab === "tab-extracted") {
+      return (
+        <ExtractedInfoPanel
+          active
+          selectedMessage={selectedMessage}
+          latestExtraction={latestExtraction}
+          loadExtractions={loadExtractions}
+          loading={extractionsLoading}
+        />
+      )
+    }
+    if (activeTab === "tab-agreement") {
+      return (
         <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
           <AgreementPlacementForm
+            active
             seed={latestExtraction || {}}
             email={{
               id: selectedMessage?.id,
@@ -92,38 +115,33 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
             showHeader={false}
           />
         </div>
-      ),
-    },
-     {
-      id: "tab-costing",
-      label: "Airjet Costing",
-      icon: <Calculator size={16} />,
-      content: (
-        <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
-            <InfoAlert/>
+      )
+    }
+    if (activeTab === "tab-costing") {
+      return (
+        <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
+          <AirjetCostingBaseSection seed={latestExtraction || {}} />
         </div>
-      ),
-    },
-    {
-      id: "tab-pr",
-      label: "PR Generation",
-      icon: <ClipboardList size={16} />,
-      content: (
+      )
+    }
+    if (activeTab === "tab-pr") {
+      return (
         <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
-          <InfoAlert/>
+          <InfoAlert />
         </div>
-      ),
-    },
-  ]
+      )
+    }
+    return null
+  }
 
   return (
     <Fragment>
       <div className="container-fluid">
         <div className="main-mail-container !p-2 gap-x-2 flex h-[calc(100vh-2rem)] min-h-0 overflow-hidden">
-          <div className="total-mails border dark:border-defaultborder/10 flex lg:flex flex-col w-full lg:w-[350px] lg:min-w-[300px] min-h-0">
-            <div className="!p-4 flex items-center justify-between border-b dark:border-defaultborder/10 !bg-blue relative">
+          <div className="total-mails border dark:border-defaultborder/10 flex lg:flex flex-col w-full lg:w-[320px] lg:min-w-[300px] min-h-0">
+            <div className="!p-2 flex items-center justify-between border-b dark:border-defaultborder/10 !bg-blue relative">
               <div className="flex items-center gap-2">
-                <Inbox size={18} className="text-white" />
+                <Inbox size={18} className="text-white ml-2" />
                 <h6 className="font-semibold mb-0 text-[1rem] text-white">All Orders</h6>
               </div>
               <div className="relative">
@@ -177,14 +195,14 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
                       <div className={`flex items-start ${isSelected ? "bg-light dark:bg-black/30" : "hover:bg-light/40 dark:hover:bg-white/5"}`}>
                         {hasMultiple ? (
                           <button
-                            className={`shrink-0 mt-3 ms-2 me-1 w-7 h-7 grid place-items-center rounded-full transition-all ${isOpen ? "bg-primary/10 text-primary" : "bg-transparent text-[#8c9097] hover:bg-light/70 dark:hover:bg-white/10"}`}
+                            className={`shrink-0 mt-3 ms-2 w-7 h-7 grid place-items-center rounded-full transition-all ${isOpen ? "bg-primary/10 text-primary" : "bg-transparent text-[#8c9097] hover:bg-light/70 dark:hover:bg-white/10"}`}
                             onClick={() => toggleThreadExpand(t.thread_key)}
                             aria-label="toggle"
                           >
                             <i className={`ri-arrow-right-s-line text-base transition-transform ${isOpen ? "rotate-90" : ""}`} />
                           </button>
                         ) : (
-                          <span className="shrink-0 mt-3 ms-2 me-2 w-7 h-7" />
+                          <span className="shrink-0 mt-3 ms-2 w-7 h-7" />
                         )}
                         <button className="w-full text-left p-2" onClick={() => selectThread(t.thread_key)}>
                           <div className="flex items-start">
@@ -222,7 +240,7 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
                 })}
               </ul>
               <div ref={sentinelRef} className="py-3 text-center text-xs text-[#8c9097]">
-                {isFetchingNextPage ? "Loading..." : hasNextPage ? "Scroll to load more" : "No more threads"}
+                {isFetchingNextPage ? <div className="flex justify-center"><LoadingSpinner /></div> : hasNextPage ? "Scroll to load more" : "No more list"}
               </div>
             </div>
           </div>
@@ -230,17 +248,18 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
           <div className="dark:bg-bodybg h-[calc(100vh-6rem)] overflow-hidden rounded-md bg-white border dark:border-defaultborder/10 text-defaulttextcolor text-defaultsize flex-1 flex flex-col min-h-0">
             {selectedMessage ? (
               <>
-                <div className="shrink-0 p-6">
+                <div className="shrink-0 p-3">
                   <CompactHeader msg={selectedMessage} />
                 </div>
                 <div className="px-6">
-                  <IconTabs tabs={tabs} />
+                  <NavTabs tabs={tabs} activeId={activeTab} onTabChange={(id) => setActiveTab(id)} />
+                  <div className="mt-4">{renderActiveContent()}</div>
                 </div>
               </>
             ) : (
               <div className="p-6 h-full min-h-[420px] flex flex-col items-center justify-center text-center">
                 <img src={mail} alt="" className="w-24 h-24 mb-4" />
-                <p className="text-[#8c9097] dark:text-white/50">Select item to read message</p>
+                <p className="text-[#8c9097] dark:text:white/50">Select item to view</p>
               </div>
             )}
           </div>
@@ -250,4 +269,4 @@ const MailApp = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.
   )
 }
 
-export default MailApp
+export default CustomerOrders
