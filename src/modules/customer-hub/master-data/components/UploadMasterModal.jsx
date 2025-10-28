@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Notify from "@helpers/toastNotifications.js";
 import FormButton from "@components/form/FormButton.jsx";
 
-const UploadMasterModal = ({ title = "Upload", closeModal, onUploaded, uploadFn, extraParams = {} }) => {
+const UploadMasterModal = ({ title = "Upload", closeModal, onUploaded, uploadFn, extraParams = {} ,refreshTable}) => {
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const modalId = "uploadMasterModal";
@@ -37,6 +37,7 @@ const UploadMasterModal = ({ title = "Upload", closeModal, onUploaded, uploadFn,
       Notify.success("Uploaded");
       onUploaded?.(payload);
       handleClose();
+      refreshTable()
     } catch {
       Notify.error("Upload failed");
     } finally {

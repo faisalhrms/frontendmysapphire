@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import UploadMasterModal from "@modules/customer-hub/master-data/components/UploadMasterModal.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 
 const ExcelUploadCard = ({ control, errors, isUploadModalOpen, openUpload, closeUpload, uploadFn, downloadAgreementsTemplate }) => {
+  const [uploadResult, setUploadResult] = useState(null);
+
   return (
     <div className="box">
       <div className="box-header">
@@ -30,13 +32,29 @@ const ExcelUploadCard = ({ control, errors, isUploadModalOpen, openUpload, close
             </button>
           </div>
         </div>
+        {uploadResult && (
+          <div className="text-xs">
+            <div className="mb-1">Created: {uploadResult.created || 0} • Updated: {uploadResult.updated || 0}</div>
+            {Array.isArray(uploadResult.errors) && uploadResult.errors.length > 0 && (
+              <div className="max-h-32 overflow-y-auto border rounded p-2">
+                {uploadResult.errors.slice(0,25).map((e,i)=>(
+                  <div key={i} className="opacity-80">Row {e.row}: {e.error}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         {isUploadModalOpen && (
           <UploadMasterModal
             title="Upload Agreements"
-            uploadFn={uploadFn}
+            uploadFn={async (file)=>{
+              const r = await uploadFn(file)
+              setUploadResult(r)
+              return r
+            }}
             extraParams={{}}
             closeModal={closeUpload}
-            onUploaded={() => {}}
+            onUploaded={()=>{}}
           />
         )}
       </div>
