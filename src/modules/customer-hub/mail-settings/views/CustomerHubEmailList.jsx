@@ -122,11 +122,6 @@ const CustomerHubEmailList = () => {
 
   return (
     <>
-      <IconPageHeader
-        heading="Customer Hub Email Config"
-        description="Manage mailbox connections, extraction rules, and sender filters."
-        icon={Mail}
-      />
       <DataTable
         columns={columns}
         title="Customer Hub Email List"

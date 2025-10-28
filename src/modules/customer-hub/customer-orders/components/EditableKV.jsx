@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { Pencil, Check, X } from "lucide-react"
 
+const VALUE_COL_WIDTH = "w-20 md:w-24"
+
 const EditableKV = ({
   label,
   value,
@@ -11,6 +13,7 @@ const EditableKV = ({
   max,
   prefix = "",
   suffix = "",
+  valueWidth = VALUE_COL_WIDTH,
 }) => {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value ?? "")
@@ -35,17 +38,17 @@ const EditableKV = ({
   }
 
   return (
-    <div className="group flex items-center justify-between py-2">
+    <div className="group grid grid-cols-[1fr,auto] items-center py-2 gap-2">
       <span className="text-gray-600 dark:text-white/70 truncate">{label}</span>
 
       {!editing ? (
-        <div className="flex items-center gap-1">
-          <span className="font-medium">
+        <div className={`relative flex items-center justify-end ${valueWidth} pr-6`}>
+          <span className="font-medium text-right tabular-nums truncate">
             {current === "" || current === null || current === undefined ? "-" : current}
           </span>
           <button
             type="button"
-            className="opacity-0 group-hover:opacity-100 transition rounded-md p-1 text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10"
+            className="absolute right-0 opacity-0 group-hover:opacity-100 transition rounded-md p-1 text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10"
             onClick={() => setEditing(true)}
             title="Edit"
           >
@@ -53,7 +56,7 @@ const EditableKV = ({
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className={`flex items-center justify-end gap-2 ${valueWidth}`}>
           {prefix ? <span className="text-slate-500 dark:text-slate-300">{prefix}</span> : null}
           <input
             type={type}
@@ -62,7 +65,7 @@ const EditableKV = ({
             max={max}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            className="form-control !w-16 !h-8 !px-2"
+            className="form-control !w-24 !h-8 !px-2 text-right"
             autoFocus
           />
           {suffix ? <span className="text-slate-500 dark:text-slate-300">{suffix}</span> : null}

@@ -1,22 +1,39 @@
 import React, { useEffect, useMemo } from "react"
 
-const ComputedKV = ({ label, compute, deps = [], precision = 2, prefix = "", suffix = "", onValue }) => {
-  const val = useMemo(() => {
+const ComputedKV = ({
+  label,
+  compute,
+  deps = [],
+  precision = 2,
+  prefix = "",
+  suffix = "",
+  onValue,
+  valueWidth = "w-20 md:w-24",
+}) => {
+  const num = useMemo(() => {
     const v = compute ? compute() : null
-    if (v === null || v === undefined || Number.isNaN(v)) return null
     const n = typeof v === "number" ? v : parseFloat(v)
-    if (!Number.isFinite(n)) return null
-    return n.toFixed(precision)
+    if (v === null || v === undefined || Number.isNaN(n) || !Number.isFinite(n)) return null
+    return n
   }, deps)
 
+  const val = useMemo(() => {
+    if (num == null) return null
+    return typeof precision === "number" ? num.toFixed(precision) : String(num)
+  }, [num, precision])
+
   useEffect(() => {
-    if (onValue) onValue(val == null ? null : Number(val))
-  }, [val, onValue])
+    if (onValue) onValue(num)
+  }, [num, onValue])
 
   return (
-    <div className="flex items-center justify-between py-2">
+    <div className="grid grid-cols-[1fr,auto] items-center py-2 gap-2">
       <span className="text-gray-600 dark:text-white/70 truncate">{label}</span>
-      <span className="font-medium">{val == null ? "-" : `${prefix}${val}${suffix}`}</span>
+      <div className={`relative flex items-center justify-end ${valueWidth} pr-6`}>
+        <span className="font-medium text-right tabular-nums truncate">
+          {val == null ? "-" : `${prefix}${val}${suffix}`}
+        </span>
+      </div>
     </div>
   )
 }

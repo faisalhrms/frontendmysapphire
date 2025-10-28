@@ -1,13 +1,19 @@
 
-import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
-import IntegrationsForm from "@modules/customer-hub/integrations/components/IntegrationsForm.jsx";
+import IntegrationsTabs from "@modules/customer-hub/integrations/components/IntegrationsTabs.jsx";
+import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import { Workflow } from "lucide-react"
 
 const IntegrationView = () => {
     return (
-        <>
-            <PageHeader currentpage="Integrations" activepage="Customer Hub" mainpage="Integrations" />
-            <IntegrationsForm />
-        </>
+    <>
+    <IconPageHeader
+      heading="Integrations"
+      description="Manage integrations, Email • API • Excel ingestion."
+      icon={Workflow}
+    >
+    </IconPageHeader>
+      <IntegrationsTabs />
+    </>
     );
 };
 

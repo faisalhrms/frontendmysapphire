@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
 import { useForm } from "react-hook-form"
-import { Save, Calculator, Ruler, Package } from "lucide-react"
-import { matchCustomerItems, saveAirjetCosting } from "@modules/customer-hub/customer-orders/services/CustomerHubMailService.js"
+import { Save, Calculator, Ruler, Package, Forward } from "lucide-react"
+import { matchCustomerItems } from "@modules/customer-hub/customer-orders/services/CustomerHubMailService.js"
 import SelectCustomerItemModal from "@modules/customer-hub/customer-orders/components/SelectCustomerItemModal.jsx"
 import YarnConsumptionModal from "@modules/customer-hub/customer-orders/components/YarnConsumptionModal.jsx"
 import FormInput from "@components/form/FormInput.jsx"
+import { createAgreement, submitAgreement, updateAgreement, getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import FormSelect from "@components/form/FormSelect.jsx"
+import { AGREEMENT_TYPES } from "@modules/customer-hub/customer-orders/components/AgreementPlacementModal.jsx"
 
 const Chip = ({ k, v }) => (v ? <span className="inline-flex items-center gap-1 rounded-full border dark:border-defaultborder/20 px-2 py-1 text-xs"><span className="opacity-70">{k}:</span><span className="font-medium">{v}</span></span> : null)
 const KV = ({ k, v }) => <div className="flex items-center justify-between py-2 px-3"><span className="text-gray-600 dark:text-white/70 truncate">{k}</span><span className="font-medium">{v ?? "-"}</span></div>
@@ -56,6 +59,36 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
   const [statusMsg, setStatusMsg] = useState("")
   const [selectedItem, setSelectedItem] = useState(null)
   const [showYarn, setShowYarn] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [agreementId, setAgreementId] = useState(seed?.id || null)
+
+  const hydrateFromAgreement = useCallback((ag) => {
+    const p = ag?.payload || {}
+    setAgreementId(ag?.id || null)
+    setValue("agreement_no", ag?.agreement_no ?? "")
+    setValue("agreement_type", p?.agreement_type ?? "")
+    setValue("fabric_detail", ag?.item_description ?? p?.fabric_detail ?? "")
+    setValue("construction", p?.construction ?? "")
+    setValue("warp_blend", p?.warp_blend ?? "")
+    setValue("weft_blend", p?.weft_blend ?? "")
+    setValue("width_inches", p?.width_inches ?? "")
+    setValue("width_cm", ag?.width ?? p?.width_cm ?? "")
+    setValue("total_meters", p?.total_meters ?? "")
+    setValue("warp_yarn_rate", p?.warp_yarn_rate ?? "")
+    setValue("weft_yarn_rate", p?.weft_yarn_rate ?? "")
+    setValue("warp_delivery", p?.warp_delivery ? normalizeDateSeed(p.warp_delivery) : "")
+    setValue("weft_delivery", p?.weft_delivery ? normalizeDateSeed(p.weft_delivery) : "")
+    setValue("dyed_warp_bags", p?.dyed_warp_bags ?? "")
+    setValue("dyed_weft_bags", p?.dyed_weft_bags ?? "")
+    setValue("ecru_warp_bags", p?.ecru_warp_bags ?? "")
+    setValue("ecru_weft_bags", p?.ecru_weft_bags ?? "")
+    setValue("dyed_bags", p?.dyed_bags ?? "")
+    setValue("ecru_bags", p?.ecru_bags ?? "")
+    setValue("total_bags", p?.total_bags ?? "")
+    setValue("selected_item_code", p?.selected_item_code ?? "")
+    setValue("fabric_delivery", ag?.start_date ? normalizeDateSeed(ag.start_date) : (p?.fabric_delivery ? normalizeDateSeed(p.fabric_delivery) : ""))
+    setValue("need_by_date", ag?.end_date ? normalizeDateSeed(ag.end_date) : (p?.need_by_date ? normalizeDateSeed(p.need_by_date) : ""))
+  }, [setValue])
 
   useEffect(() => {
     setValue("agreement_no", getValues("agreement_no") || (seed.agreement_no != null ? String(seed.agreement_no) : ""))
@@ -128,10 +161,38 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     setValue("total_bags", r2(res.totalWithRej))
   }, [selectedItem, setValue])
 
-  const handleSave = async () => {
-    const data = { ...getValues(), email }
-    const res = onSave ? await onSave(data) : await saveAirjetCosting(data)
-    return res
+  const handleSave = async (mode = "draft") => {
+    setSaving(true)
+    try {
+      const v = getValues()
+      const base = {
+        agreement_no: v.agreement_no || "",
+        width: v.width_cm || v.width_inches || "",
+        description: v.fabric_detail || "",
+        start_date: v.fabric_delivery || null,
+        end_date: v.need_by_date || null,
+        item_description: v.fabric_detail || "",
+        email: email?.id || email || null,
+        source: email ? "email" : "manual",
+        payload: { ...v, selected_item_code: v.selected_item_code || "", email_ref: email?.id || email || null }
+      }
+      let saved
+      if (agreementId) {
+        saved = await updateAgreement(agreementId, base)
+      } else {
+        saved = await createAgreement(base)
+      }
+      const id = saved?.id || saved?.data?.id || saved?.agreement?.id || agreementId
+      if (id && mode === "submitted") await submitAgreement(id)
+      if (id) {
+        const fresh = await getAgreement(id)
+        hydrateFromAgreement(fresh)
+      }
+      if (onSave) onSave(saved)
+      return saved
+    } finally {
+      setSaving(false)
+    }
   }
 
   const w = watch()
@@ -168,68 +229,66 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
 
         <div className="grid grid-cols-12 gap-12">
           <div className="col-span-12 md:col-span-6 xl:col-span-5">
-  <div className="grid grid-cols-12 gap-4">
-    <div className="col-span-12 md:col-span-6">
-      <FormInput name="agreement_no" control={control} errors={errors} placeholder="Agreement No." />
-    </div>
-    <div className="col-span-12 md:col-span-6">
-      <FormInput name="agreement_type" control={control} errors={errors} placeholder="Agreement Type" />
-    </div>
-
-    <div className="col-span-12 md:col-span-6">
-      <FormInput name="fabric_delivery" control={control} errors={errors} placeholder="Fabric Delivery" type="date" />
-    </div>
-    <div className="col-span-12 md:col-span-6">
-      <FormInput name="need_by_date" control={control} errors={errors} placeholder="Need By Date" type="date" />
-    </div>
-
-    <div className="col-span-12">
-      <label className="form-label flex items-center justify-between">
-        <span>Total Meters</span>
-        <button type="button" onClick={() => setShowYarn(true)} className="ti-btn ti-btn-primary !mb-0 h-6 px-2 !text-[0.7rem] inline-flex items-center gap-1 rounded-full">
-          <Calculator size={14} /> Yarn Consumption
-        </button>
-      </label>
-      <FormInput name="total_meters" label={false} control={control} errors={errors} placeholder="Total Meters" type="number" />
-    </div>
-
-    <div className="col-span-12">
-      <div className="rounded-xl ring-2 ring-violet-300/60 dark:ring-violet-700 p-4">
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-12 md:col-span-6">
-            <FormInput name="warp_yarn_rate" control={control} errors={errors} placeholder="Warp Yarn Rate" type="number" />
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-12 md:col-span-6">
+                <FormInput name="agreement_no" control={control} errors={errors} placeholder="Agreement No." />
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <FormSelect name="agreement_type" control={control} errors={errors} options={AGREEMENT_TYPES} placeholder="Agreement Types" />
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <FormInput name="fabric_delivery" control={control} errors={errors} placeholder="Fabric Delivery" type="date" />
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <FormInput name="need_by_date" control={control} errors={errors} placeholder="Need By Date" type="date" />
+              </div>
+              <div className="col-span-12">
+                <label className="form-label flex items-center justify-between">
+                  <span>Total Meters</span>
+                  <button type="button" onClick={() => setShowYarn(true)} className="ti-btn ti-btn-primary !mb-0 h-6 px-2 !text-[0.7rem] inline-flex items-center gap-1 rounded-full">
+                    <Calculator size={14} /> Yarn Consumption
+                  </button>
+                </label>
+                <FormInput name="total_meters" label={false} control={control} errors={errors} placeholder="Total Meters" type="number" />
+              </div>
+              <div className="col-span-12">
+                <div className="rounded-xl ring-2 ring-violet-300/60 dark:ring-violet-700 p-4">
+                  <div className="grid grid-cols-12 gap-4">
+                    <div className="col-span-12 md:col-span-6">
+                      <FormInput name="warp_yarn_rate" control={control} errors={errors} placeholder="Warp Yarn Rate" type="number" />
+                    </div>
+                    <div className="col-span-12 md:col-span-6">
+                      <FormInput name="warp_delivery" control={control} errors={errors} placeholder="Warp Delivery" type="date" />
+                    </div>
+                    <div className="col-span-12 md:col-span-6">
+                      <FormInput name="weft_yarn_rate" control={control} errors={errors} placeholder="Weft Yarn Rate" type="number" />
+                    </div>
+                    <div className="col-span-12 md:col-span-6">
+                      <FormInput name="weft_delivery" control={control} errors={errors} placeholder="Weft Delivery" type="date" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="hidden">
+                <FormInput name="selected_item_code" control={control} errors={errors} placeholder="" label={false} />
+              </div>
+              <div className="col-span-12 flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => handleSave("draft")} disabled={saving || matching} className="ti-btn ti-btn-secondary !mb-0 inline-flex items-center gap-2 text-sm">
+                  <Save size={16} /> Save
+                </button>
+                <button type="button" onClick={() => handleSave("submitted")} disabled={saving || matching} className="ti-btn ti-btn-success !mb-0 inline-flex items-center gap-2 text-sm">
+                  <Forward size={16} /> Submit
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="col-span-12 md:col-span-6">
-            <FormInput name="warp_delivery" control={control} errors={errors} placeholder="Warp Delivery" type="date" />
-          </div>
-          <div className="col-span-12 md:col-span-6">
-            <FormInput name="weft_yarn_rate" control={control} errors={errors} placeholder="Weft Yarn Rate" type="number" />
-          </div>
-          <div className="col-span-12 md:col-span-6">
-            <FormInput name="weft_delivery" control={control} errors={errors} placeholder="Weft Delivery" type="date" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="hidden">
-      <FormInput name="selected_item_code" control={control} errors={errors} placeholder="" label={false} />
-    </div>
-
-    <div className="col-span-12 flex justify-end pt-2">
-      <button type="button" onClick={handleSave} className="ti-btn ti-btn-success !mb-0 inline-flex items-center gap-2 text-sm">
-        <Save size={16} /> Save
-      </button>
-    </div>
-  </div>
-</div>
 
           <div className="col-span-12 md:col-span-7">
             <div className="md:sticky md:top-24 rounded-xl border border-slate-200/80 dark:border-white/10 overflow-hidden">
               <div className="px-4 py-2 border-b border-slate-200/70 dark:border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="font-semibold text-[.75rem]">Item Code</div>
-                  <span className="text-[.7rem] px-2 py-1 rounded-full bg-slate-700/5 dark:bg-white/10">{w.selected_item_code || "-"}</span>
+                  <span className="text-[.7rem] px-2 py-1 rounded-full bg-slate-700/5 dark:bg-white/10">{watch("selected_item_code") || "-"}</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Chip k="Quality" v={qc} />
@@ -241,31 +300,31 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
 
               <div className="p-4 space-y-5">
                 <div className="grid grid-cols-2 gap-3">
-                  <Stat Icon={Ruler} label="Width (In)" value={w.width_inches || "-"} />
-                  <Stat Icon={Ruler} label="Width (Cm)" value={w.width_cm || "-"} />
+                  <Stat Icon={Ruler} label="Width (In)" value={watch("width_inches") || "-"} />
+                  <Stat Icon={Ruler} label="Width (Cm)" value={watch("width_cm") || "-"} />
                 </div>
 
                 <div>
                   <div className="text-[.7rem] uppercase tracking-wide opacity-60 mb-2">Fabric</div>
                   <div className="rounded-xl border border-slate-200/70 dark:border-white/10 divide-y divide-slate-200/70 dark:divide-white/10 bg-white/60 dark:bg-white/5">
-                    <KV k="Fabric Detail" v={w.fabric_detail || seed.description} />
-                    <KV k="Construction" v={w.construction} />
-                    <KV k="Warp Blend" v={w.warp_blend} />
-                    <KV k="Weft Blend" v={w.weft_blend} />
+                    <KV k="Fabric Detail" v={watch("fabric_detail") || seed.description} />
+                    <KV k="Construction" v={watch("construction")} />
+                    <KV k="Warp Blend" v={watch("warp_blend")} />
+                    <KV k="Weft Blend" v={watch("weft_blend")} />
                   </div>
                 </div>
 
                 <div>
                   <div className="text-[.7rem] uppercase tracking-wide opacity-60 mb-2">Yarn Bags</div>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Warp Dyed Bags" v={w.dyed_warp_bags} /></div>
-                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Warp Ecru Bags" v={w.ecru_warp_bags} /></div>
-                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Weft Dyed Bags" v={w.dyed_weft_bags} /></div>
-                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Weft Ecru Bags" v={w.ecru_weft_bags} /></div>
+                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Warp Dyed Bags" v={watch("dyed_warp_bags")} /></div>
+                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Warp Ecru Bags" v={watch("ecru_warp_bags")} /></div>
+                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Weft Dyed Bags" v={watch("dyed_weft_bags")} /></div>
+                    <div className="rounded-lg border border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-white/5"><KV k="Weft Ecru Bags" v={watch("ecru_weft_bags")} /></div>
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-3">
-                    <Stat Icon={Package} label="Total Dyed" value={w.dyed_bags || 0} />
-                    <Stat Icon={Package} label="Total Ecru" value={w.ecru_bags || 0} />
+                    <Stat Icon={Package} label="Total Dyed" value={watch("dyed_bags") || 0} />
+                    <Stat Icon={Package} label="Total Ecru" value={watch("ecru_bags") || 0} />
                   </div>
                 </div>
               </div>

@@ -1,10 +1,21 @@
-import React from "react";
+// @modules/customer-hub/integrations/components/ApiIntegrationCard.jsx
+import React, { useState } from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import FormToggle from "@components/form/FormToggle.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 
 const ApiIntegrationCard = ({ control, errors, itemsFA, handleSubmit, onSubmit, onTest }) => {
+  const [testing, setTesting] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const doTest = async () => {
+    setTesting(true);
+    const r = await onTest();
+    setResult(r || null);
+    setTesting(false);
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="box">
@@ -27,10 +38,15 @@ const ApiIntegrationCard = ({ control, errors, itemsFA, handleSubmit, onSubmit, 
             <div className="xl:col-span-2 col-span-6">
               <FormToggle name="preview" label control={control} errors={errors} placeholder="Preview" />
             </div>
-            <div className="xl:col-span-3 col-span-6 flex items-center gap-2">
-              <button type="button" onClick={onTest} className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem]">
+            <div className="xl:col-span-6 col-span-12 flex items-center gap-2">
+              <button type="button" onClick={doTest} className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem]" disabled={testing}>
                 <i className="ri-wifi-line" />
               </button>
+              {result && (
+                <span className={`text-xs px-2 py-1 rounded ${result.ok ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
+                  {result.ok ? "OK" : "Fail"} {typeof result.status === "number" ? `• ${result.status}` : ""} {result.latency_ms ? `• ${result.latency_ms}ms` : ""}
+                </span>
+              )}
             </div>
           </div>
 

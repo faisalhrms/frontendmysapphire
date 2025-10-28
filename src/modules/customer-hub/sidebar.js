@@ -27,14 +27,6 @@ export let sidebarMenu = [
                 MASTER_DATA.READ.permission
             ),
             generateSidebarItem(
-                CUSTOMER_HUB_ROUTES.EMAIL.MAIL_LIST.path,
-                "link",
-                "Mail Settings",
-                1,
-                "bx bx-message-square-edit",
-                CUSTOMER_HUB_ROUTES.EMAIL.MAIL_LIST.permission
-            ),
-            generateSidebarItem(
                 CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.path,
                 "link",
                 "Integrations",
