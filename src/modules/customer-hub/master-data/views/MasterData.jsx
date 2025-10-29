@@ -10,10 +10,10 @@ import QualityWeavingList from "@modules/customer-hub/master-data/QualityWeaving
 
 const MasterData = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [activeStatus, setActiveStatus] = useState(() => searchParams.get("tab") || "quality-weaving");
+    const [activeStatus, setActiveStatus] = useState(() => searchParams.get("tab") || "customer-items");
 
     useEffect(() => {
-        setActiveStatus(searchParams.get("tab") || "quality-weaving");
+        setActiveStatus(searchParams.get("tab") || "customer-items");
     }, [searchParams]);
 
     return (

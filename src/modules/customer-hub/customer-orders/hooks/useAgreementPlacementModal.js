@@ -1,9 +1,11 @@
 import { useState } from "react"
+import { useSelector } from "react-redux"
 import { useForm } from "react-hook-form"
 import Notify from "@helpers/toastNotifications.js"
 import { createAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
 export const useAgreementPlacementModal = (onCreated) => {
+  const user = useSelector((state) => state.auth.user)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const form = useForm({
     defaultValues: {
@@ -42,7 +44,7 @@ export const useAgreementPlacementModal = (onCreated) => {
     try {
       const payload = {
         source: "manual",
-        owner: vals.owner || null,
+        owner: vals.owner || user?.full_name || user?.name || user?.email || "",
         agreement_no: vals.agreement_no || "",
         item_no: vals.item_no || null,
         colour: vals.colour || null,
@@ -61,7 +63,12 @@ export const useAgreementPlacementModal = (onCreated) => {
         end_date: vals.end_date || null,
         log_end_date: vals.log_end_date || null,
         status: "draft",
-        payload: { agreement_type: vals.agreement_type || "" }
+        payload: {
+          agreement_type: vals.agreement_type || "",
+          order_date: vals.start_date || new Date().toISOString().slice(0, 10),
+          created_by_id: user?.id || null,
+          created_by_name: user?.full_name || user?.name || user?.email || null
+        }
       }
       const created = await createAgreement(payload)
       if (created?.id) {
