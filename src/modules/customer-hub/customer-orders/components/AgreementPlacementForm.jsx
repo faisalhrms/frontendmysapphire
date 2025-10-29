@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
 import { useForm } from "react-hook-form"
-import { Save, Calculator, Ruler, Package, Forward } from "lucide-react"
+import { Save, Calculator, Ruler, Package, Forward, TextSearch } from "lucide-react"
 import { matchCustomerItems } from "@modules/customer-hub/customer-orders/services/CustomerHubMailService.js"
 import SelectCustomerItemModal from "@modules/customer-hub/customer-orders/components/SelectCustomerItemModal.jsx"
 import YarnConsumptionModal from "@modules/customer-hub/customer-orders/components/YarnConsumptionModal.jsx"
 import FormInput from "@components/form/FormInput.jsx"
-import { createAgreement, submitAgreement, updateAgreement, getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import { createAgreement, submitAgreement, updateAgreement, getAgreement, findAgreementByEmail } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import FormSelect from "@components/form/FormSelect.jsx"
 import { AGREEMENT_TYPES } from "@modules/customer-hub/customer-orders/components/AgreementPlacementModal.jsx"
 
@@ -23,6 +23,7 @@ const Stat = ({ Icon, label, value }) => (
 )
 const normalizeDateSeed = (v) => { if (!v) return ""; if (v instanceof Date && !isNaN(v.getTime())) return v; if (typeof v === "number") { const d = new Date(v); return isNaN(d.getTime()) ? "" : d } let s = String(v).trim(); if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return new Date(s + "T00:00:00Z"); if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}(:\d{2})?$/.test(s)) s = s.replace(" ", "T"); const d = new Date(s); return isNaN(d.getTime()) ? "" : d }
 const r2 = (n) => Number((+n || 0).toFixed(2))
+const dateToYMD = (d) => { if (!d) return null; const dt = d instanceof Date ? d : new Date(d); if (isNaN(dt)) return null; const y = dt.getFullYear(); const m = String(dt.getMonth() + 1).padStart(2, "0"); const dd = String(dt.getDate()).padStart(2, "0"); return `${y}-${m}-${dd}` }
 
 const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, onSave }) => {
   const { control, setValue, getValues, watch, formState: { errors } } = useForm({
@@ -100,9 +101,38 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     setValue("fabric_delivery", normalizeDateSeed(seed.fabric_delivery))
   }, [seed, getValues, setValue])
 
+  useEffect(() => {
+    if (seed?.id) setAgreementId(seed.id)
+  }, [seed?.id])
+
+  useEffect(() => {
+    if (seed?.id) {
+      ;(async () => {
+        const fresh = await getAgreement(seed.id)
+        if (fresh?.id) hydrateFromAgreement(fresh)
+        else hydrateFromAgreement(seed)
+      })()
+    }
+  }, [seed?.id, hydrateFromAgreement])
+
+  useEffect(() => {
+    const tryHydrate = async () => {
+      if (agreementId) return
+      const eid = email?.id || null
+      if (!eid) return
+      const an = getValues("agreement_no") || (seed.agreement_no ?? "")
+      if (!an) return
+      try {
+        const ag = await findAgreementByEmail({ email_id: eid, agreement_no: an })
+        if (ag && ag.id) hydrateFromAgreement(ag)
+      } catch {}
+    }
+    tryHydrate()
+  }, [email, agreementId, seed.agreement_no, getValues, hydrateFromAgreement])
+
   const qc = (seed.quality_code || seed.quality || "").toString().trim()
   const design = (seed.design || seed.greige_design || seed.finished_design_description || "").toString().trim()
-  const color = (seed.color || seed.greige_color || seed.finished_color_description || "").toString().trim()
+  const color = (seed.color || seed.colour || seed.greige_color || seed.finished_color_description || "").toString().trim()
   const width = (seed.width || seed.width_cm || seed.finished_width_cm || seed.width_inches || "").toString().trim()
 
   const applyItem = (item) => {
@@ -169,12 +199,12 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
         agreement_no: v.agreement_no || "",
         width: v.width_cm || v.width_inches || "",
         description: v.fabric_detail || "",
-        start_date: v.fabric_delivery || null,
-        end_date: v.need_by_date || null,
+        start_date: dateToYMD(v.fabric_delivery),
+        end_date: dateToYMD(v.need_by_date),
         item_description: v.fabric_detail || "",
-        email: email?.id || email || null,
+        email_id: email?.id || null,
         source: email ? "email" : "manual",
-        payload: { ...v, selected_item_code: v.selected_item_code || "", email_ref: email?.id || email || null }
+        payload: { ...v, selected_item_code: v.selected_item_code || "", fabric_delivery: dateToYMD(v.fabric_delivery), need_by_date: dateToYMD(v.need_by_date) }
       }
       let saved
       if (agreementId) {
@@ -183,6 +213,7 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
         saved = await createAgreement(base)
       }
       const id = saved?.id || saved?.data?.id || saved?.agreement?.id || agreementId
+      if (!agreementId && id) setAgreementId(id)
       if (id && mode === "submitted") await submitAgreement(id)
       if (id) {
         const fresh = await getAgreement(id)
@@ -221,7 +252,7 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
                     <Chip k="Width" v={width} />
                   </div>
                 </div>
-                <button onClick={fetchMatches} className="ti-btn ti-btn-primary !mb-0 text-sm">Search again</button>
+                <button onClick={fetchMatches} className="ti-btn ti-btn-primary !py-1 !px-2 !text-[0.75rem]"><TextSearch size={16} /> Search again</button>
               </div>
             </div>
           </div>

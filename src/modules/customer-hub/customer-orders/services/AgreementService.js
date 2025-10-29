@@ -52,7 +52,7 @@ export const deleteAgreement = async (id, opts = {}) => {
 
 export const datatableAgreements = async ({ skip = 0, limit = 10, s = "" } = {}, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/agreements/datatable`, {
+    const res = await api.get(`${ROOT}/agreements/datatable/`, {
       params: { skip: String(skip), limit: String(limit), ...(s ? { s } : {}) },
       signal: opts.signal,
     })
@@ -62,7 +62,6 @@ export const datatableAgreements = async ({ skip = 0, limit = 10, s = "" } = {},
     throw error
   }
 }
-
 
 export const submitAgreement = async (id, opts = {}) => {
   try {
@@ -106,6 +105,19 @@ export const uploadAgreementsExcel = async (file, opts = {}) => {
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "File upload failed"))
+    throw error
+  }
+}
+
+export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}) => {
+  try {
+    const res = await api.get(`${ROOT}/agreements/by-email/`, {
+      params: { email_id, agreement_no },
+      signal: opts.signal,
+    })
+    return res.data?.data || res.data
+  } catch (error) {
+    Notify.error(serverMessage(error, "Failed to find agreement"))
     throw error
   }
 }

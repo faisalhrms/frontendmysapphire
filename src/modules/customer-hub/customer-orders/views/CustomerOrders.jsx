@@ -1,4 +1,5 @@
 import React, { Fragment, useMemo, useState, useEffect, useCallback } from "react"
+import { useSelector } from "react-redux"
 import dayjs from "dayjs"
 import mail from "@assets/images/icon/viewicon.svg"
 import Avatar from "@components/Avatar.jsx"
@@ -15,7 +16,8 @@ import NavTabs from "@modules/customer-hub/customer-orders/components/NavTabs.js
 import AirjetCostingBaseSection from "@modules/customer-hub/customer-orders/components/AirjetCostingBaseSection.jsx"
 import AgreementPlacementModal from "@modules/customer-hub/customer-orders/components/AgreementPlacementModal.jsx"
 import { datatableAgreements } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
-import {useAgreementPlacementModal} from "@modules/customer-hub/customer-orders/services/useAgreementPlacementModal.js";
+import { useAgreementPlacementModal } from "@modules/customer-hub/customer-orders/hooks/useAgreementPlacementModal.js"
+import {useSearchHook} from "@hooks/useSearchHook.js";
 
 const ExtractedInfoPanel = ({ active, selectedMessage, latestExtraction, loadExtractions, loading }) => {
   useEffect(() => {
@@ -28,21 +30,35 @@ const ExtractedInfoPanel = ({ active, selectedMessage, latestExtraction, loadExt
   return <ExtractionGrid data={latestExtraction} />
 }
 
+const srcLabel = (s) => (s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : "")
+const statusClass = (s) => {
+  if (s === "approved") return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
+  if (s === "submitted") return "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
+  if (s === "rejected") return "bg-rose-100 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300"
+  return "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-white/80"
+}
+
+const Pill = ({ children, cls = "" }) => (
+  <span className={`inline-flex items-center rounded-full px-2 py-[2px] text-[.65rem] font-medium ${cls}`}>{children}</span>
+)
+
 const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextiles.com.pk" }) => {
+  const user = useSelector((s) => s.auth.user)
   const [mailbox, setMailbox] = useState(initialMailbox)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const { searchTerm, handleSearchChange } = useSearchHook(1)
   const { mailboxes, threads, selectedKey, selectThread, selectMessageInThread, selectedMessage, expanded, toggleThreadExpand, messagesByThread, formatThreadTime, formatFileSize, extractions, loadExtractions, extractionsLoading, clearExtractions, sentinelRef, hasNextPage, isFetchingNextPage } = useCustomerHubMail(mailbox)
   const [activeTab, setActiveTab] = useState("tab-email")
   const resolvedHtml = useMemo(() => resolveCidHtml(selectedMessage?.raw_html || "", selectedMessage?.attachments || []), [selectedMessage])
-  const latestExtraction = useMemo(() => (extractions?.length ? extractions[0]?.data || null : null), [extractions])
+  const latestExtraction = useMemo(() => (extractions?.length ? (extractions[0]?.data || null) : null), [extractions])
   const [manualRows, setManualRows] = useState([])
   const [manualLoading, setManualLoading] = useState(false)
   const [selectedManual, setSelectedManual] = useState(null)
 
-  const loadManual = useCallback(async () => {
+  const loadManual = useCallback(async (s = "") => {
     setManualLoading(true)
     try {
-      const resp = await datatableAgreements({ skip: 0, limit: 50, s: "" })
+      const resp = await datatableAgreements({ skip: 0, limit: 50, s })
       const rows = Array.isArray(resp?.rows) ? resp.rows : []
       setManualRows(rows.filter((r) => r.source === "manual"))
     } finally {
@@ -50,10 +66,12 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
     }
   }, [])
 
-  useEffect(() => { loadManual() }, [loadManual])
+  useEffect(() => { loadManual("") }, [loadManual])
+
+  useEffect(() => { loadManual(searchTerm) }, [searchTerm, loadManual])
 
   const { openModal, closeModal, control, errors, isSubmitting, handleSubmit, onSubmit } = useAgreementPlacementModal((created) => {
-    loadManual()
+    loadManual(searchTerm)
     setSelectedManual(created)
     setActiveTab("tab-agreement")
   })
@@ -69,9 +87,29 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
 
   const allRows = useMemo(() => {
     const emails = (threads || []).map((t) => ({ kind: "email", ts: dayjs(t.last_received_at).valueOf(), key: `email:${t.thread_key}`, thread: t }))
-    const manuals = (manualRows || []).map((r) => ({ kind: "manual", ts: dayjs(r.created_at).valueOf(), key: `manual:${r.id}`, row: r }))
+    const manuals = (manualRows || []).map((r) => {
+      const dt = r.start_date || r?.payload?.order_date || r.created_at
+      return { kind: "manual", ts: dayjs(dt).valueOf(), key: `manual:${r.id}`, row: r }
+    })
     return [...emails, ...manuals].sort((a, b) => b.ts - a.ts)
   }, [threads, manualRows])
+
+  const qn = (s) => (s || "").toString().toLowerCase()
+  const filteredRows = useMemo(() => {
+    const needle = qn(searchTerm)
+    if (!needle) return allRows
+    return allRows.filter((it) => {
+      if (it.kind === "manual") {
+        const r = it.row
+        const hay = [r.agreement_no, r.owner, r.quality, r.design, r.colour, r.color, r.width, r.status, r.source].map(qn).join(" ")
+        return hay.includes(needle)
+      } else {
+        const t = it.thread
+        const hay = [t.last_from_name, t.last_from, t.subject].map(qn).join(" ")
+        return hay.includes(needle)
+      }
+    })
+  }, [allRows, searchTerm])
 
   const tabs = useMemo(() => {
     if (selectedManual) return [
@@ -95,26 +133,7 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
           <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
             <AgreementPlacementForm
               active
-              seed={{
-                owner: selectedManual.owner,
-                agreement_no: selectedManual.agreement_no,
-                item_no: selectedManual.item_no,
-                colour: selectedManual.colour,
-                item_type: selectedManual.item_type,
-                start_date: selectedManual.start_date,
-                item_description: selectedManual.item_description,
-                quality: selectedManual.quality,
-                design: selectedManual.design,
-                width: selectedManual.width,
-                vendor_design: selectedManual.vendor_design,
-                description: selectedManual.description,
-                agreed_min_qty: selectedManual.agreed_min_qty,
-                log_agreed_min_qty: selectedManual.log_agreed_min_qty,
-                agreed_max_qty: selectedManual.agreed_max_qty,
-                log_agreed_max_qty: selectedManual.log_agreed_max_qty,
-                end_date: selectedManual.end_date,
-                log_end_date: selectedManual.log_end_date,
-              }}
+              seed={selectedManual}
               email={null}
               showHeader={false}
             />
@@ -125,12 +144,15 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
         return (
           <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
             <AirjetCostingBaseSection seed={{
+              email_id: selectedMessage?.id,
+              agreement_id: selectedManual?.id,
               quality_code: selectedManual.quality,
               design: selectedManual.design,
               width: selectedManual.width,
               color: selectedManual.colour,
-              processed_item_code: selectedManual.item_no
-            }} />
+              greige_item_code: selectedManual.greige_item || selectedManual.greige_item_code || selectedManual.item_no || selectedManual.item_code
+            }}
+            />
           </div>
         )
       }
@@ -209,7 +231,13 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
     if (activeTab === "tab-costing") {
       return (
         <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
-          <AirjetCostingBaseSection seed={latestExtraction || {}} />
+          <AirjetCostingBaseSection seed={{
+            email_id: selectedMessage?.id,
+            quality_code: latestExtraction?.quality,
+            design: latestExtraction?.design,
+            width: latestExtraction?.width,
+            color:  latestExtraction?.color
+          }} />
         </div>
       )
     }
@@ -222,6 +250,9 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
     }
     return null
   }
+
+  const threadsInitialLoading = threads === undefined || threads === null
+  const sidebarLoading = manualLoading || threadsInitialLoading
 
   return (
     <Fragment>
@@ -266,7 +297,7 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
             <div className="p-4">
               <div className="flex items-center gap-2">
                 <div className="input-group flex-1">
-                  <input type="text" className="form-control !bg-light !border-0 !rounded-s-md" placeholder="Search Order" />
+                  <input onChange={handleSearchChange} type="text" className="form-control !bg-light !border-0 !rounded-s-md" placeholder="Search Order" defaultValue="" />
                   <button aria-label="button" className="ti-btn ti-btn-light !rounded-s-none !mb-0" type="button">
                     <i className="ri-search-line text-[#8c9097] dark:text-white/50" />
                   </button>
@@ -277,10 +308,14 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto">
-              {manualLoading && <div className="px-3 pb-4"><LoadingSpinner /></div>}
+            <div className="flex-1 min-h-0 overflow-y-auto relative">
+              {sidebarLoading && (
+                <div className="absolute inset-0 z-10 grid place-items-center bg-white/60 dark:bg-black/20">
+                  <LoadingSpinner />
+                </div>
+              )}
               <ul className="list-none mb-0 text-defaulttextcolor text-defaultsize">
-                {allRows.map((item) => {
+                {filteredRows.map((item) => {
                   if (item.kind === "email") {
                     const t = item.thread
                     const unread = (t.unread_count || 0) > 0
@@ -293,7 +328,7 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
                         <div className={`flex items-start ${isSelected ? "bg-light dark:bg-black/30" : "hover:bg-light/40 dark:hover:bg-white/5"}`}>
                           {hasMultiple ? (
                             <button
-                              className={`shrink-0 mt-3 ms-2 w-7 h-7 grid place-items-center rounded-full transition-all ${isOpen ? "bg-primary/10 text-primary" : "bg-transparent text-[#8c9097] hover:bg-light/70 dark:hover:bg-white/10"}`}
+                              className={`shrink-0 mt-3 ms-2 w-5 h-5 grid place-items-center rounded-full transition-all ${isOpen ? "bg-primary/10 text-primary" : "bg-transparent text-[#8c9097] hover:bg-light/70 dark:hover:bg-white/10"}`}
                               onClick={() => {
                                 setSelectedManual(null)
                                 toggleThreadExpand(t.thread_key)
@@ -303,7 +338,7 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
                               <i className={`ri-arrow-right-s-line text-base transition-transform ${isOpen ? "rotate-90" : ""}`} />
                             </button>
                           ) : (
-                            <span className="shrink-0 mt-3 ms-2 w-7 h-7" />
+                            <span className="shrink-0 mt-3 ms-2 w-5 h-5" />
                           )}
                           <button className="w-full text-left p-2" onClick={() => { setSelectedManual(null); selectThread(t.thread_key); setActiveTab("tab-email") }}>
                             <div className="flex items-start">
@@ -311,10 +346,13 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
                               <div className="flex-grow min-w-0">
                                 <div className="mb-1 text-[0.75rem] space-x-2">
                                   <span className="font-medium truncate">{t.last_from_name || t.last_from}</span>
-                                  <span className="ltr:float-right rtl:float-left text-[#8c9097] dark:text-white/50 font-normal text-[.6875rem]">{formatThreadTime(t.last_received_at)}</span>
+                                  <span className="ltr:float-right rtl:float-left text-[#8c9097] dark:text:white/50 font-normal text-[.6875rem]">{formatThreadTime(t.last_received_at)}</span>
                                 </div>
                                 <span className={`block ${unread ? "font-semibold text-primary" : "font-normal"}`}>{truncateWords(t.subject, 4)}</span>
-                                <span className="text-[.6875rem] text-[#8c9097] dark:text-white/50">Total {t.total_count} • Unread {t.unread_count}</span>
+                                <div className="mt-1 flex items-center justify-between">
+                                  <span className="text-[.6875rem] text-[#8c9097] dark:text:white/50">Total {t.total_count} • Unread {t.unread_count}</span>
+                                  <Pill cls={statusClass("")}>Email</Pill>
+                                </div>
                               </div>
                             </div>
                           </button>
@@ -341,17 +379,22 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
                   }
                   const r = item.row
                   const isSelected = selectedManual?.id === r.id
+                  const when = r.start_date || r?.payload?.order_date || r.created_at
                   return (
                     <li key={item.key} className="border-b dark:border-defaultborder/20">
                       <button className={`w-full text-left p-2 flex items-start ${isSelected ? "bg-light dark:bg-black/30" : "hover:bg-light/40 dark:hover:bg-white/5"}`} onClick={() => { setSelectedManual(r); setActiveTab("tab-agreement") }}>
+                        <span className="shrink-0 mt-3 ms-2 w-5 h-5" />
                         <Avatar full_name={r.owner || "Manual"} size="sm" parentClasses="profile-timeline-avatar me-2" />
                         <div className="flex-grow min-w-0">
                           <div className="mb-1 text-[0.75rem] space-x-2">
                             <span className="font-medium truncate">{r.owner || "Manual"}</span>
-                            <span className="ltr:float-right rtl:float-left text-[#8c9097] dark:text-white/50 font-normal text-[.6875rem]">{dayjs(r.created_at).format("h:mm A")}</span>
+                            <span className="ltr:float-right rtl:float-left text-[#8c9097] dark:text-white/50 font-normal text-[.6875rem]">{dayjs(when).format("h:mm A")}</span>
                           </div>
                           <span className="block font-medium">Agreement #{r.agreement_no}</span>
-                          <span className="text-[.6875rem] text-[#8c9097] dark:text-white/50">{r.quality} • {r.design} • {r.width}</span>
+                          <div className="mt-1 flex items-center justify-between">
+                            <span className="text-[.6875rem] text-[#8c9097] dark:text-white/50">{r.quality} • {r.design} • {(r.colour || r.color || "-")} • {r.width}</span>
+                            <Pill cls={statusClass(r.status)}>{srcLabel(r.source)}</Pill>
+                          </div>
                         </div>
                       </button>
                     </li>
@@ -368,7 +411,7 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
             {selectedManual ? (
               <>
                 <div className="shrink-0 p-3">
-                  <CompactHeader msg={{ owner: selectedManual.owner, subject: "", created_at: selectedManual.created_at }} />
+                  <CompactHeader msg={{ owner: selectedManual.owner, created_at: selectedManual.created_at, start_date: selectedManual.start_date, source: selectedManual.source, status: selectedManual.status }} />
                 </div>
                 <div className="px-6">
                   <NavTabs tabs={tabs} activeId={activeTab} onTabChange={(id) => setActiveTab(id)} />
@@ -386,7 +429,7 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
                 </div>
               </>
             ) : (
-              <div className="p-6 h-full min-h-[420px] flex flex-col items-center justify-center text-center">
+              <div className="p-6 h-full min_h-[420px] flex flex-col items-center justify-center text-center">
                 <img src={mail} alt="" className="w-24 h-24 mb-4" />
                 <p className="text-[#8c9097] dark:text:white/50">Select item to view</p>
               </div>

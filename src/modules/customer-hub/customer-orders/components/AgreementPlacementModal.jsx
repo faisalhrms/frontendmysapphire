@@ -54,11 +54,7 @@ const AgreementPlacementModal = ({ control, errors, isSubmitting, handleSubmit, 
                   <FormInput name="colour" control={control} errors={errors} placeholder="Colour" is_required={minimal} />
                 </div>
 
-                {!minimal && (
-                  <div className="col-span-12 md:col-span-4">
-                    <FormInput name="item_type" control={control} errors={errors} placeholder="Type" />
-                  </div>
-                )}
+
                 <div className="col-span-12 md:col-span-4">
                   <FormInput name="start_date" control={control} errors={errors} placeholder="Start Date" type="date" />
                 </div>

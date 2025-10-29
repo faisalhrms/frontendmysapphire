@@ -88,4 +88,4 @@ const NumWidthStat = ({
   )
 }
 
-export default NumWidthStat
+export default React.memo(NumWidthStat)

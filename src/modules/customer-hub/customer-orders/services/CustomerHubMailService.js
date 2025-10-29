@@ -1,5 +1,5 @@
 import api from "@config/axiosConfig.js"
-import Notify from "@helpers/toastNotifications.js";
+import Notify from "@helpers/toastNotifications.js"
 const ROOT = "/customer-hub"
 
 const serverMessage = (error, fallback) =>
@@ -90,19 +90,56 @@ export const matchCustomerItems = async ({ quality_code, design, color, width },
   }
 }
 
-export const getAirjetCostingBase = async (params = {}, opts = {}) => {
+const clean = (o) => Object.fromEntries(Object.entries(o || {}).filter(([_, v]) => v !== undefined && v !== null && v !== ""))
+const coerceIds = (o) => {
+  const x = { ...o }
+  if (x.email_id !== undefined && x.email_id !== null && x.email_id !== "") x.email_id = Number(x.email_id)
+  if (x.agreement_id !== undefined && x.agreement_id !== null && x.agreement_id !== "") x.agreement_id = Number(x.agreement_id)
+  return clean(x)
+}
+const cleanQuery = (o = {}) => coerceIds(clean(o))
+
+const inflightBase = new Map()
+const inflightBaseData = new Map()
+const dedupeGet = async (map, url, params, opts = {}) => {
+  const k = JSON.stringify(params || {})
+  if (map.has(k)) return map.get(k)
+  const p = api.get(url, { params, signal: opts.signal }).then(r => r.data?.data ?? r.data ?? null).finally(() => map.delete(k))
+  map.set(k, p)
+  return p
+}
+
+export const getAirjetCostingBaseSaved = async (params = {}, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/airjet-costing/base-data`, { params, signal: opts.signal })
-    return res.data?.data ?? res.data
+    const p = cleanQuery(params)
+    return await dedupeGet(inflightBase, `${ROOT}/airjet-costing/base/`, p, opts)
   } catch (error) {
-    Notify.error(serverMessage(error, "Failed to load costing base"))
+    Notify.error(serverMessage(error, "Failed to load saved costing"))
     throw error
   }
 }
 
+export const getAirjetCostingBaseComputed = async (params = {}, opts = {}) => {
+  try {
+    const p = cleanQuery(params)
+    return await dedupeGet(inflightBaseData, `${ROOT}/airjet-costing/base-data/`, p, opts)
+  } catch (error) {
+    Notify.error(serverMessage(error, "Failed to compute costing base"))
+    throw error
+  }
+}
+
+export const getAirjetCostingBasePreferSaved = async (params = {}, opts = {}) => {
+  const p = cleanQuery(params)
+  const saved = await getAirjetCostingBaseSaved(p, opts)
+  if (saved) return saved
+  return await getAirjetCostingBaseComputed(p, opts)
+}
+
 export const upsertAirjetCostingBase = async (keys, patch, opts = {}) => {
   try {
-    const res = await api.post(`${ROOT}/airjet-costing/base/upsert`, { keys, patch }, { signal: opts.signal })
+    const payload = { keys: coerceIds(keys), patch: { ...clean(patch), payload: clean(patch) } }
+    const res = await api.post(`${ROOT}/airjet-costing/base/upsert/`, payload, { signal: opts.signal })
     Notify.success("Costing saved")
     return res.data?.data ?? res.data
   } catch (error) {
