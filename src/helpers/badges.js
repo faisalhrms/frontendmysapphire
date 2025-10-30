@@ -56,6 +56,7 @@ const badgeStyles = {
     waiting_for_pr: info,
     waiting_for_budget: primary,
     waiting_for_purchase: warning,
+    waiting_for_scrap:warning,
     waiting_for_quotation: secondary,
     waiting_for_acknowledgement: success,
     waiting_for_approval: danger,
@@ -108,6 +109,7 @@ const statusStyles = {
     waiting_for_acknowledgement: txtSuccess,
     waiting_for_approval: txtDanger,
     cancelled: danger,
+    waiting_for_scrap:txtWarning
 
 
 };
