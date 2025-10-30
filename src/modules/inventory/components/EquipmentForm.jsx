@@ -229,7 +229,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                     />
                                 </div>
                                 {/* ---------- previous Custodian ---------- */}
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormInput
                                         name="previous_custodian"
                                         control={control}
@@ -239,7 +239,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 </div>
 
                                 {/* ---------- Custodian ---------- */}
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <CustodianDropdown
                                         haveLabel={true}
                                         name="custodian_id"
@@ -249,6 +249,15 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         onCustodianSelect={(selected) => console.log("Custodian Selected:", selected)}
                                     />
 
+
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        name="user_name"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="User Name"
+                                    />
                                 </div>
 
                                 {/* ---------- Price Paid by Employee ---------- */}
@@ -265,7 +274,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 )}
 
                                 {/* ---------- Exception Approval Granted By (Grade G-15 Employee) ---------- */}
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormAsyncSelect
                                         name="exception_approval_granted_by_id"
                                         control={control}
@@ -279,12 +288,20 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                 </div>
 
                                 {/* ---------- Laptop Model ---------- */}
-                                <div className="xl:col-span-6 col-span-12">
+                                <div className="xl:col-span-4 col-span-12">
                                     <FormInput
                                         name="laptop_model"
                                         control={control}
                                         errors={errors}
                                         placeholder="Laptop Model"
+                                    />
+                                </div>
+                                <div className="xl:col-span-4 col-span-12">
+                                    <FormInput
+                                        name="computer_name"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Computer Name"
                                     />
                                 </div>
 
