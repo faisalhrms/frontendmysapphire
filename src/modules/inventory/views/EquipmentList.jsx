@@ -60,6 +60,20 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
         }
     };
 
+    const isSystemVerified = (row) =>
+        row?.original?.verified === true && !row?.original?.latest_verification;
+
+    const pickVerifiedOn = (row) => {
+        const latest = row?.original?.latest_verification;
+        return latest?.verified_on ?? row?.original?.system_verified_on ?? null;
+    };
+    const formatDateTime = (iso) => {
+        if (!iso) return null;
+        // Date-only:
+        return new Date(iso).toLocaleDateString();
+        // If you want date+time instead, use:
+        // return new Date(iso).toLocaleString();
+    };
 
     const columns = [
         {
@@ -264,12 +278,36 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
             filterKey: "latest_verification__verified_by__full_name",
             Cell: ({ row }) => {
                 const latest = row.original.latest_verification;
+
+                // ✅ System Verified (no human verifier, but verified flag is true)
+                if (isSystemVerified(row)) {
+                    return (
+                        <div className="flex items-center">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                                <ShieldCheck className="text-primary" size={16} title="Verified" />
+                            </div>
+                            <div className="ms-2">
+                                <p className="font-semibold mb-0 flex items-center">
+                                    System Verified
+                                    <ShieldCheck className="ml-1 text-primary" size={14} title="Verified" />
+                                </p>
+                                <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                    Auto-verified via audit
+                                </p>
+                            </div>
+                        </div>
+                    );
+                }
+
+                // ❌ Not Verified
                 if (!latest || !latest.verified_by) return "Not Verified";
 
+                // 👤 Human verified
                 const { full_name, email, avatar } = latest.verified_by;
-
                 return (
                     <div className="flex items-center">
+                        {/* If this Avatar is your own component, keep as-is.
+           If it's MUI Avatar, use <Avatar src={avatar?.url} alt={full_name} /> */}
                         <Avatar
                             avatar={avatar ? latest.verified_by : null}
                             full_name={full_name || "N/A"}
@@ -289,18 +327,20 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
                 );
             },
         },
-
-        // ✅ Verified On (from latest_verification.verified_on)
         {
             Header: "Verified On",
             accessor: "latest_verification.verified_on",
             filterable: true,
             filterType: "date",
+            // optional: if your server can filter by a single field, you can set a filterKey (e.g. system_verified_on),
+            // but since we’re showing a computed fallback value, many backends won’t support union filters.
+            // filterKey: "system_verified_on",
             Cell: ({ row }) => {
-                const date = row.original.latest_verification?.verified_on;
-                return date ? new Date(date).toLocaleDateString() : "N/A";
+                const iso = pickVerifiedOn(row); // latest_verification.verified_on OR system_verified_on
+                return iso ? formatDateTime(iso) : "N/A";
             },
         },
+
         {
             Header: "Company",
             accessor: "company.name",
