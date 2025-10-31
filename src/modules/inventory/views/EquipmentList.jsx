@@ -60,13 +60,7 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
         }
     };
 
-    const isSystemVerified = (row) =>
-        row?.original?.verified === true && !row?.original?.latest_verification;
-
-    const pickVerifiedOn = (row) => {
-        const latest = row?.original?.latest_verification;
-        return latest?.verified_on ?? row?.original?.system_verified_on ?? null;
-    };
+   
     const formatDateTime = (iso) => {
         if (!iso) return null;
         // Date-only:
@@ -74,6 +68,27 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
         // If you want date+time instead, use:
         // return new Date(iso).toLocaleString();
     };
+
+    const toDate = (iso) => (iso ? new Date(iso) : null);
+
+    const pickLatestVerification = (row) => {
+        const latest = row?.original?.latest_verification;
+        const humanISO = latest?.verified_on ?? null;
+        const sysISO = row?.original?.system_verified_on ?? null;
+
+        const human = toDate(humanISO);
+        const system = toDate(sysISO);
+
+        if (human && system) {
+            return human > system
+                ? { source: "human", iso: humanISO }
+                : { source: "system", iso: sysISO };
+        }
+        if (human) return { source: "human", iso: humanISO };
+        if (row?.original?.verified && system) return { source: "system", iso: sysISO };
+        return { source: "none", iso: null };
+    };
+
 
     const columns = [
         {
@@ -277,10 +292,9 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
             filterType: "text",
             filterKey: "latest_verification__verified_by__full_name",
             Cell: ({ row }) => {
-                const latest = row.original.latest_verification;
+                const pick = pickLatestVerification(row);
 
-                // ✅ System Verified (no human verifier, but verified flag is true)
-                if (isSystemVerified(row)) {
+                if (pick.source === "system") {
                     return (
                         <div className="flex items-center">
                             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
@@ -299,45 +313,44 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
                     );
                 }
 
-                // ❌ Not Verified
-                if (!latest || !latest.verified_by) return "Not Verified";
-
-                // 👤 Human verified
-                const { full_name, email, avatar } = latest.verified_by;
-                return (
-                    <div className="flex items-center">
-                        {/* If this Avatar is your own component, keep as-is.
-           If it's MUI Avatar, use <Avatar src={avatar?.url} alt={full_name} /> */}
-                        <Avatar
-                            avatar={avatar ? latest.verified_by : null}
-                            full_name={full_name || "N/A"}
-                            size="md"
-                            parentClasses="dark:text-gray-200 dark:bg-bodybg"
-                        />
-                        <div className="ms-2">
-                            <p className="font-semibold mb-0 flex items-center">
-                                {full_name || "N/A"}
-                                <ShieldCheck className="ml-1 text-primary" size={14} title="Verified" />
-                            </p>
-                            <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                                {email || "N/A"}
-                            </p>
+                if (pick.source === "human") {
+                    const latest = row.original.latest_verification;
+                    const { full_name, email, avatar } = latest?.verified_by || {};
+                    return (
+                        <div className="flex items-center">
+                            {/* If this Avatar is your custom component, keep as-is.
+             If it's MUI Avatar, use <Avatar src={avatar?.url} alt={full_name} /> */}
+                            <Avatar
+                                avatar={avatar ? latest.verified_by : null}
+                                full_name={full_name || "N/A"}
+                                size="md"
+                                parentClasses="dark:text-gray-200 dark:bg-bodybg"
+                            />
+                            <div className="ms-2">
+                                <p className="font-semibold mb-0 flex items-center">
+                                    {full_name || "N/A"}
+                                    <ShieldCheck className="ml-1 text-primary" size={14} title="Verified" />
+                                </p>
+                                <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                    {email || "N/A"}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                );
+                    );
+                }
+
+                return "Not Verified";
             },
         },
+
         {
             Header: "Verified On",
             accessor: "latest_verification.verified_on",
             filterable: true,
             filterType: "date",
-            // optional: if your server can filter by a single field, you can set a filterKey (e.g. system_verified_on),
-            // but since we’re showing a computed fallback value, many backends won’t support union filters.
-            // filterKey: "system_verified_on",
             Cell: ({ row }) => {
-                const iso = pickVerifiedOn(row); // latest_verification.verified_on OR system_verified_on
-                return iso ? formatDateTime(iso) : "N/A";
+                const pick = pickLatestVerification(row); // { source, iso }
+                return pick.iso ? formatDateTime(pick.iso) : "N/A";
             },
         },
 
