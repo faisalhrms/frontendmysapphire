@@ -286,6 +286,23 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
             Cell: ({ value }) => value || "N/A",
         },
         {
+            Header: "User Name",
+            accessor: "user_name",
+            filterable: true,
+            filterType: "text",
+            filterKey: "user_name", // server-side filter key (Django field)
+            Cell: ({ value }) => value || "N/A",
+        },
+        {
+            Header: "Computer Name",
+            accessor: "computer_name",
+            filterable: true,
+            filterType: "text",
+            filterKey: "computer_name", // server-side filter key (Django field)
+            Cell: ({ value }) => value || "N/A",
+        },
+
+        {
             Header: "Verified By",
             accessor: "latest_verification.verified_by",
             filterable: true,
