@@ -1,7 +1,6 @@
 import api from "@config/axiosConfig.js"
-import Notify from "@helpers/toastNotifications.js";
+import Notify from "@helpers/toastNotifications.js"
 const ROOT = "/customer-hub"
-
 const serverMessage = (error, fallback) =>
   error?.response?.data?.errors ||
   error?.response?.data?.message ||
@@ -66,32 +65,32 @@ export const datatableAgreements = async ({ skip = 0, limit = 10, s = "" } = {},
 export const submitAgreement = async (id, opts = {}) => {
   try {
     const res = await api.post(`${ROOT}/agreements/${id}/submit/`, {}, { signal: opts.signal })
-    Notify.success("Agreement submitted")
+    Notify.success("Submitted for approval")
     return res.data?.data || res.data
   } catch (error) {
-    Notify.error(serverMessage(error, "Failed to submit agreement"))
+    Notify.error(serverMessage(error, "Failed to submit"))
     throw error
   }
 }
 
-export const approveAgreement = async (id, opts = {}) => {
+export const approveAgreement = async (id, remarks, opts = {}) => {
   try {
-    const res = await api.post(`${ROOT}/agreements/${id}/approve/`, {}, { signal: opts.signal })
-    Notify.success("Agreement approved")
+    const res = await api.post(`${ROOT}/agreements/${id}/approve/`, { remarks }, { signal: opts.signal })
+    Notify.success("Approved")
     return res.data?.data || res.data
   } catch (error) {
-    Notify.error(serverMessage(error, "Failed to approve agreement"))
+    Notify.error(serverMessage(error, "Failed to approve"))
     throw error
   }
 }
 
-export const rejectAgreement = async (id, opts = {}) => {
+export const rejectAgreement = async (id, remarks, opts = {}) => {
   try {
-    const res = await api.post(`${ROOT}/agreements/${id}/reject/`, {}, { signal: opts.signal })
-    Notify.success("Agreement rejected")
+    const res = await api.post(`${ROOT}/agreements/${id}/reject/`, { remarks }, { signal: opts.signal })
+    Notify.success("Rejected")
     return res.data?.data || res.data
   } catch (error) {
-    Notify.error(serverMessage(error, "Failed to reject agreement"))
+    Notify.error(serverMessage(error, "Failed to reject"))
     throw error
   }
 }
@@ -118,6 +117,16 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to find agreement"))
+    throw error
+  }
+}
+
+export const getApprovalActivity = async (id, opts = {}) => {
+  try {
+    const res = await api.get(`${ROOT}/agreements/${id}/approval-activity/`, { signal: opts.signal })
+    return res.data?.data || res.data
+  } catch (error) {
+    Notify.error(serverMessage(error, "Failed to load approval activity"))
     throw error
   }
 }

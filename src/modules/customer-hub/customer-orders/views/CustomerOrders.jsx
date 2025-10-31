@@ -4,7 +4,7 @@ import dayjs from "dayjs"
 import mail from "@assets/images/icon/viewicon.svg"
 import Avatar from "@components/Avatar.jsx"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
-import { Inbox, ChevronDown, Mail as MailIcon, FileSignature, Calculator, FileSpreadsheet, ClipboardList, Plus } from "lucide-react"
+import { Inbox, ChevronDown, Mail as MailIcon, FileSignature, Calculator, FileSpreadsheet, ClipboardList, Plus, Edit3 } from "lucide-react"
 import InfoAlert from "../../../../InfoAlert.jsx"
 import { useCustomerHubMail } from "@modules/customer-hub/customer-orders/hooks/useCustomerHubMail.js"
 import { fileKind, resolveCidHtml, sanitizeHtml, truncateWords } from "@modules/customer-hub/customer-orders/services/MailAppUtils.js"
@@ -70,11 +70,11 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
 
   useEffect(() => { loadManual(searchTerm) }, [searchTerm, loadManual])
 
-  const { openModal, closeModal, control, errors, isSubmitting, handleSubmit, onSubmit } = useAgreementPlacementModal((created) => {
-    loadManual(searchTerm)
-    setSelectedManual(created)
-    setActiveTab("tab-agreement")
-  })
+    const { openModal, openForEdit, closeModal, control, errors, isSubmitting, handleSubmit, onSubmit, isEdit } = useAgreementPlacementModal((created) => {
+      loadManual(searchTerm)
+      setSelectedManual(created)
+      setActiveTab("tab-agreement")
+    })
 
   useEffect(() => {
     clearExtractions()
@@ -413,10 +413,21 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
                 <div className="shrink-0 p-3">
                   <CompactHeader msg={{ owner: selectedManual.owner, created_at: selectedManual.created_at, start_date: selectedManual.start_date, source: selectedManual.source, status: selectedManual.status }} />
                 </div>
-                <div className="px-6">
-                  <NavTabs tabs={tabs} activeId={activeTab} onTabChange={(id) => setActiveTab(id)} />
-                  <div className="mt-4">{renderActiveContent()}</div>
-                </div>
+                    <div className="px-6">
+                      <div className="flex items-center justify-between">
+                        <NavTabs tabs={tabs} activeId={activeTab} onTabChange={(id) => setActiveTab(id)} />
+                        {activeTab === "tab-agreement" && selectedManual && (
+                          <button
+                            type="button"
+                            onClick={() => openForEdit(selectedManual)}
+                            className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                          >
+                            <Edit3 size={14} /> Edit
+                          </button>
+                        )}
+                      </div>
+                      <div className="mt-4">{renderActiveContent()}</div>
+                    </div>
               </>
             ) : selectedMessage ? (
               <>
@@ -438,14 +449,15 @@ const CustomerOrders = ({ mailbox: initialMailbox = "beirholm.hub@sapphiretextil
         </div>
       </div>
 
-      <AgreementPlacementModal
-        control={control}
-        errors={errors}
-        isSubmitting={isSubmitting}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
-        closeModal={closeModal}
-      />
+    <AgreementPlacementModal
+      control={control}
+      errors={errors}
+      isSubmitting={isSubmitting}
+      handleSubmit={handleSubmit}
+      onSubmit={onSubmit}
+      closeModal={closeModal}
+      isEdit={isEdit}
+    />
     </Fragment>
   )
 }

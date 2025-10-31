@@ -14,6 +14,9 @@ import QualityWeavingForm from "@modules/customer-hub/master-data/QualityWeaving
 import IntegrationView from "@modules/customer-hub/integrations/views/IntegrationView.jsx";
 import CustomerHubEmailList from "@modules/customer-hub/mail-settings/views/CustomerHubEmailList.jsx";
 import CustomerHubEmailConfig from "@modules/customer-hub/mail-settings/components/CustomerHubEmailConfig.jsx";
+import GreigeLeadTimeList from "@modules/customer-hub/master-data/greige-lead-times/views/GreigeLeadTimeList.jsx";
+import GreigeLeadTimeForm from "@modules/customer-hub/master-data/greige-lead-times/components/GreigeLeadTimeForm.jsx";
+import AgreementApprovalDetail from "@modules/customer-hub/customer-orders/components/AgreementApprovalDetail.jsx";
 
 
 export const CUSTOMER_HUB_ROUTES = {
@@ -36,7 +39,10 @@ export const CUSTOMER_HUB_ROUTES = {
             path: "/module/customer/hub/integrations",
             permission: "customer_hub.view_integrations"
         }
-    }
+    },
+    AGREEMENTS_APPROVAL:{
+        path:'/module/agreement/detail/:id',
+    },
 };
 
 export const MASTER_DATA = {
@@ -98,6 +104,17 @@ export const CUSTOMER_ITEMS = {
     READ: {
         path: '/module/customer/hub/customer/items',
         permission: 'customer_hub.view_customer_item',
+    },
+};
+
+export const GREIGE_LEAD_TIMES = {
+    CREATE: {
+        path: '/module/customer/hub/lead-time/add',
+        permission: 'customer_hub.add_greige_lead_time',
+    },
+    READ: {
+        path: '/module/customer/hub/lead-time',
+        permission: 'customer_hub.view_greige_lead_time',
     },
 };
 
@@ -179,5 +196,19 @@ export const MODULE_ROUTES = [
         path: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.path,
         component: IntegrationView,
         permission: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.permission,
+    },
+    {
+        path: GREIGE_LEAD_TIMES.CREATE.path,
+        component: GreigeLeadTimeForm,
+        permission: GREIGE_LEAD_TIMES.CREATE.permission,
+    },
+    {
+        path: GREIGE_LEAD_TIMES.READ.path,
+        component: GreigeLeadTimeList,
+        permission: GREIGE_LEAD_TIMES.READ.permission,
+    },
+    {
+        path: CUSTOMER_HUB_ROUTES.AGREEMENTS_APPROVAL.path,
+        component: AgreementApprovalDetail,
     },
 ];

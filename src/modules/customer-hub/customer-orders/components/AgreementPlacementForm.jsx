@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react"
+import React, { useEffect, useMemo, useState, useCallback, forwardRef, useImperativeHandle } from "react"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
 import { useForm } from "react-hook-form"
-import { Save, Calculator, Ruler, Package, Forward, TextSearch } from "lucide-react"
+import { Save, Calculator, Ruler, Package, Forward, TextSearch, ClipboardList } from "lucide-react"
 import { matchCustomerItems } from "@modules/customer-hub/customer-orders/services/CustomerHubMailService.js"
 import SelectCustomerItemModal from "@modules/customer-hub/customer-orders/components/SelectCustomerItemModal.jsx"
 import YarnConsumptionModal from "@modules/customer-hub/customer-orders/components/YarnConsumptionModal.jsx"
 import FormInput from "@components/form/FormInput.jsx"
-import { createAgreement, submitAgreement, updateAgreement, getAgreement, findAgreementByEmail } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import { createAgreement, submitAgreement, updateAgreement, getAgreement, findAgreementByEmail, getApprovalActivity } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import FormSelect from "@components/form/FormSelect.jsx"
 import { AGREEMENT_TYPES } from "@modules/customer-hub/customer-orders/components/AgreementPlacementModal.jsx"
 
@@ -25,7 +25,7 @@ const normalizeDateSeed = (v) => { if (!v) return ""; if (v instanceof Date && !
 const r2 = (n) => Number((+n || 0).toFixed(2))
 const dateToYMD = (d) => { if (!d) return null; const dt = d instanceof Date ? d : new Date(d); if (isNaN(dt)) return null; const y = dt.getFullYear(); const m = String(dt.getMonth() + 1).padStart(2, "0"); const dd = String(dt.getDate()).padStart(2, "0"); return `${y}-${m}-${dd}` }
 
-const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, onSave }) => {
+export const AgreementPlacementForm = forwardRef(({ active, seed = {}, email, showHeader = true, onSave, actionsSlot, disableSubmit = false }, ref) => {
   const { control, setValue, getValues, watch, formState: { errors } } = useForm({
     defaultValues: {
       agreement_no: seed.agreement_no ?? "",
@@ -50,7 +50,9 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
       width_cm: seed.width ?? seed.width_cm ?? "",
       total_bags: "",
       need_by_date: normalizeDateSeed(seed.need_by_date),
-      selected_item_code: ""
+      selected_item_code: "",
+      yarn_dyed_or_greige: seed.yarn_dyed_or_greige || seed.item_type || "",
+      greige_item_code: seed.greige_item_code || seed.greige_item || ""
     }
   })
 
@@ -62,10 +64,14 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
   const [showYarn, setShowYarn] = useState(false)
   const [saving, setSaving] = useState(false)
   const [agreementId, setAgreementId] = useState(seed?.id || null)
+  const [approvalOpen, setApprovalOpen] = useState(false)
+  const [approvalActivity, setApprovalActivity] = useState(null)
+  const [agreementMeta, setAgreementMeta] = useState({ status: seed.status, current_approver_name: null })
 
   const hydrateFromAgreement = useCallback((ag) => {
     const p = ag?.payload || {}
     setAgreementId(ag?.id || null)
+    setAgreementMeta({ status: ag?.status, current_approver_name: ag?.current_approver_name || null })
     setValue("agreement_no", ag?.agreement_no ?? "")
     setValue("agreement_type", p?.agreement_type ?? "")
     setValue("fabric_detail", ag?.item_description ?? p?.fabric_detail ?? "")
@@ -87,6 +93,8 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     setValue("ecru_bags", p?.ecru_bags ?? "")
     setValue("total_bags", p?.total_bags ?? "")
     setValue("selected_item_code", p?.selected_item_code ?? "")
+    setValue("yarn_dyed_or_greige", p?.yarn_dyed_or_greige || ag?.item_type || "")
+    setValue("greige_item_code", p?.greige_item_code || "")
     setValue("fabric_delivery", ag?.start_date ? normalizeDateSeed(ag.start_date) : (p?.fabric_delivery ? normalizeDateSeed(p.fabric_delivery) : ""))
     setValue("need_by_date", ag?.end_date ? normalizeDateSeed(ag.end_date) : (p?.need_by_date ? normalizeDateSeed(p.need_by_date) : ""))
   }, [setValue])
@@ -109,8 +117,13 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     if (seed?.id) {
       ;(async () => {
         const fresh = await getAgreement(seed.id)
-        if (fresh?.id) hydrateFromAgreement(fresh)
-        else hydrateFromAgreement(seed)
+        if (fresh?.id) {
+          hydrateFromAgreement(fresh)
+          const act = await getApprovalActivity(fresh.id)
+          setApprovalActivity(act)
+        } else {
+          hydrateFromAgreement(seed)
+        }
       })()
     }
   }, [seed?.id, hydrateFromAgreement])
@@ -124,7 +137,11 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
       if (!an) return
       try {
         const ag = await findAgreementByEmail({ email_id: eid, agreement_no: an })
-        if (ag && ag.id) hydrateFromAgreement(ag)
+        if (ag && ag.id) {
+          hydrateFromAgreement(ag)
+          const act = await getApprovalActivity(ag.id)
+          setApprovalActivity(act)
+        }
       } catch {}
     }
     tryHydrate()
@@ -133,7 +150,7 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
   const qc = (seed.quality_code || seed.quality || "").toString().trim()
   const design = (seed.design || seed.greige_design || seed.finished_design_description || "").toString().trim()
   const color = (seed.color || seed.colour || seed.greige_color || seed.finished_color_description || "").toString().trim()
-  const width = (seed.width || seed.width_cm || seed.finished_width_cm || seed.width_inches || "").toString().trim()
+  const widthSeed = (seed.width || seed.width_cm || seed.finished_width_cm || seed.width_inches || "").toString().trim()
 
   const applyItem = (item) => {
     setSelectedItem(item)
@@ -144,15 +161,17 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     setValue("width_inches", item.finished_width_inches || getValues("width_inches") || "")
     setValue("width_cm", item.finished_width_cm || getValues("width_cm") || "")
     setValue("selected_item_code", item.processed_item_code || getValues("selected_item_code") || "")
+    setValue("yarn_dyed_or_greige", item.warp_weft_dyed || item.yarn_dyed_or_greige || getValues("yarn_dyed_or_greige") || "")
+    setValue("greige_item_code", item.greige_item_code || item.greige_item || getValues("greige_item_code") || "")
   }
 
   const fetchMatches = async () => {
     if (!active) return
-    if (!qc && !design && !color && !width) return
+    if (!qc && !design && !color && !widthSeed) return
     setMatching(true)
     setStatusMsg("")
     try {
-      const list = await matchCustomerItems({ quality_code: qc, design, color, width })
+      const list = await matchCustomerItems({ quality_code: qc, design, color, width: widthSeed })
       if (!list.length) {
         setChoices([])
         setOpen(false)
@@ -172,12 +191,10 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     }
   }
 
-  useEffect(() => { fetchMatches() }, [active, qc, design, color, width])
-
-  const payload = useMemo(() => ({ ...getValues(), email }), [watch(), email])
+  useEffect(() => { fetchMatches() }, [active, qc, design, color, widthSeed])
 
   const handleComputed = useCallback((res) => {
-    const dyedFlag = /yarn\s*dyed/i.test(selectedItem?.yarn_dyed_or_greige || "")
+    const dyedFlag = /yarn\s*dyed|warp\s*weft\s*dyed/i.test((watch("yarn_dyed_or_greige") || selectedItem?.yarn_dyed_or_greige || ""))
     const warpDyed = dyedFlag ? res.warpWithRej : 0
     const weftDyed = dyedFlag ? res.weftWithRej : 0
     const warpEcru = r2(res.warpWithRej - warpDyed)
@@ -189,33 +206,64 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     setValue("dyed_bags", r2(warpDyed + weftDyed))
     setValue("ecru_bags", r2(warpEcru + weftEcru))
     setValue("total_bags", r2(res.totalWithRej))
-  }, [selectedItem, setValue])
+  }, [selectedItem, setValue, watch])
 
   const handleSave = async (mode = "draft") => {
     setSaving(true)
     try {
       const v = getValues()
+      const greigeCode = v.greige_item_code || selectedItem?.greige_item_code || seed.greige_item_code || seed.greige_item || ""
+      const processedCode = v.selected_item_code || selectedItem?.processed_item_code || seed.processed_item_code || seed.item_no || seed.item_code || ""
+      const preferGreige = /greige/i.test(v.yarn_dyed_or_greige || selectedItem?.yarn_dyed_or_greige || seed.item_type || "")
+      const topItemNo = preferGreige ? (greigeCode || processedCode) : (processedCode || greigeCode)
+      const topItemType = v.yarn_dyed_or_greige || selectedItem?.yarn_dyed_or_greige || seed.item_type || selectedItem?.process_type || seed.process_type || null
+      const topQuality = (seed.quality_code || seed.quality || selectedItem?.quality_code || "").toString().trim()
+      const topDesign = (seed.design || seed.greige_design || seed.finished_design_description || "").toString().trim()
+      const topColour = (seed.color || seed.colour || seed.greige_color || seed.finished_color_description || "").toString().trim()
+      const topWidth = v.width_cm || v.width_inches || (seed.width || seed.width_cm || seed.finished_width_cm || seed.width_inches || "").toString().trim()
       const base = {
+        owner: email?.from_name || email?.from_address || null,
         agreement_no: v.agreement_no || "",
-        width: v.width_cm || v.width_inches || "",
-        description: v.fabric_detail || "",
+        item_no: topItemNo || null,
+        colour: topColour || null,
+        item_type: topItemType || null,
         start_date: dateToYMD(v.fabric_delivery),
-        end_date: dateToYMD(v.need_by_date),
+        vmi_po: null,
         item_description: v.fabric_detail || "",
+        quality: topQuality || null,
+        design: topDesign || null,
+        width: topWidth || "",
+        vendor_design: seed.vendor_design || null,
+        description: v.fabric_detail || "",
+        agreed_min_qty: null,
+        log_agreed_min_qty: null,
+        agreed_max_qty: null,
+        log_agreed_max_qty: null,
+        end_date: dateToYMD(v.need_by_date),
+        log_end_date: null,
         email_id: email?.id || null,
         source: email ? "email" : "manual",
-        payload: { ...v, selected_item_code: v.selected_item_code || "", fabric_delivery: dateToYMD(v.fabric_delivery), need_by_date: dateToYMD(v.need_by_date) }
+        payload: {
+          ...v,
+          selected_item_code: processedCode || "",
+          greige_item_code: greigeCode || "",
+          yarn_dyed_or_greige: v.yarn_dyed_or_greige || selectedItem?.yarn_dyed_or_greige || "",
+          fabric_delivery: dateToYMD(v.fabric_delivery),
+          need_by_date: dateToYMD(v.need_by_date)
+        }
       }
       let saved
-      if (agreementId) {
-        saved = await updateAgreement(agreementId, base)
-      } else {
-        saved = await createAgreement(base)
-      }
+      if (agreementId) saved = await updateAgreement(agreementId, base)
+      else saved = await createAgreement(base)
       const id = saved?.id || saved?.data?.id || saved?.agreement?.id || agreementId
       if (!agreementId && id) setAgreementId(id)
-      if (id && mode === "submitted") await submitAgreement(id)
-      if (id) {
+      if (id && mode === "submitted") {
+        await submitAgreement(id)
+        const fresh = await getAgreement(id)
+        hydrateFromAgreement(fresh)
+        const act = await getApprovalActivity(id)
+        setApprovalActivity(act)
+      } else if (id) {
         const fresh = await getAgreement(id)
         hydrateFromAgreement(fresh)
       }
@@ -226,11 +274,36 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
     }
   }
 
-  const w = watch()
+  useImperativeHandle(ref, () => ({
+    saveDraft: () => handleSave("draft"),
+    submit: () => handleSave("submitted"),
+    getValues: () => getValues()
+  }))
+
+  const statusBadge = () => {
+    const s = agreementMeta.status
+    if (!s) return null
+    const cls = s === "approved" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300"
+      : s === "under_approval" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
+      : s === "rejected" ? "bg-rose-100 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300"
+      : "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-white/80"
+    return <span className={`px-2 py-1 rounded-full text-xs ${cls}`}>{s.replace("_"," ")}</span>
+  }
 
   return (
     <div className="rounded-xl border dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
-      {showHeader && <div className="px-4 py-2.5 border-b dark:border-defaultborder/20 font-semibold text-[.95rem]">Airjet Costing</div>}
+      {showHeader && (
+        <div className="px-4 py-2.5 border-b dark:border-defaultborder/20 flex items-center justify-between">
+          <div className="font-semibold text-[.95rem]">Airjet Costing</div>
+          <div className="flex items-center gap-2">
+            {statusBadge()}
+            {agreementMeta.current_approver_name ? <span className="text-xs opacity-70">Pending: {agreementMeta.current_approver_name}</span> : null}
+            <button type="button" onClick={() => setApprovalOpen(true)} className="ti-btn ti-btn-light !mb-0 h-7 px-2 !text-[0.75rem] inline-flex items-center gap-1 rounded-full">
+              <ClipboardList size={16} /> Activity
+            </button>
+          </div>
+        </div>
+      )}
       {matching && (
         <div className="absolute inset-0 bg-white/60 dark:bg-black/30 backdrop-blur-sm flex items-center justify-center z-10">
           <LoadingSpinner />
@@ -249,7 +322,7 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
                     <Chip k="Quality" v={qc} />
                     <Chip k="Design" v={design} />
                     <Chip k="Color" v={color} />
-                    <Chip k="Width" v={width} />
+                    <Chip k="Width" v={widthSeed} />
                   </div>
                 </div>
                 <button onClick={fetchMatches} className="ti-btn ti-btn-primary !py-1 !px-2 !text-[0.75rem]"><TextSearch size={16} /> Search again</button>
@@ -303,13 +376,23 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
               <div className="hidden">
                 <FormInput name="selected_item_code" control={control} errors={errors} placeholder="" label={false} />
               </div>
+              <div className="hidden">
+                <FormInput name="yarn_dyed_or_greige" control={control} errors={errors} placeholder="" label={false} />
+              </div>
+              <div className="hidden">
+                <FormInput name="greige_item_code" control={control} errors={errors} placeholder="" label={false} />
+              </div>
               <div className="col-span-12 flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => handleSave("draft")} disabled={saving || matching} className="ti-btn ti-btn-secondary !mb-0 inline-flex items-center gap-2 text-sm">
-                  <Save size={16} /> Save
-                </button>
-                <button type="button" onClick={() => handleSave("submitted")} disabled={saving || matching} className="ti-btn ti-btn-success !mb-0 inline-flex items-center gap-2 text-sm">
-                  <Forward size={16} /> Submit
-                </button>
+                {actionsSlot ? actionsSlot : (
+                  <>
+                    <button type="button" onClick={() => handleSave("draft")} disabled={saving || matching} className="ti-btn ti-btn-secondary !mb-0 inline-flex items-center gap-2 text-sm">
+                      <Save size={16} /> Save
+                    </button>
+                    <button type="button" onClick={() => handleSave("submitted")} disabled={disableSubmit || saving || matching || agreementMeta.status === "under_approval" || agreementMeta.status === "approved"} className="ti-btn ti-btn-success !mb-0 inline-flex items-center gap-2 text-sm">
+                      <Forward size={16} /> Submit
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -319,13 +402,14 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
               <div className="px-4 py-2 border-b border-slate-200/70 dark:border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="font-semibold text-[.75rem]">Item Code</div>
-                  <span className="text-[.7rem] px-2 py-1 rounded-full bg-slate-700/5 dark:bg-white/10">{watch("selected_item_code") || "-"}</span>
+                  <span className="text-[.7rem] px-2 py-1 rounded-full bg-slate-700/5 dark:bg-white/10">{watch("greige_item_code") || "-"}</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Chip k="Quality" v={qc} />
                   <Chip k="Design" v={design} />
                   <Chip k="Color" v={color} />
-                  <Chip k="Width" v={width} />
+                  <Chip k="Width" v={widthSeed} />
+                  <Chip k="Type" v={watch("yarn_dyed_or_greige")} />
                 </div>
               </div>
 
@@ -333,16 +417,6 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
                 <div className="grid grid-cols-2 gap-3">
                   <Stat Icon={Ruler} label="Width (In)" value={watch("width_inches") || "-"} />
                   <Stat Icon={Ruler} label="Width (Cm)" value={watch("width_cm") || "-"} />
-                </div>
-
-                <div>
-                  <div className="text-[.7rem] uppercase tracking-wide opacity-60 mb-2">Fabric</div>
-                  <div className="rounded-xl border border-slate-200/70 dark:border-white/10 divide-y divide-slate-200/70 dark:divide-white/10 bg-white/60 dark:bg-white/5">
-                    <KV k="Fabric Detail" v={watch("fabric_detail") || seed.description} />
-                    <KV k="Construction" v={watch("construction")} />
-                    <KV k="Warp Blend" v={watch("warp_blend")} />
-                    <KV k="Weft Blend" v={watch("weft_blend")} />
-                  </div>
                 </div>
 
                 <div>
@@ -358,13 +432,53 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
                     <Stat Icon={Package} label="Total Ecru" value={watch("ecru_bags") || 0} />
                   </div>
                 </div>
+
+                <div>
+                  <div className="text-[.7rem] uppercase tracking-wide opacity-60 mb-2">Fabric</div>
+                  <div className="rounded-xl border border-slate-200/70 dark:border-white/10 divide-y divide-slate-200/70 dark:divide-white/10 bg-white/60 dark:bg-white/5">
+                    <KV k="Fabric Detail" v={watch("fabric_detail") || seed.description} />
+                    <KV k="Construction" v={watch("construction")} />
+                    <KV k="Warp Blend" v={watch("warp_blend")} />
+                    <KV k="Weft Blend" v={watch("weft_blend")} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <SelectCustomerItemModal open={open} onClose={() => setOpen(false)} choices={choices} queryMeta={{ quality_code: qc, design, color, width }} onUse={(item) => { applyItem(item); setOpen(false) }} />
+      {approvalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white dark:bg-bodybg rounded-xl shadow-xl w-full max-w-2xl">
+            <div className="px-4 py-3 border-b dark:border-white/10 flex items-center justify-between">
+              <div className="font-semibold text-sm">Approval Activity</div>
+              <button className="ti-btn ti-btn-light !mb-0 h-7 px-2 !text-[0.75rem]" onClick={() => setApprovalOpen(false)}>Close</button>
+            </div>
+            <div className="p-4 max-h-[70vh] overflow-y-auto">
+              <div className="flex items-center gap-2 mb-3">
+                {statusBadge()}
+                {approvalActivity?.current_approver_name ? <span className="text-xs opacity-70">Pending: {approvalActivity.current_approver_name}</span> : null}
+              </div>
+              <div className="space-y-3">
+                {(approvalActivity?.actions || []).map(a => (
+                  <div key={a.id} className="flex items-start gap-3">
+                    <div className="h-2 w-2 rounded-full mt-2 bg-slate-400" />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium capitalize">{a.action} <span className="opacity-60 text-xs">L{a.level}</span></div>
+                      <div className="text-xs opacity-70">{new Date(a.created_at).toLocaleString()}</div>
+                      {a.remarks ? <div className="text-xs mt-1">{a.remarks}</div> : null}
+                    </div>
+                  </div>
+                ))}
+                {!approvalActivity?.actions?.length ? <div className="text-sm opacity-70">No activity yet</div> : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <SelectCustomerItemModal open={open} onClose={() => setOpen(false)} choices={choices} queryMeta={{ quality_code: qc, design, color, width: widthSeed }} onUse={(item) => { applyItem(item); setOpen(false) }} />
 
       <YarnConsumptionModal
         open={showYarn}
@@ -378,6 +492,6 @@ const AgreementPlacementForm = ({ active, seed = {}, email, showHeader = true, o
       />
     </div>
   )
-}
-
+})
+AgreementPlacementForm.displayName = "AgreementPlacementForm"
 export default AgreementPlacementForm
