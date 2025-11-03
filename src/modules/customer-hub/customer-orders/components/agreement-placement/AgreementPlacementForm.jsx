@@ -324,7 +324,11 @@ const AgreementPlacementForm = ({
               design={design}
               color={color}
               widthSeed={widthSeed}
-              widthInches={watch("width_inches")}
+              widthInches={
+                (matchedItem && matchedItem.greige_width) ||
+                widthSeed ||
+                watch("width_inches")
+              }
               widthCm={watch("width_cm")}
               greigeItemCode={
                 watch("greige_item_code") ||

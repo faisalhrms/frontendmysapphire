@@ -31,8 +31,8 @@ const AgreementItemMeta = ({ qc, design, color, widthSeed, widthInches, widthCm,
     </div>
     <div className="p-4 space-y-5">
       <div className="grid grid-cols-2 gap-3">
-        <Stat Icon={Ruler} label="Width (In)" value={widthInches || "-"} />
-        <Stat Icon={Ruler} label="Width (Cm)" value={widthCm || "-"} />
+        <Stat Icon={Ruler} label="G.Width (In)" value={widthInches || "-"} />
+        <Stat Icon={Ruler} label="F.Width (Cm)" value={widthCm || "-"} />
       </div>
     </div>
   </div>
