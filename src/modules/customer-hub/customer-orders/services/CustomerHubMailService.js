@@ -35,6 +35,7 @@ export const getThreadMessages = async (threadKey, mailbox, opts = {}) => {
   }
 }
 
+
 export const getExtractionsByEmail = async (emailId, mailbox, opts = {}) => {
   try {
     const params = {}
@@ -74,6 +75,17 @@ export const getMailboxes = async (opts = {}) => {
     throw error
   }
 }
+
+export const getEmailById = async (emailId, opts = {}) => {
+  try {
+    const res = await api.get(`${ROOT}/emails/${emailId}/`, { signal: opts.signal })
+    return res.data?.data || res.data
+  } catch (error) {
+    Notify.error(serverMessage(error, "Failed to load email"))
+    throw error
+  }
+}
+
 
 export const matchCustomerItems = async ({ quality_code, design, color, width }, opts = {}) => {
   try {
