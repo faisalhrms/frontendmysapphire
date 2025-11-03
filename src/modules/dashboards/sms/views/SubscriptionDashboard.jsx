@@ -48,7 +48,7 @@ const SubscriptionDashboard = () => {
     }
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto pb-8 px-4 lg:px-0">
+        <div className="space-y-8 mx-auto pb-8 px-4 lg:px-0">
             <IconPageHeader
                 heading="Subscription Dashboard"
                 description="Comprehensive subscription analytics and cost management insights"

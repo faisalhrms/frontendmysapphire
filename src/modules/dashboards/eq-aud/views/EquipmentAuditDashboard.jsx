@@ -112,7 +112,7 @@ const EquipmentAuditDashboard = () => {
             : 0;
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto pb-8 px-4 lg:px-0">
+        <div className="space-y-8  mx-auto pb-8 px-4 lg:px-0">
             {/* Header Card with Title + Description + Filters (no IconPageHeader, no refresh button) */}
             <div className="bg-white my-8 dark:bg-bodybg border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
                 <div className="px-6 pt-6 pb-2">
