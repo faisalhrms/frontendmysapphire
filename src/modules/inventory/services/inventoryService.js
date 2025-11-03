@@ -12,6 +12,7 @@ export const equipmentStatuses = [
     { value: 'sold_to_employee', label: 'Sold To Employee' },
     { value: 'write_off', label: 'Write Off' },
     { value: 'temporary_allocation', label: 'Temporary Allocation' },
+    {value:'waiting_for_scrap', label: 'Waiting For Scrap' },
 ];
 
 // Create a new equipment

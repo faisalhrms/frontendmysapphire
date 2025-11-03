@@ -22,6 +22,8 @@ import WarrantyList from "@modules/it_governance/views/WarrantyList.jsx";
 import WarrantyAdd from "@modules/it_governance/views/WarrantyAdd.jsx";
 import WarrantyEdit from "@modules/it_governance/views/WarrantyEdit.jsx";
 import ApplicationUniverseDetail from "@modules/it_governance/views/ApplicationUniverseDetail.jsx";
+import ITGovernDetail from "@modules/it_governance/views/ITGovernDetail.jsx";
+import WarrantyDetail from "@modules/it_governance/views/WarrantyDetail.jsx";
 
 export const IT_GOVERNANCE_ROUTES = {
     READ: {
@@ -100,6 +102,10 @@ export const MODULE_ROUTES = [
         component:ITGovernEdit,
     },
     {
+        path:IT_GOVERNANCE_ROUTES.DETAIL.path,
+        component:ITGovernDetail,
+    },
+    {
     path:IT_GOVERNANCE_ROUTES.APPLICATION_UNIVERSE.READ.path,
         component:ApplicationUniverseList
     },
@@ -122,6 +128,9 @@ export const MODULE_ROUTES = [
     {
         path:IT_GOVERNANCE_ROUTES.WARRANTY.EDIT.path,
         component:WarrantyEdit
+    },
+    {  path:IT_GOVERNANCE_ROUTES.WARRANTY.DETAIL.path,
+        component:WarrantyDetail
     },
     {
         path:IT_GOVERNANCE_ROUTES.APPLICATION_UNIVERSE.DETAIL.path,

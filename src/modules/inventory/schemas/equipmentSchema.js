@@ -11,7 +11,8 @@ const equipmentStatus = z.enum([
     'sold_to_employee',
     'write_off',
     'temporary_allocation',
-    'available_in_inventory'
+    'available_in_inventory',
+    'waiting_for_scrap'
 ]);
 const subEquipmentSchema = z.object({
     type_id: z.number().min(1, "Type is required"),
@@ -52,6 +53,9 @@ const equipmentSchema = z.object({
     laptop_issued_as_per_policy: z.boolean().default(true),
     exception_approval_granted_by_id: z.number().min(1, "Exception approval granted by employee (Grade G-15) is required").nullable().optional(),
     laptop_model: z.string().max(250).nullable().optional(),
+    user_name: z.string().max(250).nullable().optional(),
+    computer_name: z.string().max(250).nullable().optional(),
+
     processor: z.string().max(250).nullable().optional(),
     ram: z.string().max(250).nullable().optional(),
     purchase_price:z.number().nullable().optional(),

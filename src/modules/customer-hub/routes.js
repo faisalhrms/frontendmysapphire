@@ -1,13 +1,9 @@
-import MailApp from "@modules/customer-hub/mail-app/views/email/MailApp.jsx";
-import CustomerHubEmailConfig
-    from "@modules/customer-hub/mail-app/components/customer-hub-email-config/CustomerHubEmailConfig.jsx";
-import CustomerHubEmailList from "@modules/customer-hub/mail-app/views/email/CustomerHubEmailList.jsx";
+import CustomerOrders from "@modules/customer-hub/customer-orders/views/CustomerOrders.jsx";
 import MasterData from "@modules/customer-hub/master-data/views/MasterData.jsx";
 import DyeingChargeForm from "@modules/customer-hub/master-data/dyeing-charges/components/DyeingChargeForm.jsx";
 import DyeingChargeList from "@modules/customer-hub/master-data/dyeing-charges/views/DyeingChargeList.jsx";
 import SizingCostList from "@modules/customer-hub/master-data/sizing-cost/views/SizingCostList.jsx";
 import SizingCostForm from "@modules/customer-hub/master-data/sizing-cost/components/SizingCostForm.jsx";
-import AgreementPlacementPage from "@modules/customer-hub/mail-app/components/AgreementPlacementPage.jsx";
 import CustomerItemList from "@modules/customer-hub/master-data/customer-item-data/views/CustomerItemList.jsx";
 import CustomerItemForm from "@modules/customer-hub/master-data/customer-item-data/components/CustomerItemForm.jsx";
 import WeavingParameterList from "@modules/customer-hub/master-data/WeavingParameter/views/WeavingParameterList.jsx";
@@ -15,6 +11,9 @@ import WeavingParameterForm
     from "@modules/customer-hub/master-data/WeavingParameter/components/WeavingParameterForm.jsx";
 import QualityWeavingList from "@modules/customer-hub/master-data/QualityWeaving/views/QualityWeavingList.jsx";
 import QualityWeavingForm from "@modules/customer-hub/master-data/QualityWeaving/components/QualityWeavingForm.jsx";
+import IntegrationView from "@modules/customer-hub/integrations/views/IntegrationView.jsx";
+import CustomerHubEmailList from "@modules/customer-hub/mail-settings/views/CustomerHubEmailList.jsx";
+import CustomerHubEmailConfig from "@modules/customer-hub/mail-settings/components/CustomerHubEmailConfig.jsx";
 
 
 export const CUSTOMER_HUB_ROUTES = {
@@ -31,15 +30,13 @@ export const CUSTOMER_HUB_ROUTES = {
             path: "/module/customer/hub/mail/settings",
             permission: 'customer_hub.add_customer_hub_email_config',
         },
-
     },
-};
-
-export const AIRJET_COSTING = {
-    READ: {
-        path: '/module/customer/hub/airjet-costing',
-        permission: 'auth.view_customer_hub_master_data',
-    },
+    INTEGRATIONS: {
+        HOME: {
+            path: "/module/customer/hub/integrations",
+            permission: "customer_hub.view_integrations"
+        }
+    }
 };
 
 export const MASTER_DATA = {
@@ -108,7 +105,7 @@ export const CUSTOMER_ITEMS = {
 export const MODULE_ROUTES = [
     {
         path: CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.path,
-        component: MailApp,
+        component: CustomerOrders,
         permission: CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.permission,
     },
     {
@@ -159,11 +156,6 @@ export const MODULE_ROUTES = [
         permission: SIZING_COST.READ.permission,
     },
     {
-        path: AIRJET_COSTING.READ.path,
-        component: AgreementPlacementPage,
-        permission: AIRJET_COSTING.READ.permission,
-    },
-    {
         path: CUSTOMER_ITEMS.READ.path,
         component: CustomerItemList,
         permission: CUSTOMER_ITEMS.READ.permission,
@@ -182,5 +174,10 @@ export const MODULE_ROUTES = [
         path: QUALITY_WEAVING.CREATE.path,
         component: QualityWeavingForm,
         permission: QUALITY_WEAVING.CREATE.permission,
+    },
+    {
+        path: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.path,
+        component: IntegrationView,
+        permission: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.permission,
     },
 ];

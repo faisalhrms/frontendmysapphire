@@ -554,7 +554,7 @@ export default function PublicDynamicForm() {
                                                 />
                                                 <label
                                                     htmlFor={`${fieldName}-${option.value}`}
-                                                    className="ml-2 text-sm text-gray-700"
+                                                    className="ml-2 text-sm text-gray-700  dark:text-gray-200 dark:bg-bodybg"
                                                 >
                                                     {option.label}
                                                 </label>
@@ -583,7 +583,7 @@ export default function PublicDynamicForm() {
                                                 />
                                                 <label
                                                     htmlFor={`${fieldName}-${option.value}`}
-                                                    className="ml-2 text-sm text-gray-700"
+                                                    className="ml-2 text-sm text-gray-700 dark:text-gray-200 dark:bg-bodybg"
                                                 >
                                                     {option.label}
                                                 </label>

@@ -19,6 +19,11 @@ const WarrantyList = () => {
                             <i className="ri-edit-line" />
                         </button>
                     </Link>
+                    <Link to={`/module/it-governance/warranty/detail/${row.original.id}`}>
+                        <button className="ti-btn ti-btn-info ti-btn-sm">
+                            <i className="ri-eye-line"></i>
+                        </button>
+                    </Link>
                 </div>
             ),
         },

@@ -60,6 +60,35 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
         }
     };
 
+   
+    const formatDateTime = (iso) => {
+        if (!iso) return null;
+        // Date-only:
+        return new Date(iso).toLocaleDateString();
+        // If you want date+time instead, use:
+        // return new Date(iso).toLocaleString();
+    };
+
+    const toDate = (iso) => (iso ? new Date(iso) : null);
+
+    const pickLatestVerification = (row) => {
+        const latest = row?.original?.latest_verification;
+        const humanISO = latest?.verified_on ?? null;
+        const sysISO = row?.original?.system_verified_on ?? null;
+
+        const human = toDate(humanISO);
+        const system = toDate(sysISO);
+
+        if (human && system) {
+            return human > system
+                ? { source: "human", iso: humanISO }
+                : { source: "system", iso: sysISO };
+        }
+        if (human) return { source: "human", iso: humanISO };
+        if (row?.original?.verified && system) return { source: "system", iso: sysISO };
+        return { source: "none", iso: null };
+    };
+
 
     const columns = [
         {
@@ -257,50 +286,91 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
             Cell: ({ value }) => value || "N/A",
         },
         {
+            Header: "User Name",
+            accessor: "user_name",
+            filterable: true,
+            filterType: "text",
+            filterKey: "user_name", // server-side filter key (Django field)
+            Cell: ({ value }) => value || "N/A",
+        },
+        {
+            Header: "Computer Name",
+            accessor: "computer_name",
+            filterable: true,
+            filterType: "text",
+            filterKey: "computer_name", // server-side filter key (Django field)
+            Cell: ({ value }) => value || "N/A",
+        },
+
+        {
             Header: "Verified By",
             accessor: "latest_verification.verified_by",
             filterable: true,
             filterType: "text",
             filterKey: "latest_verification__verified_by__full_name",
             Cell: ({ row }) => {
-                const latest = row.original.latest_verification;
-                if (!latest || !latest.verified_by) return "Not Verified";
+                const pick = pickLatestVerification(row);
 
-                const { full_name, email, avatar } = latest.verified_by;
-
-                return (
-                    <div className="flex items-center">
-                        <Avatar
-                            avatar={avatar ? latest.verified_by : null}
-                            full_name={full_name || "N/A"}
-                            size="md"
-                            parentClasses="dark:text-gray-200 dark:bg-bodybg"
-                        />
-                        <div className="ms-2">
-                            <p className="font-semibold mb-0 flex items-center">
-                                {full_name || "N/A"}
-                                <ShieldCheck className="ml-1 text-primary" size={14} title="Verified" />
-                            </p>
-                            <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
-                                {email || "N/A"}
-                            </p>
+                if (pick.source === "system") {
+                    return (
+                        <div className="flex items-center">
+                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                                <ShieldCheck className="text-primary" size={16} title="Verified" />
+                            </div>
+                            <div className="ms-2">
+                                <p className="font-semibold mb-0 flex items-center">
+                                    System Verified
+                                    <ShieldCheck className="ml-1 text-primary" size={14} title="Verified" />
+                                </p>
+                                <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                    Auto-verified via audit
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                );
+                    );
+                }
+
+                if (pick.source === "human") {
+                    const latest = row.original.latest_verification;
+                    const { full_name, email, avatar } = latest?.verified_by || {};
+                    return (
+                        <div className="flex items-center">
+                            {/* If this Avatar is your custom component, keep as-is.
+             If it's MUI Avatar, use <Avatar src={avatar?.url} alt={full_name} /> */}
+                            <Avatar
+                                avatar={avatar ? latest.verified_by : null}
+                                full_name={full_name || "N/A"}
+                                size="md"
+                                parentClasses="dark:text-gray-200 dark:bg-bodybg"
+                            />
+                            <div className="ms-2">
+                                <p className="font-semibold mb-0 flex items-center">
+                                    {full_name || "N/A"}
+                                    <ShieldCheck className="ml-1 text-primary" size={14} title="Verified" />
+                                </p>
+                                <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                                    {email || "N/A"}
+                                </p>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return "Not Verified";
             },
         },
 
-        // ✅ Verified On (from latest_verification.verified_on)
         {
             Header: "Verified On",
             accessor: "latest_verification.verified_on",
             filterable: true,
             filterType: "date",
             Cell: ({ row }) => {
-                const date = row.original.latest_verification?.verified_on;
-                return date ? new Date(date).toLocaleDateString() : "N/A";
+                const pick = pickLatestVerification(row); // { source, iso }
+                return pick.iso ? formatDateTime(pick.iso) : "N/A";
             },
         },
+
         {
             Header: "Company",
             accessor: "company.name",
