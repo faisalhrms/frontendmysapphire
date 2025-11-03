@@ -2,11 +2,12 @@ import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useForm } from "react-hook-form"
 import Notify from "@helpers/toastNotifications.js"
-import { createAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import { createAgreement, updateAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
 export const useAgreementPlacementModal = (onCreated) => {
   const user = useSelector((state) => state.auth.user)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [editingId, setEditingId] = useState(null)
   const form = useForm({
     defaultValues: {
       owner: "",
@@ -37,7 +38,34 @@ export const useAgreementPlacementModal = (onCreated) => {
   const closeModal = () => {
     const modal = document.getElementById("itemModal")
     if (modal && window.HSOverlay) window.HSOverlay.close(modal)
+    setEditingId(null)
     form.reset()
+  }
+  const openForEdit = (ag) => {
+    const p = ag?.payload || {}
+    form.reset({
+      owner: ag.owner || user?.full_name || user?.name || user?.email || "",
+      agreement_no: ag.agreement_no || "",
+      agreement_type: p.agreement_type || "",
+      item_no: ag.item_no || "",
+      colour: ag.colour || "",
+      item_type: ag.item_type || "Finished",
+      start_date: ag.start_date || "",
+      end_date: ag.end_date || "",
+      item_description: ag.item_description || ag.description || "",
+      quality: ag.quality || p.quality || "",
+      design: ag.design || p.design || "",
+      width: ag.width || p.width || "",
+      vendor_design: ag.vendor_design || "",
+      description: ag.description || "",
+      agreed_min_qty: ag.agreed_min_qty || "",
+      log_agreed_min_qty: ag.log_agreed_min_qty || "",
+      agreed_max_qty: ag.agreed_max_qty || "",
+      log_agreed_max_qty: ag.log_agreed_max_qty || "",
+      log_end_date: ag.log_end_date || "",
+    })
+    setEditingId(ag.id)
+    openModal()
   }
   const onSubmit = async (vals) => {
     setIsSubmitting(true)
@@ -70,23 +98,29 @@ export const useAgreementPlacementModal = (onCreated) => {
           created_by_name: user?.full_name || user?.name || user?.email || null
         }
       }
-      const created = await createAgreement(payload)
-      if (created?.id) {
+      let res
+      if (editingId) {
+        res = await updateAgreement(editingId, payload)
+        Notify.success("Agreement updated")
+      } else {
+        res = await createAgreement(payload)
         Notify.success("Agreement created")
-        closeModal()
-        if (onCreated) onCreated(created)
       }
+      closeModal()
+      if (onCreated) onCreated(res)
     } finally {
       setIsSubmitting(false)
     }
   }
   return {
     openModal,
+    openForEdit,
     closeModal,
     control: form.control,
     errors: form.formState.errors,
     isSubmitting,
     handleSubmit: form.handleSubmit,
     onSubmit,
+    isEdit: !!editingId,
   }
 }
