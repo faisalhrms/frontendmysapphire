@@ -974,7 +974,9 @@ const EquipmentDashboard = () => {
                                         <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                                             eq.status === 'Functional' ? 'bg-success/10 text-success' :
                                                 eq.status === 'Faulty' ? 'bg-danger/10 text-danger' :
-                                                    'bg-warning text-warning'
+                                                    eq.status === 'Brand New' ? 'bg-info/10 text-info' :
+                                                        eq.status === 'Brand New' ? 'bg-primary/10 text-primary' :
+                                                    'bg-warning/10 text-warning'
                                         }`}>
                                             {eq.status}
                                         </span>
