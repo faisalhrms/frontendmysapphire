@@ -16,7 +16,7 @@ import CustomerHubEmailList from "@modules/customer-hub/mail-settings/views/Cust
 import CustomerHubEmailConfig from "@modules/customer-hub/mail-settings/components/CustomerHubEmailConfig.jsx";
 import GreigeLeadTimeList from "@modules/customer-hub/master-data/greige-lead-times/views/GreigeLeadTimeList.jsx";
 import GreigeLeadTimeForm from "@modules/customer-hub/master-data/greige-lead-times/components/GreigeLeadTimeForm.jsx";
-import AgreementApprovalDetail from "@modules/customer-hub/customer-orders/components/AgreementApprovalDetail.jsx";
+import AgreementApprovalDetail from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementApprovalDetail.jsx";
 
 
 export const CUSTOMER_HUB_ROUTES = {

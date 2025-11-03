@@ -49,12 +49,10 @@ export const deleteAgreement = async (id, opts = {}) => {
   }
 }
 
-export const datatableAgreements = async ({ skip = 0, limit = 10, s = "" } = {}, opts = {}) => {
+export const datatableAgreements = async ({ skip = 0, limit = 10, s = "", mailbox = "" } = {}, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/agreements/datatable/`, {
-      params: { skip: String(skip), limit: String(limit), ...(s ? { s } : {}) },
-      signal: opts.signal,
-    })
+    const params = { skip: String(skip), limit: String(limit), ...(s ? { s } : {}), ...(mailbox ? { mailbox } : {}) }
+    const res = await api.get(`${ROOT}/agreements/datatable/`, { params, signal: opts.signal })
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to load agreements"))
@@ -69,28 +67,6 @@ export const submitAgreement = async (id, opts = {}) => {
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to submit"))
-    throw error
-  }
-}
-
-export const approveAgreement = async (id, remarks, opts = {}) => {
-  try {
-    const res = await api.post(`${ROOT}/agreements/${id}/approve/`, { remarks }, { signal: opts.signal })
-    Notify.success("Approved")
-    return res.data?.data || res.data
-  } catch (error) {
-    Notify.error(serverMessage(error, "Failed to approve"))
-    throw error
-  }
-}
-
-export const rejectAgreement = async (id, remarks, opts = {}) => {
-  try {
-    const res = await api.post(`${ROOT}/agreements/${id}/reject/`, { remarks }, { signal: opts.signal })
-    Notify.success("Rejected")
-    return res.data?.data || res.data
-  } catch (error) {
-    Notify.error(serverMessage(error, "Failed to reject"))
     throw error
   }
 }

@@ -1,13 +1,7 @@
 import React, { useMemo, useState } from "react"
 import { Search, X, CheckCircle2 } from "lucide-react"
 
-const Chip = ({ k, v }) =>
-  v ? (
-    <span className="inline-flex items-center gap-1 rounded-full border dark:border-defaultborder/20 px-2 py-1 text-xs">
-      <span className="opacity-70">{k}:</span>
-      <span className="font-medium">{v}</span>
-    </span>
-  ) : null
+const Chip = ({ k, v }) => v ? (<span className="inline-flex items-center gap-1 rounded-full border dark:border-defaultborder/20 px-2 py-1 text-xs"><span className="opacity-70">{k}:</span><span className="font-medium">{v}</span></span>) : null
 
 const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta = {} }) => {
   const [filterText, setFilterText] = useState("")
@@ -26,10 +20,7 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
         i.finished_color_description,
         String(i.finished_width_cm || ""),
         String(i.finished_width_inches || "")
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
+      ].filter(Boolean).join(" ").toLowerCase()
       return bag.includes(q)
     })
   }, [choices, filterText])
@@ -46,16 +37,10 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
             <X size={16} />
           </button>
         </div>
-
         <div className="px-5 py-3 flex items-center gap-2 bg-light/40 dark:bg-white/5">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 opacity-60" size={16} />
-            <input
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-              placeholder="Search item code, design, color, width"
-              className="w-full pl-9 pr-3 h-9 rounded-md border dark:border-defaultborder/20 bg-white dark:bg-transparent text-sm"
-            />
+            <input value={filterText} onChange={(e) => setFilterText(e.target.value)} placeholder="Search item code, design, color, width" className="w-full pl-9 pr-3 h-9 rounded-md border dark:border-defaultborder/20 bg-white dark:bg-transparent text-sm" />
           </div>
           <div className="hidden md:flex flex-wrap gap-2">
             <Chip k="Quality" v={queryMeta.quality_code} />
@@ -64,7 +49,6 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
             <Chip k="Width" v={queryMeta.width} />
           </div>
         </div>
-
         <div className="grid grid-cols-12 gap-0">
           <div className="col-span-12 lg:col-span-7 border-r dark:border-defaultborder/20 overflow-auto max-h-[62vh]">
             <table className="min-w-full text-sm">
@@ -80,37 +64,25 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
               </thead>
               <tbody>
                 {filteredChoices.map((i) => (
-                  <tr
-                    key={i.id}
-                    onMouseEnter={() => setHoverItem(i)}
-                    className="border-b dark:border-defaultborder/20 hover:bg-light/60 dark:hover:bg-white/5"
-                  >
+                  <tr key={i.id} onMouseEnter={() => setHoverItem(i)} className="border-b dark:border-defaultborder/20 hover:bg-light/60 dark:hover:bg-white/5">
                     <td className="py-2 px-4 font-medium">{i.processed_item_code}</td>
                     <td className="py-2 px-4">{i.finished_design_description || i.greige_design}</td>
                     <td className="py-2 px-4">{i.finished_color_description || i.greige_color}</td>
                     <td className="py-2 px-4">{i.finished_width_cm}</td>
                     <td className="py-2 px-4">{i.finished_width_inches}</td>
                     <td className="py-2 px-4">
-                      <button
-                        onClick={() => onUse && onUse(i)}
-                        className="ti-btn ti-btn-primary !mb-0 text-xs"
-                      >
-                        Use
-                      </button>
+                      <button onClick={() => onUse && onUse(i)} className="ti-btn ti-btn-primary !mb-0 text-xs">Use</button>
                     </td>
                   </tr>
                 ))}
                 {!filteredChoices.length ? (
                   <tr>
-                    <td colSpan={6} className="py-6 text-center text-sm opacity-70">
-                      No items in the list
-                    </td>
+                    <td colSpan={6} className="py-6 text-center text-sm opacity-70">No items in the list</td>
                   </tr>
                 ) : null}
               </tbody>
             </table>
           </div>
-
           <div className="col-span-12 lg:col-span-5 max-h-[62vh] overflow-auto">
             <div className="p-5">
               {hoverItem ? (
@@ -135,10 +107,7 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
                     <div className="font-medium">{hoverItem.weft_blend || "-"}</div>
                   </div>
                   <div className="pt-2">
-                    <button
-                      onClick={() => onUse && onUse(hoverItem)}
-                      className="ti-btn ti-btn-success !mb-0 w-full inline-flex items-center justify-center gap-2"
-                    >
+                    <button onClick={() => onUse && onUse(hoverItem)} className="ti-btn ti-btn-success !mb-0 w-full inline-flex items-center justify-center gap-2">
                       <CheckCircle2 size={16} />
                       Use this item
                     </button>
@@ -152,7 +121,6 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
             </div>
           </div>
         </div>
-
         <div className="px-5 py-3 border-t dark:border-defaultborder/20 flex items-center justify-between">
           <div className="text-xs opacity-70">Showing {filteredChoices.length} of {choices.length}</div>
           <div className="flex gap-2">

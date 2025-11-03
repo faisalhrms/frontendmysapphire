@@ -35,3 +35,8 @@ export const saveChannel = async (payload) => {
   Notify.success("Saved");
   return res.data?.data || res.data;
 };
+
+export const manualFetchEmails = async (payload) => {
+  const res = await api.post("customer-hub/manual-fetch-emails/", payload);
+  return res.data?.data || res.data;
+};
