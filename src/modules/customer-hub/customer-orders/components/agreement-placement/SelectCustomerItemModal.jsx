@@ -9,10 +9,11 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
 
   const filteredChoices = useMemo(() => {
     const q = filterText.trim().toLowerCase()
+    console.log(choices)
     if (!q) return choices
     return choices.filter((i) => {
       const bag = [
-        i.processed_item_code,
+        i.greige_item_code,
         i.quality_code,
         i.greige_design,
         i.finished_design_description,
@@ -65,7 +66,7 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
               <tbody>
                 {filteredChoices.map((i) => (
                   <tr key={i.id} onMouseEnter={() => setHoverItem(i)} className="border-b dark:border-defaultborder/20 hover:bg-light/60 dark:hover:bg-white/5">
-                    <td className="py-2 px-4 font-medium">{i.processed_item_code}</td>
+                    <td className="py-2 px-4 font-medium">{i.greige_item_code}</td>
                     <td className="py-2 px-4">{i.finished_design_description || i.greige_design}</td>
                     <td className="py-2 px-4">{i.finished_color_description || i.greige_color}</td>
                     <td className="py-2 px-4">{i.finished_width_cm}</td>
@@ -87,7 +88,7 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
             <div className="p-5">
               {hoverItem ? (
                 <div className="rounded-xl border dark:border-defaultborder/20 p-4 space-y-3">
-                  <div className="text-[.95rem] font-semibold">{hoverItem.processed_item_code}</div>
+                  <div className="text-[.95rem] font-semibold">{hoverItem.greige_item_code}</div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="opacity-70">Quality</div>
                     <div className="font-medium">{hoverItem.quality_code || "-"}</div>
