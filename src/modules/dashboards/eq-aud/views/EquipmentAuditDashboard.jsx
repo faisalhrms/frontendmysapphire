@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import {
-    Monitor, Cpu, HardDrive, MemoryStick, Network, Shield, MapPin, Building, BarChart3, Activity, Users, Server,
+    Monitor, Cpu, HardDrive, MemoryStick, Network, Shield, MapPin, Building, BarChart3, Activity, Users, Server,LucideMail
 } from "lucide-react";
 
 import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
@@ -84,6 +84,7 @@ const EquipmentAuditDashboard = () => {
         { key: "domain_name", label: "Domains", icon: Activity },
         { key: "disk_type", label: "Disk Types", icon: HardDrive },
         { key: "cpu_model", label: "CPU", icon: Cpu },
+        { key: "email_server", label: "Email Server", icon: LucideMail },
     ];
 
     const summary          = useMemo(() => auditData?.summary ?? {}, [auditData]);
