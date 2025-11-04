@@ -32,7 +32,7 @@ const YarnConsumptionModal = ({
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="absolute inset-0 bg-black/50" />
-      <div className="relative w-full md:max-w-4xl rounded-t-2xl md:rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-bodybg pointer-events-auto">
+      <div className="relative w-full md:max-w-4xl rounded-xl md:rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-bodybg pointer-events-auto">
         <div className="px-5 py-4 flex items-center justify-between">
           <div className="text-[.98rem] font-semibold">Yarn Consumption</div>
           <button type="button" className="ti-btn ti-btn-light !mb-0" onClick={onClose}>

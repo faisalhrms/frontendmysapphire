@@ -324,6 +324,7 @@ const AgreementPlacementForm = ({
               design={design}
               color={color}
               widthSeed={widthSeed}
+              yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
               widthInches={
                 (matchedItem && matchedItem.greige_width) ||
                 widthSeed ||
@@ -345,6 +346,7 @@ const AgreementPlacementForm = ({
                 construction={watch("construction")}
                 warpBlend={watch("warp_blend")}
                 weftBlend={watch("weft_blend")}
+                yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
               />
               <AgreementYarnBags
                 values={{

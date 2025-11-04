@@ -16,9 +16,10 @@ export const shallowEqual = (a, b) => {
 }
 
 export const buildParams = (seed) => {
-  const agreement_id = seed?.agreement_id || seed?.agreement?.id || undefined
-  const email_id = agreement_id ? undefined : (seed?.email_id || seed?.email?.id || undefined)
-  console.log(seed)
+  const agreement_id = seed?.id || seed?.agreement?.id || undefined
+  const email_id = agreement_id
+    ? undefined
+    : (seed?.email_id || seed?.email?.id || undefined)
   return {
     quality_code: pick(seed || {}, ["quality_code", "quality"]),
     greige_item_code: pick(seed || {}, ["greige_item_code", "greige_item", "item_code"]),
@@ -26,7 +27,7 @@ export const buildParams = (seed) => {
     color: pick(seed || {}, ["colour", "greige_color", "finished_color_description"]),
     width: pick(seed || {}, ["width", "width_cm", "finished_width_cm", "width_inches", "finished_width_inches", "greige_width"]),
     agreement_id,
-    email_id
+    email_id,
   }
 }
 
