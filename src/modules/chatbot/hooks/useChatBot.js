@@ -17,6 +17,8 @@ const defaultAssetSuggestions = [
 const defaultHrPoliciesSuggestions = [
   "Give me fuel allowance of grade 11 and above",
   "What's travel policy of sapphire retail",
+  "What's user account logout policy in days",
+  "In case any it incident occur, to whome it should be reported?",
   "Is a G11 manager eligible for a laptop under the policy?",
 ]
 
