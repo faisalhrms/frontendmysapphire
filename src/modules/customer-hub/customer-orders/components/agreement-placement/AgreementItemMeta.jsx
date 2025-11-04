@@ -3,7 +3,7 @@ import { Ruler, Activity } from "lucide-react"
 import Stat from "@modules/customer-hub/customer-orders/components/agreement-placement/Stat.jsx"
 import ChipAgreement from "@modules/customer-hub/customer-orders/components/agreement-placement/ChipAgreement.jsx"
 
-const AgreementItemMeta = ({ qc, design, color, widthSeed, widthInches, widthCm, greigeItemCode, onOpenActivity, actionsCount = 0 ,yarn_dyed_or_greige}) => (
+const AgreementItemMeta = ({ qc, design, color, widthSeed,yarn_dyed_or_greige ,widthInches, widthCm, greigeItemCode, onOpenActivity, actionsCount = 0 }) => (
   <div>
     <div className="px-4 py-2 border-b border-slate-200/70 dark:border-white/10">
       <div className="flex items-center justify-between">
@@ -22,7 +22,7 @@ const AgreementItemMeta = ({ qc, design, color, widthSeed, widthInches, widthCm,
           {actionsCount ? <span className="text-[10px] opacity-60">({actionsCount})</span> : null}
         </div>
       </div>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-2 flex flex-wrap gap-1">
         <ChipAgreement k="Quality" v={qc} />
         <ChipAgreement k="Design" v={design} />
         <ChipAgreement k="Color" v={color} />

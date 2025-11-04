@@ -1,6 +1,46 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import ChatService from "@modules/chatbot/services/ChatService.js"
 
+const defaultExportSuggestions = [
+  "Top 10 exporters of Bed by value_usd last 12 months bar chart",
+  "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
+  "Yearly classification-wise split of bed linen exports in value USD"
+]
+
+const defaultAssetSuggestions = [
+  "Count of devices without antivirus by location in a table",
+  "Devices without VPN or corporate email configured grouped by device_type",
+  "Top 10 locations by laptops missing antivirus",
+  "List devices assigned to a specific user with ram_gb and hard_disk_gb"
+]
+
+const defaultHrPoliciesSuggestions = [
+  "Give me fuel allowance of grade 11 and above",
+  "What's travel policy of sapphire retail",
+  "Is a G11 manager eligible for a laptop under the policy?",
+]
+
+const defaultHrPasSuggestions = [
+  "Objectives status summary for my team this year",
+  "List employees whose objectives are still pending submission this year",
+  "Top 5 KRAs by total weightage for my team this year",
+  "Objectives currently awaiting my approval in the workflow"
+]
+
+const defaultHrPmsSuggestions = [
+  "List my open PMS tasks due this week",
+  "Projects where I am project manager with delayed tasks",
+  "PMS tasks assigned to me without due dates",
+  "Tasks in my queue grouped by project"
+]
+
+const defaultHrEmployeeSuggestions = [
+  "Show profile details of employee 2081",
+  "Find employee by email faisal.rehman@sapphiretextiles.com.pk",
+  "Who is the line manager of employee 2081",
+  "Search employees in marketing department"
+]
+
 export default function useChatBot() {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState("")
@@ -11,13 +51,12 @@ export default function useChatBot() {
   const [modeSelection, setModeSelection] = useState("Select Source")
   const [modeOpen, setModeOpen] = useState(false)
   const [hrSubtypes, setHrSubtypes] = useState(["policies"])
-  const defaultSuggestions = [
-    "Top 10 exporters of Bed by value_usd last 12 months bar chart",
-    "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
-    "Yearly classification-wise split of bed linen exports in value USD"
+  const defaultChecks = [
+    "status_code","title","meta_description","h1","canonical","viewport","html_lang","open_graph","twitter_card",
+    "robots","sitemap","images_alt_ratio","ecommerce","ecom_schema","ecom_add_to_cart","ecom_prices","ecom_plp",
+    "ecom_cart","ecom_search","security_headers","broken_links"
   ]
-  const [suggestions, setSuggestions] = useState(defaultSuggestions)
-  const defaultChecks = ["status_code","title","meta_description","h1","canonical","viewport","html_lang","open_graph","twitter_card","robots","sitemap","images_alt_ratio","ecommerce","ecom_schema","ecom_add_to_cart","ecom_prices","ecom_plp","ecom_cart","ecom_search","security_headers","broken_links"]
+  const [suggestions, setSuggestions] = useState(defaultExportSuggestions)
   const [qcTarget, setQcTarget] = useState("https://pk.sapphireonline.pk")
   const [qcChecks, setQcChecks] = useState(defaultChecks)
   const [qcRender, setQcRender] = useState(true)
@@ -46,9 +85,29 @@ export default function useChatBot() {
     el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden"
   }, [])
 
+  useEffect(() => {
+    const sub = (hrSubtypes && hrSubtypes[0]) || "policies"
+    let items = defaultExportSuggestions
+    if (modeSelection === "Assets Audit") {
+      items = defaultAssetSuggestions
+    } else if (modeSelection === "HR") {
+      if (sub === "policies") items = defaultHrPoliciesSuggestions
+      else if (sub === "pas") items = defaultHrPasSuggestions
+      else if (sub === "pms") items = defaultHrPmsSuggestions
+      else if (sub === "employee") items = defaultHrEmployeeSuggestions
+      else items = defaultHrPoliciesSuggestions
+    } else if (modeSelection === "Export Data") {
+      items = defaultExportSuggestions
+    }
+    setSuggestions(items)
+  }, [modeSelection, hrSubtypes])
+
   const normalizeHtml = raw => {
     const html = typeof raw === "string" ? raw : raw?.html ?? raw?.answer ?? raw?.response ?? JSON.stringify(raw)
-    return html.replace(/<img\s/gi, "<img loading='lazy' referrerpolicy='no-referrer' style='max-width:100%;height:auto;border-radius:8px;display:block;margin:.5rem 0;' ")
+    return html.replace(
+      /<img\s/gi,
+      "<img loading='lazy' referrerpolicy='no-referrer' style='max-width:100%;height:auto;border-radius:8px;display:block;margin:.5rem 0;' "
+    )
   }
 
   const normalizeStatus = l => {
@@ -79,7 +138,7 @@ export default function useChatBot() {
     try { recorderRef.current?.stop() } catch {}
     try { mediaStreamRef.current?.getTracks()?.forEach(t => t.stop()) } catch {}
     recorderRef.current = null
-    mediaStreamRef.current = null
+    mediaStreamRef = null
   }
 
   const doTranscribe = async blob => {
@@ -176,13 +235,16 @@ export default function useChatBot() {
     }
   }
 
-  const scheduleFlush = (i) => {
+  const scheduleFlush = i => {
     if (flushTimerRef.current) return
     const now = performance.now()
     const delay = Math.max(0, FLUSH_MIN_MS - (now - lastFlushTsRef.current))
     flushTimerRef.current = window.setTimeout(() => {
       flushTimerRef.current = 0
-      if (tagDepthRef.current > 0) { scheduleFlush(i); return }
+      if (tagDepthRef.current > 0) {
+        scheduleFlush(i)
+        return
+      }
       const p = pendingHtmlRef.current
       if (!p) return
       pendingHtmlRef.current = ""
@@ -212,8 +274,11 @@ export default function useChatBot() {
     scheduleFlush(i)
   }
 
-  const flushAll = (i) => {
-    if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
+  const flushAll = i => {
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current)
+      flushTimerRef.current = 0
+    }
     const p = pendingHtmlRef.current
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
@@ -227,7 +292,7 @@ export default function useChatBot() {
     }
   }
 
-  const startStream = (msg) => {
+  const startStream = msg => {
     setIsThinking(true)
     setMessages(prev => {
       const now = new Date()
@@ -254,7 +319,10 @@ export default function useChatBot() {
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
     lastFlushTsRef.current = 0
-    if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current)
+      flushTimerRef.current = 0
+    }
 
     streamCtrlRef.current = ChatService.stream({
       msg,
@@ -270,7 +338,8 @@ export default function useChatBot() {
         if (ev.type === "status") {
           const text = normalizeStatus(ev.label)
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], statuses: [...(c[i].statuses || []), text], latestStatus: text }
             return c
           })
@@ -278,38 +347,44 @@ export default function useChatBot() {
           onDeltaChunk(i, ev.text || "")
         } else if (ev.type === "chart") {
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], chart: ev.spec }
             return c
           })
         } else if (ev.type === "qc_result") {
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], qc: ev.result }
             return c
           })
         } else if (ev.type === "qc_llm") {
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], qcLlm: ev.html }
             return c
           })
         } else if (ev.type === "employee") {
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], employee: ev.data, employee_candidates: null }
             return c
           })
         } else if (ev.type === "employee_candidates") {
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], employee_candidates: ev.items, employee: null }
             return c
           })
         } else if (ev.type === "final") {
           flushAll(i)
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], html: normalizeHtml(ev.html), latestStatus: null }
             return c
           })
@@ -320,7 +395,8 @@ export default function useChatBot() {
           flushAll(i)
           setIsThinking(false)
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], loading: false, latestStatus: null, error: ev.message || "Something went wrong" }
             return c
           })
@@ -328,7 +404,8 @@ export default function useChatBot() {
           flushAll(i)
           setIsThinking(false)
           setMessages(prev => {
-            const c = [...prev]; if (!c[i]) return prev
+            const c = [...prev]
+            if (!c[i]) return prev
             c[i] = { ...c[i], loading: false }
             return c
           })
@@ -342,7 +419,7 @@ export default function useChatBot() {
     setMessages([])
   }
 
-  const ask = (msg) => {
+  const ask = msg => {
     if (!msg) return
     if (!isBotActive) handleStartChat()
     startStream(msg)
@@ -362,11 +439,13 @@ export default function useChatBot() {
     setQcRender(true)
     setHrSubtypes(["policies"])
     botIdxRef.current = -1
-    setSuggestions(defaultSuggestions)
     if (inputRef.current) autoResize(inputRef.current)
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
-    if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current)
+      flushTimerRef.current = 0
+    }
   }
 
   const handleSend = () => {
@@ -374,7 +453,9 @@ export default function useChatBot() {
     if (!msg) return
     if (!isBotActive) handleStartChat()
     setInput("")
-    if (inputRef.current) { inputRef.current.style.height = "auto" }
+    if (inputRef.current) {
+      inputRef.current.style.height = "auto"
+    }
     startStream(msg)
   }
 
@@ -386,7 +467,10 @@ export default function useChatBot() {
       try { stopRecording() } catch {}
       try { streamCtrlRef.current?.abort() } catch {}
       try { cancelAnimationFrame(rafTickRef.current) } catch {}
-      if (flushTimerRef.current) { clearTimeout(flushTimerRef.current); flushTimerRef.current = 0 }
+      if (flushTimerRef.current) {
+        clearTimeout(flushTimerRef.current)
+        flushTimerRef.current = 0
+      }
     }
   }, [stopSpeechRecognition])
 

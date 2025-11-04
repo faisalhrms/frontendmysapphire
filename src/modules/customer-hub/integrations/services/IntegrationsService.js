@@ -40,3 +40,9 @@ export const manualFetchEmails = async (payload) => {
   const res = await api.post("customer-hub/manual-fetch-emails/", payload);
   return res.data?.data || res.data;
 };
+
+export const reprocessEmails = async (payload) => {
+  const res = await api.post("customer-hub/reprocess-emails/", payload);
+  return res.data?.data || res.data;
+};
+

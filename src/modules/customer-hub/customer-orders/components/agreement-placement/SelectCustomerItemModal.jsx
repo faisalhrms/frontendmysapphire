@@ -42,22 +42,23 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white dark:bg-bodybg rounded-2xl shadow-2xl w-[96vw] max-w-5xl max-h-[86vh] overflow-hidden border dark:border-defaultborder/20">
         <div className="px-5 py-4 border-b dark:border-defaultborder/20 flex items-center justify-between">
-          <div className="text-[.95rem] font-semibold">Select Customer Item</div>
-          <button
-            onClick={onClose}
-            className="ti-btn ti-btn-light !mb-0 h-8 w-8 grid place-items-center"
-          >
-            <X size={16} />
-          </button>
+          <div className="text-[.9rem] font-semibold">Select Customer Item</div>
+            <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white text-2xl"
+                aria-label="Close modal"
+            >
+                ✕
+            </button>
         </div>
         <div className="px-5 py-3 flex items-center gap-2 bg-light/40 dark:bg-white/5">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 opacity-60" size={16} />
+            <Search className="absolute left-3 top-2.5 opacity-60" size={14} />
             <input
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
               placeholder="Search item code, design, color, width"
-              className="w-full pl-9 pr-3 h-9 rounded-md border dark:border-defaultborder/20 bg-white dark:bg-transparent text-sm"
+              className="w-full pl-9 pr-3 h-8 rounded-md border dark:border-defaultborder/20 bg-white dark:bg-transparent text-xs"
             />
           </div>
           <div className="hidden md:flex flex-wrap gap-2">
@@ -69,15 +70,15 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
         </div>
         <div className="grid grid-cols-12 gap-0">
           <div className="col-span-12 lg:col-span-7 border-r dark:border-defaultborder/20 overflow-auto max-h-[62vh]">
-            <table className="min-w-full text-sm">
+            <table className="min-w-full text-xs">
               <thead className="sticky top-0 bg-white dark:bg-bodybg border-b dark:border-defaultborder/20">
                 <tr className="text-left">
-                  <th className="py-2 px-4">Item Code</th>
-                  <th className="py-2 px-4">Design</th>
-                  <th className="py-2 px-4">Color</th>
-                  <th className="py-2 px-4">F.Width(cm)</th>
-                  <th className="py-2 px-4">G.Width(in)</th>
-                  <th className="py-2 px-4">Action</th>
+                  <th className="py-1.5 px-3 font-medium">Item Code</th>
+                  <th className="py-1.5 px-3 font-medium">Design</th>
+                  <th className="py-1.5 px-3 font-medium">Color</th>
+                  <th className="py-1.5 px-3 font-medium">F.Width(cm)</th>
+                  <th className="py-1.5 px-3 font-medium">G.Width(in)</th>
+                  <th className="py-1.5 px-3 font-medium">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -87,19 +88,19 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
                     onMouseEnter={() => setHoverItem(i)}
                     className="border-b dark:border-defaultborder/20 hover:bg-light/60 dark:hover:bg-white/5"
                   >
-                    <td className="py-2 px-4 font-medium">{i.greige_item_code}</td>
-                    <td className="py-2 px-4">
+                    <td className="py-1.5 px-3 font-medium">{i.greige_item_code}</td>
+                    <td className="py-1.5 px-3">
                       {i.finished_design_description || i.greige_design}
                     </td>
-                    <td className="py-2 px-4">
+                    <td className="py-1.5 px-3">
                       {i.finished_color_description || i.greige_color}
                     </td>
-                    <td className="py-2 px-4">{i.finished_width_cm}</td>
-                    <td className="py-2 px-4">{i.greige_width || i.finished_width_inches}</td>
-                    <td className="py-2 px-4">
+                    <td className="py-1.5 px-3">{i.finished_width_cm}</td>
+                    <td className="py-1.5 px-3">{i.greige_width || i.finished_width_inches}</td>
+                    <td className="py-1.5 px-3">
                       <button
                         onClick={() => onUse && onUse(i)}
-                        className="ti-btn ti-btn-primary !mb-0 text-xs"
+                        className="ti-btn ti-btn-primary !mb-0 text-[0.65rem] h-7 px-2"
                       >
                         Use
                       </button>
@@ -108,7 +109,7 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
                 ))}
                 {!filteredChoices.length ? (
                   <tr>
-                    <td colSpan={6} className="py-6 text-center text-sm opacity-70">
+                    <td colSpan={6} className="py-5 text-center text-xs opacity-70">
                       No items in the list
                     </td>
                   </tr>
@@ -119,11 +120,11 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
           <div className="col-span-12 lg:col-span-5 max-h-[62vh] overflow-auto">
             <div className="p-5">
               {hoverItem ? (
-                <div className="rounded-xl border dark:border-defaultborder/20 p-4 space-y-3">
-                  <div className="text-[.95rem] font-semibold">
+                <div className="rounded-xl border dark:border-defaultborder/20 p-4 space-y-3 text-xs">
+                  <div className="text-[0.8rem] font-semibold">
                     {hoverItem.greige_item_code}
                   </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="opacity-70">Quality</div>
                     <div className="font-medium">{hoverItem.quality_code || "-"}</div>
                     <div className="opacity-70">Design</div>
@@ -156,15 +157,15 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
                   <div className="pt-2">
                     <button
                       onClick={() => onUse && onUse(hoverItem)}
-                      className="ti-btn ti-btn-success !mb-0 w-full inline-flex items-center justify-center gap-2"
+                      className="ti-btn ti-btn-success !mb-0 w-full inline-flex items-center justify-center gap-2 text-xs h-8"
                     >
-                      <CheckCircle2 size={16} />
+                      <CheckCircle2 size={14} />
                       Use this item
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="rounded-xl border dark:border-defaultborder/20 p-8 text-center">
+                <div className="rounded-xl border dark:border-defaultborder/20 p-8 text-center text-xs">
                   <div className="opacity-70">Hover a row to preview details</div>
                 </div>
               )}
@@ -172,11 +173,11 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
           </div>
         </div>
         <div className="px-5 py-3 border-t dark:border-defaultborder/20 flex items-center justify-between">
-          <div className="text-xs opacity-70">
+          <div className="text-[0.7rem] opacity-70">
             Showing {filteredChoices.length} of {choices.length}
           </div>
           <div className="flex gap-2">
-            <button onClick={onClose} className="ti-btn ti-btn-light !mb-0 text-sm">
+            <button onClick={onClose} className="ti-btn ti-btn-light !mb-0 text-xs h-8 px-3">
               Close
             </button>
           </div>
