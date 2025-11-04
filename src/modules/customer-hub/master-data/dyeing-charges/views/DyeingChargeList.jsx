@@ -10,6 +10,8 @@ const DyeingChargeList = () => {
   const dataTableRef = useRef();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [qualityCode, setQualityCode] = useState("");
+  const [key, setKey] = useState(Date.now())
+  const refresh = () => setKey(Date.now())
 
   const columns = [
     {
@@ -54,7 +56,7 @@ const DyeingChargeList = () => {
 
   return (
     <>
-      <DataTable columns={columns} title="Dyeing Charges" apiUrl="customer-hub/dyeing-charges/datatable/" ref={dataTableRef} externalFilters={['tab']} buttons={buttons} />
+      <DataTable columns={columns} title="Dyeing Charges" apiUrl="customer-hub/dyeing-charges/datatable/" ref={dataTableRef} externalFilters={['tab']} buttons={buttons}  key={key}  />
       {isUploadModalOpen && (
         <UploadMasterModal
           title="Upload Dyeing Charges"
@@ -62,6 +64,7 @@ const DyeingChargeList = () => {
           extraParams={{}}
           closeModal={() => setIsUploadModalOpen(false)}
           onUploaded={() => {}}
+          refreshTable={refresh}
         />
       )}
     </>

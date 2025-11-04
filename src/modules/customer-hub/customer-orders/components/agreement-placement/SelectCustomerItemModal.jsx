@@ -18,12 +18,13 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
     if (!q) return choices
     return choices.filter((i) => {
       const bag = [
-        i.processed_item_code,
+        i.greige_item_code,
         i.quality_code,
         i.greige_design,
         i.finished_design_description,
         i.greige_color,
         i.finished_color_description,
+        String(i.greige_width || ""),
         String(i.finished_width_cm || ""),
         String(i.finished_width_inches || "")
       ]
@@ -42,11 +43,13 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
       <div className="relative bg-white dark:bg-bodybg rounded-2xl shadow-2xl w-[96vw] max-w-5xl max-h-[86vh] overflow-hidden border dark:border-defaultborder/20">
         <div className="px-5 py-4 border-b dark:border-defaultborder/20 flex items-center justify-between">
           <div className="text-[.95rem] font-semibold">Select Customer Item</div>
-          <button onClick={onClose} className="ti-btn ti-btn-light !mb-0 h-8 w-8 grid place-items-center">
+          <button
+            onClick={onClose}
+            className="ti-btn ti-btn-light !mb-0 h-8 w-8 grid place-items-center"
+          >
             <X size={16} />
           </button>
         </div>
-
         <div className="px-5 py-3 flex items-center gap-2 bg-light/40 dark:bg-white/5">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 opacity-60" size={16} />
@@ -64,7 +67,6 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
             <Chip k="Width" v={queryMeta.width} />
           </div>
         </div>
-
         <div className="grid grid-cols-12 gap-0">
           <div className="col-span-12 lg:col-span-7 border-r dark:border-defaultborder/20 overflow-auto max-h-[62vh]">
             <table className="min-w-full text-sm">
@@ -73,8 +75,8 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
                   <th className="py-2 px-4">Item Code</th>
                   <th className="py-2 px-4">Design</th>
                   <th className="py-2 px-4">Color</th>
-                  <th className="py-2 px-4">Width(cm)</th>
-                  <th className="py-2 px-4">Width(in)</th>
+                  <th className="py-2 px-4">F.Width(cm)</th>
+                  <th className="py-2 px-4">G.Width(in)</th>
                   <th className="py-2 px-4">Action</th>
                 </tr>
               </thead>
@@ -85,11 +87,15 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
                     onMouseEnter={() => setHoverItem(i)}
                     className="border-b dark:border-defaultborder/20 hover:bg-light/60 dark:hover:bg-white/5"
                   >
-                    <td className="py-2 px-4 font-medium">{i.processed_item_code}</td>
-                    <td className="py-2 px-4">{i.finished_design_description || i.greige_design}</td>
-                    <td className="py-2 px-4">{i.finished_color_description || i.greige_color}</td>
+                    <td className="py-2 px-4 font-medium">{i.greige_item_code}</td>
+                    <td className="py-2 px-4">
+                      {i.finished_design_description || i.greige_design}
+                    </td>
+                    <td className="py-2 px-4">
+                      {i.finished_color_description || i.greige_color}
+                    </td>
                     <td className="py-2 px-4">{i.finished_width_cm}</td>
-                    <td className="py-2 px-4">{i.finished_width_inches}</td>
+                    <td className="py-2 px-4">{i.greige_width || i.finished_width_inches}</td>
                     <td className="py-2 px-4">
                       <button
                         onClick={() => onUse && onUse(i)}
@@ -110,25 +116,38 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
               </tbody>
             </table>
           </div>
-
           <div className="col-span-12 lg:col-span-5 max-h-[62vh] overflow-auto">
             <div className="p-5">
               {hoverItem ? (
                 <div className="rounded-xl border dark:border-defaultborder/20 p-4 space-y-3">
-                  <div className="text-[.95rem] font-semibold">{hoverItem.processed_item_code}</div>
+                  <div className="text-[.95rem] font-semibold">
+                    {hoverItem.greige_item_code}
+                  </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="opacity-70">Quality</div>
                     <div className="font-medium">{hoverItem.quality_code || "-"}</div>
                     <div className="opacity-70">Design</div>
-                    <div className="font-medium">{hoverItem.finished_design_description || hoverItem.greige_design || "-"}</div>
+                    <div className="font-medium">
+                      {hoverItem.finished_design_description ||
+                        hoverItem.greige_design ||
+                        "-"}
+                    </div>
                     <div className="opacity-70">Color</div>
-                    <div className="font-medium">{hoverItem.finished_color_description || hoverItem.greige_color || "-"}</div>
+                    <div className="font-medium">
+                      {hoverItem.finished_color_description || hoverItem.greige_color || "-"}
+                    </div>
                     <div className="opacity-70">Width (cm)</div>
-                    <div className="font-medium">{hoverItem.finished_width_cm || "-"}</div>
+                    <div className="font-medium">
+                      {hoverItem.finished_width_cm || "-"}
+                    </div>
                     <div className="opacity-70">Width (in)</div>
-                    <div className="font-medium">{hoverItem.finished_width_inches || "-"}</div>
+                    <div className="font-medium">
+                      {hoverItem.greige_width || hoverItem.finished_width_inches || "-"}
+                    </div>
                     <div className="opacity-70">Construction</div>
-                    <div className="font-medium">{hoverItem.fab_construction || "-"}</div>
+                    <div className="font-medium">
+                      {hoverItem.fab_construction || "-"}
+                    </div>
                     <div className="opacity-70">Warp Blend</div>
                     <div className="font-medium">{hoverItem.warp_blend || "-"}</div>
                     <div className="opacity-70">Weft Blend</div>
@@ -152,11 +171,14 @@ const SelectCustomerItemModal = ({ open, onClose, choices = [], onUse, queryMeta
             </div>
           </div>
         </div>
-
         <div className="px-5 py-3 border-t dark:border-defaultborder/20 flex items-center justify-between">
-          <div className="text-xs opacity-70">Showing {filteredChoices.length} of {choices.length}</div>
+          <div className="text-xs opacity-70">
+            Showing {filteredChoices.length} of {choices.length}
+          </div>
           <div className="flex gap-2">
-            <button onClick={onClose} className="ti-btn ti-btn-light !mb-0 text-sm">Close</button>
+            <button onClick={onClose} className="ti-btn ti-btn-light !mb-0 text-sm">
+              Close
+            </button>
           </div>
         </div>
       </div>

@@ -13,7 +13,7 @@ export const AGREEMENT_TYPES = [
   { label: "QPO", value: "QPO" },
 ]
 
-const AgreementPlacementModal = ({ control, errors, isSubmitting, handleSubmit, onSubmit, closeModal }) => {
+const AgreementPlacementModal = ({ control, errors, isSubmitting, handleSubmit, onSubmit, closeModal, isEdit = false }) => {
   const handleClose = useCallback(() => closeModal(), [closeModal])
   const type = useWatch({ control, name: "agreement_type" })
   const minimal = type === "MIN/MAX" || type === "CPR"
@@ -24,7 +24,7 @@ const AgreementPlacementModal = ({ control, errors, isSubmitting, handleSubmit, 
         <div className="max-h-full overflow-hidden ti-modal-content !w-full">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="ti-modal-header">
-              <h6 className="modal-title">Add Agreement</h6>
+              <h6 className="modal-title">{isEdit ? "Edit Agreement" : "Add Agreement"}</h6>
               <button type="button" className="hs-dropdown-toggle ti-modal-close-btn" onClick={handleClose}>
                 <span className="sr-only">Close</span>
                 <svg className="w-3.5 h-3.5" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,7 +53,6 @@ const AgreementPlacementModal = ({ control, errors, isSubmitting, handleSubmit, 
                 <div className="col-span-12 md:col-span-4">
                   <FormInput name="colour" control={control} errors={errors} placeholder="Colour" is_required={minimal} />
                 </div>
-
 
                 <div className="col-span-12 md:col-span-4">
                   <FormInput name="start_date" control={control} errors={errors} placeholder="Start Date" type="date" />
