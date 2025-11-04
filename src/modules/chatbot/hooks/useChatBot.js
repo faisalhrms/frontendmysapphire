@@ -138,7 +138,7 @@ export default function useChatBot() {
     try { recorderRef.current?.stop() } catch {}
     try { mediaStreamRef.current?.getTracks()?.forEach(t => t.stop()) } catch {}
     recorderRef.current = null
-    mediaStreamRef = null
+    mediaStreamRef.current = null
   }
 
   const doTranscribe = async blob => {
