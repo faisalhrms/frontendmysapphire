@@ -19,6 +19,8 @@ import { useMailboxes } from "@modules/customer-hub/customer-orders/hooks/useMai
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx"
 import { getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import { useQueryClient } from "@tanstack/react-query"
+import PrGenerationSection
+    from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx";
 
 const srcLabel = (s) => (s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : "")
 const statusLabel = (s) => (s ? String(s).split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") : "")
@@ -226,7 +228,7 @@ const CustomerOrders = () => {
                     )}
                     {activeTab === "tab-pr" && (
                       <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
-                        <InfoAlert />
+                        <PrGenerationSection seed={selected} />
                       </div>
                     )}
                   </div>
