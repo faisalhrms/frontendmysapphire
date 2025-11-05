@@ -123,7 +123,7 @@ const EquipmentAuditDashboard = () => {
                         </div>
                         <div>
                             <h1 className="text-xl md:text-2xl font-bold leading-tight dark:text-white">
-                                Equipment Audit Dashboard
+                                IT Audit Dashboard
                             </h1>
                             <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                                 Comprehensive device inventory, hardware analytics, and security compliance insights
