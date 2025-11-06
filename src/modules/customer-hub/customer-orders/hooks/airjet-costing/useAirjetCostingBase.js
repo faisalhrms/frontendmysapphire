@@ -112,6 +112,8 @@ export const useAirjetCostingBase = (seed) => {
       const patch = {
         ...data,
 
+        num_width: data.num_width,
+
         greige_width: data.greige_width,
 
         yarn_cost_per_yard:

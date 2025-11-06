@@ -7,25 +7,32 @@ export const toNum = (x, fb = NaN) => {
 
 export const pick = (o, keys) => keys.map(k => o?.[k]).find(v => v !== undefined && v !== null && v !== "") || ""
 
-export const shallowEqual = (a, b) => {
-  if (a === b) return true
-  const ak = Object.keys(a), bk = Object.keys(b)
-  if (ak.length !== bk.length) return false
-  for (let k of ak) if (a[k] !== b[k]) return false
-  return true
-}
-
 export const buildParams = (seed) => {
-  const agreement_id = seed?.id || seed?.agreement?.id || undefined
-  const email_id = agreement_id
-    ? undefined
-    : (seed?.email_id || seed?.email?.id || undefined)
+  const s = seed || {}
+  const agreement_id = s?.id || s?.agreement?.id || undefined
+  const email_id = agreement_id ? undefined : (s?.email_id || s?.email?.id || undefined)
+
+  const quality_code = pick(s, ["quality_code", "quality"])
+
+  const greige_item_code =
+    (Array.isArray(s.customer_item_matches) && s.customer_item_matches[0]
+      ? s.customer_item_matches[0].greige_item_code
+      : undefined)
+
+  const design = pick(s, ["design", "greige_design"])
+  const color = pick(s, ["colour", "greige_color"])
+  const width =
+    s?.payload?.width_inches ||
+    (Array.isArray(s.customer_item_matches) && s.customer_item_matches[0]
+      ? s.customer_item_matches[0].greige_width
+      : undefined)
+
   return {
-    quality_code: pick(seed || {}, ["quality_code", "quality"]),
-    greige_item_code: pick(seed || {}, ["greige_item_code", "greige_item", "item_code"]),
-    design: pick(seed || {}, ["design", "greige_design", "finished_design_description"]),
-    color: pick(seed || {}, ["colour", "greige_color", "finished_color_description"]),
-    width: pick(seed || {}, ["width", "width_cm", "finished_width_cm", "width_inches", "finished_width_inches", "greige_width"]),
+    quality_code,
+    greige_item_code,
+    design,
+    color,
+    width,
     agreement_id,
     email_id,
   }

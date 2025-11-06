@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react"
 import { Calculator, Search } from "lucide-react"
 import YarnConsumptionModal from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionModal.jsx"
+import YarnConsumptionCard from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionCard.jsx"
 import FormInput from "@components/form/FormInput.jsx"
 import FormSelect from "@components/form/FormSelect.jsx"
 import { AGREEMENT_TYPES } from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
@@ -96,10 +97,10 @@ const AgreementPlacementForm = ({
     if (!String(v.width_cm || "").trim() && m.finished_width_cm != null) {
       setValue("width_cm", String(m.finished_width_cm))
     }
-    if (!String(v.width_inches || "").trim() && m.finished_width_inches != null) {
-      setValue("width_inches", String(m.finished_width_inches))
+    if (!String(v.width_inches || "").trim() && m.greige_width != null) {
+      setValue("width_inches", String(m.greige_width))
     }
-  }, [choices, greigeCode])
+  }, [choices, greigeCode, getValues, setValue])
 
   const applyItem = useCallback(
     (i) => {
@@ -109,7 +110,7 @@ const AgreementPlacementForm = ({
       setValue("warp_blend", i.warp_blend || "")
       setValue("weft_blend", i.weft_blend || "")
       setValue("width_cm", String(i.finished_width_cm || ""))
-      setValue("width_inches", String(i.finished_width_inches || ""))
+      setValue("width_inches", String(i.greige_width || ""))
       setValue(
         "yarn_dyed_or_greige",
         i.yarn_dyed_or_greige || watch("yarn_dyed_or_greige") || ""
@@ -124,6 +125,13 @@ const AgreementPlacementForm = ({
     setChoices(fresh?.customer_item_matches || [])
     setStatusMsg(true)
   }, [seed?.id])
+
+  const totalMeters = watch("total_meters")
+  const widthInchesValue =
+    (matchedItem && matchedItem.greige_width) ||
+    widthSeed ||
+    watch("width_inches")
+  const widthCmValue = watch("width_cm")
 
   return (
     <div className="rounded-xl border dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
@@ -377,11 +385,27 @@ const AgreementPlacementForm = ({
         open={showYarn}
         onClose={() => setShowYarn(false)}
         item={matchedItem}
-        totalMeters={watch("total_meters")}
+        totalMeters={totalMeters}
         onTotalMetersChange={(v) => setValue("total_meters", v)}
+        widthInches={widthInchesValue}
+        widthCm={widthCmValue}
         onComputed={handleComputed}
         dyeingMeta={seed?.dyeing_meta}
       />
+
+      {!showYarn && (
+        <div className="hidden">
+          <YarnConsumptionCard
+            item={matchedItem}
+            totalMeters={totalMeters}
+            onTotalMetersChange={(v) => setValue("total_meters", v)}
+            widthInches={widthInchesValue}
+            widthCm={widthCmValue}
+            onComputed={handleComputed}
+            dyeingMeta={seed?.dyeing_meta}
+          />
+        </div>
+      )}
 
       <SelectCustomerItemModal
         open={open}

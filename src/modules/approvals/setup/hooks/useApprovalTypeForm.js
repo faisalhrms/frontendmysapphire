@@ -10,21 +10,17 @@ const formSchema = z.object({
     code: z.string().min(1, "Code is required"),
     label: z.string().min(1, "Label is required"),
     description: z.string().optional(),
-
     detail_page_url: z.string().min(1, "Detail page URL is required"),
     approval_page_url: z.string().optional(),
-
     notify_requester: z.boolean(),
     notify_on_all_actions: z.boolean(),
-
     sla_hours: z.union([z.number(), z.null()]).optional(),
     escalation_type: z.enum(["none", "next_level", "custom"]),
-
     reminder_enabled: z.boolean(),
     reminder_interval_hours: z.union([z.number(), z.null()]).optional(),
     reminder_max_days: z.union([z.number(), z.null()]).optional(),
-
     is_active: z.boolean(),
+    allow_parallel_approvers: z.boolean(),
 });
 
 export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
@@ -46,6 +42,7 @@ export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
             reminder_interval_hours: null,
             reminder_max_days: null,
             is_active: true,
+            allow_parallel_approvers: false,
         },
         resolver: zodResolver(formSchema),
         mode: "onChange",
@@ -67,9 +64,10 @@ export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
     const onSubmit = async (values) => {
         setIsSubmitting(true);
         try {
-            const url = editMode && approvalTypeId
-                ? `/approvals/type/${approvalTypeId}/`
-                : `/approvals/type/`;
+            const url =
+                editMode && approvalTypeId
+                    ? `/approvals/type/${approvalTypeId}/`
+                    : `/approvals/type/`;
 
             const method = editMode && approvalTypeId ? api.put : api.post;
 

@@ -72,6 +72,10 @@ const ApprovalRequesterDetail = ({ data, refetch }) => {
             minute: '2-digit'
         });
     };
+    const canTakeAction =
+      typeof data.can_take_action === "boolean"
+        ? data.can_take_action
+        : currentUser?.id === data.current_approver?.id;
 
     return (
         <>
@@ -181,61 +185,62 @@ const ApprovalRequesterDetail = ({ data, refetch }) => {
 
                         {/* Right Side - Actions */}
                         <div className="flex flex-col items-end space-y-3 ml-6">
-                            {currentUser.id === data.current_approver?.id ? (
-                                <div className="flex flex-col space-y-3">
-                                    <div className="text-right mb-1">
-                                        <p className="text-sm font-medium text-slate-900 dark:text-gray-100">Action Required</p>
-                                        <p className="text-xs text-slate-500 dark:text-gray-400">Review this request</p>
+                          {canTakeAction ? (
+                            <div className="flex flex-col space-y-3">
+                              <div className="text-right mb-1">
+                                <p className="text-sm font-medium text-slate-900 dark:text-gray-100">Action Required</p>
+                                <p className="text-xs text-slate-500 dark:text-gray-400">Review this request</p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={() => handleActionClick(data.id, "approved", data.approval_type.label)}
+                                  className="group inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                                  title="Approve Request"
+                                >
+                                  <Check className="w-4 h-4 mr-1.5" />
+                                  Approve
+                                </button>
+                                <button
+                                  onClick={() => handleActionClick(data.id, "rejected", data.approval_type.label)}
+                                  className="group inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                                  title="Reject Request"
+                                >
+                                  <X className="w-4 h-4 mr-1.5" />
+                                  Reject
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            data.current_approver && (
+                              <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3 text-right max-w-xs">
+                                <p className="text-xs font-medium text-slate-500 dark:text-gray-400 mb-2">Pending Approval</p>
+                                <div className="flex items-center justify-end space-x-2">
+                                  {data.current_approver.avatar ? (
+                                    <img
+                                      src={data.current_approver.avatar.small_url}
+                                      alt={data.current_approver.full_name}
+                                      className="w-6 h-6 rounded-lg object-cover"
+                                    />
+                                  ) : (
+                                    <div
+                                      className="w-6 h-6 rounded-lg flex items-center justify-center text-white text-xs font-semibold"
+                                      style={{ background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)" }}
+                                    >
+                                      {data.current_approver.full_name
+                                        .split(" ")
+                                        .map((n) => n[0])
+                                        .join("")}
                                     </div>
-                                    <div className="flex space-x-2">
-                                        {/* Approve Button */}
-                                        <button
-                                            onClick={() => handleActionClick(data.id, "approved", data.approval_type.label)}
-                                            className="group inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                                            title="Approve Request"
-                                        >
-                                            <Check className="w-4 h-4 mr-1.5"/>
-                                            Approve
-                                        </button>
-
-                                        {/* Reject Button */}
-                                        <button
-                                            onClick={() => handleActionClick(data.id, "rejected", data.approval_type.label)}
-                                            className="group inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
-                                            title="Reject Request"
-                                        >
-                                            <X className="w-4 h-4 mr-1.5"/>
-                                            Reject
-                                        </button>
-                                    </div>
+                                  )}
+                                  <div className="text-left">
+                                    <p className="text-sm font-medium text-slate-900 dark:text-gray-100">
+                                      {data.current_approver.full_name}
+                                    </p>
+                                  </div>
                                 </div>
-                            ) : (
-                                data.current_approver && (
-                                    <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3 text-right max-w-xs">
-                                        <p className="text-xs font-medium text-slate-500 dark:text-gray-400 mb-2">Pending Approval</p>
-                                        <div className="flex items-center justify-end space-x-2">
-                                            {data.current_approver.avatar ? (
-                                                <img
-                                                    src={data.current_approver.avatar.small_url}
-                                                    alt={data.current_approver.full_name}
-                                                    className="w-6 h-6 rounded-lg object-cover"
-                                                />
-                                            ) : (
-                                                <div
-                                                    className="w-6 h-6 rounded-lg flex items-center justify-center text-white text-xs font-semibold"
-                                                    style={{background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'}}>
-                                                    {data.current_approver.full_name.split(' ').map(n => n[0]).join('')}
-                                                </div>
-                                            )}
-                                            <div className="text-left">
-                                                <p className="text-sm font-medium text-slate-900 dark:text-gray-100">
-                                                    {data.current_approver.full_name}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            )}
+                              </div>
+                            )
+                          )}
                         </div>
                     </div>
                 </div>

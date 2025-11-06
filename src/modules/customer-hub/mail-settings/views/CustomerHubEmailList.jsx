@@ -78,7 +78,7 @@ const CustomerHubEmailList = () => {
     {
       Header: "Actions",
       Cell: ({ row }) => (
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 justify-center">
           <Link
             to={CUSTOMER_HUB_ROUTES.EMAIL.MAIL_SETTINGS.path}
             state={{ id: row.original.id }}

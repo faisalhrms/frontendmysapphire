@@ -137,7 +137,7 @@ const PrGenerationSection = ({ seed }) => {
 
         <div className="mt-4 grid gap-3 md:grid-cols-4">
           <PrStatTile label="Agreement No" value={form?.agreement_no} icon={<Hash size={14} />} />
-          <PrStatTile label="Greige Width (cm)" value={form?.greige_width_cm} icon={<LayoutTemplate size={14} />} />
+          <PrStatTile label="Greige Width (Inch)" value={form?.greige_width_cm} icon={<LayoutTemplate size={14} />} />
           <PrStatTile label="Price" value={form?.target_price_per_meter} icon={<BadgeDollarSign size={14} />} />
           <PrStatTile label="Prepared By" value={form?.costing_created_by} icon={<Package size={14} />} />
         </div>
@@ -165,7 +165,7 @@ const PrGenerationSection = ({ seed }) => {
               <PrInfoTile label="Fabric Construction" value={form.fabric_construction} />
               <PrInfoTile label="Weave Stripe Size" value={form.weave_stripe_size} />
               <PrInfoTile label="Selvedge" value={form.selvedge} />
-              <PrInfoTile label="Greige Width (cm)" value={form.greige_width_cm} />
+              <PrInfoTile label="Greige Width (Inch)" value={form.greige_width_cm} />
               <PrInfoTile label="Greige Design Code / Design" value={form.greige_design_combined} />
               <PrInfoTile label="Greige Color Code / Description" value={form.greige_color_combined} />
             </div>
