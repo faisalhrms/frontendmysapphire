@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react"
 import { Calculator, Search } from "lucide-react"
 import YarnConsumptionModal from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionModal.jsx"
+import YarnConsumptionCard from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionCard.jsx"
 import FormInput from "@components/form/FormInput.jsx"
 import FormSelect from "@components/form/FormSelect.jsx"
 import { AGREEMENT_TYPES } from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
@@ -21,7 +22,8 @@ const AgreementPlacementForm = ({
   currentApproverName,
   disabledSubmit = false,
   onAfterPersist,
-  hideSubmit = false
+  hideSubmit = false,
+  refetch
 }) => {
   const {
     control,
@@ -41,7 +43,7 @@ const AgreementPlacementForm = ({
     handleComputed,
     doSaveDraft,
     doSubmit
-  } = useAgreementPlacementForm({ seed, email, onAfterPersist })
+  } = useAgreementPlacementForm({ seed, email, onAfterPersist, refetch })
 
   const [open, setOpen] = useState(false)
   const [choices, setChoices] = useState([])
@@ -89,27 +91,27 @@ const AgreementPlacementForm = ({
       !String(v.width_inches || "").trim()
     if (!needsApply) return
     setValue("greige_item_code", v.greige_item_code || m.greige_item_code || "")
-    setValue("fabric_detail", v.fabric_detail || m.fab_construction || "")
+    setValue("fabric_detail", v.fabric_detail || "")
     setValue("construction", v.construction || m.fab_construction || "")
     setValue("warp_blend", v.warp_blend || m.warp_blend || "")
     setValue("weft_blend", v.weft_blend || m.weft_blend || "")
     if (!String(v.width_cm || "").trim() && m.finished_width_cm != null) {
       setValue("width_cm", String(m.finished_width_cm))
     }
-    if (!String(v.width_inches || "").trim() && m.finished_width_inches != null) {
-      setValue("width_inches", String(m.finished_width_inches))
+    if (!String(v.width_inches || "").trim() && m.greige_width != null) {
+      setValue("width_inches", String(m.greige_width))
     }
-  }, [choices, greigeCode])
+  }, [choices, greigeCode, getValues, setValue])
 
   const applyItem = useCallback(
     (i) => {
       setValue("greige_item_code", i.greige_item_code || "")
-      setValue("fabric_detail", i.fab_construction || watch("fabric_detail") || "")
+      setValue("fabric_detail",  watch("fabric_detail") || "")
       setValue("construction", i.fab_construction || "")
       setValue("warp_blend", i.warp_blend || "")
       setValue("weft_blend", i.weft_blend || "")
       setValue("width_cm", String(i.finished_width_cm || ""))
-      setValue("width_inches", String(i.finished_width_inches || ""))
+      setValue("width_inches", String(i.greige_width || ""))
       setValue(
         "yarn_dyed_or_greige",
         i.yarn_dyed_or_greige || watch("yarn_dyed_or_greige") || ""
@@ -124,6 +126,21 @@ const AgreementPlacementForm = ({
     setChoices(fresh?.customer_item_matches || [])
     setStatusMsg(true)
   }, [seed?.id])
+
+  const totalMeters = watch("total_meters")
+  const widthInchesValue =
+    (matchedItem && matchedItem.greige_width) ||
+    widthSeed ||
+    watch("width_inches")
+  const widthCmValue = watch("width_cm")
+
+  const warpYarnRate = watch("warp_yarn_rate")
+  const warpDelivery = watch("warp_delivery")
+  const weftYarnRate = watch("weft_yarn_rate")
+  const weftDelivery = watch("weft_delivery")
+
+  const isFabricDeliveryLocked =
+    !warpYarnRate || !warpDelivery || !weftYarnRate || !weftDelivery
 
   return (
     <div className="rounded-xl border dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
@@ -213,6 +230,7 @@ const AgreementPlacementForm = ({
                   errors={errors}
                   placeholder="Fabric Delivery"
                   type="date"
+                  disabled={isFabricDeliveryLocked}
                 />
               </div>
               <div className="col-span-12 md:col-span-6">
@@ -324,6 +342,7 @@ const AgreementPlacementForm = ({
               design={design}
               color={color}
               widthSeed={widthSeed}
+              yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
               widthInches={
                 (matchedItem && matchedItem.greige_width) ||
                 widthSeed ||
@@ -341,10 +360,11 @@ const AgreementPlacementForm = ({
             />
             <div className="p-4 space-y-5">
               <AgreementFabric
-                fabricDetail={watch("fabric_detail") || seed.description}
+                fabricDetail={watch("fabric_detail") || ""}
                 construction={watch("construction")}
                 warpBlend={watch("warp_blend")}
                 weftBlend={watch("weft_blend")}
+                yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
               />
               <AgreementYarnBags
                 values={{
@@ -375,11 +395,27 @@ const AgreementPlacementForm = ({
         open={showYarn}
         onClose={() => setShowYarn(false)}
         item={matchedItem}
-        totalMeters={watch("total_meters")}
+        totalMeters={totalMeters}
         onTotalMetersChange={(v) => setValue("total_meters", v)}
+        widthInches={widthInchesValue}
+        widthCm={widthCmValue}
         onComputed={handleComputed}
         dyeingMeta={seed?.dyeing_meta}
       />
+
+      {!showYarn && (
+        <div className="hidden">
+          <YarnConsumptionCard
+            item={matchedItem}
+            totalMeters={totalMeters}
+            onTotalMetersChange={(v) => setValue("total_meters", v)}
+            widthInches={widthInchesValue}
+            widthCm={widthCmValue}
+            onComputed={handleComputed}
+            dyeingMeta={seed?.dyeing_meta}
+          />
+        </div>
+      )}
 
       <SelectCustomerItemModal
         open={open}

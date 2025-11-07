@@ -5,8 +5,9 @@ import DataTable from "@components/datatable/DataTable.jsx"
 import { Mail, Inbox, Filter, FileText } from "lucide-react"
 import { CUSTOMER_HUB_ROUTES } from "@modules/customer-hub/routes.js"
 import Notify from "@helpers/toastNotifications.js"
-import { manualFetchEmails } from "@modules/customer-hub/integrations/services/IntegrationsService.js"
-import FetchEmailsModal from "@modules/customer-hub/integrations/components/FetchEmailsModal.jsx";
+import { manualFetchEmails, reprocessEmails } from "@modules/customer-hub/integrations/services/IntegrationsService.js"
+import FetchEmailsModal from "@modules/customer-hub/integrations/components/FetchEmailsModal.jsx"
+import ReprocessEmailsModal from "@modules/customer-hub/integrations/components/ReprocessEmailsModal.jsx"
 
 const Badge = ({ children, intent = "default" }) => {
   const cls =
@@ -31,6 +32,7 @@ const ListChip = ({ icon: Icon, label, title }) => (
 
 const CustomerHubEmailList = () => {
   const [fetchConfig, setFetchConfig] = useState(null)
+  const [reprocessConfig, setReprocessConfig] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   const handleOpenFetch = useCallback((row) => {
@@ -39,6 +41,14 @@ const CustomerHubEmailList = () => {
       id: original.id,
       mailbox_email: original.mailbox_email,
       use_unread_only: original.use_unread_only,
+    })
+  }, [])
+
+  const handleOpenReprocess = useCallback((row) => {
+    const original = row.original
+    setReprocessConfig({
+      id: original.id,
+      mailbox_email: original.mailbox_email,
     })
   }, [])
 
@@ -53,11 +63,22 @@ const CustomerHubEmailList = () => {
     setRefreshKey((k) => k + 1)
   }, [])
 
+  const handleReprocessed = useCallback((summary) => {
+    if (summary && typeof summary.processed === "number") {
+      Notify.success(
+        `Reprocessed ${summary.processed}, updated ${summary.updated}`
+      )
+    } else {
+      Notify.success("Reprocess completed")
+    }
+    setRefreshKey((k) => k + 1)
+  }, [])
+
   const columns = [
     {
       Header: "Actions",
       Cell: ({ row }) => (
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 justify-center">
           <Link
             to={CUSTOMER_HUB_ROUTES.EMAIL.MAIL_SETTINGS.path}
             state={{ id: row.original.id }}
@@ -68,6 +89,13 @@ const CustomerHubEmailList = () => {
           </Link>
           <button
             type="button"
+            className="ti-btn ti-btn-outline-secondary ti-btn-sm"
+            onClick={() => handleOpenReprocess(row)}
+          >
+            <i className="ri-refresh-line" />
+          </button>
+          <button
+            type="button"
             className="ti-btn ti-btn-outline-primary ti-btn-sm"
             onClick={() => handleOpenFetch(row)}
           >
@@ -75,7 +103,7 @@ const CustomerHubEmailList = () => {
           </button>
         </div>
       ),
-      width: 160,
+      width: 200,
     },
     {
       Header: "Mailbox",
@@ -187,6 +215,14 @@ const CustomerHubEmailList = () => {
           closeModal={() => setFetchConfig(null)}
           fetchFn={manualFetchEmails}
           onDone={handleFetched}
+        />
+      )}
+      {reprocessConfig && (
+        <ReprocessEmailsModal
+          config={reprocessConfig}
+          closeModal={() => setReprocessConfig(null)}
+          reprocessFn={reprocessEmails}
+          onDone={handleReprocessed}
         />
       )}
     </>

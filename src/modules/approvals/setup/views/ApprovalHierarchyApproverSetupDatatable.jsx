@@ -59,6 +59,7 @@ const ApprovalHierarchyApproverSetupDatatable = () => {
         onSubmit,
         isEditMode,
         setValue,
+        allowParallelApprovers,
     } = useApprovalHierarchyApproverSetupModal(dataTableRef);
 
     const handleOpenModal = useCallback((id = null, isEdit = false) => {
@@ -113,7 +114,8 @@ const ApprovalHierarchyApproverSetupDatatable = () => {
         onSubmit,
         isSubmitting,
         setValue,
-        isEditMode
+        isEditMode,
+        allowParallelApprovers,
     }), [
         control,
         errors,
@@ -122,7 +124,8 @@ const ApprovalHierarchyApproverSetupDatatable = () => {
         onSubmit,
         isSubmitting,
         setValue,
-        isEditMode
+        isEditMode,
+        allowParallelApprovers,
     ]);
 
     return (

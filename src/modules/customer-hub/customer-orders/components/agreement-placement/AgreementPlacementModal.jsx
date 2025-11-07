@@ -51,7 +51,7 @@ const AgreementPlacementModal = ({ control, errors, isSubmitting, handleSubmit, 
                   </div>
                 )}
                 <div className="col-span-12 md:col-span-4">
-                  <FormInput name="colour" control={control} errors={errors} placeholder="Colour" is_required={minimal} />
+                  <FormInput type="number" name="colour" control={control} errors={errors} placeholder="Colour Code" is_required={minimal} />
                 </div>
 
                 <div className="col-span-12 md:col-span-4">
@@ -71,10 +71,10 @@ const AgreementPlacementModal = ({ control, errors, isSubmitting, handleSubmit, 
                   <FormInput name="quality" control={control} errors={errors} placeholder="Quality" is_required={minimal} />
                 </div>
                 <div className="col-span-12 md:col-span-4">
-                  <FormInput name="design" control={control} errors={errors} placeholder="Design" is_required={minimal} />
+                  <FormInput type="number" name="design" control={control} errors={errors} placeholder="Design Code" is_required={minimal} />
                 </div>
                 <div className="col-span-12 md:col-span-4">
-                  <FormInput name="width" control={control} errors={errors} placeholder="Width" is_required={minimal} />
+                  <FormInput type="number" name="width" control={control} errors={errors} placeholder="Width" is_required={minimal} />
                 </div>
 
                 {!minimal && (
