@@ -133,6 +133,14 @@ const AgreementPlacementForm = ({
     watch("width_inches")
   const widthCmValue = watch("width_cm")
 
+  const warpYarnRate = watch("warp_yarn_rate")
+  const warpDelivery = watch("warp_delivery")
+  const weftYarnRate = watch("weft_yarn_rate")
+  const weftDelivery = watch("weft_delivery")
+
+  const isFabricDeliveryLocked =
+    !warpYarnRate || !warpDelivery || !weftYarnRate || !weftDelivery
+
   return (
     <div className="rounded-xl border dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
       <div className="p-4">
@@ -221,6 +229,7 @@ const AgreementPlacementForm = ({
                   errors={errors}
                   placeholder="Fabric Delivery"
                   type="date"
+                  disabled={isFabricDeliveryLocked}
                 />
               </div>
               <div className="col-span-12 md:col-span-6">
