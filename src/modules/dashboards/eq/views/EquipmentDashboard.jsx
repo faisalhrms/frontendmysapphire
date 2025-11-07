@@ -131,7 +131,7 @@ const EquipmentDashboard = () => {
                                 <BarChart3 size={28}/>
                             </div>
                             <div>
-                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Equipment Asset Dashboard</h1>
+                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">IT Asset Dashboard</h1>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive equipment
                                     analytics and asset management insights</p>
                             </div>

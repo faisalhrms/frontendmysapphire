@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import { useEffect, useState, useCallback, useMemo } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { createAgreement, updateAgreement, submitAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import { dateToYMD, normalizeDateSeed } from "@modules/customer-hub/customer-orders/components/agreement-placement/helpers.js"
 
@@ -7,10 +8,27 @@ const r2 = (n) => Number.parseFloat((Number(n || 0)).toFixed(2))
 
 const buildDefaults = (seed = {}, email) => {
   const p = seed.payload || {}
+  const matches = seed.customer_item_matches || []
+
+  const greigeCode =
+    p.greige_item_code ||
+    seed.greige_item_code ||
+    seed.greige_item ||
+    ""
+
+  const matchedItem =
+    matches.find((i) => i.greige_item_code === greigeCode) ||
+    (matches.length === 1 ? matches[0] : null)
+
+  const greigeWidthInches =
+    matchedItem && matchedItem.greige_width != null
+      ? String(matchedItem.greige_width)
+      : ""
+
   return {
     agreement_no: p.agreement_no ?? seed.agreement_no ?? "",
     total_meters: p.total_meters ?? "",
-    agreement_type: p.agreement_type ?? seed.item_type ?? "",
+    agreement_type: p.agreement_type ?? seed.vmi_po ?? "",
     fabric_delivery: normalizeDateSeed(p.fabric_delivery ?? seed.fabric_delivery),
     fabric_detail: p.fabric_detail ?? seed.item_description ?? seed.description ?? "",
     construction: p.construction ?? "",
@@ -26,11 +44,11 @@ const buildDefaults = (seed = {}, email) => {
     weft_yarn_rate: p.weft_yarn_rate ?? "",
     warp_delivery: normalizeDateSeed(p.warp_delivery),
     weft_delivery: normalizeDateSeed(p.weft_delivery),
-    width_inches: p.width_inches ?? seed.width_inches ?? "",
+    width_inches: greigeWidthInches || p.width_inches || seed.width_inches || "",
     width_cm: p.width_cm ?? seed.width ?? seed.width_cm ?? "",
     total_bags: p.total_bags ?? "",
     need_by_date: normalizeDateSeed(p.need_by_date ?? seed.auto_need_by_date ?? ""),
-    yarn_dyed_or_greige: p.yarn_dyed_or_greige ?? seed.item_type ?? "",
+    yarn_dyed_or_greige: p.yarn_dyed_or_greige ?? seed.yarn_dyed_or_greige ?? "",
     greige_item_code: p.greige_item_code ?? seed.greige_item_code ?? seed.greige_item ?? "",
     warp_yarn_required: p.warp_yarn_required ?? "",
     weft_yarn_required: p.weft_yarn_required ?? "",
@@ -42,7 +60,8 @@ const buildDefaults = (seed = {}, email) => {
   }
 }
 
-export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) => {
+export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, refetch }) => {
+  const queryClient = useQueryClient()
   const defaults = useMemo(() => buildDefaults(seed, email), [seed?.id, seed?.updated_at])
   const { control, setValue, getValues, watch, reset, formState: { errors } } = useForm({ defaultValues: defaults })
   const [showYarn, setShowYarn] = useState(false)
@@ -96,13 +115,13 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) 
     const topQuality = qc
     const topDesign = design
     const topColour = color
-    const topWidth = v.width_cm || v.width_inches || widthSeed || ""
+    const topWidth = v.width_cm || widthSeed || ""
     return {
       owner: seed.owner || email?.from_name || email?.from_address || null,
       agreement_no: v.agreement_no || seed.agreement_no || "",
       item_no: seed.item_no || "",
       colour: topColour || null,
-      item_type: v.yarn_dyed_or_greige || seed.item_type || null,
+      item_type: v.item_type || seed.item_type || null,
       start_date: dateToYMD(v.fabric_delivery),
       item_description: seed.item_description || v.fabric_detail || seed.description || "",
       quality: topQuality || null,
@@ -126,11 +145,17 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) 
     return await createAgreement(payload)
   }
 
+  const invalidateFeed = () => {
+    queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
+  }
+
   const doSaveDraft = async () => {
     setSaving(true)
     try {
       const saved = await persistDraft()
-      onAfterPersist?.(saved)
+      if (onAfterPersist) onAfterPersist(saved)
+      invalidateFeed()
+      if (refetch) refetch()
     } finally {
       setSaving(false)
     }
@@ -141,7 +166,9 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) 
     try {
       const saved = await persistDraft()
       const submitted = await submitAgreement(saved.id)
-      onAfterPersist?.(submitted)
+      if (onAfterPersist) onAfterPersist(submitted)
+      invalidateFeed()
+      if (refetch) refetch()
     } finally {
       setSaving(false)
     }

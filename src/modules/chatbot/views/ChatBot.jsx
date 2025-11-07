@@ -135,6 +135,8 @@ export default function ChatBot() {
           setQcRender={setQcRender}
           hrSubtypes={hrSubtypes}
           setHrSubtypes={setHrSubtypes}
+          suggestions={suggestions}
+          ask={ask}
         />
       </div>
     )

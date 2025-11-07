@@ -12,7 +12,8 @@ const ApprovalHierarchyApproverSetupModal = ({
                                 onSubmit,
                                 isSubmitting,
                                 setValue,
-                                isEditMode
+                                isEditMode,
+                                allowParallelApprovers,
                             }) => {
     const hierarchyOption = useWatch({ control, name: 'hierarchyOption' });
     const hierarchyPre = useMemo(
@@ -63,6 +64,7 @@ const ApprovalHierarchyApproverSetupModal = ({
                                 control={control}
                                 errors={errors}
                                 setValue={setValue}
+                                allowParallelApprovers={allowParallelApprovers}
                             />
                         </div>
 

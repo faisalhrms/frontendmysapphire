@@ -4,7 +4,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ApproverRow from '@modules/hrms/components/ApprovalSetup/ApproverRow.jsx';
 
-const ApproversFieldArray = ({ control, errors, setValue }) => {
+const ApproversFieldArray = ({ control, errors, setValue, allowParallelApprovers = false }) => {
     const { fields, append, remove, move } = useFieldArray({
         control,
         name: 'approvers',
@@ -23,12 +23,14 @@ const ApproversFieldArray = ({ control, errors, setValue }) => {
     );
 
     const handleAddApprover = useCallback(() => {
+        const last = approvers[approvers.length - 1];
+        const nextLevel = allowParallelApprovers ? (last?.level || 1) : approvers.length + 1;
         append({
-            level: approvers.length + 1,
+            level: nextLevel,
             approver_id: null,
             approverOption: null,
         });
-    }, [append, approvers.length]);
+    }, [append, approvers, allowParallelApprovers]);
 
     const handleRemoveApprover = useCallback(
         (index) => {
@@ -56,6 +58,7 @@ const ApproversFieldArray = ({ control, errors, setValue }) => {
                             onAdd={handleAddApprover}
                             moveItem={handleMoveItem}
                             fieldsLength={memoizedFields.length}
+                            allowParallelApprovers={allowParallelApprovers}
                         />
                     </div>
                 ))}
