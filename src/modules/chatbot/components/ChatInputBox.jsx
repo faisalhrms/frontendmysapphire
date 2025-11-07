@@ -35,7 +35,7 @@ const ChatInputBox = ({
     "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)"
   ]).slice(0, 4)
   const showSuggestions =
-    (modeSelection === "Export Data" || modeSelection === "Assets Audit" || modeSelection === "HR") &&
+    (modeSelection === "Export Data" || modeSelection === "IT Audit" || modeSelection === "HR") &&
     chips.length > 0
 
   return (
@@ -116,7 +116,7 @@ const ChatInputBox = ({
                   <button onClick={() => { setModeSelection("Quality Control"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_asset_audit'>
-                  <button onClick={() => { setModeSelection("Assets Audit"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Assets Audit</button>
+                  <button onClick={() => { setModeSelection("IT Audit"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">IT Audit</button>
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_policies'>
                   <button onClick={() => { setModeSelection("HR"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">HR</button>

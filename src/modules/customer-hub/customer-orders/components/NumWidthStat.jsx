@@ -65,7 +65,7 @@ const NumWidthStat = ({
 
 
           <div className="text-[.75rem] text-gray-600 dark:text-white/70 inline-flex items-center gap-2 justify-center">
-            No. of Width
+            No. Panel
             <span className="inline-flex items-center" title={hint} aria-label={hint}>
               <Info size={12} />
             </span>

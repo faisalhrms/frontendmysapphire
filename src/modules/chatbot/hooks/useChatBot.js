@@ -90,7 +90,7 @@ export default function useChatBot() {
   useEffect(() => {
     const sub = (hrSubtypes && hrSubtypes[0]) || "policies"
     let items = defaultExportSuggestions
-    if (modeSelection === "Assets Audit") {
+    if (modeSelection === "IT Audit") {
       items = defaultAssetSuggestions
     } else if (modeSelection === "HR") {
       if (sub === "policies") items = defaultHrPoliciesSuggestions
@@ -303,7 +303,7 @@ export default function useChatBot() {
         modeSelection === "Salesforce" ? "salesforce" :
         modeSelection === "Quality Control" ? "qc" :
         modeSelection === "HR" ? "hr" :
-        modeSelection === "Assets Audit" ? "hr" : ""
+        modeSelection === "IT Audit" ? "assets" : ""
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
@@ -317,7 +317,7 @@ export default function useChatBot() {
       modeSelection === "Salesforce" ? "salesforce" :
       modeSelection === "Quality Control" ? "qc" :
       modeSelection === "HR" ? "hr" :
-      modeSelection === "Assets Audit" ? "assets" : ""
+      modeSelection === "IT Audit" ? "assets" : ""
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
     lastFlushTsRef.current = 0

@@ -7,6 +7,23 @@ const r2 = (n) => Number.parseFloat((Number(n || 0)).toFixed(2))
 
 const buildDefaults = (seed = {}, email) => {
   const p = seed.payload || {}
+  const matches = seed.customer_item_matches || []
+
+  const greigeCode =
+    p.greige_item_code ||
+    seed.greige_item_code ||
+    seed.greige_item ||
+    ""
+
+  const matchedItem =
+    matches.find((i) => i.greige_item_code === greigeCode) ||
+    (matches.length === 1 ? matches[0] : null)
+
+  const greigeWidthInches =
+    matchedItem && matchedItem.greige_width != null
+      ? String(matchedItem.greige_width)
+      : ""
+
   return {
     agreement_no: p.agreement_no ?? seed.agreement_no ?? "",
     total_meters: p.total_meters ?? "",
@@ -26,7 +43,7 @@ const buildDefaults = (seed = {}, email) => {
     weft_yarn_rate: p.weft_yarn_rate ?? "",
     warp_delivery: normalizeDateSeed(p.warp_delivery),
     weft_delivery: normalizeDateSeed(p.weft_delivery),
-    width_inches: p.width_inches ?? seed.width_inches ?? "",
+    width_inches: greigeWidthInches || p.width_inches || seed.width_inches || "",
     width_cm: p.width_cm ?? seed.width ?? seed.width_cm ?? "",
     total_bags: p.total_bags ?? "",
     need_by_date: normalizeDateSeed(p.need_by_date ?? seed.auto_need_by_date ?? ""),
@@ -96,7 +113,7 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) 
     const topQuality = qc
     const topDesign = design
     const topColour = color
-    const topWidth = v.width_cm || v.width_inches || widthSeed || ""
+    const topWidth = v.width_cm || widthSeed || ""
     return {
       owner: seed.owner || email?.from_name || email?.from_address || null,
       agreement_no: v.agreement_no || seed.agreement_no || "",

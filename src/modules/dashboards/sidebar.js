@@ -70,7 +70,7 @@ export const sidebarMenu = [
                 generateSidebarItem(
                     DASHBOARD_ROUTES.EQUIPMENT_AUDIT_DASHBOARD.path,
                     'link',
-                    'IT Assets Audit ',
+                    'IT Audit ',
                     8,
                     '',
                     DASHBOARD_ROUTES.Equipment.permission,
