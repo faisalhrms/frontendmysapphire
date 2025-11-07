@@ -7,6 +7,7 @@ import ProfileMenu from "./components/ProfileMenu.jsx";
 import ThemeSwitcher from "./components/ThemeSwitcher.jsx";
 import { SELF_SERVICES_ROUTES } from "@modules/employee-self-services/routes.js";
 import BrandBookLink from "@modules/layouts/includes/header/components/BrandBookLink.jsx";
+import OdooSSOButton from "@modules/layouts/includes/header/components/OdooSSOButton.jsx";
 
 const Header = () => {
     return (
@@ -19,6 +20,7 @@ const Header = () => {
                             <SidebarToggle/>
                         </div>
                             <div className="header-content-right">
+                                {/*<OdooSSOButton />*/}
                                 <ThemeModeToggle/>
                                 <BrandBookLink
                                     to={SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.path}

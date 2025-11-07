@@ -3,20 +3,55 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
 import { datatableAgreements } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
-export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 30 } = {}) => {
-  const fetchPage = ({ pageParam = 0 }) => datatableAgreements({ skip: pageParam, limit, s, mailbox })
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch, isRefetching } = useInfiniteQuery({
+export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 30, root = null } = {}) => {
+  const fetchAgreements = ({ pageParam = 0 }) =>
+    datatableAgreements({ skip: pageParam, limit, s, mailbox })
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+    isRefetching
+  } = useInfiniteQuery({
     queryKey: ["agreementsFeed", s, mailbox, limit],
-    queryFn: fetchPage,
+    queryFn: fetchAgreements,
     getNextPageParam: (lastPage) => {
-      const nextSkip = (lastPage.current_page || 1) * limit
-      return (lastPage.current_page || 1) < (lastPage.total_pages || 1) ? nextSkip : undefined
+      const current = lastPage.current_page || 1
+      const total = lastPage.total_pages || 1
+      const nextSkip = current * limit
+      return current < total ? nextSkip : undefined
     },
-    staleTime: 60_000
+    enabled: !!mailbox,
+    retry: 2,
+    staleTime: 5 * 60 * 1000
   })
-  const rows = useMemo(() => (data?.rows ? data.rows : (data?.pages || []).flatMap((p) => p.rows || [])), [data])
-  const { ref: sentinelRef, inView } = useInView({ threshold: 0.1, triggerOnce: false })
-  useEffect(() => { refetch() }, [s, mailbox, limit, refetch])
-  useEffect(() => { if (inView && hasNextPage && !isFetchingNextPage) fetchNextPage() }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
-  return { rows, sentinelRef, hasNextPage: !!hasNextPage, isFetchingNextPage, isLoading: isLoading || isRefetching }
+
+  const rows = useMemo(
+    () => (data?.pages || []).flatMap((p) => p.rows || []),
+    [data]
+  )
+
+  const { ref: sentinelRef, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: false,
+    root
+  })
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  return {
+    rows,
+    sentinelRef,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoading || isRefetching,
+    refetch
+  }
 }
