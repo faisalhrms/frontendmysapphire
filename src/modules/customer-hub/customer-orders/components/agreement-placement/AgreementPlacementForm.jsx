@@ -22,7 +22,8 @@ const AgreementPlacementForm = ({
   currentApproverName,
   disabledSubmit = false,
   onAfterPersist,
-  hideSubmit = false
+  hideSubmit = false,
+  refetch
 }) => {
   const {
     control,
@@ -42,7 +43,7 @@ const AgreementPlacementForm = ({
     handleComputed,
     doSaveDraft,
     doSubmit
-  } = useAgreementPlacementForm({ seed, email, onAfterPersist })
+  } = useAgreementPlacementForm({ seed, email, onAfterPersist, refetch })
 
   const [open, setOpen] = useState(false)
   const [choices, setChoices] = useState([])
@@ -90,7 +91,7 @@ const AgreementPlacementForm = ({
       !String(v.width_inches || "").trim()
     if (!needsApply) return
     setValue("greige_item_code", v.greige_item_code || m.greige_item_code || "")
-    setValue("fabric_detail", v.fabric_detail || m.fab_construction || "")
+    setValue("fabric_detail", v.fabric_detail || "")
     setValue("construction", v.construction || m.fab_construction || "")
     setValue("warp_blend", v.warp_blend || m.warp_blend || "")
     setValue("weft_blend", v.weft_blend || m.weft_blend || "")
@@ -105,7 +106,7 @@ const AgreementPlacementForm = ({
   const applyItem = useCallback(
     (i) => {
       setValue("greige_item_code", i.greige_item_code || "")
-      setValue("fabric_detail", i.fab_construction || watch("fabric_detail") || "")
+      setValue("fabric_detail",  watch("fabric_detail") || "")
       setValue("construction", i.fab_construction || "")
       setValue("warp_blend", i.warp_blend || "")
       setValue("weft_blend", i.weft_blend || "")
@@ -359,7 +360,7 @@ const AgreementPlacementForm = ({
             />
             <div className="p-4 space-y-5">
               <AgreementFabric
-                fabricDetail={watch("fabric_detail") || seed.description}
+                fabricDetail={watch("fabric_detail") || ""}
                 construction={watch("construction")}
                 warpBlend={watch("warp_blend")}
                 weftBlend={watch("weft_blend")}

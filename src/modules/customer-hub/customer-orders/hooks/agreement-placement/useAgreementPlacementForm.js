@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import { useEffect, useState, useCallback, useMemo } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { createAgreement, updateAgreement, submitAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import { dateToYMD, normalizeDateSeed } from "@modules/customer-hub/customer-orders/components/agreement-placement/helpers.js"
 
@@ -59,7 +60,8 @@ const buildDefaults = (seed = {}, email) => {
   }
 }
 
-export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) => {
+export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, refetch }) => {
+  const queryClient = useQueryClient()
   const defaults = useMemo(() => buildDefaults(seed, email), [seed?.id, seed?.updated_at])
   const { control, setValue, getValues, watch, reset, formState: { errors } } = useForm({ defaultValues: defaults })
   const [showYarn, setShowYarn] = useState(false)
@@ -143,11 +145,17 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) 
     return await createAgreement(payload)
   }
 
+  const invalidateFeed = () => {
+    queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
+  }
+
   const doSaveDraft = async () => {
     setSaving(true)
     try {
       const saved = await persistDraft()
-      onAfterPersist?.(saved)
+      if (onAfterPersist) onAfterPersist(saved)
+      invalidateFeed()
+      if (refetch) refetch()
     } finally {
       setSaving(false)
     }
@@ -158,7 +166,9 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist }) 
     try {
       const saved = await persistDraft()
       const submitted = await submitAgreement(saved.id)
-      onAfterPersist?.(submitted)
+      if (onAfterPersist) onAfterPersist(submitted)
+      invalidateFeed()
+      if (refetch) refetch()
     } finally {
       setSaving(false)
     }
