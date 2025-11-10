@@ -138,7 +138,7 @@ const PrGenerationSection = ({ seed }) => {
         <div className="mt-4 grid gap-3 md:grid-cols-4">
           <PrStatTile label="Agreement No" value={form?.agreement_no} icon={<Hash size={14} />} />
           <PrStatTile label="Greige Width (Inch)" value={form?.greige_width_cm} icon={<LayoutTemplate size={14} />} />
-          <PrStatTile label="Price" value={form?.target_price_per_meter} icon={<BadgeDollarSign size={14} />} />
+          <PrStatTile label="Price(Pkr)" value={form?.target_price_per_meter} icon={<BadgeDollarSign size={14} />} />
           <PrStatTile label="Prepared By" value={form?.costing_created_by} icon={<Package size={14} />} />
         </div>
       </div>

@@ -401,29 +401,32 @@ const AgreementPlacementForm = ({
         />
       )}
 
-      <YarnConsumptionModal
-        open={showYarn}
-        onClose={() => setShowYarn(false)}
-        item={matchedItem}
-        totalMeters={totalMeters}
-        onTotalMetersChange={(v) => setValue("total_meters", v)}
-        widthInches={widthInchesValue}
-        widthCm={widthCmValue}
-        onComputed={handleComputed}
-        dyeingMeta={seed?.dyeing_meta}
-      />
+        <YarnConsumptionModal
+          open={showYarn}
+          onClose={() => setShowYarn(false)}
+          item={matchedItem}
+          totalMeters={totalMeters}
+          onTotalMetersChange={(v) => setValue("total_meters", v)}
+          widthInches={widthInchesValue}
+          widthCm={widthCmValue}
+          onComputed={handleComputed}
+          dyeingMeta={seed?.dyeing_meta}
+          rejPct={watch("rej_pct")}
+        />
+
 
       {!showYarn && (
         <div className="hidden">
-          <YarnConsumptionCard
-            item={matchedItem}
-            totalMeters={totalMeters}
-            onTotalMetersChange={(v) => setValue("total_meters", v)}
-            widthInches={widthInchesValue}
-            widthCm={widthCmValue}
-            onComputed={handleComputed}
-            dyeingMeta={seed?.dyeing_meta}
-          />
+        <YarnConsumptionCard
+          item={matchedItem}
+          totalMeters={totalMeters}
+          onTotalMetersChange={(v) => setValue("total_meters", v)}
+          widthInches={widthInchesValue}
+          widthCm={widthCmValue}
+          onComputed={handleComputed}
+          dyeingMeta={seed?.dyeing_meta}
+          initialRejPct={watch("rej_pct")}
+        />
         </div>
       )}
 

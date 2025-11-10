@@ -89,26 +89,27 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
     [seed?.width, seed?.query_meta?.width, seed?.id, seed?.updated_at]
   )
 
-  const handleComputed = useCallback(
-    (res) => {
-      if (!res) return
-      setValue("warp_yarn_required", r2(res.warp_yarn_required))
-      setValue("weft_yarn_required", r2(res.weft_yarn_required))
-      setValue("warp_bags", r2(res.warp_bags))
-      setValue("weft_bags", r2(res.weft_bags))
-      setValue("total_bags", r2(res.total_bags))
-      setValue("rej_pct", r2(res.rej_pct))
-      setValue("warp_coverage", r2(res.warp_coverage))
-      setValue("weft_coverage", r2(res.weft_coverage))
-      setValue("dyed_warp_bags", r2(res.dyed_warp_bags))
-      setValue("dyed_weft_bags", r2(res.dyed_weft_bags))
-      setValue("ecru_warp_bags", r2(res.ecru_warp_bags))
-      setValue("ecru_weft_bags", r2(res.ecru_weft_bags))
-      setValue("dyed_bags", r2(res.dyed_bags))
-      setValue("ecru_bags", r2(res.ecru_bags))
-    },
-    [setValue]
-  )
+    const handleComputed = useCallback(
+      (res) => {
+        if (!res) return
+        setValue("warp_yarn_required", r2(res.warp_yarn_required))
+        setValue("weft_yarn_required", r2(res.weft_yarn_required))
+        setValue("warp_bags", r2(res.warp_bags))
+        setValue("weft_bags", r2(res.weft_bags))
+        setValue("total_bags", r2(res.total_bags))
+        setValue("rej_pct", r2(res.rej_pct))
+        setValue("warp_coverage", r2(res.warp_coverage))
+        setValue("weft_coverage", r2(res.weft_coverage))
+        setValue("dyed_warp_bags", r2(res.dyed_warp_bags))
+        setValue("dyed_weft_bags", r2(res.dyed_weft_bags))
+        setValue("ecru_warp_bags", r2(res.ecru_warp_bags))
+        setValue("ecru_weft_bags", r2(res.ecru_weft_bags))
+        setValue("dyed_bags", r2(res.dyed_bags))
+        setValue("ecru_bags", r2(res.ecru_bags))
+      },
+      [setValue]
+    )
+
 
   const payloadForSave = () => {
     const v = getValues()

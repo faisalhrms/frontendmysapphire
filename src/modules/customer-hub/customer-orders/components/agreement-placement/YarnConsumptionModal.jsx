@@ -11,7 +11,8 @@ const YarnConsumptionModal = ({
   widthInches,
   widthCm,
   onComputed,
-  dyeingMeta
+  dyeingMeta,
+  rejPct
 }) => {
   useEffect(() => {
     if (!open) return
@@ -48,6 +49,7 @@ const YarnConsumptionModal = ({
             widthCm={widthCm}
             onComputed={onComputed}
             dyeingMeta={dyeingMeta}
+            initialRejPct={rejPct}
           />
         </div>
       </div>
