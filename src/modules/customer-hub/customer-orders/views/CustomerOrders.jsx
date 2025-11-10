@@ -184,7 +184,7 @@ const CustomerOrders = () => {
               <ul className="list-none mb-0 text-defaulttextcolor text-defaultsize">
                 {rows.map((r) => {
                   const isSelected = selected?.id === r.id
-                  const when = r.start_date || r.created_at
+                  const when = r.received_at || r.created_at
                   return (
                     <li key={`agr:${r.id}`} className="border-b dark:border-defaultborder/20">
                       <button
