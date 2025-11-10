@@ -1,5 +1,6 @@
 import React from "react"
 import QCPanel from "@modules/chatbot/components/QCPanel.jsx"
+import CompetitorPanel from "@modules/chatbot/components/CompetitorPanel.jsx"
 import HasPermission from "@components/HasPermission.jsx"
 
 const ChatInputBox = ({
@@ -25,9 +26,15 @@ const ChatInputBox = ({
   hrSubtypes = [],
   setHrSubtypes,
   suggestions = [],
-  ask
+  ask,
+  competitorSites = [],
+  setCompetitorSites,
+  competitorChecks = [],
+  setCompetitorChecks
 }) => {
-  const padClass = modeSelection === "Quality Control" ? "pb-20" : "pb-16"
+  const isQc = modeSelection === "Quality Control"
+  const isCompetitor = modeSelection === "Competitor Pricing"
+  const padClass = isQc || isCompetitor ? "pb-20" : "pb-16"
   const toggleSub = s => setHrSubtypes?.([s])
   const active = s => hrSubtypes?.[0] === s
   const chips = (suggestions.length ? suggestions : [
@@ -41,7 +48,23 @@ const ChatInputBox = ({
   return (
     <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-visible shadow-xl ring-2 ring-gray-300">
       <div className={`rounded-t-xl p-2 ${padClass}`}>
-        {modeSelection !== "Quality Control" && (
+        {isQc ? (
+          <QCPanel
+            qcTarget={qcTarget}
+            setQcTarget={setQcTarget}
+            qcChecks={qcChecks}
+            setQcChecks={setQcChecks}
+            qcRender={qcRender}
+            setQcRender={setQcRender}
+          />
+        ) : isCompetitor ? (
+          <CompetitorPanel
+            competitorSites={competitorSites}
+            setCompetitorSites={setCompetitorSites}
+            competitorChecks={competitorChecks}
+            setCompetitorChecks={setCompetitorChecks}
+          />
+        ) : (
           <>
             <textarea
               ref={inputRef}
@@ -66,16 +89,6 @@ const ChatInputBox = ({
               </div>
             )}
           </>
-        )}
-        {modeSelection === "Quality Control" && (
-          <QCPanel
-            qcTarget={qcTarget}
-            setQcTarget={setQcTarget}
-            qcChecks={qcChecks}
-            setQcChecks={setQcChecks}
-            qcRender={qcRender}
-            setQcRender={setQcRender}
-          />
         )}
       </div>
       <div className="absolute inset-x-0 bottom-0 px-4 py-3 bg-white dark:bg-bodybg flex items-center rounded-b-xl">
@@ -114,6 +127,17 @@ const ChatInputBox = ({
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_quality_control'>
                   <button onClick={() => { setModeSelection("Quality Control"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
+                </HasPermission>
+                <HasPermission permission='auth.chatbot_competitors'>
+                  <button
+                    onClick={() => {
+                      setModeSelection("Competitor Pricing")
+                      setModeOpen(false)
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Competitor Pricing
+                  </button>
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_asset_audit'>
                   <button onClick={() => { setModeSelection("IT Audit"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">IT Audit</button>
