@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import {
   getAirjetCostingBasePreferSaved,
+  getAirjetCostingBaseComputed,
   upsertAirjetCostingBase,
+  resetAirjetCostingBase,
 } from "@modules/customer-hub/customer-orders/services/CustomerHubMailService.js"
 import {
   buildParams,
@@ -79,15 +81,13 @@ export const useAirjetCostingBase = (seed) => {
     []
   )
 
-  const onSave = useCallback(async () => {
-    if (!data) return
-    setSaving(true)
-    try {
+  const buildKeys = useCallback(
+    (currentData) => {
       const widthKey =
         params.width ??
-        (data.greige_width != null ? String(data.greige_width) : undefined)
+        (currentData?.greige_width != null ? String(currentData.greige_width) : undefined)
 
-      const keys = {
+      return {
         agreement_id: params.agreement_id,
         greige_item_code: params.greige_item_code,
         quality_code: params.quality_code,
@@ -96,6 +96,15 @@ export const useAirjetCostingBase = (seed) => {
         width: widthKey,
         email_id: params.agreement_id ? undefined : params.email_id,
       }
+    },
+    [params]
+  )
+
+  const onSave = useCallback(async () => {
+    if (!data) return
+    setSaving(true)
+    try {
+      const keys = buildKeys(data)
 
       const yarnCostFn = makeYarnCostPerYard(data)
       const varCostFn = makeVariableCostPerYard(data)
@@ -111,32 +120,20 @@ export const useAirjetCostingBase = (seed) => {
 
       const patch = {
         ...data,
-
         num_width: data.num_width,
-
         greige_width: data.greige_width,
-
         yarn_cost_per_yard:
           yarnCost != null ? yarnCost : data.yarn_cost_per_yard,
         variable_cost_per_yard:
           variableCost != null ? variableCost : data.variable_cost_per_yard,
-
         recovery_after_rejection:
           targetProfit != null ? targetProfit : data.recovery_after_rejection,
-
         target_price_per_yard:
-          targetPriceYard != null
-            ? targetPriceYard
-            : data.target_price_per_yard,
+          targetPriceYard != null ? targetPriceYard : data.target_price_per_yard,
         target_price_per_meter:
-          targetPriceMeter != null
-            ? targetPriceMeter
-            : data.target_price_per_meter,
-
+          targetPriceMeter != null ? targetPriceMeter : data.target_price_per_meter,
         final_fabric_cost_per_meter:
-          targetPriceMeter != null
-            ? targetPriceMeter
-            : data.final_fabric_cost_per_meter,
+          targetPriceMeter != null ? targetPriceMeter : data.final_fabric_cost_per_meter,
       }
 
       const saved = await upsertAirjetCostingBase(keys, patch)
@@ -145,7 +142,29 @@ export const useAirjetCostingBase = (seed) => {
     } finally {
       setSaving(false)
     }
-  }, [params, data])
+  }, [buildKeys, data])
 
-  return { params, data, loading, saving, showingSaved, onChangeCosts, onSave }
+  const onReset = useCallback(async () => {
+    const hasKeys =
+      params.quality_code ||
+      params.greige_item_code ||
+      params.design ||
+      params.color ||
+      params.width
+
+    if (!hasKeys) return
+
+    setSaving(true)
+    try {
+      const keys = buildKeys(data || {})
+      await resetAirjetCostingBase(keys)
+      const fresh = await getAirjetCostingBaseComputed(params)
+      setData(fresh)
+      setShowingSaved(false)
+    } finally {
+      setSaving(false)
+    }
+  }, [params, data, buildKeys])
+
+  return { params, data, loading, saving, showingSaved, onChangeCosts, onSave, onReset }
 }

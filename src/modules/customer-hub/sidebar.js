@@ -1,5 +1,5 @@
 import {generateSidebarItem} from "@helpers/formatters.js";
-import {CUSTOMER_HUB_ROUTES, MASTER_DATA} from "@modules/customer-hub/routes.js";
+import {CUSTOMER_HUB_ROUTES, MASTER_DATA, READ_AGREEMENTS} from "@modules/customer-hub/routes.js";
 
 export let sidebarMenu = [
     generateSidebarItem(
@@ -33,6 +33,14 @@ export let sidebarMenu = [
                 1,
                 "bx bx-message-square-edit",
                 CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.permission
+            ),
+            generateSidebarItem(
+                READ_AGREEMENTS.READ.path,
+                "link",
+                "Approved Orders",
+                1,
+                "bx bx-message-square-edit",
+                READ_AGREEMENTS.READ.permission
             ),
 
         ]
