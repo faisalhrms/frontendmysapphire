@@ -133,7 +133,7 @@ const DmsForm = () => {
 
                                         {/* Attachments */}
                                         <div className="col-span-12 mt-4">
-                                            <h4 className="text-sm font-semibold mb-2">PF Contribution Attachments</h4>
+                                            <h4 className="text-sm font-semibold mb-2">Attachments</h4>
                                             <GalleryUpload
                                                 key={header?.DOC_SEQUENCE_VALUE ?? docSequenceValue}
                                                 currentValue={getValues('attachment_ids')}
