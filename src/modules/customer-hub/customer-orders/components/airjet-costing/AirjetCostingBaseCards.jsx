@@ -16,7 +16,8 @@ import {
   TrendingUp,
   ClipboardList,
   Save,
-  Edit3
+  Edit3,
+  RotateCcw
 } from "lucide-react"
 import NumWidthStat from "@modules/customer-hub/customer-orders/components/NumWidthStat.jsx"
 import EditableKV from "@modules/customer-hub/customer-orders/components/EditableKV.jsx"
@@ -30,7 +31,8 @@ import {
   makeLossOfRecovery,
   makeTargetProfitPerDayLoom,
   makeTargetPricePerYard,
-  makeTargetPricePerMeter
+  makeTargetPricePerMeter,
+  makeDyeWastePerYard
 } from "@modules/customer-hub/customer-orders/services/airjetCosting.js"
 
 export const VALUE_COL_WIDTH = "w-20 md:w-24"
@@ -42,11 +44,16 @@ const formatMetricValue = (value, digits = 2) => {
   return n.toFixed(digits)
 }
 
-const KV = ({ k, v, valueWidth = VALUE_COL_WIDTH }) => (
+const KV = ({ k, v, valueWidth = VALUE_COL_WIDTH, tooltip }) => (
   <div className="grid grid-cols-[1fr,auto] items-center py-2 gap-2">
     <span className="text-gray-600 dark:text-white/70 truncate">{k}</span>
     <div className={`relative flex items-center justify-end ${valueWidth} pr-6`}>
-      <span className="font-medium text-right tabular-nums truncate">{v ?? "-"}</span>
+      <span
+        className="font-medium text-right tabular-nums truncate"
+        title={tooltip}
+      >
+        {v ?? "-"}
+      </span>
     </div>
   </div>
 )
@@ -107,12 +114,12 @@ const Stat = ({ label, value, ring }) => (
 
 const MetricTile = ({ label, value, ring, Icon }) => (
   <div className={`relative rounded-lg px-4 py-3 border ${ring || "border-slate-200/80"} bg-white dark:bg-[#151515] flex flex-col`}>
-      <div className="text-[.75rem] text-gray-600 dark:text-white/70 text-center pr-6">{label}</div>
-      {Icon ? (
-        <span className="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/80 dark:border-white/10 bg-white dark:bg-black/40">
-          <Icon size={12} className="text-sky-700 dark:text-sky-300" />
-        </span>
-      ) : null}
+    <div className="text-[.75rem] text-gray-600 dark:text-white/70 text-center pr-6">{label}</div>
+    {Icon ? (
+      <span className="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/80 dark:border-white/10 bg-white dark:bg-black/40">
+        <Icon size={12} className="text-sky-700 dark:text-sky-300" />
+      </span>
+    ) : null}
     <div className="text-center text-[1.05rem] font-semibold tabular-nums">{value ?? "-"}</div>
   </div>
 )
@@ -189,7 +196,7 @@ const EditableMetricTile = ({ label, rawValue, ring, Icon = Edit3, onSave }) => 
   )
 }
 
-const HeaderCard = ({ data, onSave }) => (
+const HeaderCard = ({ data, onSave, onReset }) => (
   <div className="rounded-full border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#111] shadow-md p-2 flex items-center gap-3 overflow-x-hidden">
     <div className="flex items-center gap-4">
       <div className="h-7 w-7 rounded-md grid place-items-center bg-white dark:bg-black/30 border border-slate-200/80 dark:border-white/10">
@@ -223,20 +230,28 @@ const HeaderCard = ({ data, onSave }) => (
           Color: {data.color}
         </Chip>
       ) : null}
+      <button
+        type="button"
+        title={"clear all data"}
+        onClick={onReset}
+        className="ti-btn ti-btn-danger !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+      >
+        <RotateCcw size={15} />
+      </button>
+      <button
+        type="button"
+        onClick={onSave}
+        className="ti-btn ti-btn-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+      >
+        <Save size={15} />
+      </button>
     </div>
-    <button
-      type="button"
-      onClick={onSave}
-      className="ti-btn ti-btn-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
-    >
-      <Save size={15} />
-    </button>
   </div>
 )
 
 const TwoCol = ({ children }) => <div className="grid gap-3 md:grid-cols-2 items-stretch">{children}</div>
 
-const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave }) => {
+const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset }) => {
   if (!data) return null
 
   const fabricInches = useMemo(() => {
@@ -257,6 +272,7 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave }) => {
   const targetProfitDayLoomCompute = useMemo(() => makeTargetProfitPerDayLoom(data), [data])
   const targetPriceYardCompute = useMemo(() => makeTargetPricePerYard(data), [data])
   const targetPriceMeterCompute = useMemo(() => makeTargetPricePerMeter(data), [data])
+  const dyeWastePerYardCompute = useMemo(() => makeDyeWastePerYard(data), [data])
 
   const targetPriceYardValue = useMemo(() => {
     if (typeof targetPriceYardCompute !== "function") return undefined
@@ -276,9 +292,25 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave }) => {
     }
   }, [targetPriceMeterCompute])
 
+  const dyeWastePerYardValue = useMemo(() => {
+    if (typeof dyeWastePerYardCompute !== "function") return undefined
+    try {
+      return dyeWastePerYardCompute()
+    } catch {
+      return undefined
+    }
+  }, [dyeWastePerYardCompute])
+
+  const dyeWasteTooltip =
+    data.dyeing_waste !== null &&
+    data.dyeing_waste !== undefined &&
+    data.dyeing_waste !== ""
+      ? `Raw dyeing waste: ${formatMetricValue(data.dyeing_waste)}% of Yarn Cost/Yard`
+      : undefined
+
   return (
     <div className="space-y-4 overflow-x-hidden">
-      <HeaderCard data={data} onSave={onSave} />
+      <HeaderCard data={data} onSave={onSave} onReset={onReset} />
 
       <TwoCol>
         <Card>
@@ -295,7 +327,6 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave }) => {
                 if (onChangeCosts) onChangeCosts({ num_width: val })
               }}
             />
-
           </div>
         </Card>
 
@@ -474,7 +505,11 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave }) => {
               ]}
               precision={2}
             />
-            <KV k="Dyeing Waste" v={data.dyeing_waste} />
+            <KV
+              k="Dyeing Waste"
+              v={dyeWastePerYardValue == null ? "-" : formatMetricValue(dyeWastePerYardValue)}
+              tooltip={dyeWasteTooltip}
+            />
             <KV k="Sizing Cost/Yard" v={data.sizing_cost_per_yard} />
             <ComputedKV
               label="Variable Cost/Yard"

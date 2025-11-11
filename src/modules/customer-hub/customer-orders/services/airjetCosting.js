@@ -1,11 +1,13 @@
 export const LBS_PER_KG = 2.2046
+const BLEACH_RATE_PER_KG = 55
 
 export const toNum = (x, fb = NaN) => {
   const n = Number(x)
   return Number.isFinite(n) ? n : fb
 }
 
-export const pick = (o, keys) => keys.map(k => o?.[k]).find(v => v !== undefined && v !== null && v !== "") || ""
+export const pick = (o, keys) =>
+  keys.map(k => o?.[k]).find(v => v !== undefined && v !== null && v !== "") || ""
 
 export const buildParams = (seed) => {
   const s = seed || {}
@@ -42,25 +44,75 @@ export const makeYarnCostPerYard = (d) => () => {
   const warpCons = toNum(d.warp_cons_per_yard, NaN)
   const weftCons = toNum(d.weft_cons_per_yard, NaN)
   if (Number.isNaN(warpCons) || Number.isNaN(weftCons)) return null
+
   const warpCost10 = toNum(d.warp_cost_per_10lbs, 0)
   const weftCost10 = toNum(d.weft_cost_per_10lbs, 0)
+
   const dyeWarpPerKg = toNum(d.dyeing_charges_perkg_warp, 0)
   const dyeWeftPerKg = toNum(d.dyeing_charges_perkg_weft, 0)
+
   const covWarp = toNum(d.color_coverage_warp_percent, 0)
   const covWeft = toNum(d.color_coverage_weft_percent, 0)
-  const warpTerm = (covWarp / 100) * (dyeWarpPerKg / LBS_PER_KG) * 10 + warpCost10
-  const weftTerm = (covWeft / 100) * (dyeWeftPerKg / LBS_PER_KG) * 10 + weftCost10
-  const total = warpTerm * (warpCons / 10) + weftTerm * (weftCons / 10)
+
+  const bleachWarp = toNum(
+    d.bleached_white_coverage_warp_percent ??
+    d.bleached_white_coverage_warp ??
+    d.bleach_coverage_warp_percent ??
+    d.bleach_coverage_warp,
+    0
+  )
+
+  const bleachWeft = toNum(
+    d.bleached_white_coverage_weft_percent ??
+    d.bleached_white_coverage_weft ??
+    d.bleach_coverage_weft_percent ??
+    d.bleach_coverage_weft,
+    0
+  )
+
+  let warpBase
+  if (covWarp === 100) {
+    warpBase = (dyeWarpPerKg / LBS_PER_KG) * 10 + warpCost10
+  } else {
+    const colorPartWarp = (covWarp / 100) * (dyeWarpPerKg / LBS_PER_KG) * 10
+    const bleachPartWarp = (bleachWarp / 100) * (BLEACH_RATE_PER_KG / LBS_PER_KG) * 10
+    warpBase = colorPartWarp + bleachPartWarp + warpCost10
+  }
+
+  let weftBase
+  if (covWeft === 100) {
+    weftBase = (dyeWeftPerKg / LBS_PER_KG) * 10 + weftCost10
+  } else {
+    const colorPartWeft = (covWeft / 100) * (dyeWeftPerKg / LBS_PER_KG) * 10
+    const bleachPartWeft = (bleachWeft / 100) * (BLEACH_RATE_PER_KG / LBS_PER_KG) * 10
+    weftBase = colorPartWeft + bleachPartWeft + weftCost10
+  }
+
+  const warpComponent = warpBase * (warpCons / 10)
+  const weftComponent = weftBase * (weftCons / 10)
+
+  const total = warpComponent + weftComponent
   return Math.round((total + Number.EPSILON) * 100) / 100
+}
+
+export const makeDyeWastePerYard = (d) => () => {
+  const yarn = makeYarnCostPerYard(d)()
+  if (yarn == null) return null
+  const factor = toNum(d.dyeing_waste, NaN)
+  if (!Number.isFinite(factor)) return null
+  const value = yarn * factor
+  return Math.round((value + Number.EPSILON) * 100) / 100
 }
 
 export const makeVariableCostPerYard = (d) => () => {
   const yarn = makeYarnCostPerYard(d)()
   if (yarn == null) return null
+  const dyeWaste = makeDyeWastePerYard(d)() ?? 0
   const sizing = toNum(d.sizing_cost_per_yard, 0)
+  const freight = toNum(d.freight_per_yard, 0)
+  const rebate = toNum(d.rebate_per_yard, 0)
   const packing = toNum(d.packing_cost_per_yard, 0)
-  const dyeWaste = toNum(d.dyeing_waste, 0)
-  const total = yarn + sizing + packing + dyeWaste
+  const total = yarn + dyeWaste + sizing + freight + rebate + packing
   return Math.round((total + Number.EPSILON) * 100) / 100
 }
 
