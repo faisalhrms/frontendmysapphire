@@ -5,7 +5,7 @@ import dayjs from "dayjs"
 import mail from "@assets/images/icon/viewicon.svg"
 import Avatar from "@components/Avatar.jsx"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
-import { Inbox, Plus, Edit3, FileSignature, Calculator, ClipboardList, ChevronDown,FolderSync } from "lucide-react"
+import { Inbox, Plus, Edit3, FileSignature, Calculator, ClipboardList, ChevronDown, FolderSync, RotateCcw } from "lucide-react"
 import NavTabs from "@modules/customer-hub/customer-orders/components/NavTabs.jsx"
 import AirjetCostingBaseSection from "@modules/customer-hub/customer-orders/components/airjet-costing/AirjetCostingBaseSection.jsx"
 import AgreementPlacementModal from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
@@ -17,7 +17,7 @@ import { useSearchHook } from "@hooks/useSearchHook.js"
 import { useAgreementsFeed } from "@modules/customer-hub/customer-orders/hooks/useAgreementsFeed.js"
 import { useMailboxes } from "@modules/customer-hub/customer-orders/hooks/useMailboxes.js"
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx"
-import { getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import { getAgreement, resetAgreementPayload } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import PrGenerationSection from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx"
 const srcLabel = (s) => (s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : "")
 const statusLabel = (s) => (s ? String(s).split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") : "")
@@ -95,6 +95,14 @@ const CustomerOrders = () => {
     const full = await getAgreement(id)
     setSelected(full)
   }, [])
+
+    const handleResetPayload = useCallback(async () => {
+      if (!selected?.id) return
+      const refreshed = await resetAgreementPayload(selected.id)
+      setSelected(refreshed)
+      queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
+    }, [selected?.id, queryClient])
+
 
   return (
     <Fragment>
@@ -246,13 +254,24 @@ const CustomerOrders = () => {
                   <div className="flex items-center justify-between">
                     <NavTabs tabs={tabs} activeId={activeTab} onTabChange={(id) => setActiveTab(id)} />
                     {activeTab === "tab-agreement" && selected && (
-                      <button
-                        type="button"
-                        onClick={() => openForEdit(selected)}
-                        className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
-                      >
-                        <Edit3 size={14} /> Edit
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleResetPayload}
+                          className="ti-btn ti-btn-outline-danger !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                        >
+                          <RotateCcw size={14} />
+                          Reset
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openForEdit(selected)}
+                          className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                        >
+                          <Edit3 size={14} />
+                          Edit
+                        </button>
+                      </div>
                     )}
                   </div>
                   <div className="mt-4">
@@ -270,11 +289,15 @@ const CustomerOrders = () => {
                           approvalActivity={selected?.actions}
                           status={selected?.status}
                           currentApproverName={selected?.current_approver_name}
-                          disabledSubmit={selected?.status === "under_approval" || selected?.status === "approved"}
+                          disabledSubmit={
+                            selected?.status === "under_approval" ||
+                            selected?.status === "approved"
+                          }
                           refetch={refetch}
                         />
                       </div>
                     )}
+
                     {activeTab === "tab-costing" && (
                       <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
                         <AirjetCostingBaseSection seed={selected} />
