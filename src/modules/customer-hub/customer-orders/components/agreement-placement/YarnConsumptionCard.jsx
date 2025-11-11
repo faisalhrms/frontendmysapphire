@@ -44,9 +44,18 @@ const toNum = (v) => {
 
 const round = (n, d = 2) => Number((isFinite(n) ? n : 0).toFixed(d))
 
-const YarnConsumptionCard = ({ item, totalMeters, onTotalMetersChange, onComputed, dyeingMeta }) => {
+const YarnConsumptionCard = ({
+  item,
+  totalMeters,
+  onTotalMetersChange,
+  onComputed,
+  dyeingMeta,
+  initialRejPct
+}) => {
   const [meters, setMeters] = useState(totalMeters || "")
-  const [rejPct, setRejPct] = useState(10)
+  const [rejPct, setRejPct] = useState(
+    initialRejPct != null ? Number(initialRejPct) : 10
+  )
   const onComputedRef = useRef(onComputed)
   const prevPayloadRef = useRef(null)
 
@@ -57,6 +66,11 @@ const YarnConsumptionCard = ({ item, totalMeters, onTotalMetersChange, onCompute
   useEffect(() => {
     setMeters(totalMeters || "")
   }, [totalMeters])
+
+  useEffect(() => {
+    if (initialRejPct == null) return
+    setRejPct(Number(initialRejPct))
+  }, [initialRejPct])
 
   const epi = toNum(item?.ends)
   const ppi = toNum(item?.picks)

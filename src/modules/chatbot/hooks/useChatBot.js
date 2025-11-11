@@ -19,7 +19,7 @@ const defaultHrPoliciesSuggestions = [
   "What's travel policy of sapphire retail",
   "What's user account logout policy in days",
   "In case any it incident occur, to whome it should be reported?",
-  "Is a G11 manager eligible for a laptop under the policy?",
+  "Is a G11 manager eligible for a laptop under the policy?"
 ]
 
 const defaultHrPasSuggestions = [
@@ -43,6 +43,26 @@ const defaultHrEmployeeSuggestions = [
   "Search employees in marketing department"
 ]
 
+const defaultCompetitorSuggestions = [
+  "Compare unstitched 3-piece suits under PKR 6000 across Sapphire, Khaadi and Nishat",
+  "List top 20 ready to wear kurtas with prices from Sapphire, Khaadi and Nishat",
+  "Which brand has the cheapest ready to wear kurtas under PKR 4000?",
+  "Show unstitched lawn articles with prices side by side for all three brands"
+]
+
+const defaultCompetitorSites = [
+  { id: 1, url: "https://pk.sapphireonline.pk", enabled: true },
+  { id: 2, url: "https://pk.khaadi.com", enabled: true },
+  { id: 3, url: "https://nishatlinen.com", enabled: true }
+]
+
+const defaultCompetitorChecks = [
+  "unstiched",
+  "ready_to_wear",
+  "side_by_side",
+  "per_site_snapshot"
+]
+
 export default function useChatBot() {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState("")
@@ -62,6 +82,8 @@ export default function useChatBot() {
   const [qcTarget, setQcTarget] = useState("https://pk.sapphireonline.pk")
   const [qcChecks, setQcChecks] = useState(defaultChecks)
   const [qcRender, setQcRender] = useState(true)
+  const [competitorSites, setCompetitorSites] = useState(defaultCompetitorSites)
+  const [competitorChecks, setCompetitorChecks] = useState(defaultCompetitorChecks)
   const recognitionRef = useRef(null)
   const finalTranscriptRef = useRef("")
   const inputRef = useRef(null)
@@ -100,6 +122,8 @@ export default function useChatBot() {
       else items = defaultHrPoliciesSuggestions
     } else if (modeSelection === "Export Data") {
       items = defaultExportSuggestions
+    } else if (modeSelection === "Competitor Pricing") {
+      items = defaultCompetitorSuggestions
     }
     setSuggestions(items)
   }, [modeSelection, hrSubtypes])
@@ -303,7 +327,9 @@ export default function useChatBot() {
         modeSelection === "Salesforce" ? "salesforce" :
         modeSelection === "Quality Control" ? "qc" :
         modeSelection === "HR" ? "hr" :
-        modeSelection === "IT Audit" ? "assets" : ""
+        modeSelection === "IT Audit" ? "assets" :
+        modeSelection === "Competitor Pricing" ? "competitors" :
+        ""
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
@@ -317,7 +343,9 @@ export default function useChatBot() {
       modeSelection === "Salesforce" ? "salesforce" :
       modeSelection === "Quality Control" ? "qc" :
       modeSelection === "HR" ? "hr" :
-      modeSelection === "IT Audit" ? "assets" : ""
+      modeSelection === "IT Audit" ? "assets" :
+      modeSelection === "Competitor Pricing" ? "competitors" :
+      ""
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
     lastFlushTsRef.current = 0
@@ -325,6 +353,12 @@ export default function useChatBot() {
       clearTimeout(flushTimerRef.current)
       flushTimerRef.current = 0
     }
+
+    const enabledCompetitorSites = (competitorSites || [])
+      .filter(s => s && s.enabled && typeof s.url === "string" && s.url.trim())
+      .map(s => s.url.trim())
+
+    const safeCompetitorChecks = Array.isArray(competitorChecks) ? competitorChecks : []
 
     streamCtrlRef.current = ChatService.stream({
       msg,
@@ -334,6 +368,8 @@ export default function useChatBot() {
       qcChecks,
       qcRender,
       hrSubtypes,
+      competitorSites: enabledCompetitorSites,
+      competitorChecks: safeCompetitorChecks,
       onEvent: ev => {
         const i = botIdxRef.current
         if (i < 0) return
@@ -440,6 +476,8 @@ export default function useChatBot() {
     setQcChecks(defaultChecks)
     setQcRender(true)
     setHrSubtypes(["policies"])
+    setCompetitorSites(defaultCompetitorSites)
+    setCompetitorChecks(defaultCompetitorChecks)
     botIdxRef.current = -1
     if (inputRef.current) autoResize(inputRef.current)
     pendingHtmlRef.current = ""
@@ -451,7 +489,13 @@ export default function useChatBot() {
   }
 
   const handleSend = () => {
-    const msg = input.trim() || (modeSelection === "Quality Control" ? "Run QC" : "")
+    const msg =
+      input.trim() ||
+      (modeSelection === "Quality Control"
+        ? "Run QC"
+        : modeSelection === "Competitor Pricing"
+          ? "Run competitor pricing comparison"
+          : "")
     if (!msg) return
     if (!isBotActive) handleStartChat()
     setInput("")
@@ -498,6 +542,10 @@ export default function useChatBot() {
     setQcChecks,
     qcRender,
     setQcRender,
+    competitorSites,
+    setCompetitorSites,
+    competitorChecks,
+    setCompetitorChecks,
     inputRef,
     handleSend,
     handleReset,

@@ -9,7 +9,10 @@ const AgreementItemMeta = ({ qc, design, color, widthSeed,yarn_dyed_or_greige ,w
       <div className="flex items-center justify-between">
         <div className="font-semibold text-[.75rem]">Item Code</div>
         <div className="flex items-center gap-2">
-          <span className="text-[.7rem] px-2 py-1 rounded-full bg-slate-700/5 dark:bg-white/10">{greigeItemCode || "-"}</span>
+         <span className="text-[.65rem] px-2 py-1 font-medium rounded-full bg-slate-700/5 dark:bg-white/10">
+            {greigeItemCode || "-"}
+         </span>
+
             <button
               type="button"
               title="Activity History"

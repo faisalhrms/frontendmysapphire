@@ -76,6 +76,21 @@ const AgreementPlacementForm = ({
       (choices.length === 1 ? choices[0] : undefined),
     [choices, greigeCode]
   )
+    const greigeDisplay = useMemo(() => {
+      const parts = []
+      if (matchedItem?.greige_item_code) {
+        parts.push(matchedItem.greige_item_code)
+      } else if (greigeCode) {
+        parts.push(greigeCode)
+      }
+      if (matchedItem?.greige_design) {
+        parts.push(matchedItem.greige_design)
+      }
+      if (matchedItem?.greige_color) {
+        parts.push(matchedItem.greige_color)
+      }
+      return parts.join(" · ")
+    }, [matchedItem, greigeCode])
 
   useEffect(() => {
     if (!choices?.length) return
@@ -349,12 +364,7 @@ const AgreementPlacementForm = ({
                 watch("width_inches")
               }
               widthCm={watch("width_cm")}
-              greigeItemCode={
-                watch("greige_item_code") ||
-                seed.payload?.greige_item_code ||
-                seed.greige_item_code ||
-                seed.greige_item
-              }
+              greigeItemCode={greigeDisplay}
               actionsCount={actions?.length || 0}
               onOpenActivity={() => setActivityOpen(true)}
             />
@@ -391,29 +401,32 @@ const AgreementPlacementForm = ({
         />
       )}
 
-      <YarnConsumptionModal
-        open={showYarn}
-        onClose={() => setShowYarn(false)}
-        item={matchedItem}
-        totalMeters={totalMeters}
-        onTotalMetersChange={(v) => setValue("total_meters", v)}
-        widthInches={widthInchesValue}
-        widthCm={widthCmValue}
-        onComputed={handleComputed}
-        dyeingMeta={seed?.dyeing_meta}
-      />
+        <YarnConsumptionModal
+          open={showYarn}
+          onClose={() => setShowYarn(false)}
+          item={matchedItem}
+          totalMeters={totalMeters}
+          onTotalMetersChange={(v) => setValue("total_meters", v)}
+          widthInches={widthInchesValue}
+          widthCm={widthCmValue}
+          onComputed={handleComputed}
+          dyeingMeta={seed?.dyeing_meta}
+          rejPct={watch("rej_pct")}
+        />
+
 
       {!showYarn && (
         <div className="hidden">
-          <YarnConsumptionCard
-            item={matchedItem}
-            totalMeters={totalMeters}
-            onTotalMetersChange={(v) => setValue("total_meters", v)}
-            widthInches={widthInchesValue}
-            widthCm={widthCmValue}
-            onComputed={handleComputed}
-            dyeingMeta={seed?.dyeing_meta}
-          />
+        <YarnConsumptionCard
+          item={matchedItem}
+          totalMeters={totalMeters}
+          onTotalMetersChange={(v) => setValue("total_meters", v)}
+          widthInches={widthInchesValue}
+          widthCm={widthCmValue}
+          onComputed={handleComputed}
+          dyeingMeta={seed?.dyeing_meta}
+          initialRejPct={watch("rej_pct")}
+        />
         </div>
       )}
 
