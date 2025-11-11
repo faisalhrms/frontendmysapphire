@@ -112,7 +112,7 @@ const DmsList = () => {
     return (
         <>
             <IconPageHeader
-                heading="DMS Attachments"
+                heading="PF Contribution Attachments"
                 description="List of vouchers with their attached documents."
                 icon={FileText}
             />
