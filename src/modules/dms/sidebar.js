@@ -8,7 +8,7 @@ export const sidebarMenu = [
         'link',
         'DMS',
         15,
-        'bx-book-bookmark',
+        'bx-purchase-tag-alt',
         DMS_ROUTES.READ.permission
     )
 ]
