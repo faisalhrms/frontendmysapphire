@@ -45,7 +45,14 @@ const DmsForm = () => {
     useEffect(() => {
         loadHeader();
     }, [docSequenceValue]);
-
+    useEffect(() => {
+        if (header?.attachments) {
+            // Pre-fill the control with currently linked attachment IDs
+            reset({
+                attachment_ids: header.attachments.map(a => a.id),
+            });
+        }
+    }, [header, reset]);
     const onSubmit = useCallback(
         async (payload) => {
             if (!docSequenceValue) {
@@ -74,7 +81,7 @@ const DmsForm = () => {
 
     return (
         <>
-            <PageHeader currentpage="Dms Attachments" activepage="Dms" mainpage="Form" />
+            <PageHeader currentpage="Journal Voucher Documents" activepage="Dms" mainpage="Form" />
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-12 gap-x-6">
@@ -128,8 +135,9 @@ const DmsForm = () => {
                                         <div className="col-span-12 mt-4">
                                             <h4 className="text-sm font-semibold mb-2">Attachments</h4>
                                             <GalleryUpload
+                                                key={header?.DOC_SEQUENCE_VALUE ?? docSequenceValue}
                                                 currentValue={getValues('attachment_ids')}
-                                                files={[]} // if you have existing files, map them here later
+                                                files={header?.attachments || []}   // 👈 show existing files
                                                 label={false}
                                                 inputName="attachment_ids"
                                                 placeholder="Select Attachments"

@@ -26,18 +26,7 @@ const DmsList = () => {
             accessor: "doc_sequence_value",
             filterable: true,
             filterType: "text",
-            Cell: ({ value }) =>
-                value ? (
-                    <Link
-                        to={`/dms/form/${value}`}
-                        className="text-primary hover:underline"
-                        title="Open DMS Form"
-                    >
-                        {value}
-                    </Link>
-                ) : (
-                    "N/A"
-                ),
+            Cell: ({ value }) => (value ? value : "N/A"),
         },
         {
             Header: "Attachments",
@@ -123,7 +112,7 @@ const DmsList = () => {
     return (
         <>
             <IconPageHeader
-                heading="DMS Attachments"
+                heading="PF Contribution Attachments"
                 description="List of vouchers with their attached documents."
                 icon={FileText}
             />

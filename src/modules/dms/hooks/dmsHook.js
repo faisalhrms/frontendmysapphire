@@ -2,6 +2,8 @@
 import { useState, useCallback } from "react";
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
+import {useNavigate} from "react-router-dom";
+import {DMS_ROUTES} from "@modules/dms/routes.js";
 
 // --- fetcher ---
 const fetchDmsJournal = async (doc_sequence_value) => {
@@ -14,7 +16,7 @@ const fetchDmsJournal = async (doc_sequence_value) => {
 
 // --- mutation ---
 const postDmsAttachments = async (payload) => {
-    const res = await api.post(`/dms-journals/`, payload);
+    const res = await api.post(`/dms-journals/upsert-attachments/`, payload);
     if (!res?.data?.status) {
         throw new Error(res?.data?.message || "Failed to save attachments");
     }
@@ -45,14 +47,14 @@ export const useDmsJournal = (doc_sequence_value) => {
 // --- replace useMutation ---
 export const useSaveDmsAttachments = (doc_sequence_value, refreshCallback) => {
     const [saving, setSaving] = useState(false);
+    const navigate = useNavigate();
 
     const save = useCallback(async (payload) => {
         setSaving(true);
         try {
             const data = await postDmsAttachments(payload);
             Notify.success(data?.message || "Attachments saved");
-
-            // call refresh if given (replacing invalidateQueries)
+            navigate(DMS_ROUTES.READ.path)
             if (refreshCallback) refreshCallback();
         } catch (error) {
             Notify.error(error?.response?.data?.message || error.message || "Failed to save attachments");
