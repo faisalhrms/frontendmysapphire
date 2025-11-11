@@ -26,18 +26,7 @@ const DmsList = () => {
             accessor: "doc_sequence_value",
             filterable: true,
             filterType: "text",
-            Cell: ({ value }) =>
-                value ? (
-                    <Link
-                        to={`/dms/form/${value}`}
-                        className="text-primary hover:underline"
-                        title="Open DMS Form"
-                    >
-                        {value}
-                    </Link>
-                ) : (
-                    "N/A"
-                ),
+            Cell: ({ value }) => (value ? value : "N/A"),
         },
         {
             Header: "Attachments",
