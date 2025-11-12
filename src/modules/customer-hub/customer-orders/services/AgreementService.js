@@ -106,3 +106,20 @@ export const getApprovalActivity = async (id, opts = {}) => {
     throw error
   }
 }
+
+export const resetAgreementPayload = async (id, opts = {}) => {
+  try {
+    const res = await api.post(
+      `${ROOT}/agreements/${id}/reset-payload/`,
+      null,
+      { signal: opts.signal }
+    )
+    const data = res.data?.data || res.data
+    Notify.success("Agreement payload reset successfully")
+    return data
+  } catch (error) {
+    Notify.error(serverMessage(error, "Failed to reset agreement payload"))
+    throw error
+  }
+}
+

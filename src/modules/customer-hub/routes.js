@@ -17,6 +17,10 @@ import CustomerHubEmailConfig from "@modules/customer-hub/mail-settings/componen
 import GreigeLeadTimeList from "@modules/customer-hub/master-data/greige-lead-times/views/GreigeLeadTimeList.jsx";
 import GreigeLeadTimeForm from "@modules/customer-hub/master-data/greige-lead-times/components/GreigeLeadTimeForm.jsx";
 import AgreementApprovalDetail from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementApprovalDetail.jsx";
+import ReadAgreementList from "@modules/customer-hub/approved-orders/views/ReadAgreementList.jsx";
+import AgreementPlacementReadOnly
+    from "@modules/customer-hub/approved-orders/components/AgreementPlacementReadOnly.jsx";
+import ReadAgreementDetail from "@modules/customer-hub/approved-orders/components/ReadAgreementDetail.jsx";
 
 
 export const CUSTOMER_HUB_ROUTES = {
@@ -42,7 +46,19 @@ export const CUSTOMER_HUB_ROUTES = {
     },
     AGREEMENTS_APPROVAL:{
         path:'/module/agreement/detail/:id',
+        permission: "customer_hub.approved_customer_hub_agreements"
     },
+};
+
+export const READ_AGREEMENTS = {
+        READ: {
+            path: '/module/agreement/list',
+            permission: "customer_hub.approved_customer_hub_agreements"
+        },
+        DETAIL: {
+            path: '/module/agreement/read/:id',
+            permission: "customer_hub.approved_customer_hub_agreements"
+        }
 };
 
 export const MASTER_DATA = {
@@ -210,5 +226,16 @@ export const MODULE_ROUTES = [
     {
         path: CUSTOMER_HUB_ROUTES.AGREEMENTS_APPROVAL.path,
         component: AgreementApprovalDetail,
+        permission: CUSTOMER_HUB_ROUTES.AGREEMENTS_APPROVAL.permission,
+    },
+    {
+        path: READ_AGREEMENTS.READ.path,
+        component: ReadAgreementList,
+        permission: READ_AGREEMENTS.READ.permission,
+    },
+    {
+        path: READ_AGREEMENTS.DETAIL.path,
+        component: ReadAgreementDetail,
+        permission: READ_AGREEMENTS.DETAIL.permission,
     },
 ];

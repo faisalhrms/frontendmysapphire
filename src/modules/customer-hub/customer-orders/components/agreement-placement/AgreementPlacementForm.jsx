@@ -369,13 +369,15 @@ const AgreementPlacementForm = ({
               onOpenActivity={() => setActivityOpen(true)}
             />
             <div className="p-4 space-y-5">
-              <AgreementFabric
-                fabricDetail={watch("fabric_detail") || ""}
-                construction={watch("construction")}
-                warpBlend={watch("warp_blend")}
-                weftBlend={watch("weft_blend")}
-                yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
-              />
+                <AgreementFabric
+                  fabricDetail={watch("fabric_detail") || ""}
+                  construction={watch("construction")}
+                  warpBlend={watch("warp_blend")}
+                  weftBlend={watch("weft_blend")}
+                  yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
+                  source={seed?.source || (email ? "email" : "manual")}
+                />
+
               <AgreementYarnBags
                 values={{
                   dyed_warp_bags: watch("dyed_warp_bags"),

@@ -159,3 +159,18 @@ export const upsertAirjetCostingBase = async (keys, patch, opts = {}) => {
     throw error
   }
 }
+
+export const resetAirjetCostingBase = async (params = {}, opts = {}) => {
+  try {
+    const p = cleanQuery(params)
+    const res = await api.delete(`${ROOT}/airjet-costing/base/delete/`, {
+      params: p,
+      signal: opts.signal,
+    })
+    Notify.success("Costing reset")
+    return res.data?.data ?? res.data
+  } catch (error) {
+    Notify.error(serverMessage(error, "Failed to reset costing"))
+    throw error
+  }
+}

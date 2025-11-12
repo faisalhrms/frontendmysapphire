@@ -4,7 +4,7 @@ import AirjetCostingBaseCards from "@modules/customer-hub/customer-orders/compon
 import { useAirjetCostingBase } from "@modules/customer-hub/customer-orders/hooks/airjet-costing/useAirjetCostingBase.js"
 
 const AirjetCostingBaseSection = ({ seed }) => {
-  const { data, loading, saving, showingSaved, onChangeCosts, onSave } = useAirjetCostingBase(seed)
+  const { data, loading, saving, showingSaved, onChangeCosts, onSave, onReset } = useAirjetCostingBase(seed)
   if (loading) return <div className="py-6"><LoadingSpinner /></div>
   return (
     <div className="relative">
@@ -13,7 +13,13 @@ const AirjetCostingBaseSection = ({ seed }) => {
           <LoadingSpinner />
         </div>
       )}
-      <AirjetCostingBaseCards data={data} onChangeCosts={onChangeCosts} onSave={onSave} showingSaved={showingSaved} />
+      <AirjetCostingBaseCards
+        data={data}
+        onChangeCosts={onChangeCosts}
+        onSave={onSave}
+        onReset={onReset}
+        showingSaved={showingSaved}
+      />
     </div>
   )
 }
