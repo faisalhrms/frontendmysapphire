@@ -3,7 +3,7 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx"
 import AirjetCostingBaseCards from "@modules/customer-hub/customer-orders/components/airjet-costing/AirjetCostingBaseCards.jsx"
 import { useAirjetCostingBase } from "@modules/customer-hub/customer-orders/hooks/airjet-costing/useAirjetCostingBase.js"
 
-const AirjetCostingBaseSection = ({ seed }) => {
+const AirjetCostingBaseSection = ({ seed, showFull }) => {
   const { data, loading, saving, showingSaved, onChangeCosts, onSave, onReset } = useAirjetCostingBase(seed)
   if (loading) return <div className="py-6"><LoadingSpinner /></div>
   return (
@@ -19,6 +19,7 @@ const AirjetCostingBaseSection = ({ seed }) => {
         onSave={onSave}
         onReset={onReset}
         showingSaved={showingSaved}
+        showFull={showFull}
       />
     </div>
   )
