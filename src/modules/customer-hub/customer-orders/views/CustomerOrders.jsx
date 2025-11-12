@@ -19,6 +19,7 @@ import { useMailboxes } from "@modules/customer-hub/customer-orders/hooks/useMai
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx"
 import { getAgreement, resetAgreementPayload } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import PrGenerationSection from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx"
+import HasPermission from "@components/HasPermission.jsx";
 const srcLabel = (s) => (s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : "")
 const statusLabel = (s) => (s ? String(s).split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") : "")
 const statusClass = (s) => {
@@ -59,6 +60,7 @@ const CustomerOrders = () => {
 
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState("tab-agreement")
+  const [showFullCosting, setShowFullCosting] = useState(false)
   const hasEmail = !!selected?.email?.id
 
   const tabs = useMemo(() => {
@@ -96,13 +98,12 @@ const CustomerOrders = () => {
     setSelected(full)
   }, [])
 
-    const handleResetPayload = useCallback(async () => {
-      if (!selected?.id) return
-      const refreshed = await resetAgreementPayload(selected.id)
-      setSelected(refreshed)
-      queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
-    }, [selected?.id, queryClient])
-
+  const handleResetPayload = useCallback(async () => {
+    if (!selected?.id) return
+    const refreshed = await resetAgreementPayload(selected.id)
+    setSelected(refreshed)
+    queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
+  }, [selected?.id, queryClient])
 
   return (
     <Fragment>
@@ -253,26 +254,40 @@ const CustomerOrders = () => {
                 <div className="px-6">
                   <div className="flex items-center justify-between">
                     <NavTabs tabs={tabs} activeId={activeTab} onTabChange={(id) => setActiveTab(id)} />
-                    {activeTab === "tab-agreement" && selected && (
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      {activeTab === "tab-costing" && (
+                          <HasPermission permission='auth.view_full_costing'>
                         <button
                           type="button"
-                          onClick={handleResetPayload}
-                          className="ti-btn ti-btn-outline-danger !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                          onClick={() => setShowFullCosting((v) => !v)}
+                          className="ti-btn ti-btn-outline-secondary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
                         >
-                          <RotateCcw size={14} />
-                          Reset
+                          <Calculator size={14} />
+                          {showFullCosting ? "Basic costing view" : "Full costing view"}
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => openForEdit(selected)}
-                          className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
-                        >
-                          <Edit3 size={14} />
-                          Edit
-                        </button>
-                      </div>
-                    )}
+                          </HasPermission>
+                      )}
+                      {activeTab === "tab-agreement" && selected && (
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={handleResetPayload}
+                            className="ti-btn ti-btn-outline-danger !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                          >
+                            <RotateCcw size={14} />
+                            Reset
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openForEdit(selected)}
+                            className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                          >
+                            <Edit3 size={14} />
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="mt-4">
                     {activeTab === "tab-email" && hasEmail && <AgreementEmailPanel agreement={selected} />}
@@ -300,7 +315,7 @@ const CustomerOrders = () => {
 
                     {activeTab === "tab-costing" && (
                       <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
-                        <AirjetCostingBaseSection seed={selected} />
+                        <AirjetCostingBaseSection seed={selected} showFull={showFullCosting} />
                       </div>
                     )}
                     {activeTab === "tab-pr" && (
