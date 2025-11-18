@@ -25,7 +25,8 @@ const BoqSiteCard = ({site = null}) => {
                     </div>
                     <div className="p-4 space-y-4">
                         <div>
-                            <div className="font-medium text-sm text-gray-900">{site.name}</div>
+                            <div className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg
+">{site.name}</div>
                             <div className="text-xs text-gray-500">{site.address}</div>
                         </div>
 
