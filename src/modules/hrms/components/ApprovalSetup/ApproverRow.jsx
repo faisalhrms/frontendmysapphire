@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import FormInput from '@components/form/FormInput.jsx';
 import FormAsyncSelect from '@components/form/FormAsyncSelect.jsx';
 import { PlusCircle, MinusCircle, GripVertical } from 'lucide-react';
 import { useWatch } from 'react-hook-form';
@@ -16,7 +16,8 @@ const ApproverRow = ({
                          onRemove,
                          onAdd,
                          moveItem,
-                         fieldsLength
+                         fieldsLength,
+                         allowParallelApprovers = false,
                      }) => {
     const ref = useRef(null);
 
@@ -88,9 +89,6 @@ const ApproverRow = ({
 
     // FIXED: Use onOptionChange instead of onChange + handle immediate selection
     const handleSelectChange = useCallback((selected) => {
-        console.log('ApproverRow handleSelectChange called with:', selected, 'for index:', index);
-
-        // CRITICAL FIX: Set immediate selection first to prevent reset
         setImmediateSelection(selected);
 
         if (typeof setValue === 'function') {
@@ -120,10 +118,10 @@ const ApproverRow = ({
             setTimeout(() => {
                 setImmediateSelection(null);
             }, 100);
-        } else {
-            console.warn('setValue not supplied to ApproverRow — approverOption will not persist on moves.');
         }
     }, [index, setValue]);
+
+    const levelValue = approver?.level ?? index + 1;
 
     return (
         <div
@@ -140,20 +138,32 @@ const ApproverRow = ({
         >
             {/* Drag Handle */}
             <div className="col-span-1 flex justify-center items-center">
-                <div className="flex flex-row items-center gap-2 cursor-grab hover:text-gray-600 active:cursor-grabbing"
-                     title="Drag to reorder">
-                    <div
-                        className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
-                        {index + 1}
+                <div className="flex flex-row items-center gap-2 cursor-grab hover:text-gray-600 active:cursor-grabbing">
+                    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
+                        {allowParallelApprovers ? levelValue : index + 1}
                     </div>
                     <GripVertical className="w-4 h-4 text-gray-400"/>
                 </div>
             </div>
 
-            {/* Approver Select */}
-            <div className="col-span-10 relative z-50">
-                <FormAsyncSelect
-                    key={`approver-${field?.id || index}-${approver?.approver_id || 'empty'}`}
+                <div className={allowParallelApprovers ? "col-span-2" : "hidden"}>
+                  {allowParallelApprovers && (
+                    <FormInput
+                      type="number"
+                      name={`approvers.${index}.level`}
+                      control={control}
+                      errors={errors}
+                      placeholder="Level"
+                      label={false}
+                    />
+                  )}
+                </div>
+
+                <div
+                  className={`${allowParallelApprovers ? "col-span-8" : "col-span-10"} relative z-50`}
+                >
+                  <FormAsyncSelect
+                    key={`approver-${field?.id || index}-${approver?.approver_id || "empty"}`}
                     name={`approvers.${index}.approver_id`}
                     control={control}
                     errors={errors}
@@ -164,8 +174,9 @@ const ApproverRow = ({
                     preselectedOptions={pre}
                     onOptionChange={handleSelectChange}
                     isClearable={true}
-                />
-            </div>
+                  />
+                </div>
+
 
             {/* Action Buttons */}
             <div className="col-span-1 flex flex-col gap-1 items-center">

@@ -1,19 +1,20 @@
 import React, {useState, useEffect} from "react";
 import {useSearchParams} from "react-router-dom";
-import {Grid2x2, Droplet, BadgeDollarSign, Boxes, Waves} from "lucide-react";
+import {Grid2x2, Droplet, BadgeDollarSign, Boxes, Waves,Hourglass} from "lucide-react";
 import DyeingChargeList from "@modules/customer-hub/master-data/dyeing-charges/views/DyeingChargeList.jsx";
 import SizingCostList from "@modules/customer-hub/master-data/sizing-cost/views/SizingCostList.jsx";
 import CostIcon from "@modules/customer-hub/master-data/components/CostIcon.jsx";
 import CustomerItemList from "@modules/customer-hub/master-data/customer-item-data/views/CustomerItemList.jsx";
 import WeavingParameterList from "@modules/customer-hub/master-data/WeavingParameter/views/WeavingParameterList.jsx";
 import QualityWeavingList from "@modules/customer-hub/master-data/QualityWeaving/views/QualityWeavingList.jsx";
+import GreigeLeadTimeList from "@modules/customer-hub/master-data/greige-lead-times/views/GreigeLeadTimeList.jsx";
 
 const MasterData = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [activeStatus, setActiveStatus] = useState(() => searchParams.get("tab") || "quality-weaving");
+    const [activeStatus, setActiveStatus] = useState(() => searchParams.get("tab") || "customer-items");
 
     useEffect(() => {
-        setActiveStatus(searchParams.get("tab") || "quality-weaving");
+        setActiveStatus(searchParams.get("tab") || "customer-items");
     }, [searchParams]);
 
     return (
@@ -21,18 +22,18 @@ const MasterData = () => {
             <div className="box">
                 <div className="box-header sm:flex block !justify-start dark:bg-bodybg bg-white">
                     <nav aria-label="Statuses" className="md:flex block !justify-start whitespace-nowrap">
+
                         <button
-                            onClick={() => setSearchParams({tab: "quality-weaving"})}
+                            onClick={() => setSearchParams({tab: "customer-items"})}
                             className={`relative m-1 w-full py-2 px-3 flex items-center gap-2 text-[0.8rem] font-medium rounded-md ${
-                                activeStatus === "quality-weaving"
+                                activeStatus === "customer-items"
                                     ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                                     : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
                             }`}
                         >
-                            <Waves className="w-4 h-4"/>
-                            Quality Weaving
+                            <Boxes className="w-4 h-4 text-primary"/>
+                            Customer Items Data
                         </button>
-
 
                         <button
                             onClick={() => setSearchParams({tab: "weaving-params"})}
@@ -45,17 +46,16 @@ const MasterData = () => {
                             <Grid2x2 className="w-4 h-4"/>
                             Weaving Parameters
                         </button>
-
                         <button
-                            onClick={() => setSearchParams({tab: "customer-items"})}
+                            onClick={() => setSearchParams({tab: "quality-weaving"})}
                             className={`relative m-1 w-full py-2 px-3 flex items-center gap-2 text-[0.8rem] font-medium rounded-md ${
-                                activeStatus === "customer-items"
+                                activeStatus === "quality-weaving"
                                     ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
                                     : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
                             }`}
                         >
-                            <Boxes className="w-4 h-4 text-primary"/>
-                            Customer Items Data
+                            <Waves className="w-4 h-4"/>
+                            Quality Weaving
                         </button>
                         <button
                             onClick={() => setSearchParams({tab: "dyeing-charges"})}
@@ -83,6 +83,17 @@ const MasterData = () => {
                             <CostIcon active={activeStatus === "sizing-cost"} currency="pkr"/>
                             Sizing Cost
                         </button>
+                        <button
+                            onClick={() => setSearchParams({tab: "greige-lead-times"})}
+                            className={`relative m-1 w-full py-2 px-3 flex items-center gap-2 text-[0.8rem] font-medium rounded-md ${
+                                activeStatus === "greige-lead-times"
+                                    ? "hs-tab-active:bg-primary/10 hs-tab-active:text-primary text-primary bg-primary/10"
+                                    : "text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-primary"
+                            }`}
+                        >
+                            <Hourglass className="w-4 h-4"/>
+                            Lead Times
+                        </button>
                     </nav>
                 </div>
 
@@ -91,6 +102,7 @@ const MasterData = () => {
                 {activeStatus === "dyeing-charges" && <DyeingChargeList/>}
                 {activeStatus === "customer-items" && <CustomerItemList/>}
                 {activeStatus === "sizing-cost" && <SizingCostList/>}
+                {activeStatus === "greige-lead-times" && <GreigeLeadTimeList/>}
             </div>
         </div>
     );

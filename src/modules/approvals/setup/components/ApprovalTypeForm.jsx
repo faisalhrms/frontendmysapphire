@@ -116,8 +116,17 @@ const ApprovalTypeForm = ({ editMode = false, approvalTypeId = null }) => {
                                             placeholder="Notify on All Actions"
                                         />
                                     </div>
+                                    <div className="mt-3">
+                                        <FormToggle
+                                            name="allow_parallel_approvers"
+                                            control={control}
+                                            errors={errors}
+                                            label="Allow Parallel Approvers"
+                                            placeholder="Allow Parallel Approvers"
+                                        />
+                                    </div>
                                 </li>
-                                <li className='list-group-item'>
+                                <li className="list-group-item">
                                     <FormInput
                                         type="number"
                                         name="sla_hours"

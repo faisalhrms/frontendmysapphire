@@ -128,7 +128,7 @@ const SizingCostForm = () => {
                 </div>
 
                 <div>
-                  <label className="form-label">Sizing Cost (per unit)</label>
+                  <label className="form-label">Sizing Cost PKR (per unit)</label>
                   <Controller
                     name="sizing_cost"
                     control={control}

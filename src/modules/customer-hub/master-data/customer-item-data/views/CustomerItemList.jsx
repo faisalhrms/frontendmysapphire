@@ -11,6 +11,8 @@ import {
 const CustomerItemList = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const dataTableRef = useRef();
+    const [key, setKey] = useState(Date.now())
+    const refresh = () => setKey(Date.now())
 
   const columns = [
     {
@@ -58,7 +60,7 @@ const CustomerItemList = () => {
 
   return (
     <>
-      <DataTable columns={columns} title="Customer Items" apiUrl="customer-hub/customer-items/datatable/" ref={dataTableRef} externalFilters={['tab']} buttons={buttons} />
+      <DataTable columns={columns} title="Customer Items" apiUrl="customer-hub/customer-items/datatable/" ref={dataTableRef} externalFilters={['tab']} buttons={buttons} key={key} />
       {isUploadModalOpen && (
         <UploadMasterModal
           title="Upload Customer Items"
@@ -66,6 +68,7 @@ const CustomerItemList = () => {
           extraParams={{}}
           closeModal={() => setIsUploadModalOpen(false)}
           onUploaded={() => {}}
+          refreshTable={refresh}
         />
       )}
     </>

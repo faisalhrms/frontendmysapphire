@@ -1,13 +1,9 @@
-import MailApp from "@modules/customer-hub/mail-app/views/email/MailApp.jsx";
-import CustomerHubEmailConfig
-    from "@modules/customer-hub/mail-app/components/customer-hub-email-config/CustomerHubEmailConfig.jsx";
-import CustomerHubEmailList from "@modules/customer-hub/mail-app/views/email/CustomerHubEmailList.jsx";
+import CustomerOrders from "@modules/customer-hub/customer-orders/views/CustomerOrders.jsx";
 import MasterData from "@modules/customer-hub/master-data/views/MasterData.jsx";
 import DyeingChargeForm from "@modules/customer-hub/master-data/dyeing-charges/components/DyeingChargeForm.jsx";
 import DyeingChargeList from "@modules/customer-hub/master-data/dyeing-charges/views/DyeingChargeList.jsx";
 import SizingCostList from "@modules/customer-hub/master-data/sizing-cost/views/SizingCostList.jsx";
 import SizingCostForm from "@modules/customer-hub/master-data/sizing-cost/components/SizingCostForm.jsx";
-import AgreementPlacementPage from "@modules/customer-hub/mail-app/components/AgreementPlacementPage.jsx";
 import CustomerItemList from "@modules/customer-hub/master-data/customer-item-data/views/CustomerItemList.jsx";
 import CustomerItemForm from "@modules/customer-hub/master-data/customer-item-data/components/CustomerItemForm.jsx";
 import WeavingParameterList from "@modules/customer-hub/master-data/WeavingParameter/views/WeavingParameterList.jsx";
@@ -15,8 +11,16 @@ import WeavingParameterForm
     from "@modules/customer-hub/master-data/WeavingParameter/components/WeavingParameterForm.jsx";
 import QualityWeavingList from "@modules/customer-hub/master-data/QualityWeaving/views/QualityWeavingList.jsx";
 import QualityWeavingForm from "@modules/customer-hub/master-data/QualityWeaving/components/QualityWeavingForm.jsx";
-import IntegrationsForm from "@modules/customer-hub/integrations/components/IntegrationsForm.jsx";
 import IntegrationView from "@modules/customer-hub/integrations/views/IntegrationView.jsx";
+import CustomerHubEmailList from "@modules/customer-hub/mail-settings/views/CustomerHubEmailList.jsx";
+import CustomerHubEmailConfig from "@modules/customer-hub/mail-settings/components/CustomerHubEmailConfig.jsx";
+import GreigeLeadTimeList from "@modules/customer-hub/master-data/greige-lead-times/views/GreigeLeadTimeList.jsx";
+import GreigeLeadTimeForm from "@modules/customer-hub/master-data/greige-lead-times/components/GreigeLeadTimeForm.jsx";
+import AgreementApprovalDetail from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementApprovalDetail.jsx";
+import ReadAgreementList from "@modules/customer-hub/approved-orders/views/ReadAgreementList.jsx";
+import AgreementPlacementReadOnly
+    from "@modules/customer-hub/approved-orders/components/AgreementPlacementReadOnly.jsx";
+import ReadAgreementDetail from "@modules/customer-hub/approved-orders/components/ReadAgreementDetail.jsx";
 
 
 export const CUSTOMER_HUB_ROUTES = {
@@ -39,14 +43,22 @@ export const CUSTOMER_HUB_ROUTES = {
             path: "/module/customer/hub/integrations",
             permission: "customer_hub.view_integrations"
         }
-    }
+    },
+    AGREEMENTS_APPROVAL:{
+        path:'/module/agreement/detail/:id',
+        permission: "customer_hub.approved_customer_hub_agreements"
+    },
 };
 
-export const AIRJET_COSTING = {
-    READ: {
-        path: '/module/customer/hub/airjet-costing',
-        permission: 'auth.view_customer_hub_master_data',
-    },
+export const READ_AGREEMENTS = {
+        READ: {
+            path: '/module/agreement/list',
+            permission: "customer_hub.approved_customer_hub_agreements"
+        },
+        DETAIL: {
+            path: '/module/agreement/read/:id',
+            permission: "customer_hub.approved_customer_hub_agreements"
+        }
 };
 
 export const MASTER_DATA = {
@@ -111,11 +123,22 @@ export const CUSTOMER_ITEMS = {
     },
 };
 
+export const GREIGE_LEAD_TIMES = {
+    CREATE: {
+        path: '/module/customer/hub/lead-time/add',
+        permission: 'customer_hub.add_greige_lead_time',
+    },
+    READ: {
+        path: '/module/customer/hub/lead-time',
+        permission: 'customer_hub.view_greige_lead_time',
+    },
+};
+
 
 export const MODULE_ROUTES = [
     {
         path: CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.path,
-        component: MailApp,
+        component: CustomerOrders,
         permission: CUSTOMER_HUB_ROUTES.EMAIL.MAIL_APP.permission,
     },
     {
@@ -166,11 +189,6 @@ export const MODULE_ROUTES = [
         permission: SIZING_COST.READ.permission,
     },
     {
-        path: AIRJET_COSTING.READ.path,
-        component: AgreementPlacementPage,
-        permission: AIRJET_COSTING.READ.permission,
-    },
-    {
         path: CUSTOMER_ITEMS.READ.path,
         component: CustomerItemList,
         permission: CUSTOMER_ITEMS.READ.permission,
@@ -194,5 +212,30 @@ export const MODULE_ROUTES = [
         path: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.path,
         component: IntegrationView,
         permission: CUSTOMER_HUB_ROUTES.INTEGRATIONS.HOME.permission,
+    },
+    {
+        path: GREIGE_LEAD_TIMES.CREATE.path,
+        component: GreigeLeadTimeForm,
+        permission: GREIGE_LEAD_TIMES.CREATE.permission,
+    },
+    {
+        path: GREIGE_LEAD_TIMES.READ.path,
+        component: GreigeLeadTimeList,
+        permission: GREIGE_LEAD_TIMES.READ.permission,
+    },
+    {
+        path: CUSTOMER_HUB_ROUTES.AGREEMENTS_APPROVAL.path,
+        component: AgreementApprovalDetail,
+        permission: CUSTOMER_HUB_ROUTES.AGREEMENTS_APPROVAL.permission,
+    },
+    {
+        path: READ_AGREEMENTS.READ.path,
+        component: ReadAgreementList,
+        permission: READ_AGREEMENTS.READ.permission,
+    },
+    {
+        path: READ_AGREEMENTS.DETAIL.path,
+        component: ReadAgreementDetail,
+        permission: READ_AGREEMENTS.DETAIL.permission,
     },
 ];

@@ -1,6 +1,11 @@
 import api from "@config/axiosConfig.js";
 import Notify from "@helpers/toastNotifications.js";
 
+export const listChannels = async (params = {}) => {
+  const res = await api.get("customer-hub/integrations/channels/", { params });
+  return res.data?.data || res.data;
+};
+
 export const testChannel = async (id) => {
   const res = await api.post(`customer-hub/integrations/channels/${id}/test-connection/`);
   return res.data?.data || res.data;
@@ -30,3 +35,14 @@ export const saveChannel = async (payload) => {
   Notify.success("Saved");
   return res.data?.data || res.data;
 };
+
+export const manualFetchEmails = async (payload) => {
+  const res = await api.post("customer-hub/manual-fetch-emails/", payload);
+  return res.data?.data || res.data;
+};
+
+export const reprocessEmails = async (payload) => {
+  const res = await api.post("customer-hub/reprocess-emails/", payload);
+  return res.data?.data || res.data;
+};
+

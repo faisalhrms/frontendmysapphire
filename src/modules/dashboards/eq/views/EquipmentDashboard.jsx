@@ -131,7 +131,7 @@ const EquipmentDashboard = () => {
                                 <BarChart3 size={28}/>
                             </div>
                             <div>
-                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Equipment Asset Dashboard</h1>
+                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">IT Asset Dashboard</h1>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive equipment
                                     analytics and asset management insights</p>
                             </div>
@@ -974,7 +974,9 @@ const EquipmentDashboard = () => {
                                         <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                                             eq.status === 'Functional' ? 'bg-success/10 text-success' :
                                                 eq.status === 'Faulty' ? 'bg-danger/10 text-danger' :
-                                                    'bg-warning text-warning'
+                                                    eq.status === 'Brand New' ? 'bg-info/10 text-info' :
+                                                        eq.status === 'Brand New' ? 'bg-primary/10 text-primary' :
+                                                    'bg-warning/10 text-warning'
                                         }`}>
                                             {eq.status}
                                         </span>

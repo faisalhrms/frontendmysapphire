@@ -47,7 +47,11 @@ export default function ChatBot() {
     ask,
     suggestions,
     hrSubtypes,
-    setHrSubtypes
+    setHrSubtypes,
+    competitorSites,
+    setCompetitorSites,
+    competitorChecks,
+    setCompetitorChecks
   } = useChatBot()
 
   const currentUser = useSelector(s => s.auth.user)
@@ -135,6 +139,12 @@ export default function ChatBot() {
           setQcRender={setQcRender}
           hrSubtypes={hrSubtypes}
           setHrSubtypes={setHrSubtypes}
+          suggestions={suggestions}
+          ask={ask}
+          competitorSites={competitorSites}
+          setCompetitorSites={setCompetitorSites}
+          competitorChecks={competitorChecks}
+          setCompetitorChecks={setCompetitorChecks}
         />
       </div>
     )
@@ -267,6 +277,10 @@ export default function ChatBot() {
         suggestions={suggestions}
         hrSubtypes={hrSubtypes}
         setHrSubtypes={setHrSubtypes}
+        competitorSites={competitorSites}
+        setCompetitorSites={setCompetitorSites}
+        competitorChecks={competitorChecks}
+        setCompetitorChecks={setCompetitorChecks}
       />
     </div>
   )

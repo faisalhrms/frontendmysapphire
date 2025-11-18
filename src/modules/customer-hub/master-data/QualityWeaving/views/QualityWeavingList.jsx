@@ -11,6 +11,8 @@ import {QUALITY_WEAVING} from "@modules/customer-hub/routes.js";
 const QualityWeavingList = () => {
   const dataTableRef = useRef();
   const [open, setOpen] = useState(false);
+  const [key, setKey] = useState(Date.now())
+  const refresh = () => setKey(Date.now())
 
   const columns = [
     {
@@ -37,7 +39,7 @@ const QualityWeavingList = () => {
 
   return (
     <>
-      <DataTable columns={columns} title="Quality Weaving" apiUrl="customer-hub/quality-weaving/datatable/" externalFilters={['tab']} ref={dataTableRef} buttons={buttons} />
+      <DataTable columns={columns} title="Quality Weaving" apiUrl="customer-hub/quality-weaving/datatable/" externalFilters={['tab']} ref={dataTableRef} buttons={buttons} key={key} />
       {open && (
         <UploadMasterModal
           title="Upload Quality Weaving"
@@ -45,6 +47,7 @@ const QualityWeavingList = () => {
           extraParams={{}}
           closeModal={() => setOpen(false)}
           onUploaded={() => setOpen(false)}
+          refreshTable={refresh}
         />
       )}
     </>

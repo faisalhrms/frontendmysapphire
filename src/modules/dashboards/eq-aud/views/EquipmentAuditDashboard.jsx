@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import {
-    Monitor, Cpu, HardDrive, MemoryStick, Network, Shield, MapPin, Building, BarChart3, Activity, Users, Server,
+    Monitor, Cpu, HardDrive, MemoryStick, Network, Shield, MapPin, Building, BarChart3, Activity, Users, Server,LucideMail
 } from "lucide-react";
 
 import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
@@ -84,6 +84,7 @@ const EquipmentAuditDashboard = () => {
         { key: "domain_name", label: "Domains", icon: Activity },
         { key: "disk_type", label: "Disk Types", icon: HardDrive },
         { key: "cpu_model", label: "CPU", icon: Cpu },
+        { key: "email_server", label: "Email Server", icon: LucideMail },
     ];
 
     const summary          = useMemo(() => auditData?.summary ?? {}, [auditData]);
@@ -112,7 +113,7 @@ const EquipmentAuditDashboard = () => {
             : 0;
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto pb-8 px-4 lg:px-0">
+        <div className="space-y-8  mx-auto pb-8 px-4 lg:px-0">
             {/* Header Card with Title + Description + Filters (no IconPageHeader, no refresh button) */}
             <div className="bg-white my-8 dark:bg-bodybg border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
                 <div className="px-6 pt-6 pb-2">
@@ -122,7 +123,7 @@ const EquipmentAuditDashboard = () => {
                         </div>
                         <div>
                             <h1 className="text-xl md:text-2xl font-bold leading-tight dark:text-white">
-                                Equipment Audit Dashboard
+                                IT Audit Dashboard
                             </h1>
                             <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                                 Comprehensive device inventory, hardware analytics, and security compliance insights
@@ -164,12 +165,14 @@ const EquipmentAuditDashboard = () => {
                         icon={Shield}
                         title="Security Score"
                         value={`${deviceHealth.security_score || 0}%`}
+                        // value={`${96}%`}
                         subtitle={`${summary.with_antivirus || 0} with antivirus`}
                     />
                     <StatCard
                         icon={Network}
                         title="Network Compliance"
                         value={`${deviceHealth.network_compliance || 0}%`}
+                        // value={`${93}%`}
                         subtitle={`${summary.with_ip || 0} with IP addresses`}
                     />
                     <StatCard
@@ -204,6 +207,7 @@ const EquipmentAuditDashboard = () => {
                                 deviceHealth.hardware_health?.disk +
                                 deviceHealth.hardware_health?.cpu) / 3 || 0
                         )}%`}
+                        // value={` 97%`}
                         subtitle="Overall hardware compliance"
                     />
                 </div>
@@ -229,6 +233,7 @@ const EquipmentAuditDashboard = () => {
                                 <p className="text-sm text-white">Overall Security Score</p>
                                 <p className="text-4xl font-bold text-white">
                                     {deviceHealth.security_score || 0}%
+                                    {/*{94}%*/}
                                 </p>
                                 <p className="text-xs text-white">Device protection level</p>
                             </div>
@@ -274,6 +279,7 @@ const EquipmentAuditDashboard = () => {
                                             deviceHealth.hardware_health?.disk +
                                             deviceHealth.hardware_health?.cpu) / 3 || 0
                                     )}%
+                                    {/*{`97%`}*/}
                                 </p>
                                 <p className="text-xs text-white">Hardware configuration rate</p>
                             </div>
