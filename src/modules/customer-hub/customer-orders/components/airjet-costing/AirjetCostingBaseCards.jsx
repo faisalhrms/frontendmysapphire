@@ -251,7 +251,7 @@ const HeaderCard = ({ data, onSave, onReset }) => (
 
 const TwoCol = ({ children }) => <div className="grid gap-3 md:grid-cols-2 items-stretch">{children}</div>
 
-const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset }) => {
+const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset, showFull }) => {
   if (!data) return null
 
   const fabricInches = useMemo(() => {
@@ -362,9 +362,9 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset }) => {
         </Card>
       </TwoCol>
 
-      <div className="grid gap-3 md:grid-cols-2 auto-rows-fr items-stretch">
+      <div className={`grid gap-3 items-stretch ${showFull ? "md:grid-cols-2 auto-rows-fr" : "grid-cols-1"}`}>
         <Card title="Weaving Parameters" headerColor="amber" className="row-span-2">
-          <div className="space-y-1.5">
+        <div className={`space-y-1.5 ${!showFull ? "mx-7" : ""}`}>
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="h-7 w-7 grid place-items-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
@@ -418,82 +418,61 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset }) => {
           </div>
         </Card>
 
-        <Card title="Crimp & Waste" Icon={Percent} headerColor="emerald">
-          <div className="grid grid-cols-2 gap-x-8">
-            <div className="space-y-1.5">
-              <KV k="Warp Crimp" v={data.percent_warp_crimp} />
-              <KV k="Remainder" v={data.remainder_percent} />
-              <KV k="Yards/Day" v={data.yards_per_day_per_loom} />
+        {showFull && (
+          <Card title="Crimp & Waste" Icon={Percent} headerColor="emerald">
+            <div className="grid grid-cols-2 gap-x-8">
+              <div className="space-y-1.5">
+                <KV k="Warp Crimp" v={data.percent_warp_crimp} />
+                <KV k="Remainder" v={data.remainder_percent} />
+                <KV k="Yards/Day" v={data.yards_per_day_per_loom} />
+              </div>
+              <div className="space-y-1.5">
+                <KV k="Weft Crimp" v={data.percent_weft_crimp} />
+                <KV k="Sized Waste" v={data.sized_waste_percent} />
+                <KV k="Selv. Waste" v={data.selv_waste_percent} />
+              </div>
             </div>
-            <div className="space-y-1.5">
-              <KV k="Weft Crimp" v={data.percent_weft_crimp} />
-              <KV k="Sized Waste" v={data.sized_waste_percent} />
-              <KV k="Selv. Waste" v={data.selv_waste_percent} />
-            </div>
-          </div>
-        </Card>
+          </Card>
+        )}
 
-        <Card title="Yarn Consumption" Icon={Layers} headerColor="violet">
-          <div className="grid grid-cols-2 gap-x-8">
-            <KV k="Warp Cons./Yard" v={data.warp_cons_per_yard} />
-            <KV k="Weft Cons./Yard" v={data.weft_cons_per_yard} />
-          </div>
-        </Card>
+        {showFull && (
+          <Card title="Yarn Consumption" Icon={Layers} headerColor="violet">
+            <div className="grid grid-cols-2 gap-x-8">
+              <KV k="Warp Cons./Yard" v={data.warp_cons_per_yard} />
+              <KV k="Weft Cons./Yard" v={data.weft_cons_per_yard} />
+            </div>
+          </Card>
+        )}
       </div>
 
-      <Card title="Cost Inputs" Icon={Calculator} headerColor="cyan">
-        <div className="grid gap-5 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          <EditableKV
-            label="Packing Cost /Yard"
-            value={data.packing_cost_per_yard}
-            type="number"
-            step="0.01"
-            onSave={onChangeCosts ? (val) => onChangeCosts({ packing_cost_per_yard: val }) : undefined}
-          />
-          <EditableKV
-            label="Exchange Rate"
-            value={data.exchange_rate}
-            type="number"
-            step="0.01"
-            onSave={onChangeCosts ? (val) => onChangeCosts({ exchange_rate: val }) : undefined}
-          />
-          <KV k="Warp Dyeing Charges" v={data.dyeing_charges_perkg_warp} />
-          <KV k="Weft Dyeing Charges" v={data.dyeing_charges_perkg_weft} />
-          <KV k="Coverage Warp %" v={data.color_coverage_warp_percent} />
-          <KV k="Coverage Weft %" v={data.color_coverage_weft_percent} />
-          <KV k="Sizing Cost /Kg" v={data.sizing_cost_perkg} />
-          <ComputedKV
-            label="Prof./Day/Loom"
-            compute={targetProfitDayLoomCompute}
-            deps={[
-              data.recovery,
-              data.rejection_sale_price_per_meter,
-              data.warp_cons_per_yard,
-              data.weft_cons_per_yard,
-              data.warp_cost_per_10lbs,
-              data.weft_cost_per_10lbs,
-              data.dyeing_charges_perkg_warp,
-              data.dyeing_charges_perkg_weft,
-              data.color_coverage_warp_percent,
-              data.color_coverage_weft_percent,
-              data.sizing_cost_per_yard,
-              data.packing_cost_per_yard,
-              data.dyeing_waste,
-              data.yards_per_day_per_loom,
-              data.reject_percent
-            ]}
-            precision={2}
-          />
-        </div>
-      </Card>
-
-      <TwoCol>
-        <Card title="Costing Summary" Icon={DollarSign} headerColor="emerald">
-          <div className="grid gap-5 grid-cols-2">
+      {showFull && (
+        <Card title="Cost Inputs" Icon={Calculator} headerColor="cyan">
+          <div className="grid gap-5 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <EditableKV
+              label="Packing Cost /Yard"
+              value={data.packing_cost_per_yard}
+              type="number"
+              step="0.01"
+              onSave={onChangeCosts ? (val) => onChangeCosts({ packing_cost_per_yard: val }) : undefined}
+            />
+            <EditableKV
+              label="Exchange Rate"
+              value={data.exchange_rate}
+              type="number"
+              step="0.01"
+              onSave={onChangeCosts ? (val) => onChangeCosts({ exchange_rate: val }) : undefined}
+            />
+            <KV k="Warp Dyeing Charges" v={data.dyeing_charges_perkg_warp} />
+            <KV k="Weft Dyeing Charges" v={data.dyeing_charges_perkg_weft} />
+            <KV k="Coverage Warp %" v={data.color_coverage_warp_percent} />
+            <KV k="Coverage Weft %" v={data.color_coverage_weft_percent} />
+            <KV k="Sizing Cost /Kg" v={data.sizing_cost_perkg} />
             <ComputedKV
-              label="Yarn Cost/Yard"
-              compute={yarnCostCompute}
+              label="Prof./Day/Loom"
+              compute={targetProfitDayLoomCompute}
               deps={[
+                data.recovery,
+                data.rejection_sale_price_per_meter,
                 data.warp_cons_per_yard,
                 data.weft_cons_per_yard,
                 data.warp_cost_per_10lbs,
@@ -501,20 +480,109 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset }) => {
                 data.dyeing_charges_perkg_warp,
                 data.dyeing_charges_perkg_weft,
                 data.color_coverage_warp_percent,
-                data.color_coverage_weft_percent
+                data.color_coverage_weft_percent,
+                data.sizing_cost_per_yard,
+                data.packing_cost_per_yard,
+                data.dyeing_waste,
+                data.yards_per_day_per_loom,
+                data.reject_percent
               ]}
               precision={2}
             />
-            <KV
-              k="Dyeing Waste"
-              v={dyeWastePerYardValue == null ? "-" : formatMetricValue(dyeWastePerYardValue)}
-              tooltip={dyeWasteTooltip}
+          </div>
+        </Card>
+      )}
+
+      {showFull && (
+        <TwoCol>
+          <Card title="Costing Summary" Icon={DollarSign} headerColor="emerald">
+            <div className="grid gap-5 grid-cols-2">
+              <ComputedKV
+                label="Yarn Cost/Yard"
+                compute={yarnCostCompute}
+                deps={[
+                  data.warp_cons_per_yard,
+                  data.weft_cons_per_yard,
+                  data.warp_cost_per_10lbs,
+                  data.weft_cost_per_10lbs,
+                  data.dyeing_charges_perkg_warp,
+                  data.dyeing_charges_perkg_weft,
+                  data.color_coverage_warp_percent,
+                  data.color_coverage_weft_percent
+                ]}
+                precision={2}
+              />
+              <KV
+                k="Dyeing Waste"
+                v={dyeWastePerYardValue == null ? "-" : formatMetricValue(dyeWastePerYardValue)}
+                tooltip={dyeWasteTooltip}
+              />
+              <KV k="Sizing Cost/Yard" v={data.sizing_cost_per_yard} />
+              <ComputedKV
+                label="Variable Cost/Yard"
+                compute={variableCostCompute}
+                deps={[
+                  data.warp_cons_per_yard,
+                  data.weft_cons_per_yard,
+                  data.warp_cost_per_10lbs,
+                  data.weft_cost_per_10lbs,
+                  data.dyeing_charges_perkg_warp,
+                  data.dyeing_charges_perkg_weft,
+                  data.color_coverage_warp_percent,
+                  data.color_coverage_weft_percent,
+                  data.sizing_cost_per_yard,
+                  data.packing_cost_per_yard,
+                  data.dyeing_waste
+                ]}
+                precision={2}
+              />
+            </div>
+          </Card>
+          <Card title="Freight & Shipment" Icon={Truck} headerColor="teal">
+            <div className="grid gap-5 grid-cols-2">
+              <EditableKV
+                label="Tons/Container"
+                value={data.tons_per_container}
+                type="number"
+                step="0.01"
+                onSave={onChangeCosts ? (val) => onChangeCosts({ tons_per_container: val }) : undefined}
+              />
+              <KV k="Max. Yards/FCL" v={data.max_yards_per_fcl} />
+              <KV k="Shipment Yards" v={data.shipment_yards} />
+            </div>
+          </Card>
+        </TwoCol>
+      )}
+
+      {showFull && (
+        <Card title="Rejection & Recovery" Icon={ClipboardList} headerColor="rose">
+          <div className="grid gap-5 grid-cols-3">
+            <EditableKV
+              label="Rej. Sale Price/Mtr"
+              value={data.rejection_sale_price_per_meter}
+              type="number"
+              step="0.01"
+              onSave={
+                onChangeCosts ? (val) => onChangeCosts({ rejection_sale_price_per_meter: val }) : undefined
+              }
             />
-            <KV k="Sizing Cost/Yard" v={data.sizing_cost_per_yard} />
             <ComputedKV
-              label="Variable Cost/Yard"
-              compute={variableCostCompute}
+              label="Rej. Sale Price/Yard"
+              compute={rejectionYardCompute}
+              deps={[data.rejection_sale_price_per_meter]}
+              precision={2}
+            />
+            <ComputedKV
+              label="Rej. Quantity"
+              compute={rejectionQtyCompute}
+              deps={[data.yards_per_day_per_loom, data.reject_percent]}
+              precision={0}
+            />
+            <ComputedKV
+              label="Rej. Cost"
+              compute={costOfRejectionCompute}
               deps={[
+                data.rejection_sale_price_per_meter,
                 data.warp_cons_per_yard,
                 data.weft_cons_per_yard,
                 data.warp_cost_per_10lbs,
@@ -529,92 +597,34 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset }) => {
               ]}
               precision={2}
             />
-          </div>
-        </Card>
-        <Card title="Freight & Shipment" Icon={Truck} headerColor="teal">
-          <div className="grid gap-5 grid-cols-2">
-            <EditableKV
-              label="Tons/Container"
-              value={data.tons_per_container}
-              type="number"
-              step="0.01"
-              onSave={onChangeCosts ? (val) => onChangeCosts({ tons_per_container: val }) : undefined}
+            <ComputedKV
+              label="Loss of Reovery"
+              compute={lossOfRecoveryCompute}
+              deps={[
+                data.rejection_sale_price_per_meter,
+                data.warp_cons_per_yard,
+                data.weft_cons_per_yard,
+                data.warp_cost_per_10lbs,
+                data.weft_cost_per_10lbs,
+                data.dyeing_charges_perkg_warp,
+                data.dyeing_charges_perkg_weft,
+                data.color_coverage_warp_percent,
+                data.color_coverage_weft_percent,
+                data.sizing_cost_per_yard,
+                data.packing_cost_per_yard,
+                data.dyeing_waste,
+                data.yards_per_day_per_loom,
+                data.reject_percent
+              ]}
+              precision={2}
             />
-            <KV k="Max. Yards/FCL" v={data.max_yards_per_fcl} />
-            <KV k="Shipment Yards" v={data.shipment_yards} />
+            <KV
+              k="Recovery"
+              v={data.recovery}
+            />
           </div>
         </Card>
-      </TwoCol>
-
-      <Card title="Rejection & Recovery" Icon={ClipboardList} headerColor="rose">
-        <div className="grid gap-5 grid-cols-3">
-          <EditableKV
-            label="Rej. Sale Price/Mtr"
-            value={data.rejection_sale_price_per_meter}
-            type="number"
-            step="0.01"
-            onSave={
-              onChangeCosts ? (val) => onChangeCosts({ rejection_sale_price_per_meter: val }) : undefined
-            }
-          />
-          <ComputedKV
-            label="Rej. Sale Price/Yard"
-            compute={rejectionYardCompute}
-            deps={[data.rejection_sale_price_per_meter]}
-            precision={2}
-          />
-          <ComputedKV
-            label="Rej. Quantity"
-            compute={rejectionQtyCompute}
-            deps={[data.yards_per_day_per_loom, data.reject_percent]}
-            precision={0}
-          />
-          <ComputedKV
-            label="Rej. Cost"
-            compute={costOfRejectionCompute}
-            deps={[
-              data.rejection_sale_price_per_meter,
-              data.warp_cons_per_yard,
-              data.weft_cons_per_yard,
-              data.warp_cost_per_10lbs,
-              data.weft_cost_per_10lbs,
-              data.dyeing_charges_perkg_warp,
-              data.dyeing_charges_perkg_weft,
-              data.color_coverage_warp_percent,
-              data.color_coverage_weft_percent,
-              data.sizing_cost_per_yard,
-              data.packing_cost_per_yard,
-              data.dyeing_waste
-            ]}
-            precision={2}
-          />
-          <ComputedKV
-            label="Loss of Reovery"
-            compute={lossOfRecoveryCompute}
-            deps={[
-              data.rejection_sale_price_per_meter,
-              data.warp_cons_per_yard,
-              data.weft_cons_per_yard,
-              data.warp_cost_per_10lbs,
-              data.weft_cost_per_10lbs,
-              data.dyeing_charges_perkg_warp,
-              data.dyeing_charges_perkg_weft,
-              data.color_coverage_warp_percent,
-              data.color_coverage_weft_percent,
-              data.sizing_cost_per_yard,
-              data.packing_cost_per_yard,
-              data.dyeing_waste,
-              data.yards_per_day_per_loom,
-              data.reject_percent
-            ]}
-            precision={2}
-          />
-          <KV
-            k="Recovery"
-            v={data.recovery}
-          />
-        </div>
-      </Card>
+      )}
     </div>
   )
 }
