@@ -6,10 +6,9 @@ import LoadingSpinner from "@components/LoadingSpinner.jsx"
 import EmptyState from "@components/EmptyState.jsx"
 import { useGlobalApprovalDetail } from "@modules/approvals/global/hooks/useGlobalApprovalDetail.js"
 import ApprovalRequesterDetail from "@modules/approvals/global/components/ApprovalRequesterDetail.jsx"
-import ApprovalActionTimelineGrid from "@modules/approvals/global/components/ApprovalActionTimelineGrid.jsx"
-import ApprovalActionTimeLineTable from "@modules/approvals/global/components/ApprovalActionTimeLineTable.jsx"
-import { getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import { getAgreement, getAgreementMentionUsers } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx"
+import Discussion from "@components/Discussion.jsx";
 
 const AgreementApprovalDetail = () => {
   const { id } = useParams()
@@ -17,6 +16,7 @@ const AgreementApprovalDetail = () => {
   const [viewType, setViewType] = useState("grid")
   const [agreement, setAgreement] = useState(null)
   const [loadingAgreement, setLoadingAgreement] = useState(true)
+  const [mentionUsers, setMentionUsers] = useState([])
   const formRef = useRef(null)
 
   const agreementId = useMemo(() => data?.object_id || null, [data])
@@ -29,6 +29,8 @@ const AgreementApprovalDetail = () => {
       try {
         const ag = await getAgreement(agreementId)
         if (active) setAgreement(ag)
+        const users = await getAgreementMentionUsers(agreementId)
+        if (active) setMentionUsers(users || [])
       } finally {
         if (active) setLoadingAgreement(false)
       }
@@ -71,25 +73,16 @@ const AgreementApprovalDetail = () => {
             )}
           </div>
           <div className="col-span-12">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200/60 dark:border-gray-700/50">
-                <div className="text-sm font-semibold">Action History</div>
-                <div className="flex bg-slate-100 dark:bg-gray-700 rounded-lg p-1">
-                  <button className={`w-8 h-8 rounded-md ${viewType === "grid" ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-gray-400"}`} onClick={() => setViewType("grid")}>
-                    <BarChart3 className="w-4 h-4 mx-auto" />
-                  </button>
-                  <button className={`w-8 h-8 rounded-md ${viewType === "list" ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-gray-400"}`} onClick={() => setViewType("list")}>
-                    <Activity className="w-4 h-4 mx-auto" />
-                  </button>
-                </div>
-              </div>
-              <div className="p-4">
-                {viewType === "grid" ? <ApprovalActionTimelineGrid actions={actions} /> : <ApprovalActionTimeLineTable actions={actions} />}
-              </div>
-            </div>
+                  <Discussion
+                    title="Agreement Discussions"
+                    storeEndPoint={`/customer-hub/agreements/${agreementId}/discussion/`}
+                    getEndPoint={`/customer-hub/agreements/${agreementId}/discussions/`}
+                    users={mentionUsers}
+                  />
           </div>
         </div>
       </div>
+
     </>
   )
 }
