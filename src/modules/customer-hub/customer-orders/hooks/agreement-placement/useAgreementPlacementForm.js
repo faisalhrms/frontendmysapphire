@@ -1,8 +1,15 @@
 import { useForm } from "react-hook-form"
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { useQueryClient } from "@tanstack/react-query"
-import { createAgreement, updateAgreement, submitAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
-import { dateToYMD, normalizeDateSeed } from "@modules/customer-hub/customer-orders/components/agreement-placement/helpers.js"
+import {
+  createAgreement,
+  updateAgreement,
+  submitAgreement
+} from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import {
+  dateToYMD,
+  normalizeDateSeed
+} from "@modules/customer-hub/customer-orders/components/agreement-placement/helpers.js"
 
 const r2 = (n) => Number.parseFloat((Number(n || 0)).toFixed(2))
 
@@ -62,15 +69,23 @@ const buildDefaults = (seed = {}, email) => {
 
 export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, refetch }) => {
   const queryClient = useQueryClient()
-  const defaults = useMemo(() => buildDefaults(seed, email), [seed?.id, seed?.updated_at])
-  const { control, setValue, getValues, watch, reset, formState: { errors } } = useForm({ defaultValues: defaults })
+  const defaults = useMemo(() => buildDefaults(seed, email), [seed?.id, seed?.updated_at, email])
+  const {
+    control,
+    setValue,
+    getValues,
+    watch,
+    reset,
+    formState: { errors }
+  } = useForm({ defaultValues: defaults })
+
   const [showYarn, setShowYarn] = useState(false)
   const [saving, setSaving] = useState(false)
   const [activityOpen, setActivityOpen] = useState(false)
 
   useEffect(() => {
     reset(buildDefaults(seed, email))
-  }, [reset, seed?.id, seed?.updated_at])
+  }, [reset, seed?.id, seed?.updated_at, email])
 
   const qc = useMemo(
     () => String(seed?.quality ?? seed?.query_meta?.quality_code ?? "").trim(),
@@ -89,27 +104,26 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
     [seed?.width, seed?.query_meta?.width, seed?.id, seed?.updated_at]
   )
 
-    const handleComputed = useCallback(
-      (res) => {
-        if (!res) return
-        setValue("warp_yarn_required", r2(res.warp_yarn_required))
-        setValue("weft_yarn_required", r2(res.weft_yarn_required))
-        setValue("warp_bags", r2(res.warp_bags))
-        setValue("weft_bags", r2(res.weft_bags))
-        setValue("total_bags", r2(res.total_bags))
-        setValue("rej_pct", r2(res.rej_pct))
-        setValue("warp_coverage", r2(res.warp_coverage))
-        setValue("weft_coverage", r2(res.weft_coverage))
-        setValue("dyed_warp_bags", r2(res.dyed_warp_bags))
-        setValue("dyed_weft_bags", r2(res.dyed_weft_bags))
-        setValue("ecru_warp_bags", r2(res.ecru_warp_bags))
-        setValue("ecru_weft_bags", r2(res.ecru_weft_bags))
-        setValue("dyed_bags", r2(res.dyed_bags))
-        setValue("ecru_bags", r2(res.ecru_bags))
-      },
-      [setValue]
-    )
-
+  const handleComputed = useCallback(
+    (res) => {
+      if (!res) return
+      setValue("warp_yarn_required", r2(res.warp_yarn_required))
+      setValue("weft_yarn_required", r2(res.weft_yarn_required))
+      setValue("warp_bags", r2(res.warp_bags))
+      setValue("weft_bags", r2(res.weft_bags))
+      setValue("total_bags", r2(res.total_bags))
+      setValue("rej_pct", r2(res.rej_pct))
+      setValue("warp_coverage", r2(res.warp_coverage))
+      setValue("weft_coverage", r2(res.weft_coverage))
+      setValue("dyed_warp_bags", r2(res.dyed_warp_bags))
+      setValue("dyed_weft_bags", r2(res.dyed_weft_bags))
+      setValue("ecru_warp_bags", r2(res.ecru_warp_bags))
+      setValue("ecru_weft_bags", r2(res.ecru_weft_bags))
+      setValue("dyed_bags", r2(res.dyed_bags))
+      setValue("ecru_bags", r2(res.ecru_bags))
+    },
+    [setValue]
+  )
 
   const payloadForSave = () => {
     const v = getValues()
@@ -157,19 +171,21 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
       if (onAfterPersist) onAfterPersist(saved)
       invalidateFeed()
       if (refetch) refetch()
+      return saved
     } finally {
       setSaving(false)
     }
   }
 
-  const doSubmit = async () => {
+  const doSubmit = async (submissionType = "new") => {
     setSaving(true)
     try {
       const saved = await persistDraft()
-      const submitted = await submitAgreement(saved.id)
+      const submitted = await submitAgreement(saved.id, submissionType)
       if (onAfterPersist) onAfterPersist(submitted)
       invalidateFeed()
       if (refetch) refetch()
+      return submitted
     } finally {
       setSaving(false)
     }

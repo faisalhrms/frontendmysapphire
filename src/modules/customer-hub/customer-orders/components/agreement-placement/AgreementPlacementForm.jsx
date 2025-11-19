@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react"
-import { Calculator, Search } from "lucide-react"
+import dayjs from "dayjs"
+import { Calculator, Search, CheckCircle2, AlertTriangle } from "lucide-react"
 import YarnConsumptionModal from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionModal.jsx"
 import YarnConsumptionCard from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionCard.jsx"
 import FormInput from "@components/form/FormInput.jsx"
@@ -13,6 +14,7 @@ import AgreementFabric from "@modules/customer-hub/customer-orders/components/ag
 import SelectCustomerItemModal from "@modules/customer-hub/customer-orders/components/agreement-placement/SelectCustomerItemModal.jsx"
 import { getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import ApprovalActivityModal from "@modules/customer-hub/customer-orders/components/agreement-placement/ApprovalActivityModal.jsx"
+import SubmitAgreementModal from "@modules/customer-hub/customer-orders/components/agreement-placement/SubmitAgreementModal.jsx"
 
 const AgreementPlacementForm = ({
   seed = {},
@@ -48,15 +50,19 @@ const AgreementPlacementForm = ({
   const [open, setOpen] = useState(false)
   const [choices, setChoices] = useState([])
   const [statusMsg, setStatusMsg] = useState(false)
+  const [submitModalOpen, setSubmitModalOpen] = useState(false)
 
   const matchesCount = choices?.length || 0
   const hasMatches = matchesCount > 0
   const hasMultipleMatches = matchesCount > 1
 
   const actions = useMemo(
-    () => (approvalActivity?.actions || approvalActivity || seed?.actions || []),
+    () => approvalActivity?.actions || approvalActivity || seed?.actions || [],
     [approvalActivity, seed?.actions]
   )
+
+  const activityLogs = seed?.activity_logs || []
+  const timelineCount = (actions?.length || 0) + (activityLogs?.length || 0)
 
   useEffect(() => {
     setChoices(seed?.customer_item_matches || [])
@@ -76,21 +82,22 @@ const AgreementPlacementForm = ({
       (choices.length === 1 ? choices[0] : undefined),
     [choices, greigeCode]
   )
-    const greigeDisplay = useMemo(() => {
-      const parts = []
-      if (matchedItem?.greige_item_code) {
-        parts.push(matchedItem.greige_item_code)
-      } else if (greigeCode) {
-        parts.push(greigeCode)
-      }
-      if (matchedItem?.greige_design) {
-        parts.push(matchedItem.greige_design)
-      }
-      if (matchedItem?.greige_color) {
-        parts.push(matchedItem.greige_color)
-      }
-      return parts.join(" · ")
-    }, [matchedItem, greigeCode])
+
+  const greigeDisplay = useMemo(() => {
+    const parts = []
+    if (matchedItem?.greige_item_code) {
+      parts.push(matchedItem.greige_item_code)
+    } else if (greigeCode) {
+      parts.push(greigeCode)
+    }
+    if (matchedItem?.greige_design) {
+      parts.push(matchedItem.greige_design)
+    }
+    if (matchedItem?.greige_color) {
+      parts.push(matchedItem.greige_color)
+    }
+    return parts.join(" · ")
+  }, [matchedItem, greigeCode])
 
   useEffect(() => {
     if (!choices?.length) return
@@ -121,7 +128,7 @@ const AgreementPlacementForm = ({
   const applyItem = useCallback(
     (i) => {
       setValue("greige_item_code", i.greige_item_code || "")
-      setValue("fabric_detail",  watch("fabric_detail") || "")
+      setValue("fabric_detail", watch("fabric_detail") || "")
       setValue("construction", i.fab_construction || "")
       setValue("warp_blend", i.warp_blend || "")
       setValue("weft_blend", i.weft_blend || "")
@@ -156,6 +163,30 @@ const AgreementPlacementForm = ({
 
   const isFabricDeliveryLocked =
     !warpYarnRate || !warpDelivery || !weftYarnRate || !weftDelivery
+
+  const needByDate = watch("need_by_date")
+  const fabricDelivery = watch("fabric_delivery")
+
+  const deliveryDeviation = useMemo(() => {
+    if (!needByDate || !fabricDelivery) return null
+    const need = dayjs(needByDate)
+    const fabric = dayjs(fabricDelivery)
+    if (!need.isValid() || !fabric.isValid()) return null
+    const diff = Math.abs(need.diff(fabric, "day"))
+    if (diff <= 5) return { level: "ok", diff }
+    if (diff <= 10) return { level: "soft", diff }
+    return { level: "hard", diff }
+  }, [needByDate, fabricDelivery])
+
+  const handleSubmitWithType = useCallback(
+    async (submissionType) => {
+      try {
+        await doSubmit(submissionType)
+        setSubmitModalOpen(false)
+      } catch (e) {}
+    },
+    [doSubmit]
+  )
 
   return (
     <div className="rounded-xl border dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
@@ -257,6 +288,38 @@ const AgreementPlacementForm = ({
                   type="date"
                 />
               </div>
+              {deliveryDeviation && (
+                <div className="col-span-12">
+                  <div
+                    className={
+                      deliveryDeviation.level === "ok"
+                        ? "flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50/80 px-3 py-2 text-xs dark:border-emerald-500/40 dark:bg-emerald-900/10"
+                        : deliveryDeviation.level === "soft"
+                        ? "flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-xs dark:border-amber-500/40 dark:bg-amber-900/10"
+                        : "flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs dark:border-rose-500/40 dark:bg-rose-900/10"
+                    }
+                  >
+                    <div className="mt-[2px]">
+                      {deliveryDeviation.level === "ok" && <CheckCircle2 size={14} />}
+                      {deliveryDeviation.level !== "ok" && <AlertTriangle size={14} />}
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="text-[0.75rem] font-semibold">
+                        {deliveryDeviation.level === "ok" && "Need by date is aligned with fabric delivery"}
+                        {deliveryDeviation.level === "soft" && "Need by and delivery dates have a small deviation"}
+                        {deliveryDeviation.level === "hard" && "Need by and delivery dates are out of tolerance"}
+                      </div>
+                      <div className="opacity-80">
+                        Deviation of {deliveryDeviation.diff} day{deliveryDeviation.diff !== 1 ? "s" : ""} between need by date and received fabric delivery.
+                        {deliveryDeviation.level === "soft" &&
+                          " Within ±10 days but beyond ±5 days; review before final approval."}
+                        {deliveryDeviation.level === "hard" &&
+                          " More than ±10 days difference; please decide to approve or reject."}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="col-span-12">
                 <label className="form-label flex items-center justify-between">
                   <span>Total Meters</span>
@@ -342,9 +405,9 @@ const AgreementPlacementForm = ({
               </div>
               <AgreementActions
                 onSaveDraft={doSaveDraft}
-                onSubmit={doSubmit}
+                onSubmit={() => setSubmitModalOpen(true)}
                 disabledSubmit={
-                  disabledSubmit || status === "under_approval" || status === "approved"
+                  disabledSubmit || status === "under_approval"
                 }
                 disabled={saving}
                 hideSubmit={hideSubmit}
@@ -365,18 +428,18 @@ const AgreementPlacementForm = ({
               }
               widthCm={watch("width_cm")}
               greigeItemCode={greigeDisplay}
-              actionsCount={actions?.length || 0}
+              actionsCount={timelineCount}
               onOpenActivity={() => setActivityOpen(true)}
             />
             <div className="p-4 space-y-5">
-                <AgreementFabric
-                  fabricDetail={watch("fabric_detail") || ""}
-                  construction={watch("construction")}
-                  warpBlend={watch("warp_blend")}
-                  weftBlend={watch("weft_blend")}
-                  yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
-                  source={seed?.source || (email ? "email" : "manual")}
-                />
+              <AgreementFabric
+                fabricDetail={watch("fabric_detail") || ""}
+                construction={watch("construction")}
+                warpBlend={watch("warp_blend")}
+                weftBlend={watch("weft_blend")}
+                yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
+                source={seed?.source || (email ? "email" : "manual")}
+              />
 
               <AgreementYarnBags
                 values={{
@@ -400,36 +463,43 @@ const AgreementPlacementForm = ({
           status={status}
           currentApproverName={currentApproverName}
           actions={actions}
+          activityLogs={activityLogs}
         />
       )}
 
-        <YarnConsumptionModal
-          open={showYarn}
-          onClose={() => setShowYarn(false)}
-          item={matchedItem}
-          totalMeters={totalMeters}
-          onTotalMetersChange={(v) => setValue("total_meters", v)}
-          widthInches={widthInchesValue}
-          widthCm={widthCmValue}
-          onComputed={handleComputed}
-          dyeingMeta={seed?.dyeing_meta}
-          rejPct={watch("rej_pct")}
-        />
-
+      <YarnConsumptionModal
+        open={showYarn}
+        onClose={() => setShowYarn(false)}
+        item={matchedItem}
+        totalMeters={totalMeters}
+        onTotalMetersChange={(v) => setValue("total_meters", v)}
+        widthInches={widthInchesValue}
+        widthCm={widthCmValue}
+        onComputed={handleComputed}
+        dyeingMeta={seed?.dyeing_meta}
+        rejPct={watch("rej_pct")}
+      />
 
       {!showYarn && (
         <div className="hidden">
-        <YarnConsumptionCard
-          item={matchedItem}
-          totalMeters={totalMeters}
-          onTotalMetersChange={(v) => setValue("total_meters", v)}
-          widthInches={widthInchesValue}
-          widthCm={widthCmValue}
-          onComputed={handleComputed}
-          dyeingMeta={seed?.dyeing_meta}
-          initialRejPct={watch("rej_pct")}
-        />
+          <YarnConsumptionCard
+            item={matchedItem}
+            totalMeters={totalMeters}
+            onTotalMetersChange={(v) => setValue("total_meters", v)}
+            widthInches={widthInchesValue}
+            widthCm={widthCmValue}
+            onComputed={handleComputed}
+            dyeingMeta={seed?.dyeing_meta}
+            initialRejPct={watch("rej_pct")}
+          />
         </div>
+      )}
+
+      {submitModalOpen && (
+        <SubmitAgreementModal
+          closeModal={() => setSubmitModalOpen(false)}
+          onConfirm={handleSubmitWithType}
+        />
       )}
 
       <SelectCustomerItemModal

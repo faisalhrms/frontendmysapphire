@@ -48,7 +48,9 @@ export const useCustomerItemForm = () => {
       finished_width_inches: "",
       finished_width_cm: "",
       process_route: "",
-      process_code: ""
+      process_code: "",
+      warp_count_raw: "",
+      weft_count_raw: ""
     }
   });
 

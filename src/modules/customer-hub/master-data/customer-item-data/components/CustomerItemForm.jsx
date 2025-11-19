@@ -47,7 +47,9 @@ const CustomerItemForm = () => {
 
                 <Section title="Construction & Counts">
                   <div className="xl:col-span-3 col-span-12"><FormInput type="number" name="warp_count" control={control} errors={errors} placeholder="Warp Count" /></div>
+                  <div className="xl:col-span-3 col-span-12"><FormInput  name="warp_count_raw" control={control} errors={errors} placeholder="Warp Count Raw" /></div>
                   <div className="xl:col-span-3 col-span-12"><FormInput type="number" name="weft_count" control={control} errors={errors} placeholder="Weft Count" /></div>
+                  <div className="xl:col-span-3 col-span-12"><FormInput  name="weft_count_raw" control={control} errors={errors} placeholder="Weft Count Raw" /></div>
                   <div className="xl:col-span-3 col-span-12"><FormInput type="number" name="ends" control={control} errors={errors} placeholder="Ends" /></div>
                   <div className="xl:col-span-3 col-span-12"><FormInput type="number" name="picks" control={control} errors={errors} placeholder="Picks" /></div>
                   <div className="xl:col-span-3 col-span-12"><FormInput name="yarn_dyed_or_greige" control={control} errors={errors} placeholder="Yarn Dyed / Greige" /></div>

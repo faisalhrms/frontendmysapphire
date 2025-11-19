@@ -1,6 +1,8 @@
 import api from "@config/axiosConfig.js"
 import Notify from "@helpers/toastNotifications.js"
+
 const ROOT = "/customer-hub"
+
 const serverMessage = (error, fallback) =>
   error?.response?.data?.errors ||
   error?.response?.data?.message ||
@@ -51,7 +53,12 @@ export const deleteAgreement = async (id, opts = {}) => {
 
 export const datatableAgreements = async ({ skip = 0, limit = 10, s = "", mailbox = "" } = {}, opts = {}) => {
   try {
-    const params = { skip: String(skip), limit: String(limit), ...(s ? { s } : {}), ...(mailbox ? { mailbox } : {}) }
+    const params = {
+      skip: String(skip),
+      limit: String(limit),
+      ...(s ? { s } : {}),
+      ...(mailbox ? { mailbox } : {})
+    }
     const res = await api.get(`${ROOT}/agreements/datatable/`, { params, signal: opts.signal })
     return res.data?.data || res.data
   } catch (error) {
@@ -60,10 +67,25 @@ export const datatableAgreements = async ({ skip = 0, limit = 10, s = "", mailbo
   }
 }
 
-export const submitAgreement = async (id, opts = {}) => {
+export const submitAgreement = async (id, submissionTypeOrOpts = "new", maybeOpts = {}) => {
   try {
-    const res = await api.post(`${ROOT}/agreements/${id}/submit/`, {}, { signal: opts.signal })
-    Notify.success("Submitted for approval")
+    let submissionType = "new"
+    let opts = {}
+    if (typeof submissionTypeOrOpts === "string") {
+      submissionType = submissionTypeOrOpts || "new"
+      opts = maybeOpts || {}
+    } else {
+      opts = submissionTypeOrOpts || {}
+    }
+    const payload = submissionType ? { submission_type: submissionType } : {}
+    const res = await api.post(`${ROOT}/agreements/${id}/submit/`, payload, {
+      signal: opts.signal
+    })
+    const msg =
+      submissionType && submissionType !== "new"
+        ? "Revision submitted for approval"
+        : "Submitted for approval"
+    Notify.success(msg)
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to submit"))
@@ -88,7 +110,7 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
   try {
     const res = await api.get(`${ROOT}/agreements/by-email/`, {
       params: { email_id, agreement_no },
-      signal: opts.signal,
+      signal: opts.signal
     })
     return res.data?.data || res.data
   } catch (error) {
@@ -99,7 +121,9 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
 
 export const getApprovalActivity = async (id, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/agreements/${id}/approval-activity/`, { signal: opts.signal })
+    const res = await api.get(`${ROOT}/agreements/${id}/approval-activity/`, {
+      signal: opts.signal
+    })
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to load approval activity"))
@@ -123,3 +147,12 @@ export const resetAgreementPayload = async (id, opts = {}) => {
   }
 }
 
+export const getAgreementMentionUsers = async (id, opts = {}) => {
+  try {
+    const res = await api.get(`${ROOT}/agreements/${id}/mention-users/`, { signal: opts.signal })
+    return res.data?.data || res.data
+  } catch (error) {
+    Notify.error(serverMessage(error, "Failed to load mention users"))
+    throw error
+  }
+}
