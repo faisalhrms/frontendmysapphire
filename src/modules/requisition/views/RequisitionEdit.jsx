@@ -7,7 +7,7 @@ import IconPageHeader from "../../layouts/includes/IconPageHeader.jsx";
 
 const RequisitionEdit=()=>{
     const { id } = useParams();
-    const{requisitionData}= useRequisition(id)
+    const{requisition}= useRequisition(id)
     return(
         <>
             <IconPageHeader
@@ -15,9 +15,9 @@ const RequisitionEdit=()=>{
                 description="Update policy details, adjust visibility settings, and manage related documents."
                 icon={Edit3}
             />
-            {requisitionData
+            {requisition
                 &&(
-                    <RequisitionForm requisitionData={requisitionData} isEditMode={true}/>
+                    <RequisitionForm requisitionData={requisition} isEditMode={true}/>
                 )
             }
         </>

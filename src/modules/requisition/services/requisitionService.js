@@ -16,7 +16,7 @@ export const createRequisition = async (payload) => {
 /** Update (partial) */
 export const updateRequisition = async (id, payload) => {
     try {
-        const res = await api.patch(`/requisition/${id}/`, payload);
+        const res = await api.put(`/requisition/${id}/`, payload);
         Notify.success(res?.data?.message || "Requisition updated");
         return res?.data?.data ?? res?.data;
     } catch (error) {
