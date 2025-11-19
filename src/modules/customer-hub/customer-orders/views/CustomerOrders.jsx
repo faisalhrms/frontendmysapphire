@@ -17,9 +17,14 @@ import { useSearchHook } from "@hooks/useSearchHook.js"
 import { useAgreementsFeed } from "@modules/customer-hub/customer-orders/hooks/useAgreementsFeed.js"
 import { useMailboxes } from "@modules/customer-hub/customer-orders/hooks/useMailboxes.js"
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx"
-import { getAgreement, resetAgreementPayload } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import {
+    getAgreement,
+    getAgreementMentionUsers,
+    resetAgreementPayload
+} from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import PrGenerationSection from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx"
 import HasPermission from "@components/HasPermission.jsx";
+import Discussion from "@components/Discussion.jsx";
 const srcLabel = (s) => (s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : "")
 const statusLabel = (s) => (s ? String(s).split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") : "")
 const statusClass = (s) => {
@@ -48,6 +53,7 @@ const CustomerOrders = () => {
   const [mailbox, setMailbox] = useState(initialMailbox || "beirholm.hub@sapphiretextiles.com.pk")
   const [pickerOpen, setPickerOpen] = useState(false)
   const scrollRef = useRef(null)
+  const [mentionUsers, setMentionUsers] = useState([])
 
   const {
     rows,
@@ -60,7 +66,7 @@ const CustomerOrders = () => {
 
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState("tab-agreement")
-  const [showFullCosting, setShowFullCosting] = useState(false)
+  const [showFullCosting, setShowFullCosting] = useState(true)
   const hasEmail = !!selected?.email?.id
 
   const tabs = useMemo(() => {
@@ -75,6 +81,26 @@ const CustomerOrders = () => {
   useEffect(() => {
     if (!tabs.find((t) => t.id === activeTab) && tabs.length) setActiveTab(tabs[0].id)
   }, [tabs, activeTab])
+
+  useEffect(() => {
+    if (!selected?.id) {
+      setMentionUsers([])
+      return
+    }
+    let active = true
+    const loadMentionUsers = async () => {
+      try {
+        const users = await getAgreementMentionUsers(selected.id)
+        if (active) setMentionUsers(users || [])
+      } catch (e) {
+        if (active) setMentionUsers([])
+      }
+    }
+    loadMentionUsers()
+    return () => {
+      active = false
+    }
+  }, [selected?.id])
 
   const {
     openModal,
@@ -293,7 +319,7 @@ const CustomerOrders = () => {
                     {activeTab === "tab-email" && hasEmail && <AgreementEmailPanel agreement={selected} />}
                     {activeTab === "tab-extracted" && hasEmail && <EmailExtractionPanel email={selected.email} />}
                     {activeTab === "tab-agreement" && (
-                      <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
+                      <div className="max-h-[67vh] sm:max-h-[72vh] overflow-y-auto pr-1">
                         <AgreementPlacementForm
                           key={`${selected?.id || "new"}:${selected?.updated_at || ""}`}
                           seed={selected}
@@ -304,14 +330,20 @@ const CustomerOrders = () => {
                           approvalActivity={selected?.actions}
                           status={selected?.status}
                           currentApproverName={selected?.current_approver_name}
-                          disabledSubmit={
-                            selected?.status === "under_approval" ||
-                            selected?.status === "approved"
-                          }
+                          disabledSubmit={selected?.status === "under_approval"}
                           refetch={refetch}
                         />
+                          <div className="rounded-xl border-2 dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
+                            <Discussion
+                              title="Agreement Placement Discussions"
+                              storeEndPoint={`/customer-hub/agreements/${selected?.id}/discussion/`}
+                              getEndPoint={`/customer-hub/agreements/${selected?.id}/discussions/`}
+                              users={mentionUsers}
+                            />
+                          </div>
                       </div>
                     )}
+
 
                     {activeTab === "tab-costing" && (
                       <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
