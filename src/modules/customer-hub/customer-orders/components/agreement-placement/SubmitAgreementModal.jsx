@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 
-const SubmitAgreementModal = ({ closeModal, onConfirm }) => {
+const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDeliveryStatus, status }) => {
   const [submissionType, setSubmissionType] = useState("new")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const modalId = "submitAgreementModal"
@@ -44,6 +44,14 @@ const SubmitAgreementModal = ({ closeModal, onConfirm }) => {
     }
   }
 
+  const stageLabel = (v) => {
+    if (!v || v === "pending") return "Pending"
+    if (v === "completed") return "Completed"
+    if (v === "under_approval") return "Under approval"
+    if (v === "revision") return "Revision"
+    return v
+  }
+
   return (
     <div
       id={modalId}
@@ -80,6 +88,32 @@ const SubmitAgreementModal = ({ closeModal, onConfirm }) => {
                 <p className="text-sm opacity-80">
                   Select how you want to submit this agreement.
                 </p>
+
+                <div className="space-y-2 text-xs opacity-70 rounded-md border border-slate-200/80 dark:border-white/10 p-2">
+                  <div>
+                    Yarn terms status:{" "}
+                    <span className="font-semibold">
+                      {stageLabel(yarnTermsStatus)}
+                    </span>
+                  </div>
+                  <div>
+                    Fabric delivery status:{" "}
+                    <span className="font-semibold">
+                      {stageLabel(fabricDeliveryStatus)}
+                    </span>
+                  </div>
+                  {status && (
+                    <div>
+                      Agreement status:{" "}
+                      <span className="font-semibold capitalize">
+                        {String(status || "")
+                          .split("_")
+                          .join(" ")}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-3">
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input
