@@ -205,7 +205,7 @@ const TaskTableRow = ({
     const renderNameCell = () => {
         return (
             <td>
-        <span className="flex items-center dark:text-gray-200 dark:bg-bodybg">
+        <span className="flex items-center ">
           <span onClick={() => toggleSubTasks(task.id)}>
             {task.children && task.children.length > 0 && (
                 <svg

@@ -20,12 +20,14 @@ const AgreementPlacementForm = ({
   seed = {},
   email,
   approvalActivity,
-  status,
+  status: propStatus,
   currentApproverName,
   disabledSubmit = false,
   onAfterPersist,
   hideSubmit = false,
-  refetch
+  refetch,
+  active,
+  showHeader
 }) => {
   const {
     control,
@@ -55,6 +57,11 @@ const AgreementPlacementForm = ({
   const matchesCount = choices?.length || 0
   const hasMatches = matchesCount > 0
   const hasMultipleMatches = matchesCount > 1
+
+  const status = propStatus ?? seed?.status
+  const yarnTermsStatus = seed?.yarn_terms_status
+  const fabricDeliveryStatus = seed?.fabric_delivery_status
+  const isAgreementApproved = status === "approved"
 
   const actions = useMemo(
     () => approvalActivity?.actions || approvalActivity || seed?.actions || [],
@@ -161,8 +168,17 @@ const AgreementPlacementForm = ({
   const weftYarnRate = watch("weft_yarn_rate")
   const weftDelivery = watch("weft_delivery")
 
-  const isFabricDeliveryLocked =
+  const isYarnFieldsReadOnly =
+    isAgreementApproved && yarnTermsStatus === "completed"
+
+  const isFabricDeliveryLockedByYarn =
     !warpYarnRate || !warpDelivery || !weftYarnRate || !weftDelivery
+
+  const isFabricDeliveryReadOnly =
+    isAgreementApproved && fabricDeliveryStatus === "completed"
+
+  const isFabricDeliveryLocked =
+    isFabricDeliveryLockedByYarn || isFabricDeliveryReadOnly
 
   const needByDate = watch("need_by_date")
   const fabricDelivery = watch("fabric_delivery")
@@ -353,6 +369,7 @@ const AgreementPlacementForm = ({
                         errors={errors}
                         placeholder="Warp Yarn Rate"
                         type="number"
+                        disabled={isYarnFieldsReadOnly}
                       />
                     </div>
                     <div className="col-span-12 md:col-span-6">
@@ -362,6 +379,7 @@ const AgreementPlacementForm = ({
                         errors={errors}
                         placeholder="Warp Delivery"
                         type="date"
+                        disabled={isYarnFieldsReadOnly}
                       />
                     </div>
                     <div className="col-span-12 md:col-span-6">
@@ -371,6 +389,7 @@ const AgreementPlacementForm = ({
                         errors={errors}
                         placeholder="Weft Yarn Rate"
                         type="number"
+                        disabled={isYarnFieldsReadOnly}
                       />
                     </div>
                     <div className="col-span-12 md:col-span-6">
@@ -380,6 +399,7 @@ const AgreementPlacementForm = ({
                         errors={errors}
                         placeholder="Weft Delivery"
                         type="date"
+                        disabled={isYarnFieldsReadOnly}
                       />
                     </div>
                   </div>
@@ -406,9 +426,7 @@ const AgreementPlacementForm = ({
               <AgreementActions
                 onSaveDraft={doSaveDraft}
                 onSubmit={() => setSubmitModalOpen(true)}
-                disabledSubmit={
-                  disabledSubmit || status === "under_approval"
-                }
+                disabledSubmit={disabledSubmit || status === "under_approval"}
                 disabled={saving}
                 hideSubmit={hideSubmit}
               />

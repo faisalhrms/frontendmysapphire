@@ -66,13 +66,13 @@ const UserManagementForm = ({ userData = {}, isEditMode = false,initialInstance=
                                 <div className="xl:col-span-4 col-span-12">
                                     <div className="form-group">
                                         <label className="form-label">Full Name</label>
-                                        <p className="form-text">{passedFullName}</p></div>
+                                        <p className="form-text dark:text-gray-200 dark:bg-bodybg">{passedFullName}</p></div>
                                 </div>
 
                                 <div className="xl:col-span-4 col-span-12">
                                     <div className="form-group">
                                         <label className="form-label">Email</label>
-                                        <p className="form-text">{passedEmail}</p>  {/* Showing the passed email */}
+                                        <p className="form-text dark:text-gray-200 dark:bg-bodybg">{passedEmail}</p>  {/* Showing the passed email */}
                                     </div>
                                 </div>
 

@@ -21,6 +21,7 @@ import ReadAgreementList from "@modules/customer-hub/approved-orders/views/ReadA
 import AgreementPlacementReadOnly
     from "@modules/customer-hub/approved-orders/components/AgreementPlacementReadOnly.jsx";
 import ReadAgreementDetail from "@modules/customer-hub/approved-orders/components/ReadAgreementDetail.jsx";
+import CancelAgreementList from "@modules/customer-hub/cancel-orders/CancelAgreementList.jsx";
 
 
 export const CUSTOMER_HUB_ROUTES = {
@@ -53,6 +54,10 @@ export const CUSTOMER_HUB_ROUTES = {
 export const READ_AGREEMENTS = {
         READ: {
             path: '/module/agreement/list',
+            permission: "customer_hub.approved_customer_hub_agreements"
+        },
+        CANCEL: {
+            path: '/module/agreement/cancel/list',
             permission: "customer_hub.approved_customer_hub_agreements"
         },
         DETAIL: {
@@ -232,6 +237,11 @@ export const MODULE_ROUTES = [
         path: READ_AGREEMENTS.READ.path,
         component: ReadAgreementList,
         permission: READ_AGREEMENTS.READ.permission,
+    },
+    {
+        path: READ_AGREEMENTS.CANCEL.path,
+        component: CancelAgreementList,
+        permission: READ_AGREEMENTS.CANCEL.permission,
     },
     {
         path: READ_AGREEMENTS.DETAIL.path,

@@ -97,7 +97,7 @@ const CivilBoqDetail = () => {
     );
 
     const ItemRow = ({ item, index, currency }) => (
-        <tr className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+        <tr className="border-b border-gray-100  transition-colors">
             <td className="px-4 py-4 text-sm">
                 <div className="w-6 h-6 bg-primary/10 text-primary text-xs font-medium rounded flex items-center justify-center">
                     {index + 1}

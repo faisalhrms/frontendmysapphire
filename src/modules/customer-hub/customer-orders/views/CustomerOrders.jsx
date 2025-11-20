@@ -5,7 +5,7 @@ import dayjs from "dayjs"
 import mail from "@assets/images/icon/viewicon.svg"
 import Avatar from "@components/Avatar.jsx"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
-import { Inbox, Plus, Edit3, FileSignature, Calculator, ClipboardList, ChevronDown, FolderSync, RotateCcw } from "lucide-react"
+import { Inbox, Plus, Edit3, FileSignature, Calculator, ClipboardList, ChevronDown, FolderSync, RotateCcw, Trash2 } from "lucide-react"
 import NavTabs from "@modules/customer-hub/customer-orders/components/NavTabs.jsx"
 import AirjetCostingBaseSection from "@modules/customer-hub/customer-orders/components/airjet-costing/AirjetCostingBaseSection.jsx"
 import AgreementPlacementModal from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
@@ -18,13 +18,16 @@ import { useAgreementsFeed } from "@modules/customer-hub/customer-orders/hooks/u
 import { useMailboxes } from "@modules/customer-hub/customer-orders/hooks/useMailboxes.js"
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx"
 import {
-    getAgreement,
-    getAgreementMentionUsers,
-    resetAgreementPayload
+  getAgreement,
+  getAgreementMentionUsers,
+  resetAgreementPayload,
+  deleteAgreement,
 } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import PrGenerationSection from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx"
-import HasPermission from "@components/HasPermission.jsx";
-import Discussion from "@components/Discussion.jsx";
+import HasPermission from "@components/HasPermission.jsx"
+import Discussion from "@components/Discussion.jsx"
+import AlertModalPortal from "@components/AlertModalPortal.jsx"
+
 const srcLabel = (s) => (s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : "")
 const statusLabel = (s) => (s ? String(s).split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") : "")
 const statusClass = (s) => {
@@ -69,6 +72,11 @@ const CustomerOrders = () => {
   const [showFullCosting, setShowFullCosting] = useState(true)
   const hasEmail = !!selected?.email?.id
 
+  const [selectedId, setSelectedId] = useState(null)
+  const [selectedAgreementLabel, setSelectedAgreementLabel] = useState("")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const tabs = useMemo(() => {
     const base = [
       { id: "tab-agreement", label: "Agreement Placement", icon: <FileSignature />, color: "amber" },
@@ -108,7 +116,7 @@ const CustomerOrders = () => {
     closeModal,
     control,
     errors,
-    isSubmitting,
+    isSubmitting: isFormSubmitting,
     handleSubmit,
     onSubmit,
     isEdit
@@ -130,6 +138,29 @@ const CustomerOrders = () => {
     setSelected(refreshed)
     queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
   }, [selected?.id, queryClient])
+
+  const handleCancelClick = useCallback((row) => {
+    setSelectedId(row.id)
+    setSelectedAgreementLabel(row.agreement_no || row.id)
+    setIsModalOpen(true)
+  }, [])
+
+  const handleCancelSubmit = useCallback(async () => {
+    if (!selectedId) return
+    setIsSubmitting(true)
+    try {
+      await deleteAgreement(selectedId)
+      if (selected?.id === selectedId) {
+        setSelected(null)
+      }
+      queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
+      setIsModalOpen(false)
+      setSelectedId(null)
+      setSelectedAgreementLabel("")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [selectedId, selected, queryClient])
 
   return (
     <Fragment>
@@ -249,7 +280,25 @@ const CustomerOrders = () => {
                               {r.quality} • {r.design} • {r.colour || "-"} • {r.width}
                             </span>
                             <div className="flex items-center gap-1">
-                              <Pill cls={statusClass(r.status)}>{srcLabel(r.source)}</Pill>
+                              <div className="relative inline-flex group" title={srcLabel(r.source)}>
+                                <Pill cls={statusClass(r.status)}>
+                                  <span className="transition-opacity group-hover:opacity-0">
+                                    {srcLabel(r.source)}
+                                  </span>
+                                </Pill>
+                                <HasPermission permission="customer_hub.delete_customer_hub_agreements">
+                                  <button
+                                    type="button"
+                                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-rose-600"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleCancelClick(r)
+                                    }}
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                </HasPermission>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -282,16 +331,16 @@ const CustomerOrders = () => {
                     <NavTabs tabs={tabs} activeId={activeTab} onTabChange={(id) => setActiveTab(id)} />
                     <div className="flex items-center gap-2">
                       {activeTab === "tab-costing" && (
-                          <HasPermission permission='auth.view_full_costing'>
-                        <button
-                          type="button"
-                          onClick={() => setShowFullCosting((v) => !v)}
-                          className="ti-btn ti-btn-outline-secondary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
-                        >
-                          <Calculator size={14} />
-                          {showFullCosting ? "Basic costing view" : "Full costing view"}
-                        </button>
-                          </HasPermission>
+                        <HasPermission permission="auth.view_full_costing">
+                          <button
+                            type="button"
+                            onClick={() => setShowFullCosting((v) => !v)}
+                            className="ti-btn ti-btn-outline-secondary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                          >
+                            <Calculator size={14} />
+                            {showFullCosting ? "Basic costing view" : "Full costing view"}
+                          </button>
+                        </HasPermission>
                       )}
                       {activeTab === "tab-agreement" && selected && (
                         <div className="flex items-center gap-2">
@@ -333,17 +382,16 @@ const CustomerOrders = () => {
                           disabledSubmit={selected?.status === "under_approval"}
                           refetch={refetch}
                         />
-                          <div className="rounded-xl border-2 dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
-                            <Discussion
-                              title="Agreement Placement Discussions"
-                              storeEndPoint={`/customer-hub/agreements/${selected?.id}/discussion/`}
-                              getEndPoint={`/customer-hub/agreements/${selected?.id}/discussions/`}
-                              users={mentionUsers}
-                            />
-                          </div>
+                        <div className="rounded-xl border-2 dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
+                          <Discussion
+                            title="Agreement Placement Discussions"
+                            storeEndPoint={`/customer-hub/agreements/${selected?.id}/discussion/`}
+                            getEndPoint={`/customer-hub/agreements/${selected?.id}/discussions/`}
+                            users={mentionUsers}
+                          />
+                        </div>
                       </div>
                     )}
-
 
                     {activeTab === "tab-costing" && (
                       <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
@@ -367,10 +415,29 @@ const CustomerOrders = () => {
           </div>
         </div>
       </div>
+
+      <AlertModalPortal
+        id="agreement-cancel"
+        isOpen={isModalOpen}
+        type="danger"
+        title="Cancel agreement"
+        message={
+          selectedAgreementLabel
+            ? `Are you sure you want to cancel agreement #${selectedAgreementLabel}?`
+            : "Are you sure you want to cancel this agreement?"
+        }
+        btnTxt="Yes, cancel"
+        isSubmitting={isSubmitting}
+        needInput={false}
+        inputLabel=""
+        onConfirm={handleCancelSubmit}
+        onClose={setIsModalOpen}
+      />
+
       <AgreementPlacementModal
         control={control}
         errors={errors}
-        isSubmitting={isSubmitting}
+        isSubmitting={isFormSubmitting}
         handleSubmit={handleSubmit}
         onSubmit={onSubmit}
         closeModal={closeModal}

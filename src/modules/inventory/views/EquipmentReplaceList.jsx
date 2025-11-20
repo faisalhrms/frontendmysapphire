@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import EquipmentReplaceFormWrapper from "@modules/inventory/models/components/EquipmentReplaceFormWrapper.jsx";
+import {Link} from "react-router-dom";
 
 const EquipmentReplaceList = ({ isActive, externalFilters = [] }) => {
     if (!isActive) return null;
@@ -33,6 +34,11 @@ const EquipmentReplaceList = ({ isActive, externalFilters = [] }) => {
                         >
                             <i className="ri-edit-line" />
                         </button>
+                        <Link to={`/module/asset/replace/detail/${row.original.id}`}>
+                            <button className="ti-btn ti-btn-info ti-btn-sm">
+                                <i className="ri-eye-line"></i>
+                            </button>
+                        </Link>
                     </div>
                 );
             },
