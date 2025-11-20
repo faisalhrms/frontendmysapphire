@@ -39,17 +39,21 @@ export default function PublicInlay() {
     const allImages = import.meta.glob("@assets/images/inlay-images/*.jpg", {
         eager: true,
     });
-
     const productImages = Object.keys(allImages)
-        .filter((path) => path.includes(code))
+        .filter((path) => {
+            const fileName = path.split("/").pop(); // Get only file name
+            return fileName.startsWith(`${code}-`); // Exact match only
+        })
         .sort((a, b) => {
             const getNum = (p) => {
-                const match = p.match(/-(\d+)\.JPG$/);
+                const match = p.match(/-(\d+)\.JPG$/i);
                 return match ? parseInt(match[1], 10) : 0;
             };
             return getNum(a) - getNum(b);
         })
         .map((path) => allImages[path].default);
+
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
