@@ -32,7 +32,14 @@ export const updateAgreement = async (id, payload, opts = {}) => {
 
 export const getAgreement = async (id, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/agreements/${id}/`, { signal: opts.signal })
+    const params = {}
+    if (opts.showCancelled) {
+      params.cancelled = 'true'
+    }
+    const res = await api.get(`${ROOT}/agreements/${id}/`, {
+      signal: opts.signal,
+      params: params
+    })
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to load agreement"))
@@ -43,7 +50,7 @@ export const getAgreement = async (id, opts = {}) => {
 export const deleteAgreement = async (id, opts = {}) => {
   try {
     const res = await api.delete(`${ROOT}/agreements/${id}/`, { signal: opts.signal })
-    Notify.success("Agreement deleted")
+    Notify.success("Agreement Cancelled")
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to delete agreement"))
@@ -148,11 +155,32 @@ export const resetAgreementPayload = async (id, opts = {}) => {
 }
 
 export const getAgreementMentionUsers = async (id, opts = {}) => {
+  const params = {}
+  if (opts.showCancelled) {
+    params.cancelled = 'true'
+  }
+
+  const res = await api.get(`${ROOT}/agreements/${id}/mention-users/`, {
+    signal: opts.signal,
+    params: params
+  })
+  return res.data?.data || res.data
+}
+
+export const exportReadAgreementsExcel = async ({ ids = [], s = "" } = {}, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/agreements/${id}/mention-users/`, { signal: opts.signal })
-    return res.data?.data || res.data
+    const params = {}
+    if (ids.length) params.ids = ids.join(",")
+    if (s) params.s = s
+    const res = await api.get(`${ROOT}/agreements/read-export/`, {
+      params,
+      responseType: "blob",
+      signal: opts.signal,
+    })
+    return res
   } catch (error) {
-    Notify.error(serverMessage(error, "Failed to load mention users"))
+    Notify.error(serverMessage(error, "Failed to download agreements report"))
     throw error
   }
 }
+

@@ -42,6 +42,14 @@ export let sidebarMenu = [
                 "bx bx-message-square-edit",
                 READ_AGREEMENTS.READ.permission
             ),
+            generateSidebarItem(
+                READ_AGREEMENTS.CANCEL.path,
+                "link",
+                "Cancel Orders",
+                1,
+                "bx bx-message-square-edit",
+                READ_AGREEMENTS.CANCEL.permission
+            ),
 
         ]
     ),

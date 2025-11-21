@@ -12,7 +12,7 @@ const badge = (v) =>
 
 const fmtDate = (d) => (d ? new Date(d).toISOString().slice(0, 10) : "—");
 
-const ReadAgreementList = () => {
+const CancelAgreementList = () => {
   const dataTableRef = useRef();
   const [selectedIds, setSelectedIds] = useState(new Set());
 
@@ -83,7 +83,7 @@ const ReadAgreementList = () => {
       id: "actions",
       Cell: ({ row }) => (
         <div className="flex justify-center gap-2">
-          <Link to={READ_AGREEMENTS.DETAIL.path} state={{ id: row.original.id }}>
+          <Link to={`${READ_AGREEMENTS.DETAIL.path}?cancelled=true`}  state={{ id: row.original.id }}>
             <button className="ti-btn ti-btn-primary ti-btn-sm" title="View Details">
               <i className="ri-eye-2-line" />
             </button>
@@ -139,19 +139,19 @@ const ReadAgreementList = () => {
   return (
     <div>
       <PageHeader
-        currentpage="Agreement Placements List"
-        activepage="Agreement Placements read"
-        mainpage="Agreement Placements List"
+        currentpage="Agreement Cancel List"
+        activepage="Agreement Cancel read"
+        mainpage="Agreement Cancel List"
       />
       <DataTable
-        title="Agreement Placements"
+        title="Agreement Cancel List"
         ref={dataTableRef}
         columns={columns}
         buttons={buttons}
-        apiUrl="customer-hub/agreements/read-datatable/"
+        apiUrl="customer-hub/agreements/cancel-datatable/"
       />
     </div>
   );
 };
 
-export default ReadAgreementList;
+export default CancelAgreementList;

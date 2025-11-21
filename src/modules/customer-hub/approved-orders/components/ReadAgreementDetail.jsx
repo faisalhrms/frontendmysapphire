@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { useLocation, useParams } from "react-router-dom"
+import { useLocation, useParams,useSearchParams } from "react-router-dom"
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx"
-import { getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
-import AgreementPlacementReadOnly
-    from "@modules/customer-hub/approved-orders/components/AgreementPlacementReadOnly.jsx";
+import { getAgreement, getAgreementMentionUsers } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import AgreementPlacementReadOnly from "@modules/customer-hub/approved-orders/components/AgreementPlacementReadOnly.jsx"
+import Discussion from "@components/Discussion.jsx"
 
 const ReadAgreementDetail = () => {
   const location = useLocation()
@@ -11,10 +11,13 @@ const ReadAgreementDetail = () => {
   const idFromState = location.state?.id
   const idFromParams = params?.id
   const id = idFromState || idFromParams
+  const [searchParams] = useSearchParams()
 
   const [agreement, setAgreement] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [mentionUsers, setMentionUsers] = useState([])  // State for mentioned users
+  const showCancelled = searchParams.get('cancelled') === 'true'
 
   useEffect(() => {
     if (!id) {
@@ -25,9 +28,12 @@ const ReadAgreementDetail = () => {
     let active = true
     const run = async () => {
       try {
-        const data = await getAgreement(id)
+        const data = await getAgreement(id, { showCancelled })
         if (!active) return
         setAgreement(data)
+
+        const users = await getAgreementMentionUsers(id, { showCancelled })
+        if (active) setMentionUsers(users || [])
       } catch (e) {
         if (!active) return
         setError("Failed to load agreement")
@@ -55,6 +61,12 @@ const ReadAgreementDetail = () => {
       />
       <div className="max-w-6xl mx-auto">
         <AgreementPlacementReadOnly agreement={agreement} />
+          <Discussion
+          title="Agreement Placement Discussions"
+          storeEndPoint={`/customer-hub/agreements/${agreement?.id}/discussion/${showCancelled ? '?cancelled=true' : ''}`}
+          getEndPoint={`/customer-hub/agreements/${agreement?.id}/discussions/${showCancelled ? '?cancelled=true' : ''}`}
+          users={mentionUsers}
+        />
       </div>
     </div>
   )
