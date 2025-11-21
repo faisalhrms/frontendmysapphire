@@ -21,7 +21,7 @@ export default function SRLTreeDiagram() {
                     label={
                         <div
                             onClick={() => setOpenSRL(!openSRL)}
-                            className="px-10 py-5 bg-gradient-to-br bg-primary/10 text-primary text-xs  rounded-xl shadow-xl inline-block"
+                            className="px-10 py-5 bg-gradient-to-br bg-primary/10 text-primary text-xs  rounded-xl shadow-xl inline-block border border-gray-200"
                         >
                             <img
                                 src={isDark ? sapphirew : sapphireb}
