@@ -280,25 +280,34 @@ const CustomerOrders = () => {
                               {r.quality} • {r.design} • {r.colour || "-"} • {r.width}
                             </span>
                             <div className="flex items-center gap-1">
-                              <div className="relative inline-flex group" title={srcLabel(r.source)}>
-                                <Pill cls={statusClass(r.status)}>
-                                  <span className="transition-opacity group-hover:opacity-0">
-                                    {srcLabel(r.source)}
-                                  </span>
-                                </Pill>
-                                <HasPermission permission="customer_hub.delete_customer_hub_agreements">
-                                  <button
-                                    type="button"
-                                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-rose-600"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      handleCancelClick(r)
-                                    }}
-                                  >
-                                    <Trash2 size={12} />
-                                  </button>
-                                </HasPermission>
-                              </div>
+                                <div className="relative inline-flex group" title={srcLabel(r.source)}>
+                                  <Pill cls={statusClass(r.status)}>
+                                    <span className="transition-opacity group-hover:opacity-0">
+                                      {srcLabel(r.source)}
+                                    </span>
+                                  </Pill>
+                                  <HasPermission permission="customer_hub.delete_customer_hub_agreements">
+                                    <span
+                                      role="button"
+                                      tabIndex={0}
+                                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-rose-600"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleCancelClick(r)
+                                      }}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          handleCancelClick(r)
+                                        }
+                                      }}
+                                    >
+                                      <Trash2 size={12} />
+                                    </span>
+                                  </HasPermission>
+                                </div>
+
                             </div>
                           </div>
                         </div>

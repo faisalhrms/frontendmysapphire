@@ -1,15 +1,25 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 
 const Row = ({ label, value, last }) => (
-  <div className={`${last ? "" : "border-b dark:border-defaultborder/20"} grid grid-cols-2 items-center`}>
-    <div className="py-2 pr-3 text-[.8rem] text-[#6b7280] dark:text-white/60">{label}</div>
-    <div className="py-2 pl-3 text-right text-[.95rem] font-semibold">{value ?? "-"}</div>
+  <div
+    className={`${
+      last ? "" : "border-b dark:border-defaultborder/20"
+    } grid grid-cols-2 items-center`}
+  >
+    <div className="py-2 pr-3 text-[.8rem] text-[#6b7280] dark:text-white/60">
+      {label}
+    </div>
+    <div className="py-2 pl-3 text-right text-[.95rem] font-semibold">
+      {value ?? "-"}
+    </div>
   </div>
 )
 
 const Stat = ({ label, value, suffix }) => (
   <div className="rounded-lg border p-3 shadow-sm bg-white dark:bg-bodybg dark:border-defaultborder/20">
-    <div className="text-[.72rem] text-[#6b7280] dark:text-white/60">{label}</div>
+    <div className="text-[.72rem] text-[#6b7280] dark:text-white/60">
+      {label}
+    </div>
     <div className="mt-1 text-[1rem] font-semibold">{value}</div>
     {suffix ? <div className="text-[.65rem] opacity-60">{suffix}</div> : null}
   </div>
@@ -19,7 +29,9 @@ const RejectionBox = ({ value, onChange }) => (
   <div className="rounded-lg border p-3 shadow-sm bg-white dark:bg-bodybg dark:border-defaultborder/20">
     <div className="flex items-center justify-between gap-3">
       <div>
-        <div className="text-[.72rem] text-[#6b7280] dark:text-white/60">Rejection</div>
+        <div className="text-[.72rem] text-[#6b7280] dark:text-white/60">
+          Rejection
+        </div>
         <div className="text-[1rem] font-semibold">{value}%</div>
       </div>
       <input
@@ -50,12 +62,18 @@ const YarnConsumptionCard = ({
   onTotalMetersChange,
   onComputed,
   dyeingMeta,
-  initialRejPct
+  initialRejPct,
+  finishedMeters = "",
+  onFinishedMetersChange,
+  marginPct = "",
+  onMarginPctChange,
+  widthInches,
+  widthCm
 }) => {
-  const [meters, setMeters] = useState(totalMeters || "")
   const [rejPct, setRejPct] = useState(
     initialRejPct != null ? Number(initialRejPct) : 10
   )
+
   const onComputedRef = useRef(onComputed)
   const prevPayloadRef = useRef(null)
 
@@ -64,45 +82,58 @@ const YarnConsumptionCard = ({
   }, [onComputed])
 
   useEffect(() => {
-    setMeters(totalMeters || "")
-  }, [totalMeters])
-
-  useEffect(() => {
     if (initialRejPct == null) return
     setRejPct(Number(initialRejPct))
   }, [initialRejPct])
+
+  const updateMetersFromFinishedAndMargin = (finishedVal, marginVal) => {
+    const f = toNum(finishedVal)
+    const m = toNum(marginVal)
+    if (!f) {
+      if (onTotalMetersChange) onTotalMetersChange("")
+      return
+    }
+    const total = round(f * (1 + (m || 0) / 100), 2)
+    if (onTotalMetersChange) onTotalMetersChange(String(total))
+  }
 
   const epi = toNum(item?.ends)
   const ppi = toNum(item?.picks)
   const warpCount = toNum(item?.warp_count)
   const weftCount = toNum(item?.weft_count)
 
-  const widthIn = useMemo(
-    () =>
-      toNum(
-        item?.greige_width ??
-          item?.finished_width_inches ??
-          item?.fabric_width_inches ??
-          item?.width
-      ),
-    [item?.greige_width, item?.finished_width_inches, item?.fabric_width_inches, item?.width]
-  )
+  const widthIn = useMemo(() => {
+    const fromProp = toNum(widthInches)
+    if (fromProp) return fromProp
+    return toNum(
+      item?.greige_width ??
+        item?.finished_width_inches ??
+        item?.fabric_width_inches ??
+        item?.width
+    )
+  }, [
+    widthInches,
+    item?.greige_width,
+    item?.finished_width_inches,
+    item?.fabric_width_inches,
+    item?.width
+  ])
 
-  const widthDisplay = widthIn || ""
+  const widthDisplay = widthIn || widthCm || ""
 
   const yardsPerMeter = 1.0936
 
   const warpReq = useMemo(() => {
-    const m = toNum(meters)
+    const m = toNum(totalMeters)
     if (!m || !epi || !widthIn || !warpCount) return 0
     return round(((epi * yardsPerMeter * widthIn * m) / (840 * warpCount)) / 100, 2)
-  }, [epi, widthIn, meters, warpCount])
+  }, [epi, widthIn, totalMeters, warpCount])
 
   const weftReq = useMemo(() => {
-    const m = toNum(meters)
+    const m = toNum(totalMeters)
     if (!m || !ppi || !widthIn || !weftCount) return 0
     return round(((ppi * yardsPerMeter * widthIn * m) / (840 * weftCount)) / 100, 2)
-  }, [ppi, widthIn, meters, weftCount])
+  }, [ppi, widthIn, totalMeters, weftCount])
 
   const totalReq = useMemo(() => round(warpReq + weftReq, 2), [warpReq, weftReq])
 
@@ -218,6 +249,7 @@ const YarnConsumptionCard = ({
   return (
     <div className="rounded-2xl border bg-white shadow-md dark:bg-bodybg dark:border-defaultborder/20">
       <div className="p-4 grid gap-4 lg:grid-cols-12">
+        {/* Left column: parameters + meters + finished/margin */}
         <div className="lg:col-span-5 rounded-xl border overflow-hidden shadow-sm bg-white dark:bg-bodybg dark:border-defaultborder/20">
           <div className="px-4 py-2 border-b dark:border-defaultborder/20">
             <div className="text-[.75rem] uppercase tracking-wide text-[#6b7280] dark:text-white/60">
@@ -231,6 +263,7 @@ const YarnConsumptionCard = ({
             <Row label="Weft Density" value={item?.picks} />
             <Row label="Width" value={widthDisplay} last />
           </div>
+
           <div className="px-4 py-3 border-t dark:border-defaultborder/20">
             <div className="text-[.75rem] text-[#6b7280] dark:text-white/60 mb-1">
               Total Meter to be placed
@@ -238,15 +271,53 @@ const YarnConsumptionCard = ({
             <input
               type="number"
               min={0}
-              value={meters}
+              value={totalMeters || ""}
               onChange={(e) => {
                 const v = e.target.value
-                setMeters(v)
                 if (onTotalMetersChange) onTotalMetersChange(v)
               }}
               className="form-control !h-10 !py-2.5 !px-3 text-[.92rem]"
               placeholder="0"
             />
+          </div>
+
+          <div className="px-4 pb-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="text-[.75rem] text-[#6b7280] dark:text-white/60 mb-1">
+                  Finished width
+                </div>
+                <input
+                  type="number"
+                  min={0}
+                  value={finishedMeters}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    if (onFinishedMetersChange) onFinishedMetersChange(v)
+                    updateMetersFromFinishedAndMargin(v, marginPct)
+                  }}
+                  className="form-control !h-9 !py-2 !px-2 text-[.9rem]"
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <div className="text-[.75rem] text-[#6b7280] dark:text-white/60 mb-1">
+                  Margin %
+                </div>
+                <input
+                  type="number"
+                  min={0}
+                  value={marginPct}
+                  onChange={(e) => {
+                    const v = e.target.value
+                    if (onMarginPctChange) onMarginPctChange(v)
+                    updateMetersFromFinishedAndMargin(finishedMeters, v)
+                  }}
+                  className="form-control !h-9 !py-2 !px-2 text-[.9rem]"
+                  placeholder="0"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -264,13 +335,24 @@ const YarnConsumptionCard = ({
 
               <Stat label="GSM" value={gsm} />
               <Stat label="Cover Factor" value={coverFactor} />
+
               <div className="col-span-2 xl:col-span-3 rounded-lg border p-3 flex items-center justify-between shadow-sm bg-white dark:bg-bodybg dark:border-defaultborder/20">
-                <div className="text-[.8rem] text-[#6b7280] dark:text-white/60">Total Bags</div>
-                <div className="text-[1.15rem] font-semibold">{totalWithRej}</div>
+                <div className="text-[.8rem] text-[#6b7280] dark:text-white/60">
+                  Total Bags
+                </div>
+                <div className="text-[1.15rem] font-semibold">
+                  {totalWithRej}
+                </div>
               </div>
 
-              <Stat label="Warp coverage" value={`${round(warpCoveragePct, 2)}%`} />
-              <Stat label="Weft coverage" value={`${round(weftCoveragePct, 2)}%`} />
+              <Stat
+                label="Warp coverage"
+                value={`${round(warpCoveragePct, 2)}%`}
+              />
+              <Stat
+                label="Weft coverage"
+                value={`${round(weftCoveragePct, 2)}%`}
+              />
               <Stat label="Total dyed" value={totalDyedBags} />
 
               <Stat label="Warp bags ecru" value={warpEcruBags} />

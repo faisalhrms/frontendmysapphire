@@ -52,3 +52,14 @@ export const uploadCustomerItems = async (file) => {
   const res = await api.post("customer-hub/customer-items/bulk-upload/", fd, { headers: { "Content-Type": "multipart/form-data" } });
   return res.data;
 };
+
+export const deleteCustomerItem = async (id) => {
+  try {
+    const res = await api.delete(`customer-hub/customer-items/${id}/`);
+    Notify.success("Deleted");
+    return res.data;
+  } catch (e) {
+    Notify.error(e.response?.data?.message || "Failed to delete");
+    throw e;
+  }
+};

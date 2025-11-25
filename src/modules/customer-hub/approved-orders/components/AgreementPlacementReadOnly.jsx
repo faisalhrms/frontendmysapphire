@@ -82,8 +82,12 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
 
   const agreement_no = payload.agreement_no ?? agreement?.agreement_no ?? ""
   const agreement_type = payload.agreement_type ?? agreement?.vmi_po ?? ""
-  const fabric_delivery_raw = payload.fabric_delivery ?? agreement?.fabric_delivery ?? agreement?.start_date ?? ""
-  const need_by_date_raw = payload.need_by_date ?? agreement?.auto_need_by_date ?? agreement?.end_date ?? ""
+
+  const fabric_delivery_raw =
+    payload.fabric_delivery ?? agreement?.fabric_delivery ?? agreement?.start_date ?? ""
+  const need_by_date_raw =
+    payload.need_by_date ?? agreement?.auto_need_by_date ?? agreement?.end_date ?? ""
+
   const total_meters = payload.total_meters ?? ""
   const warp_yarn_rate = payload.warp_yarn_rate ?? ""
   const warp_delivery_raw = payload.warp_delivery ?? ""
@@ -95,12 +99,31 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
   const warp_delivery = formatDate(warp_delivery_raw)
   const weft_delivery = formatDate(weft_delivery_raw)
 
-  const yarn_dyed_or_greige = payload.yarn_dyed_or_greige ?? agreement?.yarn_dyed_or_greige ?? ""
+  const yarn_dyed_or_greige =
+    payload.yarn_dyed_or_greige ??
+    agreement?.yarn_dyed_or_greige ??
+    matchedItem?.yarn_dyed_or_greige ??
+    ""
 
-  const fabric_detail = payload.fabric_detail ?? agreement?.item_description ?? agreement?.description ?? ""
-  const construction = payload.construction ?? ""
-  const warp_blend = payload.warp_blend ?? ""
-  const weft_blend = payload.weft_blend ?? ""
+  // Fabric meta: prefer payload, fallback to matchedItem where relevant
+  const fabric_detail =
+    payload.fabric_detail ??
+    agreement?.item_description ??
+    agreement?.description ??
+    matchedItem?.finished_design_description ??
+    ""
+
+  const construction = payload.construction ?? matchedItem?.fab_construction ?? ""
+
+  const warp_blend = payload.warp_blend ?? matchedItem?.warp_blend ?? ""
+  const weft_blend = payload.weft_blend ?? matchedItem?.weft_blend ?? ""
+
+  const weave = matchedItem?.weave || ""
+  const selvedge = matchedItem?.selvedge || ""
+  const warpYarnGrade = matchedItem?.warp_yarn_grade || ""
+  const warpSpinMethod = matchedItem?.warp_spin_method || ""
+  const weftYarnGrade = matchedItem?.weft_yarn_grade || ""
+  const weftSpinMethod = matchedItem?.weft_spin_method || ""
 
   const dyed_warp_bags = payload.dyed_warp_bags ?? ""
   const ecru_warp_bags = payload.ecru_warp_bags ?? ""
@@ -267,9 +290,16 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
               <AgreementFabric
                 fabricDetail={fabric_detail}
                 construction={construction}
+                weave={weave}
+                selvedge={selvedge}
                 warpBlend={warp_blend}
                 weftBlend={weft_blend}
+                warpYarnGrade={warpYarnGrade}
+                warpSpinMethod={warpSpinMethod}
+                weftYarnGrade={weftYarnGrade}
+                weftSpinMethod={weftSpinMethod}
                 yarn_dyed_or_greige={yarn_dyed_or_greige}
+                source={agreement?.source || (agreement?.email ? "email" : "manual")}
               />
               <AgreementYarnBags
                 values={{

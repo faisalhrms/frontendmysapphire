@@ -12,7 +12,11 @@ const YarnConsumptionModal = ({
   widthCm,
   onComputed,
   dyeingMeta,
-  rejPct
+  rejPct,
+  finishedMeters,
+  onFinishedMetersChange,
+  marginPct,
+  onMarginPctChange,
 }) => {
   useEffect(() => {
     if (!open) return
@@ -50,6 +54,10 @@ const YarnConsumptionModal = ({
             onComputed={onComputed}
             dyeingMeta={dyeingMeta}
             initialRejPct={rejPct}
+            finishedMeters={finishedMeters}
+            onFinishedMetersChange={onFinishedMetersChange}
+            marginPct={marginPct}
+            onMarginPctChange={onMarginPctChange}
           />
         </div>
       </div>

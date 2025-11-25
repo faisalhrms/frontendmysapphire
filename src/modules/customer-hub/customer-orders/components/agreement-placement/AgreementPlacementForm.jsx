@@ -5,7 +5,10 @@ import YarnConsumptionModal from "@modules/customer-hub/customer-orders/componen
 import YarnConsumptionCard from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionCard.jsx"
 import FormInput from "@components/form/FormInput.jsx"
 import FormSelect from "@components/form/FormSelect.jsx"
-import { AGREEMENT_TYPES } from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
+import {
+  AGREEMENT_EXECUTION_TYPES,
+  AGREEMENT_TYPES,
+} from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
 import { useAgreementPlacementForm } from "@modules/customer-hub/customer-orders/hooks/agreement-placement/useAgreementPlacementForm.js"
 import AgreementActions from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementActions.jsx"
 import AgreementItemMeta from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementItemMeta.jsx"
@@ -27,7 +30,7 @@ const AgreementPlacementForm = ({
   hideSubmit = false,
   refetch,
   active,
-  showHeader
+  showHeader,
 }) => {
   const {
     control,
@@ -46,7 +49,7 @@ const AgreementPlacementForm = ({
     widthSeed,
     handleComputed,
     doSaveDraft,
-    doSubmit
+    doSubmit,
   } = useAgreementPlacementForm({ seed, email, onAfterPersist, refetch })
 
   const [open, setOpen] = useState(false)
@@ -158,11 +161,10 @@ const AgreementPlacementForm = ({
 
   const totalMeters = watch("total_meters")
   const widthInchesValue =
-    (matchedItem && matchedItem.greige_width) ||
-    widthSeed ||
-    watch("width_inches")
+    (matchedItem && matchedItem.greige_width) || widthSeed || watch("width_inches")
   const widthCmValue = watch("width_cm")
-
+  const finishedMeters = watch("finished_meters")
+  const marginPct = watch("margin_pct")
   const warpYarnRate = watch("warp_yarn_rate")
   const warpDelivery = watch("warp_delivery")
   const weftYarnRate = watch("weft_yarn_rate")
@@ -195,9 +197,9 @@ const AgreementPlacementForm = ({
   }, [needByDate, fabricDelivery])
 
   const handleSubmitWithType = useCallback(
-    async (submissionType) => {
+    async (submissionType, executionType) => {
       try {
-        await doSubmit(submissionType)
+        await doSubmit(submissionType, executionType)
         setSubmitModalOpen(false)
       } catch (e) {}
     },
@@ -212,7 +214,9 @@ const AgreementPlacementForm = ({
             <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 dark:from-white/5 dark:via-white/5 dark:to-white/5 p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-[.95rem] font-semibold">No matching item found</div>
+                  <div className="text-[.95rem] font-semibold">
+                    No matching item found
+                  </div>
                   <div className="text-sm opacity-70">
                     Refine search or fill details manually
                   </div>
@@ -239,7 +243,8 @@ const AgreementPlacementForm = ({
                     {matchesCount} matching customer items found
                   </div>
                   <div className="text-sm opacity-70">
-                    Open the selector to choose the correct customer item or continue editing fields manually
+                    Open the selector to choose the correct customer item or
+                    continue editing fields manually
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -285,14 +290,13 @@ const AgreementPlacementForm = ({
                 />
               </div>
               <div className="col-span-12 md:col-span-6">
-                <FormInput
-                  name="fabric_delivery"
-                  className="!text-danger"
+                <FormSelect
+                  name="execution_type"
                   control={control}
                   errors={errors}
-                  placeholder="Fabric Delivery"
-                  type="date"
-                  disabled={isFabricDeliveryLocked}
+                  options={AGREEMENT_EXECUTION_TYPES}
+                  placeholder="Execution Type"
+                  is_required
                 />
               </div>
               <div className="col-span-12 md:col-span-6">
@@ -304,6 +308,18 @@ const AgreementPlacementForm = ({
                   type="date"
                 />
               </div>
+              <div className="col-span-12">
+                <FormInput
+                  name="fabric_delivery"
+                  className="!text-danger"
+                  control={control}
+                  errors={errors}
+                  placeholder="Fabric Delivery"
+                  type="date"
+                  disabled={isFabricDeliveryLocked}
+                />
+              </div>
+
               {deliveryDeviation && (
                 <div className="col-span-12">
                   <div
@@ -317,16 +333,23 @@ const AgreementPlacementForm = ({
                   >
                     <div className="mt-[2px]">
                       {deliveryDeviation.level === "ok" && <CheckCircle2 size={14} />}
-                      {deliveryDeviation.level !== "ok" && <AlertTriangle size={14} />}
+                      {deliveryDeviation.level !== "ok" && (
+                        <AlertTriangle size={14} />
+                      )}
                     </div>
                     <div className="space-y-0.5">
                       <div className="text-[0.75rem] font-semibold">
-                        {deliveryDeviation.level === "ok" && "Need by date is aligned with fabric delivery"}
-                        {deliveryDeviation.level === "soft" && "Need by and delivery dates have a small deviation"}
-                        {deliveryDeviation.level === "hard" && "Need by and delivery dates are out of tolerance"}
+                        {deliveryDeviation.level === "ok" &&
+                          "Need by date is aligned with fabric delivery"}
+                        {deliveryDeviation.level === "soft" &&
+                          "Need by and delivery dates have a small deviation"}
+                        {deliveryDeviation.level === "hard" &&
+                          "Need by and delivery dates are out of tolerance"}
                       </div>
                       <div className="opacity-80">
-                        Deviation of {deliveryDeviation.diff} day{deliveryDeviation.diff !== 1 ? "s" : ""} between need by date and received fabric delivery.
+                        Deviation of {deliveryDeviation.diff} day
+                        {deliveryDeviation.diff !== 1 ? "s" : ""} between need by
+                        date and received fabric delivery.
                         {deliveryDeviation.level === "soft" &&
                           " Within ±10 days but beyond ±5 days; review before final approval."}
                         {deliveryDeviation.level === "hard" &&
@@ -336,6 +359,7 @@ const AgreementPlacementForm = ({
                   </div>
                 </div>
               )}
+
               <div className="col-span-12">
                 <label className="form-label flex items-center justify-between">
                   <span>Total Meters</span>
@@ -359,6 +383,7 @@ const AgreementPlacementForm = ({
                   type="number"
                 />
               </div>
+
               <div className="col-span-12">
                 <div className="rounded-xl ring-2 ring-violet-300/60 dark:ring-violet-700 p-4">
                   <div className="grid grid-cols-12 gap-4">
@@ -405,6 +430,7 @@ const AgreementPlacementForm = ({
                   </div>
                 </div>
               </div>
+
               <div className="hidden">
                 <FormInput
                   name="yarn_dyed_or_greige"
@@ -423,6 +449,7 @@ const AgreementPlacementForm = ({
                   label={false}
                 />
               </div>
+
               <AgreementActions
                 onSaveDraft={doSaveDraft}
                 onSubmit={() => setSubmitModalOpen(true)}
@@ -432,6 +459,7 @@ const AgreementPlacementForm = ({
               />
             </div>
           </div>
+
           <div className="col-span-12 md:col-span-7 rounded-xl border border-slate-200/80 dark:border-white/10 overflow-hidden">
             <AgreementItemMeta
               qc={qc}
@@ -452,9 +480,17 @@ const AgreementPlacementForm = ({
             <div className="p-4 space-y-5">
               <AgreementFabric
                 fabricDetail={watch("fabric_detail") || ""}
-                construction={watch("construction")}
-                warpBlend={watch("warp_blend")}
-                weftBlend={watch("weft_blend")}
+                construction={
+                  watch("construction") || matchedItem?.fab_construction || ""
+                }
+                weave={matchedItem?.weave || ""}
+                selvedge={matchedItem?.selvedge || ""}
+                warpBlend={watch("warp_blend") || matchedItem?.warp_blend || ""}
+                weftBlend={watch("weft_blend") || matchedItem?.weft_blend || ""}
+                warpYarnGrade={matchedItem?.warp_yarn_grade}
+                warpSpinMethod={matchedItem?.warp_spin_method}
+                weftYarnGrade={matchedItem?.weft_yarn_grade}
+                weftSpinMethod={matchedItem?.weft_spin_method}
                 yarn_dyed_or_greige={matchedItem?.yarn_dyed_or_greige || ""}
                 source={seed?.source || (email ? "email" : "manual")}
               />
@@ -466,7 +502,7 @@ const AgreementPlacementForm = ({
                   dyed_weft_bags: watch("dyed_weft_bags"),
                   ecru_weft_bags: watch("ecru_weft_bags"),
                   dyed_bags: watch("dyed_bags"),
-                  ecru_bags: watch("ecru_bags")
+                  ecru_bags: watch("ecru_bags"),
                 }}
               />
             </div>
@@ -496,6 +532,10 @@ const AgreementPlacementForm = ({
         onComputed={handleComputed}
         dyeingMeta={seed?.dyeing_meta}
         rejPct={watch("rej_pct")}
+        finishedMeters={finishedMeters}
+        onFinishedMetersChange={(v) => setValue("finished_meters", v)}
+        marginPct={marginPct}
+        onMarginPctChange={(v) => setValue("margin_pct", v)}
       />
 
       {!showYarn && (
@@ -517,6 +557,15 @@ const AgreementPlacementForm = ({
         <SubmitAgreementModal
           closeModal={() => setSubmitModalOpen(false)}
           onConfirm={handleSubmitWithType}
+          yarnTermsStatus={yarnTermsStatus}
+          fabricDeliveryStatus={fabricDeliveryStatus}
+          status={status}
+          initialExecutionType={
+            watch("execution_type") ||
+            seed?.execution_type ||
+            seed?.payload?.execution_type ||
+            ""
+          }
         />
       )}
 

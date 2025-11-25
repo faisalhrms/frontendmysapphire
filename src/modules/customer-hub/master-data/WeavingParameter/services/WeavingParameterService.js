@@ -55,3 +55,14 @@ export const uploadWeavingParameters = async (file) => {
     throw e;
   }
 };
+
+export const deleteWeavingParameter = async (id) => {
+  try {
+    const res = await api.delete(`customer-hub/weaving-params/${id}/`);
+    Notify.success("Deleted");
+    return res.data;
+  } catch (e) {
+    Notify.error(e.response?.data?.message || "Failed to delete");
+    throw e;
+  }
+};
