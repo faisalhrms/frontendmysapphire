@@ -34,11 +34,11 @@ export const getAgreement = async (id, opts = {}) => {
   try {
     const params = {}
     if (opts.showCancelled) {
-      params.cancelled = 'true'
+      params.cancelled = "true"
     }
     const res = await api.get(`${ROOT}/agreements/${id}/`, {
       signal: opts.signal,
-      params: params
+      params,
     })
     return res.data?.data || res.data
   } catch (error) {
@@ -58,15 +58,21 @@ export const deleteAgreement = async (id, opts = {}) => {
   }
 }
 
-export const datatableAgreements = async ({ skip = 0, limit = 10, s = "", mailbox = "" } = {}, opts = {}) => {
+export const datatableAgreements = async (
+  { skip = 0, limit = 10, s = "", mailbox = "" } = {},
+  opts = {}
+) => {
   try {
     const params = {
       skip: String(skip),
       limit: String(limit),
       ...(s ? { s } : {}),
-      ...(mailbox ? { mailbox } : {})
+      ...(mailbox ? { mailbox } : {}),
     }
-    const res = await api.get(`${ROOT}/agreements/datatable/`, { params, signal: opts.signal })
+    const res = await api.get(`${ROOT}/agreements/datatable/`, {
+      params,
+      signal: opts.signal,
+    })
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to load agreements"))
@@ -74,24 +80,42 @@ export const datatableAgreements = async ({ skip = 0, limit = 10, s = "", mailbo
   }
 }
 
-export const submitAgreement = async (id, submissionTypeOrOpts = "new", maybeOpts = {}) => {
+export const submitAgreement = async (
+  id,
+  submissionTypeOrOpts = "new",
+  maybeOpts = {}
+) => {
   try {
     let submissionType = "new"
     let opts = {}
+
     if (typeof submissionTypeOrOpts === "string") {
       submissionType = submissionTypeOrOpts || "new"
       opts = maybeOpts || {}
     } else {
       opts = submissionTypeOrOpts || {}
+      if (opts.submission_type) {
+        submissionType = opts.submission_type || "new"
+      }
     }
-    const payload = submissionType ? { submission_type: submissionType } : {}
+
+    const payload = {}
+    if (submissionType) {
+      payload.submission_type = submissionType
+    }
+    if (opts.execution_type) {
+      payload.execution_type = opts.execution_type
+    }
+
     const res = await api.post(`${ROOT}/agreements/${id}/submit/`, payload, {
-      signal: opts.signal
+      signal: opts.signal,
     })
+
     const msg =
       submissionType && submissionType !== "new"
         ? "Revision submitted for approval"
         : "Submitted for approval"
+
     Notify.success(msg)
     return res.data?.data || res.data
   } catch (error) {
@@ -104,7 +128,9 @@ export const uploadAgreementsExcel = async (file, opts = {}) => {
   try {
     const form = new FormData()
     form.append("file", file)
-    const res = await api.post(`${ROOT}/agreements/upload-excel/`, form, { signal: opts.signal })
+    const res = await api.post(`${ROOT}/agreements/upload-excel/`, form, {
+      signal: opts.signal,
+    })
     Notify.success("File uploaded successfully")
     return res.data?.data || res.data
   } catch (error) {
@@ -117,7 +143,7 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
   try {
     const res = await api.get(`${ROOT}/agreements/by-email/`, {
       params: { email_id, agreement_no },
-      signal: opts.signal
+      signal: opts.signal,
     })
     return res.data?.data || res.data
   } catch (error) {
@@ -129,7 +155,7 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
 export const getApprovalActivity = async (id, opts = {}) => {
   try {
     const res = await api.get(`${ROOT}/agreements/${id}/approval-activity/`, {
-      signal: opts.signal
+      signal: opts.signal,
     })
     return res.data?.data || res.data
   } catch (error) {
@@ -140,11 +166,9 @@ export const getApprovalActivity = async (id, opts = {}) => {
 
 export const resetAgreementPayload = async (id, opts = {}) => {
   try {
-    const res = await api.post(
-      `${ROOT}/agreements/${id}/reset-payload/`,
-      null,
-      { signal: opts.signal }
-    )
+    const res = await api.post(`${ROOT}/agreements/${id}/reset-payload/`, null, {
+      signal: opts.signal,
+    })
     const data = res.data?.data || res.data
     Notify.success("Agreement payload reset successfully")
     return data
@@ -157,12 +181,12 @@ export const resetAgreementPayload = async (id, opts = {}) => {
 export const getAgreementMentionUsers = async (id, opts = {}) => {
   const params = {}
   if (opts.showCancelled) {
-    params.cancelled = 'true'
+    params.cancelled = "true"
   }
 
   const res = await api.get(`${ROOT}/agreements/${id}/mention-users/`, {
     signal: opts.signal,
-    params: params
+    params,
   })
   return res.data?.data || res.data
 }
@@ -183,4 +207,3 @@ export const exportReadAgreementsExcel = async ({ ids = [], s = "" } = {}, opts 
     throw error
   }
 }
-

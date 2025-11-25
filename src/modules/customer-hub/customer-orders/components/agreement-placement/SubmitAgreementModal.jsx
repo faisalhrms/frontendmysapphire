@@ -1,9 +1,36 @@
 import React, { useCallback, useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import FormSelect from "@components/form/FormSelect.jsx"
+import {
+  AGREEMENT_EXECUTION_TYPES,
+} from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
 
-const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDeliveryStatus, status }) => {
+const SubmitAgreementModal = ({
+  closeModal,
+  onConfirm,
+  yarnTermsStatus,
+  fabricDeliveryStatus,
+  status,
+  initialExecutionType,
+}) => {
   const [submissionType, setSubmissionType] = useState("new")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const modalId = "submitAgreementModal"
+
+  const {
+    control,
+    handleSubmit: rhfHandleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      execution_type: initialExecutionType || "",
+    },
+  })
+
+  useEffect(() => {
+    reset({ execution_type: initialExecutionType || "" })
+  }, [initialExecutionType, reset])
 
   const cleanup = () => {
     document.querySelectorAll(".hs-overlay-backdrop").forEach((el) => el.remove())
@@ -31,12 +58,11 @@ const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDe
     }
   }, [])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const onSubmit = async (values) => {
     if (!onConfirm) return
     setIsSubmitting(true)
     try {
-      await onConfirm(submissionType)
+      await onConfirm(submissionType, values.execution_type || null)
       handleClose()
     } catch (err) {
     } finally {
@@ -60,7 +86,7 @@ const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDe
     >
       <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] flex items-center">
         <div className="max-h-full mx-auto overflow-hidden ti-modal-content">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={rhfHandleSubmit(onSubmit)}>
             <div className="ti-modal-header">
               <h6 className="modal-title">Submit Agreement</h6>
               <button
@@ -83,39 +109,53 @@ const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDe
                 </svg>
               </button>
             </div>
-            <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)]">
-              <div className="space-y-4">
-                <p className="text-sm opacity-80">
-                  Select how you want to submit this agreement.
-                </p>
 
-                <div className="space-y-2 text-xs opacity-70 rounded-md border border-slate-200/80 dark:border-white/10 p-2">
-                  <div>
-                    Yarn terms status:{" "}
-                    <span className="font-semibold">
-                      {stageLabel(yarnTermsStatus)}
-                    </span>
-                  </div>
-                  <div>
-                    Fabric delivery status:{" "}
-                    <span className="font-semibold">
-                      {stageLabel(fabricDeliveryStatus)}
-                    </span>
-                  </div>
-                  {status && (
+            <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)]">
+              <div className="space-y-5">
+                <div className="rounded-lg border border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 px-3 py-3">
+                  <FormSelect
+                    name="execution_type"
+                    control={control}
+                    errors={errors}
+                    options={AGREEMENT_EXECUTION_TYPES}
+                    placeholder="Execution Type"
+                    is_required
+                  />
+                </div>
+
+                <div className="rounded-lg border border-slate-200/80 dark:border-white/10 bg-gradient-to-r from-slate-50 via-slate-50 to-slate-50 dark:from-white/5 dark:via-white/5 dark:to-white/5 px-3 py-3">
+                  <div className="text-xs opacity-80 space-y-1">
                     <div>
-                      Agreement status:{" "}
-                      <span className="font-semibold capitalize">
-                        {String(status || "")
-                          .split("_")
-                          .join(" ")}
+                      Yarn terms status:{" "}
+                      <span className="font-semibold">
+                        {stageLabel(yarnTermsStatus)}
                       </span>
                     </div>
-                  )}
+                    <div>
+                      Fabric delivery status:{" "}
+                      <span className="font-semibold">
+                        {stageLabel(fabricDeliveryStatus)}
+                      </span>
+                    </div>
+                    {status && (
+                      <div>
+                        Agreement status:{" "}
+                        <span className="font-semibold capitalize">
+                          {String(status || "")
+                            .split("_")
+                            .join(" ")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="flex items-start gap-3 cursor-pointer">
+                  <p className="text-sm opacity-80">
+                    Select how you want to submit this agreement.
+                  </p>
+
+                  <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-slate-200/80 dark:border-white/10 px-3 py-2 hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors">
                     <input
                       type="radio"
                       name="submission_type"
@@ -132,7 +172,7 @@ const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDe
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-3 cursor-pointer">
+                  <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-slate-200/80 dark:border-white/10 px-3 py-2 hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors">
                     <input
                       type="radio"
                       name="submission_type"
@@ -149,7 +189,7 @@ const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDe
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-3 cursor-pointer">
+                  <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-slate-200/80 dark:border-white/10 px-3 py-2 hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors">
                     <input
                       type="radio"
                       name="submission_type"
@@ -159,7 +199,9 @@ const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDe
                       className="mt-1"
                     />
                     <div>
-                      <div className="text-sm font-medium">Fabric delivery revision</div>
+                      <div className="text-sm font-medium">
+                        Fabric delivery revision
+                      </div>
                       <div className="text-xs opacity-70">
                         Send for approval as a fabric delivery revision.
                       </div>
@@ -168,6 +210,7 @@ const SubmitAgreementModal = ({ closeModal, onConfirm, yarnTermsStatus, fabricDe
                 </div>
               </div>
             </div>
+
             <div className="ti-modal-footer">
               <button
                 type="button"
