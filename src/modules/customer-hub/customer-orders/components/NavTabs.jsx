@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useMemo } from "react"
+import PropTypes from "prop-types"
 
 const colorText = {
   slate: "text-slate-700 dark:text-white/80",
@@ -13,7 +13,7 @@ const colorText = {
   teal: "text-teal-700 dark:text-teal-300",
   blue: "text-blue-700 dark:text-blue-300",
   green: "text-green-700 dark:text-green-300",
-};
+}
 
 const colorActiveChip = {
   slate: "bg-slate-100 dark:bg-white/10 border-slate-200/80",
@@ -27,34 +27,36 @@ const colorActiveChip = {
   teal: "bg-teal-100 dark:bg-teal-900/30 border-teal-200/80",
   blue: "bg-blue-100 dark:bg-blue-900/30 border-blue-200/80",
   green: "bg-green-100 dark:bg-green-900/30 border-green-200/80",
-};
+}
 
 const NavTabs = ({ tabs, activeId, defaultActiveId, onTabChange }) => {
-  const controlled = activeId !== undefined && activeId !== null;
-  const [internal, setInternal] = useState(defaultActiveId || tabs[0]?.id || "");
-  const current = controlled ? activeId : internal;
+  const controlled = activeId !== undefined && activeId !== null
+  const [internal, setInternal] = useState(defaultActiveId || tabs[0]?.id || "")
+  const current = controlled ? activeId : internal
+
   const setActive = (id) => {
-    if (!controlled) setInternal(id);
-    onTabChange?.(id);
-  };
-  const hasContent = useMemo(() => tabs.some((t) => t.content), [tabs]);
+    if (!controlled) setInternal(id)
+    onTabChange?.(id)
+  }
+
+  const hasContent = useMemo(() => tabs.some((t) => t.content), [tabs])
 
   return (
     <div>
       <div className="sm:border-b-2 border-gray-200 dark:border-white/10">
-        <nav className="-mb-0.5 sm:flex sm:space-x-6 overflow-x-auto rtl:space-x-reverse">
+        <nav className="-mb-0.5 flex space-x-4 overflow-x-auto rtl:space-x-reverse">
           {tabs.map((tab) => {
-            const color = tab.color || "slate";
+            const color = tab.color || "slate"
             const icon = tab.icon
               ? React.cloneElement(tab.icon, {
                   size: 14,
                   className: colorText[color],
                 })
-              : null;
+              : null
             return (
               <button
                 key={tab.id}
-                className={`w-full sm:w-auto hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary pb-3 px-1 inline-flex items-center gap-2 border-b-[3px] ${
+                className={`hs-tab-active:font-semibold hs-tab-active:border-primary hs-tab-active:text-primary pb-3 px-1 inline-flex items-center gap-2 border-b-[3px] ${
                   current === tab.id
                     ? "border-primary text-primary font-semibold"
                     : "border-transparent text-defaulttextcolor dark:text-[#8c9097] dark:text-white/50 hover:text-primary"
@@ -66,7 +68,9 @@ const NavTabs = ({ tabs, activeId, defaultActiveId, onTabChange }) => {
                 {icon && (
                   <span
                     className={`h-6 w-6 grid place-items-center rounded-md border transition-all ${
-                      current === tab.id ? colorActiveChip[color] : "border-transparent bg-transparent"
+                      current === tab.id
+                        ? colorActiveChip[color]
+                        : "border-transparent bg-transparent"
                     }`}
                   >
                     {icon}
@@ -74,7 +78,7 @@ const NavTabs = ({ tabs, activeId, defaultActiveId, onTabChange }) => {
                 )}
                 {tab.label}
               </button>
-            );
+            )
           })}
         </nav>
       </div>
@@ -95,8 +99,8 @@ const NavTabs = ({ tabs, activeId, defaultActiveId, onTabChange }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 NavTabs.propTypes = {
   tabs: PropTypes.arrayOf(
@@ -106,11 +110,11 @@ NavTabs.propTypes = {
       icon: PropTypes.element,
       content: PropTypes.node,
       color: PropTypes.string,
-    })
+    }),
   ).isRequired,
   activeId: PropTypes.string,
   defaultActiveId: PropTypes.string,
   onTabChange: PropTypes.func,
-};
+}
 
-export default NavTabs;
+export default NavTabs

@@ -68,7 +68,12 @@ const buildDefaults = (seed = {}, email) => {
   }
 }
 
-export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, refetch }) => {
+export const useAgreementPlacementForm = ({
+  seed = {},
+  email,
+  onAfterPersist,
+  refetch,
+}) => {
   const queryClient = useQueryClient()
 
   const defaults = useMemo(
@@ -198,13 +203,12 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
     }
   }
 
-  const doSubmit = async (submissionType = "new", overrideExecutionType = null) => {
+  const doSubmit = async (submissionType = "new", hierarchies = null) => {
     setSaving(true)
     try {
       const saved = await persistDraft()
 
       const execType =
-        overrideExecutionType ||
         getValues("execution_type") ||
         seed?.execution_type ||
         seed?.payload?.execution_type ||
@@ -212,6 +216,7 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
 
       const submitted = await submitAgreement(saved.id, submissionType, {
         execution_type: execType,
+        hierarchies,
       })
 
       if (onAfterPersist) onAfterPersist(submitted)

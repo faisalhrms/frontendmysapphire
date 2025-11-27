@@ -18,26 +18,32 @@ const formatDate = (v) => {
   return String(v)
 }
 
-const AgreementPlacementReadOnly = ({ agreement }) => {
+const AgreementPlacementReadOnly = ({ agreement, showCancelled = false }) => {
   const [activityOpen, setActivityOpen] = useState(false)
 
   const payload = agreement?.payload || {}
   const matches = agreement?.customer_item_matches || []
 
   const qc = useMemo(
-    () => String(agreement?.quality ?? agreement?.query_meta?.quality_code ?? "").trim(),
+    () =>
+      String(
+        agreement?.quality ?? agreement?.query_meta?.quality_code ?? ""
+      ).trim(),
     [agreement]
   )
   const design = useMemo(
-    () => String(agreement?.design ?? agreement?.query_meta?.design ?? "").trim(),
+    () =>
+      String(agreement?.design ?? agreement?.query_meta?.design ?? "").trim(),
     [agreement]
   )
   const color = useMemo(
-    () => String(agreement?.colour ?? agreement?.query_meta?.color ?? "").trim(),
+    () =>
+      String(agreement?.colour ?? agreement?.query_meta?.color ?? "").trim(),
     [agreement]
   )
   const widthSeed = useMemo(
-    () => String(agreement?.width ?? agreement?.query_meta?.width ?? "").trim(),
+    () =>
+      String(agreement?.width ?? agreement?.query_meta?.width ?? "").trim(),
     [agreement]
   )
 
@@ -64,7 +70,8 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
   }, [matchedItem, greigeCode])
 
   const widthInchesValue = useMemo(() => {
-    if (matchedItem && matchedItem.greige_width != null) return String(matchedItem.greige_width)
+    if (matchedItem && matchedItem.greige_width != null)
+      return String(matchedItem.greige_width)
     if (payload.width_inches) return String(payload.width_inches)
     if (agreement?.width_inches) return String(agreement.width_inches)
     return ""
@@ -75,18 +82,26 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
     [payload.width_cm, agreement?.width, agreement?.width_cm]
   )
 
-  const actions = useMemo(
-    () => agreement?.actions || [],
-    [agreement]
-  )
+  const approvalActionsCount = Number(agreement?.approval_actions_count ?? 0)
+  const activityLogsCount = Number(agreement?.activity_logs_count ?? 0)
+
+  const actionsCount =
+    approvalActionsCount + activityLogsCount ||
+    (Array.isArray(agreement?.actions) ? agreement.actions.length : 0)
 
   const agreement_no = payload.agreement_no ?? agreement?.agreement_no ?? ""
   const agreement_type = payload.agreement_type ?? agreement?.vmi_po ?? ""
 
   const fabric_delivery_raw =
-    payload.fabric_delivery ?? agreement?.fabric_delivery ?? agreement?.start_date ?? ""
+    payload.fabric_delivery ??
+    agreement?.fabric_delivery ??
+    agreement?.start_date ??
+    ""
   const need_by_date_raw =
-    payload.need_by_date ?? agreement?.auto_need_by_date ?? agreement?.end_date ?? ""
+    payload.need_by_date ??
+    agreement?.auto_need_by_date ??
+    agreement?.end_date ??
+    ""
 
   const total_meters = payload.total_meters ?? ""
   const warp_yarn_rate = payload.warp_yarn_rate ?? ""
@@ -283,7 +298,7 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
               widthInches={widthInchesValue}
               widthCm={widthCmValue}
               greigeItemCode={greigeDisplay}
-              actionsCount={actions?.length || 0}
+              actionsCount={actionsCount}
               onOpenActivity={() => setActivityOpen(true)}
             />
             <div className="p-4 space-y-5">
@@ -299,7 +314,9 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
                 weftYarnGrade={weftYarnGrade}
                 weftSpinMethod={weftSpinMethod}
                 yarn_dyed_or_greige={yarn_dyed_or_greige}
-                source={agreement?.source || (agreement?.email ? "email" : "manual")}
+                source={
+                  agreement?.source || (agreement?.email ? "email" : "manual")
+                }
               />
               <AgreementYarnBags
                 values={{
@@ -308,7 +325,7 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
                   dyed_weft_bags,
                   ecru_weft_bags,
                   dyed_bags,
-                  ecru_bags
+                  ecru_bags,
                 }}
               />
             </div>
@@ -322,7 +339,8 @@ const AgreementPlacementReadOnly = ({ agreement }) => {
           onClose={() => setActivityOpen(false)}
           status={status}
           currentApproverName={currentApproverName}
-          actions={actions}
+          agreementId={agreement?.id}
+          showCancelled={showCancelled}
         />
       )}
     </div>

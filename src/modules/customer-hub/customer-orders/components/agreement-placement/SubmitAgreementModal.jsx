@@ -1,9 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import FormSelect from "@components/form/FormSelect.jsx"
-import {
-  AGREEMENT_EXECUTION_TYPES,
-} from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
 
 const SubmitAgreementModal = ({
   closeModal,
@@ -11,26 +6,44 @@ const SubmitAgreementModal = ({
   yarnTermsStatus,
   fabricDeliveryStatus,
   status,
-  initialExecutionType,
+  initialHierarchies = [],
 }) => {
   const [submissionType, setSubmissionType] = useState("new")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedYarnHierarchy, setSelectedYarnHierarchy] = useState(null)
+  const [selectedFabricHierarchy, setSelectedFabricHierarchy] = useState(null)
+  const [hierarchyError, setHierarchyError] = useState("")
   const modalId = "submitAgreementModal"
+  const isFullyApproved =
+    yarnTermsStatus === "completed" &&
+    fabricDeliveryStatus === "completed" &&
+    String(status || "").toLowerCase() === "approved"
 
-  const {
-    control,
-    handleSubmit: rhfHandleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      execution_type: initialExecutionType || "",
-    },
-  })
+    useEffect(() => {
+    if (isFullyApproved && submissionType === "new") {
+      setSubmissionType("yarn_rate_revision")
+    }
+  }, [isFullyApproved, submissionType])
 
   useEffect(() => {
-    reset({ execution_type: initialExecutionType || "" })
-  }, [initialExecutionType, reset])
+    if (!initialHierarchies || !initialHierarchies.length) {
+      setSelectedYarnHierarchy(null)
+      setSelectedFabricHierarchy(null)
+      return
+    }
+
+    const yarn = initialHierarchies.find(
+      (h) => h === "in_house_yarn_rate" || h === "out_source_yarn_rate"
+    )
+    const fabric = initialHierarchies.find(
+      (h) =>
+        h === "in_house_fabric_delivery" ||
+        h === "out_source_fabric_delivery"
+    )
+
+    setSelectedYarnHierarchy(yarn || null)
+    setSelectedFabricHierarchy(fabric || null)
+  }, [initialHierarchies])
 
   const cleanup = () => {
     document.querySelectorAll(".hs-overlay-backdrop").forEach((el) => el.remove())
@@ -58,24 +71,53 @@ const SubmitAgreementModal = ({
     }
   }, [])
 
-  const onSubmit = async (values) => {
-    if (!onConfirm) return
-    setIsSubmitting(true)
-    try {
-      await onConfirm(submissionType, values.execution_type || null)
-      handleClose()
-    } catch (err) {
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   const stageLabel = (v) => {
     if (!v || v === "pending") return "Pending"
     if (v === "completed") return "Completed"
     if (v === "under_approval") return "Under approval"
     if (v === "revision") return "Revision"
     return v
+  }
+
+  const toggleYarnHierarchy = (value) => {
+    setHierarchyError("")
+    setSelectedYarnHierarchy((prev) => (prev === value ? null : value))
+  }
+
+  const toggleFabricHierarchy = (value) => {
+    setHierarchyError("")
+    setSelectedFabricHierarchy((prev) => (prev === value ? null : value))
+  }
+
+  const onSubmit = async (e) => {
+    e.preventDefault()
+    if (!onConfirm) return
+
+    setHierarchyError("")
+    let hierarchies = null
+
+    if (submissionType === "new") {
+      hierarchies = []
+      if (selectedYarnHierarchy) hierarchies.push(selectedYarnHierarchy)
+      if (selectedFabricHierarchy) hierarchies.push(selectedFabricHierarchy)
+
+      if (!hierarchies.length) {
+        setHierarchyError(
+          "Select at least one approval hierarchy (yarn rate and/or fabric delivery)."
+        )
+        return
+      }
+    }
+
+    setIsSubmitting(true)
+    try {
+      await onConfirm(submissionType, hierarchies)
+      handleClose()
+    } catch (err) {
+      // errors handled by caller / Notify
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -86,7 +128,7 @@ const SubmitAgreementModal = ({
     >
       <div className="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] flex items-center">
         <div className="max-h-full mx-auto overflow-hidden ti-modal-content">
-          <form onSubmit={rhfHandleSubmit(onSubmit)}>
+          <form onSubmit={onSubmit}>
             <div className="ti-modal-header">
               <h6 className="modal-title">Submit Agreement</h6>
               <button
@@ -112,17 +154,7 @@ const SubmitAgreementModal = ({
 
             <div className="ti-modal-body overflow-y-auto max-h-[calc(100vh-200px)]">
               <div className="space-y-5">
-                <div className="rounded-lg border border-slate-200/80 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 px-3 py-3">
-                  <FormSelect
-                    name="execution_type"
-                    control={control}
-                    errors={errors}
-                    options={AGREEMENT_EXECUTION_TYPES}
-                    placeholder="Execution Type"
-                    is_required
-                  />
-                </div>
-
+                {/* Status summary */}
                 <div className="rounded-lg border border-slate-200/80 dark:border-white/10 bg-gradient-to-r from-slate-50 via-slate-50 to-slate-50 dark:from-white/5 dark:via-white/5 dark:to-white/5 px-3 py-3">
                   <div className="text-xs opacity-80 space-y-1">
                     <div>
@@ -150,25 +182,42 @@ const SubmitAgreementModal = ({
                   </div>
                 </div>
 
+                {/* Submission type */}
                 <div className="space-y-3">
                   <p className="text-sm opacity-80">
                     Select how you want to submit this agreement.
                   </p>
 
-                  <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-slate-200/80 dark:border-white/10 px-3 py-2 hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors">
+                  <label
+                    className={
+                      "flex items-start gap-3 rounded-lg border border-slate-200/80 dark:border-white/10 px-3 py-2 transition-colors " +
+                      (isFullyApproved
+                        ? "cursor-not-allowed opacity-60 bg-slate-50 dark:bg-white/5"
+                        : "cursor-pointer hover:bg-slate-50/70 dark:hover:bg-white/5")
+                    }
+                  >
                     <input
                       type="radio"
                       name="submission_type"
                       value="new"
                       checked={submissionType === "new"}
-                      onChange={() => setSubmissionType("new")}
+                      onChange={() => !isFullyApproved && setSubmissionType("new")}
                       className="mt-1"
+                      disabled={isFullyApproved}
                     />
                     <div>
                       <div className="text-sm font-medium">New agreement</div>
                       <div className="text-xs opacity-70">
-                        Normal submission for a fresh agreement.
+                        Normal submission for a fresh agreement using selected
+                        hierarchies.
                       </div>
+                      {isFullyApproved && (
+                        <div className="text-[0.7rem] text-amber-600 mt-1">
+                          New submission is disabled because yarn and fabric
+                          approvals are already completed. Use a revision
+                          option instead.
+                        </div>
+                      )}
                     </div>
                   </label>
 
@@ -184,7 +233,8 @@ const SubmitAgreementModal = ({
                     <div>
                       <div className="text-sm font-medium">Yarn rate revision</div>
                       <div className="text-xs opacity-70">
-                        Send for approval as a yarn rate revision.
+                        Submit a revision for yarn rates. Uses the same hierarchies
+                        chosen at the time of original submission.
                       </div>
                     </div>
                   </label>
@@ -195,7 +245,9 @@ const SubmitAgreementModal = ({
                       name="submission_type"
                       value="fabric_delivery_revision"
                       checked={submissionType === "fabric_delivery_revision"}
-                      onChange={() => setSubmissionType("fabric_delivery_revision")}
+                      onChange={() =>
+                        setSubmissionType("fabric_delivery_revision")
+                      }
                       className="mt-1"
                     />
                     <div>
@@ -203,11 +255,140 @@ const SubmitAgreementModal = ({
                         Fabric delivery revision
                       </div>
                       <div className="text-xs opacity-70">
-                        Send for approval as a fabric delivery revision.
+                        Submit a revision for fabric delivery. Uses the same
+                        hierarchies chosen at the time of original submission.
                       </div>
                     </div>
                   </label>
                 </div>
+
+                {/* Hierarchies selection – only for new submission */}
+                 {submissionType === "new" && !isFullyApproved && (
+                  <div className="space-y-3">
+                    <p className="text-sm opacity-80">
+                      Select approval hierarchies for this agreement (initial
+                      submission). You can combine yarn rate and fabric delivery
+                      hierarchies.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Yarn */}
+                      <div className="rounded-lg border border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-white/5 px-3 py-3">
+                        <div className="text-xs font-semibold mb-2 uppercase tracking-wide opacity-80">
+                          Yarn rate
+                        </div>
+                        <div className="space-y-2">
+                          <label className="flex items-start gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="mt-0.5"
+                              checked={
+                                selectedYarnHierarchy === "in_house_yarn_rate"
+                              }
+                              onChange={() =>
+                                toggleYarnHierarchy("in_house_yarn_rate")
+                              }
+                            />
+                            <div>
+                              <div className="text-xs font-medium">
+                                In-house Yarn Rate
+                              </div>
+                              <div className="text-[0.7rem] opacity-70">
+                                Approval flow for yarn rates managed in-house.
+                              </div>
+                            </div>
+                          </label>
+
+                          <label className="flex items-start gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="mt-0.5"
+                              checked={
+                                selectedYarnHierarchy === "out_source_yarn_rate"
+                              }
+                              onChange={() =>
+                                toggleYarnHierarchy("out_source_yarn_rate")
+                              }
+                            />
+                            <div>
+                              <div className="text-xs font-medium">
+                                Out-source Yarn Rate
+                              </div>
+                              <div className="text-[0.7rem] opacity-70">
+                                Approval flow for yarn rates managed with
+                                outsourced execution.
+                              </div>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Fabric */}
+                      <div className="rounded-lg border border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-white/5 px-3 py-3">
+                        <div className="text-xs font-semibold mb-2 uppercase tracking-wide opacity-80">
+                          Fabric delivery
+                        </div>
+                        <div className="space-y-2">
+                          <label className="flex items-start gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="mt-0.5"
+                              checked={
+                                selectedFabricHierarchy ===
+                                "in_house_fabric_delivery"
+                              }
+                              onChange={() =>
+                                toggleFabricHierarchy(
+                                  "in_house_fabric_delivery"
+                                )
+                              }
+                            />
+                            <div>
+                              <div className="text-xs font-medium">
+                                In-house Fabric Delivery
+                              </div>
+                              <div className="text-[0.7rem] opacity-70">
+                                Approval flow for fabric delivery managed
+                                in-house.
+                              </div>
+                            </div>
+                          </label>
+
+                          <label className="flex items-start gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="mt-0.5"
+                              checked={
+                                selectedFabricHierarchy ===
+                                "out_source_fabric_delivery"
+                              }
+                              onChange={() =>
+                                toggleFabricHierarchy(
+                                  "out_source_fabric_delivery"
+                                )
+                              }
+                            />
+                            <div>
+                              <div className="text-xs font-medium">
+                                Out-source Fabric Delivery
+                              </div>
+                              <div className="text-[0.7rem] opacity-70">
+                                Approval flow for fabric delivery managed with
+                                outsourced execution.
+                              </div>
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {hierarchyError && (
+                      <p className="text-[0.75rem] text-rose-600 dark:text-rose-400">
+                        {hierarchyError}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
