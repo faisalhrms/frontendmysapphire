@@ -21,7 +21,10 @@ const formSchema = z.object({
     reminder_max_days: z.union([z.number(), z.null()]).optional(),
     is_active: z.boolean(),
     allow_parallel_approvers: z.boolean(),
-});
+    custom_email_templates_enabled: z.boolean(),
+    approver_email_template: z.string().nullable().optional(),
+    requester_email_template: z.string().nullable().optional(),
+  })
 
 export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,6 +46,9 @@ export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
             reminder_max_days: null,
             is_active: true,
             allow_parallel_approvers: false,
+            custom_email_templates_enabled: false,
+            approver_email_template: "",
+            requester_email_template: "",
         },
         resolver: zodResolver(formSchema),
         mode: "onChange",
@@ -87,5 +93,6 @@ export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
         errors: form.formState.errors,
         isSubmitting,
         onSubmit,
+        watch: form.watch,
     };
 }
