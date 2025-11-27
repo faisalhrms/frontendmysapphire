@@ -4,8 +4,13 @@ import Avatar from "@components/Avatar.jsx"
 
 const CompactHeader = ({ msg }) => {
   if (!msg) return null
+
   const sender = msg.owner || msg.from_name || msg.from_address || ""
-  const when = msg.start_date || msg.received_at || msg.created_at || new Date().toISOString()
+  const isEmail = (msg.source || "").toLowerCase() === "email"
+  const when = isEmail
+    ? (msg.email?.received_at || msg.received_at || msg.created_at || new Date().toISOString())
+    : (msg.start_date || msg.created_at || msg.received_at || new Date().toISOString())
+
   const srcLabel = (s) => (s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : "")
   const statusLabel = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "-")
   const statusClass = (s) => {
@@ -20,6 +25,7 @@ const CompactHeader = ({ msg }) => {
     if (s === "rejected") return "border-l-2 border-l-rose-500"
     return "border-l-2 border-l-slate-200 dark:border-l-white/10"
   }
+
   const badge = `${srcLabel(msg.source)}`
   const stageLabel = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace("_", " ") : "-")
   const stageClass = (s) => {

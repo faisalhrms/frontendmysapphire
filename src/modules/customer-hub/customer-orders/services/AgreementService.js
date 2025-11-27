@@ -94,17 +94,20 @@ export const submitAgreement = async (
       opts = maybeOpts || {}
     } else {
       opts = submissionTypeOrOpts || {}
-      if (opts.submission_type) {
-        submissionType = opts.submission_type || "new"
-      }
+      submissionType = opts.submission_type || "new"
     }
 
     const payload = {}
     if (submissionType) {
       payload.submission_type = submissionType
     }
+
     if (opts.execution_type) {
       payload.execution_type = opts.execution_type
+    }
+
+    if (Array.isArray(opts.hierarchies) && opts.hierarchies.length > 0) {
+      payload.hierarchies = opts.hierarchies
     }
 
     const res = await api.post(`${ROOT}/agreements/${id}/submit/`, payload, {
@@ -152,10 +155,17 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
   }
 }
 
+// now supports pagination via skip/limit while staying backward-compatible
 export const getApprovalActivity = async (id, opts = {}) => {
+  const { skip = 0, limit = 20, signal } = opts
   try {
+    const params = {
+      skip: String(skip),
+      limit: String(limit),
+    }
     const res = await api.get(`${ROOT}/agreements/${id}/approval-activity/`, {
-      signal: opts.signal,
+      params,
+      signal,
     })
     return res.data?.data || res.data
   } catch (error) {

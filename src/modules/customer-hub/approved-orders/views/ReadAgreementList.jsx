@@ -80,6 +80,7 @@ const ReadAgreementList = () => {
         disableSortBy: true,
         width: 80,
       },
+      { Header: "Owner", accessor: "owner" },
       { Header: "Agreement No.", accessor: "agreement_no" },
       { Header: "Greige Item Code", accessor: "greige_item_code" },
       { Header: "Quality Code", accessor: "quality_code" },

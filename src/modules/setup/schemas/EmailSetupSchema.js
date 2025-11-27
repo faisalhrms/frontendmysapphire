@@ -5,6 +5,7 @@ const emailSetupTypes = z.enum([
     "daily_sales_report",
     "comparative_sales_report",
     "sr_daily_stat_report",
+    "ai_qc_daily_report"
 ]);
 
 const emailSetupSchema = z.object({

@@ -1,75 +1,171 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useEffect } from "react"
 import { X, CheckCircle2, Clock, Edit3, Send, Sparkles } from "lucide-react"
 import dayjs from "dayjs"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { useInView } from "react-intersection-observer"
+import api from "@config/axiosConfig.js"
 
-const ApprovalActivityModal = ({ open, onClose, status, currentApproverName, actions = [], activityLogs = [] }) => {
-  if (!open) return null
+const PAGE_SIZE = 20
+
+const fetchApprovalActivity = async ({ pageParam = 0, queryKey }) => {
+  const [, agreementId, showCancelled] = queryKey
+  if (!agreementId) return null
+
+  const params = {
+    skip: String(pageParam),
+    limit: String(PAGE_SIZE),
+  }
+  if (showCancelled) {
+    params.cancelled = "true"
+  }
+
+  const res = await api.get(
+    `/customer-hub/agreements/${agreementId}/approval-activity/`,
+    { params }
+  )
+  return res.data?.data || res.data
+}
+
+const ApprovalActivityModal = ({
+  open,
+  onClose,
+  status: statusProp,
+  currentApproverName: approverNameProp,
+  agreementId,
+  showCancelled = false,
+}) => {
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["agreementApprovalActivity", agreementId, showCancelled],
+    queryFn: fetchApprovalActivity,
+    enabled: open && !!agreementId,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage) return undefined
+      const currentPage = lastPage.current_page || lastPage.page || 1
+      const totalPages = lastPage.total_pages || lastPage.pages || 1
+      if (currentPage >= totalPages) return undefined
+      return currentPage * PAGE_SIZE
+    },
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const { ref: sentinelRef, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: false,
+  })
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  const derivedStatus = data?.pages?.[0]?.status ?? statusProp
+  const derivedApproverName =
+    data?.pages?.[0]?.current_approver_name ?? approverNameProp
 
   const items = useMemo(() => {
-    const approvalItems = (actions || []).map(a => ({
-      id: `approval-${a.id}`,
-      kind: "approval",
-      action_type: a.action,
-      label: a.action,
-      message: a.remarks || "",
-      actor: a.approver_name || a.approver || "",
-      at: a.created_at,
-      meta: a.level ? `Level ${a.level}` : "",
-    }))
+    if (!data) return []
+    const out = []
 
-    const activityItems = (activityLogs || []).map(l => ({
-      id: `activity-${l.id}`,
-      kind: "activity",
-      action_type: l.action_type,
-      label: l.action_type,
-      message: l.message || "",
-      actor: l.created_by_name || "",
-      at: l.created_at,
-      changes: l.changes || null,
-    }))
+    data.pages.forEach((page, idx) => {
+      if (!page) return
 
-    return [...approvalItems, ...activityItems].sort((a, b) => new Date(b.at) - new Date(a.at))
-  }, [actions, activityLogs])
+      if (idx === 0 && Array.isArray(page.actions)) {
+        page.actions.forEach((a) => {
+          out.push({
+            id: `approval-${a.id}`,
+            kind: "approval",
+            action_type: a.action,
+            label: a.action,
+            message: a.remarks || "",
+            actor: a.approver_name || a.approver || "",
+            at: a.created_at,
+            meta: a.level ? `Level ${a.level}` : "",
+          })
+        })
+      }
 
-  const renderIcon = item => {
+      const rows = page.rows || page.data || []
+      rows.forEach((l) => {
+        out.push({
+          id: `activity-${l.id}`,
+          kind: "activity",
+          action_type: l.action_type,
+          label: l.action_type,
+          message: l.message || "",
+          actor: l.created_by_name || "",
+          at: l.created_at,
+          changes: l.changes || null,
+        })
+      })
+    })
+
+    out.sort((a, b) => new Date(b.at) - new Date(a.at))
+    return out
+  }, [data])
+
+  const renderIcon = (item) => {
     if (item.kind === "approval") {
-      if (item.action_type === "approved") return <CheckCircle2 size={16} className="text-emerald-500" />
-      if (item.action_type === "rejected") return <X size={16} className="text-rose-500" />
-      if (item.action_type === "submitted") return <Send size={16} className="text-sky-500" />
+      if (item.action_type === "approved") {
+        return <CheckCircle2 size={16} className="text-emerald-500" />
+      }
+      if (item.action_type === "rejected") {
+        return <X size={16} className="text-rose-500" />
+      }
+      if (item.action_type === "submitted") {
+        return <Send size={16} className="text-sky-500" />
+      }
       return <Sparkles size={16} className="text-primary" />
     }
     if (item.kind === "activity") {
-      if (item.action_type === "status_changed") return <Clock size={16} className="text-amber-500" />
-      if (item.action_type === "created") return <Sparkles size={16} className="text-emerald-500" />
+      if (item.action_type === "status_changed") {
+        return <Clock size={16} className="text-amber-500" />
+      }
+      if (item.action_type === "created") {
+        return <Sparkles size={16} className="text-emerald-500" />
+      }
       return <Edit3 size={16} className="text-primary" />
     }
     return <Clock size={16} />
   }
 
-  const renderLabel = item => {
+  const renderLabel = (item) => {
     if (item.kind === "activity") {
       if (item.action_type === "created") return "Agreement created"
       if (item.action_type === "updated") return "Agreement updated"
       if (item.action_type === "status_changed") return "Status changed"
       if (item.action_type === "submitted") return "Submitted for approval"
-      if (item.action_type === "yarn_revision_submitted") return "Yarn rate revision submitted"
-      if (item.action_type === "fabric_revision_submitted") return "Fabric delivery revision submitted"
+      if (item.action_type === "yarn_revision_submitted") {
+        return "Yarn rate revision submitted"
+      }
+      if (item.action_type === "fabric_revision_submitted") {
+        return "Fabric delivery revision submitted"
+      }
     }
     return (item.label || "").replace(/_/g, " ")
   }
 
-  const formatTime = val => {
+  const formatTime = (val) => {
     if (!val) return ""
     return dayjs(val).format("DD MMM, YYYY h:mm A")
   }
 
-  const formatKindChip = kind => {
+  const formatKindChip = (kind) => {
     if (kind === "approval") return "Approval"
     if (kind === "activity") return "Form activity"
     return ""
   }
 
-  const formatFieldLabel = field => {
+  const formatFieldLabel = (field) => {
     let scope = ""
     let label = field
     if (label.startsWith("payload.")) {
@@ -83,10 +179,12 @@ const ApprovalActivityModal = ({ open, onClose, status, currentApproverName, act
     return { scope, label }
   }
 
-  const formatValue = v => {
+  const formatValue = (v) => {
     if (v === null || v === undefined || v === "") return "–"
     return String(v)
   }
+
+  if (!open) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[0.08rem]">
@@ -97,13 +195,14 @@ const ApprovalActivityModal = ({ open, onClose, status, currentApproverName, act
               <div className="text-[0.9rem] font-semibold flex items-center gap-2">
                 <span>Agreement timeline</span>
                 <span className="inline-flex items-center rounded-full px-2 py-[2px] text-[0.65rem] font-medium bg-slate-900 text-white dark:bg-white dark:text-slate-900">
-                  {status || "-"}
+                  {derivedStatus || "-"}
                 </span>
               </div>
               <div className="text-[0.72rem] text-[#6b7280] dark:text-white/60 mt-1">
-                {currentApproverName ? (
+                {derivedApproverName ? (
                   <>
-                    Pending at <span className="font-medium">{currentApproverName}</span>
+                    Pending at{" "}
+                    <span className="font-medium">{derivedApproverName}</span>
                   </>
                 ) : (
                   "No active approver"
@@ -133,7 +232,35 @@ const ApprovalActivityModal = ({ open, onClose, status, currentApproverName, act
           </div>
         </div>
         <div className="flex-1 p-4 overflow-y-auto">
-          {items.length === 0 && (
+          {isLoading && (
+            <div className="h-full grid place-items-center">
+              <div className="text-center space-y-2">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10">
+                  <Clock size={18} className="text-slate-500 dark:text-white/70" />
+                </div>
+                <div className="text-sm font-medium">Loading activity…</div>
+                <div className="text-xs text-[#6b7280] dark:text-white/60">
+                  Fetching approval history and form changes.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!isLoading && isError && (
+            <div className="h-full grid place-items-center">
+              <div className="text-center space-y-2">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-rose-50 dark:bg-rose-900/20">
+                  <X size={18} className="text-rose-500" />
+                </div>
+                <div className="text-sm font-medium">Failed to load activity</div>
+                <div className="text-xs text-[#6b7280] dark:text-white/60 max-w-xs mx-auto">
+                  {error?.message || "An error occurred while loading the approval activity."}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!isLoading && !isError && items.length === 0 && (
             <div className="h-full grid place-items-center">
               <div className="text-center space-y-2">
                 <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10">
@@ -146,86 +273,102 @@ const ApprovalActivityModal = ({ open, onClose, status, currentApproverName, act
               </div>
             </div>
           )}
-          {items.length > 0 && (
-            <ul className="space-y-4">
-              {items.map((item, idx) => (
-                <li key={item.id} className="relative pl-11">
-                  {idx !== items.length - 1 && (
-                    <div className="absolute left-4 top-5 bottom-[-10px] w-px bg-slate-200 dark:bg-white/10" />
-                  )}
-                  <div className="absolute left-1.5 top-3 w-7 h-7 rounded-full bg-white dark:bg-bodybg border border-slate-200 dark:border-white/15 grid place-items-center shadow-sm">
-                    {renderIcon(item)}
-                  </div>
-                  <div className="rounded-xl border border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] px-4 py-3.5 hover:shadow-sm transition-shadow">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-sm font-semibold">
-                            {renderLabel(item)}
+
+          {!isLoading && !isError && items.length > 0 && (
+            <>
+              <ul className="space-y-4">
+                {items.map((item, idx) => (
+                  <li key={item.id} className="relative pl-11">
+                    {idx !== items.length - 1 && (
+                      <div className="absolute left-4 top-5 bottom-[-10px] w-px bg-slate-200 dark:bg-white/10" />
+                    )}
+                    <div className="absolute left-1.5 top-3 w-7 h-7 rounded-full bg-white dark:bg-bodybg border border-slate-200 dark:border-white/15 grid place-items-center shadow-sm">
+                      {renderIcon(item)}
+                    </div>
+                    <div className="rounded-xl border border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] px-4 py-3.5 hover:shadow-sm transition-shadow">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm font-semibold">
+                              {renderLabel(item)}
+                            </div>
+                            <span className="inline-flex items-center rounded-full px-2 py-[2px] text-[0.65rem] font-medium bg-slate-900/90 text-white dark:bg-white/90 dark:text-slate-900">
+                              {formatKindChip(item.kind)}
+                            </span>
                           </div>
-                          <span className="inline-flex items-center rounded-full px-2 py-[2px] text-[0.65rem] font-medium bg-slate-900/90 text-white dark:bg-white/90 dark:text-slate-900">
-                            {formatKindChip(item.kind)}
-                          </span>
+                          {(item.actor || item.meta) && (
+                            <div className="mt-1 text-[0.72rem] text-[#6b7280] dark:text-white/60">
+                              {item.actor && <span>{item.actor}</span>}
+                              {item.actor && item.meta && <span> • </span>}
+                              {item.meta && <span>{item.meta}</span>}
+                            </div>
+                          )}
                         </div>
-                        {(item.actor || item.meta) && (
-                          <div className="mt-1 text-[0.72rem] text-[#6b7280] dark:text-white/60">
-                            {item.actor && <span>{item.actor}</span>}
-                            {item.actor && item.meta && <span> • </span>}
-                            {item.meta && <span>{item.meta}</span>}
+                        <div className="text-[0.7rem] text-[#9ca3af] dark:text-white/50 mt-0.5 whitespace-nowrap">
+                          {formatTime(item.at)}
+                        </div>
+                      </div>
+                      {item.message && (
+                        <div className="mt-2 text-[0.8rem] text-[#374151] dark:text-white/80">
+                          {item.message}
+                        </div>
+                      )}
+                      {item.kind === "activity" &&
+                        item.changes &&
+                        Object.keys(item.changes).length > 0 && (
+                          <div className="mt-3 rounded-xl border border-dashed border-slate-200 dark:border-white/20 bg-white dark:bg-black/25 px-3 py-2.5">
+                            <div className="text-[0.7rem] font-semibold tracking-wide uppercase text-[#6b7280] dark:text-white/60 mb-1.5">
+                              Changed fields
+                            </div>
+                            <div className="divide-y divide-slate-100 dark:divide-white/10">
+                              {Object.entries(item.changes).map(([field, diff]) => {
+                                const { scope, label } = formatFieldLabel(field)
+                                return (
+                                  <div
+                                    key={field}
+                                    className="py-1.5 grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.3fr)_16px_minmax(0,1.3fr)] gap-x-3 items-start text-[0.7rem]"
+                                  >
+                                    <div className="flex items-center gap-1 pr-2">
+                                      {scope && (
+                                        <span className="inline-flex items-center rounded-full px-1.5 py-[1px] text-[0.6rem] font-medium bg-slate-100 dark:bg-white/15 text-[#4b5563] dark:text-white/70">
+                                          {scope}
+                                        </span>
+                                      )}
+                                      <span className="uppercase tracking-wide text-[0.65rem] text-[#9ca3af] dark:text-white/60">
+                                        {label}
+                                      </span>
+                                    </div>
+                                    <div className="line-through text-[#9ca3af] dark:text-white/55 break-all">
+                                      {formatValue(diff.old)}
+                                    </div>
+                                    <div className="text-[#9ca3af] dark:text-white/60 text-center">
+                                      →
+                                    </div>
+                                    <div className="font-medium text-[#111827] dark:text-white break-all">
+                                      {formatValue(diff.new)}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
                           </div>
                         )}
-                      </div>
-                      <div className="text-[0.7rem] text-[#9ca3af] dark:text-white/50 mt-0.5 whitespace-nowrap">
-                        {formatTime(item.at)}
-                      </div>
                     </div>
-                    {item.message && (
-                      <div className="mt-2 text-[0.8rem] text-[#374151] dark:text-white/80">
-                        {item.message}
-                      </div>
-                    )}
-                    {item.kind === "activity" && item.changes && Object.keys(item.changes).length > 0 && (
-                      <div className="mt-3 rounded-xl border border-dashed border-slate-200 dark:border-white/20 bg-white dark:bg-black/25 px-3 py-2.5">
-                        <div className="text-[0.7rem] font-semibold tracking-wide uppercase text-[#6b7280] dark:text-white/60 mb-1.5">
-                          Changed fields
-                        </div>
-                        <div className="divide-y divide-slate-100 dark:divide-white/10">
-                          {Object.entries(item.changes).map(([field, diff]) => {
-                            const { scope, label } = formatFieldLabel(field)
-                            return (
-                              <div
-                                key={field}
-                                className="py-1.5 grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.3fr)_16px_minmax(0,1.3fr)] gap-x-3 items-start text-[0.7rem]"
-                              >
-                                <div className="flex items-center gap-1 pr-2">
-                                  {scope && (
-                                    <span className="inline-flex items-center rounded-full px-1.5 py-[1px] text-[0.6rem] font-medium bg-slate-100 dark:bg-white/15 text-[#4b5563] dark:text-white/70">
-                                      {scope}
-                                    </span>
-                                  )}
-                                  <span className="uppercase tracking-wide text-[0.65rem] text-[#9ca3af] dark:text-white/60">
-                                    {label}
-                                  </span>
-                                </div>
-                                <div className="line-through text-[#9ca3af] dark:text-white/55 break-all">
-                                  {formatValue(diff.old)}
-                                </div>
-                                <div className="text-[#9ca3af] dark:text-white/60 text-center">
-                                  →
-                                </div>
-                                <div className="font-medium text-[#111827] dark:text-white break-all">
-                                  {formatValue(diff.new)}
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+
+              {hasNextPage && (
+                <div
+                  ref={sentinelRef}
+                  className="py-3 text-center text-[0.7rem] text-slate-400 dark:text-white/50"
+                >
+                  {isFetchingNextPage
+                    ? "Loading more activity..."
+                    : "Scroll to load more activity"}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

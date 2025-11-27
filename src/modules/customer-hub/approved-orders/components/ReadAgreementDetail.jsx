@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from "react"
-import { useLocation, useParams,useSearchParams } from "react-router-dom"
+import { useLocation, useParams, useSearchParams } from "react-router-dom"
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx"
-import { getAgreement, getAgreementMentionUsers } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import {
+  getAgreement,
+  getAgreementMentionUsers,
+} from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import AgreementPlacementReadOnly from "@modules/customer-hub/approved-orders/components/AgreementPlacementReadOnly.jsx"
 import Discussion from "@components/Discussion.jsx"
 
 const ReadAgreementDetail = () => {
   const location = useLocation()
   const params = useParams()
+  const [searchParams] = useSearchParams()
+
   const idFromState = location.state?.id
   const idFromParams = params?.id
   const id = idFromState || idFromParams
-  const [searchParams] = useSearchParams()
+
+  const showCancelled = searchParams.get("cancelled") === "true"
 
   const [agreement, setAgreement] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [mentionUsers, setMentionUsers] = useState([])  // State for mentioned users
-  const showCancelled = searchParams.get('cancelled') === 'true'
+  const [mentionUsers, setMentionUsers] = useState([])
 
   useEffect(() => {
     if (!id) {
@@ -25,7 +30,9 @@ const ReadAgreementDetail = () => {
       setLoading(false)
       return
     }
+
     let active = true
+
     const run = async () => {
       try {
         const data = await getAgreement(id, { showCancelled })
@@ -41,16 +48,19 @@ const ReadAgreementDetail = () => {
         if (active) setLoading(false)
       }
     }
+
     run()
     return () => {
       active = false
     }
-  }, [id])
+  }, [id, showCancelled])
 
   if (!id) return <div className="p-4">Invalid agreement</div>
   if (loading) return <div className="p-4">Loading agreement...</div>
   if (error) return <div className="p-4 text-red-600">{error}</div>
   if (!agreement) return <div className="p-4">Agreement not found</div>
+
+  const qs = showCancelled ? "?cancelled=true" : ""
 
   return (
     <div className="px-4">
@@ -60,11 +70,11 @@ const ReadAgreementDetail = () => {
         mainpage="Agreement Placements List"
       />
       <div className="max-w-6xl mx-auto">
-        <AgreementPlacementReadOnly agreement={agreement} />
-          <Discussion
+        <AgreementPlacementReadOnly agreement={agreement} showCancelled={showCancelled} />
+        <Discussion
           title="Agreement Placement Discussions"
-          storeEndPoint={`/customer-hub/agreements/${agreement?.id}/discussion/${showCancelled ? '?cancelled=true' : ''}`}
-          getEndPoint={`/customer-hub/agreements/${agreement?.id}/discussions/${showCancelled ? '?cancelled=true' : ''}`}
+          storeEndPoint={`/customer-hub/agreements/${agreement?.id}/discussion/${qs}`}
+          getEndPoint={`/customer-hub/agreements/${agreement?.id}/discussions/${qs}`}
           users={mentionUsers}
         />
       </div>

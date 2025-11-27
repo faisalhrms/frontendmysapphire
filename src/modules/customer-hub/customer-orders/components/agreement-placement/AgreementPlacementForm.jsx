@@ -66,13 +66,15 @@ const AgreementPlacementForm = ({
   const fabricDeliveryStatus = seed?.fabric_delivery_status
   const isAgreementApproved = status === "approved"
 
-  const actions = useMemo(
-    () => approvalActivity?.actions || approvalActivity || seed?.actions || [],
-    [approvalActivity, seed?.actions]
-  )
+  const canEditYarn = !!seed?.can_edit_yarn_terms
+  const canEditFabric = !!seed?.can_edit_fabric_delivery
 
-  const activityLogs = seed?.activity_logs || []
-  const timelineCount = (actions?.length || 0) + (activityLogs?.length || 0)
+  // use lightweight counts from API instead of full arrays
+  const timelineCount =
+    (seed?.approval_actions_count || 0) + (seed?.activity_logs_count || 0)
+
+  const currentApproverDisplayName =
+    currentApproverName ?? seed?.current_approver_name ?? null
 
   useEffect(() => {
     setChoices(seed?.customer_item_matches || [])
@@ -170,14 +172,12 @@ const AgreementPlacementForm = ({
   const weftYarnRate = watch("weft_yarn_rate")
   const weftDelivery = watch("weft_delivery")
 
-  const isYarnFieldsReadOnly =
-    isAgreementApproved && yarnTermsStatus === "completed"
+  const isYarnFieldsReadOnly = !canEditYarn
 
   const isFabricDeliveryLockedByYarn =
     !warpYarnRate || !warpDelivery || !weftYarnRate || !weftDelivery
 
-  const isFabricDeliveryReadOnly =
-    isAgreementApproved && fabricDeliveryStatus === "completed"
+  const isFabricDeliveryReadOnly = !canEditFabric
 
   const isFabricDeliveryLocked =
     isFabricDeliveryLockedByYarn || isFabricDeliveryReadOnly
@@ -197,14 +197,17 @@ const AgreementPlacementForm = ({
   }, [needByDate, fabricDelivery])
 
   const handleSubmitWithType = useCallback(
-    async (submissionType, executionType) => {
+    async (submissionType, hierarchies) => {
       try {
-        await doSubmit(submissionType, executionType)
+        await doSubmit(submissionType, hierarchies)
         setSubmitModalOpen(false)
       } catch (e) {}
     },
     [doSubmit]
   )
+
+  const initialHierarchies =
+    seed?.payload?.approval_hierarchies || seed?.approval_hierarchies || []
 
   return (
     <div className="rounded-xl border dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
@@ -515,9 +518,8 @@ const AgreementPlacementForm = ({
           open={activityOpen}
           onClose={() => setActivityOpen(false)}
           status={status}
-          currentApproverName={currentApproverName}
-          actions={actions}
-          activityLogs={activityLogs}
+          currentApproverName={currentApproverDisplayName}
+          agreementId={seed?.id}
         />
       )}
 
@@ -560,12 +562,7 @@ const AgreementPlacementForm = ({
           yarnTermsStatus={yarnTermsStatus}
           fabricDeliveryStatus={fabricDeliveryStatus}
           status={status}
-          initialExecutionType={
-            watch("execution_type") ||
-            seed?.execution_type ||
-            seed?.payload?.execution_type ||
-            ""
-          }
+          initialHierarchies={initialHierarchies}
         />
       )}
 
