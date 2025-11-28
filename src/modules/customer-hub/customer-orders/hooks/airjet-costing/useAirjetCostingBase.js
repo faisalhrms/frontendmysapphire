@@ -28,8 +28,21 @@ export const useAirjetCostingBase = (seed) => {
 
   useEffect(() => {
     const next = buildParams(seed)
-    if (shallowEqual(next, params)) return
-    setParams(next)
+
+    setParams((prev) => {
+      if (shallowEqual(prev, next)) {
+        return prev
+      }
+
+      setData(null)
+      setShowingSaved(false)
+      keyRef.current = null
+
+      if (timerRef.current) clearTimeout(timerRef.current)
+      if (abortRef.current) abortRef.current.abort()
+
+      return next
+    })
   }, [seed])
 
   useEffect(() => {
@@ -44,6 +57,8 @@ export const useAirjetCostingBase = (seed) => {
       setData(null)
       setShowingSaved(false)
       keyRef.current = null
+      if (timerRef.current) clearTimeout(timerRef.current)
+      if (abortRef.current) abortRef.current.abort()
       return
     }
 
@@ -63,10 +78,19 @@ export const useAirjetCostingBase = (seed) => {
         const res = await getAirjetCostingBasePreferSaved(params, {
           signal: ac.signal,
         })
-        setData(res)
+
+        if (ac.signal.aborted) return
+
+        setData(res || null)
         setShowingSaved(!!res?.id)
+      } catch (err) {
+        if (ac.signal.aborted) return
+        setData(null)
+        setShowingSaved(false)
       } finally {
-        setLoading(false)
+        if (!ac.signal.aborted) {
+          setLoading(false)
+        }
       }
     }, 150)
 
@@ -85,7 +109,9 @@ export const useAirjetCostingBase = (seed) => {
     (currentData) => {
       const widthKey =
         params.width ??
-        (currentData?.greige_width != null ? String(currentData.greige_width) : undefined)
+        (currentData?.greige_width != null
+          ? String(currentData.greige_width)
+          : undefined)
 
       return {
         agreement_id: params.agreement_id,
@@ -129,11 +155,17 @@ export const useAirjetCostingBase = (seed) => {
         recovery_after_rejection:
           targetProfit != null ? targetProfit : data.recovery_after_rejection,
         target_price_per_yard:
-          targetPriceYard != null ? targetPriceYard : data.target_price_per_yard,
+          targetPriceYard != null
+            ? targetPriceYard
+            : data.target_price_per_yard,
         target_price_per_meter:
-          targetPriceMeter != null ? targetPriceMeter : data.target_price_per_meter,
+          targetPriceMeter != null
+            ? targetPriceMeter
+            : data.target_price_per_meter,
         final_fabric_cost_per_meter:
-          targetPriceMeter != null ? targetPriceMeter : data.final_fabric_cost_per_meter,
+          targetPriceMeter != null
+            ? targetPriceMeter
+            : data.final_fabric_cost_per_meter,
       }
 
       const saved = await upsertAirjetCostingBase(keys, patch)
@@ -166,5 +198,14 @@ export const useAirjetCostingBase = (seed) => {
     }
   }, [params, data, buildKeys])
 
-  return { params, data, loading, saving, showingSaved, onChangeCosts, onSave, onReset }
+  return {
+    params,
+    data,
+    loading,
+    saving,
+    showingSaved,
+    onChangeCosts,
+    onSave,
+    onReset,
+  }
 }

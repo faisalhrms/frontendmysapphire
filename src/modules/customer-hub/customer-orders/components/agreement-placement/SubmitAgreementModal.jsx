@@ -157,6 +157,13 @@ const SubmitAgreementModal = ({
                 {/* Status summary */}
                 <div className="rounded-lg border border-slate-200/80 dark:border-white/10 bg-gradient-to-r from-slate-50 via-slate-50 to-slate-50 dark:from-white/5 dark:via-white/5 dark:to-white/5 px-3 py-3">
                   <div className="text-xs opacity-80 space-y-1">
+                      <div>
+                          {hierarchyError && (
+                              <p className="text-[0.75rem] text-rose-600 dark:text-rose-400">
+                                  {hierarchyError}
+                              </p>
+                          )}
+                      </div>
                     <div>
                       Yarn terms status:{" "}
                       <span className="font-semibold">
@@ -382,11 +389,7 @@ const SubmitAgreementModal = ({
                       </div>
                     </div>
 
-                    {hierarchyError && (
-                      <p className="text-[0.75rem] text-rose-600 dark:text-rose-400">
-                        {hierarchyError}
-                      </p>
-                    )}
+
                   </div>
                 )}
               </div>
