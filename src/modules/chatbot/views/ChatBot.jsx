@@ -17,6 +17,7 @@ import ChatService from "@modules/chatbot/services/ChatService.js"
 import { PMS_ROUTES } from "@modules/project-management/routes.js"
 import EmployeeCard from "@modules/chatbot/components/EmployeeCard.jsx"
 import EmployeeCandidates from "@modules/chatbot/components/EmployeeCandidates.jsx"
+import AttendanceSummary from "@modules/chatbot/components/AttendanceSummary.jsx";
 
 export default function ChatBot() {
   const {
@@ -209,11 +210,15 @@ export default function ChatBot() {
                           </div>
                           {m.mode === "qc" && !m.loading ? <QCReport result={m.qc} html={m.html} llm={m.qcLlm} /> : null}
                           {m.chart ? <ChartBox spec={m.chart} ask={ask} /> : null}
-                          {m.employee ? <EmployeeCard userData={m.employee} /> : null}
+                         {m.employee && !m.attendance ?  <EmployeeCard userData={m.employee} /> : null}
                           {m.employee_candidates ? <EmployeeCandidates items={m.employee_candidates} onPick={handlePickEmployee} /> : null}
+                          {m.mode === "hr" && m.attendance ? (
+                            <AttendanceSummary data={m.attendance} ask={ask} />
+                          ) : null}
                           {m.html && m.mode !== "qc"
                             ? <div className={`main-chat-msg mt-2 prose prose-sm dark:prose-invert max-w-none overflow-x-auto ${m.loading ? "streaming" : ""}`} style={{overflowAnchor:"none"}} dangerouslySetInnerHTML={{ __html: m.html }} />
                             : null}
+
                         </div>
                       )}
                     </div>
