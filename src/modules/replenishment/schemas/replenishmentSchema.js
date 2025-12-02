@@ -1,14 +1,14 @@
 import { z } from "zod";
 import {dateSchema} from "@helpers/schema.js";
-const fromWarehouseFieldSchema = z.object({
-    name: z.string().optional(),
-    priority: z.number().optional(),
-}).refine((data) => {
-    return !(data.name && !data.priority);
-}, {
-    message: "Priority is required when name is provided.",
-    path: ["priority"],
-});
+// const fromWarehouseFieldSchema = z.object({
+//     name: z.string().optional(),
+//     priority: z.number().optional(),
+// }).refine((data) => {
+//     return !(data.name && !data.priority);
+// }, {
+//     message: "Priority is required when name is provided.",
+//     path: ["priority"],
+// });
 
 const replenishmentSchema = z.object({
     split_report: z.boolean(),
@@ -23,12 +23,14 @@ const replenishmentSchema = z.object({
     forecast_method: z.string().min(1),
     from_date: dateSchema('From'),
     launch_date: dateSchema('Launch Date', true),
+    launch_aging: z.number().optional(),
     to_date: dateSchema('To'),
-    categories: z.array(z.string()).optional(),
+    category: z.string().min(1),
+    min_qty: z.number().min(1),
     excluded_from_date: dateSchema('Excluded From', true),
     excluded_to_date: dateSchema('Excluded To', true),
     forecast_days: z.number().min(1),
-    from_warehouses: z.array(fromWarehouseFieldSchema).optional(),
+    // from_warehouses: z.array(fromWarehouseFieldSchema).optional(),
     reason_code: z.number().min(1),
     plan_ship_date: dateSchema('Plan Ship Date'),
     plan_receive_date: dateSchema('Plan Receive Date'),
