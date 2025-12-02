@@ -87,18 +87,6 @@ const SalesDashboard = () => {
                         ),
                     },
                     {
-                        id: "hour_traffic_rate",
-                        label: "Hourly Traffic Rate",
-                        icon: <i className="bi bi-clock-history"></i>,
-                        content: (
-                            <HourTrafficRate
-                                data={data}
-                                isLoading={isLoading}
-                                isActive={'hour_traffic_rate' === activeTab}
-                            />
-                        ),
-                    },
-                    {
                         id: "order_detail_from_cc",
                         label: "Order Detail From CC",
                         icon: <i className="bi bi-box"></i>,
@@ -149,23 +137,7 @@ const SalesDashboard = () => {
                                                          isActive={'hourly_order_report' === activeTab} />
 
                         ),
-                    },
-                    {
-                        id: "landing_page_performance",
-                        label: "Landing Page Performance",
-                        icon: <i className="bi bi-graph-up"></i>,
-                        content: (
-                            <LandingPagePerformanceTab
-                                data={data}
-                                isLoading={isLoading}
-                                isActive={'landing_page_performance' === activeTab}
-                                control={control}
-                                errors={errors}
-                                handleSubmit={handleSubmit}
-                                onSubmit={onSubmit}
-                            />
-                        ),
-                    },
+                    }
                 ]}
                 onTabChange={handleTabChange}
             />
