@@ -116,19 +116,23 @@ const ChatService = {
           while ((idx = buf.indexOf("\n\n")) !== -1) {
             const chunk = buf.slice(0, idx).trim()
             buf = buf.slice(idx + 2)
-            if (chunk.startsWith("data:")) {
-              const s = chunk.slice(5).trim()
-              try { onEvent(JSON.parse(s)) } catch {}
+
+            if (!chunk.startsWith("data:")) continue
+            const s = chunk.slice(5).trim()
+            if (!s) continue
+
+            try {
+              onEvent(JSON.parse(s))
+            } catch {
             }
-            await new Promise(requestAnimationFrame)
           }
         }
+        onEvent({ type: "done" })
       } catch (err) {
         onEvent({ type: "error", message: String(err || "Network error") })
         onEvent({ type: "done" })
       }
     }
-
     run()
     return ctrl
   }

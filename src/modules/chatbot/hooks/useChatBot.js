@@ -338,6 +338,7 @@ export default function useChatBot() {
       botIdxRef.current = next.length - 1
       return next
     })
+
     const mode =
       modeSelection === "Export Data" ? "export" :
       modeSelection === "Salesforce" ? "salesforce" :
@@ -346,6 +347,7 @@ export default function useChatBot() {
       modeSelection === "IT Audit" ? "assets" :
       modeSelection === "Competitor Pricing" ? "competitors" :
       ""
+
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
     lastFlushTsRef.current = 0
@@ -416,6 +418,13 @@ export default function useChatBot() {
             const c = [...prev]
             if (!c[i]) return prev
             c[i] = { ...c[i], employee_candidates: ev.items, employee: null }
+            return c
+          })
+        } else if (ev.type === "attendance") {
+          setMessages(prev => {
+            const c = [...prev]
+            if (!c[i]) return prev
+            c[i] = { ...c[i], attendance: ev.data }
             return c
           })
         } else if (ev.type === "final") {

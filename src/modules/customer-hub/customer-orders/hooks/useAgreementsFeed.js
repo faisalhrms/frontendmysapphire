@@ -26,7 +26,8 @@ export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 30, root = nul
     },
     enabled: !!mailbox,
     retry: 2,
-    staleTime: 5 * 60 * 1000
+    staleTime: 0,
+    refetchOnMount: "always"
   })
 
   const rows = useMemo(
