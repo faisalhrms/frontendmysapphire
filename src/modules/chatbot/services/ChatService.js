@@ -36,7 +36,8 @@ const buildPayload = (
   }
 
   if ((mode || "").toLowerCase() === "hr") {
-    const subs = Array.isArray(hrSubtypes) && hrSubtypes.length ? hrSubtypes : ["policies"]
+    const subs =
+      Array.isArray(hrSubtypes) && hrSubtypes.length ? hrSubtypes : ["policies"]
     payload.hr_subtypes = subs
   }
 
@@ -136,6 +137,8 @@ const ChatService = {
 
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
+
+        // buffer of partial text between reads
         let buf = ""
 
         while (true) {
@@ -143,32 +146,38 @@ const ChatService = {
           if (done) break
 
           buf += decoder.decode(value, { stream: true })
-          // normalize CRLF → LF so we can reliably split on "\n\n"
+          // normalize CRLF → LF
           buf = buf.replace(/\r\n/g, "\n")
 
-          let idx
-          while ((idx = buf.indexOf("\n\n")) !== -1) {
-            const rawChunk = buf.slice(0, idx).trim()
-            buf = buf.slice(idx + 2)
+          let nl
+          // process complete lines; keep remainder in buf
+          while ((nl = buf.indexOf("\n")) !== -1) {
+            const line = buf.slice(0, nl)
+            buf = buf.slice(nl + 1)
 
-            if (!rawChunk.startsWith("data:")) continue
-            const s = rawChunk.slice(5).trim()
-            if (!s) continue
+            const trimmed = line.trim()
+            if (!trimmed) continue
+            if (!trimmed.startsWith("data:")) continue
+
+            const payload = trimmed.slice(5).trim()
+            if (!payload) continue
 
             try {
-              const ev = JSON.parse(s)
+              const ev = JSON.parse(payload)
               onEvent(ev)
             } catch {
+              // ignore malformed events
             }
           }
         }
 
+        // handle trailing line with no newline at end
         buf = buf.replace(/\r\n/g, "\n").trim()
         if (buf.startsWith("data:")) {
-          const s = buf.slice(5).trim()
-          if (s) {
+          const payload = buf.slice(5).trim()
+          if (payload) {
             try {
-              const ev = JSON.parse(s)
+              const ev = JSON.parse(payload)
               onEvent(ev)
             } catch {}
           }
