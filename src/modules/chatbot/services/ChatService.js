@@ -9,7 +9,7 @@ const abs = path => {
 const baseAuthHeaders = () => {
   const token = store.getState()?.auth?.tokens?.access_token
   const h = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   }
   if (token) h.Authorization = `Bearer ${token}`
   return h
@@ -24,7 +24,7 @@ const buildPayload = (
   qcRender,
   hrSubtypes,
   competitorSites,
-  competitorChecks
+  competitorChecks,
 ) => {
   const payload = { query: msg, web_search: webSearch, mode }
 
@@ -65,7 +65,7 @@ const ChatService = {
     qcRender,
     hrSubtypes,
     competitorSites,
-    competitorChecks
+    competitorChecks,
   ) =>
     api.post(
       "chat/query/",
@@ -78,9 +78,9 @@ const ChatService = {
         qcRender,
         hrSubtypes,
         competitorSites,
-        competitorChecks
+        competitorChecks,
       ),
-      { headers: baseAuthHeaders() }
+      { headers: baseAuthHeaders() },
     ),
 
   stream: ({
@@ -93,7 +93,7 @@ const ChatService = {
     hrSubtypes,
     competitorSites,
     competitorChecks,
-    onEvent
+    onEvent,
   }) => {
     const ctrl = new AbortController()
 
@@ -101,7 +101,7 @@ const ChatService = {
       try {
         const headers = {
           ...baseAuthHeaders(),
-          Accept: "text/event-stream"
+          Accept: "text/event-stream",
         }
 
         const res = await fetch(abs("chat/query/stream/"), {
@@ -117,12 +117,12 @@ const ChatService = {
               qcRender,
               hrSubtypes,
               competitorSites,
-              competitorChecks
-            )
+              competitorChecks,
+            ),
           ),
           signal: ctrl.signal,
           credentials: "include",
-          cache: "no-store"
+          cache: "no-store",
         })
 
         if (!res.ok || !res.body) {
@@ -138,50 +138,57 @@ const ChatService = {
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
 
-        // buffer of partial text between reads
         let buf = ""
+        let eventData = ""
+
+        const flushEvent = () => {
+          const payload = eventData.trim()
+          if (!payload) return
+          eventData = ""
+          let ev
+          try {
+            ev = JSON.parse(payload)
+          } catch {
+            return
+          }
+          try {
+            onEvent(ev)
+          } catch {
+            // ignore handler errors to keep stream alive
+          }
+        }
 
         while (true) {
           const { done, value } = await reader.read()
           if (done) break
 
           buf += decoder.decode(value, { stream: true })
-          // normalize CRLF → LF
           buf = buf.replace(/\r\n/g, "\n")
 
           let nl
-          // process complete lines; keep remainder in buf
           while ((nl = buf.indexOf("\n")) !== -1) {
             const line = buf.slice(0, nl)
             buf = buf.slice(nl + 1)
 
-            const trimmed = line.trim()
-            if (!trimmed) continue
-            if (!trimmed.startsWith("data:")) continue
+            const trimmed = line.trimEnd()
 
-            const payload = trimmed.slice(5).trim()
-            if (!payload) continue
-
-            try {
-              const ev = JSON.parse(payload)
-              onEvent(ev)
-            } catch {
-              // ignore malformed events
+            if (trimmed === "") {
+              flushEvent()
+              continue
             }
+
+            if (!trimmed.startsWith("data:")) {
+              continue
+            }
+
+            const dataPart = trimmed.slice(5).trim()
+            if (!dataPart) continue
+
+            eventData += dataPart
           }
         }
 
-        // handle trailing line with no newline at end
-        buf = buf.replace(/\r\n/g, "\n").trim()
-        if (buf.startsWith("data:")) {
-          const payload = buf.slice(5).trim()
-          if (payload) {
-            try {
-              const ev = JSON.parse(payload)
-              onEvent(ev)
-            } catch {}
-          }
-        }
+        if (eventData) flushEvent()
 
         onEvent({ type: "done" })
       } catch (err) {
@@ -192,7 +199,7 @@ const ChatService = {
 
     run()
     return ctrl
-  }
+  },
 }
 
 export default ChatService
