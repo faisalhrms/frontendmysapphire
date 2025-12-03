@@ -128,8 +128,7 @@ const ChatService = {
           let text = ""
           try {
             text = await res.text()
-          } catch {
-          }
+          } catch {}
           onEvent({ type: "error", message: text || `HTTP ${res.status}` })
           onEvent({ type: "done" })
           return
@@ -142,7 +141,10 @@ const ChatService = {
         while (true) {
           const { done, value } = await reader.read()
           if (done) break
+
           buf += decoder.decode(value, { stream: true })
+          // normalize CRLF → LF so we can reliably split on "\n\n"
+          buf = buf.replace(/\r\n/g, "\n")
 
           let idx
           while ((idx = buf.indexOf("\n\n")) !== -1) {
@@ -158,6 +160,17 @@ const ChatService = {
               onEvent(ev)
             } catch {
             }
+          }
+        }
+
+        buf = buf.replace(/\r\n/g, "\n").trim()
+        if (buf.startsWith("data:")) {
+          const s = buf.slice(5).trim()
+          if (s) {
+            try {
+              const ev = JSON.parse(s)
+              onEvent(ev)
+            } catch {}
           }
         }
 
