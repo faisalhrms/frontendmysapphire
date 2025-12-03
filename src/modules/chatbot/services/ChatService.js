@@ -1,14 +1,16 @@
 import api from "@config/axiosConfig.js"
 import store from "@redux/store.jsx"
 
-const abs = (path) => {
+const abs = path => {
   const base = (api.defaults.baseURL || "").replace(/\/$/, "")
   return `${base}/${path.replace(/^\//, "")}`
 }
 
-const authHeaders = () => {
+const baseAuthHeaders = () => {
   const token = store.getState()?.auth?.tokens?.access_token
-  const h = { "Content-Type": "application/json" }
+  const h = {
+    "Content-Type": "application/json"
+  }
   if (token) h.Authorization = `Bearer ${token}`
   return h
 }
@@ -53,10 +55,31 @@ const buildPayload = (
 const ChatService = {
   resetMemory: () => api.post("chat/query/reset_memory/"),
 
-  query: (msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes, competitorSites, competitorChecks) =>
+  query: (
+    msg,
+    webSearch,
+    mode,
+    qcTarget,
+    qcChecks,
+    qcRender,
+    hrSubtypes,
+    competitorSites,
+    competitorChecks
+  ) =>
     api.post(
       "chat/query/",
-      buildPayload(msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes, competitorSites, competitorChecks)
+      buildPayload(
+        msg,
+        webSearch,
+        mode,
+        qcTarget,
+        qcChecks,
+        qcRender,
+        hrSubtypes,
+        competitorSites,
+        competitorChecks
+      ),
+      { headers: baseAuthHeaders() }
     ),
 
   stream: ({
@@ -75,9 +98,14 @@ const ChatService = {
 
     const run = async () => {
       try {
+        const headers = {
+          ...baseAuthHeaders(),
+          Accept: "text/event-stream"
+        }
+
         const res = await fetch(abs("chat/query/stream/"), {
           method: "POST",
-          headers: authHeaders(),
+          headers,
           body: JSON.stringify(
             buildPayload(
               msg,
@@ -92,12 +120,16 @@ const ChatService = {
             )
           ),
           signal: ctrl.signal,
-          credentials: "include"
+          credentials: "include",
+          cache: "no-store"
         })
 
         if (!res.ok || !res.body) {
           let text = ""
-          try { text = await res.text() } catch {}
+          try {
+            text = await res.text()
+          } catch {
+          }
           onEvent({ type: "error", message: text || `HTTP ${res.status}` })
           onEvent({ type: "done" })
           return
@@ -114,25 +146,28 @@ const ChatService = {
 
           let idx
           while ((idx = buf.indexOf("\n\n")) !== -1) {
-            const chunk = buf.slice(0, idx).trim()
+            const rawChunk = buf.slice(0, idx).trim()
             buf = buf.slice(idx + 2)
 
-            if (!chunk.startsWith("data:")) continue
-            const s = chunk.slice(5).trim()
+            if (!rawChunk.startsWith("data:")) continue
+            const s = rawChunk.slice(5).trim()
             if (!s) continue
 
             try {
-              onEvent(JSON.parse(s))
+              const ev = JSON.parse(s)
+              onEvent(ev)
             } catch {
             }
           }
         }
+
         onEvent({ type: "done" })
       } catch (err) {
         onEvent({ type: "error", message: String(err || "Network error") })
         onEvent({ type: "done" })
       }
     }
+
     run()
     return ctrl
   }
