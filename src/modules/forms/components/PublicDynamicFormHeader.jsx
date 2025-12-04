@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import sapphirew from "@assets/images/company-logos/sapphirew.png";
 import sapphireb from "@assets/images/company-logos/sapphireb.png";
 
-import useDarkMode from "@redux/common/useDarkMode.js";
 import useDarkModeForm from "@redux/common/useDarkModeForm.js";
 
 
@@ -41,7 +40,7 @@ const PublicDynamicFormHeader = ({
                         <img
                             src={isDark ? sapphirew : sapphireb}
                             alt=""
-                            className="authentication-brand desktop-logo w-[200px] h-[30px]"
+                            className="authentication-brand desktop-logo h-[30px]"
                         />
                     </div>
 

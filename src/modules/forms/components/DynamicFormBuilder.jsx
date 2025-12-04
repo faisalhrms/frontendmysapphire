@@ -46,6 +46,7 @@ const DynamicFormBuilder = ({ formData }) => {
             is_active: true,
             authenticated_only: false,
             require_captcha: false,
+            email_template: null,
             need_approval: false,
             expired_at: undefined,
             notification_emails: [],
@@ -83,6 +84,7 @@ const DynamicFormBuilder = ({ formData }) => {
     const watchedAlertField = useWatch({ control, name: 'enable_alerts' });
     const watchedSendEmailToSubmitter = useWatch({ control, name: 'send_email_to_submitter' });
     const watchedCoupon = useWatch({ control, name: 'enable_coupon' });
+    const watchedEmailTemplate = useWatch({ control, name: "email_template" });
 
     useEffect(() => {
         watchedFieldTypes?.forEach((field, index) => {
@@ -262,6 +264,30 @@ const DynamicFormBuilder = ({ formData }) => {
 
         setIsStepValidating(false);
     };
+
+    const [isEmailEditorDisabled, setIsEmailEditorDisabled] = useState(false);
+
+    const handleTemplateChange = (templateOption) => {
+        if (templateOption) {
+            // Template selected
+            setValue("email_template", templateOption);
+            setValue("email_content", "");
+            setIsEmailEditorDisabled(true);
+        } else {
+            // Template unselected
+            setValue("email_template", null);
+            setIsEmailEditorDisabled(false);
+        }
+    };
+
+    useEffect(() => {
+        if (formData?.email_template) {
+            setIsEmailEditorDisabled(true);
+            setValue("email_template", formData.email_template);
+        }
+    }, [formData]);
+
+
 
     return (
         <div className='container sm:p-3 !p-0'>
@@ -710,10 +736,34 @@ const DynamicFormBuilder = ({ formData }) => {
                                                         </div>
                                                     </div>
                                                     {watchedSendEmailToSubmitter && (
-                                                        <div
-                                                            className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
+                                                        <div className="xxl:col-span-12 xl:col-span-12 lg:col-span-12 sm:col-span-12 col-span-12">
                                                             <div className="box">
-                                                                <div className="space-y-2">
+                                                                <div className="space-y-4">
+
+                                                                    {/* 🔥 Email Template Selector */}
+                                                                    <div>
+                                                                        <p className="text-[0.875rem] mb-1 font-semibold">
+                                                                            Select Email Template
+                                                                        </p>
+                                                                        <p className="text-[0.75rem] mb-2 text-[#8c9097] dark:text-white/50">
+                                                                            Selecting a template will disable manual email content editing.
+                                                                        </p>
+
+                                                                        <FormAsyncSelect
+                                                                            name="email_template"
+                                                                            control={control}
+                                                                            errors={errors}
+                                                                            placeholder="Select Template"
+                                                                            apiUrl={`/select/forms/templates/?type=${watchedCoupon ? "coupon" : "general"}`}
+                                                                            queryKeyBase="form_email_templates"
+                                                                            isClearable={true}
+                                                                            clientSideSearch={false}
+                                                                            preselectedOptions={formatOptions(formData, 'email_template_option', 'id', 'name')}
+                                                                            onSelectChange={handleTemplateChange}
+                                                                        />
+                                                                    </div>
+
+                                                                    {/* Email Subject */}
                                                                     <FormInput
                                                                         name="email_subject"
                                                                         control={control}
@@ -721,14 +771,17 @@ const DynamicFormBuilder = ({ formData }) => {
                                                                         placeholder="Email Subject"
                                                                         is_required={true}
                                                                     />
+
+                                                                    {/* Email Body (Disabled when template selected) */}
                                                                     <FormRichTextarea
                                                                         name="email_content"
                                                                         control={control}
                                                                         errors={errors}
                                                                         placeholder="Email Content"
                                                                         is_required={true}
+                                                                        readOnly={isEmailEditorDisabled}
                                                                         description="To insert the discount coupon, use discount_coupon.
-                                                                            For any form field values in the email, wrap the field name in triple brackets, e.g., {full_name}."
+                                                                        For any form field values in the email, wrap the field name in triple brackets, e.g., {full_name}."
                                                                         editorOptions={{
                                                                             height: 180,
                                                                             buttonList: [
@@ -744,6 +797,7 @@ const DynamicFormBuilder = ({ formData }) => {
                                                             </div>
                                                         </div>
                                                     )}
+
                                                 </div>
                                             </li>
                                         </ul>
