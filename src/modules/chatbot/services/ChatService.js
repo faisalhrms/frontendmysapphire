@@ -1,14 +1,16 @@
 import api from "@config/axiosConfig.js"
 import store from "@redux/store.jsx"
 
-const abs = (path) => {
+const abs = path => {
   const base = (api.defaults.baseURL || "").replace(/\/$/, "")
   return `${base}/${path.replace(/^\//, "")}`
 }
 
-const authHeaders = () => {
+const baseAuthHeaders = () => {
   const token = store.getState()?.auth?.tokens?.access_token
-  const h = { "Content-Type": "application/json" }
+  const h = {
+    "Content-Type": "application/json",
+  }
   if (token) h.Authorization = `Bearer ${token}`
   return h
 }
@@ -22,7 +24,7 @@ const buildPayload = (
   qcRender,
   hrSubtypes,
   competitorSites,
-  competitorChecks
+  competitorChecks,
 ) => {
   const payload = { query: msg, web_search: webSearch, mode }
 
@@ -34,7 +36,8 @@ const buildPayload = (
   }
 
   if ((mode || "").toLowerCase() === "hr") {
-    const subs = Array.isArray(hrSubtypes) && hrSubtypes.length ? hrSubtypes : ["policies"]
+    const subs =
+      Array.isArray(hrSubtypes) && hrSubtypes.length ? hrSubtypes : ["policies"]
     payload.hr_subtypes = subs
   }
 
@@ -53,10 +56,31 @@ const buildPayload = (
 const ChatService = {
   resetMemory: () => api.post("chat/query/reset_memory/"),
 
-  query: (msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes, competitorSites, competitorChecks) =>
+  query: (
+    msg,
+    webSearch,
+    mode,
+    qcTarget,
+    qcChecks,
+    qcRender,
+    hrSubtypes,
+    competitorSites,
+    competitorChecks,
+  ) =>
     api.post(
       "chat/query/",
-      buildPayload(msg, webSearch, mode, qcTarget, qcChecks, qcRender, hrSubtypes, competitorSites, competitorChecks)
+      buildPayload(
+        msg,
+        webSearch,
+        mode,
+        qcTarget,
+        qcChecks,
+        qcRender,
+        hrSubtypes,
+        competitorSites,
+        competitorChecks,
+      ),
+      { headers: baseAuthHeaders() },
     ),
 
   stream: ({
@@ -69,15 +93,20 @@ const ChatService = {
     hrSubtypes,
     competitorSites,
     competitorChecks,
-    onEvent
+    onEvent,
   }) => {
     const ctrl = new AbortController()
 
     const run = async () => {
       try {
+        const headers = {
+          ...baseAuthHeaders(),
+          Accept: "text/event-stream",
+        }
+
         const res = await fetch(abs("chat/query/stream/"), {
           method: "POST",
-          headers: authHeaders(),
+          headers,
           body: JSON.stringify(
             buildPayload(
               msg,
@@ -88,16 +117,19 @@ const ChatService = {
               qcRender,
               hrSubtypes,
               competitorSites,
-              competitorChecks
-            )
+              competitorChecks,
+            ),
           ),
           signal: ctrl.signal,
-          credentials: "include"
+          credentials: "include",
+          cache: "no-store",
         })
 
         if (!res.ok || !res.body) {
           let text = ""
-          try { text = await res.text() } catch {}
+          try {
+            text = await res.text()
+          } catch {}
           onEvent({ type: "error", message: text || `HTTP ${res.status}` })
           onEvent({ type: "done" })
           return
@@ -105,24 +137,60 @@ const ChatService = {
 
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
+
         let buf = ""
+        let eventData = ""
+
+        const flushEvent = () => {
+          const payload = eventData.trim()
+          if (!payload) return
+          eventData = ""
+          let ev
+          try {
+            ev = JSON.parse(payload)
+          } catch {
+            return
+          }
+          try {
+            onEvent(ev)
+          } catch {
+            // ignore handler errors to keep stream alive
+          }
+        }
 
         while (true) {
           const { done, value } = await reader.read()
           if (done) break
-          buf += decoder.decode(value, { stream: true })
 
-          let idx
-          while ((idx = buf.indexOf("\n\n")) !== -1) {
-            const chunk = buf.slice(0, idx).trim()
-            buf = buf.slice(idx + 2)
-            if (chunk.startsWith("data:")) {
-              const s = chunk.slice(5).trim()
-              try { onEvent(JSON.parse(s)) } catch {}
+          buf += decoder.decode(value, { stream: true })
+          buf = buf.replace(/\r\n/g, "\n")
+
+          let nl
+          while ((nl = buf.indexOf("\n")) !== -1) {
+            const line = buf.slice(0, nl)
+            buf = buf.slice(nl + 1)
+
+            const trimmed = line.trimEnd()
+
+            if (trimmed === "") {
+              flushEvent()
+              continue
             }
-            await new Promise(requestAnimationFrame)
+
+            if (!trimmed.startsWith("data:")) {
+              continue
+            }
+
+            const dataPart = trimmed.slice(5).trim()
+            if (!dataPart) continue
+
+            eventData += dataPart
           }
         }
+
+        if (eventData) flushEvent()
+
+        onEvent({ type: "done" })
       } catch (err) {
         onEvent({ type: "error", message: String(err || "Network error") })
         onEvent({ type: "done" })
@@ -131,7 +199,7 @@ const ChatService = {
 
     run()
     return ctrl
-  }
+  },
 }
 
 export default ChatService
