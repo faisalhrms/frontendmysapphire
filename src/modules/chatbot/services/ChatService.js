@@ -1,18 +1,45 @@
 import api from "@config/axiosConfig.js"
 import store from "@redux/store.jsx"
+import { logout } from "@modules/auth/redux/authSlice.js"
 
 const abs = path => {
   const base = (api.defaults.baseURL || "").replace(/\/$/, "")
   return `${base}/${path.replace(/^\//, "")}`
 }
 
-const baseAuthHeaders = () => {
-  const token = store.getState()?.auth?.tokens?.access_token
-  const h = {
+const buildAuthHeaders = () => {
+  const state = store.getState()
+  const token = state?.auth?.tokens?.access_token
+
+  const headers = {
     "Content-Type": "application/json",
   }
-  if (token) h.Authorization = `Bearer ${token}`
-  return h
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  } else {
+    window.location.href = "/"
+  }
+
+  return headers
+}
+
+const handleAuthStatus = status => {
+  if (status === 401) {
+    store.dispatch(logout())
+    window.location.href = "/"
+    throw new Error("Unauthorized. Redirecting to login.")
+  }
+
+  if (status === 403) {
+    window.location.href = "/error/403"
+    throw new Error("Permission Denied.")
+  }
+
+  if (status === 419) {
+    window.location.href = `${import.meta.env.BASE_URL}change-password`
+    throw new Error("Password Expired.")
+  }
 }
 
 const buildPayload = (
@@ -80,7 +107,6 @@ const ChatService = {
         competitorSites,
         competitorChecks,
       ),
-      { headers: baseAuthHeaders() },
     ),
 
   stream: ({
@@ -100,7 +126,7 @@ const ChatService = {
     const run = async () => {
       try {
         const headers = {
-          ...baseAuthHeaders(),
+          ...buildAuthHeaders(),
           Accept: "text/event-stream",
         }
 
@@ -125,12 +151,24 @@ const ChatService = {
           cache: "no-store",
         })
 
-        if (!res.ok || !res.body) {
+        if (!res.ok) {
+          handleAuthStatus(res.status)
+
           let text = ""
           try {
             text = await res.text()
-          } catch {}
+          } catch {
+          }
           onEvent({ type: "error", message: text || `HTTP ${res.status}` })
+          onEvent({ type: "done" })
+          return
+        }
+
+        if (!res.body) {
+          onEvent({
+            type: "error",
+            message: "Streaming not supported by the browser/response.",
+          })
           onEvent({ type: "done" })
           return
         }
@@ -138,61 +176,56 @@ const ChatService = {
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
 
-        let buf = ""
-        let eventData = ""
-
-        const flushEvent = () => {
-          const payload = eventData.trim()
-          if (!payload) return
-          eventData = ""
-          let ev
-          try {
-            ev = JSON.parse(payload)
-          } catch {
-            return
-          }
-          try {
-            onEvent(ev)
-          } catch {
-            // ignore handler errors to keep stream alive
-          }
-        }
+        let buffer = ""
 
         while (true) {
           const { done, value } = await reader.read()
           if (done) break
 
-          buf += decoder.decode(value, { stream: true })
-          buf = buf.replace(/\r\n/g, "\n")
+          // Decode the chunk and add to buffer
+          buffer += decoder.decode(value, { stream: true })
 
-          let nl
-          while ((nl = buf.indexOf("\n")) !== -1) {
-            const line = buf.slice(0, nl)
-            buf = buf.slice(nl + 1)
+          // Process all complete messages in the buffer
+          // SSE format: "data: {...}\n\n"
+          let boundary
+          while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+            // Extract one complete message
+            const message = buffer.slice(0, boundary)
+            buffer = buffer.slice(boundary + 2) // Remove message + "\n\n"
 
-            const trimmed = line.trimEnd()
+            // Process the message
+            const lines = message.split('\n')
+            let data = ''
 
-            if (trimmed === "") {
-              flushEvent()
-              continue
+            for (const line of lines) {
+              if (line.startsWith('data:')) {
+                // Extract data after "data:" (with or without space)
+                data = line.slice(5).trimStart()
+                break
+              } else if (line.startsWith(':')) {
+                // Comment/heartbeat - ignore
+                continue
+              }
             }
 
-            if (!trimmed.startsWith("data:")) {
-              continue
+            // Parse and emit the event
+            if (data) {
+              try {
+                const event = JSON.parse(data)
+                onEvent(event)
+              } catch (e) {
+                console.error('Failed to parse SSE data:', data, e)
+              }
             }
-
-            const dataPart = trimmed.slice(5).trim()
-            if (!dataPart) continue
-
-            eventData += dataPart
           }
         }
 
-        if (eventData) flushEvent()
-
+        // Send done event
         onEvent({ type: "done" })
       } catch (err) {
-        onEvent({ type: "error", message: String(err || "Network error") })
+        if (err.name !== 'AbortError') {
+          onEvent({ type: "error", message: String(err || "Network error") })
+        }
         onEvent({ type: "done" })
       }
     }
