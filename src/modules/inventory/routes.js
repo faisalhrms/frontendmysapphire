@@ -13,6 +13,7 @@ import LocationSubnetAdd from "@modules/inventory/views/LocationSubnetAdd.jsx";
 import LocationSubnetEdit from "@modules/inventory/views/LocationSubnetEdit.jsx";
 import EquipmentAuditList from "@modules/inventory/views/EquipmentAuditList.jsx";
 import EquipmentRepairDetail from "@modules/inventory/views/EquipmentRepairDetail.jsx";
+import EquipmentReplaceDetail from "@modules/inventory/views/EquipmentsReplaceDetail.jsx";
 export const INVENTORY_ROUTES = {
     HOME: {
         path: '/module/asset/home',
@@ -162,5 +163,9 @@ export const MODULE_ROUTES = [
     },{
         path:INVENTORY_ROUTES.REPAIR.DETAIL.path,
         component:EquipmentRepairDetail
+    },
+    {
+        path:INVENTORY_ROUTES.REPLACE.DETAIL.path,
+        component:EquipmentReplaceDetail
     }
 ];

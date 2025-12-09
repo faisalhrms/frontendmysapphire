@@ -4,8 +4,25 @@ import AirjetCostingBaseCards from "@modules/customer-hub/customer-orders/compon
 import { useAirjetCostingBase } from "@modules/customer-hub/customer-orders/hooks/airjet-costing/useAirjetCostingBase.js"
 
 const AirjetCostingBaseSection = ({ seed, showFull }) => {
-  const { data, loading, saving, showingSaved, onChangeCosts, onSave, onReset } = useAirjetCostingBase(seed)
-  if (loading) return <div className="py-6"><LoadingSpinner /></div>
+  const { data, loading, saving, showingSaved, onChangeCosts, onSave, onReset } =
+    useAirjetCostingBase(seed)
+
+  if (loading) {
+    return (
+      <div className="py-6">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="py-4 text-xs text-center text-[#8c9097] dark:text-white/50">
+        No costing available for this agreement.
+      </div>
+    )
+  }
+
   return (
     <div className="relative">
       {saving && (

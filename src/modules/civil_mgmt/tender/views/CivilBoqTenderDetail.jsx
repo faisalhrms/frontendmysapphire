@@ -197,8 +197,8 @@ const CivilTenderDetail = () => {
                                         </div>
                                         <div>
                                             <div
-                                                className="font-medium text-sm text-gray-900">{tenderData.started_at}</div>
-                                            <div className="text-xs text-gray-500">Start Date</div>
+                                                className="font-medium text-sm text-gray-900 dark:text-gray-200 dark:bg-bodybg">{tenderData.started_at}</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-200 dark:bg-bodybg">Start Date</div>
                                         </div>
                                     </div>
 

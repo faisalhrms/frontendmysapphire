@@ -4,11 +4,11 @@ import { useQueryClient } from "@tanstack/react-query"
 import {
   createAgreement,
   updateAgreement,
-  submitAgreement
+  submitAgreement,
 } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import {
   dateToYMD,
-  normalizeDateSeed
+  normalizeDateSeed,
 } from "@modules/customer-hub/customer-orders/components/agreement-placement/helpers.js"
 
 const r2 = (n) => Number.parseFloat((Number(n || 0)).toFixed(2))
@@ -18,10 +18,7 @@ const buildDefaults = (seed = {}, email) => {
   const matches = seed.customer_item_matches || []
 
   const greigeCode =
-    p.greige_item_code ||
-    seed.greige_item_code ||
-    seed.greige_item ||
-    ""
+    p.greige_item_code || seed.greige_item_code || seed.greige_item || ""
 
   const matchedItem =
     matches.find((i) => i.greige_item_code === greigeCode) ||
@@ -36,6 +33,7 @@ const buildDefaults = (seed = {}, email) => {
     agreement_no: p.agreement_no ?? seed.agreement_no ?? "",
     total_meters: p.total_meters ?? "",
     agreement_type: p.agreement_type ?? seed.vmi_po ?? "",
+    execution_type: p.execution_type ?? seed.execution_type ?? "",
     fabric_delivery: normalizeDateSeed(p.fabric_delivery ?? seed.fabric_delivery),
     fabric_detail: p.fabric_detail ?? seed.item_description ?? seed.description ?? "",
     construction: p.construction ?? "",
@@ -56,27 +54,40 @@ const buildDefaults = (seed = {}, email) => {
     total_bags: p.total_bags ?? "",
     need_by_date: normalizeDateSeed(p.need_by_date ?? seed.auto_need_by_date ?? ""),
     yarn_dyed_or_greige: p.yarn_dyed_or_greige ?? seed.yarn_dyed_or_greige ?? "",
-    greige_item_code: p.greige_item_code ?? seed.greige_item_code ?? seed.greige_item ?? "",
+    greige_item_code:
+      p.greige_item_code ?? seed.greige_item_code ?? seed.greige_item ?? "",
     warp_yarn_required: p.warp_yarn_required ?? "",
     weft_yarn_required: p.weft_yarn_required ?? "",
     warp_bags: p.warp_bags ?? "",
     weft_bags: p.weft_bags ?? "",
     rej_pct: p.rej_pct ?? 10,
     warp_coverage: p.warp_coverage ?? "",
-    weft_coverage: p.weft_coverage ?? ""
+    weft_coverage: p.weft_coverage ?? "",
+    finished_meters: p.finished_meters ?? "",
+    margin_pct: p.margin_pct ?? "",
   }
 }
 
-export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, refetch }) => {
+export const useAgreementPlacementForm = ({
+  seed = {},
+  email,
+  onAfterPersist,
+  refetch,
+}) => {
   const queryClient = useQueryClient()
-  const defaults = useMemo(() => buildDefaults(seed, email), [seed?.id, seed?.updated_at, email])
+
+  const defaults = useMemo(
+    () => buildDefaults(seed, email),
+    [seed?.id, seed?.updated_at, email]
+  )
+
   const {
     control,
     setValue,
     getValues,
     watch,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm({ defaultValues: defaults })
 
   const [showYarn, setShowYarn] = useState(false)
@@ -125,20 +136,34 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
     [setValue]
   )
 
-  const payloadForSave = () => {
+  const originalExecutionType =
+    seed?.execution_type ??
+    seed?.payload?.execution_type ??
+    ""
+
+  const payloadForSave = (opts = {}) => {
+    const { lockExecutionType = false } = opts
     const v = getValues()
     const topQuality = qc
     const topDesign = design
     const topColour = color
     const topWidth = v.width_cm || widthSeed || ""
+
+    const executionTypeForPersist =
+      lockExecutionType && seed?.id
+        ? originalExecutionType || null
+        : v.execution_type || seed.execution_type || null
+
     return {
       owner: seed.owner || email?.from_name || email?.from_address || null,
       agreement_no: v.agreement_no || seed.agreement_no || "",
       item_no: seed.item_no || "",
       colour: topColour || null,
       item_type: v.item_type || seed.item_type || null,
+      execution_type: executionTypeForPersist,
       start_date: dateToYMD(v.fabric_delivery),
-      item_description: seed.item_description || v.fabric_detail || seed.description || "",
+      item_description:
+        seed.item_description || v.fabric_detail || seed.description || "",
       quality: topQuality || null,
       design: topDesign || null,
       width: topWidth || "",
@@ -148,14 +173,15 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
       source: seed.source || (email ? "email" : "manual"),
       payload: {
         ...v,
+        execution_type: executionTypeForPersist,
         fabric_delivery: dateToYMD(v.fabric_delivery),
-        need_by_date: dateToYMD(v.need_by_date)
-      }
+        need_by_date: dateToYMD(v.need_by_date),
+      },
     }
   }
 
-  const persistDraft = async () => {
-    const payload = payloadForSave()
+  const persistDraft = async (opts = {}) => {
+    const payload = payloadForSave(opts)
     if (seed?.id) return await updateAgreement(seed.id, payload)
     return await createAgreement(payload)
   }
@@ -177,11 +203,22 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
     }
   }
 
-  const doSubmit = async (submissionType = "new") => {
+  const doSubmit = async (submissionType = "new", hierarchies = null) => {
     setSaving(true)
     try {
       const saved = await persistDraft()
-      const submitted = await submitAgreement(saved.id, submissionType)
+
+      const execType =
+        getValues("execution_type") ||
+        seed?.execution_type ||
+        seed?.payload?.execution_type ||
+        null
+
+      const submitted = await submitAgreement(saved.id, submissionType, {
+        execution_type: execType,
+        hierarchies,
+      })
+
       if (onAfterPersist) onAfterPersist(submitted)
       invalidateFeed()
       if (refetch) refetch()
@@ -208,6 +245,6 @@ export const useAgreementPlacementForm = ({ seed = {}, email, onAfterPersist, re
     widthSeed,
     handleComputed,
     doSaveDraft,
-    doSubmit
+    doSubmit,
   }
 }

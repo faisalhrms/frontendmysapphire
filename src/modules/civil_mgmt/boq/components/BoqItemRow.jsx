@@ -4,7 +4,7 @@ import React from "react";
 
 const BoqItemRow = ({item, index}) => {
     return (
-        <tr className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+        <tr className="border-b border-gray-100  transition-colors">
             <td className="px-4 py-4 text-sm">
                 <div className="w-6 h-6 bg-primary/10 text-primary text-xs font-medium rounded flex items-center justify-center">
                     {index + 1}
@@ -24,13 +24,15 @@ const BoqItemRow = ({item, index}) => {
                     {item.unit}
                 </span>
             </td>
-            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900">
+            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg
+">
                 {item.quantity.toLocaleString()}
             </td>
-            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900">
+            <td className="px-4 py-4 text-right text-sm font-medium text-gray-900 dark:text-gray-200 dark:bg-bodybg
+">
                 {formatAmountWithCommas(item.rate)}
             </td>
-            <td className="px-4 py-4 text-right text-sm font-semibold text-gray-900">
+            <td className="px-4 py-4 text-right text-sm font-semibold text-gray-900 dark:text-gray-200 dark:bg-bodybg">
                 {formatAmountWithCommas(item.amount)}
             </td>
         </tr>

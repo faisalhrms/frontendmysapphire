@@ -4,14 +4,14 @@ import ChatService from "@modules/chatbot/services/ChatService.js"
 const defaultExportSuggestions = [
   "Top 10 exporters of Bed by value_usd last 12 months bar chart",
   "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
-  "Yearly classification-wise split of bed linen exports in value USD"
+  "Yearly classification-wise split of bed linen exports in value USD",
 ]
 
 const defaultAssetSuggestions = [
   "Count of devices without antivirus by location in a table",
   "Devices without VPN or corporate email configured grouped by device_type",
   "Top 10 locations by laptops missing antivirus",
-  "List devices assigned to a specific user with ram_gb and hard_disk_gb"
+  "List devices assigned to a specific user with ram_gb and hard_disk_gb",
 ]
 
 const defaultHrPoliciesSuggestions = [
@@ -19,48 +19,48 @@ const defaultHrPoliciesSuggestions = [
   "What's travel policy of sapphire retail",
   "What's user account logout policy in days",
   "In case any it incident occur, to whome it should be reported?",
-  "Is a G11 manager eligible for a laptop under the policy?"
+  "Is a G11 manager eligible for a laptop under the policy?",
 ]
 
 const defaultHrPasSuggestions = [
   "Objectives status summary for my team this year",
   "List employees whose objectives are still pending submission this year",
   "Top 5 KRAs by total weightage for my team this year",
-  "Objectives currently awaiting my approval in the workflow"
+  "Objectives currently awaiting my approval in the workflow",
 ]
 
 const defaultHrPmsSuggestions = [
   "List my open PMS tasks due this week",
   "Projects where I am project manager with delayed tasks",
   "PMS tasks assigned to me without due dates",
-  "Tasks in my queue grouped by project"
+  "Tasks in my queue grouped by project",
 ]
 
 const defaultHrEmployeeSuggestions = [
   "Show profile details of employee 2081",
   "Find employee by email faisal.rehman@sapphiretextiles.com.pk",
   "Who is the line manager of employee 2081",
-  "Search employees in marketing department"
+  "Search employees in marketing department",
 ]
 
 const defaultCompetitorSuggestions = [
   "Compare unstitched 3-piece suits under PKR 6000 across Sapphire, Khaadi and Nishat",
   "List top 20 ready to wear kurtas with prices from Sapphire, Khaadi and Nishat",
   "Which brand has the cheapest ready to wear kurtas under PKR 4000?",
-  "Show unstitched lawn articles with prices side by side for all three brands"
+  "Show unstitched lawn articles with prices side by side for all three brands",
 ]
 
 const defaultCompetitorSites = [
   { id: 1, url: "https://pk.sapphireonline.pk", enabled: true },
   { id: 2, url: "https://pk.khaadi.com", enabled: true },
-  { id: 3, url: "https://nishatlinen.com", enabled: true }
+  { id: 3, url: "https://nishatlinen.com", enabled: true },
 ]
 
 const defaultCompetitorChecks = [
   "unstiched",
   "ready_to_wear",
   "side_by_side",
-  "per_site_snapshot"
+  "per_site_snapshot",
 ]
 
 export default function useChatBot() {
@@ -73,17 +73,39 @@ export default function useChatBot() {
   const [modeSelection, setModeSelection] = useState("Select Source")
   const [modeOpen, setModeOpen] = useState(false)
   const [hrSubtypes, setHrSubtypes] = useState(["policies"])
+
   const defaultChecks = [
-    "status_code","title","meta_description","h1","canonical","viewport","html_lang","open_graph","twitter_card",
-    "robots","sitemap","images_alt_ratio","ecommerce","ecom_schema","ecom_add_to_cart","ecom_prices","ecom_plp",
-    "ecom_cart","ecom_search","security_headers","broken_links"
+    "status_code",
+    "title",
+    "meta_description",
+    "h1",
+    "canonical",
+    "viewport",
+    "html_lang",
+    "open_graph",
+    "twitter_card",
+    "robots",
+    "sitemap",
+    "images_alt_ratio",
+    "ecommerce",
+    "ecom_schema",
+    "ecom_add_to_cart",
+    "ecom_prices",
+    "ecom_plp",
+    "ecom_cart",
+    "ecom_search",
+    "security_headers",
+    "broken_links",
   ]
+
   const [suggestions, setSuggestions] = useState(defaultExportSuggestions)
   const [qcTarget, setQcTarget] = useState("https://pk.sapphireonline.pk")
   const [qcChecks, setQcChecks] = useState(defaultChecks)
   const [qcRender, setQcRender] = useState(true)
   const [competitorSites, setCompetitorSites] = useState(defaultCompetitorSites)
-  const [competitorChecks, setCompetitorChecks] = useState(defaultCompetitorChecks)
+  const [competitorChecks, setCompetitorChecks] =
+    useState(defaultCompetitorChecks)
+
   const recognitionRef = useRef(null)
   const finalTranscriptRef = useRef("")
   const inputRef = useRef(null)
@@ -92,12 +114,14 @@ export default function useChatBot() {
   const chunksRef = useRef([])
   const streamCtrlRef = useRef(null)
   const botIdxRef = useRef(-1)
-  const rafTickRef = useRef(0)
-  const [tick, setTick] = useState(0)
+
+  // streaming HTML buffer
   const pendingHtmlRef = useRef("")
   const tagDepthRef = useRef(0)
   const flushTimerRef = useRef(0)
   const lastFlushTsRef = useRef(0)
+  const rafTickRef = useRef(0)
+  const [tick, setTick] = useState(0)
   const FLUSH_MIN_MS = 90
 
   const autoResize = useCallback((eOrEl, maxHeight = 240) => {
@@ -129,10 +153,13 @@ export default function useChatBot() {
   }, [modeSelection, hrSubtypes])
 
   const normalizeHtml = raw => {
-    const html = typeof raw === "string" ? raw : raw?.html ?? raw?.answer ?? raw?.response ?? JSON.stringify(raw)
+    const html =
+      typeof raw === "string"
+        ? raw
+        : raw?.html ?? raw?.answer ?? raw?.response ?? JSON.stringify(raw)
     return html.replace(
       /<img\s/gi,
-      "<img loading='lazy' referrerpolicy='no-referrer' style='max-width:100%;height:auto;border-radius:8px;display:block;margin:.5rem 0;' "
+      "<img loading='lazy' referrerpolicy='no-referrer' style='max-width:100%;height:auto;border-radius:8px;display:block;margin:.5rem 0;' ",
     )
   }
 
@@ -141,40 +168,58 @@ export default function useChatBot() {
     if (!s) return ""
     let capitalized = s.charAt(0).toUpperCase() + s.slice(1)
     const doneKeywords = ["ready", "complete", "all set"]
-    if (doneKeywords.some(k => capitalized.toLowerCase().includes(k))) return capitalized
-    if (capitalized.toLowerCase() === "searching") return "Searching the web"
+    if (doneKeywords.some(k => capitalized.toLowerCase().includes(k)))
+      return capitalized
+    if (capitalized.toLowerCase() === "searching")
+      return "Searching the web"
     return capitalized
   }
 
   const pickMimeType = () => {
-    if (window.MediaRecorder?.isTypeSupported?.("audio/webm;codecs=opus")) return "audio/webm;codecs=opus"
-    if (window.MediaRecorder?.isTypeSupported?.("audio/webm")) return "audio/webm"
-    if (window.MediaRecorder?.isTypeSupported?.("audio/ogg;codecs=opus")) return "audio/ogg;codecs=opus"
-    if (window.MediaRecorder?.isTypeSupported?.("audio/mp4")) return "audio/mp4"
-    if (window.MediaRecorder?.isTypeSupported?.("audio/aac")) return "audio/aac"
+    if (window.MediaRecorder?.isTypeSupported?.("audio/webm;codecs=opus"))
+      return "audio/webm;codecs=opus"
+    if (window.MediaRecorder?.isTypeSupported?.("audio/webm"))
+      return "audio/webm"
+    if (window.MediaRecorder?.isTypeSupported?.("audio/ogg;codecs=opus"))
+      return "audio/ogg;codecs=opus"
+    if (window.MediaRecorder?.isTypeSupported?.("audio/mp4"))
+      return "audio/mp4"
+    if (window.MediaRecorder?.isTypeSupported?.("audio/aac"))
+      return "audio/aac"
     return ""
   }
 
   const stopSpeechRecognition = useCallback(() => {
-    try { recognitionRef.current?.stop() } catch {}
+    try {
+      recognitionRef.current?.stop()
+    } catch {}
     setListening(false)
   }, [])
 
   const stopRecording = () => {
-    try { recorderRef.current?.stop() } catch {}
-    try { mediaStreamRef.current?.getTracks()?.forEach(t => t.stop()) } catch {}
+    try {
+      recorderRef.current?.stop()
+    } catch {}
+    try {
+      mediaStreamRef.current?.getTracks()?.forEach(t => t.stop())
+    } catch {}
     recorderRef.current = null
     mediaStreamRef.current = null
   }
 
   const doTranscribe = async blob => {
     const fd = new FormData()
-    const ext = blob.type.includes("mp4") ? "m4a" : blob.type.includes("aac") ? "aac" : "webm"
+    const ext = blob.type.includes("mp4")
+      ? "m4a"
+      : blob.type.includes("aac")
+        ? "aac"
+        : "webm"
     fd.append("file", blob, `voice.${ext}`)
     fd.append("mime", blob.type || "application/octet-stream")
     let res
     try {
-      if (typeof ChatService.transcribe === "function") res = await ChatService.transcribe(fd)
+      if (typeof ChatService.transcribe === "function")
+        res = await ChatService.transcribe(fd)
       else res = await fetch("/api/transcribe", { method: "POST", body: fd })
     } catch {
       return ""
@@ -199,7 +244,8 @@ export default function useChatBot() {
       rec.onresult = e => {
         let interim = ""
         for (let i = 0; i < e.results.length; i++) {
-          if (e.results[i].isFinal) finalTranscriptRef.current += e.results[i][0].transcript
+          if (e.results[i].isFinal)
+            finalTranscriptRef.current += e.results[i][0].transcript
           else interim += e.results[i][0].transcript
         }
         const text = (finalTranscriptRef.current + interim).trim()
@@ -227,30 +273,49 @@ export default function useChatBot() {
     finalTranscriptRef.current = ""
     setInput("")
     if (inputRef.current) inputRef.current.style.height = "30px"
-    try { recognitionRef.current.start() } catch {}
+    try {
+      recognitionRef.current.start()
+    } catch {}
     return true
   }
 
   const startRecording = async () => {
-    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return false
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder)
+      return false
     const mime = pickMimeType()
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } })
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true },
+      })
       mediaStreamRef.current = stream
       chunksRef.current = []
-      const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined)
-      rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data) }
+      const rec = new MediaRecorder(
+        stream,
+        mime ? { mimeType: mime } : undefined,
+      )
+      rec.ondataavailable = e => {
+        if (e.data && e.data.size > 0) chunksRef.current.push(e.data)
+      }
       rec.onstart = () => setListening(true)
       rec.onstop = async () => {
         setListening(false)
-        const blob = new Blob(chunksRef.current, { type: mime || "application/octet-stream" })
+        const blob = new Blob(chunksRef.current, {
+          type: mime || "application/octet-stream",
+        })
         chunksRef.current = []
         const text = (await doTranscribe(blob))?.trim()
         if (text) {
           if (!isBotActive) handleStartChat()
           startStream(text)
         } else {
-          setMessages(p => [...p, { type: "bot", text: "Voice transcription failed", time: new Date() }])
+          setMessages(p => [
+            ...p,
+            {
+              type: "bot",
+              text: "Voice transcription failed",
+              time: new Date(),
+            },
+          ])
         }
       }
       recorderRef.current = rec
@@ -294,7 +359,8 @@ export default function useChatBot() {
     for (let k = 0; k < text.length; k++) {
       const ch = text[k]
       if (ch === "<") tagDepthRef.current += 1
-      if (ch === ">") tagDepthRef.current = Math.max(0, tagDepthRef.current - 1)
+      if (ch === ">")
+        tagDepthRef.current = Math.max(0, tagDepthRef.current - 1)
     }
     pendingHtmlRef.current += text
     scheduleFlush(i)
@@ -320,32 +386,78 @@ export default function useChatBot() {
 
   const startStream = msg => {
     setIsThinking(true)
+
+    try {
+      streamCtrlRef.current?.abort()
+    } catch {}
+
     setMessages(prev => {
       const now = new Date()
       const mode =
-        modeSelection === "Export Data" ? "export" :
-        modeSelection === "Salesforce" ? "salesforce" :
-        modeSelection === "Quality Control" ? "qc" :
-        modeSelection === "HR" ? "hr" :
-        modeSelection === "IT Audit" ? "assets" :
-        modeSelection === "Competitor Pricing" ? "competitors" :
-        ""
+        modeSelection === "Export Data"
+          ? "export"
+          : modeSelection === "Salesforce"
+            ? "salesforce"
+            : modeSelection === "Quality Control"
+              ? "qc"
+              : modeSelection === "HR"
+                ? "hr"
+                : modeSelection === "IT Audit"
+                  ? "assets"
+                  : modeSelection === "Competitor Pricing"
+                    ? "competitors"
+                    : ""
+
       const next = [
         ...prev,
         { type: "user", text: msg, time: now },
-        { type: "bot", loading: true, time: new Date(), html: "", chart: null, latestStatus: null, error: null, mode, statuses: [] }
+        {
+          type: "bot",
+          loading: true,
+          time: new Date(),
+          html: "",
+          chart: null,
+          latestStatus: null,
+          error: null,
+          mode,
+          statuses: [],
+          qc: null,
+          qcLlm: null,
+          employee: null,
+          employee_candidates: null,
+          attendance: null,
+        },
       ]
       botIdxRef.current = next.length - 1
       return next
     })
+
     const mode =
-      modeSelection === "Export Data" ? "export" :
-      modeSelection === "Salesforce" ? "salesforce" :
-      modeSelection === "Quality Control" ? "qc" :
-      modeSelection === "HR" ? "hr" :
-      modeSelection === "IT Audit" ? "assets" :
-      modeSelection === "Competitor Pricing" ? "competitors" :
-      ""
+      modeSelection === "Export Data"
+        ? "export"
+        : modeSelection === "Salesforce"
+          ? "salesforce"
+          : modeSelection === "Quality Control"
+            ? "qc"
+            : modeSelection === "HR"
+              ? "hr"
+              : modeSelection === "IT Audit"
+                ? "assets"
+                : modeSelection === "Competitor Pricing"
+                  ? "competitors"
+                  : ""
+
+    const enabledCompetitorSites = (competitorSites || [])
+      .filter(
+        s => s && s.enabled && typeof s.url === "string" && s.url.trim(),
+      )
+      .map(s => s.url.trim())
+
+    const safeCompetitorChecks = Array.isArray(competitorChecks)
+      ? competitorChecks
+      : []
+
+    // reset streaming buffer
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
     lastFlushTsRef.current = 0
@@ -353,12 +465,6 @@ export default function useChatBot() {
       clearTimeout(flushTimerRef.current)
       flushTimerRef.current = 0
     }
-
-    const enabledCompetitorSites = (competitorSites || [])
-      .filter(s => s && s.enabled && typeof s.url === "string" && s.url.trim())
-      .map(s => s.url.trim())
-
-    const safeCompetitorChecks = Array.isArray(competitorChecks) ? competitorChecks : []
 
     streamCtrlRef.current = ChatService.stream({
       msg,
@@ -373,16 +479,23 @@ export default function useChatBot() {
       onEvent: ev => {
         const i = botIdxRef.current
         if (i < 0) return
+
         if (ev.type === "status") {
           const text = normalizeStatus(ev.label)
           setMessages(prev => {
             const c = [...prev]
             if (!c[i]) return prev
-            c[i] = { ...c[i], statuses: [...(c[i].statuses || []), text], latestStatus: text }
+            c[i] = {
+              ...c[i],
+              statuses: [...(c[i].statuses || []), text],
+              latestStatus: text,
+            }
             return c
           })
         } else if (ev.type === "delta") {
-          onDeltaChunk(i, ev.text || "")
+          const chunk = ev.text || ""
+          if (!chunk) return
+          onDeltaChunk(i, chunk)
         } else if (ev.type === "chart") {
           setMessages(prev => {
             const c = [...prev]
@@ -408,14 +521,34 @@ export default function useChatBot() {
           setMessages(prev => {
             const c = [...prev]
             if (!c[i]) return prev
-            c[i] = { ...c[i], employee: ev.data, employee_candidates: null }
+            c[i] = {
+              ...c[i],
+              employee: ev.data,
+              employee_candidates: null,
+            }
             return c
           })
         } else if (ev.type === "employee_candidates") {
           setMessages(prev => {
             const c = [...prev]
             if (!c[i]) return prev
-            c[i] = { ...c[i], employee_candidates: ev.items, employee: null }
+            c[i] = {
+              ...c[i],
+              employee_candidates: ev.items,
+              employee: null,
+            }
+            return c
+          })
+        } else if (ev.type === "attendance") {
+          // store raw payload and force mode to 'hr'
+          setMessages(prev => {
+            const c = [...prev]
+            if (!c[i]) return prev
+            c[i] = {
+              ...c[i],
+              mode: c[i].mode || "hr",
+              attendance: ev.data,
+            }
             return c
           })
         } else if (ev.type === "final") {
@@ -423,11 +556,17 @@ export default function useChatBot() {
           setMessages(prev => {
             const c = [...prev]
             if (!c[i]) return prev
-            c[i] = { ...c[i], html: normalizeHtml(ev.html), latestStatus: null }
+            c[i] = {
+              ...c[i],
+              html: normalizeHtml(ev.html),
+              latestStatus: null,
+            }
             return c
           })
         } else if (ev.type === "suggestions") {
-          const items = Array.isArray(ev.items) ? ev.items.slice(0, 4) : []
+          const items = Array.isArray(ev.items)
+            ? ev.items.slice(0, 4)
+            : []
           if (items.length) setSuggestions(items)
         } else if (ev.type === "error") {
           flushAll(i)
@@ -435,7 +574,12 @@ export default function useChatBot() {
           setMessages(prev => {
             const c = [...prev]
             if (!c[i]) return prev
-            c[i] = { ...c[i], loading: false, latestStatus: null, error: ev.message || "Something went wrong" }
+            c[i] = {
+              ...c[i],
+              loading: false,
+              latestStatus: null,
+              error: ev.message || "Something went wrong",
+            }
             return c
           })
         } else if (ev.type === "done") {
@@ -448,7 +592,7 @@ export default function useChatBot() {
             return c
           })
         }
-      }
+      },
     })
   }
 
@@ -464,9 +608,14 @@ export default function useChatBot() {
   }
 
   const handleReset = async () => {
-    try { await ChatService.resetMemory() } catch {}
-    try { streamCtrlRef.current?.abort() } catch {}
+    try {
+      await ChatService.resetMemory()
+    } catch {}
+    try {
+      streamCtrlRef.current?.abort()
+    } catch {}
     stopSpeechRecognition()
+    stopRecording()
     setIsBotActive(false)
     setMessages([])
     setInput("")
@@ -479,13 +628,13 @@ export default function useChatBot() {
     setCompetitorSites(defaultCompetitorSites)
     setCompetitorChecks(defaultCompetitorChecks)
     botIdxRef.current = -1
-    if (inputRef.current) autoResize(inputRef.current)
     pendingHtmlRef.current = ""
     tagDepthRef.current = 0
     if (flushTimerRef.current) {
       clearTimeout(flushTimerRef.current)
       flushTimerRef.current = 0
     }
+    if (inputRef.current) autoResize(inputRef.current)
   }
 
   const handleSend = () => {
@@ -509,10 +658,15 @@ export default function useChatBot() {
 
   useEffect(() => {
     return () => {
-      try { stopSpeechRecognition() } catch {}
-      try { stopRecording() } catch {}
-      try { streamCtrlRef.current?.abort() } catch {}
-      try { cancelAnimationFrame(rafTickRef.current) } catch {}
+      try {
+        stopSpeechRecognition()
+      } catch {}
+      try {
+        stopRecording()
+      } catch {}
+      try {
+        streamCtrlRef.current?.abort()
+      } catch {}
       if (flushTimerRef.current) {
         clearTimeout(flushTimerRef.current)
         flushTimerRef.current = 0
@@ -553,10 +707,10 @@ export default function useChatBot() {
     startVoice: startSpeechRecognition,
     stopSpeechRecognition,
     autoResize,
-    tick,
     ask,
     suggestions,
     hrSubtypes,
-    setHrSubtypes
+    setHrSubtypes,
+    tick,
   }
 }

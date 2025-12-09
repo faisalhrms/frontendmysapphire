@@ -184,6 +184,7 @@ export default function ReChart({
                                 }) {
     const reduxChartType = useSelector((state) => state.theme.chartType);
     const currentChartType = chartType || reduxChartType;
+    const TooltipComponent = chartConfig.tooltipRenderer || CustomTooltip;
 
     // Merge default config with user-provided config
     const mergedChartConfig = useMemo(() => {
@@ -265,7 +266,7 @@ export default function ReChart({
                             interval={0}
                         />
                         <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} />
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         <Bar
                             dataKey="value"
                             radius={config.radius}
@@ -308,7 +309,7 @@ export default function ReChart({
                                 <Cell key={`cell-${index}`} fill={entry.fill || colors[index % colors.length]} />
                             ))}
                         </Pie>
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         {showLegend && <Legend  />}
                     </PieChart>
                 );
@@ -326,7 +327,7 @@ export default function ReChart({
                             interval={0}
                         />
                         <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} />
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         <Line
                             type="monotone"
                             dataKey="value"
@@ -352,7 +353,7 @@ export default function ReChart({
                             interval={0}
                         />
                         <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} />
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         <Area
                             type="monotone"
                             dataKey="value"
@@ -381,7 +382,7 @@ export default function ReChart({
                         <XAxis type="number" dataKey="x" name="Index" tick={{ fontSize: 9, fill: "#6b7280" }} />
                         <YAxis type="number" dataKey="y" name="Value" tick={{ fontSize: 9, fill: "#6b7280" }} />
                         <ZAxis type="number" dataKey="z" range={[50, 300]} name="Size" />
-                        {showTooltip && <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} cursor={{ strokeDasharray: '3 3' }} />}
                         <Scatter name="Data Points" data={scatterData} fill={colors[0]} isAnimationActive={animation}>
                             {scatterData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
@@ -405,7 +406,7 @@ export default function ReChart({
                             fillOpacity={0.3}
                             isAnimationActive={animation}
                         />
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         {showLegend && <Legend  />}
                     </RadarChart>
                 );
@@ -423,7 +424,7 @@ export default function ReChart({
                             interval={0}
                         />
                         <YAxis tick={{ fontSize: 11, fill: "#6b7280" }} />
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         <Area
                             type="monotone"
                             dataKey="uv"
@@ -473,7 +474,7 @@ export default function ReChart({
                                 <Cell key={`cell-${index}`} fill={entry.fill} />
                             ))}
                         </RadialBar>
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         {showLegend && <Legend  />}
                     </RadialBarChart>
                 );
@@ -497,7 +498,7 @@ export default function ReChart({
                                 <Cell key={`cell-${index}`} fill={entry.fill || colors[index % colors.length]} />
                             ))}
                         </Funnel>
-                        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+                        {showTooltip && <Tooltip content={<TooltipComponent />} />}
                         {showLegend && <Legend  />}
                     </FunnelChart>
                 );

@@ -45,7 +45,7 @@ const fieldSchema = z.object({
 
 export const dynamicFormSchema = z.object({
     title: z.string().min(1, 'Title is required'),
-    image: z.coerce.number().nullable(),
+    image: z.coerce.number().nullable().optional(),
     primary_color: z.string().min(1, 'Primary color is required').default('#673ab7'),
     font_family: z
         .string()
@@ -58,6 +58,7 @@ export const dynamicFormSchema = z.object({
         .default("Thank you for your submission! We have received your form successfully."),
     enable_alerts: z.boolean().default(false),
     is_active: z.boolean().default(true),
+    email_template: z.coerce.number().nullable().optional(),
     authenticated_only: z.boolean().default(false),
     require_captcha: z.boolean().default(false),
     expired_at: dateSchema('Expired Date', true),
@@ -80,20 +81,29 @@ export const dynamicFormSchema = z.object({
     coupon_min_order_value: z.coerce.number().optional().nullable(),
     coupon_valid_days: z.coerce.number().int().positive().default(7),
 }).superRefine((data, ctx) => {
+    // ==========================
+    //  EMAIL VALIDATION
+    // ==========================
     if (data.send_email_to_submitter) {
-        if (!data.email_subject || data.email_subject.trim() === '') {
+        if (!data.email_subject || data.email_subject.trim() === "") {
             ctx.addIssue({
-                path: ['email_subject'],
+                path: ["email_subject"],
                 code: z.ZodIssueCode.custom,
-                message: 'Subject is required when email is enabled for submitter',
+                message: "Subject is required when email is enabled for submitter",
             });
         }
-        if (!data.email_content || data.email_content.trim() === '') {
-            ctx.addIssue({
-                path: ['email_content'],
-                code: z.ZodIssueCode.custom,
-                message: 'Content is required when email is enabled for submitter',
-            });
+
+        if (data.email_template) {
+
+        }
+        else {
+            if (!data.email_content || data.email_content.trim() === "") {
+                ctx.addIssue({
+                    path: ["email_content"],
+                    code: z.ZodIssueCode.custom,
+                    message: "Content is required when no email template is selected",
+                });
+            }
         }
     }
 

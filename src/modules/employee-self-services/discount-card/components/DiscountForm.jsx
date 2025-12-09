@@ -3,6 +3,10 @@ import Logo from "../../../../assets/images/company-logos/sapphire.png";
 import FormButton from "../../../../components/form/FormButton";
 import HasPermission from "@components/HasPermission.jsx";
 import LoadingSpinner from "../../../../components/LoadingSpinner.jsx";
+import sapphirew from "@assets/images/company-logos/sapphirew.png";
+import sapphireb from "@assets/images/company-logos/sapphireb.png";
+
+import useDarkModeForm from "@redux/common/useDarkModeForm.js";
 
 const DiscountForm = ({
                           selectedOption,
@@ -15,6 +19,7 @@ const DiscountForm = ({
                           filteredData,
                           errorMessage,
                       }) => {
+    const isDark = useDarkModeForm();
     return (
         <div className="col-span-12 xl:col-span-6 ">
             <HasPermission permission="auth.discount_card_management">
@@ -58,14 +63,22 @@ const DiscountForm = ({
                         <LoadingSpinner />
                     ) : errorMessage ? (
                         <div className="flex flex-col items-center dark:text-gray-200 dark:bg-bodybg">
-                            <img src={Logo} alt="Sapphire Logo" className="h-7 w-40 mb-4" />
+                            <img
+                                src={isDark ? sapphirew : sapphireb}
+                                alt="Logo"
+                                className="h-10"
+                            />
                             <p className="text-red-500 text-lg">User data is not available.</p>
                         </div>
                     ) : (
                         <>
                             <div className="flex flex-col items-center mb-4 dark:text-gray-200 dark:bg-bodybg">
-                                <img src={Logo} alt="Sapphire Logo" className="h-7 w-40 mb-4" />
-                                <h4 className="text-xl md:text-2xl font-semibold mb-2">
+                                <img
+                                    src={isDark ? sapphirew : sapphireb}
+                                    alt="Logo"
+                                    className="h-10"
+                                />
+                                <h4 className="text-xl md:text-2xl font-semibold mb-2 mt-4">
                                     {filteredData?.name || "N/A"}
                                 </h4>
                                 <h6 className="text-sm opacity-80">
@@ -73,7 +86,8 @@ const DiscountForm = ({
                                 </h6>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 dark:text-gray-200 dark:bg-bodybg dark:text-gray-200 dark:bg-bodybg">
+                            <div
+                                className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 dark:text-gray-200 dark:bg-bodybg">
                                 {filteredData?.data?.map(({ title, value }, index) => (
                                     <div
                                         key={index}

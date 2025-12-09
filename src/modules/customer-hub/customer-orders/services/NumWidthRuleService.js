@@ -15,7 +15,7 @@ export const listNumWidthRules = async () => {
     const data = res.data?.data || res.data
     return Array.isArray(data) ? data : data?.rows || []
   } catch {
-    const res = await api.get(`${ROOT}/datatable`, { params: { skip: 0, limit: 1000 } })
+    const res = await api.get(`${ROOT}/datatable/`, { params: { skip: 0, limit: 100 } })
     const d = res.data?.data || res.data || {}
     return d.rows || []
   }

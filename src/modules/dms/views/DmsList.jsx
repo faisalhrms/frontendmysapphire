@@ -6,6 +6,7 @@ import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { FileText, Download } from "lucide-react";
 import Notify from "@helpers/toastNotifications.js";
 import { downloadDmsJournalReport } from "@modules/dms/hooks/dmsHook.js";
+import UserList from "@modules/dms/component/UserList.jsx";
 
 const renderIcon = (attachment) => {
     const { file_type } = attachment || {};
@@ -116,6 +117,7 @@ const DmsList = () => {
                 description="List of vouchers with their attached documents."
                 icon={FileText}
             />
+            <UserList/>
             <DataTable
                 columns={columns}
                 title="DMS"

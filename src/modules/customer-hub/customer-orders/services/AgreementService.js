@@ -32,7 +32,14 @@ export const updateAgreement = async (id, payload, opts = {}) => {
 
 export const getAgreement = async (id, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/agreements/${id}/`, { signal: opts.signal })
+    const params = {}
+    if (opts.showCancelled) {
+      params.cancelled = "true"
+    }
+    const res = await api.get(`${ROOT}/agreements/${id}/`, {
+      signal: opts.signal,
+      params,
+    })
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to load agreement"))
@@ -43,7 +50,7 @@ export const getAgreement = async (id, opts = {}) => {
 export const deleteAgreement = async (id, opts = {}) => {
   try {
     const res = await api.delete(`${ROOT}/agreements/${id}/`, { signal: opts.signal })
-    Notify.success("Agreement deleted")
+    Notify.success("Agreement Cancelled")
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to delete agreement"))
@@ -51,15 +58,21 @@ export const deleteAgreement = async (id, opts = {}) => {
   }
 }
 
-export const datatableAgreements = async ({ skip = 0, limit = 10, s = "", mailbox = "" } = {}, opts = {}) => {
+export const datatableAgreements = async (
+  { skip = 0, limit = 10, s = "", mailbox = "" } = {},
+  opts = {}
+) => {
   try {
     const params = {
       skip: String(skip),
       limit: String(limit),
       ...(s ? { s } : {}),
-      ...(mailbox ? { mailbox } : {})
+      ...(mailbox ? { mailbox } : {}),
     }
-    const res = await api.get(`${ROOT}/agreements/datatable/`, { params, signal: opts.signal })
+    const res = await api.get(`${ROOT}/agreements/datatable/`, {
+      params,
+      signal: opts.signal,
+    })
     return res.data?.data || res.data
   } catch (error) {
     Notify.error(serverMessage(error, "Failed to load agreements"))
@@ -67,24 +80,45 @@ export const datatableAgreements = async ({ skip = 0, limit = 10, s = "", mailbo
   }
 }
 
-export const submitAgreement = async (id, submissionTypeOrOpts = "new", maybeOpts = {}) => {
+export const submitAgreement = async (
+  id,
+  submissionTypeOrOpts = "new",
+  maybeOpts = {}
+) => {
   try {
     let submissionType = "new"
     let opts = {}
+
     if (typeof submissionTypeOrOpts === "string") {
       submissionType = submissionTypeOrOpts || "new"
       opts = maybeOpts || {}
     } else {
       opts = submissionTypeOrOpts || {}
+      submissionType = opts.submission_type || "new"
     }
-    const payload = submissionType ? { submission_type: submissionType } : {}
+
+    const payload = {}
+    if (submissionType) {
+      payload.submission_type = submissionType
+    }
+
+    if (opts.execution_type) {
+      payload.execution_type = opts.execution_type
+    }
+
+    if (Array.isArray(opts.hierarchies) && opts.hierarchies.length > 0) {
+      payload.hierarchies = opts.hierarchies
+    }
+
     const res = await api.post(`${ROOT}/agreements/${id}/submit/`, payload, {
-      signal: opts.signal
+      signal: opts.signal,
     })
+
     const msg =
       submissionType && submissionType !== "new"
         ? "Revision submitted for approval"
         : "Submitted for approval"
+
     Notify.success(msg)
     return res.data?.data || res.data
   } catch (error) {
@@ -97,7 +131,9 @@ export const uploadAgreementsExcel = async (file, opts = {}) => {
   try {
     const form = new FormData()
     form.append("file", file)
-    const res = await api.post(`${ROOT}/agreements/upload-excel/`, form, { signal: opts.signal })
+    const res = await api.post(`${ROOT}/agreements/upload-excel/`, form, {
+      signal: opts.signal,
+    })
     Notify.success("File uploaded successfully")
     return res.data?.data || res.data
   } catch (error) {
@@ -110,7 +146,7 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
   try {
     const res = await api.get(`${ROOT}/agreements/by-email/`, {
       params: { email_id, agreement_no },
-      signal: opts.signal
+      signal: opts.signal,
     })
     return res.data?.data || res.data
   } catch (error) {
@@ -119,10 +155,17 @@ export const findAgreementByEmail = async ({ email_id, agreement_no }, opts = {}
   }
 }
 
+// now supports pagination via skip/limit while staying backward-compatible
 export const getApprovalActivity = async (id, opts = {}) => {
+  const { skip = 0, limit = 20, signal } = opts
   try {
+    const params = {
+      skip: String(skip),
+      limit: String(limit),
+    }
     const res = await api.get(`${ROOT}/agreements/${id}/approval-activity/`, {
-      signal: opts.signal
+      params,
+      signal,
     })
     return res.data?.data || res.data
   } catch (error) {
@@ -133,11 +176,9 @@ export const getApprovalActivity = async (id, opts = {}) => {
 
 export const resetAgreementPayload = async (id, opts = {}) => {
   try {
-    const res = await api.post(
-      `${ROOT}/agreements/${id}/reset-payload/`,
-      null,
-      { signal: opts.signal }
-    )
+    const res = await api.post(`${ROOT}/agreements/${id}/reset-payload/`, null, {
+      signal: opts.signal,
+    })
     const data = res.data?.data || res.data
     Notify.success("Agreement payload reset successfully")
     return data
@@ -148,11 +189,31 @@ export const resetAgreementPayload = async (id, opts = {}) => {
 }
 
 export const getAgreementMentionUsers = async (id, opts = {}) => {
+  const params = {}
+  if (opts.showCancelled) {
+    params.cancelled = "true"
+  }
+
+  const res = await api.get(`${ROOT}/agreements/${id}/mention-users/`, {
+    signal: opts.signal,
+    params,
+  })
+  return res.data?.data || res.data
+}
+
+export const exportReadAgreementsExcel = async ({ ids = [], s = "" } = {}, opts = {}) => {
   try {
-    const res = await api.get(`${ROOT}/agreements/${id}/mention-users/`, { signal: opts.signal })
-    return res.data?.data || res.data
+    const params = {}
+    if (ids.length) params.ids = ids.join(",")
+    if (s) params.s = s
+    const res = await api.get(`${ROOT}/agreements/read-export/`, {
+      params,
+      responseType: "blob",
+      signal: opts.signal,
+    })
+    return res
   } catch (error) {
-    Notify.error(serverMessage(error, "Failed to load mention users"))
+    Notify.error(serverMessage(error, "Failed to download agreements report"))
     throw error
   }
 }

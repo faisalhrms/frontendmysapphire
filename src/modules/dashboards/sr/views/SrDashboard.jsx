@@ -468,11 +468,11 @@ const SrDashboard = () => {
                 <div className="grid grid-cols-2 gap-4 h-full">
                     {[
                         {
-                            status: 'Delivered',
-                            label: 'Delivered',
+                            status: 'In-Transit',
+                            label: 'In-Transit',
                             icon: 'ri-truck-line text-danger',
-                            count: serviceRequest?.Delivered ?? 0,
-                            trend: serviceRequest?.trends?.delivered || '0.0%',
+                            count: serviceRequest?.['In-Transit'] ?? 0,
+                            trend: serviceRequest?.trends?.InTransit || '0.0%',
                             bg: '!bg-pink/5'
                         },
                         {
