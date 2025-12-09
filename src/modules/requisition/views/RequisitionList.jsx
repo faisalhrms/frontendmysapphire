@@ -34,20 +34,50 @@ const RequisitionList = ({  externalFilters = [] }) => {
             Header: "Actions",
             accessor: "id",
             disableSortBy: true,
-            Cell: ({ row }) => (
-                <div className="flex gap-2">
-                    <Link to={`/module/requisition/edit/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
-                            <i className="ri-edit-line" />
-                        </button>
-                    </Link>
-                    <Link to={`/module/requisition/detail/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-info ti-btn-sm" title="View">
-                            <i className="ri-eye-line" />
-                        </button>
-                    </Link>
-                </div>
-            ),
+            Cell: ({ row }) => {
+                const status = row.original.status;
+
+                // statuses where edit must be hidden (OR disabled)
+                const blockedStatuses = [
+                    "under_approval",
+                    "approved",
+                    "published",
+                    "closed",
+                ];
+
+                const isBlocked = blockedStatuses.includes(status);
+
+                return (
+                    <div className="flex gap-2">
+
+                        {/* EDIT BUTTON */}
+                        {!isBlocked ? (
+                            <Link to={`/module/requisition/edit/${row.original.id}`}>
+                                <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
+                                    <i className="ri-edit-line" />
+                                </button>
+                            </Link>
+                        ) : (
+                            // If you want to HIDE completely → remove this block
+                            <button
+                                className="ti-btn ti-btn-primary ti-btn-sm opacity-40 cursor-not-allowed"
+                                disabled
+                                title={`Edit disabled for status: ${status.replaceAll("_", " ")}`}
+                            >
+                                <i className="ri-edit-line" />
+                            </button>
+                        )}
+
+                        {/* VIEW BUTTON */}
+                        <Link to={`/module/requisition/detail/${row.original.id}`}>
+                            <button className="ti-btn ti-btn-info ti-btn-sm" title="View">
+                                <i className="ri-eye-line" />
+                            </button>
+                        </Link>
+                    </div>
+                );
+            }
+
         },
         {
             Header: "Req No",

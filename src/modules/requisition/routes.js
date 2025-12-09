@@ -3,6 +3,7 @@ import JobDescDetail from "@modules/requisition/views/JobDescDetail.jsx";
 import RequisitionList from "@modules/requisition/views/RequisitionList.jsx";
 import RequisitionAdd from "./views/RequisitionAdd.jsx";
 import RequisitionEdit from "./views/RequisitionEdit.jsx";
+import RequisitionDetail from "./views/RequisitionDetail.jsx";
 
 export const REQUISITION_ROUTES = {
     JOB_DESCRIPTION: {
@@ -55,6 +56,10 @@ export const MODULE_ROUTES = [
     {
         path:REQUISITION_ROUTES.REQUISITION.EDIT.path,
         component: RequisitionEdit
+    },
+    {
+        path:REQUISITION_ROUTES.REQUISITION.DETAIL.path,
+        component: RequisitionDetail
     }
 
 ];

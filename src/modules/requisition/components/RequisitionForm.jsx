@@ -173,6 +173,8 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                                                     preselectedOptions={formatOptions(
                                                         requisitionData,
                                                         "job_description",
+                                                        "id",
+                                                        "position_title"
                                                     )}
                                                 />
                                             </div>
