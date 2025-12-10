@@ -14,7 +14,7 @@ const applicationUniverseSchema = z.object({
         .min(1, "Application versions are required"),
 
     application_type: z.enum(
-        ["in_house", "purchased", "customized", "offshore"],
+        ["in_house", "purchased", "customized", "offshore","other"],
         { required_error: "Application type is required" }
     ),
 
