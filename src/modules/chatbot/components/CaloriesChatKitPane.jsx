@@ -416,11 +416,14 @@ const handleClientTool = useCallback(
 
 const { control, status, error } = useChatKit({
   api: {
+    domainKey: "domain_pk_693bd6ea8c548196a1f48b626fe7bc800cf6940c2fb6a3aa",
+
     async getClientSecret() {
       const data = await createCaloriesChatSession()
       return data.client_secret
     },
   },
+
   onClientTool: async (call) => {
     try {
       const result = await handleClientTool({ name: call.name, params: call.params })
@@ -436,6 +439,7 @@ const { control, status, error } = useChatKit({
     }
   },
 })
+
 
 
   if (status === "initializing") {
