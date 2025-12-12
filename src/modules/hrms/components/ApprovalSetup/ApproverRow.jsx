@@ -122,7 +122,23 @@ const ApproverRow = ({
     }, [index, setValue]);
 
     const levelValue = approver?.level ?? index + 1;
+    const canTakeAction =
+      typeof approver?.can_take_action === "boolean"
+        ? approver.can_take_action
+        : true;
 
+    const handleCanTakeChange = useCallback(
+      (e) => {
+        const checked = e.target.checked;
+        if (typeof setValue === "function") {
+          setValue(`approvers.${index}.can_take_action`, checked, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+        }
+      },
+      [index, setValue],
+    );
     return (
         <div
             ref={ref}
@@ -159,8 +175,26 @@ const ApproverRow = ({
                   )}
                 </div>
 
+                <div className={allowParallelApprovers ? "col-span-2 self-center" : "hidden"}>
+                  <label
+                    htmlFor={`canTakeAction-${index}`}
+                    className="inline-flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300"
+                  >
+                    <input
+                      id={`canTakeAction-${index}`}
+                      type="checkbox"
+                      className="ti-form-checkbox"
+                      checked={canTakeAction}
+                      onChange={handleCanTakeChange}
+                    />
+                    <span className="leading-none">take action</span>
+                  </label>
+                </div>
+
+
+
                 <div
-                  className={`${allowParallelApprovers ? "col-span-8" : "col-span-10"} relative z-50`}
+                  className={`${allowParallelApprovers ? "col-span-6" : "col-span-10"} relative z-50`}
                 >
                   <FormAsyncSelect
                     key={`approver-${field?.id || index}-${approver?.approver_id || "empty"}`}

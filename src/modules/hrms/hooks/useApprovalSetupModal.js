@@ -15,6 +15,7 @@ export const approverSchema = z.object({
         required_error: "Approver is required",
         invalid_type_error: "Approver must be a number",
     }).min(1, "Approver ID must be at least 1"),
+    can_take_action: z.boolean().default(true),
 });
 
 const approvalSetupSchema = z.object({
