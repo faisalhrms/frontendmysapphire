@@ -65,6 +65,10 @@ const buildDefaults = (seed = {}, email) => {
     weft_coverage: p.weft_coverage ?? "",
     finished_meters: p.finished_meters ?? "",
     margin_pct: p.margin_pct ?? "",
+    warp_yarn_source: p.warp_yarn_source ?? "",
+    weft_yarn_source: p.weft_yarn_source ?? "",
+    split_quantity_enabled: p.split_quantity_enabled ?? false,
+    split_deliveries: p.split_deliveries ?? [],
   }
 }
 

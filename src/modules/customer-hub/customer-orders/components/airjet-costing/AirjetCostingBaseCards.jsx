@@ -32,7 +32,8 @@ import {
   makeTargetProfitPerDayLoom,
   makeTargetPricePerYard,
   makeTargetPricePerMeter,
-  makeDyeWastePerYard
+  makeDyeWastePerYard,
+  roundToQuarterRule
 } from "@modules/customer-hub/customer-orders/services/airjetCosting.js"
 
 export const VALUE_COL_WIDTH = "w-20 md:w-24"
@@ -41,8 +42,11 @@ const formatMetricValue = (value, digits = 2) => {
   if (value === null || value === undefined || value === "") return "-"
   const n = Number(value)
   if (!Number.isFinite(n)) return "-"
-  return n.toFixed(digits)
+  const rounded = roundToQuarterRule(n)
+  if (rounded == null) return "-"
+  return rounded.toFixed(digits)
 }
+
 
 const KV = ({ k, v, valueWidth = VALUE_COL_WIDTH, tooltip }) => (
   <div className="grid grid-cols-[1fr,auto] items-center py-2 gap-2">

@@ -1,6 +1,36 @@
 export const LBS_PER_KG = 2.2046
 const BLEACH_RATE_PER_KG = 55
 
+
+export const roundToQuarterRule = (value) => {
+  const n = Number(value)
+  if (!Number.isFinite(n)) return null
+
+  const sign = n < 0 ? -1 : 1
+  const abs = Math.abs(n)
+  const intPart = Math.floor(abs)
+  const frac = abs - intPart
+
+  if (frac === 0) {
+    return Math.round((n + Number.EPSILON) * 100) / 100
+  }
+
+  let newFrac = frac
+
+  if (frac >= 0.1 && frac <= 0.25) {
+    newFrac = 0.25
+  } else if (frac > 0.25 && frac <= 0.5) {
+    newFrac = 0.5
+  } else if (frac > 0.5 && frac <= 0.75) {
+    newFrac = 0.75
+  } else if (frac > 0.75) {
+    newFrac = 1
+  }
+
+  const rounded = (intPart + newFrac) * sign
+  return Math.round((rounded + Number.EPSILON) * 100) / 100
+}
+
 export const toNum = (x, fb = NaN) => {
   const n = Number(x)
   return Number.isFinite(n) ? n : fb
@@ -92,8 +122,9 @@ export const makeYarnCostPerYard = (d) => () => {
   const weftComponent = weftBase * (weftCons / 10)
 
   const total = warpComponent + weftComponent
-  return Math.round((total + Number.EPSILON) * 100) / 100
+  return roundToQuarterRule(total)
 }
+
 
 export const makeDyeWastePerYard = (d) => () => {
   const yarn = makeYarnCostPerYard(d)()
@@ -101,8 +132,9 @@ export const makeDyeWastePerYard = (d) => () => {
   const factor = toNum(d.dyeing_waste, NaN)
   if (!Number.isFinite(factor)) return null
   const value = yarn * factor
-  return Math.round((value + Number.EPSILON) * 100) / 100
+  return roundToQuarterRule(value)
 }
+
 
 export const makeVariableCostPerYard = (d) => () => {
   const yarn = makeYarnCostPerYard(d)()
@@ -113,13 +145,15 @@ export const makeVariableCostPerYard = (d) => () => {
   const rebate = toNum(d.rebate_per_yard, 0)
   const packing = toNum(d.packing_cost_per_yard, 0)
   const total = yarn + dyeWaste + sizing + freight + rebate + packing
-  return Math.round((total + Number.EPSILON) * 100) / 100
+  return roundToQuarterRule(total)
 }
+
 
 export const makeRejectionSalePerYard = (d) => () => {
   const m = toNum(d.rejection_sale_price_per_meter, NaN)
   if (Number.isNaN(m)) return null
-  return Math.round(((m / 1.0936) + Number.EPSILON) * 100) / 100
+  const perYard = m / 1.0936
+  return roundToQuarterRule(perYard)
 }
 
 export const makeRejectionQty = (d) => () => {
@@ -130,26 +164,33 @@ export const makeRejectionQty = (d) => () => {
   return Math.round(qty)
 }
 
+
 export const makeCostOfRejection = (d) => () => {
   const rejYard = makeRejectionSalePerYard(d)()
   const varCost = makeVariableCostPerYard(d)()
   if (rejYard == null || varCost == null) return null
-  return Math.round(((rejYard - varCost) + Number.EPSILON) * 100) / 100
+  const delta = rejYard - varCost
+  return roundToQuarterRule(delta)
 }
+
 
 export const makeLossOfRecovery = (d) => () => {
   const cost = makeCostOfRejection(d)()
   const qty = makeRejectionQty(d)()
   if (cost == null || qty == null) return null
-  return Math.round(((cost * qty) + Number.EPSILON) * 100) / 100
+  const total = cost * qty
+  return roundToQuarterRule(total)
 }
+
 
 export const makeTargetProfitPerDayLoom = (d) => () => {
   const rec = toNum(d.recovery, NaN)
   const loss = makeLossOfRecovery(d)()
   if (!Number.isFinite(rec) || loss == null) return null
-  return Math.round(((rec - loss) + Number.EPSILON) * 100) / 100
+  const value = rec - loss
+  return roundToQuarterRule(value)
 }
+
 
 export const makeTargetPricePerYard = (d) => () => {
   const yards = toNum(d.yards_per_day_per_loom, NaN)
@@ -159,11 +200,12 @@ export const makeTargetPricePerYard = (d) => () => {
   if (!Number.isFinite(yards) || varCost == null || targ == null) return null
   const base = (targ + toNum(d.conversion_per_day, 0)) / yards
   const yard = (base / exch) + varCost
-  return Math.round(((yard) + Number.EPSILON) * 100) / 100
+  return roundToQuarterRule(yard)
 }
 
 export const makeTargetPricePerMeter = (d) => () => {
   const y = makeTargetPricePerYard(d)()
   if (y == null) return null
-  return Math.round(((y * 1.0936) + Number.EPSILON) * 100) / 100
+  const perMeter = y * 1.0936
+  return roundToQuarterRule(perMeter)
 }

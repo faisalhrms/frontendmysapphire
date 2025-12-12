@@ -50,7 +50,7 @@ export const useApprovalHierarchyApproverSetupModal = (dataTableRef) => {
         defaultValues: {
             hierarchy_id: null,
             hierarchyOption: null,
-            approvers: [{ level: 1, approver_id: null, approverOption: null }],
+            approvers: [{ level: 1, approver_id: null, approverOption: null,can_take_action: true, }],
         },
     });
 
@@ -100,6 +100,10 @@ export const useApprovalHierarchyApproverSetupModal = (dataTableRef) => {
                         approverOption: u
                             ? { value: u.id, label: `${u.full_name} (${u.email})` }
                             : null,
+                        can_take_action:
+                        typeof item.can_take_action === "boolean"
+                          ? item.can_take_action
+                          : true,
                     };
                 });
 
@@ -131,7 +135,7 @@ export const useApprovalHierarchyApproverSetupModal = (dataTableRef) => {
             reset({
                 hierarchy_id: null,
                 hierarchyOption: null,
-                approvers: [{ level: 1, approver_id: null, approverOption: null }],
+                approvers: [{ level: 1, approver_id: null, approverOption: null, can_take_action: true, }],
             });
             setEditId(null);
             setIsEditMode(false);
@@ -145,6 +149,10 @@ export const useApprovalHierarchyApproverSetupModal = (dataTableRef) => {
             approvers: data.approvers.map((approver, index) => ({
                 level: allowParallelApprovers ? approver.level : index + 1,
                 approver_id: approver.approver_id,
+                can_take_action:
+                typeof approver.can_take_action === "boolean"
+                  ? approver.can_take_action
+                  : true,
             })),
         };
 
