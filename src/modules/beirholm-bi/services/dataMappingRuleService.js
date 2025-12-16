@@ -61,3 +61,19 @@ export const downloadMappingSample = async () => {
     throw err
   }
 }
+
+export const downloadMappingExcel = async () => {
+  try {
+    const res = await api.get('data/mapping/rule/download-excel/', { responseType: 'blob' })
+    const url = window.URL.createObjectURL(new Blob([res.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'mapping_rules.xlsx')
+    document.body.appendChild(link)
+    link.click()
+    link.parentNode.removeChild(link)
+  } catch (err) {
+    Notify.error(err.response?.data?.message || 'Failed to download mapping rules')
+    throw err
+  }
+}

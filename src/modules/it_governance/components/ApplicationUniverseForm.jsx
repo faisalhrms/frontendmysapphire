@@ -16,6 +16,7 @@ const APPLICATION_TYPE_OPTIONS = [
     { value: "purchased", label: "Purchased" },
     { value: "customized", label: "Customized" },
     { value: "offshore", label: "Offshore" },
+    { value: "other", label: "Other" },
 ];
 
 const ApplicationUniverseForm = ({ appData = {}, isEditMode = false }) => {
