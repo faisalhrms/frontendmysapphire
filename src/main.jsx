@@ -22,6 +22,7 @@ import PublicInlay from "@modules/inlay/views/PublicInlay.jsx";
 import ToDetailPage from "@modules/public/views/ToDetailPage.jsx";
 import AboutUs from "@modules/public/views/AboutUs.jsx";
 import CartonDetailPage from "@modules/carton/view/CartonDetailPage.jsx";
+import PublicRequisitionApply from "./modules/requisition/views/PublicRequisitionApply.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -77,6 +78,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="resetpassword/:uidb64/:token" element={<ForgotPassView />} />
                             <Route path="vcard/profile/:id" element={<VCardProfile />} />
                             <Route path="forms/:slug" element={<PublicDynamicForm />} />
+                            <Route path="careers/apply/:slug" element={<PublicRequisitionApply />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/inlay/:code" element={<PublicInlay />} />
                             <Route path="transfer-order/delivery/detail/:sdn_id" element={<ToDetailPage />} />

@@ -4,17 +4,15 @@ import { Link } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import {Shield} from "lucide-react";
+import { Shield } from "lucide-react";
 import IconPageHeader from "../../layouts/includes/IconPageHeader.jsx";
-import {REQUISITION_ROUTES} from "../routes.js";
+import { REQUISITION_ROUTES } from "../routes.js";
 
-const RequisitionList = ({  externalFilters = [] }) => {
-
+const RequisitionList = ({ externalFilters = [] }) => {
     const tableRef = useRef(null);
 
     const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString() : "—");
 
-    // Select options for filters
     const statusOptions = [
         "draft",
         "under_approval",
@@ -29,6 +27,30 @@ const RequisitionList = ({  externalFilters = [] }) => {
         value: t,
     }));
 
+    // helpers
+    const buildPublicUrl = (row) =>
+        row.public_form_url ||
+        (row.public_form_slug
+            ? `${window.location.origin}/careers/apply/${row.public_form_slug}`
+            : null);
+
+    const copyToClipboard = async (text) => {
+        if (!text) return;
+        try {
+            await navigator.clipboard.writeText(text);
+            alert("Public link copied to clipboard.");
+        } catch {
+            // fallback
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            alert("Public link copied to clipboard.");
+        }
+    };
+
     const columns = [
         {
             Header: "Actions",
@@ -36,21 +58,11 @@ const RequisitionList = ({  externalFilters = [] }) => {
             disableSortBy: true,
             Cell: ({ row }) => {
                 const status = row.original.status;
-
-                // statuses where edit must be hidden (OR disabled)
-                const blockedStatuses = [
-                    "under_approval",
-                    "approved",
-                    "published",
-                    "closed",
-                ];
-
+                const blockedStatuses = ["under_approval", "approved", "published", "closed"];
                 const isBlocked = blockedStatuses.includes(status);
 
                 return (
                     <div className="flex gap-2">
-
-                        {/* EDIT BUTTON */}
                         {!isBlocked ? (
                             <Link to={`/module/requisition/edit/${row.original.id}`}>
                                 <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
@@ -58,7 +70,6 @@ const RequisitionList = ({  externalFilters = [] }) => {
                                 </button>
                             </Link>
                         ) : (
-                            // If you want to HIDE completely → remove this block
                             <button
                                 className="ti-btn ti-btn-primary ti-btn-sm opacity-40 cursor-not-allowed"
                                 disabled
@@ -68,17 +79,67 @@ const RequisitionList = ({  externalFilters = [] }) => {
                             </button>
                         )}
 
-                        {/* VIEW BUTTON */}
                         <Link to={`/module/requisition/detail/${row.original.id}`}>
                             <button className="ti-btn ti-btn-info ti-btn-sm" title="View">
                                 <i className="ri-eye-line" />
                             </button>
                         </Link>
+                        <Link to={`/module/requisition/submissions/${row.original.id}`}>
+                            <button
+                                className="ti-btn ti-btn-success-gradient ti-btn-sm"
+                                title="View Applicants"
+                            >
+                                <i className="bi bi-people"></i>
+                            </button>
+                        </Link>
                     </div>
                 );
-            }
-
+            },
         },
+
+        // NEW: Public column (copy + open)
+        {
+            Header: "Public",
+            accessor: "public_form_url",
+            disableSortBy: true,
+            Cell: ({ row }) => {
+                const url = buildPublicUrl(row.original);
+                const disabled = !url;
+
+                return (
+                    <div className="flex gap-2">
+                        <button
+                            className={`ti-btn ti-btn-secondary ti-btn-sm ${
+                                disabled ? "opacity-40 cursor-not-allowed" : ""
+                            }`}
+                            disabled={disabled}
+                            onClick={() => url && copyToClipboard(url)}
+                            title={disabled ? "No public URL available" : "Copy public link"}
+                        >
+                            <i className="ri-links-line" />
+                        </button>
+
+                        <a
+                            href={url || "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => disabled && e.preventDefault()}
+                            title={disabled ? "No public URL available" : "Open public page"}
+                        >
+                            <button
+                                className={`ti-btn ti-btn-success ti-btn-sm ${
+                                    disabled ? "opacity-40 cursor-not-allowed" : ""
+                                }`}
+                                disabled={disabled}
+                            >
+                                <i className="ri-external-link-line" />
+                            </button>
+                        </a>
+                    </div>
+                );
+            },
+        },
+
         {
             Header: "Req No",
             accessor: "req_no",
@@ -100,7 +161,6 @@ const RequisitionList = ({  externalFilters = [] }) => {
             accessor: "designation",
             filterable: true,
             filterType: "text",
-            // if your API later returns an object, this still works
             Cell: ({ row }) => {
                 const d = row.original.designation;
                 if (!d) return "—";
@@ -192,7 +252,6 @@ const RequisitionList = ({  externalFilters = [] }) => {
                 hiddenParameters={["tab"]}
             />
         </>
-
     );
 };
 

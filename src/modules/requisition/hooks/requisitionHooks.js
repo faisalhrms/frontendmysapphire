@@ -6,6 +6,7 @@ import {
     getRequisition,
 } from "@modules/requisition/services/requisitionService.js";
 import { REQUISITION_ROUTES } from "@modules/requisition/routes.js";
+import api from "../../../config/axiosConfig.js";
 
 /** Normalize payload for API */
 const normalize = (p) => {
@@ -80,4 +81,38 @@ export const useRequisition = (id) => {
     }, [id]);
 
     return { requisition, loading };
+};
+
+
+export const useRequisitionApplicant = (requisitionId, applicationId) => {
+    const [applicant, setApplicant] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    const fetchIt = useCallback(async () => {
+        if (!requisitionId || !applicationId) return;
+        try {
+            setLoading(true);
+            setError("");
+            const { data } = await api.get(
+                `/requisitions/${requisitionId}/applicants/${applicationId}/`
+            );
+            setApplicant(data?.data || null);
+        } catch (e) {
+            setError(
+                e?.response?.data?.message ||
+                e?.message ||
+                "Failed to load applicant details."
+            );
+            setApplicant(null);
+        } finally {
+            setLoading(false);
+        }
+    }, [requisitionId, applicationId]);
+
+    useEffect(() => {
+        fetchIt();
+    }, [fetchIt]);
+
+    return { applicant, loading, error, refetch: fetchIt };
 };

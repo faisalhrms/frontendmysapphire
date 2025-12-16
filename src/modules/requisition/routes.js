@@ -4,6 +4,8 @@ import RequisitionList from "@modules/requisition/views/RequisitionList.jsx";
 import RequisitionAdd from "./views/RequisitionAdd.jsx";
 import RequisitionEdit from "./views/RequisitionEdit.jsx";
 import RequisitionDetail from "./views/RequisitionDetail.jsx";
+import RequisitionApplicantsList from "./views/RequisitionApplicantsList.jsx";
+import RequisitionApplicantDetail from "./views/RequisitionApplicantDetail.jsx";
 
 export const REQUISITION_ROUTES = {
     JOB_DESCRIPTION: {
@@ -30,6 +32,14 @@ export const REQUISITION_ROUTES = {
         READ: {
             path: '/module/requisition/list',
         },
+        SUBMISSIONS: {
+            path: "/module/requisition/submissions/:id",
+
+        },
+        APPLICANT_DETAIL:{
+            path:"/module/requisitions/:requisitionId/applicants/:applicationId"
+
+        }
 
     }
 
@@ -60,6 +70,14 @@ export const MODULE_ROUTES = [
     {
         path:REQUISITION_ROUTES.REQUISITION.DETAIL.path,
         component: RequisitionDetail
+    },
+    {
+        path:REQUISITION_ROUTES.REQUISITION.SUBMISSIONS.path,
+        component: RequisitionApplicantsList
+    },
+    {
+        path:REQUISITION_ROUTES.REQUISITION.APPLICANT_DETAIL.path,
+        component: RequisitionApplicantDetail
     }
 
 ];
