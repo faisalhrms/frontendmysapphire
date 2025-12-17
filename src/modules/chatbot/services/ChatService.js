@@ -174,11 +174,10 @@ const ChatService = {
         }
 
       const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-
+      const decoder = new TextDecoder("utf-8")
       let buffer = ""
 
-      const emitSseBlock = (block) => {
+      const emitBlock = (block) => {
         const lines = block.split(/\r?\n/)
         const dataLines = []
 
@@ -189,13 +188,15 @@ const ChatService = {
         }
 
         if (!dataLines.length) return
-        const data = dataLines.join("\n")
 
+        const data = dataLines.join("\n")
         try {
           onEvent(JSON.parse(data))
         } catch (e) {
-          console.error("Failed to parse SSE data:", data, e)
+          console.error("Bad SSE JSON:", data, e)
         }
+        console.log("SSE block at", new Date().toISOString(), block.slice(0, 80))
+
       }
 
       while (true) {
@@ -208,17 +209,20 @@ const ChatService = {
           const idx = buffer.search(/\r?\n\r?\n/)
           if (idx === -1) break
 
-          const delimMatch = buffer.slice(idx).match(/^\r?\n\r?\n/)
-          const delimLen = delimMatch ? delimMatch[0].length : 2
-
+          const delim = buffer.slice(idx).match(/^\r?\n\r?\n/)[0].length
           const block = buffer.slice(0, idx)
-          buffer = buffer.slice(idx + delimLen)
+          buffer = buffer.slice(idx + delim)
 
-          emitSseBlock(block)
+          if (block.trim()) emitBlock(block)
         }
       }
 
+      // flush remaining bytes
+      buffer += decoder.decode()
+      if (buffer.trim()) emitBlock(buffer)
+
       onEvent({ type: "done" })
+
 
 
       } catch (err) {
