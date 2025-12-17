@@ -62,6 +62,7 @@ const ReplenishmentFrom = () => {
       date_from: "",
       date_to: "",
       standard_deviations: 0.00,
+      launches: [],
       forecast_days: 13,
       forecast_method: "standard_deviation",
       // from_warehouses: [{ name: "", priority: undefined }],
@@ -334,14 +335,17 @@ const ReplenishmentFrom = () => {
                             <div className="xl:col-span-8 col-span-12">
                               <div className="grid grid-cols-12 gap-x-2 gap-y-2">
                                 <div className="xl:col-span-6 col-span-12">
-                                  <FormInput
-                                      type="date"
-                                      id="launch_date"
-                                      name="launch_date"
-                                      control={control}
-                                      errors={errors}
-                                      placeholder="Launch Date"
-                                  />
+                                    <FormAsyncSelect
+                                        label={true}
+                                        isMulti={true}
+                                        name="launches"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Launches"
+                                        apiUrl="/select/scm/launches/"
+                                        queryKeyBase="scm_launches"
+                                        clientSideSearch={true}
+                                    />
                                 </div>
                                 <div className="xl:col-span-6 col-span-12">
                                   <FormInput
@@ -350,6 +354,7 @@ const ReplenishmentFrom = () => {
                                       name="launch_aging"
                                       control={control}
                                       errors={errors}
+                                      is_required={true}
                                   />
                                 </div>
                               </div>
