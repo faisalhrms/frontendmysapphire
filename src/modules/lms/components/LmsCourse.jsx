@@ -146,7 +146,7 @@ export default function LmsCourse() {
 
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 dark:text-gray-200 dark:bg-bodybg">
                         <div className="ti-modal-header flex justify-between items-center p-4 border-b">
                             <h6 className="modal-title text-lg font-semibold">
                                 {editingId ? "Edit Course" : "Add Course"}
@@ -169,7 +169,7 @@ export default function LmsCourse() {
                                     </label>
                                     <input
                                         type="text"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm dark:text-gray-200 dark:bg-bodybg"
                                         placeholder="Enter course title"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
@@ -183,7 +183,7 @@ export default function LmsCourse() {
                                     </label>
                                     <input
                                         type="file"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2 dark:text-gray-200 dark:bg-bodybg"
                                         onChange={handleFileChange}
                                         disabled={loading}
                                         accept=".zip,.rar,.7z"
