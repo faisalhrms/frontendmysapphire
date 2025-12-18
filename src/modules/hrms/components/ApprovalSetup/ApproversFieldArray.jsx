@@ -29,6 +29,7 @@ const ApproversFieldArray = ({ control, errors, setValue, allowParallelApprovers
             level: nextLevel,
             approver_id: null,
             approverOption: null,
+            can_take_action: true,
         });
     }, [append, approvers, allowParallelApprovers]);
 

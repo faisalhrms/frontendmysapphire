@@ -283,6 +283,295 @@ export const products = {
         ],
         images: 6,
     },
+    "U3P-DY23V7-12BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY23V7-2BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY23V7-4BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY23V7-19BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY23V7-18BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-1DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-10BDS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-14DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-16DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-16BDS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-19DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-19BDS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-2DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-20BDS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-6DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DD25V8-8DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY25V8-31DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Printed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY25V8-32DS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Printed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V8-16BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V8-33BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V8-34BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V8-38BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V7-14BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V7-16BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V7-17BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V7-2BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V7-15BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V7-19BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+
+    "U3P-DY24V8-37BTS": {
+        name: "3 PIECE - PRINTED \nKHADDAR SUIT",
+        description: [
+            { label: "Printed Khaddar Shirt", value: "3.00m" },
+            { label: "Printed Khaddar Dupatta", value: "2.50m" },
+            { label: "Dyed Khaddar Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
 
 };
 

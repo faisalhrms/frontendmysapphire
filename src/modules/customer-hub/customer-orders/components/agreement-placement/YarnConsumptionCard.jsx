@@ -266,7 +266,7 @@ const YarnConsumptionCard = ({
 
           <div className="px-4 py-3 border-t dark:border-defaultborder/20">
             <div className="text-[.75rem] text-[#6b7280] dark:text-white/60 mb-1">
-              Total Meter to be placed
+              Greige Qty
             </div>
             <input
               type="number"
@@ -285,7 +285,7 @@ const YarnConsumptionCard = ({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <div className="text-[.75rem] text-[#6b7280] dark:text-white/60 mb-1">
-                  Finished width
+                  Finished Qty
                 </div>
                 <input
                   type="number"
