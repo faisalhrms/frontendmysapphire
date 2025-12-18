@@ -33,11 +33,11 @@ export const REQUISITION_ROUTES = {
             path: '/module/requisition/list',
         },
         SUBMISSIONS: {
-            path: "/module/requisition/submissions/:id",
+            path: "/module/requisition/applicants/:requisitionId",
 
         },
         APPLICANT_DETAIL:{
-            path:"/module/requisitions/:requisitionId/applicants/:applicationId"
+            path:"/module/requisition/:requisitionId/applicants/:applicationId"
 
         }
 

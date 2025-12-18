@@ -83,36 +83,111 @@ export const useRequisition = (id) => {
     return { requisition, loading };
 };
 
-
 export const useRequisitionApplicant = (requisitionId, applicationId) => {
     const [applicant, setApplicant] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const fetchIt = useCallback(async () => {
-        if (!requisitionId || !applicationId) return;
-        try {
-            setLoading(true);
-            setError("");
-            const { data } = await api.get(
-                `/requisitions/${requisitionId}/applicants/${applicationId}/`
-            );
-            setApplicant(data?.data || null);
-        } catch (e) {
-            setError(
-                e?.response?.data?.message ||
-                e?.message ||
-                "Failed to load applicant details."
-            );
-            setApplicant(null);
-        } finally {
-            setLoading(false);
-        }
+    useEffect(() => {
+        let mounted = true;
+
+        (async () => {
+            try {
+                setLoading(true);
+                setError("");
+
+                if (!requisitionId || !applicationId) {
+                    throw new Error("Missing requisitionId/applicationId");
+                }
+
+                const { data } = await api.get(
+                    `/requisitions/${requisitionId}/applicants/${applicationId}/`
+                );
+
+                if (!mounted) return;
+                setApplicant(data?.data || null);
+            } catch (e) {
+                if (!mounted) return;
+                setError(e?.response?.data?.message || "Unable to load applicant.");
+                setApplicant(null);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
+
+        return () => {
+            mounted = false;
+        };
     }, [requisitionId, applicationId]);
 
-    useEffect(() => {
-        fetchIt();
-    }, [fetchIt]);
+    return { applicant, loading, error };
+};
+// ✅ Bulk status update hook for requisition applicants
+export const useRequisitionApplicantsBulkStatus = (requisitionId) => {
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [submitting, setSubmitting] = useState(false);
 
-    return { applicant, loading, error, refetch: fetchIt };
+    // ✅ track which button/action is running (so loader shows only there)
+    const [pendingStatus, setPendingStatus] = useState(null); // "shortlisted" | "rejected" | "submitted" | null
+
+    const isSelected = useCallback(
+        (id) => selectedIds.includes(id),
+        [selectedIds]
+    );
+
+    const toggleOne = useCallback((id) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        );
+    }, []);
+
+    const clearSelection = useCallback(() => setSelectedIds([]), []);
+
+    const toggleAllOnPage = useCallback((pageIds, checked) => {
+        setSelectedIds((prev) => {
+            const pageSet = new Set(pageIds || []);
+            if (checked) {
+                const merged = new Set([...prev, ...pageSet]);
+                return Array.from(merged);
+            }
+            return prev.filter((x) => !pageSet.has(x));
+        });
+    }, []);
+
+    const bulkUpdateStatus = useCallback(
+        async ({ status, applicationIds }) => {
+            const ids = applicationIds?.length ? applicationIds : selectedIds;
+
+            if (!requisitionId) throw new Error("Missing requisitionId");
+            if (!status) throw new Error("Missing status");
+            if (!ids?.length) throw new Error("Please select at least one applicant.");
+
+            setSubmitting(true);
+            setPendingStatus(status);
+
+            try {
+                const { data } = await api.patch(
+                    `/requisitions/${requisitionId}/applicants/status/bulk/`,
+                    { status, application_ids: ids }
+                );
+                return data;
+            } finally {
+                setSubmitting(false);
+                setPendingStatus(null);
+            }
+        },
+        [requisitionId, selectedIds]
+    );
+
+    return {
+        selectedIds,
+        setSelectedIds,
+        submitting,
+        pendingStatus, // ✅ expose it
+        isSelected,
+        toggleOne,
+        toggleAllOnPage,
+        clearSelection,
+        bulkUpdateStatus,
+    };
 };

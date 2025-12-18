@@ -1,15 +1,178 @@
-import React from "react";
+import React, { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import { Users } from "lucide-react";
+import { Users, Sparkles, BadgeCheck, XCircle } from "lucide-react";
 import Avatar from "@components/Avatar.jsx";
+import Notify from "@helpers/toastNotifications.js";
+import { toTitleCase } from "@helpers/formatters.js";
+import { getBadgeClasses } from "@helpers/badges.js";
+import { useRequisitionApplicantsBulkStatus } from "@modules/requisition/hooks/requisitionHooks.js";
 
 const RequisitionApplicantsList = () => {
-    const { id } = useParams(); // requisitionId
+    const { requisitionId } = useParams();
+
+    const {
+        selectedIds,
+        submitting,
+        pendingStatus,
+        isSelected,
+        toggleOne,
+        toggleAllOnPage,
+        clearSelection,
+        bulkUpdateStatus,
+    } = useRequisitionApplicantsBulkStatus(requisitionId);
+
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    // Track IDs rendered in current page (for select-all current page)
+    const currentPageIdsRef = useRef(new Set());
+    currentPageIdsRef.current = new Set();
+
+    const [allChecked, setAllChecked] = useState(false);
+
+    const SelectAllHeader = () => {
+        const ref = useRef(null);
+
+        useEffect(() => {
+            const pageIds = Array.from(currentPageIdsRef.current);
+            const selectedOnPage = pageIds.filter((id) => selectedIds.includes(id));
+
+            const isIndeterminate =
+                selectedOnPage.length > 0 && selectedOnPage.length < pageIds.length;
+
+            if (ref.current) ref.current.indeterminate = isIndeterminate;
+
+            setAllChecked(pageIds.length > 0 && selectedOnPage.length === pageIds.length);
+        }, [selectedIds]);
+
+        const onChange = (e) => {
+            const checked = e.target.checked;
+            const pageIds = Array.from(currentPageIdsRef.current);
+            toggleAllOnPage(pageIds, checked);
+            setAllChecked(checked);
+        };
+
+        return (
+            <input
+                ref={ref}
+                type="checkbox"
+                checked={allChecked}
+                onChange={onChange}
+                title="Select all on this page"
+            />
+        );
+    };
+
+    const runBulkStatus = useCallback(
+        async (status, successMsg) => {
+            try {
+                await bulkUpdateStatus({ status });
+                Notify.success(successMsg);
+                clearSelection();
+                setRefreshKey((k) => k + 1);
+            } catch (e) {
+                Notify.error(e?.response?.data?.message || e?.message || "Bulk update failed.");
+            }
+        },
+        [bulkUpdateStatus, clearSelection]
+    );
+
+    const headerButtons = useMemo(() => {
+        if (!selectedIds.length) return null;
+
+        const btnBase = "!py-1 !px-2 !text-[0.75rem]";
+
+        const actions = [
+            {
+                status: "shortlisted",
+                className: `ti-btn ti-btn-success ${btnBase}`,
+                icon: "ri-check-line",
+                label: "Shortlist",
+                successMsg: "Selected applicants shortlisted successfully.",
+            },
+            {
+                status: "rejected",
+                className: `ti-btn ti-btn-danger ${btnBase}`,
+                icon: "ri-close-line",
+                label: "Reject",
+                successMsg: "Selected applicants rejected successfully.",
+            },
+            {
+                status: "submitted",
+                className: `ti-btn ti-btn-secondary ${btnBase}`,
+                icon: "ri-refresh-line",
+                label: "Reset to Submitted",
+                successMsg: "Selected applicants moved back to Submitted.",
+                title: "Move selected applicants back to initial status",
+            },
+        ];
+
+        return (
+            <div className="flex items-center gap-2 flex-wrap">
+                <div className="text-xs text-gray-500">
+                    Selected: <span className="font-semibold">{selectedIds.length}</span>
+                </div>
+
+                {actions.map((a) => {
+                    const isThisLoading = submitting && pendingStatus === a.status;
+
+                    return (
+                        <button
+                            key={a.status}
+                            type="button"
+                            title={a.title || ""}
+                            onClick={() => runBulkStatus(a.status, a.successMsg)}
+                            disabled={submitting}
+                            className={a.className}
+                        >
+                            {isThisLoading ? (
+                                <>
+                                    <i className="ri-loader-4-line animate-spin me-1" /> Updating...
+                                </>
+                            ) : (
+                                <>
+                                    <i className={`${a.icon} me-1`} /> {a.label}
+                                </>
+                            )}
+                        </button>
+                    );
+                })}
+
+                <button
+                    type="button"
+                    onClick={clearSelection}
+                    disabled={submitting}
+                    className={`ti-btn ti-btn-light ${btnBase}`}
+                    title="Clear selection"
+                >
+                    <i className="ri-delete-bin-6-line me-1" /> Clear
+                </button>
+            </div>
+        );
+    }, [selectedIds, submitting, pendingStatus, runBulkStatus, clearSelection]);
 
     const columns = [
-        // Actions column (eye for detail)
+        {
+            Header: <SelectAllHeader />,
+            accessor: "checkbox",
+            disableSortBy: true,
+            filterable: false,
+            Cell: ({ row }) => {
+                const id = row?.original?.id;
+                if (!id) return null;
+
+                currentPageIdsRef.current.add(id);
+
+                return (
+                    <input
+                        type="checkbox"
+                        checked={isSelected(id)}
+                        onChange={() => toggleOne(id)}
+                    />
+                );
+            },
+        },
         {
             Header: "Actions",
             accessor: "id",
@@ -18,11 +181,8 @@ const RequisitionApplicantsList = () => {
                 const appId = row?.original?.id;
                 return (
                     <div className="flex justify-center space-x-2">
-                        <Link to={`/module/requisitions/${id}/applicants/${appId}`}>
-                            <button
-                                className="ti-btn ti-btn-secondary ti-btn-sm"
-                                title="View Applicant"
-                            >
+                        <Link to={`/module/requisition/${requisitionId}/applicants/${appId}`}>
+                            <button className="ti-btn ti-btn-secondary ti-btn-sm" title="View Applicant">
                                 <i className="ri-eye-line" />
                             </button>
                         </Link>
@@ -30,21 +190,17 @@ const RequisitionApplicantsList = () => {
                 );
             },
         },
-
         {
             Header: "Applicant",
             accessor: "full_name",
             filterType: "text",
             filterable: true,
-            // map to an actual DB field so backend doesn't try to filter on "full_name"
             filterKey: "first_name",
             getCellProps: () => ({ className: "!text-left" }),
             Cell: ({ row }) => {
                 const r = row?.original || {};
                 const full =
-                    r.full_name ||
-                    [r.first_name, r.last_name].filter(Boolean).join(" ") ||
-                    "N/A";
+                    r.full_name || [r.first_name, r.last_name].filter(Boolean).join(" ") || "N/A";
 
                 return (
                     <div className="flex items-center">
@@ -64,38 +220,9 @@ const RequisitionApplicantsList = () => {
                 );
             },
         },
-
         { Header: "Mobile", accessor: "mobile_number", filterType: "text", filterable: true },
         { Header: "CNIC", accessor: "cnic_number", filterType: "text", filterable: true },
         { Header: "City", accessor: "city", filterType: "text", filterable: true },
-        {
-            Header: "Current Title",
-            accessor: "current_job_title",
-            filterType: "text",
-            filterable: true,
-            Cell: ({ value }) => value || "—",
-        },
-        {
-            Header: "Experience (yrs)",
-            accessor: "total_experience_years",
-            filterType: "text",
-            filterable: true,
-            Cell: ({ value }) => (value ?? value === 0 ? value : "—"),
-        },
-        {
-            Header: "Expected Salary",
-            accessor: "expected_salary",
-            filterType: "text",
-            filterable: true,
-            Cell: ({ value }) => (value !== null && value !== undefined ? value : "—"),
-        },
-        {
-            Header: "Notice (days)",
-            accessor: "notice_period_days",
-            filterType: "text",
-            filterable: true,
-            Cell: ({ value }) => (value !== null && value !== undefined ? value : "—"),
-        },
         {
             Header: "Status",
             accessor: "status",
@@ -111,19 +238,55 @@ const RequisitionApplicantsList = () => {
                 { value: "hired", label: "Hired" },
                 { value: "rejected", label: "Rejected" },
             ],
+            headerClassName: "!text-center",
+            Cell: ({ cell }) => toTitleCase(cell.value || ""),
             getCellProps: (cellInfo) => {
-                const val = cellInfo.value;
-                const map = {
-                    submitted: { bg: "bg-slate-100", text: "text-slate-700" },
-                    shortlisted: { bg: "bg-indigo/10", text: "text-indigo-600" },
-                    interview_scheduled: { bg: "bg-warning/10", text: "text-warning" },
-                    interviewed: { bg: "bg-purple/10", text: "text-purple" },
-                    offered: { bg: "bg-info/10", text: "text-info" },
-                    hired: { bg: "bg-success/10", text: "text-success" },
-                    rejected: { bg: "bg-danger/10", text: "text-danger" },
+                // fallback colors (in case getBadgeClasses doesn't know these keys)
+                const fallback = {
+                    submitted: "bg-slate-100 text-slate-700",
+                    shortlisted: "bg-indigo/10 text-indigo-600",
+                    interview_scheduled: "bg-warning/10 text-warning",
+                    interviewed: "bg-purple/10 text-purple",
+                    offered: "bg-info/10 text-info",
+                    hired: "bg-success/10 text-success",
+                    rejected: "bg-danger/10 text-danger",
                 };
-                const sty = map[val] || { bg: "bg-light", text: "text-default" };
-                return { className: `capitalize px-2 py-1 rounded ${sty.bg} ${sty.text}` };
+
+                const v = cellInfo.value;
+                const cls = getBadgeClasses?.(v, "", false); // ✅ Priority-style call
+
+                return {
+                    className: `${cls || `badge !rounded-full ${fallback[v] || "bg-light text-default"}`} !text-center`,
+                };
+            },
+        }
+,
+        {
+            Header: "AI Score",
+            accessor: "ai_score",
+            filterType: "text",
+            filterable: true,
+            Cell: ({ value }) => (value ?? value === 0 ? `${Number(value).toFixed(2)}%` : "—"),
+        },
+        {
+            Header: "AI Recommended",
+            accessor: "ai_shortlisted",
+            filterType: "boolean",
+            filterable: true,
+            Cell: ({ value }) => {
+                const ok = !!value;
+                return ok ? (
+                    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
+                        <Sparkles size={14} />
+                        AI Recommended
+                        <BadgeCheck size={14} />
+                    </span>
+                ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-light text-default">
+                        <XCircle size={14} />
+                        Not Recommended
+                    </span>
+                );
             },
         },
         {
@@ -133,33 +296,8 @@ const RequisitionApplicantsList = () => {
             filterable: false,
             Cell: ({ value }) =>
                 value ? (
-                    <a
-                        href={value}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary underline"
-                    >
+                    <a href={value} target="_blank" rel="noopener noreferrer" className="text-primary underline">
                         View
-                    </a>
-                ) : (
-                    "—"
-                ),
-        },
-        {
-            Header: "Portfolio",
-            accessor: "portfolio_url",
-            disableSortBy: true,
-            filterType: "text",
-            filterable: true,
-            Cell: ({ value }) =>
-                value ? (
-                    <a
-                        href={value}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary underline"
-                    >
-                        Open
                     </a>
                 ) : (
                     "—"
@@ -180,12 +318,14 @@ const RequisitionApplicantsList = () => {
                 description="Browse all applicants for the selected requisition."
                 icon={Users}
             />
+
             <DataTable
+                key={refreshKey}
                 columns={columns}
                 title="Applicants"
-                apiUrl={`/requisitions/${id}/applicants/datatable/`}
+                apiUrl={`/requisitions/${requisitionId}/applicants/datatable/`}
                 enableAdvancedFilters={true}
-                needHeader={false}
+                buttons={headerButtons}
             />
         </>
     );
