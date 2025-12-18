@@ -1,181 +1,156 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-} from "react"
-import { useWatch } from "react-hook-form"
-import { BarChart3, Database, ShieldCheck, Globe2, Layers3 } from "lucide-react"
+import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { useWatch } from "react-hook-form";
+import { BarChart3, ShieldCheck, Globe2, Layers3 } from "lucide-react";
 
-import useFilters from "@hooks/useFilters"
-import DataHealthDashboardFilter from "@modules/dashboards/beirholmBi/components/data-health/DataHealthDashboardFilter.jsx"
-import useDataHealth from "@modules/dashboards/beirholmBi/hooks/useDataHealth.js"
-import ReChart from "@components/charts/ReChart.jsx"
-import { DEFAULT_CHART_COLORS } from "@helpers/styles.js"
+import useFilters from "@hooks/useFilters";
+import DataHealthDashboardFilter from "@modules/dashboards/beirholmBi/components/data-health/DataHealthDashboardFilter.jsx";
+import useDataHealth from "@modules/dashboards/beirholmBi/hooks/useDataHealth.js";
+import ReChart from "@components/charts/ReChart.jsx";
+import { DEFAULT_CHART_COLORS } from "@helpers/styles.js";
 
-const COLORS = DEFAULT_CHART_COLORS
+const COLORS = DEFAULT_CHART_COLORS;
 
 export const productCountry = [
   { value: "pakistan", label: "Pakistan" },
   { value: "india", label: "India" },
   { value: "vietnam", label: "Vietnam" },
   { value: "turkey", label: "Turkey" },
-]
+];
 
-const formatPercent = value => {
-  if (typeof value !== "number" || Number.isNaN(value)) return "--"
-  return `${value.toFixed(2)}%`
-}
+const formatPercent = v =>
+  typeof v === "number" && !Number.isNaN(v) ? `${v.toFixed(2)}%` : "--";
 
-const clampPct = value => {
-  if (typeof value !== "number" || Number.isNaN(value)) return 0
-  if (value < 0) return 0
-  if (value > 100) return 100
-  return value
-}
+const clampPct = v =>
+  typeof v === "number" && !Number.isNaN(v) ? Math.min(100, Math.max(0, v)) : 0;
 
-const formatInt = value => {
-  if (typeof value !== "number" || Number.isNaN(value)) return "0"
-  return value.toLocaleString()
-}
+const formatInt = v =>
+  typeof v === "number" && !Number.isNaN(v) ? v.toLocaleString() : "0";
 
 export default function DataHealthDashboard() {
   const { control, errors } = useFilters(
     useMemo(() => ({ initialFilters: [] }), [])
-  )
-  const filters = useWatch({ control }) || {}
+  );
+  const filters = useWatch({ control }) || {};
+  const { data, isLoading } = useDataHealth(filters);
 
-  const { data, isLoading } = useDataHealth(filters)
-
-  const kpis = data?.kpis || {}
-  const fieldOverview = data?.field_overview || []
-  const dqTrendRaw = data?.dq_trend || {}
-  const table = data?.table || []
-  const perCategory = data?.per_category || []
-  const perCountry = data?.per_country || []
-  const monthlyValidityRaw = data?.monthly_validity || {}
-
+  const kpis = data?.kpis || {};
+  const fieldOverview = data?.field_overview || [];
+  const dqTrendRaw = data?.dq_trend || {};
+  const table = data?.table || [];
+  const perCategory = data?.per_category || [];
+  const perCountry = data?.per_country || [];
+  const monthlyValidityRaw = data?.monthly_validity || {};
   const monthlyValidityAll = Array.isArray(monthlyValidityRaw.all)
     ? monthlyValidityRaw.all
-    : []
+    : [];
   const monthlyValidityByHeader = Array.isArray(monthlyValidityRaw.by_header)
     ? monthlyValidityRaw.by_header
-    : []
+    : [];
 
-  const totalRows = typeof kpis.total_rows === "number" ? kpis.total_rows : 0
-  const issueRows = typeof kpis.issue_rows === "number" ? kpis.issue_rows : 0
-  const cleanRows = Math.max(0, totalRows - issueRows)
+  const rawRows = typeof kpis.raw_rows === "number" ? kpis.raw_rows : 0;
+  const cleanRows = typeof kpis.clean_rows === "number" ? kpis.clean_rows : 0;
+  const totalRows =
+    typeof kpis.total_rows === "number" ? kpis.total_rows : rawRows + cleanRows;
 
-  const totalRowsValue = formatInt(totalRows)
-  const cleanRowsValue = formatInt(cleanRows)
-  const issueRowsValue = formatInt(issueRows)
+  const totalRowsValue = formatInt(totalRows);
+  const cleanRowsValue = formatInt(cleanRows);
+  const rawRowsValue = formatInt(rawRows);
 
-  const completenessValue = formatPercent(kpis.completeness_pct)
-  const validityValue = formatPercent(kpis.validity_pct)
-  const invalidityValue = formatPercent(kpis.invalid_pct) // now from backend (unknown+invalid)
-  const dqScoreValue = formatPercent(kpis.dq_score)
+  const maxRowCount = Math.max(cleanRows, rawRows, 0);
+  const cleanRowsShare =
+    maxRowCount > 0 ? clampPct((cleanRows / maxRowCount) * 100) : 0;
+  const rawRowsShare =
+    maxRowCount > 0 ? clampPct((rawRows / maxRowCount) * 100) : 0;
 
-  // Category mapping (Bed / Towel)
+  const validityPctAll = clampPct(
+    typeof kpis.validity_pct === "number" ? kpis.validity_pct : 0
+  );
+  const invalidPctAll = clampPct(
+    typeof kpis.invalid_pct === "number" ? kpis.invalid_pct : 0
+  );
+  const overallValidityValue = formatPercent(validityPctAll);
+
+  const completenessFilledPct = clampPct(validityPctAll + invalidPctAll);
+  const completenessFilledValue = formatPercent(completenessFilledPct);
+
   const categoryByName = useMemo(() => {
-    const map = new Map()
-    perCategory.forEach(cat => {
-      if (!cat) return
-      const key = String(cat.name || "").toLowerCase()
-      if (key) map.set(key, cat)
-    })
-    return map
-  }, [perCategory])
+    const m = new Map();
+    perCategory.forEach(c => {
+      const key = String(c.name || "").toLowerCase();
+      if (key) m.set(key, c);
+    });
+    return m;
+  }, [perCategory]);
 
-  const bedCategory = categoryByName.get("bed") || {}
-  const towelCategory = categoryByName.get("towel") || {}
-
+  const bed = categoryByName.get("bed") || {};
+  const towel = categoryByName.get("towel") || {};
   const bedValidPct = clampPct(
-    typeof bedCategory.valid_pct === "number" ? bedCategory.valid_pct : 0
-  )
+    typeof bed.valid_pct === "number" ? bed.valid_pct : 0
+  );
   const towelValidPct = clampPct(
-    typeof towelCategory.valid_pct === "number" ? towelCategory.valid_pct : 0
-  )
+    typeof towel.valid_pct === "number" ? towel.valid_pct : 0
+  );
+  const bedRows = formatInt(typeof bed.rows === "number" ? bed.rows : 0);
+  const towelRows = formatInt(typeof towel.rows === "number" ? towel.rows : 0);
 
-  const bedRows = formatInt(
-    typeof bedCategory.rows === "number" ? bedCategory.rows : 0
-  )
-  const towelRows = formatInt(
-    typeof towelCategory.rows === "number" ? towelCategory.rows : 0
-  )
-
-  // Country stats (Pakistan, India, Vietnam, Turkey etc.)
   const countryStats = useMemo(() => {
-    const map = new Map()
+    const lookup = new Map();
     perCountry.forEach(c => {
-      const key = String(c.country || "").toLowerCase()
-      if (key) map.set(key, c)
-    })
+      const k = String(c.country || "").toLowerCase();
+      if (k) lookup.set(k, c);
+    });
 
     return productCountry.map(opt => {
-      const stats = map.get(opt.value) || {}
-      const rows = typeof stats.rows === "number" ? stats.rows : 0
-      const valid_pct =
-        typeof stats.valid_pct === "number" ? clampPct(stats.valid_pct) : 0
-      const invalid_pct =
-        typeof stats.invalid_pct === "number" ? clampPct(stats.invalid_pct) : 0
-      const null_pct =
-        typeof stats.null_pct === "number" ? clampPct(stats.null_pct) : 0
+      const s = lookup.get(opt.value) || {};
+      const rows = typeof s.rows === "number" ? s.rows : 0;
+
+      const valid_pct = clampPct(
+        typeof s.valid_pct === "number" ? s.valid_pct : 0
+      );
+      const invalid_pct = clampPct(
+        typeof s.invalid_pct === "number" ? s.invalid_pct : 0
+      );
+      const null_pct = clampPct(
+        typeof s.null_pct === "number" ? s.null_pct : 0
+      );
+      const filled_pct = clampPct(valid_pct + invalid_pct);
 
       return {
         ...opt,
         rows,
+        filled_pct,
         valid_pct,
         invalid_pct,
         null_pct,
-      }
-    })
-  }, [perCountry])
-
-  const totalCountryRows = countryStats.reduce(
-    (sum, c) => sum + (typeof c.rows === "number" ? c.rows : 0),
-    0
-  )
-  const totalCountryRowsValue = formatInt(totalCountryRows)
-  const activeCountriesCount =
-    countryStats.filter(c => c.rows > 0).length || countryStats.length
+      };
+    });
+  }, [perCountry]);
 
   const topCountries = [...countryStats]
     .sort((a, b) => b.rows - a.rows)
-    .slice(0, 4)
+    .slice(0, 4);
 
-  // Overall DQ score trend (last 12 months)
   const dqTrendData = useMemo(() => {
-    const categories = dqTrendRaw.categories || []
-    const series =
-      dqTrendRaw.series && dqTrendRaw.series[0]
-        ? dqTrendRaw.series[0].data || []
-        : []
-    if (!categories.length || !series.length) return []
-    return categories.map((name, index) => ({
+    const cats = dqTrendRaw.categories || [];
+    const series = dqTrendRaw.series?.[0]?.data || [];
+    return cats.map((name, i) => ({
       name,
-      value: typeof series[index] === "number" ? series[index] : 0,
-    }))
-  }, [dqTrendRaw])
+      value: typeof series[i] === "number" ? series[i] : 0,
+    }));
+  }, [dqTrendRaw]);
 
-  // Tabs: "All" + 1 per header
-  const [selectedHeaderId, setSelectedHeaderId] = useState("all")
-
+  const [selectedHeaderId, setSelectedHeaderId] = useState("all");
   const headerTabs = useMemo(
     () => [
       { id: "all", label: "All" },
-      ...monthlyValidityByHeader.map(h => ({
+      ...(monthlyValidityByHeader || []).map(h => ({
         id: h.header?.id,
         label: h.header?.name || `Header ${h.header?.id}`,
       })),
     ],
     [monthlyValidityByHeader]
-  )
+  );
 
-  const handleHeaderTabClick = useCallback(id => {
-    setSelectedHeaderId(id)
-  }, [])
-
-  // Reset tab if headers change
   useEffect(() => {
     if (
       selectedHeaderId !== "all" &&
@@ -183,110 +158,104 @@ export default function DataHealthDashboard() {
         h => String(h.header?.id) === String(selectedHeaderId)
       )
     ) {
-      setSelectedHeaderId("all")
+      setSelectedHeaderId("all");
     }
-  }, [monthlyValidityByHeader, selectedHeaderId])
+  }, [monthlyValidityByHeader, selectedHeaderId]);
 
-  // Monthly validity series (All tab or individual header)
   const monthlyValidityTrend = useMemo(() => {
-    let source = []
-
+    let source = [];
     if (monthlyValidityAll.length || monthlyValidityByHeader.length) {
-      if (selectedHeaderId === "all") {
-        source = monthlyValidityAll
-      } else {
-        const match = monthlyValidityByHeader.find(
-          h => String(h.header?.id) === String(selectedHeaderId)
-        )
-        source = match?.points || []
-      }
-
+      source =
+        selectedHeaderId === "all"
+          ? monthlyValidityAll
+          : monthlyValidityByHeader.find(
+              h => String(h.header?.id) === String(selectedHeaderId)
+            )?.points || [];
       return (source || []).map(p => {
-        const valid = clampPct(
+        const v = clampPct(
           typeof p.valid_pct === "number" ? p.valid_pct : 0
-        )
-        const invalid = clampPct(
+        );
+        const inv = clampPct(
           typeof p.invalid_pct === "number" ? p.invalid_pct : 0
-        )
-        const nullPct = clampPct(
+        );
+        const nul = clampPct(
           typeof p.null_pct === "number" ? p.null_pct : 0
-        )
-
+        );
         return {
           name: p.period || "",
-          value: valid, // chart line
-          valid_pct: valid,
-          invalid_pct: invalid,
-          null_pct: nullPct,
-        }
-      })
+          value: v,
+          valid_pct: v,
+          invalid_pct: inv,
+          null_pct: nul,
+        };
+      });
     }
-
-    // Fallback from table
-    if (!Array.isArray(table) || table.length === 0) return []
+    if (!Array.isArray(table) || table.length === 0) return [];
     return table.map(row => {
-      const blanks = typeof row.blanks_pct === "number" ? row.blanks_pct : 0
-      const unknown = typeof row.unknown_pct === "number" ? row.unknown_pct : 0
-      const dots = typeof row.dots_pct === "number" ? row.dots_pct : 0
-      const invalid = typeof row.invalid_pct === "number" ? row.invalid_pct : 0
-
-      const nullPct = clampPct(blanks + dots)
-      const invalidPct = clampPct(unknown + invalid)
-      const validPct = clampPct(100 - nullPct - invalidPct)
-
+      const nul = clampPct(
+        (typeof row.blanks_pct === "number" ? row.blanks_pct : 0) +
+          (typeof row.unknown_pct === "number" ? row.unknown_pct : 0)
+      );
+      const inv = clampPct(
+        (typeof row.dots_pct === "number" ? row.dots_pct : 0) +
+          (typeof row.invalid_pct === "number" ? row.invalid_pct : 0)
+      );
+      const v = clampPct(100 - nul - inv);
       return {
         name: row.period || "",
-        value: validPct,
-        valid_pct: validPct,
-        invalid_pct: invalidPct,
-        null_pct: nullPct,
-      }
-    })
-  }, [
-    monthlyValidityAll,
-    monthlyValidityByHeader,
-    selectedHeaderId,
-    table,
-  ])
+        value: v,
+        valid_pct: v,
+        invalid_pct: inv,
+        null_pct: nul,
+      };
+    });
+  }, [monthlyValidityAll, monthlyValidityByHeader, selectedHeaderId, table]);
 
-  // Custom tooltip for Monthly Validity chart
-  const renderMonthlyTooltip = useCallback(
-    ({ active, payload, label }) => {
-      if (!active || !payload || !payload.length) return null
-      const p = payload[0]?.payload || {}
-
-      const valid = formatPercent(
-        typeof p.valid_pct === "number" ? p.valid_pct : 0
-      )
-      const invalid = formatPercent(
-        typeof p.invalid_pct === "number" ? p.invalid_pct : 0
-      )
-      const nullPct = formatPercent(
-        typeof p.null_pct === "number" ? p.null_pct : 0
-      )
-
-      return (
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200 px-3 py-2 text-xs">
-          <div className="font-semibold text-gray-800 mb-1">{label}</div>
-          <div className="space-y-0.5">
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600">Valid</span>
-              <span className="font-medium text-emerald-600">{valid}</span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600">Invalid</span>
-              <span className="font-medium text-rose-600">{invalid}</span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600">Null</span>
-              <span className="font-medium text-slate-600">{nullPct}</span>
-            </div>
+  const renderMonthlyTooltip = useCallback(({ active, payload, label }) => {
+    if (!active || !payload || !payload.length) return null;
+    const p = payload[0]?.payload || {};
+    return (
+      <div className="bg-white rounded-lg shadow-lg border border-gray-200 px-3 py-2 text-xs">
+        <div className="font-semibold text-gray-800 mb-1">{label}</div>
+        <div className="space-y-0.5">
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600">Valid</span>
+            <span className="font-medium text-emerald-600">
+              {formatPercent(p.valid_pct)}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600">Invalid</span>
+            <span className="font-medium text-rose-600">
+              {formatPercent(p.invalid_pct)}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600">Null</span>
+            <span className="font-medium text-slate-600">
+              {formatPercent(p.null_pct)}
+            </span>
           </div>
         </div>
-      )
-    },
-    []
-  )
+      </div>
+    );
+  }, []);
+
+  const renderDQTrendTooltip = useCallback(({ active, payload, label }) => {
+    if (!active || !payload || !payload.length) return null;
+    const v = payload[0]?.value;
+    const formatted =
+      typeof v === "number" ? `${v.toFixed(2)}%` : String(v ?? "--");
+    return (
+      <div className="bg-white rounded-lg shadow-lg border border-gray-200 px-3 py-2 text-xs">
+        <div className="font-semibold text-gray-800 mb-1">{label}</div>
+        <div className="flex justify-between gap-4">
+          <span className="text-gray-600">Validity</span>
+          <span className="font-medium text-emerald-600">{formatted}</span>
+        </div>
+      </div>
+    );
+  }, []);
 
   return (
     <div className="space-y-8 mx-auto pb-10 px-4 lg:px-0">
@@ -302,72 +271,73 @@ export default function DataHealthDashboard() {
                 EXPORT DATA HEALTH DASHBOARD
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                Monitors processed rows, data quality, completeness, validity,
-                monthly trends, and null values.
+                Monitors processed rows, completeness, validity, and trends.
               </p>
             </div>
           </div>
-
           <div className="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700">
             <DataHealthDashboardFilter control={control} errors={errors} />
           </div>
         </div>
       </div>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Data Quality Overview */}
         <div className="bg-gradient-to-br from-blue to-purple rounded-xl shadow-lg p-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -mb-12 -ml-12" />
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                Data Quality Overview
+                Total Rows Processed
               </h3>
               <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                 <ShieldCheck className="text-white" size={24} />
               </div>
             </div>
-
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-white">Overall Data Quality Score</p>
-                <p className="text-4xl font-bold text-white">{dqScoreValue}</p>
-                <p className="text-xs text-white">
-                  Based on valid, invalid, and null cells across all headers.
+                <p className="text-sm text-white">Overall Total Rows</p>
+                <p className="text-4xl font-bold text-white">
+                  {totalRowsValue}
                 </p>
               </div>
-
-              <div className="pt-4 border-t border-white/30 grid grid-cols-2 gap-4">
+              <div className="pt-6 border-t border-white/30 space-y-3">
                 <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                  <p className="text-xs text-white">Bed Rows</p>
-                  <p className="text-2xl font-bold text-white">{bedRows}</p>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs text-white">Clean Rows</span>
+                    <span className="text-sm font-bold text-white">
+                      {cleanRowsValue}
+                    </span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full bg-white transition-all duration-500"
+                      style={{ width: `${cleanRowsShare}%` }}
+                    />
+                  </div>
                 </div>
                 <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                  <p className="text-xs text-white">Towel Rows</p>
-                  <p className="text-2xl font-bold text-white">{towelRows}</p>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs text-white">Raw Rows</span>
+                    <span className="text-sm font-bold text-white">
+                      {rawRowsValue}
+                    </span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full bg-white transition-all duration-500"
+                      style={{ width: `${rawRowsShare}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2 pt-2 text-white bg-white/10 p-2 rounded-lg">
-                <Database size={16} />
-                <span className="text-sm font-medium">
-                  {issueRowsValue} rows with detected issues
-                </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Completeness / Validity by Category */}
         <div className="bg-gradient-to-br from-black to-green rounded-xl shadow-lg p-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -mb-12 -ml-12" />
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                Completeness by Category
+                Completeness
               </h3>
               <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                 <Layers3 className="text-white" size={24} />
@@ -376,108 +346,35 @@ export default function DataHealthDashboard() {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-white">
-                  Overall Validity and Invalidity Score
+                  Overall Validity and Invalidity
                 </p>
-                <p className="text-3xl font-bold text-white">
-                  {validityValue} valid
-                </p>
-                <p className="text-xs text-white mt-1">
-                  Invalid:{" "}
-                  <span className="font-semibold">{invalidityValue}</span>
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-white/30 space-y-3">
-                {/* Bed */}
-                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-white">Bed (Valid)</span>
-                    <span className="text-sm font-bold text-white">
-                      {formatPercent(bedValidPct)}
-                    </span>
-                  </div>
-                  <div className="w-full bg-white/20 rounded-full h-2">
-                    <div
-                      className="h-2 rounded-full bg-white transition-all duration-500"
-                      style={{ width: `${bedValidPct}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Towel */}
-                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-white">Towel (Valid)</span>
-                    <span className="text-sm font-bold text-white">
-                      {formatPercent(towelValidPct)}
-                    </span>
-                  </div>
-                  <div className="w-full bg-white/20 rounded-full h-2">
-                    <div
-                      className="h-2 rounded-full bg-white transition-all duration-500"
-                      style={{ width: `${towelValidPct}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 pt-2 text-white bg-white/10 p-2 rounded-lg">
-                <ShieldCheck size={16} />
-                <span className="text-sm font-medium">
-                  Completeness: {completenessValue}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Country Validity */}
-        <div className="bg-gradient-to-br from-red to-orange rounded-xl shadow-lg p-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -mb-12 -ml-12" />
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                Country Validity
-              </h3>
-              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                <Globe2 className="text-white" size={24} />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-white">Total Countries</p>
                 <p className="text-4xl font-bold text-white">
-                  {activeCountriesCount}
-                </p>
-                <p className="text-xs text-white">
-                  Active product countries with data
+                  {completenessFilledValue}
                 </p>
               </div>
-
-              <div className="pt-4 border-t border-white/30 space-y-3 max-h-[140px] overflow-y-auto pr-2">
+              <div className="pt-6 border-t border-white/30 space-y-3 max-h-[170px] overflow-y-auto pr-2">
                 {topCountries.length > 0 ? (
-                  topCountries.map((country, index) => (
+                  topCountries.map((c, i) => (
                     <div
-                      key={country.value || index}
+                      key={c.value || i}
                       className="bg-white/10 p-3 rounded-lg backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <p className="text-sm font-medium text-white truncate">
-                            {country.label}
+                            {c.label}
                           </p>
                           <p className="text-xs text-white">
-                            {formatInt(country.rows)} rows
+                            {formatInt(c.rows)} rows
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-bold text-white">
-                            {formatPercent(country.valid_pct)}
+                            {formatPercent(c.filled_pct)}
                           </p>
                           <p className="text-xs text-white">
-                            Invalid {formatPercent(country.invalid_pct)}
+                            Valid {formatPercent(c.valid_pct)} • Invalid{" "}
+                            {formatPercent(c.invalid_pct)}
                           </p>
                         </div>
                       </div>
@@ -491,28 +388,74 @@ export default function DataHealthDashboard() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
 
-              <div className="flex items-center gap-2 pt-2 text-white bg-white/10 p-2 rounded-lg">
-                <Globe2 size={16} />
-                <span className="text-sm font-medium">
-                  {totalCountryRowsValue} total rows across countries
-                </span>
+        <div className="bg-gradient-to-br from-sky-600 to-blue rounded-xl shadow-lg p-6 relative overflow-hidden">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                Validity
+              </h3>
+              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                <Globe2 className="text-white" size={24} />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-white">Overall Validity Score</p>
+                <p className="text-4xl font-bold text-white">
+                  {overallValidityValue}
+                </p>
+              </div>
+              <div className="pt-6 border-t border-white/30 space-y-3">
+                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs text-white">
+                      Bed ({bedRows} rows)
+                    </span>
+                    <span className="text-sm font-bold text-white">
+                      {formatPercent(bedValidPct)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full bg-white transition-all duration-500"
+                      style={{ width: `${bedValidPct}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs text-white">
+                      Towel ({towelRows} rows)
+                    </span>
+                    <span className="text-sm font-bold text-white">
+                      {formatPercent(towelValidPct)}
+                    </span>
+                  </div>
+                  <div className="w-full bg-white/20 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full bg-white transition-all duration-500"
+                      style={{ width: `${towelValidPct}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Overall DQ chart */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-gray-200">
           <div>
             <h3 className="text-base md:text-lg font-semibold text-gray-900">
-              Overall Data Quality (last 12 months)
+              Overall Data Quality
             </h3>
             <p className="text-xs text-gray-600 mt-1">
-              Shows the trend of overall data quality scores for the last 12
-              months.
+              Trend of data quality score.
             </p>
           </div>
         </div>
@@ -522,19 +465,17 @@ export default function DataHealthDashboard() {
               data={dqTrendData}
               chartType="line"
               colors={DEFAULT_CHART_COLORS}
-              dimensions={{ height: 260 }}
+              dimensions={{ height: 300, xAxisAngle: 0 }}
               chartConfig={{
-                line: {
-                  strokeWidth: 3,
-                  dotSize: 5,
-                },
+                line: { strokeWidth: 3, dotSize: 5 },
+                tooltipRenderer: ({ active, payload, label }) =>
+                  renderDQTrendTooltip({ active, payload, label }),
               }}
             />
           </div>
         </div>
       </div>
 
-      {/* Monthly Validity Overview */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-gray-200 flex-wrap">
           <div>
@@ -542,28 +483,26 @@ export default function DataHealthDashboard() {
               Monthly Validity Overview
             </h3>
             <p className="text-xs text-gray-600 mt-1">
-              Shows validity trend by month. Use the tabs to switch between all
-              data and individual headers.
+              Switch between all data and individual headers.
             </p>
           </div>
-
           <div className="flex flex-wrap gap-2">
-            {headerTabs.map(tab => {
-              const active = String(selectedHeaderId) === String(tab.id)
+            {headerTabs.map(t => {
+              const active = String(selectedHeaderId) === String(t.id);
               return (
                 <button
-                  key={tab.id}
+                  key={t.id}
                   type="button"
-                  onClick={() => handleHeaderTabClick(tab.id)}
+                  onClick={() => setSelectedHeaderId(t.id)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm transition-all border ${
                     active
                       ? "bg-primary/10 text-primary border-primary/30 shadow-sm"
                       : "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-sm"
                   }`}
                 >
-                  {tab.label}
+                  {t.label}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
@@ -573,22 +512,19 @@ export default function DataHealthDashboard() {
               data={monthlyValidityTrend}
               chartType="line"
               colors={DEFAULT_CHART_COLORS}
-              dimensions={{ height: 260 }}
+              dimensions={{ height: 300, xAxisAngle: 0 }}
               chartConfig={{
-                line: {
-                  strokeWidth: 3,
-                  dotSize: 5,
-                },
-                tooltipRenderer: renderMonthlyTooltip,
+                line: { strokeWidth: 3, dotSize: 5 },
+                tooltipRenderer: ({ active, payload, label }) =>
+                  renderMonthlyTooltip({ active, payload, label }),
               }}
             />
           </div>
         </div>
       </div>
 
-      {/* Data Quality Status by Header */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-8 py-4 border-b border-gray-200">
           <h3 className="text-base md:text-lg font-semibold text-gray-900">
             Data Quality Status by Header
           </h3>
@@ -596,7 +532,7 @@ export default function DataHealthDashboard() {
             Breakdown of valid, invalid, and null percentages for each header.
           </p>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto p-4">
           <table className="w-full min-w-max">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
@@ -626,16 +562,15 @@ export default function DataHealthDashboard() {
                 </tr>
               )}
               {fieldOverview.map(row => {
-                const valid = clampPct(
+                const v = clampPct(
                   typeof row.valid_pct === "number" ? row.valid_pct : 0
-                )
-                const invalid = clampPct(
+                );
+                const inv = clampPct(
                   typeof row.invalid_pct === "number" ? row.invalid_pct : 0
-                )
-                const nullPct = clampPct(
+                );
+                const nul = clampPct(
                   typeof row.null_pct === "number" ? row.null_pct : 0
-                )
-
+                );
                 return (
                   <tr
                     key={row.header?.id}
@@ -644,47 +579,41 @@ export default function DataHealthDashboard() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {row.header?.name || "-"}
                     </td>
-
-                    {/* Valid */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
                       <div className="flex flex-col items-end gap-1">
-                        <span>{formatPercent(valid)}</span>
+                        <span>{formatPercent(v)}</span>
                         <div className="w-28 md:w-32 bg-gray-200 rounded-full h-2 overflow-hidden">
                           <div
                             className="h-2 rounded-full bg-emerald-500 transition-all duration-500"
-                            style={{ width: `${valid}%` }}
+                            style={{ width: `${v}%` }}
                           />
                         </div>
                       </div>
                     </td>
-
-                    {/* Invalid */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
                       <div className="flex flex-col items-end gap-1">
-                        <span>{formatPercent(invalid)}</span>
+                        <span>{formatPercent(inv)}</span>
                         <div className="w-28 md:w-32 bg-gray-200 rounded-full h-2 overflow-hidden">
                           <div
                             className="h-2 rounded-full bg-rose-500 transition-all duration-500"
-                            style={{ width: `${invalid}%` }}
+                            style={{ width: `${inv}%` }}
                           />
                         </div>
                       </div>
                     </td>
-
-                    {/* Null */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
                       <div className="flex flex-col items-end gap-1">
-                        <span>{formatPercent(nullPct)}</span>
+                        <span>{formatPercent(nul)}</span>
                         <div className="w-28 md:w-32 bg-gray-200 rounded-full h-2 overflow-hidden">
                           <div
                             className="h-2 rounded-full bg-slate-400 transition-all duration-500"
-                            style={{ width: `${nullPct}%` }}
+                            style={{ width: `${nul}%` }}
                           />
                         </div>
                       </div>
                     </td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -692,8 +621,10 @@ export default function DataHealthDashboard() {
       </div>
 
       {isLoading && (
-        <div className="text-xs text-gray-500">Loading data health metrics…</div>
+        <div className="text-xs text-gray-500">
+          Loading data health metrics…
+        </div>
       )}
     </div>
-  )
+  );
 }

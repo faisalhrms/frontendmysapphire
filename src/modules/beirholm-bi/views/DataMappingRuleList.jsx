@@ -5,53 +5,70 @@ import DataTable from '@components/datatable/DataTable.jsx'
 import { BEIRHOLM_BI_ROUTES } from '@modules/beirholm-bi/routes.js'
 import { toTitleCase } from '@helpers/formatters.js'
 import MappingModal from '@modules/beirholm-bi/components/MappingModal.jsx'
-import { downloadMappingSample } from '@modules/beirholm-bi/services/dataMappingRuleService.js'
+import { downloadMappingSample, downloadMappingExcel } from '@modules/beirholm-bi/services/dataMappingRuleService.js'
 
 const DataMappingRuleList = () => {
   const [open, setOpen] = useState(false)
   const [key, setKey] = useState(Date.now())
+  const [isDownloading, setIsDownloading] = useState(false)
+
   const refresh = () => setKey(Date.now())
 
-  const join = (arr, fn) => arr.map(fn).join(', ')
+  const columns = [
+    {
+      Header: 'Actions',
+      Cell: ({ row }) => (
+        <Link to={BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_CREATE.path} state={{ id: row.original.id }}>
+          <button className="ti-btn ti-btn-primary ti-btn-sm">
+            <i className="ri-edit-line"></i>
+          </button>
+        </Link>
+      )
+    },
+    { Header: 'Country',       accessor: r => toTitleCase(r.product_country) },
+    { Header: 'Source Header', accessor: r => toTitleCase(r.source_header.name) },
+    { Header: 'Source Value',  accessor: 'source_value' },
+    {
+      Header: 'Mappings',
+      accessor: 'mapped',
+      Cell: ({ value }) => (
+        <div className="flex flex-col">
+          {value.map((m, i) => (
+            <span key={i} className="inline-flex items-center space-x-1">
+              <span className="font-medium">{toTitleCase(m.mapped_header.name)}:</span>
+              <span>{m.mapped_value}</span>
+            </span>
+          ))}
+        </div>
+      )
+    },
+    {
+      Header: 'Created',
+      accessor: 'created_at',
+      Cell: ({ value }) => new Date(value).toLocaleString()
+    }
+  ]
 
-const columns = [
-  {
-    Header: 'Actions',
-    Cell: ({ row }) => (
-      <Link to={BEIRHOLM_BI_ROUTES.DATA_MAPPING_RULE_CREATE.path} state={{ id: row.original.id }}>
-        <button className="ti-btn ti-btn-primary ti-btn-sm">
-          <i className="ri-edit-line"></i>
-        </button>
-      </Link>
-    )
-  },
-  { Header: 'Country',       accessor: r => toTitleCase(r.product_country) },
-  { Header: 'Source Header', accessor: r => toTitleCase(r.source_header.name) },
-  { Header: 'Source Value',  accessor: 'source_value' },
-  {
-    Header: 'Mappings',
-    accessor: 'mapped',
-    Cell: ({ value }) => (
-      <div className="flex flex-col">
-        {value.map((m, i) => (
-          <span key={i} className="inline-flex items-center space-x-1">
-            <span className="font-medium">{toTitleCase(m.mapped_header.name)}:</span>
-            <span>{m.mapped_value}</span>
-          </span>
-        ))}
-      </div>
-    )
-  },
-  {
-    Header: 'Created',
-    accessor: 'created_at',
-    Cell: ({ value }) => new Date(value).toLocaleString()
+  const downloadExcel = async () => {
+    try {
+      setIsDownloading(true)
+      await downloadMappingExcel()
+    } finally {
+      setIsDownloading(false)
+    }
   }
-]
-
 
   const buttons = (
     <>
+      <button
+        type="button"
+        onClick={downloadExcel}
+        disabled={isDownloading}
+        className="hs-dropdown-toggle ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]"
+        title="Download Mapping Rules"
+      >
+        {isDownloading ? <i className="ri-file-excel-2-line animate-spin" /> : <i className="ri-file-excel-2-line" />}
+      </button>
       <button
         className="ti-btn ti-btn-info-full !py-1 !px-2 !text-[0.75rem]"
         onClick={downloadMappingSample}

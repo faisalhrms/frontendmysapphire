@@ -12,9 +12,13 @@ function StatChip({ icon: Icon, label, value, tone = "default" }) {
           : "bg-slate-50 text-slate-700 dark:bg-slate-800/60 dark:text-slate-200"
 
   return (
-    <div className={`rounded-xl px-3 py-2 flex items-center justify-between gap-2 shadow-[0_0_0_1px_rgba(15,23,42,0.03)] ${toneClasses}`}>
+    <div
+      className={`rounded-xl px-3 py-2 flex items-center justify-between gap-2 shadow-[0_0_0_1px_rgba(15,23,42,0.03)] ${toneClasses}`}
+    >
       <div className="flex flex-col">
-        <span className="text-[0.68rem] uppercase tracking-wide opacity-80">{label}</span>
+        <span className="text-[0.68rem] uppercase tracking-wide opacity-80">
+          {label}
+        </span>
         <span className="text-[0.9rem] font-semibold">{value ?? "—"}</span>
       </div>
       <Icon className="w-4 h-4 opacity-60" />
@@ -33,7 +37,9 @@ const LEAVE_STATUSES = [
   "umrah leave",
 ]
 
-export default function AttendanceSummary({ data, ask }) {
+export default function AttendanceSummary({ data: rawData, ask }) {
+  // allow both shapes: {mode, rows,...} or {type:'attendance', data:{...}}
+  const data = rawData?.data ?? rawData
   if (!data) return null
 
   const {
@@ -62,9 +68,25 @@ export default function AttendanceSummary({ data, ask }) {
         const derivedIsPresent =
           s === "present" || s === "exempted" || derivedIsHalfDay
 
-        const isLate =
+        // derive late from short minutes / deltas when not explicitly provided
+        const shortRaw =
+          r.short_minutes ??
+          r.short_delta ??
+          r.total_short_minutes ??
+          r.short_hours
+        const shortVal =
+          shortRaw !== null && shortRaw !== undefined
+            ? Number(shortRaw)
+            : 0
+
+        const derivedIsLate =
           r.is_late ??
-          (derivedIsHalfDay ? true : false)
+          (derivedIsHalfDay
+            ? true
+            : shortVal > 0 &&
+              !derivedIsAbsent &&
+              !derivedIsLeave &&
+              !derivedIsRest)
 
         const workedHours =
           r.worked_hours != null
@@ -96,7 +118,7 @@ export default function AttendanceSummary({ data, ask }) {
           is_rest: r.is_rest ?? derivedIsRest,
           is_half_day: r.is_half_day ?? derivedIsHalfDay,
           is_present: r.is_present ?? derivedIsPresent,
-          is_late: isLate,
+          is_late: derivedIsLate,
         }
       }),
     [sourceRecords],
@@ -105,7 +127,9 @@ export default function AttendanceSummary({ data, ask }) {
   const derivedStats = useMemo(() => {
     const s = {
       total_records: records.length,
-      unique_employees: new Set(records.map(r => r.emp_code || r.employee_id)).size,
+      unique_employees: new Set(
+        records.map(r => r.emp_code || r.employee_id || r.employee),
+      ).size,
       present_records: 0,
       absent_records: 0,
       leave_records: 0,
@@ -204,7 +228,7 @@ export default function AttendanceSummary({ data, ask }) {
               <tbody>
                 {limitedRecords.map((row, idx) => (
                   <tr
-                    key={`${row.emp_code}-${row.date}-${idx}`}
+                    key={`${row.emp_code}-${row.date || idx}-${idx}`}
                     className="border-b border-slate-100 dark:border-slate-700 last:border-b-0"
                   >
                     <td className="px-2 py-1 whitespace-nowrap">
@@ -216,7 +240,9 @@ export default function AttendanceSummary({ data, ask }) {
                     <td className="px-2 py-1 whitespace-nowrap text-[0.72rem] text-slate-600">
                       {row.department || "—"}
                     </td>
-                    <td className="px-2 py-1 whitespace-nowrap">{row.date}</td>
+                    <td className="px-2 py-1 whitespace-nowrap">
+                      {row.date || row.attendance_date || "—"}
+                    </td>
                     <td className="px-2 py-1">
                       <span
                         className={`inline-flex items-center rounded-full px-2 py-[2px] text-[0.68rem] ${
@@ -250,7 +276,8 @@ export default function AttendanceSummary({ data, ask }) {
             </table>
             {records.length > limitedRecords.length ? (
               <div className="px-3 py-2 text-[0.7rem] text-slate-500 bg-slate-50 dark:bg-slate-900/40">
-                Showing {limitedRecords.length} of {records.length} records. Ask the bot to export or drill down.
+                Showing {limitedRecords.length} of {records.length} records. Ask the bot
+                to export or drill down.
               </div>
             ) : null}
           </div>

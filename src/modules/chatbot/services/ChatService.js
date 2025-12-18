@@ -1,18 +1,45 @@
 import api from "@config/axiosConfig.js"
 import store from "@redux/store.jsx"
+import { logout } from "@modules/auth/redux/authSlice.js"
 
 const abs = path => {
   const base = (api.defaults.baseURL || "").replace(/\/$/, "")
   return `${base}/${path.replace(/^\//, "")}`
 }
 
-const baseAuthHeaders = () => {
-  const token = store.getState()?.auth?.tokens?.access_token
-  const h = {
+const buildAuthHeaders = () => {
+  const state = store.getState()
+  const token = state?.auth?.tokens?.access_token
+
+  const headers = {
     "Content-Type": "application/json",
   }
-  if (token) h.Authorization = `Bearer ${token}`
-  return h
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  } else {
+    window.location.href = "/"
+  }
+
+  return headers
+}
+
+const handleAuthStatus = status => {
+  if (status === 401) {
+    store.dispatch(logout())
+    window.location.href = "/"
+    throw new Error("Unauthorized. Redirecting to login.")
+  }
+
+  if (status === 403) {
+    window.location.href = "/error/403"
+    throw new Error("Permission Denied.")
+  }
+
+  if (status === 419) {
+    window.location.href = `${import.meta.env.BASE_URL}change-password`
+    throw new Error("Password Expired.")
+  }
 }
 
 const buildPayload = (
@@ -80,7 +107,6 @@ const ChatService = {
         competitorSites,
         competitorChecks,
       ),
-      { headers: baseAuthHeaders() },
     ),
 
   stream: ({
@@ -100,7 +126,7 @@ const ChatService = {
     const run = async () => {
       try {
         const headers = {
-          ...baseAuthHeaders(),
+          ...buildAuthHeaders(),
           Accept: "text/event-stream",
         }
 
@@ -125,74 +151,84 @@ const ChatService = {
           cache: "no-store",
         })
 
-        if (!res.ok || !res.body) {
+        if (!res.ok) {
+          handleAuthStatus(res.status)
+
           let text = ""
           try {
             text = await res.text()
-          } catch {}
+          } catch {
+          }
           onEvent({ type: "error", message: text || `HTTP ${res.status}` })
           onEvent({ type: "done" })
           return
         }
 
-        const reader = res.body.getReader()
-        const decoder = new TextDecoder()
-
-        let buf = ""
-        let eventData = ""
-
-        const flushEvent = () => {
-          const payload = eventData.trim()
-          if (!payload) return
-          eventData = ""
-          let ev
-          try {
-            ev = JSON.parse(payload)
-          } catch {
-            return
-          }
-          try {
-            onEvent(ev)
-          } catch {
-            // ignore handler errors to keep stream alive
-          }
+        if (!res.body) {
+          onEvent({
+            type: "error",
+            message: "Streaming not supported by the browser/response.",
+          })
+          onEvent({ type: "done" })
+          return
         }
+
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder("utf-8")
+      let buffer = ""
+
+      const emitBlock = (block) => {
+        const lines = block.split(/\r?\n/)
+        const dataLines = []
+
+        for (const line of lines) {
+          if (!line) continue
+          if (line.startsWith(":")) continue
+          if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart())
+        }
+
+        if (!dataLines.length) return
+
+        const data = dataLines.join("\n")
+        try {
+          onEvent(JSON.parse(data))
+        } catch (e) {
+          console.error("Bad SSE JSON:", data, e)
+        }
+        console.log("SSE block at", new Date().toISOString(), block.slice(0, 80))
+
+      }
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
 
         while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
+          const idx = buffer.search(/\r?\n\r?\n/)
+          if (idx === -1) break
 
-          buf += decoder.decode(value, { stream: true })
-          buf = buf.replace(/\r\n/g, "\n")
+          const delim = buffer.slice(idx).match(/^\r?\n\r?\n/)[0].length
+          const block = buffer.slice(0, idx)
+          buffer = buffer.slice(idx + delim)
 
-          let nl
-          while ((nl = buf.indexOf("\n")) !== -1) {
-            const line = buf.slice(0, nl)
-            buf = buf.slice(nl + 1)
-
-            const trimmed = line.trimEnd()
-
-            if (trimmed === "") {
-              flushEvent()
-              continue
-            }
-
-            if (!trimmed.startsWith("data:")) {
-              continue
-            }
-
-            const dataPart = trimmed.slice(5).trim()
-            if (!dataPart) continue
-
-            eventData += dataPart
-          }
+          if (block.trim()) emitBlock(block)
         }
+      }
 
-        if (eventData) flushEvent()
+      // flush remaining bytes
+      buffer += decoder.decode()
+      if (buffer.trim()) emitBlock(buffer)
 
-        onEvent({ type: "done" })
+      onEvent({ type: "done" })
+
+
+
       } catch (err) {
-        onEvent({ type: "error", message: String(err || "Network error") })
+        if (err.name !== 'AbortError') {
+          onEvent({ type: "error", message: String(err || "Network error") })
+        }
         onEvent({ type: "done" })
       }
     }
