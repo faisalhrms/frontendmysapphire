@@ -7,16 +7,16 @@ import iconswhite from "@assets/images/company-logos/iconswhite.png";
 import useDarkMode from "@redux/common/useDarkMode.js";
 import { products } from "@modules/inlay/ProductData/productData.js";
 import EmptyState from "@components/EmptyState.jsx";
-
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules"; // Removed Autoplay
+import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import Image_not_available from "@assets/images/inlay-images/No-image-available.jpg"
+
 
 export default function PublicInlay() {
     const { code } = useParams();
     const isDark = useDarkMode();
-    console.log(isDark)
     const product = products[code];
 
     if (!product) {
@@ -39,10 +39,11 @@ export default function PublicInlay() {
     const allImages = import.meta.glob("@assets/images/inlay-images/*.jpg", {
         eager: true,
     });
+
     const productImages = Object.keys(allImages)
         .filter((path) => {
-            const fileName = path.split("/").pop(); // Get only file name
-            return fileName.startsWith(`${code}-`); // Exact match only
+            const fileName = path.split("/").pop();
+            return fileName.startsWith(`${code}-`);
         })
         .sort((a, b) => {
             const getNum = (p) => {
@@ -53,65 +54,71 @@ export default function PublicInlay() {
         })
         .map((path) => allImages[path].default);
 
-
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
             <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
-
                 {/* Left Section */}
                 <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-950 order-2 lg:order-1">
                     <div className="relative w-full flex flex-col items-center">
                         <div className="flex flex-col items-center mb-6 lg:hidden mt-4">
-                            <img
-                                src={isDark ? sapphirew : sapphireb}
-                                alt="Logo"
-                                className="h-10"
-                            />
-
+                            <img src={isDark ? sapphirew : sapphireb} alt="Logo" className="h-10" />
                             <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 mt-3 leading-tight font-bold">
                                 {product.name}
                             </h2>
                         </div>
 
                         <Swiper
-                            modules={[Navigation]} // No Autoplay
-                            loop={true}
+                            modules={[Navigation]}
+                            loop={productImages.length > 1} // Loop only if more than 1 image
                             navigation={{
                                 nextEl: ".custom-next",
                                 prevEl: ".custom-prev",
                             }}
                             className="w-full"
                         >
-                            {productImages.map((src, index) => (
-                                <SwiperSlide key={index}>
-                                    <img
-                                        src={src}
-                                        alt={`Slide ${index + 1}`}
-                                        className="w-full object-contain"
-                                    />
+                            {productImages.length > 0 ? (
+                                productImages.map((src, index) => (
+                                    <SwiperSlide key={index}>
+                                        <img
+                                            src={src}
+                                            alt={`Slide ${index + 1}`}
+                                            className="w-full h-full object-contain"
+                                        />
+                                    </SwiperSlide>
+                                ))
+                            ) : (
+                                <SwiperSlide>
+                                    <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-800">
+                                        <img
+                                            src={Image_not_available}
+                                            alt="No Image Available"
+                                            className="max-h-full max-w-full object-contain opacity-70"
+                                        />
+                                    </div>
                                 </SwiperSlide>
-                            ))}
+                            )}
 
-                            <button className="custom-prev absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
-                                <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-                            </button>
-                            <button className="custom-next absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
-                                <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-                            </button>
+                            {/* Navigation Buttons - Show only if there are real images */}
+                            {productImages.length > 1 && (
+                                <>
+                                    <button className="custom-prev absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
+                                        <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+                                    </button>
+                                    <button className="custom-next absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">
+                                        <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+                                    </button>
+                                </>
+                            )}
                         </Swiper>
                     </div>
 
+                    {/* Care Instructions */}
                     <div className="w-full px-6 py-4 border-gray-200 dark:border-gray-700">
                         <h3 className="text-center text-sm text-black dark:text-white gotham-medium mb-2">
                             CARE INSTRUCTIONS
                         </h3>
                         <div className="flex justify-center mb-4">
-                            <img
-                                src={isDark ? iconswhite : iconsblack}
-                                alt="Care Icons"
-                                className="w-20"
-                            />
+                            <img src={isDark ? iconswhite : iconsblack} alt="Care Icons" className="w-20" />
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 text-xs text-gray-700 dark:text-gray-200 max-w-md mx-auto">
                             <ul className="list-disc pl-5">
@@ -126,17 +133,12 @@ export default function PublicInlay() {
                     </div>
                 </div>
 
-                {/* Right Section */}
+                {/* Right Section - Desktop Only */}
                 <div className="flex flex-col justify-between p-10 order-1 lg:order-2 hidden lg:flex">
                     <div>
                         <div className="flex flex-col items-center mb-10">
-                            <img
-                                src={isDark ? sapphirew : sapphireb}
-                                alt="Logo"
-                                className="h-10"
-                            />
+                            <img src={isDark ? sapphirew : sapphireb} alt="Logo" className="h-10" />
                         </div>
-
                         <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 mb-10 leading-tight whitespace-pre-line">
                             {product.name}
                         </h2>

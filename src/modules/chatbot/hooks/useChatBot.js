@@ -330,22 +330,23 @@ export default function useChatBot() {
     if (flushTimerRef.current) return
     const now = performance.now()
     const delay = Math.max(0, FLUSH_MIN_MS - (now - lastFlushTsRef.current))
+
     flushTimerRef.current = window.setTimeout(() => {
       flushTimerRef.current = 0
-      if (tagDepthRef.current > 0) {
-        scheduleFlush(i)
-        return
-      }
+
       const p = pendingHtmlRef.current
       if (!p) return
+
       pendingHtmlRef.current = ""
       lastFlushTsRef.current = performance.now()
+
       setMessages(prev => {
         const c = [...prev]
         if (!c[i]) return prev
         c[i] = { ...c[i], html: (c[i].html || "") + p }
         return c
       })
+
       if (!rafTickRef.current) {
         rafTickRef.current = requestAnimationFrame(() => {
           setTick(t => t + 1)
@@ -354,6 +355,7 @@ export default function useChatBot() {
       }
     }, delay)
   }
+
 
   const onDeltaChunk = (i, text) => {
     for (let k = 0; k < text.length; k++) {

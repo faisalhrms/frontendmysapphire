@@ -173,55 +173,58 @@ const ChatService = {
           return
         }
 
-        const reader = res.body.getReader()
-        const decoder = new TextDecoder()
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder("utf-8")
+      let buffer = ""
 
-        let buffer = ""
+      const emitBlock = (block) => {
+        const lines = block.split(/\r?\n/)
+        const dataLines = []
 
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-
-          // Decode the chunk and add to buffer
-          buffer += decoder.decode(value, { stream: true })
-
-          // Process all complete messages in the buffer
-          // SSE format: "data: {...}\n\n"
-          let boundary
-          while ((boundary = buffer.indexOf('\n\n')) !== -1) {
-            // Extract one complete message
-            const message = buffer.slice(0, boundary)
-            buffer = buffer.slice(boundary + 2) // Remove message + "\n\n"
-
-            // Process the message
-            const lines = message.split('\n')
-            let data = ''
-
-            for (const line of lines) {
-              if (line.startsWith('data:')) {
-                // Extract data after "data:" (with or without space)
-                data = line.slice(5).trimStart()
-                break
-              } else if (line.startsWith(':')) {
-                // Comment/heartbeat - ignore
-                continue
-              }
-            }
-
-            // Parse and emit the event
-            if (data) {
-              try {
-                const event = JSON.parse(data)
-                onEvent(event)
-              } catch (e) {
-                console.error('Failed to parse SSE data:', data, e)
-              }
-            }
-          }
+        for (const line of lines) {
+          if (!line) continue
+          if (line.startsWith(":")) continue
+          if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart())
         }
 
-        // Send done event
-        onEvent({ type: "done" })
+        if (!dataLines.length) return
+
+        const data = dataLines.join("\n")
+        try {
+          onEvent(JSON.parse(data))
+        } catch (e) {
+          console.error("Bad SSE JSON:", data, e)
+        }
+        console.log("SSE block at", new Date().toISOString(), block.slice(0, 80))
+
+      }
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+
+        while (true) {
+          const idx = buffer.search(/\r?\n\r?\n/)
+          if (idx === -1) break
+
+          const delim = buffer.slice(idx).match(/^\r?\n\r?\n/)[0].length
+          const block = buffer.slice(0, idx)
+          buffer = buffer.slice(idx + delim)
+
+          if (block.trim()) emitBlock(block)
+        }
+      }
+
+      // flush remaining bytes
+      buffer += decoder.decode()
+      if (buffer.trim()) emitBlock(buffer)
+
+      onEvent({ type: "done" })
+
+
+
       } catch (err) {
         if (err.name !== 'AbortError') {
           onEvent({ type: "error", message: String(err || "Network error") })
