@@ -1,274 +1,297 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import api from "@config/axiosConfig";
+import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 
-export default function LmsCourse() {
-    const [filters, setFilters] = useState({});
-    const [showModal, setShowModal] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [title, setTitle] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [existingFileName, setExistingFileName] = useState("");
-    const [reloadKey, setReloadKey] = useState(0);
+const LEVELS = ["L1", "L2", "L3"];
 
-    const columns = [
-        { accessor: "title", Header: "Course Title" },
-        { accessor: "zip_file", Header: "ZIP File" },
-        { accessor: "extracted_path", Header: "Extracted Folder" },
-        { accessor: "video_file", Header: "Video File" },
-        {
-            Header: "Actions",
-            accessor: "id",
-            disableSortBy: true,
-            Cell: ({ row }) => (
-                <div className="flex justify-center space-x-2">
-                    <button
-                        onClick={() => handleEdit(row.original.id)}
-                        className="ti-btn ti-btn-primary ti-btn-sm flex items-center justify-center"
-                    >
-                        <i className="ri-edit-line text-lg"></i>
+function normalizeDrfError(err) {
+    const data = err?.response?.data;
+    if (data?.message) return data.message;
+
+    if (data?.errors && typeof data.errors === "object") {
+        const parts = [];
+        for (const [field, msgs] of Object.entries(data.errors)) {
+            if (Array.isArray(msgs)) parts.push(`${field}: ${msgs.join(", ")}`);
+            else parts.push(`${field}: ${msgs}`);
+        }
+        return parts.join("\n");
+    }
+    return "Something went wrong.";
+}
+
+function Modal({ open, title, children, onClose }) {
+    if (!open) return null;
+    return (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+            <div className="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
+                <div className="flex items-center justify-between border-b px-5 py-4">
+                    <h2 className="text-lg font-semibold">{title}</h2>
+                    <button onClick={onClose} className="rounded-xl px-3 py-1 hover:bg-gray-100">
+                        ✕
                     </button>
                 </div>
-            ),
+                <div className="p-5">{children}</div>
+            </div>
+        </div>
+    );
+}
+
+const Badge = ({ ok, children }) => (
+    <span
+        className={[
+            "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
+            ok ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700",
+        ].join(" ")}
+    >
+    {children}
+  </span>
+);
+
+const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
+
+export default function CoursesPage() {
+    const tableRef = useRef(null);
+
+    const [selected, setSelected] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    const {
+        control,
+        register,
+        setValue,
+        reset,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            title: "",
+            description: "",
+            level: "L1",
+            is_active: true,
+            scorm_package_id: null,
         },
-    ];
+    });
 
-    const handleEdit = async (id) => {
+    const reloadTable = () => {
+        tableRef.current?.reload?.();
+        tableRef.current?.refresh?.();
+        tableRef.current?.fetchData?.();
+    };
+
+    const openCreate = () => {
+        setSelected(null);
+        reset({
+            title: "",
+            description: "",
+            level: "L1",
+            is_active: true,
+            scorm_package_id: null,
+        });
+        setOpen(true);
+    };
+
+    const openEdit = (course) => {
+        setSelected(course);
+        reset({
+            title: course?.title ?? "",
+            description: course?.description ?? "",
+            level: course?.level ?? "L1",
+            is_active: course?.is_active ?? true,
+            scorm_package_id: course?.scorm_package?.id ?? null,
+        });
+        setOpen(true);
+    };
+
+    const onSubmit = async (values) => {
+        setSaving(true);
         try {
-            const res = await api.get(`/lms/course/${id}/`);
-            const course = res.data.data;
+            const payload = {
+                title: values.title.trim(),
+                description: values.description?.trim() || null,
+                level: values.level,
+                is_active: !!values.is_active,
+                scorm_package_id: values.scorm_package_id || null, // unlink if cleared
+            };
 
-            setTitle(course.title || "");
-
-            if (course.zip_file) {
-                let fileName = course.zip_file;
-                if (typeof course.zip_file === 'string') {
-                    fileName = course.zip_file.split('/').pop();
-                    fileName = fileName.split('\\').pop();
-                }
-                setExistingFileName(fileName);
+            if (selected?.id) {
+                await api.put(`/lms/courses/${selected.id}/`, payload);
             } else {
-                setExistingFileName("");
+                await api.post("/lms/courses/", payload);
             }
 
-            setSelectedFile(null);
-            setEditingId(id);
-            setShowModal(true);
-        } catch (err) {
-            console.error(err);
+            setOpen(false);
+            reloadTable();
+        } catch (e) {
+            console.error("Save failed", e);
+            alert(normalizeDrfError(e));
+        } finally {
+            setSaving(false);
         }
     };
 
-    const handleSave = async () => {
-        if (!title.trim()) {
-            alert("Please enter a course title");
-            return;
-        }
+    const columns = useMemo(
+        () => [
+            { Header: "ID", accessor: "id", width: 80 },
+            { Header: "Title", accessor: "title" },
+            { Header: "Slug", accessor: "slug" },
+            {
+                Header: "Level",
+                accessor: "level",
+                Cell: ({ value }) => <Badge ok>{value ?? "—"}</Badge>,
+                width: 120,
+            },
+            {
+                Header: "Active",
+                accessor: "is_active",
+                Cell: ({ value }) => <Badge ok={!!value}>{value ? "Yes" : "No"}</Badge>,
+                width: 120,
+            },
+            {
+                Header: "SCORM",
+                accessor: "scorm_package.title",
+                Cell: ({ row }) => {
+                    const sp = row.original?.scorm_package;
+                    return sp ? `#${sp.id} — ${sp.title ?? "SCORM"}` : "—";
+                },
+            },
+            {
+                Header: "Created",
+                accessor: "created_at",
+                Cell: ({ value }) => formatDate(value),
+            },
+            {
+                Header: "Actions",
+                accessor: "actions",
+                disableSortBy: true,
+                width: 160,
+                Cell: ({ row }) => (
+                    <button onClick={() => openEdit(row.original)} className="ti-btn ti-btn-primary ti-btn-sm">
+                        <i className="ri-edit-line"></i>
+                    </button>
+                ),
+            },
+        ],
+        []
+    );
 
-        setLoading(true);
-        try {
-            const formData = new FormData();
-            formData.append("title", title);
-
-            if (selectedFile) {
-                formData.append("zip_file", selectedFile);
-            }
-
-            if (editingId) {
-                await api.put(`/lms/course/${editingId}/`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
-            } else {
-
-                await api.post("/lms/course/", formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
-            }
-
-            setReloadKey(prev => prev + 1);
-
-            setShowModal(false);
-            setEditingId(null);
-            setTitle("");
-            setSelectedFile(null);
-            setExistingFileName("");
-            setLoading(false);
-
-        } catch (err) {
-            console.error("Save error:", err);
-
-            setLoading(false);
-        }
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setSelectedFile(file);
-        }
-    };
-
-    const clearFile = () => {
-        setSelectedFile(null);
-        const fileInput = document.querySelector('input[type="file"]');
-        if (fileInput) fileInput.value = "";
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-        setEditingId(null);
-        setTitle("");
-        setSelectedFile(null);
-        setExistingFileName("");
-        setLoading(false);
-    };
-
-    const buttons = [
-        <button
-            key="add-course"
-            onClick={() => {
-                setShowModal(true);
-                setEditingId(null);
-                setTitle("");
-                setSelectedFile(null);
-                setExistingFileName("");
-            }}
-            className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-        >
-            <i className="ri-add-line font-semibold align-middle"></i> Add Course
-        </button>,
-    ];
+    // ✅ Buttons shown inside DataTable header (right side)
+    const buttons = (
+        <div className="flex space-x-2">
+            <button
+                onClick={openCreate}
+                type="button"
+                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+            >
+                <i className="ri-add-line font-semibold align-middle"></i> Create Course
+            </button>
+        </div>
+    );
 
     return (
         <div className="p-4">
-            <h2 className="text-xl font-bold mb-4">LMS Courses</h2>
+            {/* ✅ DataTable header will show title + buttons like your UserList */}
+            <DataTable
+                ref={tableRef}
+                columns={columns}
+                title="LMS Courses"
+                buttons={buttons}
+                apiUrl="/lms/courses/datatable/"
+            />
 
-            {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 dark:text-gray-200 dark:bg-bodybg">
-                        <div className="ti-modal-header flex justify-between items-center p-4 border-b">
-                            <h6 className="modal-title text-lg font-semibold">
-                                {editingId ? "Edit Course" : "Add Course"}
-                            </h6>
-                            <button
-                                type="button"
-                                className="text-gray-500 hover:text-gray-700 text-xl"
-                                onClick={closeModal}
-                                disabled={loading}
-                            >
-                                <i className="ri-close-line"></i>
-                            </button>
+            {/* Modal */}
+            <Modal
+                open={open}
+                title={selected?.id ? `Edit Course #${selected.id}` : "Create New Course"}
+                onClose={() => setOpen(false)}
+            >
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    <div>
+                        <label className="form-label">Title *</label>
+                        <input
+                            className="form-control w-full !rounded-sm border"
+                            placeholder="e.g. Fire Safety Training"
+                            {...register("title", { required: "Title is required" })}
+                        />
+                        {errors.title && <p className="text-xs text-red-600 mt-1">{errors.title.message}</p>}
+                    </div>
+
+                    <div>
+                        <label className="form-label">Description</label>
+                        <textarea
+                            rows={3}
+                            className="form-control w-full !rounded-sm border"
+                            placeholder="Brief description..."
+                            {...register("description")}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label className="form-label">Level</label>
+                            <select className="form-control w-full !rounded-sm border" {...register("level")}>
+                                {LEVELS.map((lvl) => (
+                                    <option key={lvl} value={lvl}>
+                                        {lvl}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
-                        <div className="ti-modal-body p-4">
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium  mb-1">
-                                        Course Title *
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm dark:text-gray-200 dark:bg-bodybg"
-                                        placeholder="Enter course title"
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        disabled={loading}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium  mb-1">
-                                        ZIP File
-                                    </label>
-                                    <input
-                                        type="file"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2 dark:text-gray-200 dark:bg-bodybg"
-                                        onChange={handleFileChange}
-                                        disabled={loading}
-                                        accept=".zip,.rar,.7z"
-                                    />
-
-                                    {editingId && existingFileName && !selectedFile && (
-                                        <div className="mt-2 p-3 bg-blue-50 rounded border border-blue-200">
-                                            <p className="text-sm text-blue-700 mb-1">
-                                                <i className="ri-file-zip-line mr-1"></i>
-                                                Current file: <span className="font-medium">{existingFileName}</span>
-                                            </p>
-                                            <p className="text-xs text-blue-600">
-                                                Upload a new file above to replace this one
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {selectedFile && (
-                                        <div className="mt-2 p-3 bg-green-50 rounded border border-green-200">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <p className="text-sm text-green-700 mb-1">
-                                                        <i className="ri-file-upload-line mr-1"></i>
-                                                        New file: <span className="font-medium">{selectedFile.name}</span>
-                                                    </p>
-                                                    <p className="text-xs text-green-600">
-                                                        Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                                                    </p>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={clearFile}
-                                                    className="text-red-500 hover:text-red-700 text-sm"
-                                                    disabled={loading}
-                                                >
-                                                    <i className="ri-close-circle-line text-lg"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="ti-modal-footer flex justify-end gap-2 p-4 border-t">
-                            <button
-                                type="button"
-                                onClick={closeModal}
-                                disabled={loading}
-                                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleSave}
-                                disabled={loading || !title.trim()}
-                                className={`phs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]${
-                                    loading || !title.trim()
-                                        ? 'ti-btn-primary-full  cursor-not-allowed'
-                                        : 'bti-btn-primary-full  hover:bg-blue-700'
-                                }`}
-                            >
-                                {loading ? (
-                                    <span className="flex items-center">
-                                        <i className="ri-loader-4-line animate-spin mr-2"></i>
-                                        Saving...
-                                    </span>
-                                ) : (
-                                    editingId ? "Update Course" : "Add Course"
-                                )}
-                            </button>
+                        <div className="flex items-center gap-3 mt-6">
+                            <input type="checkbox" className="h-5 w-5 rounded border-gray-300" {...register("is_active")} />
+                            <label className="text-sm font-medium text-gray-700">Active</label>
                         </div>
                     </div>
-                </div>
-            )}
 
-            <DataTable
-                key={reloadKey}
-                columns={columns}
-                title="Courses"
-                buttons={buttons}
-                apiUrl="/lms/course/datatable"
-                filter={filters}
-            />
+                    <div>
+                        <FormAsyncSelect
+                            isMulti={false}
+                            name="scorm_package_id"
+                            control={control}
+                            errors={errors}
+                            placeholder="Search SCORM package"
+                            preselectedOptions={
+                                selected?.scorm_package
+                                    ? [
+                                        {
+                                            value: selected.scorm_package.id,
+                                            label: `${selected.scorm_package.title ?? "SCORM"} (${selected.scorm_package.scorm_version ?? ""})`,
+                                        },
+                                    ]
+                                    : []
+                            }
+                            allowSaveNewOption={false}
+                            className="w-full"
+                            apiUrl={`/select/lms/scorm-packages/`}
+                            queryKeyBase={`lms_scorm_packages`}
+                            needObject={false}
+                            rules={{ required: false }}
+                            isClearable={true}
+                            onSelectChange={(opt) => setValue("scorm_package_id", opt?.value ?? null)}
+                        />
+
+                        {errors.scorm_package_id && <p className="text-xs text-red-600 mt-1">{errors.scorm_package_id.message}</p>}
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4 border-t">
+                        <button
+                            type="button"
+                            onClick={() => setOpen(false)}
+                            disabled={saving}
+                            className="ti-btn ti-btn-primary"
+                        >
+                            Cancel
+                        </button>
+
+                        <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-medium rounded-md ti-btn-primary-full">
+                            {saving ? "Saving..." : selected?.id ? "Update Course" : "Create Course"}
+                        </button>
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 }

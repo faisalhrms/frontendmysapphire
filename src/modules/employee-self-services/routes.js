@@ -12,6 +12,7 @@ import EditObjective from "@modules/employee-self-services/objectives/views/Edit
 import ObjectiveDetail from "@modules/employee-self-services/objectives/views/ObjectiveDetail.jsx";
 import TeamObjectivesList from "@modules/employee-self-services/objectives/views/TeamObjectivesList.jsx";
 import BrandBook from "@modules/employee-self-services/brand-book/views/BrandBook.jsx";
+import CourseOffering from "@modules/employee-self-services/course-learning/views/CourseOffering.jsx";
 export const SELF_SERVICES_ROUTES = {
     SERVICES: {
         READ: {
@@ -68,6 +69,12 @@ export const SELF_SERVICES_ROUTES = {
             permission:"user.view_ess_modules"
 
         }
+        ,
+        COURSE_LEARING:{
+            path: "/module/ess/course-learing",
+            // permission:"user.view_ess_modules"
+
+        },
 
     }
 };
@@ -136,5 +143,10 @@ export const MODULE_ROUTES = [
         path:SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.path,
         component:BrandBook,
         permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
+    },
+    {
+        path:SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
+        component:CourseOffering,
+        // permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
     }
 ];

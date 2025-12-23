@@ -1,21 +1,19 @@
-import React from 'react';
-import LmsCourse from "@modules/lms/components/LmsCourse.jsx";
-import {PlusCircle} from "lucide-react";
+import React from "react";
+import { PlusCircle } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
+import LmsScorm from "@modules/lms/components/scorm-courses/LmsScorm.jsx";
 
-
-const Lms = () => {
+const ScromCourse = () => {
     return (
         <>
             <IconPageHeader
-                heading="Create LMS Course"
+                heading="SCORM Packages"
                 description="Add a new course and organize learning content for learners."
                 icon={PlusCircle}
             />
-            <LmsCourse />
+            <LmsScorm showHeader={false} />
         </>
     );
 };
 
-export default Lms;
-
+export default ScromCourse;

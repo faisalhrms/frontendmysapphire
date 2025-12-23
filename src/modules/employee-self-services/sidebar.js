@@ -61,6 +61,14 @@ export const sidebarMenu = [
                 SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission,
             ),
             generateSidebarItem(
+                SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
+                "link",
+                "Course Learing",
+                7,
+                "",
+                SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.permission
+            ),
+            generateSidebarItem(
                 "",
                 "sub",
                 "PAS",
@@ -84,6 +92,7 @@ export const sidebarMenu = [
                         "",
                         SELF_SERVICES_ROUTES.SERVICES.OBJECTIVES.TEAM.permission
                     ),
+
                 ]
             )
 
