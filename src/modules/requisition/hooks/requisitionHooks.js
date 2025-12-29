@@ -127,13 +127,10 @@ export const useRequisitionApplicantsBulkStatus = (requisitionId) => {
     const [selectedIds, setSelectedIds] = useState([]);
     const [submitting, setSubmitting] = useState(false);
 
-    // ✅ track which button/action is running (so loader shows only there)
-    const [pendingStatus, setPendingStatus] = useState(null); // "shortlisted" | "rejected" | "submitted" | null
+    // ✅ track which button/action is running
+    const [pendingStatus, setPendingStatus] = useState(null);
 
-    const isSelected = useCallback(
-        (id) => selectedIds.includes(id),
-        [selectedIds]
-    );
+    const isSelected = useCallback((id) => selectedIds.includes(id), [selectedIds]);
 
     const toggleOne = useCallback((id) => {
         setSelectedIds((prev) =>
@@ -155,20 +152,40 @@ export const useRequisitionApplicantsBulkStatus = (requisitionId) => {
     }, []);
 
     const bulkUpdateStatus = useCallback(
-        async ({ status, applicationIds }) => {
+        async ({ status, is_shortlisted, applicationIds, actionKey }) => {
             const ids = applicationIds?.length ? applicationIds : selectedIds;
 
             if (!requisitionId) throw new Error("Missing requisitionId");
-            if (!status) throw new Error("Missing status");
             if (!ids?.length) throw new Error("Please select at least one applicant.");
 
+            const hasStatus =
+                status !== undefined && status !== null && String(status).trim() !== "";
+            const hasShortlist = is_shortlisted !== undefined && is_shortlisted !== null;
+
+            if (!hasStatus && !hasShortlist) {
+                throw new Error("Missing status or shortlist flag.");
+            }
+
+            // ✅ loader key
+            const computedKey = hasStatus
+                ? String(status)
+                : is_shortlisted
+                    ? "shortlisted"
+                    : "unshortlisted";
+
             setSubmitting(true);
-            setPendingStatus(status);
+            setPendingStatus(actionKey || computedKey);
 
             try {
+                const payload = {
+                    application_ids: ids,
+                    ...(hasStatus ? { status } : {}),
+                    ...(hasShortlist ? { is_shortlisted } : {}),
+                };
+
                 const { data } = await api.patch(
                     `/requisitions/${requisitionId}/applicants/status/bulk/`,
-                    { status, application_ids: ids }
+                    payload
                 );
                 return data;
             } finally {
@@ -183,7 +200,7 @@ export const useRequisitionApplicantsBulkStatus = (requisitionId) => {
         selectedIds,
         setSelectedIds,
         submitting,
-        pendingStatus, // ✅ expose it
+        pendingStatus,
         isSelected,
         toggleOne,
         toggleAllOnPage,

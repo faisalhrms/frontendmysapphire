@@ -5,15 +5,30 @@ import { getBadgeClasses } from "@helpers/badges.js";
 
 const ApplicantSummary = ({ applicant }) => {
     const fullName =
-        [applicant.first_name, applicant.last_name].filter(Boolean).join(" ") || "—";
+        applicant.full_name ||
+        [applicant.first_name, applicant.last_name].filter(Boolean).join(" ") ||
+        "—";
 
     return (
         <div className="box custom-box">
-            <div className="box-header justify-between">
+            <div className="box-header justify-between flex items-center">
                 <div className="box-title">Applicant Summary</div>
-                <span className={getBadgeClasses(applicant.status)}>
-          {toTitleCase((applicant.status || "").replaceAll("_", " "))}
-        </span>
+
+                <div className="flex items-center gap-2">
+                    <span className={getBadgeClasses(applicant.status)}>
+                        {toTitleCase((applicant.status || "").replaceAll("_", " "))}
+                    </span>
+
+                    {applicant.is_shortlisted ? (
+                        <span className="badge !rounded-full bg-success/10 text-success">
+                            Shortlisted
+                        </span>
+                    ) : (
+                        <span className="badge !rounded-full bg-light text-default">
+                            Not Shortlisted
+                        </span>
+                    )}
+                </div>
             </div>
 
             <div className="box-body">
@@ -29,6 +44,11 @@ const ApplicantSummary = ({ applicant }) => {
                         <div className="text-xs text-gray-500">
                             Applied on {formatDate(applicant.created_at) || "—"}
                         </div>
+                        {applicant.requisition_public_slug ? (
+                            <div className="text-xs text-gray-500 mt-1">
+                                Slug: <span className="font-mono">{applicant.requisition_public_slug}</span>
+                            </div>
+                        ) : null}
                     </div>
                 </div>
 
@@ -47,7 +67,7 @@ const ApplicantSummary = ({ applicant }) => {
                     </div>
                     <div className="col-span-6">
                         <strong>Date of Birth:</strong>
-                        <p>{formatDate(applicant.date_of_birth) || "—"}</p>
+                        <p>{applicant.date_of_birth ? formatDate(applicant.date_of_birth) : "—"}</p>
                     </div>
                     <div className="col-span-6">
                         <strong>City:</strong>

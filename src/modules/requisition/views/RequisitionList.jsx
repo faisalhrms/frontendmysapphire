@@ -84,8 +84,8 @@ const RequisitionList = ({ externalFilters = [] }) => {
                                 <i className="ri-eye-line" />
                             </button>
                         </Link>
-                        <Link to={`/module/requisition/applicants/${row.original.id}`}>
-                            <button
+                        <Link to={`/module/requisition/${row.original.id}/applicants`}>
+                        <button
                                 className="ti-btn ti-btn-success-gradient ti-btn-sm"
                                 title="View Applicants"
                             >

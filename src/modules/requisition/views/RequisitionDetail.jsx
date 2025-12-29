@@ -31,7 +31,7 @@ const RequisitionDetail = () => {
             <div className="grid grid-cols-12 gap-6">
 
                 {/* Main column */}
-                <div className="xl:col-span-9 col-span-12 space-y-6">
+                <div className="xl:col-span-9 col-span-12 pb-6 space-y-6">
                     <RequisitionSummary requisition={data} />
                     <RequisitionPersonSpec personSpec={data.person_spec} />
                 </div>
