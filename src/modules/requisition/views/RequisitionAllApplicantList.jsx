@@ -56,16 +56,16 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
             },
 
             // ✅ NEW: remove shortlist without changing status
-            {
-                actionKey: "unshortlisted",
-                status: undefined,           // IMPORTANT: do not send
-                is_shortlisted: false,
-                className: `ti-btn ti-btn-light ${btnBase}`,
-                icon: "ri-user-unfollow-line",
-                label: "Remove Shortlist",
-                successMsg: "Selected applicants removed from shortlist.",
-                title: "Removes only shortlist flag (status unchanged)",
-            },
+            // {
+            //     actionKey: "unshortlisted",
+            //     status: undefined,           // IMPORTANT: do not send
+            //     is_shortlisted: false,
+            //     className: `ti-btn ti-btn-light ${btnBase}`,
+            //     icon: "ri-user-unfollow-line",
+            //     label: "Remove Shortlist",
+            //     successMsg: "Selected applicants removed from shortlist.",
+            //     title: "Removes only shortlist flag (status unchanged)",
+            // },
 
             {
                 actionKey: "rejected",
