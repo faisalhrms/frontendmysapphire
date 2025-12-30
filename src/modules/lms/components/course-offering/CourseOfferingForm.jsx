@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import api from "@config/axiosConfig.js";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import { COURSE_OFFERING_ROUTES } from "@modules/lms/routes.js";
+import FormInput from "@components/form/FormInput.jsx";
+import { toast } from "react-toastify";
 
 const isoToLocalInput = (iso) => {
     if (!iso) return "";
     const d = new Date(iso);
     const pad = (n) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-        d.getHours()
-    )}:${pad(d.getMinutes())}`;
-};
-
-const localInputToISO = (value) => {
-    if (!value) return null;
-    return new Date(value).toISOString();
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 
 export default function CourseOfferingForm({
@@ -25,9 +20,12 @@ export default function CourseOfferingForm({
                                            }) {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const isEdit = !!id;
 
-    // Plug auth later
+
+    const preselectedCourseId = location?.state?.preselectedCourseId;
+
     const user = null;
     const isSuperuser = !!user?.is_superuser;
 
@@ -47,15 +45,23 @@ export default function CourseOfferingForm({
             company_id: null,
             course_id: null,
             is_published: false,
-            start_at: "",
-            end_at: "",
+            started_at: "",
+            ended_at: "",
             allow_self_enroll: true,
         },
     });
 
-    const startAt = watch("start_at");
-    const endAt = watch("end_at");
+    const startAt = watch("started_at");
+    const endAt = watch("ended_at");
 
+    // ✅ If create (not edit) and we have course from modal => set it
+    useEffect(() => {
+        if (isEdit) return;
+        if (!preselectedCourseId) return;
+        setValue("course_id", preselectedCourseId);
+    }, [isEdit, preselectedCourseId, setValue]);
+
+    // ✅ load edit data
     useEffect(() => {
         if (!isEdit) return;
 
@@ -68,32 +74,40 @@ export default function CourseOfferingForm({
 
                 setValue("is_published", !!data.is_published);
                 setValue("allow_self_enroll", !!data.allow_self_enroll);
-                setValue("start_at", isoToLocalInput(data.start_at));
-                setValue("end_at", isoToLocalInput(data.end_at));
 
-                if (data?.course?.id) {
-                    setValue("course_id", data.course.id);
-                }
-                if (data?.company?.id) {
-                    setValue("company_id", data.company.id);
-                }
+                setValue("started_at", isoToLocalInput(data.started_at));
+                setValue("ended_at", isoToLocalInput(data.ended_at));
+
+                if (data?.course?.id) setValue("course_id", data.course.id);
+                if (data?.company?.id) setValue("company_id", data.company.id);
+            })
+            .catch((err) => {
+                const msg =
+                    err?.response?.data?.message ||
+                    (Array.isArray(err?.response?.data?.errors)
+                        ? err.response.data.errors[0]
+                        : null) ||
+                    "Failed to load offering.";
+
+                toast.error(msg);
             })
             .finally(() => setLoading(false));
     }, [id, isEdit, setValue]);
 
+    // ✅ validate start/end
     useEffect(() => {
-        if (!startAt || !endAt) return clearErrors("end_at");
+        if (!startAt || !endAt) return clearErrors("ended_at");
 
         const s = new Date(startAt);
         const e = new Date(endAt);
 
         if (e < s) {
-            setError("end_at", {
+            setError("ended_at", {
                 type: "validate",
                 message: "End date must be greater than or equal to start date.",
             });
         } else {
-            clearErrors("end_at");
+            clearErrors("ended_at");
         }
     }, [startAt, endAt, setError, clearErrors]);
 
@@ -102,24 +116,35 @@ export default function CourseOfferingForm({
             ...(isSuperuser && values.company_id ? { company_id: values.company_id } : {}),
             course_id: values.course_id,
             is_published: !!values.is_published,
-            start_at: localInputToISO(values.start_at),
-            end_at: localInputToISO(values.end_at),
+            started_at: values.started_at ? values.started_at : null,
+            ended_at: values.ended_at ? values.ended_at : null,
             allow_self_enroll: !!values.allow_self_enroll,
         };
 
-        if (!payload.start_at) delete payload.start_at;
-        if (!payload.end_at) delete payload.end_at;
+        if (!payload.started_at) delete payload.started_at;
+        if (!payload.ended_at) delete payload.ended_at;
 
         setLoading(true);
         try {
             if (isEdit) {
                 await api.put(`/lms/course-offerings/${id}/`, payload);
+                toast.success("Offering updated successfully.");
                 navigate(COURSE_OFFERING_ROUTES.view(id));
             } else {
                 const res = await api.post(`/lms/course-offerings/`, payload);
                 const created = res?.data?.data ?? res?.data;
+                toast.success("Offering created successfully.");
                 navigate(COURSE_OFFERING_ROUTES.view(created.id));
             }
+        } catch (err) {
+            const msg =
+                err?.response?.data?.message ||
+                (Array.isArray(err?.response?.data?.errors)
+                    ? err.response.data.errors[0]
+                    : null) ||
+                "Something went wrong.";
+
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
@@ -139,10 +164,7 @@ export default function CourseOfferingForm({
                     </div>
 
                     {showBackButton && (
-                        <Link
-                            to={COURSE_OFFERING_ROUTES.list}
-                            className="ti-btn ti-btn-primary"
-                        >
+                        <Link to={COURSE_OFFERING_ROUTES.list} className="ti-btn ti-btn-primary">
                             Back
                         </Link>
                     )}
@@ -150,10 +172,7 @@ export default function CourseOfferingForm({
             ) : (
                 showBackButton && (
                     <div className="flex justify-end mb-4">
-                        <Link
-                            to={COURSE_OFFERING_ROUTES.list}
-                            className="ti-btn ti-btn-primary"
-                        >
+                        <Link to={COURSE_OFFERING_ROUTES.list} className="ti-btn ti-btn-primary">
                             Back
                         </Link>
                     </div>
@@ -162,9 +181,8 @@ export default function CourseOfferingForm({
 
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="bg-white rounded-2xl shadow-sm border p-4 space-y-4"
+                className="bg-white rounded-2xl shadow-sm border p-4 space-y-4 dark:text-gray-200 dark:bg-bodybg"
             >
-                {/* Company Select - Only for Superusers */}
                 {isSuperuser && (
                     <div>
                         <FormAsyncSelect
@@ -187,49 +205,77 @@ export default function CourseOfferingForm({
                             rules={{ required: false }}
                         />
                         {errors.company_id && (
-                            <p className="text-xs text-red-600 mt-1">
-                                {errors.company_id.message}
-                            </p>
+                            <p className="text-xs text-red-600 mt-1">{errors.company_id.message}</p>
                         )}
                     </div>
                 )}
 
-                {/* Course Select */}
-                <div>
-                    <FormAsyncSelect
-                        isMulti={false}
-                        label="Course *"
-                        name="course_id"
-                        control={control}
-                        errors={errors}
-                        placeholder="select a course"
-                        preselectedOptions={
-                            initial?.course
-                                ? [
-                                    {
-                                        value: initial.course.id,
-                                        label:
-                                            initial.course.title ??
-                                            `Course #${initial.course.id}`,
-                                    },
-                                ]
-                                : []
-                        }
-                        allowSaveNewOption={false}
-                        className="w-full"
-                        apiUrl={`/select/lms/courses/`}
-                        queryKeyBase={`lms_courses`}
-                        needObject={false}
-                        rules={{ required: "Please select a course" }}
-                    />
-                    {errors.course_id && (
-                        <p className="text-xs text-red-600 mt-1">
-                            {errors.course_id.message}
-                        </p>
-                    )}
+                {/* ✅ ONE ROW: Course + Start + End */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {/* Course */}
+                    <div>
+                        <FormAsyncSelect
+                            isMulti={false}
+                            label="Course *"
+                            name="course_id"
+                            control={control}
+                            errors={errors}
+                            placeholder="select a course"
+                            preselectedOptions={
+                                initial?.course
+                                    ? [
+                                        {
+                                            value: initial.course.id,
+                                            label: initial.course.title ?? `Course #${initial.course.id}`,
+                                        },
+                                    ]
+                                    : preselectedCourseId
+                                        ? [
+                                            {
+                                                value: preselectedCourseId,
+                                                label: `Course #${preselectedCourseId}`,
+                                            },
+                                        ]
+                                        : []
+                            }
+                            allowSaveNewOption={false}
+                            className="w-full"
+                            apiUrl={`/select/lms/courses/`}
+                            queryKeyBase={`lms_courses_exclude_offered`}
+                            isDisabled={isEdit}
+                            needObject={false}
+                            rules={{ required: "Please select a course" }}
+                        />
+                        {errors.course_id && (
+                            <p className="text-xs text-red-600 mt-1">{errors.course_id.message}</p>
+                        )}
+                    </div>
+
+                    {/* Start At */}
+                    <div>
+                        <FormInput
+                            type="date"
+                            name="started_at"
+                            control={control}
+                            errors={errors}
+                            label={true}
+                            placeholder="Start At"
+                        />
+                    </div>
+
+                    {/* End At */}
+                    <div>
+                        <FormInput
+                            type="date"
+                            name="ended_at"
+                            control={control}
+                            errors={errors}
+                            label={true}
+                            placeholder="End At"
+                        />
+                    </div>
                 </div>
 
-                {/* Checkboxes */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <label className="form-control w-full !rounded-sm border">
                         <input
@@ -240,9 +286,7 @@ export default function CourseOfferingForm({
                         />
                         <div>
                             <div className="text-sm font-medium">Published</div>
-                            <div className="text-xs text-gray-500">
-                                Visible/available to users.
-                            </div>
+                            <div className="text-xs text-gray-500">Visible/available to users.</div>
                         </div>
                     </label>
 
@@ -255,47 +299,16 @@ export default function CourseOfferingForm({
                         />
                         <div>
                             <div className="text-sm font-medium">Allow Self Enroll</div>
-                            <div className="text-xs text-gray-500">
-                                Users can enroll themselves.
-                            </div>
+                            <div className="text-xs text-gray-500">Users can enroll themselves.</div>
                         </div>
                     </label>
                 </div>
 
-                {/* Date Inputs */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                        <label className="form-label">Start At</label>
-                        <input
-                            type="datetime-local"
-                            className="form-control w-full !rounded-sm border"
-                            value={watch("start_at") || ""}
-                            onChange={(e) => setValue("start_at", e.target.value)}
-                        />
-                        {errors.start_at && (
-                            <p className="text-xs text-red-600 mt-1">
-                                {errors.start_at.message}
-                            </p>
-                        )}
-                    </div>
+                {/* ✅ End date validation message (if you want explicit under row) */}
+                {errors.ended_at && (
+                    <p className="text-xs text-red-600 -mt-2">{errors.ended_at.message}</p>
+                )}
 
-                    <div>
-                        <label className="form-label">End At</label>
-                        <input
-                            type="datetime-local"
-                            className="form-control w-full !rounded-sm border"
-                            value={watch("end_at") || ""}
-                            onChange={(e) => setValue("end_at", e.target.value)}
-                        />
-                        {errors.end_at && (
-                            <p className="text-xs text-red-600 mt-1">
-                                {errors.end_at.message}
-                            </p>
-                        )}
-                    </div>
-                </div>
-
-                {/* Submit Buttons */}
                 <div className="flex items-center justify-end gap-2 pt-2">
                     <button
                         type="button"
@@ -305,6 +318,7 @@ export default function CourseOfferingForm({
                     >
                         Cancel
                     </button>
+
                     <button
                         type="submit"
                         className="px-4 py-2 text-sm font-medium rounded-md ti-btn-primary-full"

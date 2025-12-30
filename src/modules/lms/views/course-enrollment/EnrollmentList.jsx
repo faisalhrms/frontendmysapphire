@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users } from "lucide-react";  // Better icon than PlusCircle
+import { Users } from "lucide-react";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import CourseEnrollmentList from "@modules/lms/components/courseenrollment/CourseEnrollmentList.jsx";
 

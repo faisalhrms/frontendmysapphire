@@ -1,314 +1,419 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import api from "@config/axiosConfig";
+import DataTable from "@components/datatable/DataTable.jsx";
+import { toast } from "react-toastify";
 
-function buildLaunchUrl(detail) {
-
-    if (detail?.launch_url) return detail.launch_url;
-
-    const base = import.meta.env.VITE_DJANGO_URL || window.location.origin;
-
-    const storagePath = (detail?.storage_path || "").replace(/^\/+/, "");
-    const launchPath = (detail?.launch_path || "").replace(/^\/+/, "");
-
-    if (!storagePath || !launchPath) return "";
-    const sp = storagePath.endsWith("/") ? storagePath : `${storagePath}/`;
-    return `${base}/media/${sp}${launchPath}`;
-}
-
-export default function LmsScormListing() {
-    const [packages, setPackages] = useState([]);
-    const [selectedPkg, setSelectedPkg] = useState(null);
-    const [storyUrl, setStoryUrl] = useState("");
+export default function LmsScorm() {
+    const [filters, setFilters] = useState({});
+    const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const loadPackages = async () => {
-        try {
-            setError("");
+    const [editingId, setEditingId] = useState(null);
+    const [title, setTitle] = useState("");
+    const [isActive, setIsActive] = useState(true);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [existingFileName, setExistingFileName] = useState("");
+    const [reloadKey, setReloadKey] = useState(0);
+    const [showPlayer, setShowPlayer] = useState(false);
+    const [playerTitle, setPlayerTitle] = useState("");
+    const [playerUrl, setPlayerUrl] = useState("");
+    const [playerLoading, setPlayerLoading] = useState(false);
+    const [playerError, setPlayerError] = useState("");
 
-            // Datatable list endpoint
-            const res = await api.get("/lms/scorm-packages/datatable");
-            setPackages(res.data?.data?.rows || []);
+    const resetForm = () => {
+        setEditingId(null);
+        setTitle("");
+        setIsActive(true);
+        setSelectedFile(null);
+        setExistingFileName("");
+    };
+
+    const openAddModal = () => {
+        resetForm();
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setLoading(false);
+        resetForm();
+    };
+
+    const closePlayer = () => {
+        setShowPlayer(false);
+        setPlayerTitle("");
+        setPlayerUrl("");
+        setPlayerError("");
+        setPlayerLoading(false);
+    };
+
+    const handleEdit = async (id) => {
+        try {
+            const res = await api.get(`/lms/scorm-packages/${id}/`);
+            const scorm = res.data?.data;
+
+            setTitle(scorm?.title || "");
+            setIsActive(Boolean(scorm?.is_active));
+
+            if (scorm?.zip_file) {
+                let fileName = scorm.zip_file;
+                if (typeof fileName === "string") {
+                    fileName = fileName.split("/").pop();
+                    fileName = fileName.split("\\").pop();
+                }
+                setExistingFileName(fileName);
+            } else {
+                setExistingFileName("");
+            }
+
+            setSelectedFile(null);
+            setEditingId(id);
+            setShowModal(true);
         } catch (err) {
-            console.error("Failed loading scorm packages", err.response?.data || err);
-            setError("Failed to load SCORM packages. Please try again.");
+
+            toast.error("Failed to load SCORM details");
         }
     };
 
-
-
-    const loadScormPlayer = async (id) => {
+    const handlePlay = async (pkg) => {
         try {
-            setLoading(true);
-            setError("");
+            setPlayerLoading(true);
+            setPlayerError("");
+            setPlayerTitle(pkg?.title || "SCORM Player");
+            setPlayerUrl("");
+            setShowPlayer(true);
 
-            const res = await api.get(`/lms/scorm-packages/${id}/`);
+            const res = await api.get(`/lms/scorm-packages/${pkg.id}/`);
             const detail = res.data?.data;
 
-            const url = buildLaunchUrl(detail);
-            if (!url) {
-                setError("No playable content found (launch_path/storage_path missing).");
-                setStoryUrl("");
-                return;
+            const url = import.meta.env.VITE_API_BASE_URL + detail.launch_url;
+
+            setPlayerUrl(url);
+        } catch (err) {
+            setPlayerError(err.response?.data?.message || "Failed to load SCORM content");
+            setPlayerUrl("");
+        } finally {
+            setPlayerLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        if (!title.trim()) {
+            toast.error("Please enter title"); // ✅ CHANGED (was alert)
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const formData = new FormData();
+            formData.append("title", title.trim());
+            formData.append("is_active", isActive ? "true" : "false");
+            if (selectedFile) formData.append("zip_file", selectedFile);
+
+            if (editingId) {
+                await api.put(`/lms/scorm-packages/${editingId}/`, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                toast.success("SCORM package updated successfully."); // ✅ ADDED
+            } else {
+                await api.post(`/lms/scorm-packages/`, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                toast.success("SCORM package created successfully."); // ✅ ADDED
             }
 
-            setStoryUrl(url);
+            setReloadKey((prev) => prev + 1);
+            closeModal();
         } catch (err) {
-            console.error("Failed loading scorm detail", err.response?.data || err);
-            setError(err.response?.data?.message || "Failed to load SCORM content");
-            setStoryUrl("");
-        } finally {
+            const resp = err?.response?.data;
+            const msg =
+                resp?.message ||
+                resp?.["message'''"] ||
+                (typeof resp?.errors === "string" ? resp.errors : null) ||
+                (Array.isArray(resp?.errors) ? resp.errors[0] : null) ||
+                (resp?.errors && typeof resp.errors === "object"
+                    ? Object.values(resp.errors)?.flat?.()?.[0]
+                    : null) ||
+                "Failed to save SCORM package";
+
+            toast.error(String(msg));
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        loadPackages();
-    }, []);
-
-    const handleSelect = (pkg) => {
-        setSelectedPkg(pkg);
-        setStoryUrl("");
-        loadScormPlayer(pkg.id);
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) setSelectedFile(file);
     };
 
-    return (
-        <div className="p-6 max-w-7xl mx-auto">
-            {!selectedPkg ? (
-                <div>
-                    {error && (
-                        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                            {error}
-                        </div>
-                    )}
+    const clearFile = () => {
+        setSelectedFile(null);
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.value = "";
+    };
 
-                    {packages.length === 0 ? (
-                        <div className="text-center py-10">
-                            <p className="text-gray-500">
-                                No SCORM packages available. Please upload some SCORM packages.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {packages.map((pkg) => (
-                                <div
-                                    key={pkg.id}
-                                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer border border-gray-200 dark:text-gray-200 dark:bg-bodybg"
-                                    onClick={() => handleSelect(pkg)}
-                                >
-                                    <div className="p-8">
-                                        <div className="flex items-start space-x-4">
-                                            <div className="flex-shrink-0">
-                                                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
-                                                    <i className="ri-folder-zip-line text-primary text-xl"></i>
-                                                </div>
-                                            </div>
+    const buttons = [
+        <button
+            key="add-scorm"
+            onClick={openAddModal}
+            className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+        >
+            <i className="ri-add-line font-semibold align-middle"></i> Add SCORM
+        </button>,
+    ];
 
-                                            <div className="flex-1">
-                                                <h3 className="text-lg font-semibold text-gray-800 mb-2 dark:text-gray-200">
-                                                    {pkg.title}
-                                                </h3>
-
-                                                <div className="space-y-1">
-                                                    <p className="text-sm text-gray-600">
-                                                        <span className="font-medium">Version:</span>{" "}
-                                                        <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
-                              {pkg.scorm_version || "-"}
-                            </span>
-                                                    </p>
-
-                                                    <p className="text-sm text-gray-600">
-                                                        <span className="font-medium">Active:</span>{" "}
-                                                        <span
-                                                            className={`px-2 py-1 rounded text-xs ${
-                                                                pkg.is_active
-                                                                    ? "bg-green-100 text-green-800"
-                                                                    : "bg-gray-100 text-gray-700"
-                                                            }`}
-                                                        >
-                              {pkg.is_active ? "Yes" : "No"}
-                            </span>
-                                                    </p>
-
-                                                    {pkg.created_at && (
-                                                        <p className="text-xs text-gray-500">
-                                                            Created:{" "}
-                                                            {new Date(pkg.created_at).toLocaleDateString()}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-4 pt-4 border-t border-gray-100">
-                                            <div className="flex justify-end">
-                        <span className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
-                          Click to Play
-                          <svg
-                              className="w-4 h-4 ml-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"
-                            ></path>
-                          </svg>
-                        </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+    const columns = [
+        { accessor: "title", Header: "Title" },
+        {
+            accessor: "is_active",
+            Header: "Active",
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value;
+                return {
+                    className: value ? 'bg-success text-white' : 'bg-red text-white',
+                };
+            },
+            Cell: ({ row }) => (
+                <span
+                    className={`px-2 py-1 rounded text-xs ${
+                        row.original.is_active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-700"
+                    }`}
+                >
+          {row.original.is_active ? "Yes" : "No"}
+        </span>
+            ),
+        },
+        { accessor: "created_at", Header: "Created At" },
+        {
+            Header: "Actions",
+            accessor: "id",
+            disableSortBy: true,
+            Cell: ({ row }) => (
+                <div className="flex justify-center space-x-2">
+                    <button
+                        onClick={() => handlePlay(row.original)}
+                        className="ti-btn ti-btn-success ti-btn-sm flex items-center justify-center"
+                        title="Play"
+                    >
+                        <i className="ri-play-circle-line text-lg"></i>
+                    </button>
+                    <button
+                        onClick={() => handleEdit(row.original.id)}
+                        className="ti-btn ti-btn-primary ti-btn-sm flex items-center justify-center"
+                        title="Edit"
+                    >
+                        <i className="ri-edit-line text-lg"></i>
+                    </button>
                 </div>
-            ) : (
-                <div className="bg-white rounded-lg shadow-lg border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
-                    {/* Header */}
-                    <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-gray-50">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                                <button
-                                    className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                                    onClick={() => {
-                                        setSelectedPkg(null);
-                                        setStoryUrl("");
-                                        setError("");
-                                    }}
-                                >
-                                    <svg
-                                        className="w-4 h-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                                        ></path>
-                                    </svg>
-                                    <span>Back</span>
-                                </button>
-                                <h2 className="text-xl font-bold">{selectedPkg.title}</h2>
-                            </div>
+            ),
+        },
+    ];
 
-                            <div className="flex items-center space-x-3">
-                <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                  ID: {selectedPkg.id}
-                </span>
-                            </div>
+    return (
+        <div className="p-4">
+            {showPlayer && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl mx-4 dark:text-gray-200 dark:bg-bodybg">
+                        <div className="ti-modal-header flex justify-between items-center p-4 border-b">
+                            <h6 className="modal-title text-lg font-semibold">{playerTitle}</h6>
+                            <button
+                                type="button"
+                                className="text-gray-500 hover:text-gray-700 text-xl"
+                                onClick={closePlayer}
+                            >
+                                <i className="ri-close-line"></i>
+                            </button>
                         </div>
-                    </div>
 
-                    {/* Content Area */}
-                    <div className="p-6">
-                        {error && (
-                            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                <div className="flex items-start">
-                                    <svg
-                                        className="w-5 h-5 text-red-500 mr-2 mt-0.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        ></path>
-                                    </svg>
-                                    <div>
-                                        <p className="font-medium text-red-800">Error</p>
-                                        <p className="text-red-600 text-sm mt-1">{error}</p>
-                                    </div>
+                        <div className="ti-modal-body p-4">
+                            {playerError ? (
+                                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                                    {playerError}
                                 </div>
-                            </div>
-                        )}
-
-                        {loading ? (
-                            <div className="flex flex-col items-center justify-center py-16">
-                                <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-                                <p className="mt-6 text-gray-600 font-medium">
-                                    Loading SCORM content...
-                                </p>
-                            </div>
-                        ) : storyUrl ? (
-                            <div className="space-y-4">
-                                <div className="bg-gray-50 p-4 rounded-lg dark:text-gray-200 dark:bg-bodybg border border-gray-200">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h3 className="font-medium">SCORM Player</h3>
-                                        <div className="text-xs text-gray-500 font-mono">
-                                            {new URL(storyUrl).hostname}
-                                        </div>
-                                    </div>
-                                    <p className="text-sm text-gray-600">
-                                        Interactive SCORM content loaded below.
-                                    </p>
+                            ) : playerLoading ? (
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin"></div>
+                                    <p className="mt-4 text-sm text-gray-600">Loading SCORM content...</p>
                                 </div>
-
-                                <div className="relative bg-gray-900 rounded-lg overflow-hidden border-4 border-gray-800 shadow-xl">
-                                    <div className="absolute top-0 left-0 right-0 bg-gray-800 px-4 py-2 flex items-center justify-between z-10">
-                                        <div className="flex items-center space-x-2">
-                                            <div className="flex space-x-1">
-                                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                                                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                                            </div>
-                                            <span className="text-xs text-gray-300 font-mono">
-                        scorm-player
-                      </span>
-                                        </div>
-                                        <div className="text-xs text-gray-400">
-                                            {new URL(storyUrl).pathname}
-                                        </div>
+                            ) : playerUrl ? (
+                                <div className="border rounded-lg overflow-hidden">
+                                    <div className="px-3 py-2 text-xs text-gray-500 bg-gray-50 border-b font-mono break-all">
+                                        {playerUrl}
                                     </div>
 
                                     <iframe
-                                        key={selectedPkg.id}
-                                        src={storyUrl}
-                                        title={`${selectedPkg.title} - SCORM Player`}
+                                        src={playerUrl}
+                                        title="SCORM Player"
                                         className="w-full h-[75vh] border-0"
                                         allow="autoplay; fullscreen"
                                         sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads"
-                                        style={{ marginTop: "40px" }}
                                         loading="eager"
-                                        onError={(e) => {
-                                            console.error("Iframe loading error:", e);
-                                            setError(
+                                        onError={() =>
+                                            setPlayerError(
                                                 "Failed to load SCORM content. File might be missing or blocked by browser."
-                                            );
-                                        }}
+                                            )
+                                        }
                                     />
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="text-center py-16">
-                                <h3 className="text-lg font-medium text-gray-700 mb-2">
-                                    No Content Available
-                                </h3>
-                                <p className="text-gray-500 mb-6">
-                                    This SCORM package doesn't have playable content yet.
-                                </p>
-                                <button
-                                    onClick={() => loadScormPlayer(selectedPkg.id)}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                                >
-                                    Try Loading Again
-                                </button>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+                                    No SCORM URL found.
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="ti-modal-footer flex justify-end gap-2 p-4 border-t">
+                            <button
+                                type="button"
+                                onClick={closePlayer}
+                                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 dark:text-gray-200 dark:bg-bodybg">
+                        <div className="ti-modal-header flex justify-between items-center p-4 border-b">
+                            <h6 className="modal-title text-lg font-semibold">
+                                {editingId ? "Edit SCORM" : "Add SCORM"}
+                            </h6>
+                            <button
+                                type="button"
+                                className="text-gray-500 hover:text-gray-700 text-xl"
+                                onClick={closeModal}
+                                disabled={loading}
+                            >
+                                <i className="ri-close-line"></i>
+                            </button>
+                        </div>
+
+                        <div className="ti-modal-body p-4">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Title *</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm dark:text-gray-200 dark:bg-bodybg"
+                                        placeholder="Enter title"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        disabled={loading}
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        id="is_active"
+                                        type="checkbox"
+                                        checked={isActive}
+                                        onChange={(e) => setIsActive(e.target.checked)}
+                                        disabled={loading}
+                                        className="h-4 w-4"
+                                    />
+                                    <label htmlFor="is_active" className="text-sm font-medium">
+                                        Active
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">ZIP File</label>
+                                    <input
+                                        type="file"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2 dark:text-gray-200 dark:bg-bodybg"
+                                        onChange={handleFileChange}
+                                        disabled={loading}
+                                        accept=".zip"
+                                    />
+
+                                    {editingId && existingFileName && !selectedFile && (
+                                        <div className="mt-2 p-3 bg-blue-50 rounded border border-blue-200">
+                                            <p className="text-sm text-blue-700 mb-1">
+                                                <i className="ri-file-zip-line mr-1"></i> Current file:{" "}
+                                                <span className="font-medium">{existingFileName}</span>
+                                            </p>
+                                            <p className="text-xs text-blue-600">Upload a new zip above to replace it</p>
+                                        </div>
+                                    )}
+
+                                    {selectedFile && (
+                                        <div className="mt-2 p-3 bg-green-50 rounded border border-green-200">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <p className="text-sm text-green-700 mb-1">
+                                                        <i className="ri-file-upload-line mr-1"></i> New file:{" "}
+                                                        <span className="font-medium">{selectedFile.name}</span>
+                                                    </p>
+                                                    <p className="text-xs text-green-600">
+                                                        Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={clearFile}
+                                                    className="text-red-500 hover:text-red-700 text-sm"
+                                                    disabled={loading}
+                                                >
+                                                    <i className="ri-close-circle-line text-lg"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="ti-modal-footer flex justify-end gap-2 p-4 border-t">
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                disabled={loading}
+                                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleSave}
+                                disabled={loading || !title.trim()}
+                                className={`hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem] ${
+                                    loading || !title.trim() ? "cursor-not-allowed" : ""
+                                }`}
+                            >
+                                {loading ? (
+                                    <span className="flex items-center">
+                    <i className="ri-loader-4-line animate-spin mr-2"></i> Saving...
+                  </span>
+                                ) : editingId ? (
+                                    "Update SCORM"
+                                ) : (
+                                    "Add SCORM"
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <DataTable
+                key={reloadKey}
+                columns={columns}
+                buttons={buttons}
+                apiUrl="/lms/scorm-packages/datatable/"
+                filter={filters}
+            />
         </div>
     );
 }
+
+
+
+
+
+
+
+

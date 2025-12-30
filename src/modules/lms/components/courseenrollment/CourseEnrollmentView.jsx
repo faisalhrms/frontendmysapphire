@@ -1,15 +1,26 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 import api from "@config/axiosConfig.js";
 import { COURSE_ENROLLMENT_ROUTES } from "@modules/lms/routes.js";
+import FormInput from "@components/form/FormInput.jsx";
 
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
+
+const toDateInputValue = (value) => {
+    if (!value) return "";
+    if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return "";
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
 
 const cleanUserLabel = (u) => {
     if (!u) return "—";
     const n = (u?.name || "").trim();
-    // backend sometimes returns "None None"
+
     const badName = !n || n === "None None" || n === "None" || n.includes("None");
     return (!badName ? n : "") || u?.username || u?.email || `User #${u?.id ?? "—"}`;
 };
@@ -36,6 +47,17 @@ export default function CourseEnrollmentView() {
     const [loading, setLoading] = useState(true);
     const [serverMsg, setServerMsg] = useState("");
 
+    const {
+        control,
+        setValue,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            started_at: "",
+            ended_at: "",
+        },
+    });
+
     useEffect(() => {
         setLoading(true);
         setServerMsg("");
@@ -43,11 +65,13 @@ export default function CourseEnrollmentView() {
         api
             .get(`/lms/course-enrollments/${id}/`)
             .then((res) => {
-                // ✅ works for your response shape
                 const payload = res?.data ?? {};
                 const data = payload?.data ?? payload;
                 setRow(data);
                 if (payload?.message) setServerMsg(payload.message);
+                const offering = data?.offering;
+                setValue("started_at", toDateInputValue(offering?.started_at));
+                setValue("ended_at", toDateInputValue(offering?.ended_at));
             })
             .catch((err) => {
                 const payload = err?.response?.data;
@@ -59,7 +83,7 @@ export default function CourseEnrollmentView() {
                 setRow(null);
             })
             .finally(() => setLoading(false));
-    }, [id]);
+    }, [id, setValue]);
 
     const onDelete = async () => {
         const ok = window.confirm("Delete this enrollment?");
@@ -105,7 +129,7 @@ export default function CourseEnrollmentView() {
                         to={COURSE_ENROLLMENT_ROUTES.edit(row.id)}
                         className="ti-btn ti-btn-primary ti-btn-sm"
                     >
-                      <i className={"ri-edit-line"}/>
+                        <i className={"ri-edit-line"} />
                     </Link>
                     <Link
                         to={COURSE_ENROLLMENT_ROUTES.list}
@@ -117,7 +141,6 @@ export default function CourseEnrollmentView() {
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border p-4 space-y-4">
-                {/* Top pills */}
                 <div className="flex flex-wrap gap-2">
                     <Pill>Source: {row?.source ?? "—"}</Pill>
                     <Pill>Status: {row?.status ?? "—"}</Pill>
@@ -125,8 +148,6 @@ export default function CourseEnrollmentView() {
                     <Pill>Score: {row?.score ?? "—"}</Pill>
                     <Pill>Time(s): {row?.total_time_seconds ?? 0}</Pill>
                 </div>
-
-                {/* Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <SectionCard label="Offering ID" value={offering?.id ?? "—"} />
                     <SectionCard label="Company" value={`${offering?.company?.name ?? "—"} (ID: ${offering?.company?.id ?? "—"})`} />
@@ -136,9 +157,33 @@ export default function CourseEnrollmentView() {
 
                     <SectionCard label="Published" value={yesNo(offering?.is_published)} />
                     <SectionCard label="Allow Self Enroll" value={yesNo(offering?.allow_self_enroll)} />
+                    <div className="border rounded-xl p-3">
+                        <div className="text-xs text-gray-500 mb-2">Started At</div>
+                        <FormInput
+                            type="date"
+                            name="started_at"
+                            control={control}
+                            errors={errors}
+                            label={false}
+                            placeholder="Started At"
+                            disabled
+                            readOnly
+                        />
+                    </div>
 
-                    <SectionCard label="Start At" value={formatDate(offering?.start_at)} />
-                    <SectionCard label="End At" value={formatDate(offering?.end_at)} />
+                    <div className="border rounded-xl p-3">
+                        <div className="text-xs text-gray-500 mb-2">Ended At</div>
+                        <FormInput
+                            type="date"
+                            name="ended_at"
+                            control={control}
+                            errors={errors}
+                            label={false}
+                            placeholder="Ended At"
+                            disabled
+                            readOnly
+                        />
+                    </div>
 
                     <SectionCard label="User" value={userLabel} />
                     <SectionCard label="User Email" value={u?.email ?? "—"} />

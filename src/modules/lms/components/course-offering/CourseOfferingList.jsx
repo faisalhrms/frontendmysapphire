@@ -1,198 +1,148 @@
-// import React, { useRef } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import DataTable from "@components/datatable/DataTable.jsx";
-//
-// import { COURSE_OFFERING_ROUTES } from "@modules/lms/routes.js";
-//
-//
-// const Badge = ({ ok, children }) => (
-//     <span
-//         className={[
-//             "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-//             ok ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700",
-//         ].join(" ")}
-//     >
-//     {children}
-//   </span>
-// );
-//
-// const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
-//
-// export default function CourseOfferingList({ externalFilters = [] }) {
-//     const tableRef = useRef(null);
-//     const navigate = useNavigate();
-//
-//     const columns = [
-//         { Header: "ID", accessor: "id", width: 80 },
-//
-//         // { Header: "Checksum", accessor: "checksum" },
-//
-//         {
-//             Header: "Company",
-//             accessor: "company.name", // if dot path works
-//             Cell: ({ value, row }) => value ?? row.original?.company?.name ?? "—",
-//         },
-//         {
-//             Header: "Course",
-//             accessor: "course.title",
-//             Cell: ({ value, row }) => value ?? row.original?.course?.title ?? "—",
-//         },
-//
-//         {
-//             Header: "Published",
-//             accessor: "is_published",
-//             Cell: ({ value }) => <Badge ok={!!value}>{value ? "Yes" : "No"}</Badge>,
-//             width: 120,
-//         },
-//         {
-//             Header: "Self Enroll",
-//             accessor: "allow_self_enroll",
-//             Cell: ({ value }) => <Badge ok={!!value}>{value ? "Allowed" : "No"}</Badge>,
-//             width: 140,
-//         },
-//
-//         {
-//             Header: "Start",
-//             accessor: "start_at",
-//             Cell: ({ value }) => formatDate(value),
-//         },
-//         {
-//             Header: "End",
-//             accessor: "end_at",
-//             Cell: ({ value }) => formatDate(value),
-//         },
-//
-//         {
-//             Header: "Actions",
-//             accessor: "actions",
-//             disableSortBy: true,
-//             Cell: ({ row }) => {
-//                 const id = row.original?.id;
-//                 return (
-//                     <div className="flex gap-2">
-//
-//                         <button
-//                             className="px-3 py-1 text-sm rounded-lg border hover:bg-gray-50"
-//                             onClick={() => navigate(COURSE_OFFERING_ROUTES.edit(id))}
-//                         >
-//                             Edit
-//                         </button>
-//                     </div>
-//                 );
-//             },
-//             width: 200,
-//         },
-//     ];
-//
-//
-//     return (
-//         <div className="p-4">
-//             <div className="flex items-center justify-between mb-4">
-//                 <div>
-//                     <h1 className="text-xl font-semibold">Course Offerings</h1>
-//                     <p className="text-sm text-gray-500">Manage company availability & rules for courses.</p>
-//                 </div>
-//
-//                 <Link
-//                     to={COURSE_OFFERING_ROUTES.create}
-//                     className="inline-flex items-center rounded-xl bg-black text-white px-4 py-2 text-sm hover:opacity-90"
-//                 >
-//                     + Create Offering
-//                 </Link>
-//             </div>
-//
-//             <DataTable
-//                 ref={tableRef}
-//                 apiUrl="/lms/course-offerings/datatable/"
-//                 columns={columns}
-//                 externalFilters={externalFilters}
-//             />
-//         </div>
-//     );
-// }
-import React, { useRef } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
+import { COURSE_ENROLLMENT_ROUTES, COURSE_OFFERING_ROUTES } from "@modules/lms/routes.js";
+import CourseOfferingAssignModal from "@modules/lms/components/CourseOfferingAssignModal.jsx";
+import api from "@config/axiosConfig.js";
+import { toast } from "react-toastify";
 
-import { COURSE_OFFERING_ROUTES } from "@modules/lms/routes.js";
+const HR_CREATE_ENDPOINT = "/lms/course-enrollments/hr/";
 
 const Badge = ({ ok, children }) => (
     <span
         className={[
             "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-            ok ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700",
+            ok ? "bg-success/10 text-success" : "bg-danger/10 text-danger",
         ].join(" ")}
     >
     {children}
   </span>
 );
 
-const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
+const formatDateOnly = (value) => {
+    if (!value) return "—";
+    if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return "—";
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
 
 export default function CourseOfferingList({ externalFilters = [] }) {
     const tableRef = useRef(null);
     const navigate = useNavigate();
+    const [openAssignModal, setOpenAssignModal] = useState(false);
 
-    const columns = [
-        { Header: "ID", accessor: "id", width: 80 },
+    const onOpenModal = () => setOpenAssignModal(true);
+    const onCloseModal = () => setOpenAssignModal(false);
 
-        {
-            Header: "Company",
-            accessor: "company.name",
-            Cell: ({ value, row }) => value ?? row.original?.company?.name ?? "—",
-        },
-        {
-            Header: "Course",
-            accessor: "course.title",
-            Cell: ({ value, row }) => value ?? row.original?.course?.title ?? "—",
-        },
+    // ✅ SAVE ENROLLMENTS THEN GO TO LIST
+    const onContinue = async ({ offering_id, user_ids, score, total_time_seconds }) => {
+        const offeringId = Number(offering_id);
+        const userIds = Array.isArray(user_ids) ? user_ids.map(Number).filter(Boolean) : [];
 
-        {
-            Header: "Published",
-            accessor: "is_published",
-            Cell: ({ value }) => <Badge ok={!!value}>{value ? "Yes" : "No"}</Badge>,
-            width: 120,
-        },
-        {
-            Header: "Self Enroll",
-            accessor: "allow_self_enroll",
-            Cell: ({ value }) => <Badge ok={!!value}>{value ? "Allowed" : "No"}</Badge>,
-            width: 140,
-        },
+        if (!offeringId) return toast.error("Course Offering is required.");
+        if (!userIds.length) return toast.error("At least one user is required.");
 
-        {
-            Header: "Start",
-            accessor: "start_at",
-            Cell: ({ value }) => formatDate(value),
-        },
-        {
-            Header: "End",
-            accessor: "end_at",
-            Cell: ({ value }) => formatDate(value),
-        },
+        const payload = {
+            offering_id: offeringId,
+            user_ids: userIds,
+            score: score === "" || score === null || score === undefined ? null : Number(score),
+            total_time_seconds: Number(total_time_seconds ?? 0),
+        };
 
-        {
-            Header: "Actions",
-            accessor: "actions",
-            disableSortBy: true,
-            Cell: ({ row }) => {
-                const id = row.original?.id;
-                return (
-                    <div className="flex gap-2">
-                        <button
-                            className=" ti-btn ti-btn-primary ti-btn-sm"
-                            onClick={() => navigate(COURSE_OFFERING_ROUTES.edit(id))}
-                        >
-                            <i className={"ri-edit-line"}></i>
-                        </button>
-                    </div>
-                );
+        try {
+            const res = await api.post(HR_CREATE_ENDPOINT, payload);
+            const out = res?.data?.data ?? res?.data;
+
+            const createdCount = out?.created_count ?? 0;
+            const skippedCount = out?.skipped_count ?? 0;
+
+            if (skippedCount > 0) toast.info(`Created: ${createdCount} | Skipped: ${skippedCount}`);
+            else toast.success(`Created: ${createdCount}`);
+
+            onCloseModal();
+            navigate(`${COURSE_ENROLLMENT_ROUTES.list}?refresh=${Date.now()}`);
+        } catch (err) {
+            const resp = err?.response?.data;
+            const msg =
+                resp?.message ||
+                (Array.isArray(resp?.errors) ? resp.errors[0] : null) ||
+                "Something went wrong.";
+            toast.error(msg);
+        }
+    };
+
+    const columns = useMemo(
+        () => [
+            { Header: "ID", accessor: "id", width: 80 },
+            {
+                Header: "Company",
+                accessor: "company.name",
+                Cell: ({ value, row }) => value ?? row.original?.company?.name ?? "—",
             },
-            width: 200,
-        },
-    ];
+            {
+                Header: "Course",
+                accessor: "course.title",
+                Cell: ({ value, row }) => value ?? row.original?.course?.title ?? "—",
+            },
+            {
+                Header: "Published",
+                accessor: "is_published",
+                Cell: ({ value }) => <Badge ok={!!value}>{value ? "Yes" : "No"}</Badge>,
+                width: 120,
+            },
+            {
+                Header: "Self Enroll",
+                accessor: "allow_self_enroll",
+                Cell: ({ value }) => <Badge ok={!!value}>{value ? "Allowed" : "No"}</Badge>,
+                width: 140,
+            },
+            { Header: "Start", accessor: "started_at", Cell: ({ value }) => formatDateOnly(value) },
+            { Header: "End", accessor: "ended_at", Cell: ({ value }) => formatDateOnly(value) },
+            {
+                Header: "Actions",
+                accessor: "actions",
+                disableSortBy: true,
+                width: 260,
+                Cell: ({ row }) => {
+                    const id = row.original?.id;
+                    return (
+                        <div className="flex gap-2">
+                            <button
+                                className="ti-btn ti-btn-secondary ti-btn-sm"
+                                onClick={() => navigate(COURSE_OFFERING_ROUTES.view(id))}
+                                title="View"
+                                type="button"
+                            >
+                                <i className="ri-eye-line" />
+                            </button>
 
-    // ✅ NEW (only this): Create button inside DataTable header (right side)
+                            <button
+                                className="ti-btn ti-btn-primary ti-btn-sm"
+                                onClick={() => navigate(COURSE_OFFERING_ROUTES.edit(id))}
+                                title="Edit"
+                                type="button"
+                            >
+                                <i className="ri-edit-line" />
+                            </button>
+
+                            <button
+                                className="ti-btn ti-btn-info ti-btn-sm"
+                                onClick={onOpenModal}
+                                title="Assign users (LOV)"
+                                type="button"
+                            >
+                                <i className="ri-user-add-line" />
+                            </button>
+                        </div>
+                    );
+                },
+            },
+        ],
+        [navigate]
+    );
+
     const buttons = (
         <Link
             to={COURSE_OFFERING_ROUTES.create}
@@ -211,6 +161,12 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                 externalFilters={externalFilters}
                 title="Course Offerings"
                 buttons={buttons}
+            />
+
+            <CourseOfferingAssignModal
+                open={openAssignModal}
+                onClose={onCloseModal}
+                onSubmit={onContinue}
             />
         </div>
     );

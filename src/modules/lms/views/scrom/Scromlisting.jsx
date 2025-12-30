@@ -7,7 +7,7 @@ const ScromListing = () => {
     return (
         <>
             <IconPageHeader
-                heading="SCORM Packages Listing"
+                heading="SCORM Packages"
                 description="Add a new course and organize learning content for learners."
                 icon={PlusCircle}
             />

@@ -6,22 +6,18 @@ import OfferingForm from "@modules/lms/views/course-offerings/OfferingForm.jsx";
 import OfferingView from "@modules/lms/views/course-offerings/OfferingView.jsx";
 import CoursesView from "@modules/lms/views/lms-course/CoureseView.jsx";
 import ScromListing from "@modules/lms/views/scrom/Scromlisting.jsx";
-import ScromCourse from "@modules/lms/views/scrom/ScromCourse.jsx";
-
-
 
 export const LMS_ROUTES = {
-    READ: { path: "/module/lms/scrom-listing" },
-    UPDATE: { path: "/module/lms/scrom" },
-    CREATE: { path: "/module/lms/coursepage" },
-    COURSE_OFFERING_CREATE: { path: "/module/lms/courseoffering" },
-    COURSE_OFFERING_LIST: { path: "/module/lms/courseofferinglist" },
-    COURSE_OFFERING_VIEW: { path: "/module/lms/courseofferingview/:id" },
-    COURSE_OFFERING_EDIT: { path: "/module/lms/courseoffering/:id" },
-    COURSE_ENROLLMENT_CREATE: { path: "/module/lms/courseenrollment" },
-    COURSE_ENROLLMENT_LIST: { path: "/module/lms/courseenrollmentlist" },
-    COURSE_ENROLLMENT_VIEW: { path: "/module/lms/courseenrollmentview/:id" },
-    COURSE_ENROLLMENT_EDIT: { path: "/module/lms/courseenrollment/:id" },
+    SCORM: { path: "/module/lms/scorm" },
+    COURSES: { path: "/module/lms/courses" },
+    COURSE_OFFERING_CREATE: { path: "/module/lms/course-offerings/create" },
+    COURSE_OFFERING_LIST: { path: "/module/lms/course-offerings" },
+    COURSE_OFFERING_VIEW: { path: "/module/lms/course-offerings/detail/:id" },
+    COURSE_OFFERING_EDIT: { path: "/module/lms/course-offerings/edit/:id" },
+    COURSE_ENROLLMENT_CREATE: { path: "/module/lms/course-enrollments/create" },
+    COURSE_ENROLLMENT_LIST: { path: "/module/lms/course-enrollments" },
+    COURSE_ENROLLMENT_VIEW: { path: "/module/lms/course-enrollments/detail/:id" },
+    COURSE_ENROLLMENT_EDIT: { path: "/module/lms/course-enrollments/edit/:id" },
 };
 
 export const COURSE_OFFERING_ROUTES = {
@@ -31,8 +27,8 @@ export const COURSE_OFFERING_ROUTES = {
     viewPath: LMS_ROUTES.COURSE_OFFERING_VIEW.path,
     editPath: LMS_ROUTES.COURSE_OFFERING_EDIT.path,
 
-    view: (id) => `/module/lms/courseofferingview/${id}`,
-    edit: (id) => `/module/lms/courseoffering/${id}`,
+    view: (id) => `/module/lms/course-offerings/detail/${id}`,
+    edit: (id) => `/module/lms/course-offerings/edit/${id}`,
 };
 
 export const COURSE_ENROLLMENT_ROUTES = {
@@ -42,15 +38,14 @@ export const COURSE_ENROLLMENT_ROUTES = {
     viewPath: LMS_ROUTES.COURSE_ENROLLMENT_VIEW.path,
     editPath: LMS_ROUTES.COURSE_ENROLLMENT_EDIT.path,
 
-    view: (id) => `/module/lms/courseenrollmentview/${id}`,
-    edit: (id) => `/module/lms/courseenrollment/${id}`,
+    view: (id) => `/module/lms/course-enrollments/detail/${id}`,
+    edit: (id) => `/module/lms/course-enrollments/edit/${id}`,
 };
 
 export const MODULE_ROUTES = [
 
-    { path: LMS_ROUTES.READ.path, component: ScromListing },
-    { path: LMS_ROUTES.UPDATE.path, component: ScromCourse},
-    { path: LMS_ROUTES.CREATE.path, component: CoursesView },
+    { path: LMS_ROUTES.SCORM.path, component: ScromListing },
+    { path: LMS_ROUTES.COURSES.path, component: CoursesView },
     { path: LMS_ROUTES.COURSE_OFFERING_LIST.path, component: OfferingList },
     { path: LMS_ROUTES.COURSE_OFFERING_CREATE.path, component: OfferingForm },
     { path: LMS_ROUTES.COURSE_OFFERING_EDIT.path, component: OfferingForm },

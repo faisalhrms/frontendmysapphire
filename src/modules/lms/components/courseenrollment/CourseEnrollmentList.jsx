@@ -1,7 +1,8 @@
-import React, { useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useRef, useMemo } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { COURSE_ENROLLMENT_ROUTES } from "@modules/lms/routes.js";
+import UserWithAvatar from "@components/UserWithAvatar.jsx";
 
 const Badge = ({ tone = "gray", children }) => {
     const cls =
@@ -28,15 +29,17 @@ const statusTone = (s) => {
     return "gray";
 };
 
-const sourceTone = (s) => (s === "hr" ? "bg-waring" : "gray");
+const sourceTone = (s) => (s === "hr" ? "bg-warning" : "gray"); // ✅ fixed typo
 
 export default function CourseEnrollmentList({ externalFilters = [] }) {
     const tableRef = useRef(null);
     const navigate = useNavigate();
+    const { search } = useLocation();
+
+    const refreshKey = useMemo(() => new URLSearchParams(search).get("refresh") || "0", [search]);
 
     const columns = [
         { Header: "ID", accessor: "id", width: 80 },
-
         {
             Header: "Company",
             accessor: "company_name",
@@ -48,22 +51,10 @@ export default function CourseEnrollmentList({ externalFilters = [] }) {
             Cell: ({ row }) => row?.original?.offering?.course?.title ?? "—",
         },
         {
-            Header: "Offering",
-            accessor: "offering_id",
-            Cell: ({ row }) => row?.original?.offering?.id ?? "—",
-            width: 110,
-        },
-
-        {
             Header: "User",
-            accessor: "user_label",
-            Cell: ({ row }) => {
-                const u = row?.original?.user;
-                if (!u) return "—";
-                return u?.name || u?.username || u?.email || `User #${u?.id ?? "—"}`;
-            },
+            accessor: "user",
+            Cell: ({ value }) => <UserWithAvatar user={value} />,
         },
-
         {
             Header: "Source",
             accessor: "source",
@@ -76,17 +67,14 @@ export default function CourseEnrollmentList({ externalFilters = [] }) {
             Cell: ({ value }) => <Badge tone={statusTone(value)}>{value ?? "—"}</Badge>,
             width: 140,
         },
-
         {
             Header: "Completed At",
             accessor: "completed_at",
             Cell: ({ value }) => formatDate(value),
             width: 190,
         },
-
         { Header: "Score", accessor: "score", width: 110 },
         { Header: "Time (sec)", accessor: "total_time_seconds", width: 130 },
-
         {
             Header: "Actions",
             accessor: "__actions__",
@@ -99,14 +87,16 @@ export default function CourseEnrollmentList({ externalFilters = [] }) {
                         <button
                             className="ti-btn ti-btn-secondary ti-btn-sm"
                             onClick={() => navigate(COURSE_ENROLLMENT_ROUTES.view(id))}
+                            type="button"
                         >
-                            <i className={"ri-eye-line"}></i>
+                            <i className="ri-eye-line" />
                         </button>
                         <button
                             className="ti-btn ti-btn-primary ti-btn-sm"
                             onClick={() => navigate(COURSE_ENROLLMENT_ROUTES.edit(id))}
+                            type="button"
                         >
-                            <i className={"ri-edit-line"}></i>
+                            <i className="ri-edit-line" />
                         </button>
                     </div>
                 );
@@ -114,7 +104,6 @@ export default function CourseEnrollmentList({ externalFilters = [] }) {
         },
     ];
 
-    // ✅ NEW: show create button inside DataTable header (right side)
     const buttons = (
         <Link
             to={COURSE_ENROLLMENT_ROUTES.create}
@@ -127,6 +116,7 @@ export default function CourseEnrollmentList({ externalFilters = [] }) {
     return (
         <div className="p-4">
             <DataTable
+                key={refreshKey}
                 ref={tableRef}
                 apiUrl="/lms/course-enrollments/datatable/"
                 columns={columns}
