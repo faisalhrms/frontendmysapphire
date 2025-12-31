@@ -216,6 +216,7 @@ export default function CourseEnrollmentForm({ showHeader = true, showBackButton
         return [];
     }, [isEdit, initial]);
 
+    const companyId = watch("company_id");
     const statusReg = register("status");
 
     return (
@@ -249,24 +250,29 @@ export default function CourseEnrollmentForm({ showHeader = true, showBackButton
                 onSubmit={handleSubmit(onSubmit)}
                 className="bg-white rounded-2xl shadow-sm border p-4 space-y-4 dark:text-gray-200 dark:bg-bodybg"
             >
+
+
                 <div>
                     <FormAsyncSelect
                         isMulti={false}
-                        label={isEdit ? "Course Offering" : "Course Offering *"}
+                        label="Course Offering"
                         name="offering_id"
                         control={control}
                         errors={errors}
-                        placeholder="course offering..."
-                        preselectedOptions={offeringPreselected}
+                        placeholder="Search offering..."
                         allowSaveNewOption={false}
                         className="w-full"
-                        apiUrl={`/select/lms/course-offerings/?published=true&active_now=true`}
-                        queryKeyBase={`lms_course_offerings_active`}
+                        apiUrl={`/select/lms/course-offerings`}
+                        queryKeyBase={`lms_course_offerings_${companyId || "no_company"}`}
                         needObject={false}
-                        isDisabled={isEdit}
-                        rules={{ required: !isEdit ? "Course Offering is required" : false }}
+                        rules={{ required: true }}
+                        // ✅ IMPORTANT: company_id query param bhejna
+                        queryParams={companyId ? { company_id: companyId } : {}}
                     />
-                    {errors.offering_id && <p className="text-xs text-red-600 mt-1">{errors.offering_id.message}</p>}
+
+                    {errors.offering_id && (
+                        <p className="text-xs text-red-600 mt-1">{errors.offering_id.message}</p>
+                    )}
                 </div>
 
                 <div>

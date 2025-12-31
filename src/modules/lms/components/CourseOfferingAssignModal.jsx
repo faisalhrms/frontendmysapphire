@@ -49,7 +49,7 @@ export default function CourseOfferingAssignModal({
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4">
             <div className="w-full max-w-3xl rounded-2xl bg-white p-4 shadow-lg dark:bg-bodybg">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">Assign Course Offering</h2>
+                    <h2 className="text-lg font-semibold">Assign Course enrollment</h2>
                     <button className="ti-btn ti-btn-light ti-btn-sm" onClick={onClose} type="button">
                         <i className="ri-close-line" />
                     </button>

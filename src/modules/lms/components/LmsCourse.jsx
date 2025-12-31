@@ -113,14 +113,29 @@ export default function CoursesPage() {
             () => [
                 {Header: "ID", accessor: "id", width: 80},
                 {Header: "Title", accessor: "title"},
+
                 {
-                    Header: "Active",
                     accessor: "is_active",
-                    Cell: ({value}) => (
-                        <Badge ok={!!value}>{value ? "Yes" : "No"}</Badge>
+                    Header: "Active",
+                    getCellProps: (cellInfo) => {
+                        const value = cellInfo.value;
+                        return {
+                            className: value ? "bg-success text-white" : "bg-red text-white",
+                        };
+                    },
+                    Cell: ({ row }) => (
+                        <span
+                            className={`px-2 py-1 rounded text-xs ${
+                                row.original.is_active
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-gray-100 text-gray-700"
+                            }`}
+                        >
+      {row.original.is_active ? "Yes" : "No"}
+    </span>
                     ),
-                    width: 120,
                 },
+
                 {
                     Header: "SCORM",
                     accessor: "scorm_package.title",

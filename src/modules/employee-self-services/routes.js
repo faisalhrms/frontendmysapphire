@@ -13,6 +13,7 @@ import ObjectiveDetail from "@modules/employee-self-services/objectives/views/Ob
 import TeamObjectivesList from "@modules/employee-self-services/objectives/views/TeamObjectivesList.jsx";
 import BrandBook from "@modules/employee-self-services/brand-book/views/BrandBook.jsx";
 import CourseOffering from "@modules/employee-self-services/course-learning/views/CourseOffering.jsx";
+import CourseOfferingDetail from "@modules/employee-self-services/course-learning/components/CourseOfferingDetail.jsx";
 export const SELF_SERVICES_ROUTES = {
     SERVICES: {
         READ: {
@@ -70,10 +71,21 @@ export const SELF_SERVICES_ROUTES = {
 
         }
         ,
-        COURSE_LEARING:{
+        // COURSE_LEARING:{
+        //     path: "/module/ess/course-learing",
+        //     // permission:"user.view_ess_modules"
+        //
+        // },
+        // COURSE_LEARING_DETAIL: {
+        //     path: "/module/ess/course-learing/:id",
+        //
+        // },
+        COURSE_LEARING: {
             path: "/module/ess/course-learing",
             // permission:"user.view_ess_modules"
-
+        },
+        COURSE_LEARING_DETAIL: {
+            path: "/module/ess/course-learing/:id",
         },
 
     }
@@ -144,9 +156,21 @@ export const MODULE_ROUTES = [
         component:BrandBook,
         permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
     },
+    // {
+    //     path:SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
+    //     component:CourseOffering,
+    //     // permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
+    // },
+    // {
+    //     path: SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING_DETAIL.path,
+    //     component: CourseOfferingDetail,
+    // },
     {
-        path:SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
-        component:CourseOffering,
-        // permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
-    }
+        path: SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
+        component: CourseOffering,
+    },
+    {
+        path: SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING_DETAIL.path,
+        component: CourseOfferingDetail,
+    },
 ];

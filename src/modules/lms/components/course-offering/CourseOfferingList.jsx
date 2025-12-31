@@ -36,7 +36,9 @@ export default function CourseOfferingList({ externalFilters = [] }) {
     const onOpenModal = () => setOpenAssignModal(true);
     const onCloseModal = () => setOpenAssignModal(false);
 
-    // ✅ SAVE ENROLLMENTS THEN GO TO LIST
+    const onOpenEnrollmentDatatable = (offeringId) => {
+        navigate(COURSE_ENROLLMENT_ROUTES.datatable(offeringId));
+    };
     const onContinue = async ({ offering_id, user_ids, score, total_time_seconds }) => {
         const offeringId = Number(offering_id);
         const userIds = Array.isArray(user_ids) ? user_ids.map(Number).filter(Boolean) : [];
@@ -87,17 +89,50 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                 Cell: ({ value, row }) => value ?? row.original?.course?.title ?? "—",
             },
             {
-                Header: "Published",
                 accessor: "is_published",
-                Cell: ({ value }) => <Badge ok={!!value}>{value ? "Yes" : "No"}</Badge>,
+                Header: "Published",
+                getCellProps: (cellInfo) => {
+                    const value = cellInfo.value;
+                    return {
+                        className: value ? "bg-success text-white" : "bg-red text-white",
+                    };
+                },
+                Cell: ({ row }) => (
+                    <span
+                        className={`px-2 py-1 rounded text-xs ${
+                            row.original.is_published
+                                ? "bg-green-100 text-green-800"
+                                : ""
+                        }`}
+                    >
+      {row.original.is_published ? "Yes" : "No"}
+    </span>
+                ),
                 width: 120,
             },
             {
-                Header: "Self Enroll",
                 accessor: "allow_self_enroll",
-                Cell: ({ value }) => <Badge ok={!!value}>{value ? "Allowed" : "No"}</Badge>,
+                Header: "Self Enroll",
+                getCellProps: (cellInfo) => {
+                    const value = cellInfo.value;
+                    return {
+                        className: value ? "bg-success text-white" : "bg-red text-white",
+                    };
+                },
+                Cell: ({ row }) => (
+                    <span
+                        className={`px-2 py-1 rounded text-xs ${
+                            row.original.allow_self_enroll
+                                ? "bg-green-100 text-green-800"
+                                : ""
+                        }`}
+                    >
+      {row.original.allow_self_enroll ? "Allowed" : "No"}
+    </span>
+                ),
                 width: 140,
             },
+
             { Header: "Start", accessor: "started_at", Cell: ({ value }) => formatDateOnly(value) },
             { Header: "End", accessor: "ended_at", Cell: ({ value }) => formatDateOnly(value) },
             {
@@ -115,7 +150,7 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                                 title="View"
                                 type="button"
                             >
-                                <i className="ri-eye-line" />
+                                <i className="ri-eye-line"/>
                             </button>
 
                             <button
@@ -124,17 +159,26 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                                 title="Edit"
                                 type="button"
                             >
-                                <i className="ri-edit-line" />
+                                <i className="ri-edit-line"/>
                             </button>
 
                             <button
                                 className="ti-btn ti-btn-info ti-btn-sm"
                                 onClick={onOpenModal}
-                                title="Assign users (LOV)"
+                                title="Course Enrollment"
                                 type="button"
                             >
-                                <i className="ri-user-add-line" />
+                                <i className="ri-user-add-line"/>
                             </button>
+                            <button
+                                className="ti-btn ti-btn-success ti-btn-sm"
+                                onClick={() => onOpenEnrollmentDatatable(id)}
+                                title="View Enrollments"
+                                type="button"
+                            >
+                                <i className="ri-team-line"/>
+                            </button>
+
                         </div>
                     );
                 },
