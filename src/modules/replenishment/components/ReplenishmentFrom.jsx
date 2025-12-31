@@ -62,9 +62,10 @@ const ReplenishmentFrom = () => {
       date_from: "",
       date_to: "",
       standard_deviations: 0.00,
+      launches: [],
       forecast_days: 13,
       forecast_method: "standard_deviation",
-      from_warehouses: [{ name: "", priority: undefined }],
+      // from_warehouses: [{ name: "", priority: undefined }],
       reason_code:102,
       comment:"Replenishment",
     },
@@ -195,6 +196,7 @@ const ReplenishmentFrom = () => {
                                   errors={errors}
                                   options={forecastMethods}
                                   placeholder="Forecast Method"
+                                  is_required={true}
                               />
                             </div>
                             <div className="xl:col-span-8 col-span-12">
@@ -223,52 +225,52 @@ const ReplenishmentFrom = () => {
                               </div>
                             </div>
 
-                            <div>
-                              <label
-                                  className="form-label"
-                                  title="From Warehouses"
-                                  htmlFor="from_warehouses">
-                                From Warehouses
-                              </label>
-                              <div className="flex flex-col gap-y-2">
-                                {fields.map((field, index) => (
-                                    <div key={index} className="flex items-center gap-x-2">
-                                      <FormAsyncSelect
-                                          label={false}
-                                          name={`from_warehouses.${index}.name`}
-                                          control={control}
-                                          errors={errors}
-                                          placeholder="Warehouse"
-                                          apiUrl="/select/scm/warehouses/"
-                                          queryKeyBase="scm_warehouses"
-                                          preselectedOptions={[]}
-                                      />
-                                      {errors?.from_warehouses?.[index]?.priority && (
-                                          <span className="text-danger text-sm">
-                                     <p className="text-sm text-red mt-2">{errors.from_warehouses[index].priority.message}</p>
-                                 </span>
-                                      )}
-                                      <FormInput
-                                          type="number"
-                                          name={`from_warehouses.${index}.priority`}
-                                          control={control}
-                                          errors={errors}
-                                      />
-                                      {index === 0 ? (
-                                          <i
-                                              className="bi bi-plus-square text-success cursor-pointer"
-                                              onClick={addField}
-                                          ></i>
-                                      ) : (
-                                          <i
-                                              className="bi bi-dash-square text-danger cursor-pointer"
-                                              onClick={() => removeField(index)}
-                                          ></i>
-                                      )}
-                                    </div>
-                                ))}
-                              </div>
-                            </div>
+                            {/*<div>*/}
+                            {/*  <label*/}
+                            {/*      className="form-label"*/}
+                            {/*      title="From Warehouses"*/}
+                            {/*      htmlFor="from_warehouses">*/}
+                            {/*    From Warehouses*/}
+                            {/*  </label>*/}
+                            {/*  <div className="flex flex-col gap-y-2">*/}
+                            {/*    {fields.map((field, index) => (*/}
+                            {/*        <div key={index} className="flex items-center gap-x-2">*/}
+                            {/*          <FormAsyncSelect*/}
+                            {/*              label={false}*/}
+                            {/*              name={`from_warehouses.${index}.name`}*/}
+                            {/*              control={control}*/}
+                            {/*              errors={errors}*/}
+                            {/*              placeholder="Warehouse"*/}
+                            {/*              apiUrl="/select/scm/warehouses/"*/}
+                            {/*              queryKeyBase="scm_warehouses"*/}
+                            {/*              preselectedOptions={[]}*/}
+                            {/*          />*/}
+                            {/*          {errors?.from_warehouses?.[index]?.priority && (*/}
+                            {/*              <span className="text-danger text-sm">*/}
+                            {/*         <p className="text-sm text-red mt-2">{errors.from_warehouses[index].priority.message}</p>*/}
+                            {/*     </span>*/}
+                            {/*          )}*/}
+                            {/*          <FormInput*/}
+                            {/*              type="number"*/}
+                            {/*              name={`from_warehouses.${index}.priority`}*/}
+                            {/*              control={control}*/}
+                            {/*              errors={errors}*/}
+                            {/*          />*/}
+                            {/*          {index === 0 ? (*/}
+                            {/*              <i*/}
+                            {/*                  className="bi bi-plus-square text-success cursor-pointer"*/}
+                            {/*                  onClick={addField}*/}
+                            {/*              ></i>*/}
+                            {/*          ) : (*/}
+                            {/*              <i*/}
+                            {/*                  className="bi bi-dash-square text-danger cursor-pointer"*/}
+                            {/*                  onClick={() => removeField(index)}*/}
+                            {/*              ></i>*/}
+                            {/*          )}*/}
+                            {/*        </div>*/}
+                            {/*    ))}*/}
+                            {/*  </div>*/}
+                            {/*</div>*/}
 
                             <div>
                               <FormInput
@@ -277,25 +279,39 @@ const ReplenishmentFrom = () => {
                                   name="forecast_days"
                                   control={control}
                                   errors={errors}
+                                  is_required={true}
                               />
                             </div>
-                            <div>
-                              <FormAsyncSelect
-                                  isMulti={true}
-                                  label={true}
-                                  name={`categories`}
-                                  control={control}
-                                  errors={errors}
-                                  placeholder="Category"
-                                  apiUrl="/select/scm/categories/"
-                                  queryKeyBase="categories"
-                                  preselectedOptions={[]}
-                              />
+                            <div className="xl:col-span-8 col-span-12">
+                              <div className="grid grid-cols-12 gap-x-2 gap-y-2">
+                                <div className="xl:col-span-6 col-span-12">
+                                  <FormAsyncSelect
+                                      label={true}
+                                      name={`category`}
+                                      control={control}
+                                      errors={errors}
+                                      placeholder="Category"
+                                      apiUrl="/select/scm/categories/"
+                                      queryKeyBase="scm_categories"
+                                      is_required={true}
+                                  />
+                                </div>
+                                <div className="xl:col-span-6 col-span-12">
+                                  <FormInput
+                                      placeholder='Minimum Quantity'
+                                      type="number"
+                                      name="min_qty"
+                                      control={control}
+                                      errors={errors}
+                                      is_required={true}
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </li>
+              </div>
+            </li>
 
                     <li className="list-group-item !border !border-defaultborder dark:!border-defaultborder/10 !border-t-0 !border-e-0 !border-s-0">
                       <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
@@ -316,15 +332,32 @@ const ReplenishmentFrom = () => {
                         </div>
                         <div className="xl:col-span-8 col-span-12">
                           <div className="flex flex-col gap-y-4">
-                            <div>
-                              <FormInput
-                                  type="date"
-                                  id="launch_date"
-                                  name="launch_date"
-                                  control={control}
-                                  errors={errors}
-                                  placeholder="Launch Date"
-                              />
+                            <div className="xl:col-span-8 col-span-12">
+                              <div className="grid grid-cols-12 gap-x-2 gap-y-2">
+                                <div className="xl:col-span-6 col-span-12">
+                                    <FormAsyncSelect
+                                        label={true}
+                                        isMulti={true}
+                                        name="launches"
+                                        control={control}
+                                        errors={errors}
+                                        placeholder="Launches"
+                                        apiUrl="/select/scm/launches/"
+                                        queryKeyBase="scm_launches"
+                                        clientSideSearch={true}
+                                    />
+                                </div>
+                                <div className="xl:col-span-6 col-span-12">
+                                  <FormInput
+                                      placeholder='Launch Aging'
+                                      type="number"
+                                      name="launch_aging"
+                                      control={control}
+                                      errors={errors}
+                                      is_required={true}
+                                  />
+                                </div>
+                              </div>
                             </div>
                             <div>
                               <FormInput
@@ -335,46 +368,48 @@ const ReplenishmentFrom = () => {
                                   errors={errors}
                                   placeholder="Sale Date From"
                                   min={minSoldAt}
-                                  max={maxSoldAt}
-                              />
-                            </div>
-                            <div>
-                              <FormInput
-                                  type="date"
-                                  id="to_date"
-                                  name="to_date"
-                                  control={control}
-                                  errors={errors}
-                                  placeholder="Sale Date To"
-                                  min={minSoldAt}
-                                  max={maxSoldAt}
-                              />
-                            </div>
-                            <div>
-                              <FormInput
-                                  type="date"
-                                  name="excluded_from_date"
-                                  control={control}
-                                  errors={errors}
-                                  placeholder="Excluded From Date"
-                              />
-                            </div>
-                            <div>
-                              <FormInput
-                                  type="date"
-                                  name="excluded_to_date"
-                                  control={control}
-                                  errors={errors}
-                                  placeholder="Excluded To Date"
-                              />
+                                      max={maxSoldAt}
+                                      is_required={true}
+                                  />
+                                </div>
+                                <div>
+                                  <FormInput
+                                      type="date"
+                                      id="to_date"
+                                      name="to_date"
+                                      control={control}
+                                      errors={errors}
+                                      placeholder="Sale Date To"
+                                      min={minSoldAt}
+                                      max={maxSoldAt}
+                                      is_required={true}
+                                  />
+                                </div>
+                                <div>
+                                  <FormInput
+                                      type="date"
+                                      name="excluded_from_date"
+                                      control={control}
+                                      errors={errors}
+                                      placeholder="Excluded From Date"
+                                  />
+                                </div>
+                                <div>
+                                  <FormInput
+                                      type="date"
+                                      name="excluded_to_date"
+                                      control={control}
+                                      errors={errors}
+                                      placeholder="Excluded To Date"
+                                  />
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
                     </li>
 
             <li className="list-group-item !border !border-defaultborder dark:!border-defaultborder/10 !border-t-0 !border-e-0 !border-s-0">
-              <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
+            <div className="grid grid-cols-12 xl:gap-x-[3rem] gap-y-4">
                 <div className="xl:col-span-4 col-span-12">
                   <label
                       className="text-[1rem] mb-1 font-semibold"
@@ -398,6 +433,7 @@ const ReplenishmentFrom = () => {
                                   name="reason_code"
                                   control={control}
                                   errors={errors}
+                                  is_required={true}
                               />
                             </div>
                             <div className="xl:col-span-4 col-span-12">
@@ -407,6 +443,7 @@ const ReplenishmentFrom = () => {
                                   name="plan_ship_date"
                                   control={control}
                                   errors={errors}
+                                  is_required={true}
                               />
                             </div>
                             <div className="xl:col-span-4 col-span-12">
@@ -416,6 +453,7 @@ const ReplenishmentFrom = () => {
                                   name="plan_receive_date"
                                   control={control}
                                   errors={errors}
+                                  is_required={true}
                               />
                             </div>
                             <div className="col-span-12">
@@ -425,6 +463,7 @@ const ReplenishmentFrom = () => {
                                   name="comment"
                                   control={control}
                                   errors={errors}
+                                  is_required={true}
                               />
                             </div>
                           </div>
