@@ -117,7 +117,7 @@ const AgreementPlacementModal = ({
                 )}
                 <div className="col-span-12 md:col-span-4">
                   <FormInput
-                    type="number"
+                    type="text"
                     name="colour"
                     control={control}
                     errors={errors}
@@ -166,7 +166,7 @@ const AgreementPlacementModal = ({
                 </div>
                 <div className="col-span-12 md:col-span-4">
                   <FormInput
-                    type="number"
+                    type="text"
                     name="design"
                     control={control}
                     errors={errors}

@@ -1,6 +1,7 @@
 import React from "react"
 import QCPanel from "@modules/chatbot/components/QCPanel.jsx"
 import CompetitorPanel from "@modules/chatbot/components/CompetitorPanel.jsx"
+import EmployeeChatKitPane from "@modules/chatbot/components/EmployeeChatKitPane.jsx"
 import HasPermission from "@components/HasPermission.jsx"
 
 const ChatInputBar = ({
@@ -30,23 +31,212 @@ const ChatInputBar = ({
   competitorSites = [],
   setCompetitorSites,
   competitorChecks = [],
-  setCompetitorChecks
+  setCompetitorChecks,
 }) => {
-  const chips = (suggestions.length ? suggestions : [
-    "Top 10 exporters of Bed by value_usd last 12 months bar chart",
-    "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)"
-  ]).slice(0, 4)
+  const chips = (suggestions.length
+    ? suggestions
+    : [
+        "Top 10 exporters of Bed by value_usd last 12 months bar chart",
+        "Top ten institutional exporters of duvet to Europe in 2024 in value (USD)",
+      ]
+  ).slice(0, 4)
+
+  const toggleSub = (s) => setHrSubtypes?.([s])
+  const active = (s) => hrSubtypes?.[0] === s
+
   const isQc = modeSelection === "Quality Control"
   const isCompetitor = modeSelection === "Competitor Pricing"
-  const pad = isQc || isCompetitor ? "pb-24" : "pb-20"
-  const toggleSub = s => setHrSubtypes?.([s])
-  const active = s => hrSubtypes?.[0] === s
+  const isHrEmployee = modeSelection === "HR" && active("employee")
+
   const showSuggestions =
     (modeSelection === "Export Data" || modeSelection === "IT Audit" || modeSelection === "HR") &&
     chips.length > 0
 
+  // HR -> EMPLOYEE: render EmployeeChatKitPane instead of textarea bar
+  if (isHrEmployee) {
+    return (
+      <div className="relative w-full max-w-5xl mx-auto bg-white dark:bg-bodybg rounded-xl shadow-xl ring-1 ring-black/5 border border-gray-200 overflow-hidden">
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 dark:border-defaultborder/20">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setHrSubtypes?.(["policies"])}
+              className="h-9 px-3 rounded-full border text-xs bg-white dark:bg-gray-800"
+            >
+              Back
+            </button>
+
+            <button
+              onClick={toggleWebSearch}
+              className={`h-9 w-9 rounded-full flex items-center justify-center border ${
+                isWebSearch ? "bg-blue text-white" : "text-info"
+              }`}
+              title="Web search"
+              aria-label="Web search"
+            >
+              <i className="ri-earth-line text-lg"></i>
+            </button>
+
+            <div className="relative">
+              <button
+                onClick={() => setModeOpen((o) => !o)}
+                className="h-9 px-4 rounded-lg border text-xs flex items-center gap-1 bg-transparent"
+              >
+                {modeSelection}
+                <i className="ri-arrow-down-s-line text-lg"></i>
+              </button>
+
+              {modeSelection !== "Select Source" && (
+                <button
+                  onClick={() => {
+                    setModeSelection("Select Source")
+                    setModeOpen(false)
+                    setHrSubtypes?.(["policies"])
+                  }}
+                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
+                  aria-label="Clear source"
+                >
+                  <i className="ri-close-line text-xs"></i>
+                </button>
+              )}
+
+              {modeOpen && (
+                <div className="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
+                  <button
+                    onClick={() => {
+                      setModeSelection("Select Source")
+                      setModeOpen(false)
+                      setHrSubtypes?.(["policies"])
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Select Source
+                  </button>
+
+                  <HasPermission permission="auth.chatbot_export_data">
+                    <button
+                      onClick={() => {
+                        setModeSelection("Export Data")
+                        setModeOpen(false)
+                        setHrSubtypes?.(["policies"])
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      Export Data
+                    </button>
+                  </HasPermission>
+
+                  <HasPermission permission="auth.chatbot_sales_force">
+                    <button
+                      onClick={() => {
+                        setModeSelection("Salesforce")
+                        setModeOpen(false)
+                        setHrSubtypes?.(["policies"])
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      Salesforce
+                    </button>
+                  </HasPermission>
+
+                  <HasPermission permission="auth.chatbot_quality_control">
+                    <button
+                      onClick={() => {
+                        setModeSelection("Quality Control")
+                        setModeOpen(false)
+                        setHrSubtypes?.(["policies"])
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      Quality Control
+                    </button>
+                  </HasPermission>
+
+                  <HasPermission permission="auth.chatbot_competitors">
+                    <button
+                      onClick={() => {
+                        setModeSelection("Competitor Pricing")
+                        setModeOpen(false)
+                        setHrSubtypes?.(["policies"])
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      Competitor Pricing
+                    </button>
+                  </HasPermission>
+
+                  <HasPermission permission="auth.chatbot_asset_audit">
+                    <button
+                      onClick={() => {
+                        setModeSelection("IT Audit")
+                        setModeOpen(false)
+                        setHrSubtypes?.(["policies"])
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      IT Audit
+                    </button>
+                  </HasPermission>
+
+                  <HasPermission permission="auth.chatbot_policies">
+                    <button
+                      onClick={() => {
+                        setModeSelection("HR")
+                        setModeOpen(false)
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      HR
+                    </button>
+                  </HasPermission>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 ml-2 flex-wrap">
+              {["policies", "pms", "pas", "employee"].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => toggleSub(s)}
+                  className={`px-3 py-1 rounded-full text-xs border ${
+                    active(s)
+                      ? "bg-indigo/80 text-white border-indigo"
+                      : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"
+                  }`}
+                >
+                  {s.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={startVoice}
+              className={`h-9 w-9 rounded-full flex items-center justify-center ${
+                listening ? "ring ring-red bg-outline-danger" : "bg-outline-success"
+              }`}
+              title="Voice"
+              aria-label="Voice"
+            >
+              <i className={`ri-voiceprint-fill text-lg ${listening ? "text-red animate-pulse" : ""}`}></i>
+            </button>
+          </div>
+        </div>
+
+        <div className="p-2">
+          <EmployeeChatKitPane />
+        </div>
+      </div>
+    )
+  }
+
+  const pad = isQc || isCompetitor ? "pb-24" : "pb-20"
+
   return (
-    <div className={`relative w-full max-w-5xl mx-auto bg-white dark:bg-bodybg rounded-xl shadow-xl ring-1 ring-black/5 border border-gray-200 px-6 pt-4 ${pad}`}>
+    <div
+      className={`relative w-full max-w-5xl mx-auto bg-white dark:bg-bodybg rounded-xl shadow-xl ring-1 ring-black/5 border border-gray-200 px-6 pt-4 ${pad}`}
+    >
       {isQc ? (
         <QCPanel
           qcTarget={qcTarget}
@@ -70,10 +260,14 @@ const ChatInputBar = ({
             rows={1}
             placeholder="What do you want to know?"
             value={input}
-            onChange={e => { setInput(e.target.value); if (typeof autoResize === "function") autoResize(e) }}
-            onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
+            onChange={(e) => {
+              setInput(e.target.value)
+              if (typeof autoResize === "function") autoResize(e)
+            }}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
             className="w-full form-control border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] leading-6"
           />
+
           {showSuggestions && (
             <div className="mt-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
               {chips.map((s, i) => (
@@ -93,63 +287,133 @@ const ChatInputBar = ({
       <div className="absolute bottom-3 left-3 flex items-center gap-2">
         <button
           onClick={toggleWebSearch}
-          className={`h-10 w-10 rounded-full flex items-center justify-center border ${isWebSearch ? "bg-blue text-white" : "text-info"}`}
+          className={`h-10 w-10 rounded-full flex items-center justify-center border ${
+            isWebSearch ? "bg-blue text-white" : "text-info"
+          }`}
         >
           <i className="ri-earth-line text-xl"></i>
         </button>
+
         <div className="relative">
           <button
-            onClick={() => setModeOpen(o => !o)}
+            onClick={() => setModeOpen((o) => !o)}
             className="h-10 px-4 rounded-lg border text-sm flex items-center gap-1 bg-transparent"
           >
             {modeSelection}
             <i className="ri-arrow-down-s-line text-lg"></i>
           </button>
+
           {modeSelection !== "Select Source" && (
             <button
-              onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }}
+              onClick={() => {
+                setModeSelection("Select Source")
+                setModeOpen(false)
+              }}
               className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
               aria-label="Clear source"
             >
               <i className="ri-close-line text-xs"></i>
             </button>
           )}
+
           {modeOpen && (
             <div className="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
-              <button onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Select Source</button>
-              <HasPermission permission='auth.chatbot_export_data'>
-                <button onClick={() => { setModeSelection("Export Data"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Export Data</button>
-              </HasPermission>
-              <HasPermission permission='auth.chatbot_sales_force'>
-                <button onClick={() => { setModeSelection("Salesforce"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Salesforce</button>
-              </HasPermission>
-              <HasPermission permission='auth.chatbot_quality_control'>
-                <button onClick={() => { setModeSelection("Quality Control"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
-              </HasPermission>
-              <HasPermission permission='auth.chatbot_competitors'>
+              <button
+                onClick={() => {
+                  setModeSelection("Select Source")
+                  setModeOpen(false)
+                }}
+                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Select Source
+              </button>
+
+              <HasPermission permission="auth.chatbot_export_data">
                 <button
-                  onClick={() => { setModeSelection("Competitor Pricing"); setModeOpen(false) }}
+                  onClick={() => {
+                    setModeSelection("Export Data")
+                    setModeOpen(false)
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Export Data
+                </button>
+              </HasPermission>
+
+              <HasPermission permission="auth.chatbot_sales_force">
+                <button
+                  onClick={() => {
+                    setModeSelection("Salesforce")
+                    setModeOpen(false)
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Salesforce
+                </button>
+              </HasPermission>
+
+              <HasPermission permission="auth.chatbot_quality_control">
+                <button
+                  onClick={() => {
+                    setModeSelection("Quality Control")
+                    setModeOpen(false)
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Quality Control
+                </button>
+              </HasPermission>
+
+              <HasPermission permission="auth.chatbot_competitors">
+                <button
+                  onClick={() => {
+                    setModeSelection("Competitor Pricing")
+                    setModeOpen(false)
+                  }}
                   className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Competitor Pricing
                 </button>
               </HasPermission>
-              <HasPermission permission='auth.chatbot_asset_audit'>
-                <button onClick={() => { setModeSelection("IT Audit"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">IT Audit</button>
+
+              <HasPermission permission="auth.chatbot_asset_audit">
+                <button
+                  onClick={() => {
+                    setModeSelection("IT Audit")
+                    setModeOpen(false)
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  IT Audit
+                </button>
               </HasPermission>
-              <HasPermission permission='auth.chatbot_policies'>
-                <button onClick={() => { setModeSelection("HR"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">HR</button>
+
+              <HasPermission permission="auth.chatbot_policies">
+                <button
+                  onClick={() => {
+                    setModeSelection("HR")
+                    setModeOpen(false)
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  HR
+                </button>
               </HasPermission>
             </div>
           )}
         </div>
+
         {modeSelection === "HR" && (
           <div className="flex items-center gap-2 ml-2">
-            {["policies","pms","pas","employee"].map(s => (
+            {["policies", "pms", "pas", "employee"].map((s) => (
               <button
                 key={s}
                 onClick={() => toggleSub(s)}
-                className={`px-3 py-1 rounded-full text-xs border ${active(s) ? "bg-indigo/80 text-white border-indigo" : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"}`}
+                className={`px-3 py-1 rounded-full text-xs border ${
+                  active(s)
+                    ? "bg-indigo/80 text-white border-indigo"
+                    : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"
+                }`}
               >
                 {s.toUpperCase()}
               </button>
@@ -161,10 +425,13 @@ const ChatInputBar = ({
       <div className="absolute bottom-3 right-3 flex items-center gap-2">
         <button
           onClick={startVoice}
-          className={`h-10 w-10 rounded-full flex items-center justify-center ${listening ? "ring ring-red bg-outline-danger" : "bg-outline-success"}`}
+          className={`h-10 w-10 rounded-full flex items-center justify-center ${
+            listening ? "ring ring-red bg-outline-danger" : "bg-outline-success"
+          }`}
         >
           <i className={`ri-voiceprint-fill text-xl ${listening ? "text-red animate-pulse" : ""}`}></i>
         </button>
+
         <button
           onClick={handleSend}
           className="h-10 w-10 rounded-full bg-outline-primary text-white flex items-center justify-center"

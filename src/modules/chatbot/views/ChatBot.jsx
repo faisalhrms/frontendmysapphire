@@ -19,7 +19,8 @@ import EmployeeCard from "@modules/chatbot/components/EmployeeCard.jsx"
 import EmployeeCandidates from "@modules/chatbot/components/EmployeeCandidates.jsx"
 import AttendanceSummary from "@modules/chatbot/components/AttendanceSummary.jsx"
 import CaloriesChatKitPane from "@modules/chatbot/components/CaloriesChatKitPane.jsx"
-import HasPermission from "@components/HasPermission.jsx";
+import HasPermission from "@components/HasPermission.jsx"
+import EmployeeChatKitPane from "@modules/chatbot/components/EmployeeChatKitPane.jsx"
 
 export default function ChatBot() {
   const {
@@ -57,20 +58,31 @@ export default function ChatBot() {
     tick,
   } = useChatBot()
 
-  const currentUser = useSelector(s => s.auth.user)
+  const currentUser = useSelector((s) => s.auth.user)
   const psContainerRef = useRef(null)
   const dockRef = useRef(null)
   const [dockH, setDockH] = useState(140)
-  const canSeeFitness = useMemo(
-    () => (currentUser?.email || "").toLowerCase() === "faisal.rehman@sapphiretextiles.com.pk",
-    [currentUser?.email],
-  )
+
   const [activeView, setActiveView] = useState("assistant")
 
-  const hasLoadingBot = useMemo(
-    () => messages.some(m => m.type === "bot" && m.loading),
-    [messages],
-  )
+  const canSeeFitness = useMemo(() => {
+    const email = String(currentUser?.email || "").toLowerCase()
+    return email === "faisal.rehman@sapphiretextiles.com.pk"
+  }, [currentUser?.email])
+
+  // ✅ this is the real "HR -> employee" pane flag
+  const isHrEmployeePane = useMemo(() => {
+    return activeView === "assistant" && modeSelection === "HR" && hrSubtypes?.[0] === "employee"
+  }, [activeView, modeSelection, hrSubtypes])
+
+  const exitHrEmployeePane = useCallback(() => {
+    setHrSubtypes?.(["policies"])
+    setActiveView("assistant")
+  }, [setHrSubtypes])
+
+  const hasLoadingBot = useMemo(() => {
+    return (messages || []).some((m) => m?.type === "bot" && m?.loading)
+  }, [messages])
 
   useEffect(() => {
     ChatService.resetMemory()
@@ -78,7 +90,7 @@ export default function ChatBot() {
 
   useEffect(() => {
     if (!dockRef.current) return
-    const ro = new ResizeObserver(e => setDockH(Math.round(e[0].contentRect.height)))
+    const ro = new ResizeObserver((e) => setDockH(Math.round(e[0].contentRect.height)))
     ro.observe(dockRef.current)
     return () => ro.disconnect()
   }, [])
@@ -102,14 +114,14 @@ export default function ChatBot() {
 
   useEffect(() => {
     scrollToBottom()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     scrollToBottom()
   }, [messages, isThinking, isWebSearch, tick, scrollToBottom])
 
   const handleLLMLinkClick = useCallback(
-    e => {
+    (e) => {
       const a = e.target.closest("a[data-pms-kind][data-pms-id]")
       if (!a) return
       if (!(hrSubtypes || []).includes("pms")) return
@@ -125,7 +137,7 @@ export default function ChatBot() {
   )
 
   const handlePickEmployee = useCallback(
-    x => {
+    (x) => {
       setModeSelection("HR")
       setHrSubtypes?.(["employee"])
       const q = x.emp_code ? `employee ${x.emp_code}` : `employee ${x.full_name}`
@@ -134,7 +146,6 @@ export default function ChatBot() {
     [ask, setHrSubtypes, setModeSelection],
   )
 
-  // Landing state before chat is started — keep using your existing intro screen.
   if (!isBotActive && activeView === "assistant") {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-white dark:bg-bodybg">
@@ -144,9 +155,7 @@ export default function ChatBot() {
           input={input}
           setInput={setInput}
           inputRef={inputRef}
-          autoResize={e => {
-            autoResize(e)
-          }}
+          autoResize={(e) => autoResize(e)}
           handleSend={handleSend}
           toggleWebSearch={toggleWebSearch}
           isWebSearch={isWebSearch}
@@ -176,46 +185,56 @@ export default function ChatBot() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-bodybg">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-bodybg p-2 mt-2 rounded-md">
       <div className="flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2">
         <div className="flex items-center gap-2">
           <LottieLoader animationData={botLoading} width={40} height={40} speed={0.3} opacity={1} />
-          <Link
-            to="#"
-            className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70"
-          >
+          <Link to="#" className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70">
             SappSense
           </Link>
+
           {canSeeFitness && (
-          <HasPermission permission='auth.ai_fitness_coach'>
-          <div className="ml-4 inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 p-1">
+            <HasPermission permission="auth.ai_fitness_coach">
+              <div className="ml-4 inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 p-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveView("assistant")}
+                  className={`px-3 py-1 text-xs rounded-full transition ${
+                    activeView === "assistant"
+                      ? "bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-300 shadow-sm"
+                      : "text-slate-500 dark:text-slate-300"
+                  }`}
+                >
+                  Assistant
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveView("calories")}
+                  className={`px-3 py-1 text-xs rounded-full transition ${
+                    activeView === "calories"
+                      ? "bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 shadow-sm"
+                      : "text-slate-500 dark:text-slate-300"
+                  }`}
+                >
+                  Calories Tracker
+                </button>
+              </div>
+            </HasPermission>
+          )}
+
+          {/* ✅ Back should be tied to HR employee pane, not fitness permission */}
+          {isHrEmployeePane && (
             <button
               type="button"
-              onClick={() => setActiveView("assistant")}
-              className={`px-3 py-1 text-xs rounded-full transition ${
-                activeView === "assistant"
-                  ? "bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-300 shadow-sm"
-                  : "text-slate-500 dark:text-slate-300"
-              }`}
+              onClick={exitHrEmployeePane}
+              className="ml-3 inline-flex items-center h-8 px-3 rounded-full border text-xs bg-white dark:bg-slate-900"
             >
-              Assistant
+              Back
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveView("calories")}
-              className={`px-3 py-1 text-xs rounded-full transition ${
-                activeView === "calories"
-                  ? "bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 shadow-sm"
-                  : "text-slate-500 dark:text-slate-300"
-              }`}
-            >
-              Calories Tracker
-            </button>
-          </div>
-          </HasPermission>
-            )}
+          )}
         </div>
-        {activeView === "assistant" && (
+
+        {activeView === "assistant" && !isHrEmployeePane && (
           <button
             onClick={handleReset}
             className="inline-flex items-center gap-2 px-5 py-1 rounded-full ring-1 ring-black/5"
@@ -226,17 +245,19 @@ export default function ChatBot() {
         )}
       </div>
 
+      {/* ✅ Render EmployeeChatKitPane when HR->employee is selected */}
       {activeView === "calories" ? (
         <div className="flex-1 min-h-0">
           <CaloriesChatKitPane />
         </div>
+      ) : isHrEmployeePane ? (
+        <div className="flex-1 min-h-0">
+          <EmployeeChatKitPane />
+        </div>
       ) : (
         <>
           <div className="flex-1 min-h-0 overflow-hidden">
-            <PerfectScrollbar
-              className="h-full"
-              containerRef={ref => (psContainerRef.current = ref)}
-            >
+            <PerfectScrollbar className="h-full" containerRef={(ref) => (psContainerRef.current = ref)}>
               <ul
                 className="px-16 py-4 space-y-6"
                 style={{ paddingBottom: dockH + 24 }}
@@ -258,13 +279,11 @@ export default function ChatBot() {
                         </span>
                         {!m.loading && (
                           <span className="text-xs text-gray-500">
-                            {m.time?.toLocaleTimeString?.([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            {m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}
                           </span>
                         )}
                       </div>
+
                       <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-4xl">
                         {m.loading && m.mode === "qc" ? (
                           <LiveScanLCD url={qcTarget} shots={2} delayMs={1800} maxWidth={680} />
@@ -291,6 +310,7 @@ export default function ChatBot() {
                             )}
                           </div>
                         ) : null}
+
                         {m.error ? (
                           <div className="text-xs text-red-600 mt-1">{m.error}</div>
                         ) : (
@@ -300,22 +320,14 @@ export default function ChatBot() {
                                 <ExportExcelButton html={m.html} />
                               ) : null}
                             </div>
-                            {m.mode === "qc" && !m.loading ? (
-                              <QCReport result={m.qc} html={m.html} llm={m.qcLlm} />
-                            ) : null}
+
+                            {m.mode === "qc" && !m.loading ? <QCReport result={m.qc} html={m.html} llm={m.qcLlm} /> : null}
                             {m.chart ? <ChartBox spec={m.chart} ask={ask} /> : null}
-                            {m.employee && !m.attendance ? (
-                              <EmployeeCard userData={m.employee} />
-                            ) : null}
+                            {m.employee && !m.attendance ? <EmployeeCard userData={m.employee} /> : null}
                             {m.employee_candidates ? (
-                              <EmployeeCandidates
-                                items={m.employee_candidates}
-                                onPick={handlePickEmployee}
-                              />
+                              <EmployeeCandidates items={m.employee_candidates} onPick={handlePickEmployee} />
                             ) : null}
-                            {m.mode === "hr" && m.attendance ? (
-                              <AttendanceSummary data={m.attendance} ask={ask} />
-                            ) : null}
+                            {m.mode === "hr" && m.attendance ? <AttendanceSummary data={m.attendance} ask={ask} /> : null}
 
                             {m.html && m.mode !== "qc" ? (
                               <div
@@ -335,10 +347,7 @@ export default function ChatBot() {
                       <div className="flex flex-col items-end text-right max-w-lg space-y-1">
                         <div className="flex items-center gap-2 justify-end">
                           <span className="text-xs text-gray-500">
-                            {m.time?.toLocaleTimeString?.([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            {m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}
                           </span>
                         </div>
                         <div className="bg-sky-100 dark:bg-blue text-blue dark:text-white rounded-lg px-4 py-3">
@@ -351,19 +360,12 @@ export default function ChatBot() {
                     </li>
                   ),
                 )}
+
                 {!hasLoadingBot && isThinking && (
                   <li className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <LottieLoader
-                        animationData={botLoading}
-                        width={40}
-                        height={40}
-                        speed={1}
-                        opacity={1}
-                      />
-                      <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">
-                        SappSense
-                      </span>
+                      <LottieLoader animationData={botLoading} width={40} height={40} speed={1} opacity={1} />
+                      <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
                     </div>
                     <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-lg">
                       <div className="flex items-center gap-2 text-xs text-gray-500">

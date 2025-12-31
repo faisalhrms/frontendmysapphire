@@ -24,6 +24,7 @@ const formSchema = z.object({
     custom_email_templates_enabled: z.boolean(),
     approver_email_template: z.string().nullable().optional(),
     requester_email_template: z.string().nullable().optional(),
+    hide_action_buttons: z.boolean(),
   })
 
 export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
@@ -49,6 +50,7 @@ export function useApprovalTypeForm(editMode = false, approvalTypeId = null) {
             custom_email_templates_enabled: false,
             approver_email_template: "",
             requester_email_template: "",
+            hide_action_buttons: false,
         },
         resolver: zodResolver(formSchema),
         mode: "onChange",
