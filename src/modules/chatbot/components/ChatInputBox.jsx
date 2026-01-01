@@ -140,7 +140,7 @@ const ChatInputBox = ({
           </div>
 
           <div className="flex items-center gap-2 ml-2 flex-wrap">
-            {["policies","pms","pas","employee"].map((s) => (
+            {["policies","pms","employee"].map((s) => (
               <button
                 key={s}
                 onClick={() => toggleSub(s)}
@@ -275,7 +275,7 @@ const ChatInputBox = ({
 
           {modeSelection === "HR" && (
             <div className="flex items-center gap-2 ml-2">
-              {["policies","pms","pas","employee"].map((s) => (
+              {["policies","pms","employee"].map((s) => (
                 <button
                   key={s}
                   onClick={() => toggleSub(s)}

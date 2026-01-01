@@ -47,6 +47,11 @@ const formatMetricValue = (value, digits = 2) => {
   return rounded.toFixed(digits)
 }
 
+const toNumMul10 = (val) => {
+  if (val === null || val === undefined || val === "") return val
+  const n = Number(val)
+  return Number.isFinite(n) ? n * 10 : val
+}
 
 const KV = ({ k, v, valueWidth = VALUE_COL_WIDTH, tooltip }) => (
   <div className="grid grid-cols-[1fr,auto] items-center py-2 gap-2">
@@ -353,14 +358,22 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset, showFull
               rawValue={data.warp_cost_per_10lbs}
               ring="border-violet-200/80"
               Icon={Edit3}
-              onSave={onChangeCosts ? (val) => onChangeCosts({ warp_cost_per_10lbs: val }) : undefined}
+              onSave={
+                onChangeCosts
+                  ? (val) => onChangeCosts({ warp_cost_per_10lbs: toNumMul10(val) })
+                  : undefined
+              }
             />
             <EditableMetricTile
               label="Weft Cost/10 Lbs"
               rawValue={data.weft_cost_per_10lbs}
               ring="border-amber-200/80"
               Icon={Edit3}
-              onSave={onChangeCosts ? (val) => onChangeCosts({ weft_cost_per_10lbs: val }) : undefined}
+              onSave={
+                onChangeCosts
+                  ? (val) => onChangeCosts({ weft_cost_per_10lbs: toNumMul10(val) })
+                  : undefined
+              }
             />
           </div>
         </Card>
