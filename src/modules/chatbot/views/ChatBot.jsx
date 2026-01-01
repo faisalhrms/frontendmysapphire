@@ -70,7 +70,6 @@ export default function ChatBot() {
     return email === "faisal.rehman@sapphiretextiles.com.pk"
   }, [currentUser?.email])
 
-  // ✅ this is the real "HR -> employee" pane flag
   const isHrEmployeePane = useMemo(() => {
     return activeView === "assistant" && modeSelection === "HR" && hrSubtypes?.[0] === "employee"
   }, [activeView, modeSelection, hrSubtypes])
@@ -146,7 +145,14 @@ export default function ChatBot() {
     [ask, setHrSubtypes, setModeSelection],
   )
 
-  if (!isBotActive && activeView === "assistant") {
+  const toggleHrSub = useCallback((s) => setHrSubtypes?.([s]), [setHrSubtypes])
+  const hrActive = useCallback((s) => hrSubtypes?.[0] === s, [hrSubtypes])
+
+  const rootClass = isHrEmployeePane
+    ? "min-h-screen flex flex-col bg-white dark:bg-bodybg"
+    : "min-h-screen flex flex-col bg-white dark:bg-bodybg p-2 mt-2 rounded-md"
+
+  if (!isBotActive && activeView === "assistant" && !isHrEmployeePane) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-white dark:bg-bodybg">
         <LottieLoader animationData={botLoading} width={100} height={100} speed={0.3} opacity={1} />
@@ -185,13 +191,149 @@ export default function ChatBot() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-bodybg p-2 mt-2 rounded-md">
-      <div className="flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2">
-        <div className="flex items-center gap-2">
+    <div className={rootClass}>
+      <div className="flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2 overflow-visible">
+        <div className="flex items-center gap-2 flex-wrap">
           <LottieLoader animationData={botLoading} width={40} height={40} speed={0.3} opacity={1} />
           <Link to="#" className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70">
             SappSense
           </Link>
+
+            {isHrEmployeePane && (
+            <div className="ml-2 flex items-center gap-2 flex-wrap">
+              <div className="relative">
+                <button
+                  onClick={() => setModeOpen((o) => !o)}
+                  className="inline-flex items-center h-9 px-3 rounded-full border bg-transparent text-xs"
+                >
+                  {modeSelection}
+                  <i className="ri-arrow-down-s-line ml-2"></i>
+                </button>
+
+                {modeSelection !== "Select Source" && (
+                  <button
+                    onClick={() => {
+                      setModeSelection("Select Source")
+                      setModeOpen(false)
+                      setHrSubtypes?.(["policies"])
+                    }}
+                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
+                    aria-label="Clear source"
+                  >
+                    <i className="ri-close-line text-xs"></i>
+                  </button>
+                )}
+
+                {modeOpen && (
+                   <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
+                    <button
+                      onClick={() => {
+                        setModeSelection("Select Source")
+                        setModeOpen(false)
+                        setHrSubtypes?.(["policies"])
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      Select Source
+                    </button>
+
+                    <HasPermission permission="auth.chatbot_export_data">
+                      <button
+                        onClick={() => {
+                          setModeSelection("Export Data")
+                          setModeOpen(false)
+                          setHrSubtypes?.(["policies"])
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Export Data
+                      </button>
+                    </HasPermission>
+
+                    <HasPermission permission="auth.chatbot_sales_force">
+                      <button
+                        onClick={() => {
+                          setModeSelection("Salesforce")
+                          setModeOpen(false)
+                          setHrSubtypes?.(["policies"])
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Salesforce
+                      </button>
+                    </HasPermission>
+
+                    <HasPermission permission="auth.chatbot_quality_control">
+                      <button
+                        onClick={() => {
+                          setModeSelection("Quality Control")
+                          setModeOpen(false)
+                          setHrSubtypes?.(["policies"])
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Quality Control
+                      </button>
+                    </HasPermission>
+
+                    <HasPermission permission="auth.chatbot_competitors">
+                      <button
+                        onClick={() => {
+                          setModeSelection("Competitor Pricing")
+                          setModeOpen(false)
+                          setHrSubtypes?.(["policies"])
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Competitor Pricing
+                      </button>
+                    </HasPermission>
+
+                    <HasPermission permission="auth.chatbot_asset_audit">
+                      <button
+                        onClick={() => {
+                          setModeSelection("IT Audit")
+                          setModeOpen(false)
+                          setHrSubtypes?.(["policies"])
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        IT Audit
+                      </button>
+                    </HasPermission>
+
+                    <HasPermission permission="auth.chatbot_policies">
+                      <button
+                        onClick={() => {
+                          setModeSelection("HR")
+                          setModeOpen(false)
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        HR
+                      </button>
+                    </HasPermission>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 ml-2 flex-wrap">
+                {["policies", "pms", "pas", "employee"].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => toggleHrSub(s)}
+                    className={`px-3 py-1 rounded-full text-xs border ${
+                      hrActive(s)
+                        ? "bg-indigo/80 text-white border-indigo"
+                        : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"
+                    }`}
+                  >
+                    {s.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {canSeeFitness && (
             <HasPermission permission="auth.ai_fitness_coach">
@@ -222,7 +364,6 @@ export default function ChatBot() {
             </HasPermission>
           )}
 
-          {/* ✅ Back should be tied to HR employee pane, not fitness permission */}
           {isHrEmployeePane && (
             <button
               type="button"
@@ -235,34 +376,26 @@ export default function ChatBot() {
         </div>
 
         {activeView === "assistant" && !isHrEmployeePane && (
-          <button
-            onClick={handleReset}
-            className="inline-flex items-center gap-2 px-5 py-1 rounded-full ring-1 ring-black/5"
-          >
+          <button onClick={handleReset} className="inline-flex items-center gap-2 px-5 py-1 rounded-full ring-1 ring-black/5">
             <i className="ri-edit-box-line text-base" />
             <span>New Chat</span>
           </button>
         )}
       </div>
 
-      {/* ✅ Render EmployeeChatKitPane when HR->employee is selected */}
       {activeView === "calories" ? (
         <div className="flex-1 min-h-0">
           <CaloriesChatKitPane />
         </div>
       ) : isHrEmployeePane ? (
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <EmployeeChatKitPane />
         </div>
       ) : (
         <>
           <div className="flex-1 min-h-0 overflow-hidden">
             <PerfectScrollbar className="h-full" containerRef={(ref) => (psContainerRef.current = ref)}>
-              <ul
-                className="px-16 py-4 space-y-6"
-                style={{ paddingBottom: dockH + 24 }}
-                onClick={handleLLMLinkClick}
-              >
+              <ul className="px-16 py-4 space-y-6" style={{ paddingBottom: dockH + 24 }} onClick={handleLLMLinkClick}>
                 {messages.map((m, i) =>
                   m.type === "bot" ? (
                     <li key={i} className="space-y-1">
@@ -274,9 +407,7 @@ export default function ChatBot() {
                           speed={m.loading ? 1 : 0}
                           opacity={1}
                         />
-                        <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">
-                          SappSense
-                        </span>
+                        <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
                         {!m.loading && (
                           <span className="text-xs text-gray-500">
                             {m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}
@@ -304,8 +435,7 @@ export default function ChatBot() {
                               </ul>
                             ) : (
                               <div className="flex items-center gap-2">
-                                {m.latestStatus || (isWebSearch ? "Searching the web " : "Thinking ")}{" "}
-                                <TypingIndicator />
+                                {m.latestStatus || (isWebSearch ? "Searching the web " : "Thinking ")} <TypingIndicator />
                               </div>
                             )}
                           </div>
@@ -316,9 +446,7 @@ export default function ChatBot() {
                         ) : (
                           <div className={`${m.loading ? "min-h-[148px]" : ""}`}>
                             <div className="flex justify-end mb-1">
-                              {!m.chart && /<(table|ol|ul)/i.test(m.html || "") ? (
-                                <ExportExcelButton html={m.html} />
-                              ) : null}
+                              {!m.chart && /<(table|ol|ul)/i.test(m.html || "") ? <ExportExcelButton html={m.html} /> : null}
                             </div>
 
                             {m.mode === "qc" && !m.loading ? <QCReport result={m.qc} html={m.html} llm={m.qcLlm} /> : null}
@@ -409,6 +537,7 @@ export default function ChatBot() {
             setCompetitorSites={setCompetitorSites}
             competitorChecks={competitorChecks}
             setCompetitorChecks={setCompetitorChecks}
+            showHrControlsInDock={activeView === "assistant" && modeSelection === "HR" && !isHrEmployeePane}
           />
         </>
       )}

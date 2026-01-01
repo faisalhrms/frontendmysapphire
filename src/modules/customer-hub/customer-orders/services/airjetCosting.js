@@ -1,7 +1,6 @@
 export const LBS_PER_KG = 2.2046
 const BLEACH_RATE_PER_KG = 55
 
-
 export const roundToQuarterRule = (value) => {
   const n = Number(value)
   if (!Number.isFinite(n)) return null
@@ -83,7 +82,6 @@ export const makeYarnCostPerYard = (d) => () => {
 
   const covWarp = toNum(d.color_coverage_warp_percent, 0)
   const covWeft = toNum(d.color_coverage_weft_percent, 0)
-
   const bleachWarp = toNum(
     d.bleached_white_coverage_warp_percent ??
     d.bleached_white_coverage_warp ??
@@ -121,20 +119,16 @@ export const makeYarnCostPerYard = (d) => () => {
   const warpComponent = warpBase * (warpCons / 10)
   const weftComponent = weftBase * (weftCons / 10)
 
-  const total = warpComponent + weftComponent
-  return roundToQuarterRule(total)
+  return warpComponent + weftComponent
 }
-
 
 export const makeDyeWastePerYard = (d) => () => {
   const yarn = makeYarnCostPerYard(d)()
   if (yarn == null) return null
   const factor = toNum(d.dyeing_waste, NaN)
   if (!Number.isFinite(factor)) return null
-  const value = yarn * factor
-  return roundToQuarterRule(value)
+  return yarn * factor
 }
-
 
 export const makeVariableCostPerYard = (d) => () => {
   const yarn = makeYarnCostPerYard(d)()
@@ -144,16 +138,13 @@ export const makeVariableCostPerYard = (d) => () => {
   const freight = toNum(d.freight_per_yard, 0)
   const rebate = toNum(d.rebate_per_yard, 0)
   const packing = toNum(d.packing_cost_per_yard, 0)
-  const total = yarn + dyeWaste + sizing + freight + rebate + packing
-  return roundToQuarterRule(total)
+  return yarn + dyeWaste + sizing + freight + rebate + packing
 }
-
 
 export const makeRejectionSalePerYard = (d) => () => {
   const m = toNum(d.rejection_sale_price_per_meter, NaN)
   if (Number.isNaN(m)) return null
-  const perYard = m / 1.0936
-  return roundToQuarterRule(perYard)
+  return m / 1.0936
 }
 
 export const makeRejectionQty = (d) => () => {
@@ -164,33 +155,26 @@ export const makeRejectionQty = (d) => () => {
   return Math.round(qty)
 }
 
-
 export const makeCostOfRejection = (d) => () => {
   const rejYard = makeRejectionSalePerYard(d)()
   const varCost = makeVariableCostPerYard(d)()
   if (rejYard == null || varCost == null) return null
-  const delta = rejYard - varCost
-  return roundToQuarterRule(delta)
+  return rejYard - varCost
 }
-
 
 export const makeLossOfRecovery = (d) => () => {
   const cost = makeCostOfRejection(d)()
   const qty = makeRejectionQty(d)()
   if (cost == null || qty == null) return null
-  const total = cost * qty
-  return roundToQuarterRule(total)
+  return cost * qty
 }
-
 
 export const makeTargetProfitPerDayLoom = (d) => () => {
   const rec = toNum(d.recovery, NaN)
   const loss = makeLossOfRecovery(d)()
   if (!Number.isFinite(rec) || loss == null) return null
-  const value = rec - loss
-  return roundToQuarterRule(value)
+  return rec - loss
 }
-
 
 export const makeTargetPricePerYard = (d) => () => {
   const yards = toNum(d.yards_per_day_per_loom, NaN)
@@ -199,8 +183,7 @@ export const makeTargetPricePerYard = (d) => () => {
   const targ = makeTargetProfitPerDayLoom(d)()
   if (!Number.isFinite(yards) || varCost == null || targ == null) return null
   const base = (targ + toNum(d.conversion_per_day, 0)) / yards
-  const yard = (base / exch) + varCost
-  return roundToQuarterRule(yard)
+  return (base / exch) + varCost
 }
 
 export const makeTargetPricePerMeter = (d) => () => {
