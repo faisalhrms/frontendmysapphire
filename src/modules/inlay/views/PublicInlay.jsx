@@ -13,7 +13,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Image_not_available from "@assets/images/inlay-images/No-image-available.jpg"
 
-
 export default function PublicInlay() {
     const { code } = useParams();
     const isDark = useDarkMode();
@@ -27,7 +26,7 @@ export default function PublicInlay() {
                     heading="Product Not Found"
                     description={
                         <>
-                            We couldn’t find a product for code:{" "}
+                            We couldn't find a product for code:{" "}
                             <span className="font-mono font-bold">{code}</span>
                         </>
                     }
@@ -53,23 +52,35 @@ export default function PublicInlay() {
             return getNum(a) - getNum(b);
         })
         .map((path) => allImages[path].default);
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
             <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
-                {/* Left Section */}
+                {/* Left Section - Image Carousel */}
                 <div className="relative flex flex-col items-center justify-between bg-white dark:bg-gray-950 order-2 lg:order-1">
                     <div className="relative w-full flex flex-col items-center">
-                        <div className="flex flex-col items-center mb-6 lg:hidden mt-4">
-                            <img src={isDark ? sapphirew : sapphireb} alt="Logo" className="h-10" />
-                            <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 mt-3 leading-tight font-bold">
+                        {/* Mobile Header - Shows on mobile only */}
+                        <div className="flex flex-col items-center mb-4 lg:hidden mt-6 px-6">
+                            <img src={isDark ? sapphirew : sapphireb} alt="Logo" className="h-10 mb-4" />
+                            <h2 className="gotham-medium text-lg text-center text-black dark:text-gray-200 leading-tight font-bold whitespace-pre-line">
                                 {product.name}
                             </h2>
                         </div>
 
+                        {/* Mobile Description - Shows on mobile only, AFTER name */}
+                        <div className="w-full px-6 mb-4 lg:hidden">
+                            <div className="space-y-3 gotham-normal text-sm text-gray-800 dark:text-gray-200">
+                                {product.description.map((item, idx) => (
+                                    <div className="flex justify-between" key={idx}>
+                                        <span>{item.label}</span>
+                                        <span className="font-bold">{item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         <Swiper
                             modules={[Navigation]}
-                            loop={productImages.length > 1} // Loop only if more than 1 image
+                            loop={productImages.length > 1}
                             navigation={{
                                 nextEl: ".custom-next",
                                 prevEl: ".custom-prev",
@@ -98,7 +109,6 @@ export default function PublicInlay() {
                                 </SwiperSlide>
                             )}
 
-                            {/* Navigation Buttons - Show only if there are real images */}
                             {productImages.length > 1 && (
                                 <>
                                     <button className="custom-prev absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 dark:bg-gray-700/70 p-2 rounded-full z-10">

@@ -83,11 +83,7 @@ const ReadAgreementList = () => {
       { Header: "Owner", accessor: "owner" },
       { Header: "Agreement No.", accessor: "agreement_no" },
       { Header: "Greige Item Code", accessor: "greige_item_code" },
-      { Header: "Quality Code", accessor: "quality_code" },
-      { Header: "Greige Design", accessor: "greige_design" },
-      { Header: "Greige Color", accessor: "greige_color" },
-      { Header: "Greige Width", accessor: "greige_width" },
-      {
+              {
         Header: "Yarn Status",
         accessor: "yarn_terms_status",
         Cell: ({ value }) => badge(value),
@@ -97,6 +93,10 @@ const ReadAgreementList = () => {
         accessor: "fabric_delivery_status",
         Cell: ({ value }) => badge(value),
       },
+      { Header: "Quality Code", accessor: "quality_code" },
+      { Header: "Greige Design", accessor: "greige_design" },
+      { Header: "Greige Color", accessor: "greige_color" },
+      { Header: "Greige Width", accessor: "greige_width" },
       {
         Header: "Need By Date",
         accessor: "need_by_date",

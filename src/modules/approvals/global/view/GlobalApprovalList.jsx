@@ -34,38 +34,46 @@ const GlobalApprovalList = () => {
             accessor: "id",
             disableSortBy: true,
 
-            Cell: ({ row }) => (
+            Cell: ({ row }) => {
+              const hideActions = Boolean(row?.original?.approval_type?.hide_action_buttons)
+
+              return (
                 <div className="flex gap-2">
-                    <button
+                  {!hideActions && (
+                    <>
+                      <button
                         onClick={() =>
-                            handleActionClick(row.original.id, "approved", row.original.approval_type.label)
+                          handleActionClick(row.original.id, "approved", row.original.approval_type.label)
                         }
                         className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-emerald-500 hover:bg-emerald-600"
                         title="Approve"
-                    >
+                      >
                         Approve
-                    </button>
+                      </button>
 
-                    <button
+                      <button
                         onClick={() =>
-                            handleActionClick(row.original.id, "rejected", row.original.approval_type.label)
+                          handleActionClick(row.original.id, "rejected", row.original.approval_type.label)
                         }
                         className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-rose-500 hover:bg-rose-600"
                         title="Reject"
-                    >
+                      >
                         Reject
-                    </button>
+                      </button>
+                    </>
+                  )}
 
-                    <Link
-                        to={row.original.detail_url}
-                        className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
-                        title="View"
-                    >
-                        View
-                    </Link>
+                  <Link
+                    to={row.original.detail_url}
+                    className="px-3 py-1 text-xs font-semibold text-white rounded-full bg-primary hover:bg-primary"
+                    title="View"
+                  >
+                    View
+                  </Link>
                 </div>
+              )
+            },
 
-            ),
         },
         {
             Header: "Approval Type",
