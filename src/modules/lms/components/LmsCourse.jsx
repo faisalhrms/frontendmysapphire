@@ -2,6 +2,8 @@ import React, { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import api from "@config/axiosConfig";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
+import FormInput from "@components/form/FormInput.jsx";
+import FormTextarea from "@components/form/FormTextarea.jsx";
 import DataTable from "@components/datatable/DataTable.jsx";
 import Notify from "@helpers/toastNotifications.js";
 
@@ -35,8 +37,9 @@ const Badge = ({ ok, children }) => (
 
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
 
-export default function CoursesPage({ isActive = true,externalFilters = [] }) {
+export default function CoursesPage({ isActive = true, externalFilters = [] }) {
     if (!isActive) return null;
+
     const tableRef = useRef(null);
     const [selected, setSelected] = useState(null);
     const [open, setOpen] = useState(false);
@@ -44,13 +47,12 @@ export default function CoursesPage({ isActive = true,externalFilters = [] }) {
     const [tableKey, setTableKey] = useState(0);
     const [advancedFilters, setAdvancedFilters] = useState([]);
 
-
     const {
         control,
         register,
         reset,
         handleSubmit,
-        formState: {errors},
+        formState: { errors },
     } = useForm({
         defaultValues: {
             title: "",
@@ -62,245 +64,234 @@ export default function CoursesPage({ isActive = true,externalFilters = [] }) {
 
     const reloadTable = () => {
         setTableKey((prev) => prev + 1);
-    }
-        const openCreate = () => {
-            setSelected(null);
-            reset({
-                title: "",
-                description: "",
-                is_active: true,
-                scorm_package_id: null,
-            });
-            setOpen(true);
-        };
+    };
 
-        const openEdit = (course) => {
-            setSelected(course);
-            reset({
-                title: course?.title ?? "",
-                description: course?.description ?? "",
-                is_active: course?.is_active ?? true,
-                scorm_package_id: course?.scorm_package?.id ?? null,
-            });
-            setOpen(true);
-        };
+    const openCreate = () => {
+        setSelected(null);
+        reset({
+            title: "",
+            description: "",
+            is_active: true,
+            scorm_package_id: null,
+        });
+        setOpen(true);
+    };
 
-        const onSubmit = async (values) => {
-            setSaving(true);
-            try {
-                const payload = {
-                    title: values.title.trim(),
-                    description: values.description?.trim() || null,
-                    is_active: !!values.is_active,
-                    scorm_package_id: values.scorm_package_id || null,
-                };
+    const openEdit = (course) => {
+        setSelected(course);
+        reset({
+            title: course?.title ?? "",
+            description: course?.description ?? "",
+            is_active: course?.is_active ?? true,
+            scorm_package_id: course?.scorm_package?.id ?? null,
+        });
+        setOpen(true);
+    };
 
-                if (selected?.id) {
-                    await api.put(`/lms/courses/${selected.id}/`, payload);
-                    Notify.success("Course updated successfully.");
-                } else {
-                    await api.post("/lms/courses/", payload);
-                    Notify.success("Course created successfully."); // ✅ ADDED
-                }
+    const onSubmit = async (values) => {
+        setSaving(true);
+        try {
+            const payload = {
+                title: String(values.title || "").trim(),
+                description: values.description?.trim() || null,
+                is_active: !!values.is_active,
+                scorm_package_id: values.scorm_package_id || null,
+            };
 
-                setOpen(false);
-                reloadTable();
-            } catch (error) {
-                Notify.error(error.response?.data?.message || 'Failed');
-            } finally {
-                setSaving(false);
+            if (selected?.id) {
+                await api.put(`/lms/courses/${selected.id}/`, payload);
+                Notify.success("Course updated successfully.");
+            } else {
+                await api.post("/lms/courses/", payload);
+                Notify.success("Course created successfully.");
             }
-        };
 
-        const columns = useMemo(
-            () => [
+            setOpen(false);
+            reloadTable();
+        } catch (error) {
+            Notify.error(error.response?.data?.message || "Failed");
+        } finally {
+            setSaving(false);
+        }
+    };
 
-                {Header: "Title",
-                    accessor: "title",
-                    filterable: true,
+    const columns = useMemo(
+        () => [
+            {
+                Header: "Title",
+                accessor: "title",
+                filterable: true,
+            },
+            {
+                accessor: "is_active",
+                Header: "Active",
+                filterable: true,
+                getCellProps: (cellInfo) => {
+                    const value = cellInfo.value;
+                    return {
+                        className: value ? "bg-success text-white" : "bg-red text-white",
+                    };
                 },
-
-                {
-                    accessor: "is_active",
-                    Header: "Active",
-                    filterable: true,
-
-                    getCellProps: (cellInfo) => {
-                        const value = cellInfo.value;
-                        return {
-                            className: value ? "bg-success text-white" : "bg-red text-white",
-                        };
-                    },
-                    Cell: ({ row }) => (
-                        <span
-                            className={`px-2 py-1 rounded text-xs ${
-                                row.original.is_active
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-gray-100 text-gray-700"
-                            }`}
-                        >
-      {row.original.is_active ? "Yes" : "No"}
-    </span>
-                    ),
+                Cell: ({ row }) => (
+                    <span
+                        className={`px-2 py-1 rounded text-xs ${
+                            row.original.is_active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-700"
+                        }`}
+                    >
+                        {row.original.is_active ? "Yes" : "No"}
+                    </span>
+                ),
+            },
+            {
+                Header: "SCORM",
+                accessor: "scorm_package.title",
+                filterable: true,
+                Cell: ({ row }) => {
+                    const sp = row.original?.scorm_package;
+                    return sp ? `#${sp.id} — ${sp.title ?? "SCORM"}` : "—";
                 },
+            },
+            {
+                Header: "Created",
+                accessor: "created_at",
+                filterable: true,
+                Cell: ({ value }) => formatDate(value),
+            },
+            {
+                Header: "Actions",
+                accessor: "actions",
+                disableSortBy: true,
+                width: 160,
+                Cell: ({ row }) => (
+                    <button
+                        onClick={() => openEdit(row.original)}
+                        className="ti-btn ti-btn-primary ti-btn-sm"
+                    >
+                        <i className="ri-edit-line"></i>
+                    </button>
+                ),
+            },
+        ],
+        []
+    );
 
-                {
-                    Header: "SCORM",
-                    accessor: "scorm_package.title",
-                    filterable: true,
-                    Cell: ({row}) => {
-                        const sp = row.original?.scorm_package;
-                        return sp ? `#${sp.id} — ${sp.title ?? "SCORM"}` : "—";
-                    },
-                },
-                {
-                    Header: "Created",
-                    accessor: "created_at",
-                    filterable: true,
-                    Cell: ({value}) => formatDate(value),
-                },
-                {
-                    Header: "Actions",
-                    accessor: "actions",
-                    disableSortBy: true,
-                    width: 160,
-                    Cell: ({row}) => (
-                        <button
-                            onClick={() => openEdit(row.original)}
-                            className="ti-btn ti-btn-primary ti-btn-sm"
-                        >
-                            <i className="ri-edit-line"></i>
-                        </button>
-                    ),
-                },
-            ],
-            []
-        );
+    const buttons = (
+        <div className="flex space-x-2">
+            <button
+                onClick={openCreate}
+                type="button"
+                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
+            >
+                <i className="ri-add-line font-semibold align-middle"></i>
+                Create Course
+            </button>
+        </div>
+    );
 
-        const buttons = (
-            <div className="flex space-x-2">
-                <button
-                    onClick={openCreate}
-                    type="button"
-                    className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                >
-                    <i className="ri-add-line font-semibold align-middle"></i>
-                    Create Course
-                </button>
-            </div>
-        );
+    return (
+        <div className="p-4">
+            <DataTable
+                key={tableKey}
+                ref={tableRef}
+                columns={columns}
+                title="LMS Courses"
+                buttons={buttons}
+                apiUrl="/lms/courses/datatable/"
+                enableAdvancedFilters={true}
+                advancedFilters={advancedFilters}
+                setAdvancedFilters={setAdvancedFilters}
+            />
 
-        return (
-            <div className="p-4">
-                <DataTable
-                    key={tableKey}
-                    ref={tableRef}
-                    columns={columns}
-                    title="LMS Courses"
-                    buttons={buttons}
-                    apiUrl="/lms/courses/datatable/"
-                    enableAdvancedFilters={true}
-                    advancedFilters={advancedFilters}
-                    setAdvancedFilters={setAdvancedFilters}
-                />
+            <Modal
+                open={open}
+                title={selected?.id ? `Edit Course #${selected.id}` : "Create New Course"}
+                onClose={() => setOpen(false)}
+            >
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    <FormInput
+                        name="title"
+                        control={control}
+                        errors={errors}
+                        label={true}
+                        placeholder="Fire Safety Training"
+                        rules={{ required: "Title is required" }}
+                        is_required={true}
+                    />
 
-                <Modal
-                    open={open}
-                    title={selected?.id ? `Edit Course #${selected.id}` : "Create New Course"}
-                    onClose={() => setOpen(false)}
-                >
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    <FormTextarea
+                        name="description"
+                        control={control}
+                        errors={errors}
+                        placeholder="Brief description..."
+                        rows={3}
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label className="form-label">Title *</label>
-                            <input
-                                className="form-control w-full !rounded-sm border"
-                                placeholder="e.g. Fire Safety Training"
-                                {...register("title", {required: "Title is required"})}
+                            <FormAsyncSelect
+                                isMulti={false}
+                                name="scorm_package_id"
+                                control={control}
+                                errors={errors}
+                                placeholder="Search SCORM package"
+                                preselectedOptions={
+                                    selected?.scorm_package
+                                        ? [
+                                            {
+                                                value: selected.scorm_package.id,
+                                                label: `${selected.scorm_package.title ?? "SCORM"} (${
+                                                    selected.scorm_package.scorm_version ?? ""
+                                                })`,
+                                            },
+                                        ]
+                                        : []
+                                }
+                                allowSaveNewOption={false}
+                                className="w-full"
+                                apiUrl="/select/lms/scorm-packages/"
+                                queryKeyBase="lms_scorm_packages"
+                                needObject={false}
+                                rules={{ required: false }}
+                                isClearable={true}
                             />
-                            {errors.title && (
-                                <p className="text-xs font-bold text-danger mt-1">{errors.title.message}</p>
+                            {errors.scorm_package_id && (
+                                <p className="text-xs text-red-600 mt-1">
+                                    {errors.scorm_package_id.message}
+                                </p>
                             )}
                         </div>
 
-                        <div>
-                            <label className="form-label">Description</label>
-                            <textarea
-                                rows={3}
-                                className="form-control w-full !rounded-sm border"
-                                placeholder="Brief description..."
-                                {...register("description")}
+                        <div className="flex items-center gap-3 mt-6">
+                            <input
+                                type="checkbox"
+                                className="h-5 w-5 rounded border-gray-300"
+                                {...register("is_active")}
                             />
+                            <label className="text-sm font-medium text-gray-700">Active</label>
                         </div>
+                    </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <FormAsyncSelect
-                                    isMulti={false}
-                                    name="scorm_package_id"
-                                    control={control}
-                                    errors={errors}
-                                    placeholder="Search SCORM package"
-                                    preselectedOptions={
-                                        selected?.scorm_package
-                                            ? [
-                                                {
-                                                    value: selected.scorm_package.id,
-                                                    label: `${selected.scorm_package.title ?? "SCORM"} (${
-                                                        selected.scorm_package.scorm_version ?? ""
-                                                    })`,
-                                                },
-                                            ]
-                                            : []
-                                    }
-                                    allowSaveNewOption={false}
-                                    className="w-full"
-                                    apiUrl="/select/lms/scorm-packages/"
-                                    queryKeyBase="lms_scorm_packages"
-                                    needObject={false}
-                                    rules={{required: false}}
-                                    isClearable={true}
-                                />
-                                {errors.scorm_package_id && (
-                                    <p className="text-xs text-red-600 mt-1">
-                                        {errors.scorm_package_id.message}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="flex items-center gap-3 mt-6">
-                                <input
-                                    type="checkbox"
-                                    className="h-5 w-5 rounded border-gray-300"
-                                    {...register("is_active")}
-                                />
-                                <label className="text-sm font-medium text-gray-700">Active</label>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-4 border-t">
-                            <button
-                                type="button"
-                                onClick={() => setOpen(false)}
-                                disabled={saving}
-                                className="ti-btn ti-btn-primary"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={saving}
-                                className="px-4 py-2 text-sm font-medium rounded-md ti-btn-primary-full"
-                            >
-                                {saving
-                                    ? "Saving..."
-                                    : selected?.id
-                                        ? "Update Course"
-                                        : "Create Course"}
-                            </button>
-                        </div>
-                    </form>
-                </Modal>
-            </div>
-
-        );
+                    <div className="flex justify-end gap-3 pt-4 border-t">
+                        <button
+                            type="button"
+                            onClick={() => setOpen(false)}
+                            disabled={saving}
+                            className="ti-btn ti-btn-primary"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="px-4 py-2 text-sm font-medium rounded-md ti-btn-primary-full"
+                        >
+                            {saving ? "Saving..." : selected?.id ? "Update Course" : "Create Course"}
+                        </button>
+                    </div>
+                </form>
+            </Modal>
+        </div>
+    );
 }

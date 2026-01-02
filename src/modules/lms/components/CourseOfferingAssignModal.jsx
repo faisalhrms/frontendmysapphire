@@ -66,7 +66,7 @@ export default function CourseOfferingAssignModal({
                             name="user_ids"
                             control={control}
                             errors={errors}
-                            placeholder="Search users..."
+                            placeholder="Search users"
                             allowSaveNewOption={false}
                             className="w-full"
                             apiUrl={`/select/users`}
