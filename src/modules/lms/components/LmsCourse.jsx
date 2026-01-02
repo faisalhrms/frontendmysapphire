@@ -35,12 +35,15 @@ const Badge = ({ ok, children }) => (
 
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
 
-export default function CoursesPage() {
+export default function CoursesPage({ isActive = true,externalFilters = [] }) {
+    if (!isActive) return null;
     const tableRef = useRef(null);
     const [selected, setSelected] = useState(null);
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [tableKey, setTableKey] = useState(0);
+    const [advancedFilters, setAdvancedFilters] = useState([]);
+
 
     const {
         control,
@@ -111,12 +114,17 @@ export default function CoursesPage() {
 
         const columns = useMemo(
             () => [
-                {Header: "ID", accessor: "id", width: 80},
-                {Header: "Title", accessor: "title"},
+
+                {Header: "Title",
+                    accessor: "title",
+                    filterable: true,
+                },
 
                 {
                     accessor: "is_active",
                     Header: "Active",
+                    filterable: true,
+
                     getCellProps: (cellInfo) => {
                         const value = cellInfo.value;
                         return {
@@ -139,6 +147,7 @@ export default function CoursesPage() {
                 {
                     Header: "SCORM",
                     accessor: "scorm_package.title",
+                    filterable: true,
                     Cell: ({row}) => {
                         const sp = row.original?.scorm_package;
                         return sp ? `#${sp.id} — ${sp.title ?? "SCORM"}` : "—";
@@ -147,6 +156,7 @@ export default function CoursesPage() {
                 {
                     Header: "Created",
                     accessor: "created_at",
+                    filterable: true,
                     Cell: ({value}) => formatDate(value),
                 },
                 {
@@ -189,6 +199,9 @@ export default function CoursesPage() {
                     title="LMS Courses"
                     buttons={buttons}
                     apiUrl="/lms/courses/datatable/"
+                    enableAdvancedFilters={true}
+                    advancedFilters={advancedFilters}
+                    setAdvancedFilters={setAdvancedFilters}
                 />
 
                 <Modal

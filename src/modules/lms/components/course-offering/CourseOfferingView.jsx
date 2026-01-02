@@ -71,7 +71,7 @@ export default function CourseOfferingView() {
     if (!row) return <div className="p-4">Not found.</div>;
 
     return (
-        <div className="p-4 bg-white  dark:text-gray-200 dark:bg-bodybg">
+        <div className="p-4 bg-white mb-4  dark:text-gray-200 dark:bg-bodybg">
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h1 className="text-xl font-semibold">Offering #{row.id}</h1>

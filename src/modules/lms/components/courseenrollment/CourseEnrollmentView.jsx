@@ -114,7 +114,7 @@ export default function CourseEnrollmentView() {
     }
 
     return (
-        <div className="p-4 bg-white">
+        <div className="p-4 mb-4 bg-white">
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h1 className="text-xl font-semibold">Enrollment #{row?.id}</h1>

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, {useRef, useMemo, useState} from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { COURSE_ENROLLMENT_ROUTES } from "@modules/lms/routes.js";
@@ -31,45 +31,53 @@ const statusTone = (s) => {
 
 const sourceTone = (s) => (s === "hr" ? "bg-warning" : "gray"); // ✅ fixed typo
 
-export default function CourseEnrollmentList({ externalFilters = [] }) {
+export default function CourseEnrollmentList({isActive = true, externalFilters = [] }) {
+    if (!isActive) return null;
     const tableRef = useRef(null);
     const navigate = useNavigate();
     const { search } = useLocation();
 
+    const [advancedFilters, setAdvancedFilters] = useState([]);
+
     const refreshKey = useMemo(() => new URLSearchParams(search).get("refresh") || "0", [search]);
 
     const columns = [
-        { Header: "ID", accessor: "id", width: 80 },
         {
             Header: "Company",
             accessor: "company_name",
+            filterable: true,
             Cell: ({ row }) => row?.original?.offering?.company?.name ?? "—",
         },
         {
             Header: "Course",
             accessor: "course_title",
+            filterable: true,
             Cell: ({ row }) => row?.original?.offering?.course?.title ?? "—",
         },
         {
             Header: "User",
             accessor: "user",
+            filterable: true,
             Cell: ({ value }) => <UserWithAvatar user={value} />,
         },
         {
             Header: "Source",
             accessor: "source",
+            filterable: true,
             Cell: ({ value }) => <Badge tone={sourceTone(value)}>{value ?? "—"}</Badge>,
             width: 120,
         },
         {
             Header: "Status",
             accessor: "status",
+            filterable: true,
             Cell: ({ value }) => <Badge tone={statusTone(value)}>{value ?? "—"}</Badge>,
             width: 140,
         },
         {
             Header: "Completed At",
             accessor: "completed_at",
+            filterable: true,
             Cell: ({ value }) => formatDate(value),
             width: 190,
         },
@@ -123,6 +131,9 @@ export default function CourseEnrollmentList({ externalFilters = [] }) {
                 externalFilters={externalFilters}
                 title="Course Enrollments"
                 buttons={buttons}
+                enableAdvancedFilters={true}
+                advancedFilters={advancedFilters}
+                setAdvancedFilters={setAdvancedFilters}
             />
         </div>
     );

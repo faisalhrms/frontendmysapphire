@@ -15,8 +15,8 @@ const Badge = ({ ok, children }) => (
             ok ? "bg-success/10 text-success" : "bg-danger/10 text-danger",
         ].join(" ")}
     >
-    {children}
-  </span>
+        {children}
+    </span>
 );
 
 const formatDateOnly = (value) => {
@@ -28,17 +28,43 @@ const formatDateOnly = (value) => {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 
-export default function CourseOfferingList({ externalFilters = [] }) {
+export default function CourseOfferingList({ isActive = true, externalFilters = [] }) {
+    if (!isActive) return null;
+
     const tableRef = useRef(null);
     const navigate = useNavigate();
     const [openAssignModal, setOpenAssignModal] = useState(false);
 
-    const onOpenModal = () => setOpenAssignModal(true);
+    const [advancedFilters, setAdvancedFilters] = useState([]);
+
+    // ✅ NEW: modal default values (offering_id auto from row)
+    const [assignDefaults, setAssignDefaults] = useState({
+        offering_id: null,
+        user_ids: [],
+        score: "",
+        total_time_seconds: 0,
+    });
+
     const onCloseModal = () => setOpenAssignModal(false);
+
+    // ✅ UPDATED: open modal WITH selected offering_id
+    const onOpenModal = (offeringRow) => {
+        const offeringId = offeringRow?.id ?? null;
+
+        setAssignDefaults({
+            offering_id: offeringId,
+            user_ids: [],
+            score: "",
+            total_time_seconds: 0,
+        });
+
+        setOpenAssignModal(true);
+    };
 
     const onOpenEnrollmentDatatable = (offeringId) => {
         navigate(COURSE_ENROLLMENT_ROUTES.datatable(offeringId));
     };
+
     const onContinue = async ({ offering_id, user_ids, score, total_time_seconds }) => {
         const offeringId = Number(offering_id);
         const userIds = Array.isArray(user_ids) ? user_ids.map(Number).filter(Boolean) : [];
@@ -77,20 +103,36 @@ export default function CourseOfferingList({ externalFilters = [] }) {
 
     const columns = useMemo(
         () => [
-            { Header: "ID", accessor: "id", width: 80 },
             {
                 Header: "Company",
-                accessor: "company.name",
+                accessor: "company_name",
+                filterable: true,
                 Cell: ({ value, row }) => value ?? row.original?.company?.name ?? "—",
             },
             {
                 Header: "Course",
-                accessor: "course.title",
-                Cell: ({ value, row }) => value ?? row.original?.course?.title ?? "—",
+                accessor: "course_title",
+                filterable: true,
+
+                // ✅ click course text → open modal and auto set offering_id
+                Cell: ({ value, row }) => {
+                    const label = value ?? row.original?.course?.title ?? "—";
+                    return (
+                        <button
+                            type="button"
+                            className="text-left hover:underline"
+                            onClick={() => onOpenModal(row.original)}
+                            title="Assign enrollment"
+                        >
+                            {label}
+                        </button>
+                    );
+                },
             },
             {
                 accessor: "is_published",
                 Header: "Published",
+                filterable: true,
                 getCellProps: (cellInfo) => {
                     const value = cellInfo.value;
                     return {
@@ -100,13 +142,11 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                 Cell: ({ row }) => (
                     <span
                         className={`px-2 py-1 rounded text-xs ${
-                            row.original.is_published
-                                ? "bg-green-100 text-green-800"
-                                : ""
+                            row.original.is_published ? "bg-green-100 text-green-800" : ""
                         }`}
                     >
-      {row.original.is_published ? "Yes" : "No"}
-    </span>
+                        {row.original.is_published ? "Yes" : "No"}
+                    </span>
                 ),
                 width: 120,
             },
@@ -122,19 +162,26 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                 Cell: ({ row }) => (
                     <span
                         className={`px-2 py-1 rounded text-xs ${
-                            row.original.allow_self_enroll
-                                ? "bg-green-100 text-green-800"
-                                : ""
+                            row.original.allow_self_enroll ? "bg-green-100 text-green-800" : ""
                         }`}
                     >
-      {row.original.allow_self_enroll ? "Allowed" : "No"}
-    </span>
+                        {row.original.allow_self_enroll ? "Allowed" : "No"}
+                    </span>
                 ),
                 width: 140,
             },
-
-            { Header: "Start", accessor: "started_at", Cell: ({ value }) => formatDateOnly(value) },
-            { Header: "End", accessor: "ended_at", Cell: ({ value }) => formatDateOnly(value) },
+            {
+                Header: "Start",
+                accessor: "started_at",
+                filterable: true,
+                Cell: ({ value }) => formatDateOnly(value),
+            },
+            {
+                Header: "End",
+                accessor: "ended_at",
+                filterable: true,
+                Cell: ({ value }) => formatDateOnly(value),
+            },
             {
                 Header: "Actions",
                 accessor: "actions",
@@ -150,7 +197,7 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                                 title="View"
                                 type="button"
                             >
-                                <i className="ri-eye-line"/>
+                                <i className="ri-eye-line" />
                             </button>
 
                             <button
@@ -159,26 +206,27 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                                 title="Edit"
                                 type="button"
                             >
-                                <i className="ri-edit-line"/>
+                                <i className="ri-edit-line" />
                             </button>
 
+                            {/* ✅ click here also auto picks offering_id, and modal shows without offering select */}
                             <button
                                 className="ti-btn ti-btn-info ti-btn-sm"
-                                onClick={onOpenModal}
+                                onClick={() => onOpenModal(row.original)}
                                 title="Course Enrollment"
                                 type="button"
                             >
-                                <i className="ri-user-add-line"/>
+                                <i className="ri-user-add-line" />
                             </button>
+
                             <button
                                 className="ti-btn ti-btn-success ti-btn-sm"
                                 onClick={() => onOpenEnrollmentDatatable(id)}
                                 title="View Enrollments"
                                 type="button"
                             >
-                                <i className="ri-team-line"/>
+                                <i className="ri-team-line" />
                             </button>
-
                         </div>
                     );
                 },
@@ -205,12 +253,16 @@ export default function CourseOfferingList({ externalFilters = [] }) {
                 externalFilters={externalFilters}
                 title="Course Offerings"
                 buttons={buttons}
+                enableAdvancedFilters={true}
+                advancedFilters={advancedFilters}
+                setAdvancedFilters={setAdvancedFilters}
             />
 
             <CourseOfferingAssignModal
                 open={openAssignModal}
                 onClose={onCloseModal}
                 onSubmit={onContinue}
+                defaultValues={assignDefaults}
             />
         </div>
     );

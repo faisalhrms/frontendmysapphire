@@ -55,27 +55,9 @@ export default function CourseOfferingAssignModal({
                     </button>
                 </div>
 
-                {/* ✅ IMPORTANT: onSubmit must exist */}
+                {/* ✅ offering_id is AUTO picked from datatable, not shown */}
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div>
-                        <FormAsyncSelect
-                            isMulti={false}
-                            label="Course Offering *"
-                            name="offering_id"
-                            control={control}
-                            errors={errors}
-                            placeholder="course offering..."
-                            allowSaveNewOption={false}
-                            className="w-full"
-                            apiUrl={`/select/lms/course-offerings/?published=true&active_now=true`}
-                            queryKeyBase="lms_course_offerings_active"
-                            needObject={false}
-                            rules={{ required: "Course Offering is required" }}
-                        />
-                        {errors.offering_id && (
-                            <p className="text-xs text-red-600 mt-1">{errors.offering_id.message}</p>
-                        )}
-                    </div>
+                    <input type="hidden" {...register("offering_id")} />
 
                     <div>
                         <FormAsyncSelect

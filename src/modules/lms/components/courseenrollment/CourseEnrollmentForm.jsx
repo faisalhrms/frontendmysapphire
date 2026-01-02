@@ -210,11 +210,12 @@ export default function CourseEnrollmentForm({ showHeader = true, showBackButton
     const userPreselected = useMemo(() => {
         if (isEdit && initial?.user?.id) {
             const u = initial.user;
-            const label = u?.name || u?.username || u?.email || `User #${u?.id}`;
+            const label = u?.full_name || u?.username || u?.email || `User #${u?.id}`;
             return [{ value: u.id, label }];
         }
         return [];
     }, [isEdit, initial]);
+
 
     const companyId = watch("company_id");
     const statusReg = register("status");
