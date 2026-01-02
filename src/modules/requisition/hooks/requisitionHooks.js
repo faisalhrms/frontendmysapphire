@@ -8,33 +8,29 @@ import {
 import { REQUISITION_ROUTES } from "@modules/requisition/routes.js";
 import api from "../../../config/axiosConfig.js";
 
-/** Normalize payload for API */
 const normalize = (p) => {
     const out = { ...p };
 
     // IDs: option objects -> value
-    ["job_description","designation","location","hiring_manager","replacement_for_employee"]
-        .forEach((k) => {
-            const v = out[k];
-            if (v && typeof v === "object" && "value" in v) out[k] = v.value;
-        });
+    ["job_description", "designation", "location", "hiring_manager", "replacement_for_employee"].forEach((k) => {
+        const v = out[k];
+        if (v && typeof v === "object" && "value" in v) out[k] = v.value;
+    });
 
     // Channels: [{value,label}] -> ["value"]
     if (Array.isArray(out.channels)) {
         out.channels = out.channels.map((c) => (typeof c === "string" ? c : c?.value)).filter(Boolean);
     }
 
+    // Numeric safety
+    ["contract_duration_months", "target_salary_min", "target_salary_max", "min_total_experience_years"].forEach((k) => {
+        if (out[k] === "") out[k] = null;
+    });
+    if (out.validity_days === "") out.validity_days = 0;
+
     return out;
 };
 
-/**
- * Create/Update submit handler with redirect on success.
- * Redirects to REQUISITION_ROUTES.REQUISITION.READ.path by default.
- *
- * You can override behavior via the 4th arg:
- *   useRequisitionForm(data, isEdit, onSuccess, { redirect: false })
- *   useRequisitionForm(data, isEdit, onSuccess, { to: "/custom/path" })
- */
 export const useRequisitionForm = (
     requisitionData = null,
     isEditMode = false,
@@ -44,19 +40,20 @@ export const useRequisitionForm = (
     const id = requisitionData?.id ?? null;
     const navigate = useNavigate();
 
-    const handleRequisitionSubmit = useCallback(async (payload) => {
-        const body = normalize(payload);
+    const handleRequisitionSubmit = useCallback(
+        async (payload) => {
+            const body = normalize(payload);
 
-        // Services already toast & throw on error. If we reach here, it's a success.
-        const res = isEditMode && id
-            ? await updateRequisition(id, body)
-            : await createRequisition(body);
+            const res =
+                isEditMode && id ? await updateRequisition(id, body) : await createRequisition(body);
 
-        onSuccess?.(res);
-        if (redirect) navigate(to);
+            onSuccess?.(res);
+            if (redirect) navigate(to);
 
-        return res;
-    }, [id, isEditMode, onSuccess, redirect, to, navigate]);
+            return res;
+        },
+        [id, isEditMode, onSuccess, redirect, to, navigate]
+    );
 
     return { handleRequisitionSubmit };
 };
@@ -100,9 +97,7 @@ export const useRequisitionApplicant = (requisitionId, applicationId) => {
                     throw new Error("Missing requisitionId/applicationId");
                 }
 
-                const { data } = await api.get(
-                    `/requisitions/${requisitionId}/applicants/${applicationId}/`
-                );
+                const { data } = await api.get(`/requisitions/${requisitionId}/applicants/${applicationId}/`);
 
                 if (!mounted) return;
                 setApplicant(data?.data || null);
@@ -122,7 +117,6 @@ export const useRequisitionApplicant = (requisitionId, applicationId) => {
 
     return { applicant, loading, error };
 };
-// ✅ Bulk status update hook for requisition applicants
 export const useRequisitionApplicantsBulkStatus = (requisitionId) => {
     const [selectedIds, setSelectedIds] = useState([]);
     const [submitting, setSubmitting] = useState(false);

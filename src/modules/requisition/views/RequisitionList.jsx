@@ -13,21 +13,12 @@ const RequisitionList = ({ externalFilters = [] }) => {
 
     const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString() : "—");
 
-    const statusOptions = [
-        "draft",
-        "under_approval",
-        "approved",
-        "rejected",
-        "published",
-        "closed",
-    ].map((s) => ({ label: toTitleCase(s.replaceAll("_", " ")), value: s }));
-
     const reqTypeOptions = ["new", "replacement", "additional"].map((t) => ({
         label: toTitleCase(t),
         value: t,
     }));
 
-    // helpers
+    // ---------- helpers ----------
     const buildPublicUrl = (row) =>
         row.public_form_url ||
         (row.public_form_slug
@@ -40,7 +31,6 @@ const RequisitionList = ({ externalFilters = [] }) => {
             await navigator.clipboard.writeText(text);
             alert("Public link copied to clipboard.");
         } catch {
-            // fallback
             const ta = document.createElement("textarea");
             ta.value = text;
             document.body.appendChild(ta);
@@ -51,20 +41,30 @@ const RequisitionList = ({ externalFilters = [] }) => {
         }
     };
 
+    /**
+     * Your backend no longer returns a real `status`.
+     * So we derive a UI-only status from available fields.
+     */
+    const getUiStatus = (r) => {
+        if (r?.current_approver_id) return "under_approval";
+        if (r?.public_form_url || r?.public_form_slug) return "approved";
+        return "draft";
+    };
+
     const columns = [
         {
             Header: "Actions",
             accessor: "id",
             disableSortBy: true,
             Cell: ({ row }) => {
-                const status = row.original.status;
-                const blockedStatuses = ["under_approval", "approved", "published", "closed"];
-                const isBlocked = blockedStatuses.includes(status);
+                const r = row.original;
+                const uiStatus = getUiStatus(r);
+                const isBlocked = uiStatus !== "draft"; // only draft can edit
 
                 return (
                     <div className="flex gap-2">
                         {!isBlocked ? (
-                            <Link to={`/module/requisition/edit/${row.original.id}`}>
+                            <Link to={`/module/requisition/edit/${r.id}`}>
                                 <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
                                     <i className="ri-edit-line" />
                                 </button>
@@ -73,19 +73,20 @@ const RequisitionList = ({ externalFilters = [] }) => {
                             <button
                                 className="ti-btn ti-btn-primary ti-btn-sm opacity-40 cursor-not-allowed"
                                 disabled
-                                title={`Edit disabled for status: ${status.replaceAll("_", " ")}`}
+                                title={`Edit disabled: ${uiStatus.replaceAll("_", " ")}`}
                             >
                                 <i className="ri-edit-line" />
                             </button>
                         )}
 
-                        <Link to={`/module/requisition/detail/${row.original.id}`}>
+                        <Link to={`/module/requisition/detail/${r.id}`}>
                             <button className="ti-btn ti-btn-info ti-btn-sm" title="View">
                                 <i className="ri-eye-line" />
                             </button>
                         </Link>
-                        <Link to={`/module/requisition/${row.original.id}/applicants`}>
-                        <button
+
+                        <Link to={`/module/requisition/${r.id}/applicants`}>
+                            <button
                                 className="ti-btn ti-btn-success-gradient ti-btn-sm"
                                 title="View Applicants"
                             >
@@ -97,7 +98,7 @@ const RequisitionList = ({ externalFilters = [] }) => {
             },
         },
 
-        // NEW: Public column (copy + open)
+        // Public column (copy + open)
         {
             Header: "Public",
             accessor: "public_form_url",
@@ -148,6 +149,7 @@ const RequisitionList = ({ externalFilters = [] }) => {
             filterKey: "req_no",
             Cell: ({ value }) => value || "—",
         },
+
         {
             Header: "Title",
             accessor: "job_description.position_title",
@@ -156,24 +158,23 @@ const RequisitionList = ({ externalFilters = [] }) => {
             filterKey: "job_description__position_title",
             Cell: ({ row }) => row.original.job_description?.position_title || "—",
         },
+
         {
             Header: "Designation",
-            accessor: "designation",
+            accessor: "designation.name",
             filterable: true,
             filterType: "text",
-            Cell: ({ row }) => {
-                const d = row.original.designation;
-                if (!d) return "—";
-                if (typeof d === "object") return d.name || "—";
-                return `#${d}`;
-            },
+            filterKey: "designation__name",
+            Cell: ({ row }) => row.original.designation?.name || "—",
         },
+
         {
             Header: "Openings",
             accessor: "openings",
             filterable: true,
             filterType: "number",
         },
+
         {
             Header: "Type",
             accessor: "req_type",
@@ -182,29 +183,53 @@ const RequisitionList = ({ externalFilters = [] }) => {
             filterOptions: reqTypeOptions,
             Cell: ({ value }) => toTitleCase(String(value || "").replaceAll("_", " ")),
         },
+
+        // ✅ NEW: UI Status (derived, not server filterable)
         {
-            Header: "Status",
-            accessor: "status",
-            filterable: true,
-            filterType: "select",
-            filterOptions: statusOptions,
-            Cell: ({ row }) => (
-                <span className={getBadgeClasses(row.original.status)}>
-          {toTitleCase(row.original.status.replaceAll("_", " "))}
-        </span>
-            ),
+            Header: "Approval",
+            accessor: "ui_status",
+            disableSortBy: true,
+            Cell: ({ row }) => {
+                const uiStatus = getUiStatus(row.original);
+                return (
+                    <span className={getBadgeClasses(uiStatus)}>
+            {toTitleCase(uiStatus.replaceAll("_", " "))}
+          </span>
+                );
+            },
         },
+
         {
             Header: "Current Approver",
-            accessor: "current_approver.full_name",
+            accessor: "current_approver_id",
+            filterable: false, // safer unless you implement backend filter key
+            Cell: ({ row }) => {
+                const r = row.original;
+                if (r.current_approver?.full_name) return r.current_approver.full_name;
+                if (r.current_approver?.email) return r.current_approver.email;
+                if (r.current_approver_id) return `#${r.current_approver_id}`;
+                return "—";
+            },
+        },
+
+        {
+            Header: "Requested By",
+            accessor: "requested_by.full_name",
             filterable: true,
             filterType: "text",
-            filterKey: "current_approver__full_name",
-            Cell: ({ row }) =>
-                row.original.current_approver?.full_name ||
-                row.original.current_approver?.email ||
-                "—",
+            filterKey: "requested_by__full_name",
+            Cell: ({ row }) => row.original.requested_by?.full_name || "—",
         },
+
+        {
+            Header: "Hiring Manager",
+            accessor: "hiring_manager.full_name",
+            filterable: true,
+            filterType: "text",
+            filterKey: "hiring_manager__full_name",
+            Cell: ({ row }) => row.original.hiring_manager?.full_name || "—",
+        },
+
         {
             Header: "Company",
             accessor: "company.name",
@@ -213,6 +238,16 @@ const RequisitionList = ({ externalFilters = [] }) => {
             filterKey: "company__name",
             Cell: ({ row }) => row.original.company?.name || "—",
         },
+
+        {
+            Header: "Deadline",
+            accessor: "application_deadline",
+            filterable: true,
+            filterType: "date",
+            filterKey: "application_deadline",
+            Cell: ({ value }) => value || "—",
+        },
+
         {
             Header: "Created On",
             accessor: "created_at",
@@ -238,7 +273,7 @@ const RequisitionList = ({ externalFilters = [] }) => {
         <>
             <IconPageHeader
                 heading="Job Requisitions"
-                description="Manage and review organizational policies, their visibility, and related documents."
+                description="Manage and review job requisitions, approval routing, and public job links."
                 icon={Shield}
             />
             <DataTable

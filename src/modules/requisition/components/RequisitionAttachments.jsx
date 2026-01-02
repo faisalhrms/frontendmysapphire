@@ -1,5 +1,4 @@
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { formatDate } from "@helpers/dateTime.js";
 import { Link } from "react-router-dom";
 
 const RequisitionAttachments = ({ attachments }) => {
@@ -28,8 +27,9 @@ const RequisitionAttachments = ({ attachments }) => {
                                         {file.file_name}.{file.file_extension}
                                     </Link>
 
+                                    {/* your response doesn’t include created_at - keep safe */}
                                     <p className="text-xs text-gray-500">
-                                        {formatDate(file.created_at)}
+                                        {file.file_size ? `${(file.file_size / 1024).toFixed(0)} KB` : "—"}
                                     </p>
                                 </div>
                             </div>

@@ -13,11 +13,11 @@ const RequisitionDetail = () => {
     const { id } = useParams();
     const { requisition, loading } = useRequisition(id);
 
-    if (loading || !requisition) {
-        return <LoadingSpinner />;
-    }
+    if (loading || !requisition) return <LoadingSpinner />;
 
     const data = requisition;
+    const attachments = data.attachments || [];
+    const hasAttachments = attachments.length > 0;
 
     return (
         <Fragment>
@@ -29,19 +29,20 @@ const RequisitionDetail = () => {
             />
 
             <div className="grid grid-cols-12 gap-6">
-
                 {/* Main column */}
                 <div className="xl:col-span-9 col-span-12 pb-6 space-y-6">
                     <RequisitionSummary requisition={data} />
-                    <RequisitionPersonSpec personSpec={data.person_spec} />
+                    <RequisitionPersonSpec requisition={data} />
                 </div>
 
                 {/* Sidebar */}
                 <div className="xl:col-span-3 col-span-12 space-y-6">
                     <RequisitionAdditionalDetails requisition={data} />
-                    <RequisitionAttachments attachments={data.attachments || []} />
-                </div>
 
+                    {hasAttachments && (
+                        <RequisitionAttachments attachments={attachments} />
+                    )}
+                </div>
             </div>
         </Fragment>
     );

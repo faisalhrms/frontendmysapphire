@@ -1,5 +1,5 @@
 // @modules/requisition/components/RequisitionForm.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSelector } from "react-redux";
@@ -12,15 +12,16 @@ import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
+import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 
 import { formatOptions } from "@helpers/formatters.js";
 import requisitionSchema from "@modules/requisition/schemas/requisitionSchema.js";
 import { useRequisitionForm } from "@modules/requisition/hooks/requisitionHooks.js";
 
-// ✅ use the same import path you already use elsewhere
+// ✅ your existing JD modal
 import JobDescFormModal from "@modules/requisition/models/JobDescFormModal.jsx";
 
-// --- enums (unchanged) ---
+// --- enums ---
 const reqTypeOptions = [
     { value: "new", label: "New" },
     { value: "replacement", label: "Replacement" },
@@ -37,10 +38,9 @@ const workModeOptions = [
     { value: "hybrid", label: "Hybrid" },
     { value: "remote", label: "Remote" },
 ];
-const genderOptions = [
-    { value: "any", label: "Any" },
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
+const budgetStatusOptions = [
+    { value: "budgeted", label: "Budgeted" },
+    { value: "unbudgeted", label: "Unbudgeted" },
 ];
 const channelOptions = [
     { value: "website", label: "Company Website" },
@@ -51,88 +51,108 @@ const channelOptions = [
     { value: "twitter", label: "Twitter/X" },
 ];
 
-const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }) => {
+// Build defaults from API response (edit) or empty (create)
+const buildDefaults = (requisitionData, companyIdFromUser) => ({
+    company_id: requisitionData?.company?.id ?? companyIdFromUser ?? null,
+
+    job_description: requisitionData?.job_description?.id ?? null,
+    designation: requisitionData?.designation?.id ?? null,
+    location: requisitionData?.location?.id ?? null,
+    hiring_manager: requisitionData?.hiring_manager?.id ?? null,
+
+    openings: requisitionData?.openings ?? 1,
+    req_type: requisitionData?.req_type ?? "new",
+    employment_type: requisitionData?.employment_type ?? "permanent",
+    contract_duration_months: requisitionData?.contract_duration_months ?? null,
+    work_mode: requisitionData?.work_mode ?? "onsite",
+    replacement_for_employee: requisitionData?.replacement_for_employee ?? null,
+
+    // ✅ NEW fields (as per your updated backend)
+    budget_status: requisitionData?.budget_status ?? "budgeted",
+    unbudgeted_reason: requisitionData?.unbudgeted_reason ?? "",
+
+    min_total_experience_years: requisitionData?.min_total_experience_years ?? null,
+
+    education_relevant_experience: requisitionData?.education_relevant_experience ?? "",
+    knowledge_technical_skills: requisitionData?.knowledge_technical_skills ?? "",
+
+    salary_band_code: requisitionData?.salary_band_code ?? "",
+    target_salary_currency: requisitionData?.target_salary_currency ?? "",
+    target_salary_min: requisitionData?.target_salary_min ?? null,
+    target_salary_max: requisitionData?.target_salary_max ?? null,
+
+    publish_on_approval: requisitionData?.publish_on_approval ?? true,
+
+    // ✅ numeric validity days instead of date
+    validity_days: requisitionData?.validity_days ?? 0,
+
+    channels: requisitionData?.channels ?? [],
+    attachment_ids: requisitionData?.attachments?.map((f) => f.id) ?? [],
+});
+
+const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess }) => {
     const currentUser = useSelector((s) => s?.auth?.user);
+    const companyId = currentUser?.employee?.company?.id ?? null;
+
+    // ✅ memoize defaults so it doesn't rebuild each render
+    const defaultValues = useMemo(
+        () => buildDefaults(requisitionData, companyId),
+        // important: don't depend on full object ref
+        [companyId, requisitionData?.id, requisitionData?.updated_at]
+    );
 
     const {
         control,
         handleSubmit,
         setValue,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(requisitionSchema),
-        defaultValues: {
-            company_id: requisitionData?.company?.id ?? null,
-            job_description: requisitionData?.job_description?.id ?? null,
-            designation: requisitionData?.designation?.id ?? null,
-            location: requisitionData?.location?.id ?? null,
-            hiring_manager: requisitionData?.hiring_manager?.id ?? null,
-
-            openings: requisitionData?.openings ?? 1,
-            req_type: requisitionData?.req_type ?? "new",
-            employment_type: requisitionData?.employment_type ?? "permanent",
-            contract_duration_months: requisitionData?.contract_duration_months ?? null,
-            work_mode: requisitionData?.work_mode ?? "onsite",
-            replacement_for_employee: requisitionData?.replacement_for_employee ?? null,
-
-            business_justification: requisitionData?.business_justification ?? "",
-
-            person_spec: {
-                age_from: requisitionData?.person_spec?.age_from ?? null,
-                age_to: requisitionData?.person_spec?.age_to ?? null,
-                gender: requisitionData?.person_spec?.gender ?? "any",
-                preferred_industry_background: requisitionData?.person_spec?.preferred_industry_background ?? "",
-                education_relevant_experience: requisitionData?.person_spec?.education_relevant_experience ?? "",
-                alternate_education_experience: requisitionData?.person_spec?.alternate_education_experience ?? "",
-                knowledge_technical_skills: requisitionData?.person_spec?.knowledge_technical_skills ?? "",
-                business_functional_understanding: requisitionData?.person_spec?.business_functional_understanding ?? "",
-                personality_behavioral_attributes: requisitionData?.person_spec?.personality_behavioral_attributes ?? "",
-                hiring_justification: requisitionData?.person_spec?.hiring_justification ?? "",
-            },
-
-            salary_band_code: requisitionData?.salary_band_code ?? "",
-            target_salary_currency: requisitionData?.target_salary_currency ?? "",
-            target_salary_min: requisitionData?.target_salary_min ?? null,
-            target_salary_max: requisitionData?.target_salary_max ?? null,
-
-            publish_on_approval: requisitionData?.publish_on_approval ?? true,
-            application_deadline: requisitionData?.application_deadline ?? "",
-            channels: requisitionData?.channels ?? [],
-
-            attachment_ids: requisitionData?.attachments?.map((f) => f.id) ?? [],
-        },
+        defaultValues,
     });
 
     const reqType = useWatch({ control, name: "req_type" });
     const employmentType = useWatch({ control, name: "employment_type" });
+    const budgetStatus = useWatch({ control, name: "budget_status" });
 
-    // submit via hook (unchanged)
+    // submit via hook
     const { handleRequisitionSubmit: submitRequisition } =
         useRequisitionForm(requisitionData, isEditMode, onSuccess);
 
-    useEffect(() => {
-        if (!requisitionData) return;
-        Object.entries(requisitionData).forEach(([k, v]) => {
-            if (["job_description", "designation", "location", "hiring_manager"].includes(k)) return;
-            setValue(k, v);
-        });
-    }, [requisitionData, setValue]);
+    // ✅ Reset ONLY when form is initializing (prevents overwriting user selections/typing)
+    const initKey = isEditMode
+        ? `edit-${requisitionData?.id ?? "none"}`
+        : `create-${companyId ?? "none"}`;
 
-    const onSubmit = async (payload) => {
-        await submitRequisition(payload);
+    const lastInitKeyRef = useRef(null);
+
+    useEffect(() => {
+        if (lastInitKeyRef.current === initKey) return;
+
+        // in edit mode wait for data
+        if (isEditMode && !requisitionData?.id) return;
+
+        reset(defaultValues);
+        lastInitKeyRef.current = initKey;
+    }, [initKey, isEditMode, requisitionData?.id, reset, defaultValues]);
+
+    const onSubmit = async (formValues) => {
+        await submitRequisition(formValues);
     };
 
-    // 🔹 NEW: open/close state for your existing JD modal
+    // JD modal state
     const [isJDModalOpen, setIsJDModalOpen] = useState(false);
 
-    // 🔹 On JD create/update success from modal → select it in this form
     const handleJDModalSuccess = (resp) => {
-        // hook/service returns the created/updated JD object
         const jd = resp?.data ?? resp ?? {};
         const id = jd.id;
         const label = jd.position_title || jd.title || `JD #${id}`;
+
         if (id) {
+            // If your FormAsyncSelect stores objects, keep object:
             setValue("job_description", { value: id, label }, { shouldDirty: true, shouldValidate: true });
+            // If it stores numbers only, use: setValue("job_description", id, { ... })
         }
         setIsJDModalOpen(false);
     };
@@ -141,6 +161,7 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-12 gap-x-6">
+                    {/* LEFT */}
                     <div className="xxl:col-span-9 col-span-12">
                         {/* ===== Requisition Basics ===== */}
                         <div className="box">
@@ -149,7 +170,7 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                             </div>
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
-                                    {/* Job Description with + button (opens your JD modal) */}
+                                    {/* Job Description + Add */}
                                     <div className="xl:col-span-6 col-span-12">
                                         <div className="flex items-start gap-2">
                                             <button
@@ -159,8 +180,9 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                                                 aria-label="Add Job Description"
                                                 onClick={() => setIsJDModalOpen(true)}
                                             >
-                                                <Plus size={16}/>
+                                                <Plus size={16} />
                                             </button>
+
                                             <div className="flex-1">
                                                 <FormAsyncSelect
                                                     is_required
@@ -170,16 +192,9 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                                                     placeholder="Job Description"
                                                     apiUrl="/select/job-descriptions/"
                                                     queryKeyBase="job-descriptions"
-                                                    preselectedOptions={formatOptions(
-                                                        requisitionData,
-                                                        "job_description",
-                                                        "id",
-                                                        "position_title"
-                                                    )}
+                                                    preselectedOptions={formatOptions(requisitionData, "job_description", "id", "position_title")}
                                                 />
                                             </div>
-
-
                                         </div>
                                     </div>
 
@@ -218,7 +233,7 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                                             control={control}
                                             errors={errors}
                                             placeholder="Hiring Manager"
-                                            apiUrl="/select/managers/"
+                                            apiUrl="/select/hr-users/"
                                             queryKeyBase="users"
                                             preselectedOptions={formatOptions(requisitionData, "hiring_manager", "id", "full_name")}
                                         />
@@ -226,51 +241,22 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
 
                                     {/* Openings */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormInput
-                                            type="number"
-                                            name="openings"
-                                            is_required
-                                            control={control}
-                                            errors={errors}
-                                            placeholder="Openings"
-                                            min="1"
-                                        />
+                                        <FormInput type="number" name="openings" is_required control={control} errors={errors} placeholder="Openings" min="1" />
                                     </div>
 
                                     {/* Req Type */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormSelect
-                                            name="req_type"
-                                            is_required
-                                            control={control}
-                                            errors={errors}
-                                            placeholder="Requisition Type"
-                                            options={reqTypeOptions}
-                                        />
+                                        <FormSelect name="req_type" is_required control={control} errors={errors} placeholder="Requisition Type" options={reqTypeOptions} />
                                     </div>
 
                                     {/* Employment Type */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormSelect
-                                            name="employment_type"
-                                            is_required
-                                            control={control}
-                                            errors={errors}
-                                            placeholder="Employment Type"
-                                            options={employmentTypeOptions}
-                                        />
+                                        <FormSelect name="employment_type" is_required control={control} errors={errors} placeholder="Employment Type" options={employmentTypeOptions} />
                                     </div>
 
                                     {/* Work Mode */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormSelect
-                                            name="work_mode"
-                                            is_required
-                                            control={control}
-                                            errors={errors}
-                                            placeholder="Work Mode"
-                                            options={workModeOptions}
-                                        />
+                                        <FormSelect name="work_mode" is_required control={control} errors={errors} placeholder="Work Mode" options={workModeOptions} />
                                     </div>
 
                                     {/* Contract only */}
@@ -299,76 +285,111 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                                                 placeholder="Replace Employee"
                                                 apiUrl="/select/employees/replace/"
                                                 queryKeyBase="employees"
-                                                preselectedOptions={formatOptions(
-                                                    requisitionData,
-                                                    "replacement_for_employee",
-                                                    "id",
-                                                    "full_name"
-                                                )}
+                                                preselectedOptions={formatOptions(requisitionData, "replacement_for_employee", "id", "full_name")}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ===== Budget / Unbudgeted Reason ===== */}
+                        <div className="box">
+                            <div className="box-header">
+                                <div className="box-title">Budget & Hiring Justification</div>
+                            </div>
+                            <div className="box-body">
+                                <div className="grid grid-cols-12 gap-4">
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormSelect
+                                            name="budget_status"
+                                            is_required
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Budget Status"
+                                            options={budgetStatusOptions}
+                                        />
+                                    </div>
+
+                                    {budgetStatus === "unbudgeted" && (
+                                        <div className="xl:col-span-12 col-span-12">
+                                            <FormRichTextarea
+                                                name="unbudgeted_reason"
+                                                control={control}
+                                                errors={errors}
+                                                placeholder="Unbudgeted Reason"
+                                                is_required
+                                                editorOptions={{ maxCharCount: 5000, charCounter: true }}
                                             />
                                         </div>
                                     )}
 
-                                    {/* Justification */}
-                                    <div className="col-span-12">
-                                        <FormTextarea
-                                            is_required
-                                            name="business_justification"
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput
+                                            type="number"
+                                            name="min_total_experience_years"
                                             control={control}
                                             errors={errors}
-                                            placeholder="Business Justification"
-                                            rows={4}
+                                            placeholder="Min Total Experience (Years)"
+                                            min="0"
+                                            step="0.5"
+                                        />
+                                    </div>
+
+                                    {/* Education & Experience (Rich Text) */}
+                                    <div className="xl:col-span-12 col-span-12">
+                                        <FormRichTextarea
+                                            name="education_relevant_experience"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Education & Relevant Experience"
+                                            editorOptions={{ maxCharCount: 5000, charCounter: true }}
+                                        />
+                                    </div>
+
+                                    {/* Knowledge & Technical Skills (Rich Text) */}
+                                    <div className="xl:col-span-12 col-span-12">
+                                        <FormRichTextarea
+                                            name="knowledge_technical_skills"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Knowledge & Technical Skills"
+                                            editorOptions={{ maxCharCount: 5000, charCounter: true }}
                                         />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* ===== Person Specification (override) ===== */}
+                        {/* ===== Salary Range / Budget ===== */}
                         <div className="box">
                             <div className="box-header">
-                                <div className="box-title">Person Specification (Override)</div>
+                                <div className="box-title">Salary Range / Budget</div>
                             </div>
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
-                                    <div className="xl:col-span-2 col-span-6">
-                                        <FormInput type="number" name="person_spec.age_from" control={control} errors={errors} placeholder="Age From" />
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput
+                                            name="target_salary_currency"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Currency (e.g., PKR)"
+                                            maxLength={3}
+                                        />
                                     </div>
-                                    <div className="xl:col-span-2 col-span-6">
-                                        <FormInput type="number" name="person_spec.age_to" control={control} errors={errors} placeholder="Age To" />
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput type="number" name="target_salary_min" control={control} errors={errors} placeholder="Salary Min" min="0" step="0.01" />
                                     </div>
-                                    <div className="xl:col-span-3 col-span-12">
-                                        <FormSelect name="person_spec.gender" control={control} errors={errors} placeholder="Gender" options={genderOptions} />
-                                    </div>
-                                    <div className="xl:col-span-5 col-span-12">
-                                        <FormInput name="person_spec.preferred_industry_background" control={control} errors={errors} placeholder="Preferred Industry Background" />
-                                    </div>
-
-                                    <div className="xl:col-span-6 col-span-12">
-                                        <FormTextarea name="person_spec.education_relevant_experience" control={control} errors={errors} placeholder="Education & Relevant Experience" rows={3} />
-                                    </div>
-                                    <div className="xl:col-span-6 col-span-12">
-                                        <FormTextarea name="person_spec.alternate_education_experience" control={control} errors={errors} placeholder="Alternate Education & Experience" rows={3} />
-                                    </div>
-                                    <div className="xl:col-span-6 col-span-12">
-                                        <FormTextarea name="person_spec.knowledge_technical_skills" control={control} errors={errors} placeholder="Knowledge & Technical Skills" rows={3} />
-                                    </div>
-                                    <div className="xl:col-span-6 col-span-12">
-                                        <FormTextarea name="person_spec.business_functional_understanding" control={control} errors={errors} placeholder="Business / Functional Understanding" rows={3} />
-                                    </div>
-                                    <div className="xl:col-span-6 col-span-12">
-                                        <FormTextarea name="person_spec.personality_behavioral_attributes" control={control} errors={errors} placeholder="Personality & Behavioral Attributes" rows={3} />
-                                    </div>
-                                    <div className="xl:col-span-12 col-span-12">
-                                        <FormTextarea name="person_spec.hiring_justification" control={control} errors={errors} placeholder="Justification for Hiring" rows={3} />
+                                    <div className="xl:col-span-4 col-span-12">
+                                        <FormInput type="number" name="target_salary_max" control={control} errors={errors} placeholder="Salary Max" min="0" step="0.01" />
                                     </div>
 
                                     <div className="xl:col-span-6 col-span-12">
                                         <GalleryUpload
-                                            currentValue={requisitionData?.attachment_ids}
-                                            files={requisitionData?.attachments}
+                                            currentValue={requisitionData?.attachments?.map((f) => f.id) ?? []}
+                                            files={requisitionData?.attachments ?? []}
                                             inputName="attachment_ids"
-                                            placeholder="Attach JD PDFs / docs / images"
+                                            placeholder="Attach supporting docs"
                                             control={control}
                                             errors={errors}
                                         />
@@ -382,11 +403,9 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                                 </div>
                             </div>
                         </div>
-
-                        {/* (compensation block remains commented) */}
                     </div>
 
-                    {/* ===== Right Panel (Publishing) ===== */}
+                    {/* RIGHT */}
                     <div className="xxl:col-span-3 col-span-12">
                         <div className="box">
                             <div className="box-header">
@@ -395,13 +414,35 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
                                     <div className="col-span-12">
-                                        <FormCheckbox name="publish_on_approval" label="Publish automatically when approved" control={control} errors={errors} />
+                                        <FormCheckbox
+                                            name="publish_on_approval"
+                                            label="Publish automatically when approved"
+                                            control={control}
+                                            errors={errors}
+                                        />
                                     </div>
+
+                                    {/* ✅ validity_days numeric */}
                                     <div className="col-span-12">
-                                        <FormInput type="date" name="application_deadline" control={control} errors={errors} placeholder="Application Deadline" label={false} />
+                                        <FormInput
+                                            type="number"
+                                            name="validity_days"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Validity Days After Approval"
+                                            min="0"
+                                        />
                                     </div>
+
                                     <div className="col-span-12">
-                                        <FormSelect isMulti name="channels" control={control} errors={errors} placeholder="Publishing Channels" options={channelOptions} />
+                                        <FormSelect
+                                            isMulti
+                                            name="channels"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Publishing Channels"
+                                            options={channelOptions}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -421,12 +462,11 @@ const RequisitionForm = ({ requisitionData = {}, isEditMode = false, onSuccess }
                 </div>
             </form>
 
-            {/* 🔹 Your existing JD modal wired in */}
             <JobDescFormModal
                 isOpen={isJDModalOpen}
                 onClose={() => setIsJDModalOpen(false)}
-                jobDescData={null}                // Quick-create from requisition
-                onSuccess={handleJDModalSuccess}  // auto-select newly created JD
+                jobDescData={null}
+                onSuccess={handleJDModalSuccess}
             />
         </>
     );
