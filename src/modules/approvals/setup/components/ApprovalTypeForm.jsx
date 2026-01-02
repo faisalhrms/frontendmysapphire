@@ -149,7 +149,6 @@ const ApprovalTypeForm = ({ editMode = false, approvalTypeId = null }) => {
                       placeholder="Allow Parallel Approvers"
                     />
                   </div>
-                  {/* TOGGLE DIRECTLY UNDER ALLOW PARALLEL APPROVERS */}
                   <div className="mt-3">
                     <FormToggle
                       name="custom_email_templates_enabled"
@@ -158,6 +157,15 @@ const ApprovalTypeForm = ({ editMode = false, approvalTypeId = null }) => {
                       label="Use Custom Email Templates"
                       placeholder="Use Custom Email Templates"
                     />
+                  </div>
+                  <div className="mt-3">
+                  <FormToggle
+                    name="hide_action_buttons"
+                    control={control}
+                    errors={errors}
+                    label="Hide Approve/Reject Buttons"
+                    placeholder="Hide Approve/Reject Buttons"
+                  />
                   </div>
                 </li>
 

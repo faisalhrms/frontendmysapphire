@@ -22,6 +22,13 @@ import {
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx";
 import AgreementRequesterDetail from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementRequesterDetail.jsx";
 
+const getErrMsg = (e) =>
+  e?.response?.data?.message ||
+  e?.response?.data?.detail ||
+  e?.response?.data?.error ||
+  e?.message ||
+  "Request failed";
+
 const AgreementApprovalDetail = () => {
   const { id } = useParams();
   const {
@@ -32,9 +39,12 @@ const AgreementApprovalDetail = () => {
     isError,
     error,
   } = useGlobalApprovalDetail(id);
+
   const [agreement, setAgreement] = useState(null);
   const [loadingAgreement, setLoadingAgreement] = useState(true);
   const [mentionUsers, setMentionUsers] = useState([]);
+  const [actionError, setActionError] = useState(null);
+
   const formRef = useRef(null);
   const currentUser = useSelector((state) => state.auth.user);
 
@@ -113,37 +123,40 @@ const AgreementApprovalDetail = () => {
 
   const handleApproveClick = () => {
     if (!data) return;
+    setActionError(null);
     handleActionClick(data.id, "approved", data.approval_type.label);
   };
 
   const handleRejectClick = () => {
     if (!data) return;
+    setActionError(null);
     handleActionClick(data.id, "rejected", data.approval_type.label);
   };
 
-  const handleConfirmWithSideEffects = async (inputValue) => {
+  const handleConfirmWithSideEffects = async (_inputValue) => {
+    setActionError(null);
+
     const isApprove = actionType === "approved";
+    const remarks = actionType === "rejected" ? "Rejected" : "Approved";
 
-    await handleSubmit(inputValue);
-
-    if (
-      isApprove &&
-      formRef.current &&
-      typeof formRef.current.saveDraft === "function"
-    ) {
-      try {
+    try {
+      if (
+        isApprove &&
+        formRef.current &&
+        typeof formRef.current.saveDraft === "function"
+      ) {
         await formRef.current.saveDraft();
-      } catch (e) {
-        console.error("Failed to save agreement after approve", e);
       }
-    }
 
-    await handleRefetch();
+      await handleSubmit(remarks);
+      await handleRefetch();
+    } catch (e) {
+      setActionError(getErrMsg(e));
+    }
   };
 
   if (isLoading) return <LoadingSpinner />;
-  if (isError)
-    return <EmptyState heading="Error" description={error?.message} />;
+  if (isError) return <EmptyState heading="Error" description={error?.message} />;
 
   return (
     <>
@@ -171,6 +184,12 @@ const AgreementApprovalDetail = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
           <AgreementRequesterDetail data={data} refetch={refetch} />
 
+          {actionError ? (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              {actionError}
+            </div>
+          ) : null}
+
           <div className="col-span-12 lg:col-span-8">
             {loadingAgreement ? (
               <LoadingSpinner />
@@ -189,6 +208,9 @@ const AgreementApprovalDetail = () => {
                 onApprove={handleApproveClick}
                 onReject={handleRejectClick}
                 approvalSubmitting={isSubmitting}
+                activeApprovalType={
+                  data?.approval_type?.code || data?.approval_type?.label || null
+                }
               />
             ) : (
               <EmptyState heading="Agreement not found" description="" />

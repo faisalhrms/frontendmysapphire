@@ -42,6 +42,7 @@ const AgreementPlacementForm = forwardRef(
       seed = {},
       email,
       approvalActivity,
+      activeApprovalType = null,
       status: propStatus,
       currentApproverName,
       disabledSubmit = false,
@@ -77,17 +78,19 @@ const AgreementPlacementForm = forwardRef(
       handleComputed,
       doSaveDraft,
       doSubmit,
-    } = useAgreementPlacementForm({ seed, email, onAfterPersist, refetch })
+      validateBeforeApprove
+    } = useAgreementPlacementForm({ seed, email, onAfterPersist, refetch,activeApprovalType })
 
     useImperativeHandle(
       ref,
       () => ({
         saveDraft: () => doSaveDraft(),
-        submit: (submissionType, hierarchies) =>
-          doSubmit(submissionType, hierarchies),
+        submit: (submissionType, hierarchies) => doSubmit(submissionType, hierarchies),
+        validateBeforeApprove: () => validateBeforeApprove?.(),
       }),
-      [doSaveDraft, doSubmit],
+      [doSaveDraft, doSubmit, validateBeforeApprove],
     )
+
 
     const splitQuantityEnabled = watch("split_quantity_enabled")
 
@@ -128,6 +131,7 @@ const AgreementPlacementForm = forwardRef(
       if (splitQuantityEnabled && splitDeliveries.length === 0) {
         appendSplitDelivery({
           fabric_delivery: "",
+          need_by_date: "",
           quantity: "",
         })
       }
@@ -288,10 +292,18 @@ const AgreementPlacementForm = forwardRef(
     const initialHierarchies =
       seed?.payload?.approval_hierarchies || seed?.approval_hierarchies || []
 
-    const handleApproveInternal = useCallback(async () => {
-      if (!onApprove) return
-      await onApprove()
-    }, [onApprove])
+      const handleApproveInternal = useCallback(async () => {
+        if (!onApprove) return
+
+        let ok = true
+        if (typeof validateBeforeApprove === "function") {
+          ok = await validateBeforeApprove()
+        }
+
+        if (!ok) return
+        await onApprove()
+      }, [onApprove, validateBeforeApprove])
+
 
 
     const handleRejectInternal = useCallback(async () => {
@@ -363,7 +375,7 @@ const AgreementPlacementForm = forwardRef(
           )}
 
           <div className="grid grid-cols-12 gap-x-4 gap-y-6 xl:gap-x-5">
-            <div className="col-span-12 md:col-span-6 xl:col-span-5">
+            <div className="col-span-12 lg:col-span-5 min-w-0">
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-12 md:col-span-6">
                   <FormInput
@@ -442,86 +454,101 @@ const AgreementPlacementForm = forwardRef(
                   )}
 
                   {splitQuantityEnabled && (
-                    <div className="mt-1 rounded-lg border border-dashed border-slate-200 dark:border-slate-700 p-3 space-y-2">
-                      {splitDeliveries.length === 0 && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-[0.7rem] text-slate-400">
-                            No splits added yet.
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              appendSplitDelivery({
-                                fabric_delivery: "",
-                                quantity: "",
-                              })
-                            }
-                            className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.7rem] inline-flex items-center gap-1 rounded-full"
-                          >
-                            <Plus size={14} />
-                          </button>
-                        </div>
-                      )}
+                  <div className="mt-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-white/5 p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                        Fabric delivery splits
+                      </span>
 
-                      {splitDeliveries.length > 0 && (
-                        <>
-                          <div className="flex items-center justify-between">
-                            <span className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500">
-                              Fabric delivery splits
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                appendSplitDelivery({
-                                  fabric_delivery: "",
-                                  quantity: "",
-                                })
-                              }
-                              className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.7rem] inline-flex items-center gap-1 rounded-full"
-                            >
-                              <Plus size={14} />
-                            </button>
-                          </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          appendSplitDelivery({
+                            fabric_delivery: "",
+                            need_by_date: "",
+                            quantity: "",
+                          })
+                        }
+                        className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.7rem] inline-flex items-center gap-1 rounded-full"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
 
-                            {splitDeliveries.map((row, idx) => (
-                            <div
-                              key={row.id}
-                              className="flex items-center gap-2"
-                            >
-                              <FormInput
-                                name={`split_deliveries.${idx}.fabric_delivery`}
-                                label={false}
-                                control={control}
-                                errors={errors}
-                                type="date"
-                                placeholder="Fabric Delivery"
-                                className="flex-1"
-                                disabled={isFabricDeliveryLocked}
-                              />
+                    <div className="mt-3 space-y-2">
+                      {splitDeliveries.map((row, idx) => (
+                        <div
+                          key={row.id}
+                          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-bodybg shadow-sm p-3"
+                        >
+                          <div className="grid grid-cols-12 gap-3">
+                            <div className="col-span-12 sm:col-span-4">
+                              <div className="mb-1 text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
+                                Qty
+                              </div>
                               <FormInput
                                 name={`split_deliveries.${idx}.quantity`}
                                 label={false}
+                                className="!h-8"
                                 control={control}
                                 errors={errors}
                                 type="number"
                                 placeholder="Qty"
-                                className="flex-1"
+                                min={0}
                               />
-                              <button
-                                type="button"
-                                onClick={() => removeSplitDelivery(idx)}
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600"
-                                aria-label="Remove split"
-                              >
-                                <Minus size={14} />
-                              </button>
                             </div>
 
-                          ))}
-                        </>
-                      )}
+                              <div className="col-span-12 sm:col-span-7">
+                                <div className="mb-1 text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
+                                  Need by date
+                                </div>
+                                <FormInput
+                                  name={`split_deliveries.${idx}.need_by_date`}
+                                  label={false}
+                                  className="!h-8 !text-xs"
+                                  control={control}
+                                  errors={errors}
+                                  type="date"
+                                  placeholder="Need By Date"
+                                />
+                              </div>
+
+                              <div className="col-span-12 sm:col-span-1 flex sm:items-end sm:justify-end">
+                                <button
+                                  type="button"
+                                  onClick={() => removeSplitDelivery(idx)}
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-white/5 text-slate-500 hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600"
+                                  aria-label="Remove split"
+                                  title="Remove"
+                                >
+                                  <Minus size={12} />
+                                </button>
+                              </div>
+
+                            <div className="col-span-12">
+                              <div className="mb-1 text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
+                                Fabric delivery
+                              </div>
+                              <FormInput
+                                name={`split_deliveries.${idx}.fabric_delivery`}
+                                label={false}
+                                className="!h-8"
+                                control={control}
+                                errors={errors}
+                                type="date"
+                                placeholder="Fabric Delivery"
+                                disabled={isFabricDeliveryLocked}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                )}
+
+
+
                 </div>
 
                 {deliveryDeviation && (
@@ -601,6 +628,7 @@ const AgreementPlacementForm = forwardRef(
                           placeholder="Warp Yarn Rate"
                           type="number"
                           disabled={isYarnFieldsReadOnly}
+                          min={0}
                         />
                       </div>
                       <div className="col-span-12 md:col-span-6">
@@ -621,6 +649,7 @@ const AgreementPlacementForm = forwardRef(
                           placeholder="Weft Yarn Rate"
                           type="number"
                           disabled={isYarnFieldsReadOnly}
+                          min={0}
                         />
                       </div>
                       <div className="col-span-12 md:col-span-6">
@@ -703,7 +732,7 @@ const AgreementPlacementForm = forwardRef(
               </div>
             </div>
 
-            <div className="col-span-12 md:col-span-7 rounded-xl border-2 border-slate-200/80 dark:border-white/10 overflow-hidden">
+            <div className="col-span-12 lg:col-span-7 w-full min-w-0 rounded-xl border-2 border-slate-200/80 dark:border-white/10 overflow-hidden">
               <AgreementItemMeta
                 qc={qc}
                 design={design}

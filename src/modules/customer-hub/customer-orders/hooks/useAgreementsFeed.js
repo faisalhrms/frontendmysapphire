@@ -3,7 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
 import { datatableAgreements } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
-export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 30, root = null } = {}) => {
+export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 10, root = null } = {}) => {
   const fetchAgreements = ({ pageParam = 0 }) =>
     datatableAgreements({ skip: pageParam, limit, s, mailbox })
 
