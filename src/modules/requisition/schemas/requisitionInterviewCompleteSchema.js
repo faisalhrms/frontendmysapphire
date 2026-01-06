@@ -6,15 +6,15 @@ export const requisitionInterviewCompleteSchema = z.object({
     interviewer_notes: z.string().optional().nullable(),
     outcome: z.enum(["pass", "fail", "hold"]).default("pass"),
 
-    // dynamic feedback rows -> converted into JSON object
+    // UI rows -> will be converted into feedback.rubric
     feedback_items: z
         .array(
             z.object({
-                key: z.string().min(1, "Key is required"),
+                key: z.string().min(1, "Criteria is required"),
                 score: z.coerce.number().min(0).max(5),
             })
         )
-        .default([]),
+        .default([{ key: "communication", score: 0 }]),
 
     feedback_notes: z.string().optional().nullable(),
 });

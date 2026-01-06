@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Modal from "@modules/requisition/models/Modal.jsx";
 import { useForm, useWatch } from "react-hook-form";
@@ -11,12 +11,20 @@ import { formatOptions } from "@helpers/formatters.js";
 import { useSelector } from "react-redux";
 import { useJobDescForm } from "@modules/requisition/hooks/jobDescHooks.js";
 import FormRichTextarea from "../../../components/form/FormRichTextarea.jsx";
+import { getJobDesc } from "@modules/requisition/services/jobDescService.js";
 
 const numberOrNull = (v) => (v === null || v === undefined || v === "" ? null : Number(v));
 
 const JobDescFormModal = ({ isOpen, onClose, jobDescData = null, onSuccess }) => {
     const isEditMode = Boolean(jobDescData?.id);
     const companyId = useSelector((state) => state?.auth?.user?.employee?.company?.id);
+
+    // ✅ fetched full detail for edit
+    const [fullJD, setFullJD] = useState(null);
+    const [loadingJD, setLoadingJD] = useState(false);
+
+    // ✅ use fetched jd if available
+    const currentJD = fullJD || jobDescData;
 
     const {
         control,
@@ -27,12 +35,12 @@ const JobDescFormModal = ({ isOpen, onClose, jobDescData = null, onSuccess }) =>
     } = useForm({
         resolver: zodResolver(jobDescSchema),
         defaultValues: {
-            id: jobDescData?.id || undefined,
-            position_title: jobDescData?.position_title || "",
-            brief_role_overview: jobDescData?.brief_role_overview || "",
-            company_id: jobDescData?.company?.id || companyId || null,
-            department_id: jobDescData?.department?.id || null,
-            sub_department_id: jobDescData?.sub_department?.id || null,
+            id: currentJD?.id || undefined,
+            position_title: currentJD?.position_title || "",
+            brief_role_overview: currentJD?.brief_role_overview || "",
+            company_id: currentJD?.company?.id || companyId || null,
+            department_id: currentJD?.department?.id || null,
+            sub_department_id: currentJD?.sub_department?.id || null,
         },
     });
 
@@ -43,13 +51,11 @@ const JobDescFormModal = ({ isOpen, onClose, jobDescData = null, onSuccess }) =>
     const prevDepartmentIdRef = useRef(null);
 
     useEffect(() => {
-        // first run: just store current value
         if (prevDepartmentIdRef.current === null) {
             prevDepartmentIdRef.current = selectedDepartmentId ?? null;
             return;
         }
 
-        // if department changed -> clear sub_department
         if (prevDepartmentIdRef.current !== (selectedDepartmentId ?? null)) {
             setValue("sub_department_id", null, { shouldValidate: true, shouldDirty: true });
             prevDepartmentIdRef.current = selectedDepartmentId ?? null;
@@ -70,28 +76,67 @@ const JobDescFormModal = ({ isOpen, onClose, jobDescData = null, onSuccess }) =>
     const onSubmit = async (form) => {
         const payload = buildPayload(form);
         await handleJobDescSubmit(payload);
+        setFullJD(null);
         onClose();
         reset();
     };
 
-    // reset on open
+    // ✅ Fetch + reset on open (Edit uses GET single endpoint)
     useEffect(() => {
-        if (isOpen) {
-            const depId = jobDescData?.department?.id || null;
+        if (!isOpen) return;
 
-            reset({
-                id: jobDescData?.id || undefined,
-                position_title: jobDescData?.position_title || "",
-                brief_role_overview: jobDescData?.brief_role_overview || "",
-                company_id: companyId ?? null,
-                department_id: depId,
-                sub_department_id: jobDescData?.sub_department?.id || null,
-            });
+        let alive = true;
 
-            // ✅ sync ref so we don't clear sub_department immediately after reset
-            prevDepartmentIdRef.current = depId;
-        }
-    }, [isOpen, jobDescData, reset, companyId]);
+        const run = async () => {
+            // Create mode
+            if (!isEditMode || !jobDescData?.id) {
+                setFullJD(null);
+
+                reset({
+                    id: undefined,
+                    position_title: "",
+                    brief_role_overview: "",
+                    company_id: companyId ?? null,
+                    department_id: null,
+                    sub_department_id: null,
+                });
+
+                prevDepartmentIdRef.current = null;
+                return;
+            }
+
+            // Edit mode -> fetch full detail
+            setLoadingJD(true);
+            try {
+                const data = await getJobDesc(jobDescData.id);
+                if (!alive) return;
+
+                setFullJD(data);
+
+                const depId = data?.department?.id || null;
+
+                reset({
+                    id: data?.id || undefined,
+                    position_title: data?.position_title || "",
+                    brief_role_overview: data?.brief_role_overview || "",
+                    company_id: data?.company?.id || companyId || null,
+                    department_id: depId,
+                    sub_department_id: data?.sub_department?.id || null,
+                });
+
+                // ✅ sync ref so we don't clear sub_department immediately after reset
+                prevDepartmentIdRef.current = depId;
+            } finally {
+                if (alive) setLoadingJD(false);
+            }
+        };
+
+        run();
+
+        return () => {
+            alive = false;
+        };
+    }, [isOpen, isEditMode, jobDescData?.id, reset, companyId]);
 
     // lock body scroll
     useEffect(() => {
@@ -121,84 +166,107 @@ const JobDescFormModal = ({ isOpen, onClose, jobDescData = null, onSuccess }) =>
     return (
         <Modal
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={() => {
+                setFullJD(null);
+                onClose();
+            }}
             title={isEditMode ? "Edit Job Description" : "Create Job Description"}
             width="max-w-5xl"
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-12 gap-6">
-                    <div className="xl:col-span-4 col-span-12">
-                        <FormInput
-                            name="position_title"
-                            label="Position Title"
-                            placeholder="Position Title"
-                            control={control}
-                            errors={errors}
-                            is_required
-                        />
-                    </div>
-
-                    <div className="xl:col-span-4 col-span-12">
-                        <FormAsyncSelect
-                            name="department_id"
-                            label="Department"
-                            is_required
-                            control={control}
-                            errors={errors}
-                            placeholder="Select Department"
-                            apiUrl="/select/departments/"
-                            queryKeyBase="departments"
-                            clientSideSearch={true}
-                            preselectedOptions={formatOptions(jobDescData, "department", "id", "name")}
-                        />
-                    </div>
-
-                    <div className="xl:col-span-4 col-span-12">
-                        <FormAsyncSelect
-                            name="sub_department_id"
-                            label="Sub Department"
-                            control={control}
-                            errors={errors}
-                            placeholder={selectedDepartmentId ? "Select Sub Department" : "Select Department first"}
-                            apiUrl={subDeptApiUrl}                  // ✅ filtered by department_id
-                            queryKeyBase={subDeptQueryKey}          // ✅ unique cache key per department
-                            clientSideSearch={true}
-                            preselectedOptions={formatOptions(jobDescData, "sub_department", "id", "name")}
-                            isDisabled={!selectedDepartmentId}      // ✅ disable until dept selected (if supported)
-                            disabled={!selectedDepartmentId}        // ✅ fallback if your component uses disabled
-                        />
-                    </div>
-
-                    <div className="xl:col-span-12 col-span-12">
-                        <FormRichTextarea
-                            name="brief_role_overview"
-                            control={control}
-                            errors={errors}
-                            placeholder="Brief Role Overview"
-                            is_required={true}
-                            editorOptions={{
-                                maxCharCount: 5000,
-                                charCounter: true,
-                                charCounterLabel: "Characters: ",
-                            }}
-                        />
+            {loadingJD ? (
+                <div className="p-6">
+                    <div className="flex items-center gap-3">
+                        <span className="animate-spin inline-block w-5 h-5 border-2 border-gray-300 border-t-gray-700 rounded-full" />
+                        <span className="text-sm text-gray-600">Loading job description...</span>
                     </div>
                 </div>
+            ) : (
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-12 gap-6">
+                        <div className="xl:col-span-4 col-span-12">
+                            <FormInput
+                                name="position_title"
+                                label="Position Title"
+                                placeholder="Position Title"
+                                control={control}
+                                errors={errors}
+                                is_required
+                            />
+                        </div>
 
-                <div className="sticky bottom-0 z-20 bg-white/95 backdrop-blur border-t border-gray-200 px-2 py-3 mt-2">
-                    <div className="flex justify-end space-x-3">
-                        <button type="button" onClick={onClose} className="ti-btn ti-btn-light ti-btn-wave">
-                            Cancel
-                        </button>
-                        <FormButton
-                            isLoading={isSubmitting}
-                            text={isEditMode ? "Update JD" : "Create JD"}
-                            disabled={isEditMode && !isDirty}
-                            className="ti-btn-primary"
-                        />
+                        <div className="xl:col-span-4 col-span-12">
+                            <FormAsyncSelect
+                                name="department_id"
+                                label="Department"
+                                is_required
+                                control={control}
+                                errors={errors}
+                                placeholder="Select Department"
+                                apiUrl="/select/departments/"
+                                queryKeyBase="departments"
+                                clientSideSearch={true}
+                                preselectedOptions={formatOptions(currentJD, "department", "id", "name")}
+                            />
+                        </div>
+
+                        <div className="xl:col-span-4 col-span-12">
+                            <FormAsyncSelect
+                                name="sub_department_id"
+                                label="Sub Department"
+                                control={control}
+                                errors={errors}
+                                placeholder={selectedDepartmentId ? "Select Sub Department" : "Select Department first"}
+                                apiUrl={subDeptApiUrl}
+                                queryKeyBase={subDeptQueryKey}
+                                clientSideSearch={true}
+                                preselectedOptions={formatOptions(currentJD, "sub_department", "id", "name")}
+                                isDisabled={!selectedDepartmentId}
+                                disabled={!selectedDepartmentId}
+                            />
+                        </div>
+
+                        <div className="xl:col-span-12 col-span-12">
+                            <FormRichTextarea
+                                name="brief_role_overview"
+                                control={control}
+                                errors={errors}
+                                placeholder="Brief Role Overview"
+                                is_required={true}
+                                height="380px"
+                                contentPadding="12px 14px 60px"
+                                containerClassName="mb-6"
+                                editorOptions={{
+                                    maxCharCount: 5000,
+                                    charCounter: true,
+                                    charCounterLabel: "Characters: ",
+                                }}
+                            />
+                        </div>
                     </div>
-                </div>
-            </form>
+
+                    <div className="sticky bottom-0 z-20 bg-white/95 backdrop-blur border-t border-gray-200 px-2 py-3 mt-2">
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFullJD(null);
+                                    onClose();
+                                }}
+                                className="ti-btn ti-btn-light ti-btn-wave"
+                            >
+                                Cancel
+                            </button>
+
+                            <FormButton
+                                isLoading={isSubmitting}
+                                text={isEditMode ? "Update JD" : "Create JD"}
+                                disabled={(isEditMode && !isDirty) || isSubmitting}
+                                className="ti-btn-primary"
+                            />
+                        </div>
+                    </div>
+                </form>
+            )}
         </Modal>
     );
 };

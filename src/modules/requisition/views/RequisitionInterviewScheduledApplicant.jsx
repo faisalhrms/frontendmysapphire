@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import DataTable from "@components/datatable/DataTable.jsx";
 import Avatar from "@components/Avatar.jsx";
 import Notify from "@helpers/toastNotifications.js";
@@ -20,7 +21,43 @@ import RequisitionInterviewFormWrapper from "../models/components/RequisitionInt
 import RequisitionInterviewCompleteWrapper from "../models/components/RequisitionInterviewCompleteWrapper.jsx";
 import RequisitionInterviewCancelWrapper from "../models/components/RequisitionInterviewCancelWrapper.jsx";
 
-const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => {
+// ✅ best-effort: try to resolve logged in user id from common storage keys
+const tryGetCurrentUserId = () => {
+    try {
+        const candidates = ["user", "auth_user", "profile", "current_user", "me", "user_info"];
+
+        for (const k of candidates) {
+            const raw = localStorage.getItem(k);
+            if (!raw) continue;
+
+            // might be "12" directly
+            if (/^\d+$/.test(raw)) return Number(raw);
+
+            // might be JSON
+            let obj = null;
+            try {
+                obj = JSON.parse(raw);
+            } catch {
+                obj = null;
+            }
+
+            const id =
+                obj?.id ??
+                obj?.user?.id ??
+                obj?.data?.id ??
+                obj?.data?.user?.id ??
+                obj?.employee?.user_id ??
+                obj?.employee?.user?.id;
+
+            if (id) return Number(id);
+        }
+    } catch {
+        // ignore
+    }
+    return null;
+};
+
+const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, currentUserId = null }) => {
     const [refreshKey, setRefreshKey] = useState(0);
 
     // ✅ Reschedule modal state
@@ -33,6 +70,13 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
 
     // ✅ Cancel modal state
     const [isCancelOpen, setIsCancelOpen] = useState(false);
+
+    // ✅ Prefer redux user id if available
+    const authUser = useSelector((state) => state?.auth?.user);
+
+    const myUserId = useMemo(() => {
+        return currentUserId ?? authUser?.id ?? tryGetCurrentUserId();
+    }, [currentUserId, authUser?.id]);
 
     const openRescheduleModal = (applicationId, interview) => {
         setSelectedApplicationId(applicationId);
@@ -82,7 +126,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
         [requisitionId]
     );
 
-
     const renderUserCell = (userObj) => {
         if (!userObj) return "—";
         return (
@@ -114,9 +157,168 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
         }
         return (
             <span title={value} className="truncate inline-block max-w-[240px] align-middle">
-        {value}
-      </span>
+                {value}
+            </span>
         );
+    };
+
+    const formatRound = (value) => {
+        if (!value) return "—";
+        const v = String(value).toLowerCase();
+        const m = v.match(/^round_(\d+)$/);
+        if (m) return `Round ${m[1]}`;
+        return toTitleCase(String(value).replaceAll("_", " "));
+    };
+
+    // ✅ compact inline panel
+    const renderPanelCell = (panel, interview) => {
+        const list = Array.isArray(panel) ? panel : [];
+        if (!list.length) return "—";
+
+        const total = typeof interview?.total_interviewers === "number" ? interview.total_interviewers : list.length;
+        const pending =
+            typeof interview?.pending_feedback_count === "number"
+                ? interview.pending_feedback_count
+                : list.filter((p) => String(p?.status || "pending").toLowerCase() !== "submitted").length;
+
+        const allDone =
+            typeof interview?.all_feedback_submitted === "boolean"
+                ? interview.all_feedback_submitted
+                : total > 0 && pending === 0;
+
+        const topBadgeCls = allDone ? "bg-success/10 text-success" : "bg-warning/10 text-warning";
+        const topBadgeText = allDone ? "ALL SUBMITTED" : "IN PROGRESS";
+
+        const maxAvatars = 5;
+        const shown = list.slice(0, maxAvatars);
+        const extra = list.length - shown.length;
+
+        return (
+            <div className="flex items-center justify-between gap-3 w-full">
+                <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-semibold">
+                            Panel: {total} • Pending: {pending}
+                        </span>
+                        <span className={`badge !rounded-full ${topBadgeCls}`}>{topBadgeText}</span>
+                    </div>
+                </div>
+
+                <div className="flex items-center shrink-0">
+                    <div className="flex -space-x-2">
+                        {shown.map((p, idx) => {
+                            const u = p?.interviewer || null;
+                            const name = u?.full_name || "—";
+                            const st = String(p?.status || "pending").toLowerCase();
+                            const ringCls =
+                                st === "submitted"
+                                    ? "ring-success/40"
+                                    : st === "pending"
+                                        ? "ring-warning/40"
+                                        : "ring-gray-200";
+
+                            return (
+                                <div
+                                    key={`${p?.interviewer_id || idx}`}
+                                    className={`rounded-full ring-2 ${ringCls} dark:ring-white/10`}
+                                    title={`${name} • ${st.toUpperCase()}`}
+                                >
+                                    <Avatar
+                                        avatar={u?.avatar || null}
+                                        full_name={name}
+                                        size="sm"
+                                        parentClasses="bg-primary/10 !fill-primary"
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {extra > 0 && (
+                        <span className="ms-2 text-xs font-semibold text-[#8c9097] dark:text-white/50">+{extra}</span>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    const getMyPanelMember = (interview) => {
+        if (!interview || !myUserId) return null;
+        const panel = Array.isArray(interview?.panel) ? interview.panel : [];
+        return (
+            panel.find((p) => {
+                const pid = p?.interviewer_id ?? p?.interviewer?.id;
+                return pid != null && Number(pid) === Number(myUserId);
+            }) || null
+        );
+    };
+
+    const isInterviewTimePassed = (interview) => {
+        const raw = interview?.scheduled_at;
+        if (!raw) return false;
+        const t = new Date(raw).getTime();
+        if (Number.isNaN(t)) return false;
+        return t <= Date.now();
+    };
+
+    // ✅ NEW: lock reschedule/cancel if ANY feedback submitted by ANY panel member
+    const hasAnyFeedbackStarted = (interview) => {
+        const panel = Array.isArray(interview?.panel) ? interview.panel : [];
+        return panel.some((p) => String(p?.status || "").toLowerCase() === "submitted");
+    };
+
+    // ✅ central rule: can I submit feedback?
+    const getFeedbackAvailability = (interview) => {
+        if (!interview?.id) return { ok: false, reason: "No interview found" };
+        if (!myUserId) return { ok: false, reason: "Cannot detect current user" };
+
+        const status = String(interview?.status || "").toLowerCase();
+        if (status === "cancelled") return { ok: false, reason: "Interview is cancelled" };
+
+        if (interview?.all_feedback_submitted === true) {
+            return { ok: false, reason: "All feedback already submitted" };
+        }
+
+        const me = getMyPanelMember(interview);
+        if (!me) return { ok: false, reason: "You are not in the interview panel" };
+
+        const myStatus = String(me?.status || "").toLowerCase();
+        if (myStatus === "submitted") return { ok: false, reason: "Feedback already submitted" };
+
+        if (!isInterviewTimePassed(interview)) {
+            return { ok: false, reason: "Feedback is allowed after the interview time" };
+        }
+
+        return { ok: true, reason: "Submit feedback" };
+    };
+
+    // ✅ NEW: rules for reschedule/cancel (locked after any feedback is submitted)
+    const getRescheduleAvailability = (interview) => {
+        if (!interview?.id) return { ok: false, reason: "No interview found" };
+
+        const status = String(interview?.status || "").toLowerCase();
+        if (status === "cancelled") return { ok: false, reason: "Interview is cancelled" };
+        if (status === "completed") return { ok: false, reason: "Interview is completed" };
+
+        if (hasAnyFeedbackStarted(interview)) {
+            return { ok: false, reason: "Cannot reschedule: feedback already started" };
+        }
+
+        return { ok: true, reason: "Reschedule / Update Interview" };
+    };
+
+    const getCancelAvailability = (interview) => {
+        if (!interview?.id) return { ok: false, reason: "No interview found" };
+
+        const status = String(interview?.status || "").toLowerCase();
+        if (status === "cancelled") return { ok: false, reason: "Already cancelled" };
+        if (status === "completed") return { ok: false, reason: "Interview is completed" };
+
+        if (hasAnyFeedbackStarted(interview)) {
+            return { ok: false, reason: "Cannot cancel: feedback already started" };
+        }
+
+        return { ok: true, reason: "Cancel Interview" };
     };
 
     const columns = useMemo(
@@ -130,6 +332,29 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                     const interview = row?.original?.next_interview || null;
                     const hasInterview = Boolean(interview?.id);
 
+                    // ✅ feedback button logic
+                    const feedbackAvailability = getFeedbackAvailability(interview);
+                    const disableComplete = !feedbackAvailability.ok;
+
+                    const completeBtnCls = disableComplete
+                        ? "ti-btn ti-btn-light ti-btn-sm !opacity-60 !cursor-not-allowed grayscale blur-[0.4px]"
+                        : "ti-btn ti-btn-success ti-btn-sm";
+
+                    // ✅ NEW: reschedule + cancel lock when feedback started
+                    const rescheduleAvailability = getRescheduleAvailability(interview);
+                    const disableReschedule = !hasInterview || !rescheduleAvailability.ok;
+
+                    const rescheduleBtnCls = disableReschedule
+                        ? "ti-btn ti-btn-light ti-btn-sm !opacity-60 !cursor-not-allowed grayscale blur-[0.4px]"
+                        : "ti-btn ti-btn-primary ti-btn-sm";
+
+                    const cancelAvailability = getCancelAvailability(interview);
+                    const disableCancel = !hasInterview || !cancelAvailability.ok;
+
+                    const cancelBtnCls = disableCancel
+                        ? "ti-btn ti-btn-light ti-btn-sm !opacity-60 !cursor-not-allowed grayscale blur-[0.4px]"
+                        : "ti-btn ti-btn-warning ti-btn-sm";
+
                     return (
                         <div className="flex justify-center gap-2">
                             <Link to={`/module/requisition/${requisitionId}/applicants/${appId}`}>
@@ -138,76 +363,80 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                                 </button>
                             </Link>
 
-                            {/* ✅ Reschedule / Update */}
+                            {/* ✅ Reschedule (LOCKED after any feedback submitted) */}
                             <button
                                 type="button"
-                                className="ti-btn ti-btn-primary ti-btn-sm"
-                                title="Reschedule / Update Interview"
-                                onClick={() => openRescheduleModal(appId, interview)}
-                                disabled={!hasInterview}
+                                className={rescheduleBtnCls}
+                                title={rescheduleAvailability.reason}
+                                onClick={() => {
+                                    if (disableReschedule) return;
+                                    openRescheduleModal(appId, interview);
+                                }}
+                                disabled={disableReschedule}
                             >
-                <span className="inline-flex items-center gap-1">
-                  <CalendarClock size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <CalendarClock size={16} />
+                                </span>
                             </button>
 
-                            {/* ✅ Complete Interview */}
+                            {/* ✅ Feedback/Complete (disabled + blurred based on rules) */}
                             <button
                                 type="button"
-                                className="ti-btn ti-btn-success ti-btn-sm"
-                                title="Complete Interview (Add Remarks)"
-                                onClick={() => openCompleteModal(appId, interview)}
-                                disabled={!hasInterview}
+                                className={completeBtnCls}
+                                title={feedbackAvailability.reason}
+                                onClick={() => {
+                                    if (disableComplete) return;
+                                    openCompleteModal(appId, interview);
+                                }}
+                                disabled={disableComplete}
                             >
-                <span className="inline-flex items-center gap-1">
-                  <ClipboardCheck size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <ClipboardCheck size={16} />
+                                </span>
                             </button>
 
-                            {/* ✅ Cancel Interview */}
+                            {/* ✅ Cancel (LOCKED after any feedback submitted) */}
                             <button
                                 type="button"
-                                className="ti-btn ti-btn-warning ti-btn-sm"
-                                title="Cancel Interview"
-                                onClick={() => openCancelModal(appId, interview)}
-                                disabled={!hasInterview}
+                                className={cancelBtnCls}
+                                title={cancelAvailability.reason}
+                                onClick={() => {
+                                    if (disableCancel) return;
+                                    openCancelModal(appId, interview);
+                                }}
+                                disabled={disableCancel}
                             >
-                <span className="inline-flex items-center gap-1">
-                  <CalendarX size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <CalendarX size={16} />
+                                </span>
                             </button>
 
-                            {/* existing actions */}
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-danger ti-btn-sm"
                                 title="Reject"
-                                onClick={() =>
-                                    updateOneStatus(appId, "rejected", "Applicant rejected successfully.", false)
-                                }
+                                onClick={() => updateOneStatus(appId, "rejected", "Applicant rejected successfully.", false)}
                             >
-                <span className="inline-flex items-center gap-1">
-                  <Ban size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <Ban size={16} />
+                                </span>
                             </button>
 
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-secondary ti-btn-sm"
                                 title="Move Back to Submitted"
-                                onClick={() =>
-                                    updateOneStatus(appId, "submitted", "Applicant moved back to Submitted.", false)
-                                }                            >
-                <span className="inline-flex items-center gap-1">
-                  <RotateCcw size={16} />
-                </span>
+                                onClick={() => updateOneStatus(appId, "submitted", "Applicant moved back to Submitted.", false)}
+                            >
+                                <span className="inline-flex items-center gap-1">
+                                    <RotateCcw size={16} />
+                                </span>
                             </button>
                         </div>
                     );
                 },
             },
 
-            // ... keep your other columns EXACTLY same
             {
                 Header: "Applicant",
                 accessor: "full_name",
@@ -251,7 +480,7 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                 id: "next_interview_round",
                 accessor: (r) => r?.next_interview?.round || "",
                 filterable: false,
-                Cell: ({ value }) => (value ? toTitleCase(value.replaceAll("_", " ")) : "—"),
+                Cell: ({ value }) => formatRound(value),
             },
             {
                 Header: "Type",
@@ -260,14 +489,19 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                 filterable: false,
                 Cell: ({ value }) => (value ? toTitleCase(value) : "—"),
             },
+
             {
-                Header: "Interviewer",
-                id: "next_interview_interviewer",
-                accessor: (r) => r?.next_interview?.interviewer || null,
+                Header: "Panel",
+                id: "next_interview_panel",
+                accessor: (r) => r?.next_interview?.panel || [],
                 filterable: false,
                 getCellProps: () => ({ className: "!text-left" }),
-                Cell: ({ value }) => renderUserCell(value),
+                Cell: ({ row, value }) => {
+                    const interview = row?.original?.next_interview || null;
+                    return renderPanelCell(value, interview);
+                },
             },
+
             {
                 Header: "Scheduled By",
                 id: "next_interview_scheduled_by",
@@ -337,12 +571,12 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                 Cell: ({ value }) =>
                     value ? (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-              <Sparkles size={14} /> AI Recommended <BadgeCheck size={14} />
-            </span>
+                            <Sparkles size={14} /> AI Recommended <BadgeCheck size={14} />
+                        </span>
                     ) : (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-light text-default">
-              <XCircle size={14} /> Not Recommended
-            </span>
+                            <XCircle size={14} /> Not Recommended
+                        </span>
                     ),
             },
             {
@@ -366,7 +600,8 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                 filterable: true,
             },
         ],
-        [requisitionId, updateOneStatus]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [requisitionId, updateOneStatus, myUserId]
     );
 
     if (!isActive) return null;
@@ -381,7 +616,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                 enableAdvancedFilters={true}
             />
 
-            {/* Reschedule / Update modal */}
             <RequisitionInterviewFormWrapper
                 requisitionId={requisitionId}
                 applicationId={selectedApplicationId}
@@ -394,7 +628,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                 }}
             />
 
-            {/* Complete modal */}
             <RequisitionInterviewCompleteWrapper
                 requisitionId={requisitionId}
                 applicationId={selectedApplicationId}
@@ -407,7 +640,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive }) => 
                 }}
             />
 
-            {/* Cancel modal */}
             <RequisitionInterviewCancelWrapper
                 requisitionId={requisitionId}
                 applicationId={selectedApplicationId}

@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import IconTabs from "@components/IconTabs.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
 import { Users, BadgeCheck, CalendarCheck2, CalendarX, ClipboardCheck } from "lucide-react";
@@ -8,7 +9,6 @@ import RequisitionAllApplicantList from "../views/RequisitionAllApplicantList.js
 import RequisitionShortlistedApplicant from "../views/RequisitionShortlistedApplicant.jsx";
 import RequisitionInterviewScheduledApplicant from "../views/RequisitionInterviewScheduledApplicant.jsx";
 
-// ✅ NEW
 import RequisitionInterviewCancelledApplicant from "../views/RequisitionInterviewCancelledApplicant.jsx";
 import RequisitionInterviewCompletedApplicant from "../views/RequisitionInterviewCompletedApplicant.jsx";
 
@@ -17,6 +17,10 @@ const DEFAULT_TAB = "all";
 const RequisitionApplicant = () => {
     const { requisitionId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
+
+    // ✅ get logged-in user from redux (same as your ApplicantForm)
+    const currentUser = useSelector((state) => state.auth.user);
+    const currentUserId = currentUser?.id ?? null;
 
     const activeTab = searchParams.get("tab") || DEFAULT_TAB;
 
@@ -46,10 +50,7 @@ const RequisitionApplicant = () => {
                         label: "All Applicants",
                         icon: <Users className="text-sky-400" />,
                         content: (
-                            <RequisitionAllApplicantList
-                                requisitionId={requisitionId}
-                                isActive={activeTab === "all"}
-                            />
+                            <RequisitionAllApplicantList requisitionId={requisitionId} isActive={activeTab === "all"} />
                         ),
                     },
                     {
@@ -71,11 +72,11 @@ const RequisitionApplicant = () => {
                             <RequisitionInterviewScheduledApplicant
                                 requisitionId={requisitionId}
                                 isActive={activeTab === "interview_scheduled"}
+                                currentUserId={currentUserId}   // ✅ PASS HERE
                             />
                         ),
                     },
 
-                    // ✅ NEW TAB: Cancelled
                     {
                         id: "interview_cancelled",
                         label: "Interview Cancelled",
@@ -84,11 +85,11 @@ const RequisitionApplicant = () => {
                             <RequisitionInterviewCancelledApplicant
                                 requisitionId={requisitionId}
                                 isActive={activeTab === "interview_cancelled"}
+                                currentUserId={currentUserId}   // ✅ PASS HERE (if you disable feedback/actions there too)
                             />
                         ),
                     },
 
-                    // ✅ NEW TAB: Completed
                     {
                         id: "interview_completed",
                         label: "Interview Completed",
@@ -97,6 +98,7 @@ const RequisitionApplicant = () => {
                             <RequisitionInterviewCompletedApplicant
                                 requisitionId={requisitionId}
                                 isActive={activeTab === "interview_completed"}
+                                currentUserId={currentUserId}   // ✅ PASS HERE (if you disable feedback/actions there too)
                             />
                         ),
                     },

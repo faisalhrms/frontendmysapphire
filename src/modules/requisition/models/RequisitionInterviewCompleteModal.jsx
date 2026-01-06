@@ -1,3 +1,4 @@
+// @modules/requisition/components/interviews/RequisitionInterviewCompleteModal.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -91,13 +92,18 @@ const RequisitionInterviewCompleteModal = ({
 
         setIsSubmitting(true);
         try {
-            const feedback = {};
+            // ✅ Build rubric (new API format)
+            const rubric = {};
             (values.feedback_items || []).forEach((it) => {
                 const k = String(it?.key || "").trim();
                 if (!k) return;
-                feedback[k] = Number(it?.score ?? 0);
+                rubric[k] = Number(it?.score ?? 0);
             });
-            if (values.feedback_notes) feedback.notes = values.feedback_notes;
+
+            // ✅ feedback payload must be: { rubric: {...} }
+            const feedback = { rubric };
+            const note = String(values.feedback_notes || "").trim();
+            if (note) feedback.notes = note; // (optional) safe extra info if backend ignores/accepts
 
             const payload = {
                 interviewer_rating: Number(values.interviewer_rating),
@@ -121,29 +127,29 @@ const RequisitionInterviewCompleteModal = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Complete Interview" width="max-w-4xl">
             <form onSubmit={handleSubmit(onSubmit)}>
-                {/* ✅ key change: fixed height container + scrollable body + fixed footer */}
+                {/* ✅ fixed height container + scrollable body + fixed footer */}
                 <div className="box flex flex-col max-h-[calc(100vh-12rem)]">
                     {/* ✅ SCROLL AREA */}
                     <div className="box-body flex-1 overflow-y-auto">
                         {/* info card */}
                         <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
                             <div className="flex items-start gap-2">
-                <span className="text-amber-700 mt-0.5">
-                  <Info size={16} />
-                </span>
+                                <span className="text-amber-700 mt-0.5">
+                                    <Info size={16} />
+                                </span>
 
                                 <div className="flex-1">
                                     <p className="text-sm font-semibold mb-0 text-amber-800">
                                         Add interview rating and remarks
                                     </p>
                                     <p className="text-sm mt-1 mb-0 text-amber-800">
-                                        You can add extra scoring items if needed (e.g. Communication, Confidence).
+                                        Add scoring items (this will be sent as <span className="font-semibold">feedback.rubric</span>).
                                     </p>
                                 </div>
 
                                 <span className="text-amber-700 mt-0.5">
-                  <ClipboardCheck size={16} />
-                </span>
+                                    <ClipboardCheck size={16} />
+                                </span>
                             </div>
                         </div>
 
@@ -158,7 +164,7 @@ const RequisitionInterviewCompleteModal = ({
                                     name="interviewer_rating"
                                     control={control}
                                     errors={errors}
-                                    placeholder="0 - 5"
+                                    placeholder="Rating"
                                     is_required={true}
                                     label="Interviewer Rating (0-5)"
                                 />
@@ -183,7 +189,7 @@ const RequisitionInterviewCompleteModal = ({
                                     name="interviewer_notes"
                                     control={control}
                                     errors={errors}
-                                    placeholder="Write remarks..."
+                                    placeholder="Write Remarks"
                                     rows={3}
                                     label="Interviewer Notes"
                                 />
@@ -192,17 +198,17 @@ const RequisitionInterviewCompleteModal = ({
                             {/* scoring */}
                             <div className="col-span-12">
                                 <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
-                                    <p className="font-semibold mb-0">Scoring</p>
+                                    <p className="font-semibold mb-0">Rubric Scoring</p>
 
                                     <button
                                         type="button"
                                         className="ti-btn ti-btn-secondary ti-btn-md ti-btn-wave whitespace-nowrap"
                                         onClick={() => append({ key: "", score: 0 })}
                                     >
-                    <span className="inline-flex items-center gap-2">
-                      <PlusCircle size={16} />
-                      Add Score
-                    </span>
+                                        <span className="inline-flex items-center gap-2">
+                                            <PlusCircle size={16} />
+                                            Add Score
+                                        </span>
                                     </button>
                                 </div>
 
@@ -231,7 +237,7 @@ const RequisitionInterviewCompleteModal = ({
                                                         name={`feedback_items.${idx}.key`}
                                                         control={control}
                                                         errors={errors}
-                                                        placeholder="e.g. Communication"
+                                                        placeholder="e.g. React"
                                                         className="w-full"
                                                     />
                                                 </td>
@@ -259,9 +265,9 @@ const RequisitionInterviewCompleteModal = ({
                                                         onClick={() => remove(idx)}
                                                         disabled={fields.length === 1}
                                                     >
-                              <span className="inline-flex items-center justify-center">
-                                <Trash2 size={16} />
-                              </span>
+                                                            <span className="inline-flex items-center justify-center">
+                                                                <Trash2 size={16} />
+                                                            </span>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -275,7 +281,7 @@ const RequisitionInterviewCompleteModal = ({
                                         name="feedback_notes"
                                         control={control}
                                         errors={errors}
-                                        placeholder='Optional note (e.g. "Proceed to technical round")'
+                                        placeholder='FeedBack'
                                         rows={2}
                                         label="Additional Note"
                                     />

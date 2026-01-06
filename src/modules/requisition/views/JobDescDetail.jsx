@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment } from "react";
 import { useParams, Link } from "react-router-dom";
 import PageHeader from "@modules/layouts/includes/PageHeader.jsx";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
@@ -8,7 +8,77 @@ import "@assets/css/custom/attachment-card.css";
 import { useJobDesc } from "@modules/requisition/hooks/jobDescHooks.js";
 
 const pretty = (val) => (val === 0 || val ? String(val) : "N/A");
-const safeUpper = (v) => String(v || "N/A").replaceAll("_", " ").toUpperCase();
+
+/**
+ * Basic HTML sanitizer (no external pkg)
+ * Allows only a small set of tags + limited attributes
+ */
+const sanitizeHtml = (input) => {
+    if (!input) return "";
+
+    const doc = new DOMParser().parseFromString(String(input), "text/html");
+
+    // allowed tags
+    const allowed = new Set([
+        "B",
+        "STRONG",
+        "I",
+        "EM",
+        "U",
+        "S",
+        "P",
+        "BR",
+        "UL",
+        "OL",
+        "LI",
+        "A",
+        "SPAN",
+        "DIV",
+    ]);
+
+    // collect nodes first (because we'll mutate DOM)
+    const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT, null);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach((el) => {
+        const tag = el.tagName;
+
+        // remove disallowed tags by unwrapping their children
+        if (!allowed.has(tag)) {
+            const parent = el.parentNode;
+            if (parent) {
+                while (el.firstChild) parent.insertBefore(el.firstChild, el);
+                parent.removeChild(el);
+            }
+            return;
+        }
+
+        // strip attributes
+        [...el.attributes].forEach((attr) => {
+            const name = attr.name.toLowerCase();
+
+            if (tag === "A") {
+                if (!["href", "target", "rel"].includes(name)) el.removeAttribute(attr.name);
+            } else {
+                el.removeAttribute(attr.name);
+            }
+        });
+
+        // sanitize links
+        if (tag === "A") {
+            const href = el.getAttribute("href") || "";
+            if (/^\s*javascript:/i.test(href) || /^\s*data:/i.test(href)) {
+                el.removeAttribute("href");
+            }
+            if (el.getAttribute("target") === "_blank") {
+                el.setAttribute("rel", "noopener noreferrer");
+            }
+        }
+    });
+
+    return doc.body.innerHTML;
+};
 
 const JobDescDetail = () => {
     const { id } = useParams();
@@ -16,15 +86,6 @@ const JobDescDetail = () => {
 
     // Normalize API shape (supports either full response or just .data)
     const data = jobDesc?.data || jobDesc;
-
-    const responsibilities = data?.core_responsibilities || [];
-    const total = useMemo(
-        () =>
-            responsibilities
-                .filter((r) => !r?._delete)
-                .reduce((sum, r) => sum + Number(r?.weightage || 0), 0),
-        [responsibilities]
-    );
 
     if (loading || !data) {
         return <LoadingSpinner />;
@@ -39,8 +100,10 @@ const JobDescDetail = () => {
         created_by,
         created_at,
         updated_at,
-        attachments, // if your API doesn't provide this, it's fine—UI handles empty
+        attachments, // optional
     } = data;
+
+    const overviewHtml = sanitizeHtml(brief_role_overview);
 
     return (
         <Fragment>
@@ -59,16 +122,10 @@ const JobDescDetail = () => {
                         <div className="box-header justify-between">
                             <div className="box-title">Job Summary</div>
                             <div className="flex items-center gap-2">
-                <span className="badge bg-primary/10 text-primary">
-                  {pretty(company?.name)}
-                </span>
-                                <span className="badge bg-info/10 text-info">
-                  {pretty(department?.name)}
-                </span>
+                                <span className="badge bg-primary/10 text-primary">{pretty(company?.name)}</span>
+                                <span className="badge bg-info/10 text-info">{pretty(department?.name)}</span>
                                 {sub_department?.name ? (
-                                    <span className="badge bg-warning/10 text-warning">
-                    {sub_department?.name}
-                  </span>
+                                    <span className="badge bg-warning/10 text-warning">{sub_department?.name}</span>
                                 ) : null}
                             </div>
                         </div>
@@ -82,9 +139,7 @@ const JobDescDetail = () => {
                                             <label className="text-[0.75rem] text-[#8c9097] dark:text-white/50 font-semibold">
                                                 Position Title
                                             </label>
-                                            <p className="text-[0.975rem] font-semibold mb-0">
-                                                {pretty(position_title)}
-                                            </p>
+                                            <p className="text-[0.975rem] font-semibold mb-0">{pretty(position_title)}</p>
                                         </div>
 
                                         <div>
@@ -120,87 +175,29 @@ const JobDescDetail = () => {
                                         <label className="text-[0.75rem] text-[#8c9097] dark:text-white/50 font-semibold">
                                             Brief Role Overview
                                         </label>
-                                        <p className="text-[0.9rem] leading-6 mb-0 whitespace-pre-line">
-                                            {pretty(brief_role_overview)}
-                                        </p>
+
+                                        {!overviewHtml ? (
+                                            <p className="text-[0.875rem] text-[#8c9097] dark:text-white/50 mb-0">
+                                                N/A
+                                            </p>
+                                        ) : (
+                                            <div
+                                                className="
+                                                    text-[0.9rem] leading-6
+                                                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2
+                                                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2
+                                                    [&_li]:my-1
+                                                "
+                                                dangerouslySetInnerHTML={{ __html: overviewHtml }}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Core Responsibilities */}
-                    <div className="box">
-                        <div className="box-header justify-between">
-                            <div className="box-title">Core Responsibilities</div>
-                            <div className="badge bg-secondary/10 text-secondary">
-                                Total Weightage: {total.toFixed(2)}
-                            </div>
-                        </div>
-
-                        <div className="box-body">
-                            {responsibilities.length === 0 ? (
-                                <div className="text-center py-6 text-[#8c9097] dark:text-white/50">
-                                    No responsibilities available.
-                                </div>
-                            ) : (
-                                <div className="relative overflow-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Sr. No
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Responsibility
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Weightage
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Status
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                        {responsibilities.map((r, i) => {
-                                            const marked = Boolean(r?._delete);
-                                            return (
-                                                <tr key={r.id ?? i} className={marked ? "opacity-60" : ""}>
-                                                    <td className="px-4 py-3 whitespace-nowrap font-semibold">
-                                                        {r.sr_no ?? i + 1}
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        <div className="font-medium">{pretty(r.responsibility_name)}</div>
-                                                    </td>
-                                                    <td className="px-4 py-3 whitespace-nowrap">
-                                                        {Number(r?.weightage || 0).toFixed(2)}
-                                                    </td>
-                                                    <td className="px-4 py-3 whitespace-nowrap">
-                                                        {marked ? (
-                                                            <span className="badge bg-amber-100 text-amber-700">Marked for Delete</span>
-                                                        ) : (
-                                                            <span className="badge bg-success/10 text-success">Active</span>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                        </tbody>
-                                        <tfoot>
-                                        <tr className="bg-gray-50 font-semibold">
-                                            <td className="px-4 py-3" colSpan={2}>
-                                                Total
-                                            </td>
-                                            <td className="px-4 py-3">{total.toFixed(2)}</td>
-                                            <td></td>
-                                        </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    {/* ✅ Core Responsibilities REMOVED */}
 
                     {/* Created By */}
                     <div className="box">
@@ -215,9 +212,7 @@ const JobDescDetail = () => {
                                             <label className="text-[0.75rem] text-[#8c9097] dark:text-white/50 font-semibold">
                                                 Name
                                             </label>
-                                            <p className="text-[0.875rem] mb-0">
-                                                {pretty(created_by?.full_name)}
-                                            </p>
+                                            <p className="text-[0.875rem] mb-0">{pretty(created_by?.full_name)}</p>
                                         </div>
                                         <div>
                                             <label className="text-[0.75rem] text-[#8c9097] dark:text-white/50 font-semibold">
@@ -257,9 +252,7 @@ const JobDescDetail = () => {
                                                 <label className="text-[0.75rem] text-[#8c9097] dark:text-white/50 font-semibold">
                                                     Last Updated
                                                 </label>
-                                                <p className="text-[0.875rem] mb-0">
-                                                    {formatDate(updated_at)}
-                                                </p>
+                                                <p className="text-[0.875rem] mb-0">{formatDate(updated_at)}</p>
                                             </div>
                                         )}
                                     </div>
@@ -280,25 +273,23 @@ const JobDescDetail = () => {
                             <div className="space-y-4">
                                 <div className="flex items-start">
                                     <div className="me-3">
-                    <span className="avatar avatar-sm avatar-rounded bg-success/10">
-                      <i className="ri-briefcase-2-line text-success text-[1rem]"></i>
-                    </span>
+                                        <span className="avatar avatar-sm avatar-rounded bg-success/10">
+                                            <i className="ri-briefcase-2-line text-success text-[1rem]"></i>
+                                        </span>
                                     </div>
                                     <div className="flex-grow">
                                         <p className="mb-1 text-[0.75rem] font-semibold text-[#8c9097] dark:text-white/50">
                                             Position
                                         </p>
-                                        <p className="text-[0.875rem] font-semibold mb-0">
-                                            {pretty(position_title)}
-                                        </p>
+                                        <p className="text-[0.875rem] font-semibold mb-0">{pretty(position_title)}</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-start">
                                     <div className="me-3">
-                    <span className="avatar avatar-sm avatar-rounded bg-info/10">
-                      <i className="ri-calendar-line text-info text-[1rem]"></i>
-                    </span>
+                                        <span className="avatar avatar-sm avatar-rounded bg-info/10">
+                                            <i className="ri-calendar-line text-info text-[1rem]"></i>
+                                        </span>
                                     </div>
                                     <div className="flex-grow">
                                         <p className="mb-1 text-[0.75rem] font-semibold text-[#8c9097] dark:text-white/50">
@@ -319,8 +310,8 @@ const JobDescDetail = () => {
                             <div className="box-title">
                                 Attachments
                                 <span className="badge bg-primary/10 !rounded-full text-primary ms-1">
-                  {attachments?.length || 0}
-                </span>
+                                    {attachments?.length || 0}
+                                </span>
                             </div>
                         </div>
 
@@ -341,9 +332,9 @@ const JobDescDetail = () => {
                                             <li key={a.id} className="!mb-4">
                                                 <div className="flex items-center">
                                                     <div className="me-2">
-                            <span className="shared-file-icon">
-                              <i className="ti ti-file-text"></i>
-                            </span>
+                                                        <span className="shared-file-icon">
+                                                            <i className="ti ti-file-text"></i>
+                                                        </span>
                                                     </div>
                                                     <div className="flex-grow">
                                                         <Link

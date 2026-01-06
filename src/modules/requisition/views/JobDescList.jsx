@@ -4,7 +4,7 @@ import DataTable from "@components/datatable/DataTable.jsx";
 import { Link } from "react-router-dom";
 import JobDescFormModal from "@modules/requisition/models/JobDescFormModal.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import {Shield} from "lucide-react"; // if you still need it for detail page
+import { Shield } from "lucide-react";
 
 async function deleteJobDescription(id) {
     const res = await fetch(`/job-descriptions/${id}/delete/`, {
@@ -21,8 +21,6 @@ async function deleteJobDescription(id) {
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString() : "N/A");
 
 const JobDescList = ({ externalFilters = [] }) => {
-
-
     const tableRef = useRef(null);
 
     // Modal states
@@ -35,8 +33,9 @@ const JobDescList = ({ externalFilters = [] }) => {
     };
 
     const openEdit = (row) => {
-        // row.original already contains nested responsibilities from datatable payload
-        setEditingJD(row?.original || null);
+        // ✅ IMPORTANT: only pass id; modal will fetch detail via GET endpoint
+        const id = row?.original?.id;
+        setEditingJD(id ? { id } : null);
         setIsJDModalOpen(true);
     };
 
@@ -58,12 +57,6 @@ const JobDescList = ({ externalFilters = [] }) => {
         }
     };
 
-    const getTotalWeightage = (row) => {
-        const list = row?.original?.core_responsibilities || [];
-        const total = list.reduce((sum, r) => sum + Number(r?.weightage ?? 0), 0);
-        return Math.round((total + Number.EPSILON) * 100) / 100;
-    };
-
     const columns = [
         {
             Header: "Actions",
@@ -78,11 +71,13 @@ const JobDescList = ({ externalFilters = [] }) => {
                     >
                         <i className="ri-edit-line"></i>
                     </button>
+
                     <Link to={`/module/requisition/job-description/detail/${row.original.id}`}>
                         <button className="ti-btn ti-btn-info ti-btn-sm" title="View">
                             <i className="ri-eye-line"></i>
                         </button>
                     </Link>
+
                     <button
                         className="ti-btn ti-btn-danger ti-btn-sm"
                         onClick={() => onDelete(row.original.id)}
@@ -100,14 +95,6 @@ const JobDescList = ({ externalFilters = [] }) => {
             filterType: "text",
             filterKey: "position_title",
             Cell: ({ value }) => <span className="font-semibold">{value || "-"}</span>,
-        },
-        {
-            Header: "Brief Overview",
-            accessor: "brief_role_overview",
-            filterable: true,
-            filterType: "text",
-            filterKey: "brief_role_overview",
-            Cell: ({ value }) => (value ? (value.length > 80 ? value.slice(0, 80) + "…" : value) : "—"),
         },
         {
             Header: "Company",
@@ -132,42 +119,6 @@ const JobDescList = ({ externalFilters = [] }) => {
             filterType: "text",
             filterKey: "sub_department__name",
             Cell: ({ row }) => <span>{row.original.sub_department?.name || "—"}</span>,
-        },
-        {
-            Header: "Responsibilities",
-            accessor: "core_responsibilities",
-            disableSortBy: true,
-            filterable: false,
-            Cell: ({ row }) => {
-                const list = row.original.core_responsibilities || [];
-                return (
-                    <span className="badge bg-primary/20 text-primary rounded-sm py-1">
-            {list.length} items
-          </span>
-                );
-            },
-        },
-        {
-            Header: "Total Weightage",
-            accessor: "total_weightage",
-            disableSortBy: true,
-            filterable: false,
-            Cell: ({ row }) => {
-                const total = getTotalWeightage(row);
-                const ok = Number(total) === 100;
-                return (
-                    <span
-                        className={
-                            ok
-                                ? "badge bg-success/20 text-success rounded-sm py-1"
-                                : "badge bg-danger/20 text-danger rounded-sm py-1"
-                        }
-                        title="Sum of responsibilities' weightage"
-                    >
-            {total.toFixed(2)}
-          </span>
-                );
-            },
         },
         {
             Header: "Created",
@@ -205,22 +156,22 @@ const JobDescList = ({ externalFilters = [] }) => {
                 description="Manage and review organizational policies, their visibility, and related documents."
                 icon={Shield}
             />
+
             <DataTable
                 ref={tableRef}
                 columns={columns}
                 title="Job Descriptions"
-                apiUrl={`/job-descriptions/datatable`}
+                apiUrl={`/job-descriptions/datatable/`}
                 buttons={buttons}
                 enableAdvancedFilters={true}
                 externalFilters={externalFilters}
                 hiddenParameters={["tab"]}
             />
 
-            {/* Create/Edit JD Modal */}
             <JobDescFormModal
                 isOpen={isJDModalOpen}
                 onClose={closeModal}
-                jobDescData={editingJD}
+                jobDescData={editingJD} // {id} OR null
                 onSuccess={handleSuccess}
             />
         </>

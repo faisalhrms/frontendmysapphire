@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Avatar from "@components/Avatar.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { formatDate } from "@helpers/dateTime.js";
 import { getBadgeClasses } from "@helpers/badges.js";
@@ -33,13 +34,77 @@ const Field = ({ label, children }) => (
     </div>
 );
 
-/* =========================
-   ✅ Dynamic Feedback UI
-========================= */
+const renderUserMini = (userObj) => {
+    if (!userObj) return <span className="text-gray-500">—</span>;
+    return (
+        <div className="flex items-center gap-2 min-w-0">
+            <Avatar
+                avatar={userObj.avatar || null}
+                full_name={userObj.full_name || "—"}
+                size="sm"
+                parentClasses="bg-primary/10 !fill-primary"
+            />
+            <div className="min-w-0">
+                <div className="text-sm font-semibold truncate">{userObj.full_name || "—"}</div>
+                <div className="text-xs text-[#8c9097] dark:text-white/50 truncate">{userObj.email || "—"}</div>
+            </div>
+        </div>
+    );
+};
 
-const prettyLabel = (k = "") =>
-    toTitleCase(String(k).replaceAll("_", " ").replaceAll("-", " "));
+const PanelStatusBadge = ({ value }) => {
+    const v = String(value || "").toLowerCase();
+    const map = {
+        submitted: "bg-success/10 text-success",
+        pending: "bg-warning/10 text-warning",
+    };
+    return <span className={`badge !rounded-full ${map[v] || "bg-light text-default"}`}>{v ? v.toUpperCase() : "—"}</span>;
+};
 
+const PanelTable = ({ interview }) => {
+    const panel = Array.isArray(interview?.panel) ? interview.panel : [];
+    if (!panel.length) return <div className="text-gray-500">No panel assigned.</div>;
+
+    const total = interview?.total_interviewers ?? panel.length;
+    const pending = interview?.pending_feedback_count ?? panel.filter((p) => String(p?.status || "pending").toLowerCase() !== "submitted").length;
+
+    return (
+        <div className="space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold">Panel: {total} • Pending: {pending}</span>
+                {interview?.all_feedback_submitted ? (
+                    <span className="badge !rounded-full bg-success/10 text-success">ALL SUBMITTED</span>
+                ) : (
+                    <span className="badge !rounded-full bg-warning/10 text-warning">IN PROGRESS</span>
+                )}
+            </div>
+
+            <div className="table-responsive">
+                <table className="table whitespace-nowrap min-w-full">
+                    <thead>
+                    <tr>
+                        <th>Interviewer</th>
+                        <th>Status</th>
+                        <th>Submitted At</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {panel.map((p, idx) => (
+                        <tr key={`${p?.interviewer_id || idx}`}>
+                            <td className="!ps-4">{renderUserMini(p?.interviewer)}</td>
+                            <td><PanelStatusBadge value={p?.status} /></td>
+                            <td>{p?.submitted_at ? formatDate(p.submitted_at) : "—"}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+/* ===== Optional: your dynamic feedback UI stays compatible ===== */
+const prettyLabel = (k = "") => toTitleCase(String(k).replaceAll("_", " ").replaceAll("-", " "));
 const isEmptyValue = (v) =>
     v === null ||
     v === undefined ||
@@ -47,138 +112,74 @@ const isEmptyValue = (v) =>
     (Array.isArray(v) && v.length === 0) ||
     (typeof v === "object" && !Array.isArray(v) && Object.keys(v || {}).length === 0);
 
-const guessScaleMax = (n) => {
-    if (n <= 5) return 5;
-    if (n <= 10) return 10;
-    if (n <= 100) return 100;
-    return n;
-};
-
-const ScoreBar = ({ value }) => {
-    const num = Number(value);
-    if (!Number.isFinite(num)) return <span className="text-gray-500">—</span>;
-
-    const max = guessScaleMax(num);
-    const pct = Math.max(0, Math.min(100, (num / max) * 100));
-
-    return (
-        <div className="flex items-center gap-3 min-w-[180px]">
-            <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
-                <div className="h-2 rounded-full bg-primary" style={{ width: `${pct}%` }} />
-            </div>
-            <div className="text-sm font-semibold tabular-nums w-[52px] text-right">
-                {max === 100 ? `${num}` : `${num}/${max}`}
-            </div>
-        </div>
-    );
-};
-
-const FeedbackValue = ({ value }) => {
-    if (isEmptyValue(value)) return <span className="text-gray-500">—</span>;
-
-    if (typeof value === "number") return <ScoreBar value={value} />;
-
-    if (typeof value === "boolean") {
-        return value ? (
-            <span className="badge !rounded-full bg-success/10 text-success">Yes</span>
-        ) : (
-            <span className="badge !rounded-full bg-light text-default">No</span>
-        );
-    }
-
-    if (Array.isArray(value)) {
-        const cleaned = value.filter((x) => !isEmptyValue(x)).map((x) => String(x));
-        return <span className="whitespace-pre-wrap">{cleaned.join(", ") || "—"}</span>;
-    }
-
-    if (typeof value === "object") {
-        const entries = Object.entries(value || {}).filter(([, v]) => !isEmptyValue(v));
-        if (!entries.length) return <span className="text-gray-500">—</span>;
-
-        return (
-            <div className="space-y-1">
-                {entries.map(([k, v]) => (
-                    <div key={k} className="flex gap-2 text-sm">
-                        <span className="text-gray-500">{prettyLabel(k)}:</span>
-                        <span className="font-medium">
-                            {typeof v === "number" ? <ScoreBar value={v} /> : String(v)}
-                        </span>
-                    </div>
-                ))}
-            </div>
-        );
-    }
-
-    return <span className="whitespace-pre-wrap">{String(value)}</span>;
-};
-
 const FeedbackPanel = ({ feedback }) => {
     if (!feedback || typeof feedback !== "object" || Array.isArray(feedback)) return null;
-
     const entries = Object.entries(feedback).filter(([, v]) => !isEmptyValue(v));
     if (!entries.length) return null;
-
-    const noteKeys = new Set(["notes", "note", "comment", "remarks", "summary", "observation"]);
-    const notesEntry = entries.find(([k]) => noteKeys.has(String(k).toLowerCase()));
-    const notes = notesEntry ? notesEntry[1] : null;
-
-    const metrics = entries.filter(([k]) => !noteKeys.has(String(k).toLowerCase()));
 
     return (
         <div className="col-span-12">
             <div className="text-[0.75rem] text-gray-500">Feedback</div>
-
-            <div className="mt-1 p-3 rounded-md bg-light space-y-3">
-                {notes ? (
-                    <div className="bg-white/60 rounded-md p-3">
-                        <div className="text-xs text-gray-500 mb-1">Notes</div>
-                        <div className="text-sm whitespace-pre-wrap">{String(notes)}</div>
+            <div className="mt-1 p-3 rounded-md bg-light space-y-2">
+                {entries.map(([k, v]) => (
+                    <div key={k} className="flex gap-2 text-sm">
+                        <span className="text-gray-500">{prettyLabel(k)}:</span>
+                        <span className="font-medium whitespace-pre-wrap">{typeof v === "object" ? JSON.stringify(v) : String(v)}</span>
                     </div>
-                ) : null}
-
-                {metrics.length ? (
-                    <div className="grid grid-cols-12 gap-3">
-                        {metrics.map(([k, v]) => (
-                            <div key={k} className="col-span-12 md:col-span-6">
-                                <div className="text-xs text-gray-500 mb-1">{prettyLabel(k)}</div>
-                                <div className="font-medium">
-                                    <FeedbackValue value={v} />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-gray-500 text-sm">No scored feedback fields.</div>
-                )}
+                ))}
             </div>
         </div>
     );
 };
-
-/* ========================= */
+/* =============================================== */
 
 const ApplicantInterviewCard = ({ applicant }) => {
     const [showHistory, setShowHistory] = useState(false);
 
     const interviews = Array.isArray(applicant.interviews) ? applicant.interviews : [];
 
-    const { latest, upcoming, sorted } = useMemo(() => {
+    const { active, upcoming, latestCompleted, sorted } = useMemo(() => {
         const sorted = [...interviews].sort((a, b) => {
             const da = new Date(a?.created_at || a?.scheduled_at || 0).getTime();
             const db = new Date(b?.created_at || b?.scheduled_at || 0).getTime();
             return db - da;
         });
 
-        const latest = sorted[0] || null;
-
         const now = new Date();
+
+        // ✅ Active interview = scheduled/rescheduled (even if time passed) - prioritize ones with pending feedback
+        const activeCandidates = interviews
+            .filter((x) => ["scheduled", "rescheduled"].includes(String(x?.status || "").toLowerCase()))
+            .sort((a, b) => {
+                const ap = (a?.pending_feedback_count ?? 0) > 0 ? 0 : 1;
+                const bp = (b?.pending_feedback_count ?? 0) > 0 ? 0 : 1;
+                if (ap !== bp) return ap - bp;
+
+                const da = new Date(a?.created_at || a?.scheduled_at || 0).getTime();
+                const db = new Date(b?.created_at || b?.scheduled_at || 0).getTime();
+                return db - da;
+            });
+
+        const active = activeCandidates[0] || null;
+
+        // ✅ Upcoming = future scheduled/rescheduled (nearest)
         const upcoming =
             interviews
-                .filter((x) => ["scheduled", "rescheduled"].includes((x?.status || "").toLowerCase()))
+                .filter((x) => ["scheduled", "rescheduled"].includes(String(x?.status || "").toLowerCase()))
                 .filter((x) => x?.scheduled_at && new Date(x.scheduled_at) >= now)
                 .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0] || null;
 
-        return { latest, upcoming, sorted };
+        // ✅ Latest Completed = most recent completed
+        const latestCompleted =
+            interviews
+                .filter((x) => String(x?.status || "").toLowerCase() === "completed")
+                .sort((a, b) => {
+                    const da = new Date(a?.completed_at || a?.created_at || a?.scheduled_at || 0).getTime();
+                    const db = new Date(b?.completed_at || b?.created_at || b?.scheduled_at || 0).getTime();
+                    return db - da;
+                })[0] || null;
+
+        return { active, upcoming, latestCompleted, sorted };
     }, [interviews]);
 
     const renderLinkOrText = (value) => {
@@ -197,6 +198,8 @@ const ApplicantInterviewCard = ({ applicant }) => {
             </span>
         );
     };
+
+    const RoundText = (round) => (round ? toTitleCase(String(round).replaceAll("_", " ")) : "—");
 
     return (
         <div className="box">
@@ -243,35 +246,68 @@ const ApplicantInterviewCard = ({ applicant }) => {
                     </div>
                 </div>
 
-                {/* ✅ Upcoming */}
+                {/* ✅ Active Interview (important for your case like id=66 pending feedback) */}
                 <div className="p-4 rounded-md bg-light space-y-2">
-                    <div className="font-semibold">Upcoming Interview</div>
+                    <div className="font-semibold">Active Interview</div>
+                    {active ? (
+                        <div className="grid grid-cols-12 gap-4">
+                            <div className="col-span-12 md:col-span-3">
+                                <Field label="Status"><InterviewStatusBadge value={active.status} /></Field>
+                            </div>
+                            <div className="col-span-12 md:col-span-4">
+                                <Field label="Scheduled At">{formatDate(active.scheduled_at) || "—"}</Field>
+                            </div>
+                            <div className="col-span-12 md:col-span-2">
+                                <Field label="Round">{RoundText(active.round)}</Field>
+                            </div>
+                            <div className="col-span-12 md:col-span-3">
+                                <Field label="Type">{active.interview_type ? toTitleCase(active.interview_type) : "—"}</Field>
+                            </div>
+
+                            <div className="col-span-12 md:col-span-6">
+                                <Field label="Scheduled By">{renderUserMini(active.scheduled_by)}</Field>
+                            </div>
+                            <div className="col-span-12 md:col-span-6">
+                                <Field label="Feedback">{active.all_feedback_submitted ? "All Submitted" : `Pending: ${active.pending_feedback_count ?? "—"}`}</Field>
+                            </div>
+
+                            <div className="col-span-12">
+                                <div className="text-[0.75rem] text-gray-500">Location / Link</div>
+                                <div className="mt-1">{renderLinkOrText(active.link_or_location)}</div>
+                            </div>
+
+                            <div className="col-span-12">
+                                <PanelTable interview={active} />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-gray-500">No active interview.</div>
+                    )}
+                </div>
+
+                {/* ✅ Upcoming (future) */}
+                <div className="p-4 rounded-md border space-y-2">
+                    <div className="font-semibold">Next Upcoming Interview</div>
                     {upcoming ? (
                         <div className="grid grid-cols-12 gap-4">
                             <div className="col-span-12 md:col-span-3">
-                                <Field label="Status">
-                                    <InterviewStatusBadge value={upcoming.status} />
-                                </Field>
+                                <Field label="Status"><InterviewStatusBadge value={upcoming.status} /></Field>
                             </div>
                             <div className="col-span-12 md:col-span-4">
                                 <Field label="Scheduled At">{formatDate(upcoming.scheduled_at) || "—"}</Field>
                             </div>
                             <div className="col-span-12 md:col-span-2">
-                                <Field label="Round">
-                                    {upcoming.round ? toTitleCase(upcoming.round.replaceAll("_", " ")) : "—"}
-                                </Field>
+                                <Field label="Round">{RoundText(upcoming.round)}</Field>
                             </div>
                             <div className="col-span-12 md:col-span-3">
-                                <Field label="Type">
-                                    {upcoming.interview_type ? toTitleCase(upcoming.interview_type) : "—"}
-                                </Field>
+                                <Field label="Type">{upcoming.interview_type ? toTitleCase(upcoming.interview_type) : "—"}</Field>
                             </div>
 
                             <div className="col-span-12 md:col-span-6">
-                                <Field label="Interviewer">{upcoming.interviewer || "—"}</Field>
+                                <Field label="Scheduled By">{renderUserMini(upcoming.scheduled_by)}</Field>
                             </div>
                             <div className="col-span-12 md:col-span-6">
-                                <Field label="Scheduled By">{upcoming.scheduled_by || "—"}</Field>
+                                <Field label="Feedback">{upcoming.all_feedback_submitted ? "All Submitted" : `Pending: ${upcoming.pending_feedback_count ?? "—"}`}</Field>
                             </div>
 
                             <div className="col-span-12">
@@ -284,46 +320,60 @@ const ApplicantInterviewCard = ({ applicant }) => {
                     )}
                 </div>
 
-                {/* ✅ Latest */}
+                {/* ✅ Latest Completed (your feedback/outcome/rating can show here if serializer returns them) */}
                 <div className="p-4 rounded-md border space-y-2">
-                    <div className="font-semibold">Latest Interview</div>
+                    <div className="font-semibold">Latest Completed Interview</div>
 
-                    {latest ? (
+                    {latestCompleted ? (
                         <div className="grid grid-cols-12 gap-4">
                             <div className="col-span-12 md:col-span-3">
-                                <Field label="Status">
-                                    <InterviewStatusBadge value={latest.status} />
-                                </Field>
+                                <Field label="Status"><InterviewStatusBadge value={latestCompleted.status} /></Field>
                             </div>
                             <div className="col-span-12 md:col-span-4">
-                                <Field label="Scheduled At">{formatDate(latest.scheduled_at) || "—"}</Field>
+                                <Field label="Completed At">{latestCompleted.completed_at ? formatDate(latestCompleted.completed_at) : "—"}</Field>
                             </div>
                             <div className="col-span-12 md:col-span-2">
-                                <Field label="Outcome">{latest.outcome ? toTitleCase(latest.outcome) : "—"}</Field>
+                                <Field label="Round">{RoundText(latestCompleted.round)}</Field>
                             </div>
                             <div className="col-span-12 md:col-span-3">
-                                <Field label="Interviewer Rating">{latest.interviewer_rating ?? "—"}</Field>
+                                <Field label="Type">{latestCompleted.interview_type ? toTitleCase(latestCompleted.interview_type) : "—"}</Field>
                             </div>
 
                             <div className="col-span-12 md:col-span-6">
-                                <Field label="Interviewer">{latest.interviewer || "—"}</Field>
+                                <Field label="Scheduled By">{renderUserMini(latestCompleted.scheduled_by)}</Field>
                             </div>
                             <div className="col-span-12 md:col-span-6">
-                                <Field label="Scheduled By">{latest.scheduled_by || "—"}</Field>
+                                <Field label="Feedback">{latestCompleted.all_feedback_submitted ? "All Submitted" : `Pending: ${latestCompleted.pending_feedback_count ?? "—"}`}</Field>
                             </div>
 
-                            {latest.interviewer_notes ? (
-                                <div className="col-span-12">
-                                    <div className="text-[0.75rem] text-gray-500">Notes</div>
-                                    <div className="whitespace-pre-wrap mt-1 text-sm">{latest.interviewer_notes}</div>
+                            {/* Optional fields if your API returns them */}
+                            {latestCompleted.outcome ? (
+                                <div className="col-span-12 md:col-span-4">
+                                    <Field label="Outcome">{toTitleCase(latestCompleted.outcome)}</Field>
+                                </div>
+                            ) : null}
+                            {latestCompleted.interviewer_rating != null ? (
+                                <div className="col-span-12 md:col-span-4">
+                                    <Field label="Interviewer Rating">{latestCompleted.interviewer_rating}</Field>
                                 </div>
                             ) : null}
 
-                            {/* ✅ Pretty dynamic feedback (NO JSON) */}
-                            <FeedbackPanel feedback={latest.feedback} />
+                            {latestCompleted.interviewer_notes ? (
+                                <div className="col-span-12">
+                                    <div className="text-[0.75rem] text-gray-500">Notes</div>
+                                    <div className="whitespace-pre-wrap mt-1 text-sm">{latestCompleted.interviewer_notes}</div>
+                                </div>
+                            ) : null}
+
+                            {/* Optional feedback object if serializer returns it */}
+                            <FeedbackPanel feedback={latestCompleted.feedback} />
+
+                            <div className="col-span-12">
+                                <PanelTable interview={latestCompleted} />
+                            </div>
                         </div>
                     ) : (
-                        <div className="text-gray-500">No interview history.</div>
+                        <div className="text-gray-500">No completed interview yet.</div>
                     )}
                 </div>
 
@@ -349,9 +399,9 @@ const ApplicantInterviewCard = ({ applicant }) => {
                                         <th>Scheduled</th>
                                         <th>Round</th>
                                         <th>Type</th>
-                                        <th>Interviewer</th>
-                                        <th>Outcome</th>
-                                        <th>Rating</th>
+                                        <th>Scheduled By</th>
+                                        <th>Pending</th>
+                                        <th>Completed</th>
                                         <th>Cancelled</th>
                                         <th>Reason</th>
                                     </tr>
@@ -361,12 +411,12 @@ const ApplicantInterviewCard = ({ applicant }) => {
                                         <tr key={iv.id}>
                                             <td><InterviewStatusBadge value={iv.status} /></td>
                                             <td>{formatDate(iv.scheduled_at) || "—"}</td>
-                                            <td>{iv.round ? toTitleCase(iv.round.replaceAll("_", " ")) : "—"}</td>
+                                            <td>{RoundText(iv.round)}</td>
                                             <td>{iv.interview_type ? toTitleCase(iv.interview_type) : "—"}</td>
-                                            <td>{iv.interviewer || "—"}</td>
-                                            <td>{iv.outcome ? toTitleCase(iv.outcome) : "—"}</td>
-                                            <td>{iv.interviewer_rating ?? "—"}</td>
-                                            <td>{formatDate(iv.cancelled_at) || "—"}</td>
+                                            <td className="!ps-4">{renderUserMini(iv.scheduled_by)}</td>
+                                            <td>{iv.all_feedback_submitted ? "0" : (iv.pending_feedback_count ?? "—")}</td>
+                                            <td>{iv.completed_at ? formatDate(iv.completed_at) : "—"}</td>
+                                            <td>{iv.cancelled_at ? formatDate(iv.cancelled_at) : "—"}</td>
                                             <td className="truncate max-w-[240px]" title={iv.cancel_reason || ""}>
                                                 {iv.cancel_reason || "—"}
                                             </td>

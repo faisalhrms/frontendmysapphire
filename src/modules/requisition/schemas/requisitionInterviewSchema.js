@@ -8,7 +8,11 @@ export const requisitionInterviewSchema = z
         duration_minutes: z.coerce.number().int().min(5, "Minimum 5 minutes"),
         timezone: z.string().min(1, "Timezone is required"),
         link_or_location: z.string().optional(),
-        interviewer_id: z.coerce.number().int().positive("Interviewer is required"),
+
+        // ✅ MULTI interviewer ids
+        interviewer_ids: z
+            .array(z.coerce.number().int().positive("Invalid interviewer"))
+            .min(1, "At least one interviewer is required"),
     })
     .superRefine((val, ctx) => {
         const s = (val.link_or_location || "").trim();
