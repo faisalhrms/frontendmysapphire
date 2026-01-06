@@ -60,7 +60,9 @@ const badgeStyles = {
     waiting_for_quotation: secondary,
     waiting_for_acknowledgement: success,
     waiting_for_approval: danger,
-    draft:primary
+    draft:primary,
+    approved:success,
+    shortlisted: success
 
 };
 
@@ -109,8 +111,9 @@ const statusStyles = {
     waiting_for_acknowledgement: txtSuccess,
     waiting_for_approval: txtDanger,
     cancelled: danger,
-    waiting_for_scrap:txtWarning
-
+    waiting_for_scrap:txtWarning,
+    approved:txtSuccess,
+    shortlisted:txtSuccess
 
 };
 
