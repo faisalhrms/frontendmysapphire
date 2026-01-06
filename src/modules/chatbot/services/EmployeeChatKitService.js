@@ -38,3 +38,13 @@ export async function chatkitWidgetActionTool(params = {}, { signal } = {}) {
   const res = await api.post("/chatkit/widget-action/", params, { signal })
   return res.data
 }
+
+export async function leaveBalanceResolveTool(params = {}, { signal } = {}) {
+  const res = await api.post("/chatkit/employee/leave_balance/resolve/", params, { signal })
+  return res.data
+}
+
+export async function leaveBalanceQueryTool(params = {}, { signal } = {}) {
+  const res = await api.post("/chatkit/employee/leave_balance/query/", params, { signal })
+  return res.data
+}

@@ -192,7 +192,7 @@ export default function ChatBot() {
 
   return (
     <div className={rootClass}>
-      <div className="flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2 overflow-visible">
+      <div className="sticky top-0 z-50 flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2 bg-white dark:bg-bodybg overflow-visible">
         <div className="flex items-center gap-2 flex-wrap">
           <LottieLoader animationData={botLoading} width={40} height={40} speed={0.3} opacity={1} />
           <Link to="#" className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70">
@@ -210,31 +210,31 @@ export default function ChatBot() {
                   <i className="ri-arrow-down-s-line ml-2"></i>
                 </button>
 
-                {modeSelection !== "Select Source" && (
+                {modeSelection !== "Select Agent" && (
                   <button
                     onClick={() => {
-                      setModeSelection("Select Source")
+                      setModeSelection("Select Agent")
                       setModeOpen(false)
                       setHrSubtypes?.(["policies"])
                     }}
                     className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
-                    aria-label="Clear source"
+                    aria-label="Clear Agent"
                   >
                     <i className="ri-close-line text-xs"></i>
                   </button>
                 )}
 
                 {modeOpen && (
-                   <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-[60] max-h-60 overflow-auto">
                     <button
                       onClick={() => {
-                        setModeSelection("Select Source")
+                        setModeSelection("Select Agent")
                         setModeOpen(false)
                         setHrSubtypes?.(["policies"])
                       }}
                       className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                      Select Source
+                      Select Agent
                     </button>
 
                     <HasPermission permission="auth.chatbot_export_data">
@@ -276,19 +276,6 @@ export default function ChatBot() {
                       </button>
                     </HasPermission>
 
-                    <HasPermission permission="auth.chatbot_competitors">
-                      <button
-                        onClick={() => {
-                          setModeSelection("Competitor Pricing")
-                          setModeOpen(false)
-                          setHrSubtypes?.(["policies"])
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        Competitor Pricing
-                      </button>
-                    </HasPermission>
-
                     <HasPermission permission="auth.chatbot_asset_audit">
                       <button
                         onClick={() => {
@@ -318,7 +305,7 @@ export default function ChatBot() {
               </div>
 
               <div className="flex items-center gap-2 ml-2 flex-wrap">
-                {["policies", "pms", "pas", "employee"].map((s) => (
+                {["policies", "pms", "employee"].map((s) => (
                   <button
                     key={s}
                     onClick={() => toggleHrSub(s)}

@@ -593,7 +593,7 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset, showFull
               label="Rej. Quantity"
               compute={rejectionQtyCompute}
               deps={[data.yards_per_day_per_loom, data.reject_percent]}
-              precision={0}
+              precision={2}
             />
             <ComputedKV
               label="Rej. Cost"
