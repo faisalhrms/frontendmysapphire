@@ -173,14 +173,13 @@ export default function CourseOffering() {
                         <p className="text-slate-600">Please wait while we fetch available courses</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {ensureArray(filteredOfferings).map((offering) => {
                             const isEnrolled = Boolean(offering?.enrollment);
                             const canSelfEnroll = Boolean(offering?.self_enrollment);
                             const title = offering?.courses?.title ?? "—";
                             const slug = offering?.courses?.slug ?? "—";
 
-                            // ✅ NEW: show date ONLY when both dates exist
                             const showDateRange = Boolean(offering?.start_date && offering?.end_date);
 
                             return (
@@ -189,7 +188,7 @@ export default function CourseOffering() {
                                     className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl transition-all duration-500 group"
                                 >
                                     {/* Course Image with Overlay */}
-                                    <div className="relative h-80 overflow-hidden">
+                                    <div className="relative h-52 overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 to-slate-900/70 z-10"></div>
                                         <div
                                             className="h-full bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
@@ -242,7 +241,7 @@ export default function CourseOffering() {
                                     </div>
 
                                     {/* Course Content */}
-                                    <div className="p-8">
+                                    <div className="p-5">
                                         <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight group-hover:text-emerald-600 transition-colors">
                                             {title}
                                         </h3>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import api from "@config/axiosConfig.js";
 
@@ -7,40 +7,6 @@ const formatDate = (iso) => {
     const date = new Date(iso);
     return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 };
-
-function PlayerModal({ open, onClose, url, title }) {
-    if (!open) return null;
-
-    return (
-        <div className="fixed inset-0 z-50">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <div className="absolute inset-0 p-3 sm:p-6 flex items-center justify-center">
-                <div className="w-full max-w-6xl h-[85vh] bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border-2 border-slate-700">
-                    <div className="h-16 px-6 flex items-center justify-between border-b border-slate-700 bg-slate-800">
-                        <div className="font-bold text-white truncate flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                            {title || "Course Player"}
-                        </div>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 rounded-xl font-bold bg-white text-slate-900 hover:bg-slate-100 transition-all"
-                        >
-                            Close
-                        </button>
-                    </div>
-
-                    <iframe
-                        title="course-player"
-                        src={url}
-                        className="w-full h-[calc(85vh-64px)] bg-white"
-                        allow="fullscreen"
-                    />
-                </div>
-            </div>
-        </div>
-    );
-}
 
 export default function CourseOfferingDetail() {
     const { id } = useParams();
@@ -53,7 +19,9 @@ export default function CourseOfferingDetail() {
     const [success, setSuccess] = useState("");
     const [offering, setOffering] = useState(location.state?.offering || null);
 
-    const [playerOpen, setPlayerOpen] = useState(false);
+    // ✅ inline player state
+    const [showPlayer, setShowPlayer] = useState(false);
+    const playerRef = useRef(null);
 
     const isEnrolled = Boolean(offering?.enrollment);
     const canSelfEnroll = Boolean(offering?.self_enrollment);
@@ -62,7 +30,7 @@ export default function CourseOfferingDetail() {
     const slug = offering?.courses?.slug ?? "—";
     const launchUrl = offering?.launch_url || "";
 
-    // ✅ date conditions
+    // ✅ date conditions (only for hero line)
     const hasStartDate = Boolean(offering?.start_date);
     const hasEndDate = Boolean(offering?.end_date);
     const showDateRange = hasStartDate && hasEndDate;
@@ -106,6 +74,13 @@ export default function CourseOfferingDetail() {
     };
 
     const canOpenCourse = useMemo(() => isEnrolled && Boolean(launchUrl), [isEnrolled, launchUrl]);
+
+    const openInlinePlayer = () => {
+        setShowPlayer(true);
+        setTimeout(() => {
+            playerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 50);
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-stone-100">
@@ -270,15 +245,13 @@ export default function CourseOfferingDetail() {
                                                 )}
 
                                                 {canOpenCourse && (
-                                                    <>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setPlayerOpen(true)}
-                                                            className="w-full py-4 px-6 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-white text-slate-900"
-                                                        >
-                                                            Open Course
-                                                        </button>
-                                                    </>
+                                                    <button
+                                                        type="button"
+                                                        onClick={openInlinePlayer}
+                                                        className="w-full py-4 px-6 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-white text-slate-900"
+                                                    >
+                                                        Open Course
+                                                    </button>
                                                 )}
                                             </div>
                                         </div>
@@ -290,95 +263,38 @@ export default function CourseOfferingDetail() {
                 </div>
             </div>
 
-            {/* Additional Details Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-8 py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Course Details */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-8">
-                            <h2 className="text-2xl font-bold text-slate-900 mb-6">Course Overview</h2>
-                            <p className="text-slate-600 leading-relaxed mb-6">
-                                This comprehensive course will guide you through essential concepts and practical
-                                applications. You'll gain hands-on experience and develop skills that are directly
-                                applicable to real-world scenarios. Our expert instructors have designed this curriculum
-                                to ensure you build a solid foundation in the subject matter.
-                            </p>
-
-                            {/* ✅ show date cards only if any date exists */}
-                            {(hasStartDate || hasEndDate) && (
-                                <div className="grid grid-cols-2 gap-4">
-                                    {hasStartDate && (
-                                        <div
-                                            className={[
-                                                "bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100",
-                                                !hasEndDate ? "col-span-2" : "",
-                                            ].join(" ")}
-                                        >
-                                            <div className="text-sm font-bold text-blue-600 uppercase mb-2">Start Date</div>
-                                            <div className="text-xl font-bold text-slate-900">
-                                                {formatDate(offering?.start_date)}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {hasEndDate && (
-                                        <div
-                                            className={[
-                                                "bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100",
-                                                !hasStartDate ? "col-span-2" : "",
-                                            ].join(" ")}
-                                        >
-                                            <div className="text-sm font-bold text-purple-600 uppercase mb-2">End Date</div>
-                                            <div className="text-xl font-bold text-slate-900">
-                                                {formatDate(offering?.end_date)}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Sidebar */}
-                    <div className="space-y-6">
-                        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl shadow-xl p-6 text-white">
-                            <h3 className="text-lg font-bold mb-4">What You'll Learn</h3>
-                            <ul className="space-y-3">
-                                {[
-                                    "Core fundamental principles",
-                                    "Practical applications",
-                                    "Industry best practices",
-                                    "Real-world projects",
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-start gap-3">
-                                        <svg
-                                            className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                        <span className="text-sm">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        {loading && (
-                            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 text-center">
-                                <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                                <p className="text-slate-600 font-semibold">Loading details...</p>
+            {/* Player Section (NO extra cards/text, only iframe when opened) */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
+                <div ref={playerRef}>
+                    {canOpenCourse && showPlayer && (
+                        <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-6">
+                            <div className="flex items-center justify-between gap-3 mb-4">
+                                <div className="font-bold text-slate-900 text-xl truncate">{title}</div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPlayer(false)}
+                                    className="px-4 py-2 rounded-xl font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                >
+                                    Hide
+                                </button>
                             </div>
-                        )}
-                    </div>
+
+                            <div className="w-full h-[75vh] bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 shadow-inner">
+                                <iframe
+                                    title="course-player"
+                                    src={launchUrl}
+                                    className="w-full h-full bg-white"
+                                    allow="fullscreen; autoplay"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
-
-            <PlayerModal open={playerOpen} onClose={() => setPlayerOpen(false)} url={launchUrl} title={title} />
         </div>
     );
 }
+
+
+
+
