@@ -19,6 +19,7 @@ const SalesForceOrderExceptionReport = () => {
             () => ({
                 initialFilters: [
                     { name: 'date',defaultValue: getPastDate(0)},
+                    { name: 'country',defaultValue: 'PK'},
                 ],
             }),
             []

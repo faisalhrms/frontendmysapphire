@@ -70,7 +70,7 @@ export default function useChatBot() {
   const [isThinking, setIsThinking] = useState(false)
   const [isBotActive, setIsBotActive] = useState(false)
   const [isWebSearch, setIsWebSearch] = useState(false)
-  const [modeSelection, setModeSelection] = useState("Select Source")
+  const [modeSelection, setModeSelection] = useState("Select Agent")
   const [modeOpen, setModeOpen] = useState(false)
   const [hrSubtypes, setHrSubtypes] = useState(["policies"])
 
@@ -622,7 +622,7 @@ export default function useChatBot() {
     setMessages([])
     setInput("")
     setIsWebSearch(false)
-    setModeSelection("Select Source")
+    setModeSelection("Select Agent")
     setQcTarget("https://pk.sapphireonline.pk")
     setQcChecks(defaultChecks)
     setQcRender(true)

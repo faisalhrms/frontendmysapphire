@@ -10,64 +10,76 @@ import EditApprovalHierarchySetup from "@modules/approvals/setup/views/EditAppro
 import ApprovalHierarchyApproverSetupDatatable from "@modules/approvals/setup/views/ApprovalHierarchyApproverSetupDatatable.jsx";
 import GlobalApprovalList from "@modules/approvals/global/view/GlobalApprovalList.jsx";
 import GlobalApprovalDetail from "@modules/approvals/global/view/GlobalApprovalDetail.jsx";
+import RequisitionApprovalInbox from "../requisition/views/RequisitionApprovalInbox.jsx";
 
-const SETUP_PERMISSION = 'approvals.dynamic_hierarchy_management'
+// ✅ NEW: Requisition approval inbox (general for HOD + HR)
+
+const SETUP_PERMISSION = 'approvals.dynamic_hierarchy_management';
+
+// ✅ pick whatever permission you want for requisition approvals
+// (change this string to your actual backend permission if you have one)
+const REQUISITION_APPROVAL_PERMISSION = 'requisition.view_requisition';
 
 export const APPROVAL_ROUTES = {
     TASK: {
         path: '/module/approvals/task',
         permission: 'pms.manage_task_approvals',
     },
-    OBJECTIVE:{
-        path:'/module/approvals/objective',
+    OBJECTIVE: {
+        path: '/module/approvals/objective',
         permission: 'user.view_ess_modules',
     },
-    FORM:{
-        path:'/module/approvals/form',
+    FORM: {
+        path: '/module/approvals/form',
         permission: 'user.view_ess_modules',
     },
-    GLOBAL:{
-        path:'/module/approvals/global',
+    GLOBAL: {
+        path: '/module/approvals/global',
         permission: 'user.view_ess_modules',
     },
-    DETAIL:{
-        path:'/module/approvals/detail/:id',
+    DETAIL: {
+        path: '/module/approvals/detail/:id',
         permission: 'user.view_ess_modules',
     },
+
+    REQUISITION: {
+        path: '/module/approvals/requisition',
+    },
+
     SETUP: {
-        TYPE:{
+        TYPE: {
             READ: {
                 path: '/module/approvals/setups/type',
-                permission:SETUP_PERMISSION
+                permission: SETUP_PERMISSION,
             },
-            ADD:{
-                path:'/module/approvals/setups/type/create',
-                permission:SETUP_PERMISSION
+            ADD: {
+                path: '/module/approvals/setups/type/create',
+                permission: SETUP_PERMISSION,
             },
-            EDIT:{
-                path:'/module/approvals/setups/type/edit/:id',
-                permission:SETUP_PERMISSION
-            }
+            EDIT: {
+                path: '/module/approvals/setups/type/edit/:id',
+                permission: SETUP_PERMISSION,
+            },
         },
-        HIERARCHY:{
+        HIERARCHY: {
             READ: {
                 path: '/module/approvals/setups/hierarchy',
-                permission:SETUP_PERMISSION
+                permission: SETUP_PERMISSION,
             },
-            ADD:{
-                path:'/module/approvals/setups/hierarchy/create',
-                permission:SETUP_PERMISSION
+            ADD: {
+                path: '/module/approvals/setups/hierarchy/create',
+                permission: SETUP_PERMISSION,
             },
-            EDIT:{
-                path:'/module/approvals/setups/hierarchy/edit/:id',
-                permission:SETUP_PERMISSION
+            EDIT: {
+                path: '/module/approvals/setups/hierarchy/edit/:id',
+                permission: SETUP_PERMISSION,
             },
-            APPROVERS:{
-                path:'/module/approvals/setups/hierarchy/approvers',
-                permission:SETUP_PERMISSION
-            }
-        }
-    }
+            APPROVERS: {
+                path: '/module/approvals/setups/hierarchy/approvers',
+                permission: SETUP_PERMISSION,
+            },
+        },
+    },
 };
 
 export const MODULE_ROUTES = [
@@ -78,57 +90,63 @@ export const MODULE_ROUTES = [
     },
     {
         path: APPROVAL_ROUTES.OBJECTIVE.path,
-        component:ObjectiveApprovalList,
+        component: ObjectiveApprovalList,
         permission: APPROVAL_ROUTES.OBJECTIVE.permission,
     },
     {
         path: APPROVAL_ROUTES.FORM.path,
-        component:DynamicFormApprovalList,
+        component: DynamicFormApprovalList,
         permission: APPROVAL_ROUTES.FORM.permission,
     },
     {
         path: APPROVAL_ROUTES.GLOBAL.path,
-        component:GlobalApprovalList,
+        component: GlobalApprovalList,
         permission: APPROVAL_ROUTES.GLOBAL.permission,
     },
     {
         path: APPROVAL_ROUTES.DETAIL.path,
-        component:GlobalApprovalDetail,
+        component: GlobalApprovalDetail,
         permission: APPROVAL_ROUTES.DETAIL.permission,
     },
+
+    {
+        path: APPROVAL_ROUTES.REQUISITION.path,
+        component: RequisitionApprovalInbox,
+    },
+
     {
         path: APPROVAL_ROUTES.SETUP.TYPE.READ.path,
-        component:ApprovalTypeSetupDatatable,
+        component: ApprovalTypeSetupDatatable,
         permission: SETUP_PERMISSION,
     },
     {
         path: APPROVAL_ROUTES.SETUP.TYPE.ADD.path,
-        component:CreateApprovalTypeSetup,
+        component: CreateApprovalTypeSetup,
         permission: SETUP_PERMISSION,
     },
     {
         path: APPROVAL_ROUTES.SETUP.TYPE.EDIT.path,
-        component:EditApprovalTypeSetup,
+        component: EditApprovalTypeSetup,
         permission: SETUP_PERMISSION,
     },
     {
         path: APPROVAL_ROUTES.SETUP.HIERARCHY.READ.path,
-        component:ApprovalHierarchySetupDatatable,
+        component: ApprovalHierarchySetupDatatable,
         permission: SETUP_PERMISSION,
     },
     {
         path: APPROVAL_ROUTES.SETUP.HIERARCHY.ADD.path,
-        component:CreateApprovalHierarchySetup,
+        component: CreateApprovalHierarchySetup,
         permission: SETUP_PERMISSION,
     },
     {
         path: APPROVAL_ROUTES.SETUP.HIERARCHY.EDIT.path,
-        component:EditApprovalHierarchySetup,
+        component: EditApprovalHierarchySetup,
         permission: SETUP_PERMISSION,
     },
     {
         path: APPROVAL_ROUTES.SETUP.HIERARCHY.APPROVERS.path,
-        component:ApprovalHierarchyApproverSetupDatatable,
+        component: ApprovalHierarchyApproverSetupDatatable,
         permission: SETUP_PERMISSION,
     },
 ];

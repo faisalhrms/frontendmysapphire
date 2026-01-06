@@ -3,10 +3,32 @@ import Notify from "@helpers/toastNotifications.js"
 
 const ROOT = "/customer-hub"
 
-const serverMessage = (error, fallback) =>
-  error?.response?.data?.errors ||
-  error?.response?.data?.message ||
-  fallback
+const normalizeServerError = (error, fallback) => {
+  const data = error?.response?.data
+  if (!data) return fallback
+  if (typeof data.message === "string" && data.message.trim()) return data.message
+
+  const errs = data.errors
+  if (!errs) return fallback
+
+  if (typeof errs === "string") return errs
+  if (Array.isArray(errs)) return errs.filter(Boolean).join("\n")
+
+  if (errs && typeof errs === "object") {
+    const lines = []
+    for (const [field, msgs] of Object.entries(errs)) {
+      if (Array.isArray(msgs)) msgs.forEach((m) => lines.push(`${field}: ${m}`))
+      else if (typeof msgs === "string") lines.push(`${field}: ${msgs}`)
+      else lines.push(`${field}: ${JSON.stringify(msgs)}`)
+    }
+    if (lines.length) return lines.join("\n")
+  }
+
+  return fallback
+}
+
+const serverMessage = (error, fallback) => normalizeServerError(error, fallback)
+
 
 export const createAgreement = async (payload, opts = {}) => {
   try {

@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form"
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { useQueryClient } from "@tanstack/react-query"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   createAgreement,
   updateAgreement,
@@ -10,6 +11,7 @@ import {
   dateToYMD,
   normalizeDateSeed,
 } from "@modules/customer-hub/customer-orders/components/agreement-placement/helpers.js"
+import { buildAgreementPlacementSchema } from "@modules/customer-hub/customer-orders/hooks/agreement-placement/agreementPlacementSchema.js"
 
 const r2 = (n) => Number.parseFloat((Number(n || 0)).toFixed(2))
 
@@ -68,7 +70,11 @@ const buildDefaults = (seed = {}, email) => {
     warp_yarn_source: p.warp_yarn_source ?? "",
     weft_yarn_source: p.weft_yarn_source ?? "",
     split_quantity_enabled: p.split_quantity_enabled ?? false,
-    split_deliveries: p.split_deliveries ?? [],
+    split_deliveries: (p.split_deliveries ?? []).map((d) => ({
+      fabric_delivery: normalizeDateSeed(d?.fabric_delivery),
+      need_by_date: normalizeDateSeed(d?.need_by_date),
+      quantity: d?.quantity ?? "",
+    })),
   }
 }
 
@@ -77,12 +83,53 @@ export const useAgreementPlacementForm = ({
   email,
   onAfterPersist,
   refetch,
+  activeApprovalType = null,
 }) => {
   const queryClient = useQueryClient()
 
   const defaults = useMemo(
     () => buildDefaults(seed, email),
-    [seed?.id, seed?.updated_at, email]
+    [seed?.id, seed?.updated_at, email?.id]
+  )
+
+  const canEditYarn = !!seed?.can_edit_yarn_terms
+  const canEditFabric = !!seed?.can_edit_fabric_delivery
+
+  const currentApprovalTag =
+    seed?.current_approval_tag || seed?.payload?.current_approval_tag || null
+
+  const stageHint = useMemo(() => {
+    const yarn = String(seed?.yarn_terms_status || "").toLowerCase()
+    const fabric = String(seed?.fabric_delivery_status || "").toLowerCase()
+
+    if (yarn && yarn !== "completed") return "yarn"
+
+    if (yarn === "completed" && fabric && fabric !== "completed") return "fabric"
+
+    return null
+  }, [seed?.yarn_terms_status, seed?.fabric_delivery_status])
+
+
+  const resolver = useCallback(
+    async (values, context, options) => {
+      const splitEnabled = !!values?.split_quantity_enabled
+      const schema = buildAgreementPlacementSchema({
+        canEditYarn,
+        canEditFabric,
+        splitQuantityEnabled: splitEnabled,
+        currentApprovalTag,
+        activeApprovalType,
+        stageHint,
+      })
+      return zodResolver(schema)(values, context, options)
+    },
+    [
+      canEditYarn,
+      canEditFabric,
+      currentApprovalTag,
+      activeApprovalType,
+      stageHint,
+    ]
   )
 
   const {
@@ -91,8 +138,14 @@ export const useAgreementPlacementForm = ({
     getValues,
     watch,
     reset,
+    handleSubmit,
+    trigger,
     formState: { errors },
-  } = useForm({ defaultValues: defaults })
+  } = useForm({
+    defaultValues: defaults,
+    resolver,
+    mode: "onSubmit",
+  })
 
   const [showYarn, setShowYarn] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -100,7 +153,7 @@ export const useAgreementPlacementForm = ({
 
   useEffect(() => {
     reset(buildDefaults(seed, email))
-  }, [reset, seed?.id, seed?.updated_at, email])
+  }, [reset, seed?.id, seed?.updated_at, email?.id])
 
   const qc = useMemo(
     () => String(seed?.quality ?? seed?.query_meta?.quality_code ?? "").trim(),
@@ -141,96 +194,142 @@ export const useAgreementPlacementForm = ({
   )
 
   const originalExecutionType =
-    seed?.execution_type ??
-    seed?.payload?.execution_type ??
-    ""
+    seed?.execution_type ?? seed?.payload?.execution_type ?? ""
 
-  const payloadForSave = (opts = {}) => {
-    const { lockExecutionType = false } = opts
-    const v = getValues()
-    const topQuality = qc
-    const topDesign = design
-    const topColour = color
-    const topWidth = v.width_cm || widthSeed || ""
+  const payloadForSaveFrom = useCallback(
+    (values, opts = {}) => {
+      const { lockExecutionType = false } = opts
+      const v = values || getValues()
 
-    const executionTypeForPersist =
-      lockExecutionType && seed?.id
-        ? originalExecutionType || null
-        : v.execution_type || seed.execution_type || null
+      const topQuality = qc
+      const topDesign = design
+      const topColour = color
+      const topWidth = v.width_cm || widthSeed || ""
 
-    return {
-      owner: seed.owner || email?.from_name || email?.from_address || null,
-      agreement_no: v.agreement_no || seed.agreement_no || "",
-      item_no: seed.item_no || "",
-      colour: topColour || null,
-      item_type: v.item_type || seed.item_type || null,
-      execution_type: executionTypeForPersist,
-      start_date: dateToYMD(v.fabric_delivery),
-      item_description:
-        seed.item_description || v.fabric_detail || seed.description || "",
-      quality: topQuality || null,
-      design: topDesign || null,
-      width: topWidth || "",
-      description: v.fabric_detail || "",
-      end_date: dateToYMD(v.need_by_date),
-      email_id: email?.id || null,
-      source: seed.source || (email ? "email" : "manual"),
-      payload: {
-        ...v,
+      const executionTypeForPersist =
+        lockExecutionType && seed?.id
+          ? originalExecutionType || null
+          : v.execution_type || seed?.execution_type || null
+      const existingPayload = seed?.payload || {}
+
+      return {
+        owner: seed?.owner || email?.from_name || email?.from_address || null,
+        agreement_no: v.agreement_no || seed?.agreement_no || "",
+        item_no: seed?.item_no || "",
+        colour: topColour || null,
+        item_type: v.item_type || seed?.item_type || null,
         execution_type: executionTypeForPersist,
-        fabric_delivery: dateToYMD(v.fabric_delivery),
-        need_by_date: dateToYMD(v.need_by_date),
-      },
-    }
-  }
+        start_date: dateToYMD(v.fabric_delivery),
+        item_description:
+          seed?.item_description || v.fabric_detail || seed?.description || "",
+        quality: topQuality || null,
+        design: topDesign || null,
+        width: topWidth || "",
+        description: v.fabric_detail || "",
+        end_date: dateToYMD(v.need_by_date),
+        email_id: email?.id || null,
+        source: seed?.source || (email ? "email" : "manual"),
+        payload: {
+          ...existingPayload,
+          ...v,
+          execution_type: executionTypeForPersist,
+          fabric_delivery: dateToYMD(v.fabric_delivery),
+          need_by_date: dateToYMD(v.need_by_date),
+        },
+      }
+    },
+    [
+      getValues,
+      qc,
+      design,
+      color,
+      widthSeed,
+      seed?.id,
+      seed?.owner,
+      seed?.agreement_no,
+      seed?.item_no,
+      seed?.item_type,
+      seed?.execution_type,
+      seed?.item_description,
+      seed?.description,
+      seed?.source,
+      email?.id,
+      email?.from_name,
+      email?.from_address,
+      originalExecutionType,
+    ]
+  )
 
-  const persistDraft = async (opts = {}) => {
-    const payload = payloadForSave(opts)
-    if (seed?.id) return await updateAgreement(seed.id, payload)
-    return await createAgreement(payload)
-  }
+  const persistDraft = useCallback(
+    async (values, opts = {}) => {
+      const payload = payloadForSaveFrom(values, opts)
+      if (seed?.id) return await updateAgreement(seed.id, payload)
+      return await createAgreement(payload)
+    },
+    [seed?.id, payloadForSaveFrom]
+  )
 
-  const invalidateFeed = () => {
+  const invalidateFeed = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
-  }
+  }, [queryClient])
 
-  const doSaveDraft = async () => {
-    setSaving(true)
-    try {
-      const saved = await persistDraft()
-      if (onAfterPersist) onAfterPersist(saved)
-      invalidateFeed()
-      if (refetch) refetch()
-      return saved
-    } finally {
-      setSaving(false)
-    }
-  }
+  const doSaveDraft = useCallback(
+    () =>
+      handleSubmit(async (values) => {
+        setSaving(true)
+        try {
+          const saved = await persistDraft(values)
+          if (onAfterPersist) onAfterPersist(saved)
+          invalidateFeed()
+          if (refetch) refetch()
+          return saved
+        } finally {
+          setSaving(false)
+        }
+      })(),
+    [handleSubmit, persistDraft, onAfterPersist, invalidateFeed, refetch]
+  )
 
-  const doSubmit = async (submissionType = "new", hierarchies = null) => {
-    setSaving(true)
-    try {
-      const saved = await persistDraft()
+  const doSubmit = useCallback(
+    async (submissionType = "new", hierarchies = null) => {
+      setSaving(true)
+      try {
+        const values = getValues()
+        const saved = await persistDraft(values)
 
-      const execType =
-        getValues("execution_type") ||
-        seed?.execution_type ||
-        seed?.payload?.execution_type ||
-        null
+        const execType =
+          values?.execution_type ||
+          seed?.execution_type ||
+          seed?.payload?.execution_type ||
+          null
 
-      const submitted = await submitAgreement(saved.id, submissionType, {
-        execution_type: execType,
-        hierarchies,
-      })
+        const submitted = await submitAgreement(saved.id, submissionType, {
+          execution_type: execType,
+          hierarchies,
+        })
 
-      if (onAfterPersist) onAfterPersist(submitted)
-      invalidateFeed()
-      if (refetch) refetch()
-      return submitted
-    } finally {
-      setSaving(false)
-    }
-  }
+        if (onAfterPersist) onAfterPersist(submitted)
+        invalidateFeed()
+        if (refetch) refetch()
+        return submitted
+      } finally {
+        setSaving(false)
+      }
+    },
+    [
+      getValues,
+      persistDraft,
+      seed?.execution_type,
+      seed?.payload?.execution_type,
+      onAfterPersist,
+      invalidateFeed,
+      refetch,
+    ]
+  )
+
+  const validateBeforeApprove = useCallback(async () => {
+    return await trigger()
+  }, [trigger])
 
   return {
     control,
@@ -250,5 +349,6 @@ export const useAgreementPlacementForm = ({
     handleComputed,
     doSaveDraft,
     doSubmit,
+    validateBeforeApprove,
   }
 }

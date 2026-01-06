@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
+import FormSelect from "@components/form/FormSelect.jsx";
 
 const OrderExceptionFilter = ({ control, errors }) => {
     return (
@@ -10,6 +11,20 @@ const OrderExceptionFilter = ({ control, errors }) => {
                     <div className="box-body p-4">
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-4 flex-1">
+                                <FormSelect
+                                    name="country"
+                                    control={control}
+                                    errors={errors}
+                                    placeholder=""
+                                    options={[
+                                        { value: 'PK', label: 'PK' },
+                                        { value: 'UK', label: 'UK' },
+                                        { value: 'UAE', label: 'UAE' },
+                                    ]}
+                                    label="New Status"
+                                />
+                            </div>
+                            <div className="flex items-center gap-4 flex-1">
                                 <FormInput
                                     type="date"
                                     name="date"
@@ -17,7 +32,7 @@ const OrderExceptionFilter = ({ control, errors }) => {
                                     errors={errors}
                                 />
                             </div>
-                            <FilterButton />
+                            <FilterButton/>
                         </div>
                     </div>
                 </div>
