@@ -49,7 +49,6 @@ const ChatInputBox = ({
     (modeSelection === "Export Data" || modeSelection === "IT Audit" || modeSelection === "HR") &&
     chips.length > 0
 
-  // HR -> employee: render EmployeeChatKitPane and avoid overlapping footer controls
   if (isHrEmployee) {
     return (
       <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-hidden shadow-xl ring-2 ring-gray-300">
@@ -63,11 +62,11 @@ const ChatInputBox = ({
               <i className="ri-arrow-down-s-line ml-2"></i>
             </button>
 
-            {modeSelection !== "Select Source" && (
+            {modeSelection !== "Select Agent" && (
               <button
-                onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }}
+                onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }}
                 className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
-                aria-label="Clear source"
+                aria-label="Clear Agent"
               >
                 <i className="ri-close-line text-[10px]"></i>
               </button>
@@ -76,10 +75,10 @@ const ChatInputBox = ({
             {modeOpen && (
               <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-20 text-sm">
                 <button
-                  onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }}
+                  onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }}
                   className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  Select Source
+                  Select Agent
                 </button>
 
                 <HasPermission permission='auth.chatbot_export_data'>
@@ -106,15 +105,6 @@ const ChatInputBox = ({
                     className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Quality Control
-                  </button>
-                </HasPermission>
-
-                <HasPermission permission='auth.chatbot_competitors'>
-                  <button
-                    onClick={() => { setModeSelection("Competitor Pricing"); setModeOpen(false) }}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    Competitor Pricing
                   </button>
                 </HasPermission>
 
@@ -233,9 +223,9 @@ const ChatInputBox = ({
               <i className="ri-arrow-down-s-line ml-2"></i>
             </button>
 
-            {modeSelection !== "Select Source" && (
+            {modeSelection !== "Select Agent" && (
               <button
-                onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }}
+                onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }}
                 className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
                 aria-label="Clear source"
               >
@@ -245,7 +235,7 @@ const ChatInputBox = ({
 
             {modeOpen && (
               <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-20 text-sm">
-                <button onClick={() => { setModeSelection("Select Source"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Select Source</button>
+                <button onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Select Agent</button>
                 <HasPermission permission='auth.chatbot_export_data'>
                   <button onClick={() => { setModeSelection("Export Data"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Export Data</button>
                 </HasPermission>
@@ -254,14 +244,6 @@ const ChatInputBox = ({
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_quality_control'>
                   <button onClick={() => { setModeSelection("Quality Control"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Quality Control</button>
-                </HasPermission>
-                <HasPermission permission='auth.chatbot_competitors'>
-                  <button
-                    onClick={() => { setModeSelection("Competitor Pricing"); setModeOpen(false) }}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    Competitor Pricing
-                  </button>
                 </HasPermission>
                 <HasPermission permission='auth.chatbot_asset_audit'>
                   <button onClick={() => { setModeSelection("IT Audit"); setModeOpen(false) }} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">IT Audit</button>

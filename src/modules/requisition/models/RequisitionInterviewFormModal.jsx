@@ -15,6 +15,7 @@ import { requisitionInterviewSchema } from "@modules/requisition/schemas/requisi
 import { useRequisitionInterviewForm } from "@modules/requisition/hooks/requisitionInterviewHooks.js";
 import Notify from "@helpers/toastNotifications.js";
 import { RefreshCcw, AlertTriangle } from "lucide-react";
+import {useSelector} from "react-redux";
 
 const isoToDateTimeLocal = (iso) => {
     if (!iso) return "";
@@ -53,10 +54,14 @@ const RequisitionInterviewFormModal = ({
                                            onSuccess,
                                        }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const companyId = useSelector((state) => state?.auth?.user?.employee?.company?.id);
     const isEditMode = Boolean(interviewData?.id);
     const originalScheduledAtRef = useRef("");
-
+    const usersApiUrl = useMemo(() => {
+        const base = "/select/users/";
+        if (!companyId) return base;
+        return `${base}?company_id=${encodeURIComponent(companyId)}`;
+    }, [companyId]);
     // ✅ UPDATED: rounds are round_1 ... round_4
     const roundOptions = useMemo(
         () => [
@@ -329,14 +334,15 @@ const RequisitionInterviewFormModal = ({
                                             control={control}
                                             errors={errors}
                                             placeholder="Interviewers"
-                                            apiUrl="/select/users/"
-                                            queryKeyBase="users"
-                                            clientSideSearch={true}
+                                            apiUrl={usersApiUrl}                 // ✅ now filtered by company_id
+                                            queryKeyBase={`users-${companyId || "all"}`} // ✅ avoids cache collisions
+                                            clientSideSearch={false}
                                             is_required={true}
                                             isMulti={true}
                                             closeMenuOnSelect={true}
                                             preselectedOptions={preselectedInterviewers}
                                         />
+
                                         <p className="text-xs text-[#8c9097] dark:text-white/50 mt-1">
                                             Select one or more interviewers for the panel.
                                         </p>

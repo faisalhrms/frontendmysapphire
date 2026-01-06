@@ -4,7 +4,7 @@ const ComputedKV = ({
   label,
   compute,
   deps = [],
-  precision = 2,
+  precision = "",
   prefix = "",
   suffix = "",
   onValue,

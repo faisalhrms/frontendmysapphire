@@ -8,7 +8,7 @@ import {
   employeeSearchTool,
   employeeGetTool,
   employeeQueryTool,
-  chatkitWidgetActionTool,
+  chatkitWidgetActionTool, leaveBalanceResolveTool, leaveBalanceQueryTool,
 } from "@modules/chatbot/services/EmployeeChatKitService.js"
 
 function parseExpiresAt(v) {
@@ -87,6 +87,10 @@ export default function EmployeeChatKitPane({ onReady: onChatReady }) {
     if (name === "employee_search") return await employeeSearchTool(args, { signal })
     if (name === "employee_get") return await employeeGetTool(args, { signal })
     if (name === "employee_query") return await employeeQueryTool(args, { signal })
+
+    if (name === "leave_balance_resolve") return await leaveBalanceResolveTool(args, { signal })
+    if (name === "leave_balance_query") return await leaveBalanceQueryTool(args, { signal })
+
     return { error: true, message: `Unhandled tool: ${name}` }
   }, [])
 
@@ -131,9 +135,9 @@ export default function EmployeeChatKitPane({ onReady: onChatReady }) {
         greeting: "Welcome to SappSense HR Agent!",
         prompts: [
           { label: "Employee profile", prompt: "Show profile of Yasir Hashmi", icon: "search" },
-          { label: "Today late employees", prompt: "Who is late today?", icon: "calendar" },
-          { label: "My team attendance", prompt: "Show today attendance of my team", icon: "calendar" },
-          { label: "Employees count", prompt: "How many employees are in IT department?", icon: "search" },
+          { label: "Today late employees", prompt: "Who is late today in stml?", icon: "calendar" },
+          { label: "My team attendance", prompt: "Show today attendance of my team in stml", icon: "calendar" },
+          { label: "Employees count", prompt: "How many employees are in Mis IT department?", icon: "search" },
         ],
       },
 
