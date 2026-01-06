@@ -49,8 +49,55 @@ function safeLower(v) {
     return String(v ?? "").toLowerCase();
 }
 
+/**
+ * Normalizes HTML coming from backend (rich text).
+ * - Renders lists properly instead of showing raw tags
+ * - Removes annoying <br> inside <li>
+ * - Applies a tiny safety cleanup (removes script/iframe and inline on* handlers)
+ *
+ * NOTE: For production-grade sanitization use a sanitizer like DOMPurify.
+ * You said no new packages, so keeping it lightweight here.
+ */
+function normalizeRichText(html) {
+    if (!html) return "<p>—</p>";
+
+    let s = String(html);
+
+    // If it's plain text (no tags), escape and wrap in <p>
+    const hasTag = /<\/?[a-z][\s\S]*>/i.test(s);
+    if (!hasTag) {
+        const escaped = s
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        return `<p>${escaped}</p>`;
+    }
+
+    // Remove risky tags completely
+    s = s.replace(
+        /<\s*(script|style|iframe|object|embed)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi,
+        ""
+    );
+
+    // Remove inline event handlers like onclick="..."
+    s = s.replace(/\son\w+="[^"]*"/gi, "");
+    s = s.replace(/\son\w+='[^']*'/gi, "");
+
+    // Neutralize javascript: urls in href/src
+    s = s.replace(
+        /(href|src)\s*=\s*(['"])\s*javascript:[\s\S]*?\2/gi,
+        '$1=$2#$2'
+    );
+
+    // Fix: remove <br> that appears inside <li> (your exact issue)
+    s = s.replace(/<br\s*\/?>\s*(<\/li>)/gi, "$1");
+
+    return s;
+}
+
 const htmlStyles = `
   .job-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: #4b5563; }
+  .job-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.5rem; color: #4b5563; }
   .job-content li { margin-bottom: 0.5rem; }
   .job-content p { margin-bottom: 1rem; color: #4b5563; line-height: 1.8; }
   .job-content a { color: #111827; text-decoration: underline; }
@@ -377,9 +424,13 @@ export default function JobDetail() {
                         <div className="rounded-3xl border border-gray-200 bg-white p-7 md:p-9">
                             <h2 className="text-xl md:text-2xl font-extrabold text-gray-900">About the role</h2>
 
-                            <p className="mt-4 text-gray-600 leading-relaxed text-base md:text-lg">
-                                {job.brief_role_overview || "—"}
-                            </p>
+                            {/* ✅ FIX: render rich text instead of showing raw HTML tags */}
+                            <div
+                                className="job-content mt-4 text-base md:text-lg"
+                                dangerouslySetInnerHTML={{
+                                    __html: normalizeRichText(job.brief_role_overview),
+                                }}
+                            />
 
                             <div className="mt-10 border-t border-gray-100 pt-10">
                                 <h3 className="text-lg font-extrabold text-gray-900">Requirements</h3>
@@ -415,9 +466,8 @@ export default function JobDetail() {
                             <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-lg font-extrabold text-gray-900">Apply</h3>
-                                    <div
-                                        className="h-10 w-10 rounded-2xl border border-gray-200 bg-white flex items-center justify-center">
-                                        <ArrowUpRight className="h-5 w-5 text-gray-700"/>
+                                    <div className="h-10 w-10 rounded-2xl border border-gray-200 bg-white flex items-center justify-center">
+                                        <ArrowUpRight className="h-5 w-5 text-gray-700" />
                                     </div>
                                 </div>
 
@@ -435,8 +485,7 @@ export default function JobDetail() {
                                     </div>
 
                                     {job?.employment_type === "contract" && job?.contract_duration_months ? (
-                                        <div
-                                            className="flex items-center justify-between border-b border-gray-100 pb-4">
+                                        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                                             <span className="text-sm font-semibold text-gray-500">Contract</span>
                                             <span className="text-sm font-extrabold text-gray-900">
                                                 {job.contract_duration_months} months
@@ -445,11 +494,9 @@ export default function JobDetail() {
                                     ) : null}
 
                                     {!!job?.target_salary_min && (
-                                        <div
-                                            className="flex items-center justify-between border-b border-gray-100 pb-4">
-                                            <span
-                                                className="text-sm font-semibold text-gray-500 inline-flex items-center gap-2">
-                                                <DollarSign className="h-4 w-4"/>
+                                        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                                            <span className="text-sm font-semibold text-gray-500 inline-flex items-center gap-2">
+                                                <DollarSign className="h-4 w-4" />
                                                 Salary
                                             </span>
                                             <span className="text-sm font-extrabold text-gray-900">
@@ -460,9 +507,8 @@ export default function JobDetail() {
                                     )}
 
                                     <div className="flex items-center justify-between">
-                                        <span
-                                            className="text-sm font-semibold text-gray-500 inline-flex items-center gap-2">
-                                            <Clock className="h-4 w-4"/>
+                                        <span className="text-sm font-semibold text-gray-500 inline-flex items-center gap-2">
+                                            <Clock className="h-4 w-4" />
                                             Deadline
                                         </span>
                                         <span className="text-sm font-extrabold text-gray-900">
@@ -490,16 +536,15 @@ export default function JobDetail() {
                                     Apply now
                                 </button>
 
-
-                                <div className="mt-4 text-center text-xs text-gray-500">Usually responds within 3
-                                    working days.
+                                <div className="mt-4 text-center text-xs text-gray-500">
+                                    Usually responds within 3 working days.
                                 </div>
                             </div>
 
                             <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6">
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm font-extrabold text-gray-900">Share this role</div>
-                                    <Share2 className="h-4 w-4 text-gray-500"/>
+                                    <Share2 className="h-4 w-4 text-gray-500" />
                                 </div>
 
                                 <div className="mt-4 flex gap-3">
