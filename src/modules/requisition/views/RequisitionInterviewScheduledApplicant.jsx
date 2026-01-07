@@ -6,16 +6,7 @@ import Avatar from "@components/Avatar.jsx";
 import Notify from "@helpers/toastNotifications.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import {
-    Sparkles,
-    BadgeCheck,
-    XCircle,
-    RotateCcw,
-    Ban,
-    CalendarClock,
-    ClipboardCheck,
-    CalendarX,
-} from "lucide-react";
+import { Sparkles, BadgeCheck, XCircle, CalendarClock, ClipboardCheck, CalendarX } from "lucide-react";
 
 import RequisitionInterviewFormWrapper from "../models/components/RequisitionInterviewFormWrapper.jsx";
 import RequisitionInterviewCompleteWrapper from "../models/components/RequisitionInterviewCompleteWrapper.jsx";
@@ -30,10 +21,8 @@ const tryGetCurrentUserId = () => {
             const raw = localStorage.getItem(k);
             if (!raw) continue;
 
-            // might be "12" directly
             if (/^\d+$/.test(raw)) return Number(raw);
 
-            // might be JSON
             let obj = null;
             try {
                 obj = JSON.parse(raw);
@@ -261,13 +250,13 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
         return t <= Date.now();
     };
 
-    // ✅ NEW: lock reschedule/cancel if ANY feedback submitted by ANY panel member
+    // ✅ lock reschedule/cancel if ANY feedback submitted by ANY panel member
     const hasAnyFeedbackStarted = (interview) => {
         const panel = Array.isArray(interview?.panel) ? interview.panel : [];
         return panel.some((p) => String(p?.status || "").toLowerCase() === "submitted");
     };
 
-    // ✅ central rule: can I submit feedback?
+    // ✅ can submit feedback?
     const getFeedbackAvailability = (interview) => {
         if (!interview?.id) return { ok: false, reason: "No interview found" };
         if (!myUserId) return { ok: false, reason: "Cannot detect current user" };
@@ -292,7 +281,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
         return { ok: true, reason: "Submit feedback" };
     };
 
-    // ✅ NEW: rules for reschedule/cancel (locked after any feedback is submitted)
     const getRescheduleAvailability = (interview) => {
         if (!interview?.id) return { ok: false, reason: "No interview found" };
 
@@ -332,7 +320,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
                     const interview = row?.original?.next_interview || null;
                     const hasInterview = Boolean(interview?.id);
 
-                    // ✅ feedback button logic
                     const feedbackAvailability = getFeedbackAvailability(interview);
                     const disableComplete = !feedbackAvailability.ok;
 
@@ -340,7 +327,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
                         ? "ti-btn ti-btn-light ti-btn-sm !opacity-60 !cursor-not-allowed grayscale blur-[0.4px]"
                         : "ti-btn ti-btn-success ti-btn-sm";
 
-                    // ✅ NEW: reschedule + cancel lock when feedback started
                     const rescheduleAvailability = getRescheduleAvailability(interview);
                     const disableReschedule = !hasInterview || !rescheduleAvailability.ok;
 
@@ -363,7 +349,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
                                 </button>
                             </Link>
 
-                            {/* ✅ Reschedule (LOCKED after any feedback submitted) */}
                             <button
                                 type="button"
                                 className={rescheduleBtnCls}
@@ -379,7 +364,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
                                 </span>
                             </button>
 
-                            {/* ✅ Feedback/Complete (disabled + blurred based on rules) */}
                             <button
                                 type="button"
                                 className={completeBtnCls}
@@ -395,7 +379,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
                                 </span>
                             </button>
 
-                            {/* ✅ Cancel (LOCKED after any feedback submitted) */}
                             <button
                                 type="button"
                                 className={cancelBtnCls}
@@ -408,28 +391,6 @@ const RequisitionInterviewScheduledApplicant = ({ requisitionId, isActive, curre
                             >
                                 <span className="inline-flex items-center gap-1">
                                     <CalendarX size={16} />
-                                </span>
-                            </button>
-
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-danger ti-btn-sm"
-                                title="Reject"
-                                onClick={() => updateOneStatus(appId, "rejected", "Applicant rejected successfully.", false)}
-                            >
-                                <span className="inline-flex items-center gap-1">
-                                    <Ban size={16} />
-                                </span>
-                            </button>
-
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-secondary ti-btn-sm"
-                                title="Move Back to Submitted"
-                                onClick={() => updateOneStatus(appId, "submitted", "Applicant moved back to Submitted.", false)}
-                            >
-                                <span className="inline-flex items-center gap-1">
-                                    <RotateCcw size={16} />
                                 </span>
                             </button>
                         </div>

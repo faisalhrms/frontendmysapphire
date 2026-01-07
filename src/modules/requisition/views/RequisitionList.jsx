@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import { Shield } from "lucide-react";
+import { FilePenLine  } from "lucide-react";
 import IconPageHeader from "../../layouts/includes/IconPageHeader.jsx";
 import { REQUISITION_ROUTES } from "../routes.js";
 
@@ -16,6 +16,11 @@ const RequisitionList = ({ externalFilters = [] }) => {
     const reqTypeOptions = ["new", "replacement", "additional"].map((t) => ({
         label: toTitleCase(t),
         value: t,
+    }));
+
+    const statusOptions = ["draft", "under_approval", "approved", "rejected"].map((s) => ({
+        label: toTitleCase(String(s).replaceAll("_", " ")),
+        value: s,
     }));
 
     // ---------- helpers ----------
@@ -42,13 +47,20 @@ const RequisitionList = ({ externalFilters = [] }) => {
     };
 
     /**
-     * Your backend no longer returns a real `status`.
-     * So we derive a UI-only status from available fields.
+     * ✅ Prefer backend status.
+     * Fallback kept for legacy responses.
      */
     const getUiStatus = (r) => {
+        if (r?.status) return String(r.status).toLowerCase();
+        // legacy fallback (in case some old endpoint doesn't return status)
         if (r?.current_approver_id) return "under_approval";
         if (r?.public_form_url || r?.public_form_slug) return "approved";
         return "draft";
+    };
+
+    const canEditByStatus = (status) => {
+        // Allow edit in draft + rejected (so user can update and re-submit)
+        return status === "draft" || status === "rejected";
     };
 
     const columns = [
@@ -59,11 +71,11 @@ const RequisitionList = ({ externalFilters = [] }) => {
             Cell: ({ row }) => {
                 const r = row.original;
                 const uiStatus = getUiStatus(r);
-                const isBlocked = uiStatus !== "draft"; // only draft can edit
+                const canEdit = canEditByStatus(uiStatus);
 
                 return (
                     <div className="flex gap-2">
-                        {!isBlocked ? (
+                        {canEdit ? (
                             <Link to={`/module/requisition/edit/${r.id}`}>
                                 <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
                                     <i className="ri-edit-line" />
@@ -184,17 +196,20 @@ const RequisitionList = ({ externalFilters = [] }) => {
             Cell: ({ value }) => toTitleCase(String(value || "").replaceAll("_", " ")),
         },
 
-        // ✅ NEW: UI Status (derived, not server filterable)
+        // ✅ UPDATED: Approval uses backend `status`
         {
             Header: "Approval",
-            accessor: "ui_status",
-            disableSortBy: true,
+            accessor: "status",
+            filterable: true,
+            filterType: "select",
+            filterOptions: statusOptions,
+            filterKey: "status",
             Cell: ({ row }) => {
-                const uiStatus = getUiStatus(row.original);
+                const s = getUiStatus(row.original);
                 return (
-                    <span className={getBadgeClasses(uiStatus)}>
-            {toTitleCase(uiStatus.replaceAll("_", " "))}
-          </span>
+                    <span className={getBadgeClasses(s)}>
+                        {toTitleCase(s.replaceAll("_", " "))}
+                    </span>
                 );
             },
         },
@@ -202,7 +217,7 @@ const RequisitionList = ({ externalFilters = [] }) => {
         {
             Header: "Current Approver",
             accessor: "current_approver_id",
-            filterable: false, // safer unless you implement backend filter key
+            filterable: false,
             Cell: ({ row }) => {
                 const r = row.original;
                 if (r.current_approver?.full_name) return r.current_approver.full_name;
@@ -272,9 +287,9 @@ const RequisitionList = ({ externalFilters = [] }) => {
     return (
         <>
             <IconPageHeader
-                heading="Job Requisitions"
-                description="Manage and review job requisitions, approval routing, and public job links."
-                icon={Shield}
+                heading="Requisitions"
+                description="Create, track, and manage job requisitions, including approval workflows."
+                icon={FilePenLine }
             />
             <DataTable
                 ref={tableRef}

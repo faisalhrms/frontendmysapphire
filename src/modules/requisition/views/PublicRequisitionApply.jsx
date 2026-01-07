@@ -40,7 +40,7 @@ const BRAND = {
 
 /** ---------------------- VALIDATION HELPERS ---------------------- */
 const CNIC_REGEX = /^\d{13}$/; // e.g. 37203798844979 (14 digits)
-const PK_MOBILE_REGEX = /^0\d{10}$/; // e.g. 03063167781 (11 digits, starts with 0)
+const PK_MOBILE_REGEX = /^0\d{10}$/; // e.g. 01234567891 (11 digits, starts with 0)
 const DOB_MIN = new Date("1950-01-01T00:00:00");
 
 function startOfToday() {
@@ -161,7 +161,7 @@ const schema = z.object({
     email: z.string().trim().email("Valid email required"),
 
     // Mobile: 11 digits, starts with 0
-    mobile_number: z.string().trim().regex(PK_MOBILE_REGEX, "Mobile must be 11 digits (e.g., 03063167781)"),
+    mobile_number: z.string().trim().regex(PK_MOBILE_REGEX, "Mobile must be 11 digits (e.g., 01234567891)"),
 
     // Optional but sensible validations
     expected_salary: nullableNumber({ invalid_type_error: "Expected salary must be a number" })
@@ -573,12 +573,14 @@ const PublicRequisitionApply = () => {
         {
             title: "Contact",
             icon: Mail,
-            fields: ["email", "mobile_number", "expected_salary", "notice_period_days"],
+            // ✅ MOVED: expected_salary + notice_period_days removed from Contact step
+            fields: ["email", "mobile_number"],
         },
         {
             title: "Portfolio & Resume",
             icon: Briefcase,
-            fields: ["portfolio_url"],
+            // ✅ MOVED: expected_salary + notice_period_days added here
+            fields: ["portfolio_url", "expected_salary", "notice_period_days"],
         },
         { title: "Qualifications", icon: GraduationCap, fields: ["qualifications"] },
         { title: "Experiences", icon: ClipboardList, fields: ["experiences"] },
@@ -940,15 +942,10 @@ const PublicRequisitionApply = () => {
                 <FormInput type="email" name="email" control={control} errors={errors} placeholder="Email Address" is_required />
             </div>
             <div className="col-span-12 sm:col-span-6">
-                <FormInput name="mobile_number" control={control} errors={errors} placeholder="Mobile Number (e.g., 03063167781)" is_required />
+                <FormInput name="mobile_number" control={control} errors={errors} placeholder="Mobile Number" is_required />
             </div>
 
-            <div className="col-span-12 sm:col-span-6">
-                <FormInput type="number" name="expected_salary" control={control} errors={errors} placeholder="Expected Salary" />
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-                <FormInput type="number" name="notice_period_days" control={control} errors={errors} placeholder="Notice Period (days)" />
-            </div>
+            {/* ✅ MOVED: Expected Salary + Notice Period removed from Contact step */}
         </div>
     );
 
@@ -1002,7 +999,16 @@ const PublicRequisitionApply = () => {
                 <div className="col-span-12">
                     <FormInput name="portfolio_url" control={control} errors={errors} placeholder="LinkedIn / Portfolio URL (optional)" />
                 </div>
+
+                {/* ✅ MOVED HERE: Expected Salary + Notice Period (days) */}
+                <div className="col-span-12 sm:col-span-6">
+                    <FormInput type="number" name="expected_salary" control={control} errors={errors} placeholder="Expected Salary" />
+                </div>
+                <div className="col-span-12 sm:col-span-6">
+                    <FormInput type="number" name="notice_period_days" control={control} errors={errors} placeholder="Notice Period (days)" />
+                </div>
             </div>
+
             {renderResumeBlock()}
         </div>
     );
@@ -1185,7 +1191,7 @@ const PublicRequisitionApply = () => {
                 </div>
                 {latestDesignation ? (
                     <div className="mt-2 text-xs text-gray-600">
-                        Current Job Title (auto): <span className="font-semibold text-gray-900">{latestDesignation}</span>
+                        Current Job Title: <span className="font-semibold text-gray-900">{latestDesignation}</span>
                     </div>
                 ) : null}
             </div>
@@ -1241,7 +1247,7 @@ const PublicRequisitionApply = () => {
                     <div className="text-sm font-extrabold text-gray-900">Professional Summary</div>
                     <div className="mt-2 text-sm text-gray-600 leading-relaxed space-y-1">
                         <div>Total Experience: {totalExpYears} years</div>
-                        <div>Current Job Title (auto): {latestDesignation || "—"}</div>
+                        <div>Current Job Title: {latestDesignation || "—"}</div>
                         <div>Portfolio: {portfolio}</div>
                     </div>
                 </div>
