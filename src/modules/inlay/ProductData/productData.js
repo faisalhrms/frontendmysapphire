@@ -572,6 +572,231 @@ export const products = {
         ],
         images: 6,
     },
+    // ✅ ADD THESE ENTRIES inside: export const products = { ... }
+
+// 3 PIECE - PRINTED LAWN SUIT
+    "U2D-DY25V4-11DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U2D-DY25V4-12DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DD25V5-13DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V1-44DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V1-47DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V3-14DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V3-20DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V3-23DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V3-28DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V3-30DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,    },
+    "U3P-DY25V4-13DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V4-16DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V4-19DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V4-27DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U2DE-DY25V3-16DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-BW25V4-2DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DD25V5-1DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DD25V5-2DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DD25V5-5DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DD25V5-7DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V1-8DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V2-8DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V4-1DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,
+    },
+    "U3P-DY25V4-3DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,    },
+    "U3P-DY25V4-7DS": {
+        name: "3 PIECE - PRINTED \nLAWN SUIT",
+        description: [
+            { label: "Printed Lawn Shirt", value: "3.00m" },
+            { label: "Printed Voile Dupatta", value: "2.50m" },
+            { label: "Dyed Cotton Trouser", value: "2.50m" },
+        ],
+        images: 6,    },
 
 };
 
