@@ -1,18 +1,15 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import Avatar from "@components/Avatar.jsx";
-import Notify from "@helpers/toastNotifications.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import {
     Sparkles,
     BadgeCheck,
     XCircle,
-    RotateCcw,
-    Ban,
     CalendarPlus,
-    History, // ✅ NEW
+    History,
 } from "lucide-react";
 
 import RequisitionInterviewFormWrapper from "../models/components/RequisitionInterviewFormWrapper.jsx";
@@ -20,7 +17,7 @@ import RequisitionInterviewFormWrapper from "../models/components/RequisitionInt
 const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => {
     const [refreshKey, setRefreshKey] = useState(0);
 
-    const navigate = useNavigate(); // ✅ NEW
+    const navigate = useNavigate();
 
     // ✅ schedule next interview modal
     const [isInterviewFormOpen, setIsInterviewFormOpen] = useState(false);
@@ -36,27 +33,6 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
         setSelectedApplicationId(null);
     };
 
-    // ✅ update status + shortlist flag
-    const updateOneStatus = useCallback(
-        async (applicationId, status, is_shortlisted, successMsg) => {
-            try {
-                const api = (await import("../../../config/axiosConfig.js")).default;
-
-                const body = { application_ids: [applicationId] };
-                if (status) body.status = status;
-                if (typeof is_shortlisted === "boolean") body.is_shortlisted = is_shortlisted;
-
-                await api.patch(`/requisitions/${requisitionId}/applicants/status/bulk/`, body);
-
-                Notify.success(successMsg);
-                setRefreshKey((k) => k + 1);
-            } catch (e) {
-                Notify.error(e?.response?.data?.message || e?.message || "Update failed.");
-            }
-        },
-        [requisitionId]
-    );
-
     const renderUserCell = (userObj) => {
         if (!userObj) return "—";
         return (
@@ -69,7 +45,9 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 />
                 <div className="ms-2 leading-tight">
                     <p className="font-semibold mb-0">{userObj.full_name || "—"}</p>
-                    <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">{userObj.email || "—"}</p>
+                    <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                        {userObj.email || "—"}
+                    </p>
                 </div>
             </div>
         );
@@ -88,8 +66,8 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
         }
         return (
             <span title={value} className="truncate inline-block max-w-[240px] align-middle">
-        {value}
-      </span>
+                {value}
+            </span>
         );
     };
 
@@ -110,7 +88,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                 </button>
                             </Link>
 
-                            {/* ✅ NEW: Interview History */}
+                            {/* ✅ Interview History */}
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-light ti-btn-sm"
@@ -119,9 +97,9 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                     navigate(`/module/requisition/${requisitionId}/applicants/${appId}/interviews`)
                                 }
                             >
-                <span className="inline-flex items-center gap-1">
-                  <History size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <History size={16} />
+                                </span>
                             </button>
 
                             {/* ✅ Completed tab: schedule next round */}
@@ -131,40 +109,15 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                 title="Schedule Next Round"
                                 onClick={() => openInterviewModal(appId)}
                             >
-                <span className="inline-flex items-center gap-1">
-                  <CalendarPlus size={16} />
-                </span>
-                            </button>
-
-                            {/* ✅ Reject => also unshortlist */}
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-danger ti-btn-sm"
-                                title="Reject"
-                                onClick={() => updateOneStatus(appId, "rejected", false, "Applicant rejected successfully.")}
-                            >
-                <span className="inline-flex items-center gap-1">
-                  <Ban size={16} />
-                </span>
-                            </button>
-
-                            {/* ✅ Reset => also unshortlist */}
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-secondary ti-btn-sm"
-                                title="Move Back to Submitted"
-                                onClick={() => updateOneStatus(appId, "submitted", false, "Applicant moved back to Submitted.")}
-                            >
-                <span className="inline-flex items-center gap-1">
-                  <RotateCcw size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <CalendarPlus size={16} />
+                                </span>
                             </button>
                         </div>
                     );
                 },
             },
 
-            // ✅ keep remaining columns same
             {
                 Header: "Applicant",
                 accessor: "full_name",
@@ -292,12 +245,12 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 Cell: ({ value }) =>
                     value ? (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-              <Sparkles size={14} /> AI Recommended <BadgeCheck size={14} />
-            </span>
+                            <Sparkles size={14} /> AI Recommended <BadgeCheck size={14} />
+                        </span>
                     ) : (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-light text-default">
-              <XCircle size={14} /> Not Recommended
-            </span>
+                            <XCircle size={14} /> Not Recommended
+                        </span>
                     ),
             },
             {
@@ -321,7 +274,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 filterable: true,
             },
         ],
-        [requisitionId, updateOneStatus, navigate]
+        [requisitionId, navigate]
     );
 
     if (!isActive) return null;
@@ -332,7 +285,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 key={refreshKey}
                 columns={columns}
                 title="Interview Completed Applicants"
-                apiUrl={`/requisitions/${requisitionId}/applicants/interviews/datatable?bucket=completed`}
+                apiUrl={`/requisitions/${requisitionId}/applicants/interviews/datatable/?bucket=completed`}
                 enableAdvancedFilters={true}
             />
 
