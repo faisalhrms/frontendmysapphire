@@ -25,10 +25,18 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
     // ✅ Holds ids for CURRENT visible page (filled by cell renders)
     const currentPageIdsRef = useRef(new Set());
 
+    // ✅ Track applicant flags (id -> { is_shortlisted })
+    const applicantFlagsRef = useRef(new Map());
+
+    const safeInfo = (msg) => {
+        if (Notify?.info) Notify.info(msg);
+        else Notify.success(msg);
+    };
+
     const runBulkStatus = useCallback(
-        async ({ status, is_shortlisted, actionKey }, successMsg) => {
+        async ({ status, is_shortlisted, actionKey, applicationIds }, successMsg) => {
             try {
-                await bulkUpdateStatus({ status, is_shortlisted, actionKey });
+                await bulkUpdateStatus({ status, is_shortlisted, actionKey, applicationIds });
                 Notify.success(successMsg);
 
                 clearSelection();
@@ -39,52 +47,90 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
         },
         [bulkUpdateStatus, clearSelection]
     );
+
     const headerButtons = useMemo(() => {
         if (!selectedIds.length) return null;
 
         const btnBase = "!py-1 !px-2 !text-[0.75rem]";
 
+        // ✅ shortlist-eligible ids = selected ids where is_shortlisted !== true
+        const eligibleShortlistIds = selectedIds.filter((id) => {
+            const meta = applicantFlagsRef.current.get(id);
+            // If meta missing (rare), treat as eligible
+            return meta ? !meta.is_shortlisted : true;
+        });
+
+        const alreadyShortlistedCount = selectedIds.length - eligibleShortlistIds.length;
+
         const actions = [
             {
                 actionKey: "shortlisted",
-                status: "shortlisted",       // optional (keep if you want status change too)
-                is_shortlisted: true,
                 className: `ti-btn ti-btn-success ${btnBase}`,
                 icon: "ri-check-line",
                 label: "Shortlist",
-                successMsg: "Selected applicants shortlisted successfully.",
+                title:
+                    eligibleShortlistIds.length === 0
+                        ? "All selected applicants are already shortlisted"
+                        : alreadyShortlistedCount > 0
+                            ? `${alreadyShortlistedCount} already shortlisted will be skipped`
+                            : "",
+                disabled: eligibleShortlistIds.length === 0,
+                onClick: () => {
+                    if (eligibleShortlistIds.length === 0) {
+                        safeInfo("All selected applicants are already shortlisted.");
+                        return;
+                    }
+
+                    if (alreadyShortlistedCount > 0) {
+                        safeInfo(
+                            `${alreadyShortlistedCount} already shortlisted — updating remaining ${eligibleShortlistIds.length}.`
+                        );
+                    }
+
+                    runBulkStatus(
+                        {
+                            status: "shortlisted",
+                            is_shortlisted: true,
+                            actionKey: "shortlisted",
+                            applicationIds: eligibleShortlistIds, // ✅ only eligible
+                        },
+                        "Selected applicants shortlisted successfully."
+                    );
+                },
             },
-
-            // ✅ NEW: remove shortlist without changing status
-            // {
-            //     actionKey: "unshortlisted",
-            //     status: undefined,           // IMPORTANT: do not send
-            //     is_shortlisted: false,
-            //     className: `ti-btn ti-btn-light ${btnBase}`,
-            //     icon: "ri-user-unfollow-line",
-            //     label: "Remove Shortlist",
-            //     successMsg: "Selected applicants removed from shortlist.",
-            //     title: "Removes only shortlist flag (status unchanged)",
-            // },
-
             {
                 actionKey: "rejected",
-                status: "rejected",
-                is_shortlisted: false,       // ✅ ensure unshortlist on reject
                 className: `ti-btn ti-btn-danger ${btnBase}`,
                 icon: "ri-close-line",
                 label: "Reject",
-                successMsg: "Selected applicants rejected successfully.",
+                title: "",
+                disabled: false,
+                onClick: () =>
+                    runBulkStatus(
+                        {
+                            status: "rejected",
+                            is_shortlisted: false, // ✅ ensure unshortlist on reject
+                            actionKey: "rejected",
+                        },
+                        "Selected applicants rejected successfully."
+                    ),
             },
             {
                 actionKey: "submitted",
-                status: "submitted",
-                is_shortlisted: false,       // ✅ reset shortlist when moving back
                 className: `ti-btn ti-btn-secondary ${btnBase}`,
                 icon: "ri-refresh-line",
                 label: "Reset to Submitted",
-                successMsg: "Selected applicants moved back to Submitted.",
                 title: "Move selected applicants back to initial status",
+                disabled: false,
+                onClick: () =>
+                    runBulkStatus(
+                        {
+                            status: "submitted",
+                            is_shortlisted: false, // ✅ reset shortlist when moving back
+                            actionKey: "submitted",
+                        },
+                        "Selected applicants moved back to Submitted."
+                    ),
             },
         ];
 
@@ -102,14 +148,9 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
                             key={a.actionKey}
                             type="button"
                             title={a.title || ""}
-                            onClick={() =>
-                                runBulkStatus(
-                                    { status: a.status, is_shortlisted: a.is_shortlisted, actionKey: a.actionKey },
-                                    a.successMsg
-                                )
-                            }
-                            disabled={submitting}
-                            className={a.className}
+                            onClick={a.onClick}
+                            disabled={submitting || a.disabled}
+                            className={`${a.className} ${a.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                         >
                             {isThisLoading ? (
                                 <>
@@ -136,10 +177,9 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
             </div>
         );
     }, [selectedIds, submitting, pendingStatus, runBulkStatus, clearSelection]);
+
     /**
      * ✅ Select-all header checkbox (NO state, NO parent updates)
-     * - Clears currentPageIdsRef at render start (thead renders before tbody in your DataTable)
-     * - After render, reads ids gathered by cells and sets checked/indeterminate on DOM node
      */
     const SelectAllHeader = () => {
         const inputRef = useRef(null);
@@ -158,10 +198,9 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
             const checked = pageIds.length > 0 && selectedOnPage === pageIds.length;
             const indeterminate = selectedOnPage > 0 && selectedOnPage < pageIds.length;
 
-            // ✅ update DOM (uncontrolled checkbox)
             el.checked = checked;
             el.indeterminate = indeterminate;
-        }); // run after every render of this header
+        });
 
         const onChange = (e) => {
             const checked = e.target.checked;
@@ -188,11 +227,15 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
                 disableSortBy: true,
                 filterable: false,
                 Cell: ({ row }) => {
-                    const id = row?.original?.id;
+                    const r = row?.original || {};
+                    const id = r?.id;
                     if (!id) return null;
 
                     // ✅ collect current page ids (this runs for visible rows)
                     currentPageIdsRef.current.add(id);
+
+                    // ✅ store shortlist flag (important for bulk shortlist logic)
+                    applicantFlagsRef.current.set(id, { is_shortlisted: !!r.is_shortlisted });
 
                     return (
                         <input
@@ -306,15 +349,15 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
                     const ok = !!value;
                     return ok ? (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-              <Sparkles size={14} />
-              AI Recommended
-              <BadgeCheck size={14} />
-            </span>
+                            <Sparkles size={14} />
+                            AI Recommended
+                            <BadgeCheck size={14} />
+                        </span>
                     ) : (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-light text-default">
-              <XCircle size={14} />
-              Not Recommended
-            </span>
+                            <XCircle size={14} />
+                            Not Recommended
+                        </span>
                     );
                 },
             },
@@ -339,7 +382,6 @@ const RequisitionAllApplicantList = ({ requisitionId, isActive }) => {
                 filterable: true,
             },
         ],
-        // ✅ keep these so DataTable rerenders when selection/submitting changes
         [requisitionId, selectedIds, submitting, pendingStatus, isSelected, toggleOne, toggleAllOnPage]
     );
 
