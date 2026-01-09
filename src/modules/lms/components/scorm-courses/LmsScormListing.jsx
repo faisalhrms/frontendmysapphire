@@ -1,36 +1,10 @@
-import React, { useMemo, useState, useEffect, useCallback } from "react";
+import React, {useMemo, useState, useEffect, useCallback, useRef} from "react";
 import api from "@config/axiosConfig";
 import DataTable from "@components/datatable/DataTable.jsx";
-import FileUpload from "@components/FileUpload.jsx";
 
 import { useForm } from "react-hook-form";
 import FormInput from "@components/form/FormInput.jsx";
 
-function getDjangoBase() {
-    return (import.meta.env.VITE_DJANGO_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
-}
-
-function buildLaunchUrl(detail) {
-    if (!detail) return "";
-
-    const base = getDjangoBase();
-    const lu = detail?.launch_url;
-    if (lu) {
-        if (/^https?:\/\//i.test(lu)) return lu;
-        const rel = String(lu).replace(/^\/+/, "");
-        return `${base}/${rel}`;
-    }
-
-    const storagePath = String(detail?.storage_path || "")
-        .replace(/^\/+/, "")
-        .replace(/\/+$/, "");
-    const launchPath = String(detail?.launch_path || "").replace(/^\/+/, "");
-
-    if (!storagePath || !launchPath) return "";
-    return `${base}/media/${storagePath}/${launchPath}`;
-}
-
-// ✅ local cleanup to kill HS overlay blur/backdrop if left behind
 function cleanupHsOverlay() {
     try {
         document.querySelectorAll(".hs-overlay-backdrop").forEach((el) => el.remove());
@@ -65,9 +39,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
     const [playerLoading, setPlayerLoading] = useState(false);
     const [playerError, setPlayerError] = useState("");
 
-    const [attachmentId, setAttachmentId] = useState(null);
-    const [attachmentObj, setAttachmentObj] = useState(null);
-
     const {
         control,
         handleSubmit,
@@ -78,18 +49,15 @@ export default function LmsScorm({ isActive: componentActive = true }) {
     } = useForm({
         defaultValues: {
             title: "",
-            scorm_version: "1.2", // ✅ ADDED default
+            scorm_version: "1.2",
             is_active: true,
-            attachment_id: null,
         },
     });
 
     const title = watch("title");
-    const scormVersion = watch("scorm_version"); // ✅ ADDED
+    const scormVersion = watch("scorm_version");
     const isActive = watch("is_active");
-    const attachmentIdWatch = watch("attachment_id");
 
-    // ✅ run cleanup on mount/unmount too (safe)
     useEffect(() => {
         cleanupHsOverlay();
         return () => cleanupHsOverlay();
@@ -97,11 +65,9 @@ export default function LmsScorm({ isActive: componentActive = true }) {
 
     const resetForm = () => {
         setEditingId(null);
-        reset({ title: "", scorm_version: "1.2", is_active: true, attachment_id: null }); // ✅ include version
+        reset({ title: "", scorm_version: "1.2", is_active: true });
         setSelectedZip(null);
         setExistingZipName("");
-        setAttachmentId(null);
-        setAttachmentObj(null);
     };
 
     const openAddModal = () => {
@@ -114,7 +80,7 @@ export default function LmsScorm({ isActive: componentActive = true }) {
         setShowModal(false);
         setLoading(false);
         resetForm();
-        cleanupHsOverlay(); // ✅ important
+        cleanupHsOverlay();
     }, [reset]);
 
     const closePlayer = () => {
@@ -132,16 +98,10 @@ export default function LmsScorm({ isActive: componentActive = true }) {
             const res = await api.get(`/lms/scorm-packages/${id}/`);
             const scorm = res.data?.data;
 
-            const first = Array.isArray(scorm?.attachments) ? scorm.attachments[0] : null;
-
-            setAttachmentId(first?.id || null);
-            setAttachmentObj(first || null);
-
             reset({
                 title: scorm?.title || "",
-                scorm_version: scorm?.scorm_version || "1.2", // ✅ ADDED
+                scorm_version: scorm?.scorm_version || "1.2",
                 is_active: Boolean(scorm?.is_active),
-                attachment_id: first?.id || null,
             });
 
             if (scorm?.zip_file) {
@@ -162,6 +122,14 @@ export default function LmsScorm({ isActive: componentActive = true }) {
             console.error(err);
         }
     };
+    const iframeRef = useRef(null);
+
+    const iframeSrc = useMemo(() => {
+        if (!playerUrl || !showPlayer) return "";
+        const sep = playerUrl.includes("?") ? "&" : "?";
+        return `${playerUrl}${sep}v=${Date.now()}`;
+    }, [playerUrl, showPlayer]);
+
 
     /**
      * ✅ FIXED PLAY:
@@ -181,10 +149,7 @@ export default function LmsScorm({ isActive: componentActive = true }) {
 
             const res = await api.get(`/lms/scorm-packages/${pkg.id}/`);
             const detail = res.data?.data;
-
-            const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
-            const rel = String(detail?.launch_url || "").replace(/^\/+/, "");
-            const url = base ? `${base}/${rel}` : (detail?.launch_url || "");
+            const url = detail?.launch_url;
 
             if (!url) {
                 setPlayerError("No SCORM URL found.");
@@ -203,18 +168,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
         }
     };
 
-    useEffect(() => {
-        if (!attachmentIdWatch) {
-            setAttachmentId(null);
-            setAttachmentObj(null);
-            return;
-        }
-        setAttachmentId(attachmentIdWatch);
-
-        // ✅ FileUpload selection often leaves HS backdrop; cleanup after value updates
-        cleanupHsOverlay();
-    }, [attachmentIdWatch]);
-
     const onSubmit = async (values) => {
         if (!values.title?.trim()) {
             alert("Please enter title");
@@ -226,16 +179,11 @@ export default function LmsScorm({ isActive: componentActive = true }) {
             const formData = new FormData();
             formData.append("title", values.title.trim());
 
-            // ✅ ADDED: scorm_version
             formData.append("scorm_version", values.scorm_version || "1.2");
 
             formData.append("is_active", values.is_active ? "true" : "false");
 
             if (selectedZip) formData.append("zip_file", selectedZip);
-
-            if (values?.attachment_id) {
-                formData.append("attachment_ids", String(values.attachment_id)); // backend expects attachment_ids
-            }
 
             if (editingId) {
                 await api.put(`/lms/scorm-packages/${editingId}/`, formData, {
@@ -280,8 +228,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
     const columns = useMemo(
         () => [
             { accessor: "title", Header: "Title", filterable: true },
-
-            // ✅ ADDED column
             {
                 accessor: "scorm_version",
                 Header: "SCORM Version",
@@ -364,20 +310,27 @@ export default function LmsScorm({ isActive: componentActive = true }) {
                                 </div>
                             ) : playerUrl ? (
                                 <div className="border rounded-lg overflow-hidden">
-                                    <div className="px-3 py-2 text-xs text-gray-500 bg-gray-50 border-b font-mono break-all">
+                                    <div
+                                        className="px-3 py-2 text-xs text-gray-500 bg-gray-50 border-b font-mono break-all">
                                         {playerUrl}
                                     </div>
                                     <iframe
-                                        src={playerUrl}
-                                        title="SCORM Player"
-                                        className="w-full h-[75vh] border-0"
-                                        allow="autoplay; fullscreen"
-                                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads"
-                                        loading="eager"
-                                        onError={() => {
-                                            setPlayerError(
-                                                "Failed to load SCORM content. File might be missing or blocked by browser."
-                                            );
+                                        ref={iframeRef}
+                                        title="course-player"
+                                        src={iframeSrc}
+                                        className="h-full w-full bg-white"
+                                        allow="fullscreen; autoplay"
+                                        onLoad={() => {
+                                            // Best-effort: help nested frames find API
+                                            try {
+                                                const w = iframeRef.current?.contentWindow;
+                                                if (w) {
+                                                    w.API = window.API;
+                                                    w.API_1484_11 = window.API_1484_11;
+                                                }
+                                            } catch {
+                                                // ignore
+                                            }
                                         }}
                                     />
                                 </div>
@@ -404,7 +357,8 @@ export default function LmsScorm({ isActive: componentActive = true }) {
             {/* Add/Edit Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 dark:text-gray-200 dark:bg-bodybg">
+                    <div
+                        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 dark:text-gray-200 dark:bg-bodybg">
                         <div className="ti-modal-header flex justify-between items-center p-4 border-b">
                             <h6 className="modal-title text-lg font-semibold">{editingId ? "Edit SCORM" : "Add SCORM"}</h6>
                             <button
@@ -458,16 +412,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
                                             Active
                                         </label>
                                     </div>
-
-                                    <FileUpload
-                                        type="image"
-                                        modalId="scormMediaModal"
-                                        inputName="attachment_id"
-                                        currentValue={attachmentId}
-                                        file={attachmentObj || {}}
-                                        control={control}
-                                        errors={errors}
-                                    />
 
                                     <div>
                                         <label className="block text-sm font-medium mb-1">ZIP File</label>

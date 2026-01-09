@@ -81,11 +81,11 @@ export const SELF_SERVICES_ROUTES = {
         //
         // },
         COURSE_LEARING: {
-            path: "/module/ess/course-learing",
+            path: "/module/ess/courses",
             // permission:"user.view_ess_modules"
         },
         COURSE_LEARING_DETAIL: {
-            path: "/module/ess/course-learing/:id",
+            path: "/module/ess/course/:slug",
         },
 
     }

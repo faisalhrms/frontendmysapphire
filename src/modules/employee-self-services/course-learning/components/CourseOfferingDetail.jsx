@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "@config/axiosConfig.js";
 
 const formatDate = (iso) => {
@@ -15,11 +15,13 @@ const throttle = (fn, wait = 15000) => {
     return (...args) => {
         const now = Date.now();
         const remaining = wait - (now - last);
+
         if (remaining <= 0) {
             last = now;
             fn(...args);
             return;
         }
+
         if (!timer) {
             timer = setTimeout(() => {
                 timer = null;
@@ -51,15 +53,16 @@ const statusTone = (s) => {
 };
 
 export default function CourseOfferingDetail() {
-    const { id } = useParams();
+    // ✅ route should be something like: /courses/:slug  (or /lms/courses/:slug)
+    const { slug } = useParams();
     const navigate = useNavigate();
-    const location = useLocation();
 
     const [loading, setLoading] = useState(false);
     const [enrolling, setEnrolling] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [offering, setOffering] = useState(location.state?.offering || null);
+
+    const [offering, setOffering] = useState(null);
 
     const [showPlayer, setShowPlayer] = useState(false);
     const playerRef = useRef(null);
@@ -85,7 +88,7 @@ export default function CourseOfferingDetail() {
     const [trackingData, setTrackingData] = useState({
         score: 0,
         progress: 0,
-        timeSpent: 0, // seconds (cumulative)
+        timeSpent: 0,
         status: "not attempted",
         lastActivity: null,
         lessonLocation: "",
@@ -99,51 +102,72 @@ export default function CourseOfferingDetail() {
 
     const saveInFlightRef = useRef(false);
 
-    const isEnrolled = Boolean(offering?.enrollment);
-    const canSelfEnroll = Boolean(offering?.self_enrollment);
+    // ✅ Offering id from backend response (used for enroll/progress endpoints)
+    const offeringId = offering?.id ?? offering?.offering_id ?? null;
 
-    const title = offering?.courses?.title ?? "—";
-    const slug = offering?.courses?.slug ?? "—";
-    const rawLaunchUrl = offering?.launch_url || "";
+    // ---------- Fetch detail by SLUG ----------
+    const fetchDetail = useCallback(
+        async (signal) => {
+            if (!slug) return;
 
+            setLoading(true);
+            setError("");
+
+            try {
+                // ✅ If you added /by-slug/<slug>/ endpoint:
+                const res = await api.get(`/lms/course-offerings/by-slug/${slug}/`, { signal });
+
+                // If you changed retrieve() to accept slug at /<slug>/, use:
+                // const res = await api.get(`/lms/course-offerings/${slug}/`, { signal });
+
+                setOffering(res?.data?.data ?? res?.data ?? null);
+            } catch (e) {
+                if (e?.name === "CanceledError" || e?.code === "ERR_CANCELED") return;
+                setError(e?.response?.data?.message || "Failed to load course detail.");
+            } finally {
+                setLoading(false);
+            }
+        },
+        [slug]
+    );
+
+    useEffect(() => {
+        if (!slug) return;
+        const controller = new AbortController();
+        fetchDetail(controller.signal);
+        return () => controller.abort();
+    }, [slug, fetchDetail]);
+
+    // ---------- Field mapping ----------
+    const courseObj = offering?.course ?? null;
+
+    const title = courseObj?.title ?? "—";
+    const dataSlug = courseObj?.slug ?? "—";
+
+    const canSelfEnroll = Boolean(offering?.allow_self_enroll ?? offering?.self_enrollment);
+    const isEnrolled = Boolean(offering?.is_enrolled ?? offering?.enrollment);
+
+    const startDate = offering?.started_at ?? offering?.start_date ?? null;
+    const endDate = offering?.ended_at ?? offering?.end_date ?? null;
+
+    const showDateRange = Boolean(startDate) && Boolean(endDate);
+
+    const rawLaunchUrl = offering?.course?.scorm_package?.launch_url || "";
     const launchUrl = useMemo(() => {
         if (!rawLaunchUrl) return "";
-        // Storyline: prefer LMS wrapper if present
         return rawLaunchUrl.replace(/story\.html(\?.*)?$/i, "index_lms.html$1");
     }, [rawLaunchUrl]);
 
-    // cache-buster per open
+    const canOpenCourse = useMemo(() => isEnrolled && Boolean(launchUrl), [isEnrolled, launchUrl]);
+
     const iframeSrc = useMemo(() => {
         if (!launchUrl || !showPlayer) return "";
         const sep = launchUrl.includes("?") ? "&" : "?";
         return `${launchUrl}${sep}v=${Date.now()}`;
     }, [launchUrl, showPlayer]);
 
-    const hasStartDate = Boolean(offering?.start_date);
-    const hasEndDate = Boolean(offering?.end_date);
-    const showDateRange = hasStartDate && hasEndDate;
-
-    const fetchDetail = async () => {
-        setLoading(true);
-        setError("");
-        try {
-            const res = await api.get(`/lms/course-offerings/${id}/`);
-            setOffering(res?.data?.data ?? res?.data ?? null);
-        } catch (e) {
-            setError(e?.response?.data?.message || "Failed to load course detail.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (!offering && id) fetchDetail();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
-
-    const canOpenCourse = useMemo(() => isEnrolled && Boolean(launchUrl), [isEnrolled, launchUrl]);
-
-    const computeProgress = () => {
+    // ---------- SCORM + tracking ----------
+    const computeProgress = useCallback(() => {
         const d = scormDataRef.current;
         const status = String(d.lessonStatus || "").toLowerCase();
 
@@ -152,14 +176,13 @@ export default function CourseOfferingDetail() {
         const score = parseFloat(d.scoreRaw);
         if (!Number.isNaN(score) && score > 0) return Math.max(0, Math.min(100, score));
 
-        // If resume data exists, assume mid-progress (Storyline uses suspend_data heavily)
         if ((status === "incomplete" || status === "browsing") && d.suspendData) return 50;
         if (status === "incomplete" || status === "browsing") return 10;
 
         return 0;
-    };
+    }, []);
 
-    const syncTrackingFromScorm = () => {
+    const syncTrackingFromScorm = useCallback(() => {
         const d = scormDataRef.current;
 
         setTrackingData((prev) => {
@@ -176,15 +199,18 @@ export default function CourseOfferingDetail() {
                 lastActivity: new Date().toISOString(),
             };
         });
-    };
+    }, [computeProgress]);
 
-    const syncTrackingFromScormThrottled = useMemo(() => throttle(syncTrackingFromScorm, 1000), []);
+    const syncTrackingFromScormThrottled = useMemo(() => throttle(syncTrackingFromScorm, 1000), [syncTrackingFromScorm]);
 
-    const loadProgressFromBackend = async () => {
+    const loadProgressFromBackend = useCallback(async () => {
+        if (!offeringId) return;
+
         try {
             const res = await api.get("/lms/course-progress/", {
-                params: { offering_id: Number(id) },
+                params: { offering_id: Number(offeringId) },
             });
+
             const p = res?.data?.data ?? res?.data ?? null;
             if (!p) return;
 
@@ -203,63 +229,71 @@ export default function CourseOfferingDetail() {
                 timeSpent: Number(p.total_time_seconds || prev.timeSpent || 0),
                 lastActivity: p.last_activity_at || prev.lastActivity,
             }));
-        } catch (e) {
+        } catch {
             // best-effort
         }
-    };
+    }, [offeringId]);
 
-    const saveTrackingDataToBackend = async (reason = "auto") => {
-        if (saveInFlightRef.current) return;
-        saveInFlightRef.current = true;
+    const saveTrackingDataToBackend = useCallback(
+        async (reason = "auto") => {
+            if (!offeringId) return;
+            if (saveInFlightRef.current) return;
+            saveInFlightRef.current = true;
 
-        try {
-            syncTrackingFromScorm();
+            try {
+                syncTrackingFromScorm();
 
-            const d = scormDataRef.current;
-            const t = trackingRef.current;
+                const d = scormDataRef.current;
+                const t = trackingRef.current;
 
-            const payload = {
-                offering_id: Number(id),
-                score: t.score || parseFloat(d.scoreRaw) || 0,
-                progress: t.progress ?? computeProgress(),
-                scorm_status: d.lessonStatus || t.status, // match your backend serializer
-                time_spent: t.timeSpent,
-                lesson_location: d.lessonLocation || "",
-                suspend_data: d.suspendData || "",
-                last_activity: t.lastActivity || new Date().toISOString(),
-            };
+                const payload = {
+                    offering_id: Number(offeringId),
+                    score: t.score || parseFloat(d.scoreRaw) || 0,
+                    progress: t.progress ?? computeProgress(),
+                    scorm_status: d.lessonStatus || t.status,
+                    time_spent: t.timeSpent,
+                    lesson_location: d.lessonLocation || "",
+                    suspend_data: d.suspendData || "",
+                    last_activity: t.lastActivity || new Date().toISOString(),
+                };
 
-            await api.post("/lms/course-progress/", payload);
+                await api.post("/lms/course-progress/", payload);
 
-            if (reason === "finish" || reason === "hide") {
-                setSuccess("Progress saved.");
-                setTimeout(() => setSuccess(""), 1500);
+                if (reason === "finish" || reason === "hide") {
+                    setSuccess("Progress saved.");
+                    setTimeout(() => setSuccess(""), 1500);
+                }
+            } catch {
+                if (reason === "finish" || reason === "hide") {
+                    setError("Failed to save progress.");
+                    setTimeout(() => setError(""), 2500);
+                }
+            } finally {
+                saveInFlightRef.current = false;
             }
-        } catch (err) {
-            if (reason === "finish" || reason === "hide") {
-                setError("Failed to save progress.");
-                setTimeout(() => setError(""), 2500);
-            }
-        } finally {
-            saveInFlightRef.current = false;
-        }
-    };
-
-    const autosaveThrottled = useMemo(
-        () => throttle((reason) => saveTrackingDataToBackend(reason), 15000),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [id]
+        },
+        [offeringId, computeProgress, syncTrackingFromScorm]
     );
 
-    const selfEnroll = async () => {
-        if (!id) return;
+    const autosaveThrottled = useMemo(() => throttle((reason) => saveTrackingDataToBackend(reason), 15000), [
+        saveTrackingDataToBackend,
+    ]);
+
+    // ---------- Enrollment ----------
+    const selfEnroll = useCallback(async () => {
+        if (!offeringId) {
+            setError("Offering ID not loaded yet. Please try again.");
+            return;
+        }
+
         setEnrolling(true);
         setError("");
         setSuccess("");
+
         try {
-            await api.post("/lms/course-enrollments/self/", { offering_id: Number(id) });
+            await api.post("/lms/course-enrollments/self/", { offering_id: Number(offeringId) });
             setSuccess("Successfully enrolled.");
-            await fetchDetail();
+            await fetchDetail(); // refresh by slug
         } catch (e) {
             const backendMsg =
                 e?.response?.data?.message || e?.response?.data?.errors?.offering_id || "Self enrollment failed.";
@@ -267,29 +301,29 @@ export default function CourseOfferingDetail() {
         } finally {
             setEnrolling(false);
         }
-    };
+    }, [offeringId, fetchDetail]);
 
-    const openInlinePlayer = async () => {
+    const openInlinePlayer = useCallback(async () => {
         setError("");
         setSuccess("");
 
-        // ✅ load resume data first
         await loadProgressFromBackend();
 
         setShowPlayer(true);
         setTimeout(() => playerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
-    };
+    }, [loadProgressFromBackend]);
 
-    const closeInlinePlayer = async () => {
+    const closeInlinePlayer = useCallback(async () => {
         await saveTrackingDataToBackend("hide");
         setShowPlayer(false);
-    };
+    }, [saveTrackingDataToBackend]);
 
     // ---------- SCORM API registration (only while open) ----------
     useEffect(() => {
         if (!showPlayer) return;
 
-        // SCORM 1.2
+        const studentId = `student_${offeringId ?? slug ?? "unknown"}`;
+
         window.API = {
             LMSInitialize: () => {
                 scormDataRef.current.initialized = true;
@@ -310,47 +344,32 @@ export default function CourseOfferingDetail() {
                 switch (element) {
                     case "cmi.core.lesson_status":
                         return d.lessonStatus;
-
                     case "cmi.core.lesson_location":
                         return d.lessonLocation;
-
                     case "cmi.core.score.raw":
                         return d.scoreRaw;
-
                     case "cmi.core.score.max":
                         return d.scoreMax;
-
                     case "cmi.core.score.min":
                         return d.scoreMin;
-
                     case "cmi.core.session_time":
                         return d.sessionTime;
-
                     case "cmi.core.total_time":
                         return d.totalTime;
-
                     case "cmi.suspend_data":
                         return d.suspendData;
-
                     case "cmi.core.student_id":
-                        return `student_${id}`;
-
+                        return studentId;
                     case "cmi.core.student_name":
                         return "Student";
-
                     case "cmi.core.credit":
                         return d.credit;
-
-                    // ✅ professional: resume if either suspend_data OR lesson_location exists
                     case "cmi.core.entry":
                         return d.suspendData || d.lessonLocation ? "resume" : "ab-initio";
-
                     case "cmi.launch_data":
                         return "";
-
                     case "cmi.core.lesson_mode":
                         return d.mode;
-
                     default:
                         return "";
                 }
@@ -360,7 +379,6 @@ export default function CourseOfferingDetail() {
                 const d = scormDataRef.current;
                 d.lastSetValueAt = new Date().toISOString();
 
-                // update
                 if (element === "cmi.core.lesson_status") d.lessonStatus = value;
                 if (element === "cmi.core.lesson_location") d.lessonLocation = value;
                 if (element === "cmi.core.score.raw") d.scoreRaw = value;
@@ -386,7 +404,6 @@ export default function CourseOfferingDetail() {
             LMSGetDiagnostic: () => "No error",
         };
 
-        // SCORM 2004
         window.API_1484_11 = {
             Initialize: () => {
                 scormDataRef.current.initialized = true;
@@ -451,10 +468,17 @@ export default function CourseOfferingDetail() {
             delete window.API;
             delete window.API_1484_11;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [showPlayer, id]);
+    }, [
+        showPlayer,
+        offeringId,
+        slug,
+        autosaveThrottled,
+        saveTrackingDataToBackend,
+        syncTrackingFromScorm,
+        syncTrackingFromScormThrottled,
+    ]);
 
-    // Time tracking (accurate; cumulative)
+    // Time tracking
     useEffect(() => {
         if (!showPlayer) return;
 
@@ -474,7 +498,7 @@ export default function CourseOfferingDetail() {
         return () => clearInterval(interval);
     }, [showPlayer]);
 
-    // Periodic autosave even if content never calls commit
+    // Periodic autosave
     useEffect(() => {
         if (!showPlayer) return;
         const interval = setInterval(() => autosaveThrottled("interval"), 30000);
@@ -528,22 +552,20 @@ export default function CourseOfferingDetail() {
                         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                             <div className="min-w-0">
                                 <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
-                  <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 font-semibold">
-                    SCORM
-                  </span>
+                                    <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 font-semibold">SCORM</span>
+
                                     <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 font-semibold font-mono">
-                    {slug}
+                    {dataSlug}
                   </span>
+
                                     {showDateRange && (
                                         <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 font-semibold">
-                      {formatDate(offering?.start_date)} — {formatDate(offering?.end_date)}
+                      {formatDate(startDate)} — {formatDate(endDate)}
                     </span>
                                     )}
                                 </div>
 
-                                <h1 className="mt-3 text-2xl sm:text-3xl font-bold text-slate-900 truncate">
-                                    {title}
-                                </h1>
+                                <h1 className="mt-3 text-2xl sm:text-3xl font-bold text-slate-900 truncate">{title}</h1>
 
                                 <p className="mt-2 text-slate-600 max-w-2xl">
                                     Launch the course in an embedded player with automatic tracking and resume support.
@@ -606,9 +628,7 @@ export default function CourseOfferingDetail() {
                                     ) : (
                                         <>
                                             <div className="text-slate-900 font-bold">Access</div>
-                                            <div className="mt-1 text-sm text-slate-600">
-                                                Open the course player. Progress is saved automatically.
-                                            </div>
+                                            <div className="mt-1 text-sm text-slate-600">Open the course player. Progress is saved automatically.</div>
 
                                             <button
                                                 type="button"
@@ -620,16 +640,12 @@ export default function CourseOfferingDetail() {
                                             </button>
 
                                             {hasResume && (
-                                                <div className="mt-3 text-xs text-slate-500">
-                                                    Resume is available from your last session.
-                                                </div>
+                                                <div className="mt-3 text-xs text-slate-500">Resume is available from your last session.</div>
                                             )}
                                         </>
                                     )}
 
-                                    {loading && (
-                                        <div className="mt-4 text-xs text-slate-500">Loading course details…</div>
-                                    )}
+                                    {loading && <div className="mt-4 text-xs text-slate-500">Loading course details…</div>}
                                 </div>
                             </div>
                         </div>
@@ -682,7 +698,6 @@ export default function CourseOfferingDetail() {
                                             className="h-full w-full bg-white"
                                             allow="fullscreen; autoplay"
                                             onLoad={() => {
-                                                // Best-effort: help nested frames find API
                                                 try {
                                                     const w = iframeRef.current?.contentWindow;
                                                     if (w) {
@@ -698,7 +713,8 @@ export default function CourseOfferingDetail() {
                                 </div>
 
                                 <p className="mt-3 text-xs text-slate-500">
-                                    Progress is saved automatically (commit, interval, close, unload). If the course does not report score/location, those fields will remain unavailable.
+                                    Progress is saved automatically (commit, interval, close, unload). If the course does not report
+                                    score/location, those fields will remain unavailable.
                                 </p>
                             </div>
                         )}
