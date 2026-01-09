@@ -1,5 +1,4 @@
-// RoadmapDashboard.jsx
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -14,10 +13,9 @@ import CertificateAlerts from "@modules/dashboards/roadmap/components/Certificat
 import HasPermission from "@components/HasPermission.jsx";
 import PdfModalViewerBase from "@modules/dashboards/roadmap/components/PdfModalViewerBase.jsx";
 
-const asId = (v) => (v && typeof v === "object" && "value" in v ? v.value : v ?? "");
+import RoadMapFlowchartsPdf from "@assets/files/RoadMapFlowcharts.pdf";
 
-const PROCESS_FLOW_URL =
-  "https://be.mysapphire.co/media/uploads/2026/01/09/RoadMapFlowcharts.pdf";
+const asId = (v) => (v && typeof v === "object" && "value" in v ? v.value : v ?? "");
 
 const RoadmapDashboard = () => {
   const {
@@ -68,12 +66,32 @@ const RoadmapDashboard = () => {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerUrl, setViewerUrl] = useState("");
   const [viewerTitle, setViewerTitle] = useState("Document");
+  const [viewerLoading, setViewerLoading] = useState(false);
 
-  const openDoc = (url, title = "Document") => {
-    if (!url) return;
-    setViewerUrl(url);
+  const lastObjectUrlRef = useRef("");
+  const revokeLastObjectUrl = () => {
+    if (lastObjectUrlRef.current) {
+      URL.revokeObjectURL(lastObjectUrlRef.current);
+      lastObjectUrlRef.current = "";
+    }
+  };
+
+  useEffect(() => {
+    return () => revokeLastObjectUrl();
+  }, []);
+
+  const openAssetPdf = (title = "Document") => {
     setViewerTitle(title);
+    setViewerLoading(false);
+    setViewerUrl(RoadMapFlowchartsPdf);
     setViewerOpen(true);
+  };
+
+  const closeViewer = () => {
+    setViewerOpen(false);
+    setViewerUrl("");
+    setViewerTitle("Document");
+    revokeLastObjectUrl();
   };
 
   return (
@@ -88,7 +106,7 @@ const RoadmapDashboard = () => {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => openDoc(PROCESS_FLOW_URL, "RoadMap Process Flow")}
+            onClick={() => openAssetPdf("RoadMap Process Flow")}
             className="inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium transition-colors shadow-sm border-sky-500/40 bg-sky-50 text-sky-700 hover:bg-sky-100 dark:bg-sky-500/10 dark:text-sky-300"
             title="View process flow"
           >
@@ -118,8 +136,8 @@ const RoadmapDashboard = () => {
         isOpen={viewerOpen}
         fileUrl={viewerUrl}
         mimeType="application/pdf"
-        loading={false}
-        onClose={() => setViewerOpen(false)}
+        loading={viewerLoading}
+        onClose={closeViewer}
         title={viewerTitle}
         subtitle="PDF Document"
         isConfidential={false}
