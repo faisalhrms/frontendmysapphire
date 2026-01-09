@@ -104,6 +104,7 @@ const RoadmapDashboard = () => {
         />
 
         <div className="flex items-center gap-2">
+          <HasPermission permission="auth.view_roadmap_process">
           <button
             type="button"
             onClick={() => openAssetPdf("RoadMap Process Flow")}
@@ -113,6 +114,7 @@ const RoadmapDashboard = () => {
             <GitBranch className="h-4 w-4 mr-1.5" />
             <span>Process Flow</span>
           </button>
+          </HasPermission>
 
           <HasPermission permission="auth.view_certificates_insight">
             <CertificateAlerts />
