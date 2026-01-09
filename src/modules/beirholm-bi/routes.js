@@ -12,7 +12,26 @@ import DataMappingRuleList from "@modules/beirholm-bi/views/DataMappingRuleList.
 import DataMappingRuleForm from "@modules/beirholm-bi/components/DataMappingRuleForm.jsx";
 import DataHealthRulesetEditor from "@modules/beirholm-bi/components/DataHealthRulesetEditor.jsx";
 import DataHealthRulesetList from "@modules/beirholm-bi/views/DataHealthRulesetList.jsx";
+import CompetitorsList from "@modules/beirholm-bi/views/CompetitorsList.jsx";
+import CompetitorsAdd from "@modules/beirholm-bi/components/CompetitorsAdd.jsx";
+import CompetitorsEdit from "@modules/beirholm-bi/components/CompetitorsEdit.jsx";
 
+export const COMPETITORS_ROUTES = {
+    READ:{
+        path:'/competitors/list',
+        permission:'beirholm_bi.view_competitors'
+    },
+    ADD:{
+        path:'/competitors/add',
+        permission:'beirholm_bi.add_competitors'
+    },
+    EDIT:{
+        path:'/competitors/edit/:id',
+        permission:'beirholm_bi.change_competitors'
+    },
+
+
+}
 
 export const BEIRHOLM_BI_ROUTES = {
     FIELD_DEFINITION_READ: {
@@ -169,4 +188,19 @@ export const MODULE_ROUTES = [
         component: DataHealthRulesetList,
         permission: BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_LIST.permission
     },
+    {
+        path:COMPETITORS_ROUTES.READ.path,
+        component:CompetitorsList,
+        permission:COMPETITORS_ROUTES.READ.permission
+    },
+    {
+        path:COMPETITORS_ROUTES.ADD.path,
+        component:CompetitorsAdd,
+        permission:COMPETITORS_ROUTES.ADD.permission
+    },
+    {
+        path:COMPETITORS_ROUTES.EDIT.path,
+        component:CompetitorsEdit,
+        permission:COMPETITORS_ROUTES.EDIT.permission
+    }
 ];
