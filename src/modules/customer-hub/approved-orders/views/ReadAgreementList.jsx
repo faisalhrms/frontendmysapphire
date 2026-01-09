@@ -109,7 +109,7 @@ const ReadAgreementList = () => {
   const handleDownloadExcel = useCallback(async () => {
     const ids = Array.from(selectedIds);
     try {
-      const res = await exportReadAgreementsExcel({ ids });
+      const res = await exportReadAgreementsExcel({ ids, cancelled: false });
       const blob = res.data;
 
       const disposition = res.headers["content-disposition"] || "";

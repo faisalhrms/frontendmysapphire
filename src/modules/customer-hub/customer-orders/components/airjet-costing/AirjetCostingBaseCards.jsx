@@ -389,7 +389,7 @@ const AirjetCostingBaseCards = ({ data, onChangeCosts, onSave, onReset, showFull
                 </span>
                 <span className="text-gray-600 dark:text-white/70 truncate">Band</span>
               </div>
-              <span className="font-medium">{data.band_for_params ?? "-"}</span>
+              <span className="font-medium">{data.loom_band ?? data.band_for_params ?? "-"}</span>
             </div>
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-2 min-w-0">

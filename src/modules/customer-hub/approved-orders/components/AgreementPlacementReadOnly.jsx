@@ -95,12 +95,10 @@ const AgreementPlacementReadOnly = ({ agreement, showCancelled = false }) => {
   const fabric_delivery_raw =
     payload.fabric_delivery ??
     agreement?.fabric_delivery ??
-    agreement?.start_date ??
     ""
   const need_by_date_raw =
     payload.need_by_date ??
     agreement?.auto_need_by_date ??
-    agreement?.end_date ??
     ""
 
   const total_meters = payload.total_meters ?? ""
@@ -120,7 +118,6 @@ const AgreementPlacementReadOnly = ({ agreement, showCancelled = false }) => {
     matchedItem?.yarn_dyed_or_greige ??
     ""
 
-  // Fabric meta: prefer payload, fallback to matchedItem where relevant
   const fabric_detail =
     payload.fabric_detail ??
     agreement?.item_description ??

@@ -164,17 +164,33 @@ const downloadBulkCleanFile = async (fileIds = [], exportFilters = {}) => {
 
 
 
+const fetchTrendReportPreviewHtml = async () => {
+  const resp = await api.get("/trend-report/preview/", {
+    responseType: "text",
+    headers: { Accept: "text/html" },
+  });
+  return resp.data;
+};
+
+const sendTrendReport = async () => {
+  const response = await api.post("/trend-report/send/");
+  return response.data;
+};
 
 export default {
-    uploadRawFile,
-    reprocessJob,
-    getJobStatus,
-    downloadErrorFile,
-    downloadRawFile,
-    downloadCleanFile,
-    uploadMissingRules,
-    downloadSampleFile,
-    downloadBulkCleanFile,
-    deleteFile,
-    downloadConstructionStatus,
+  uploadRawFile,
+  reprocessJob,
+  getJobStatus,
+  downloadErrorFile,
+  downloadRawFile,
+  downloadCleanFile,
+  uploadMissingRules,
+  downloadSampleFile,
+  downloadBulkCleanFile,
+  deleteFile,
+  downloadConstructionStatus,
+  fetchTrendReportPreviewHtml,
+  sendTrendReport,
 };
+
+
