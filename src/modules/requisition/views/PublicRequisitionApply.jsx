@@ -139,7 +139,7 @@ const schema = z.object({
     last_name: z.string().trim().min(1, "Last Name is required").max(80, "Too long"),
 
     // CNIC: exactly 14 digits
-    cnic_number: z.string().trim().regex(CNIC_REGEX, "CNIC must be 14 digits (e.g., 37203798844979)"),
+    cnic_number: z.string().trim().regex(CNIC_REGEX, "CNIC must be 14 digits (e.g., 12345678912345)"),
 
     // DOB: not future, not before 1950 (allow empty)
     date_of_birth: z
