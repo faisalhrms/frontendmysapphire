@@ -12,6 +12,7 @@ import useFilters from "@hooks/useFilters.js";
 import DataSanitizeFilter from "@modules/beirholm-bi/components/DataSanitizeFilter.jsx";
 import DownloadErrorChoiceModal from "@modules/beirholm-bi/components/DownloadErrorChoiceModal.jsx";
 import DownloadSampleFile from "@components/DownloadSampleFile.jsx";
+import TrendReportModal from "@modules/beirholm-bi/components/TrendReportModal.jsx";
 
 const DataSanitizationList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +26,10 @@ const DataSanitizationList = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [bulkProcessing, setBulkProcessing] = useState(false);
     const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+    const [isTrendModalOpen, setIsTrendModalOpen] = useState(false);
+    const openTrendModal = () => setIsTrendModalOpen(true);
+    const closeTrendModal = () => setIsTrendModalOpen(false);
+
     const openDownloadModal = (id) => {
         setCurrentJobId(id);
         setIsDownloadModalOpen(true)
@@ -313,6 +318,14 @@ const DataSanitizationList = () => {
     const buttons = (
         <>
            <HasPermission permission='beirholm_bi.upload_raw_files'>
+            <button
+              className="ti-btn ti-btn-secondary"
+              onClick={openTrendModal}
+              title="Trend Report"
+              type="button"
+            >
+              <i className="ri-file-chart-line"></i>
+            </button>
             <div className="grid grid-cols-1 sm:grid-cols-1">
                 <button
                     className="ti-btn ti-btn-primary"
@@ -404,6 +417,8 @@ const DataSanitizationList = () => {
             {isDownloadModalOpen && currentJobId && (
                 <DownloadErrorChoiceModal jobId={currentJobId} closeModal={closeDownloadModal}/>
             )}
+            {isTrendModalOpen && <TrendReportModal closeModal={closeTrendModal} />}
+
         </>
     );
 };
