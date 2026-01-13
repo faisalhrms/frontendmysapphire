@@ -1,26 +1,139 @@
 // @modules/requisition/components/interviews/RequisitionInterviewCompleteModal.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import Modal from "@modules/inventory/models/components/Modal.jsx";
-import FormInput from "@components/form/FormInput.jsx";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import Notify from "@helpers/toastNotifications.js";
 
 import { requisitionInterviewCompleteSchema } from "@modules/requisition/schemas/requisitionInterviewCompleteSchema.js";
-import { Info, PlusCircle, Trash2, ClipboardCheck } from "lucide-react";
+import { Info, ClipboardCheck, Star } from "lucide-react";
 import { useRequisitionInterviewActions } from "../hooks/requisitionInterviewHooks.js";
 
 const DEFAULTS = {
-    interviewer_rating: 0,
-    interviewer_notes: "",
-    outcome: "pass",
-    feedback_items: [{ key: "communication", score: 0 }],
-    feedback_notes: "",
+    communication: 0,
+    cultural_fit: 0,
+    technical_expertise: 0,
+    functional_expertise: 0,
+    leadership: 0,
+    recommendation: "recommended",
+    remarks: "",
+};
+
+/**
+ * Star rating with half-steps (0.5 increments)
+ * - Click left half => n - 0.5
+ * - Click right half => n
+ */
+const StarRating = ({ value = 0, onChange, disabled = false, size = 22 }) => {
+    const v = Number(value || 0);
+
+    const setVal = (next) => {
+        if (disabled) return;
+        const clamped = Math.max(0, Math.min(5, Number(next)));
+        // keep .0/.5 only
+        const rounded = Math.round(clamped * 2) / 2;
+        onChange?.(rounded);
+    };
+
+    return (
+        <div className="inline-flex items-center gap-1 select-none">
+            {[1, 2, 3, 4, 5].map((i) => {
+                const fill = Math.max(0, Math.min(1, v - (i - 1))); // 0..1
+                const fillPct = `${fill * 100}%`;
+
+                return (
+                    <div key={i} className="relative inline-flex" style={{ width: size, height: size }}>
+                        {/* base outline */}
+                        <Star
+                            size={size}
+                            className={`text-gray-300 ${disabled ? "opacity-60" : ""}`}
+                            strokeWidth={2}
+                        />
+
+                        {/* filled overlay (partial allowed) */}
+                        <div
+                            className="absolute inset-0 overflow-hidden"
+                            style={{ width: fillPct }}
+                        >
+                            <Star
+                                size={size}
+                                className={`${disabled ? "opacity-60" : ""} text-amber-500`}
+                                fill="currentColor"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                            />
+                        </div>
+
+                        {/* left half click */}
+                        <button
+                            type="button"
+                            className="absolute left-0 top-0 h-full w-1/2 cursor-pointer"
+                            disabled={disabled}
+                            onClick={() => setVal(i - 0.5)}
+                            aria-label={`Set rating to ${i - 0.5}`}
+                        />
+
+                        {/* right half click */}
+                        <button
+                            type="button"
+                            className="absolute right-0 top-0 h-full w-1/2 cursor-pointer"
+                            disabled={disabled}
+                            onClick={() => setVal(i)}
+                            aria-label={`Set rating to ${i}`}
+                        />
+                    </div>
+                );
+            })}
+
+            {/* numeric hint */}
+            <span className="ms-2 text-sm text-gray-600 dark:text-white/50">
+        {v.toFixed(1)}
+      </span>
+
+            {/* reset */}
+            {!disabled && (
+                <button
+                    type="button"
+                    className="ms-2 text-xs text-primary underline"
+                    onClick={() => setVal(0)}
+                >
+                    Reset
+                </button>
+            )}
+        </div>
+    );
+};
+
+const StarRatingField = ({ control, name, label, errors, required = true }) => {
+    const err = errors?.[name]?.message;
+
+    return (
+        <div className="w-full">
+            <div className="flex items-center justify-between">
+                <label className="form-label mb-1">
+                    {label} {required ? <span className="text-danger">*</span> : null}
+                </label>
+            </div>
+
+            <Controller
+                control={control}
+                name={name}
+                render={({ field }) => (
+                    <StarRating
+                        value={field.value}
+                        onChange={(val) => field.onChange(val)}
+                    />
+                )}
+            />
+
+            {err ? <p className="text-danger text-xs mt-1">{err}</p> : null}
+        </div>
+    );
 };
 
 const RequisitionInterviewCompleteModal = ({
@@ -33,11 +146,10 @@ const RequisitionInterviewCompleteModal = ({
                                            }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const outcomeOptions = useMemo(
+    const recommendationOptions = useMemo(
         () => [
-            { value: "pass", label: "Pass" },
-            { value: "fail", label: "Fail" },
-            { value: "hold", label: "Hold" },
+            { value: "recommended", label: "Recommended" },
+            { value: "not_recommended", label: "Not Recommended" },
         ],
         []
     );
@@ -54,10 +166,24 @@ const RequisitionInterviewCompleteModal = ({
         defaultValues: DEFAULTS,
     });
 
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "feedback_items",
-    });
+    const watched = useWatch({ control });
+    const overallPreview = useMemo(() => {
+        const vals = [
+            Number(watched?.communication ?? 0),
+            Number(watched?.cultural_fit ?? 0),
+            Number(watched?.technical_expertise ?? 0),
+            Number(watched?.functional_expertise ?? 0),
+            Number(watched?.leadership ?? 0),
+        ];
+        const avg = vals.reduce((a, b) => a + b, 0) / 5;
+        return Number.isFinite(avg) ? (Math.round(avg * 100) / 100).toFixed(2) : "0.00";
+    }, [
+        watched?.communication,
+        watched?.cultural_fit,
+        watched?.technical_expertise,
+        watched?.functional_expertise,
+        watched?.leadership,
+    ]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -92,33 +218,24 @@ const RequisitionInterviewCompleteModal = ({
 
         setIsSubmitting(true);
         try {
-            // ✅ Build rubric (new API format)
-            const rubric = {};
-            (values.feedback_items || []).forEach((it) => {
-                const k = String(it?.key || "").trim();
-                if (!k) return;
-                rubric[k] = Number(it?.score ?? 0);
-            });
-
-            // ✅ feedback payload must be: { rubric: {...} }
-            const feedback = { rubric };
-            const note = String(values.feedback_notes || "").trim();
-            if (note) feedback.notes = note; // (optional) safe extra info if backend ignores/accepts
-
+            // ✅ New backend payload (flat)
             const payload = {
-                interviewer_rating: Number(values.interviewer_rating),
-                interviewer_notes: values.interviewer_notes || "",
-                outcome: values.outcome,
-                feedback,
+                communication: Number(values.communication),
+                cultural_fit: Number(values.cultural_fit),
+                technical_expertise: Number(values.technical_expertise),
+                functional_expertise: Number(values.functional_expertise),
+                leadership: Number(values.leadership),
+                recommendation: values.recommendation,
+                remarks: values.remarks || "",
             };
 
             const res = await completeInterview(interviewData.id, payload);
 
-            Notify.success("Interview completed successfully.");
+            Notify.success("Feedback submitted successfully.");
             onSuccess?.(res);
             onClose?.();
         } catch (e) {
-            Notify.error(e?.response?.data?.message || e?.message || "Failed to complete interview.");
+            Notify.error(e?.response?.data?.message || e?.message || "Failed to submit feedback.");
         } finally {
             setIsSubmitting(false);
         }
@@ -127,175 +244,116 @@ const RequisitionInterviewCompleteModal = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Complete Interview" width="max-w-4xl">
             <form onSubmit={handleSubmit(onSubmit)}>
-                {/* ✅ fixed height container + scrollable body + fixed footer */}
                 <div className="box flex flex-col max-h-[calc(100vh-12rem)]">
-                    {/* ✅ SCROLL AREA */}
+                    {/* SCROLL AREA */}
                     <div className="box-body flex-1 overflow-y-auto">
                         {/* info card */}
                         <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
                             <div className="flex items-start gap-2">
-                                <span className="text-amber-700 mt-0.5">
-                                    <Info size={16} />
-                                </span>
+                <span className="text-amber-700 mt-0.5">
+                  <Info size={16} />
+                </span>
 
                                 <div className="flex-1">
                                     <p className="text-sm font-semibold mb-0 text-amber-800">
-                                        Add interview rating and remarks
+                                        Submit structured interview feedback
                                     </p>
                                     <p className="text-sm mt-1 mb-0 text-amber-800">
-                                        Add scoring items (this will be sent as <span className="font-semibold">feedback.rubric</span>).
+                                        Use star ratings (supports half stars). Below is the Overall rating.
                                     </p>
+
+                                    <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-amber-200">
+                                        <span className="text-xs font-semibold text-amber-800">Overall (Preview)</span>
+                                        <span className="text-xs text-amber-900">{overallPreview}</span>
+                                    </div>
                                 </div>
 
                                 <span className="text-amber-700 mt-0.5">
-                                    <ClipboardCheck size={16} />
-                                </span>
+                  <ClipboardCheck size={16} />
+                </span>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-12 gap-4">
-                            {/* rating */}
+                            {/* Stars */}
                             <div className="xl:col-span-6 col-span-12">
-                                <FormInput
-                                    type="number"
-                                    step="0.5"
-                                    min="0"
-                                    max="5"
-                                    name="interviewer_rating"
+                                <StarRatingField
                                     control={control}
+                                    name="communication"
+                                    label="Communication"
                                     errors={errors}
-                                    placeholder="Rating"
-                                    is_required={true}
-                                    label="Interviewer Rating (0-5)"
                                 />
                             </div>
 
-                            {/* outcome */}
+                            <div className="xl:col-span-6 col-span-12">
+                                <StarRatingField
+                                    control={control}
+                                    name="cultural_fit"
+                                    label="Cultural Fit"
+                                    errors={errors}
+                                />
+                            </div>
+
+                            <div className="xl:col-span-6 col-span-12">
+                                <StarRatingField
+                                    control={control}
+                                    name="technical_expertise"
+                                    label="Technical Expertise"
+                                    errors={errors}
+                                />
+                            </div>
+
+                            <div className="xl:col-span-6 col-span-12">
+                                <StarRatingField
+                                    control={control}
+                                    name="functional_expertise"
+                                    label="Functional Expertise"
+                                    errors={errors}
+                                />
+                            </div>
+
+                            <div className="xl:col-span-6 col-span-12">
+                                <StarRatingField
+                                    control={control}
+                                    name="leadership"
+                                    label="Leadership"
+                                    errors={errors}
+                                />
+                            </div>
+
+                            {/* Recommendation */}
                             <div className="xl:col-span-6 col-span-12">
                                 <FormSelect
-                                    name="outcome"
+                                    name="recommendation"
                                     control={control}
                                     errors={errors}
-                                    placeholder="Outcome"
-                                    options={outcomeOptions}
+                                    placeholder="Select recommendation"
+                                    options={recommendationOptions}
                                     is_required={true}
-                                    label="Outcome"
+                                    label="Recommendation"
                                 />
                             </div>
 
-                            {/* notes */}
+                            {/* Remarks */}
                             <div className="col-span-12">
                                 <FormTextarea
-                                    name="interviewer_notes"
+                                    name="remarks"
                                     control={control}
                                     errors={errors}
-                                    placeholder="Write Remarks"
+                                    placeholder="Write remarks (optional)"
                                     rows={3}
-                                    label="Interviewer Notes"
+                                    label="Remarks"
                                 />
-                            </div>
-
-                            {/* scoring */}
-                            <div className="col-span-12">
-                                <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
-                                    <p className="font-semibold mb-0">Rubric Scoring</p>
-
-                                    <button
-                                        type="button"
-                                        className="ti-btn ti-btn-secondary ti-btn-md ti-btn-wave whitespace-nowrap"
-                                        onClick={() => append({ key: "", score: 0 })}
-                                    >
-                                        <span className="inline-flex items-center gap-2">
-                                            <PlusCircle size={16} />
-                                            Add Score
-                                        </span>
-                                    </button>
-                                </div>
-
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                                                Criteria
-                                            </th>
-                                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                                                Score (0-5)
-                                            </th>
-                                            <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">
-                                                Action
-                                            </th>
-                                        </tr>
-                                        </thead>
-
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                        {fields.map((f, idx) => (
-                                            <tr key={f.id}>
-                                                <td className="px-3 py-2 align-top">
-                                                    <FormInput
-                                                        label={false}
-                                                        name={`feedback_items.${idx}.key`}
-                                                        control={control}
-                                                        errors={errors}
-                                                        placeholder="e.g. React"
-                                                        className="w-full"
-                                                    />
-                                                </td>
-
-                                                <td className="px-3 py-2 align-top">
-                                                    <FormInput
-                                                        label={false}
-                                                        type="number"
-                                                        min="0"
-                                                        max="5"
-                                                        step="0.5"
-                                                        name={`feedback_items.${idx}.score`}
-                                                        control={control}
-                                                        errors={errors}
-                                                        placeholder="0 - 5"
-                                                        className="w-full max-w-[160px]"
-                                                    />
-                                                </td>
-
-                                                <td className="px-3 py-2 text-right align-top">
-                                                    <button
-                                                        type="button"
-                                                        className="ti-btn ti-btn-danger ti-btn-sm ti-btn-wave !px-2.5 !py-2"
-                                                        title="Remove"
-                                                        onClick={() => remove(idx)}
-                                                        disabled={fields.length === 1}
-                                                    >
-                                                            <span className="inline-flex items-center justify-center">
-                                                                <Trash2 size={16} />
-                                                            </span>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <div className="mt-3">
-                                    <FormTextarea
-                                        name="feedback_notes"
-                                        control={control}
-                                        errors={errors}
-                                        placeholder='FeedBack'
-                                        rows={2}
-                                        label="Additional Note"
-                                    />
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* ✅ FIXED FOOTER (no scroll) */}
+                    {/* FIXED FOOTER */}
                     <div className="shrink-0 px-6 py-4 border-t border-dashed sm:flex justify-end gap-3 bg-white dark:bg-bodybg">
                         <button type="button" onClick={onClose} className="ti-btn ti-btn-light ti-btn-wave">
                             Cancel
                         </button>
-                        <FormButton isLoading={isSubmitting} text="Complete Interview" className="ti-btn-success" />
+                        <FormButton isLoading={isSubmitting} text="Submit Feedback" className="ti-btn-success" />
                     </div>
                 </div>
             </form>

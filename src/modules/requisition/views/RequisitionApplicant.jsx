@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import IconTabs from "@components/IconTabs.jsx";
 import IconPageHeader from "@modules/layouts/includes/IconPageHeader.jsx";
-import { Users, BadgeCheck, CalendarCheck2, CalendarX, ClipboardCheck } from "lucide-react";
+import { Users, BadgeCheck, CalendarCheck2, CalendarX, ClipboardCheck, Hourglass, Handshake  } from "lucide-react";
 
 import RequisitionAllApplicantList from "../views/RequisitionAllApplicantList.jsx";
 import RequisitionShortlistedApplicant from "../views/RequisitionShortlistedApplicant.jsx";
@@ -11,6 +11,8 @@ import RequisitionInterviewScheduledApplicant from "../views/RequisitionIntervie
 
 import RequisitionInterviewCancelledApplicant from "../views/RequisitionInterviewCancelledApplicant.jsx";
 import RequisitionInterviewCompletedApplicant from "../views/RequisitionInterviewCompletedApplicant.jsx";
+import RequisitionDecisionPendingApplicant from "./RequisitionDecisionPendingApplicant.jsx";
+import RequisitionOfferPipelineApplicant from "./RequisitionOfferPipelineApplicant.jsx";
 
 const DEFAULT_TAB = "all";
 
@@ -102,6 +104,29 @@ const RequisitionApplicant = () => {
                             />
                         ),
                     },
+                    {
+                        id: "decision_pending",
+                        label: "Decision Pending",
+                        icon: <Hourglass className="text-warning" />,
+                        content: (
+                            <RequisitionDecisionPendingApplicant
+                                requisitionId={requisitionId}
+                                isActive={activeTab === "decision_pending"}
+                            />
+                        ),
+                    },
+                    {
+                        id: "offer_pipeline",
+                        label: "Offer Pipeline",
+                        icon: <Handshake className="text-primary" />,
+                        content: (
+                            <RequisitionOfferPipelineApplicant
+                                requisitionId={requisitionId}
+                                isActive={activeTab === "offer_pipeline"}
+                            />
+                        ),
+                    },
+
                 ]}
             />
         </>

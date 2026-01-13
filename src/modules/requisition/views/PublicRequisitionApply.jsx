@@ -39,7 +39,7 @@ const BRAND = {
 };
 
 /** ---------------------- VALIDATION HELPERS ---------------------- */
-const CNIC_REGEX = /^\d{13}$/; // e.g. 37203798844979 (14 digits)
+const CNIC_REGEX = /^\d{14}$/; // e.g. 37203798844979 (14 digits)
 const PK_MOBILE_REGEX = /^0\d{10}$/; // e.g. 01234567891 (11 digits, starts with 0)
 const DOB_MIN = new Date("1950-01-01T00:00:00");
 
