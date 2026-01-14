@@ -4,35 +4,11 @@ import DataTable from "@components/datatable/DataTable.jsx";
 import Avatar from "@components/Avatar.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import {
-    Sparkles,
-    BadgeCheck,
-    XCircle,
-    CalendarPlus,
-    History,
-    Star,
-} from "lucide-react";
+import {History, Handshake, Star} from "lucide-react";
 
-import RequisitionInterviewFormWrapper from "../models/components/RequisitionInterviewFormWrapper.jsx";
-
-const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => {
+const RequisitionDecisionPendingApplicant = ({ requisitionId, isActive }) => {
     const [refreshKey, setRefreshKey] = useState(0);
-
     const navigate = useNavigate();
-
-    // ✅ schedule next interview modal
-    const [isInterviewFormOpen, setIsInterviewFormOpen] = useState(false);
-    const [selectedApplicationId, setSelectedApplicationId] = useState(null);
-
-    const openInterviewModal = (applicationId) => {
-        setSelectedApplicationId(applicationId);
-        setIsInterviewFormOpen(true);
-    };
-
-    const closeInterviewModal = () => {
-        setIsInterviewFormOpen(false);
-        setSelectedApplicationId(null);
-    };
 
     const renderUserCell = (userObj) => {
         if (!userObj) return "—";
@@ -67,8 +43,8 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
         }
         return (
             <span title={value} className="truncate inline-block max-w-[240px] align-middle">
-                {value}
-            </span>
+        {value}
+      </span>
         );
     };
 
@@ -89,30 +65,28 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                 </button>
                             </Link>
 
-                            {/* ✅ Interview History */}
+                            {/* Interview History */}
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-light ti-btn-sm"
                                 title="Interview History"
-                                onClick={() =>
-                                    navigate(`/module/requisition/${requisitionId}/applicants/${appId}/interviews`)
-                                }
+                                onClick={() => navigate(`/module/requisition/${requisitionId}/applicants/${appId}/interviews`)}
                             >
-                                <span className="inline-flex items-center gap-1">
-                                    <History size={16} />
-                                </span>
+                <span className="inline-flex items-center gap-1">
+                  <History size={16} />
+                </span>
                             </button>
 
-                            {/* ✅ Completed tab: schedule next round */}
+                            {/* Proceed to Offer (UI only: redirect to detail page) */}
                             <button
                                 type="button"
-                                className="ti-btn ti-btn-primary ti-btn-sm"
-                                title="Schedule Next Round"
-                                onClick={() => openInterviewModal(appId)}
+                                className="ti-btn ti-btn-success ti-btn-sm"
+                                title="Proceed to Offer"
+                                onClick={() => navigate(`/module/requisition/${requisitionId}/applicants/${appId}?section=offer`)}
                             >
-                                <span className="inline-flex items-center gap-1">
-                                    <CalendarPlus size={16} />
-                                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Handshake size={16} />
+                </span>
                             </button>
                         </div>
                     );
@@ -151,22 +125,22 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
             { Header: "City", accessor: "city", filterType: "text", filterable: true },
 
             {
-                Header: "Interview At",
-                id: "next_interview_scheduled_at",
+                Header: "Last Interview At",
+                id: "last_interview_scheduled_at",
                 accessor: (r) => r?.next_interview?.scheduled_at || null,
                 filterable: false,
                 Cell: ({ value }) => (value ? new Date(value).toLocaleString() : "—"),
             },
             {
-                Header: "Round",
-                id: "next_interview_round",
+                Header: "Last Round",
+                id: "last_interview_round",
                 accessor: (r) => r?.next_interview?.round || "",
                 filterable: false,
                 Cell: ({ value }) => (value ? toTitleCase(value.replaceAll("_", " ")) : "—"),
             },
             {
                 Header: "Type",
-                id: "next_interview_type",
+                id: "last_interview_type",
                 accessor: (r) => r?.next_interview?.interview_type || "",
                 filterable: false,
                 Cell: ({ value }) => (value ? toTitleCase(value) : "—"),
@@ -226,7 +200,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
 
             {
                 Header: "Scheduled By",
-                id: "next_interview_scheduled_by",
+                id: "last_interview_scheduled_by",
                 accessor: (r) => r?.next_interview?.scheduled_by || null,
                 filterable: false,
                 getCellProps: () => ({ className: "!text-left" }),
@@ -234,7 +208,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
             },
             {
                 Header: "Interview Status",
-                id: "next_interview_status",
+                id: "last_interview_status",
                 accessor: (r) => r?.next_interview?.status || "",
                 filterable: false,
                 headerClassName: "!text-center",
@@ -256,7 +230,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
             },
             {
                 Header: "Location / Link",
-                id: "next_interview_link",
+                id: "last_interview_link",
                 accessor: (r) => r?.next_interview?.link_or_location || "",
                 filterable: false,
                 getCellProps: () => ({ className: "!text-left" }),
@@ -283,36 +257,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 filterable: true,
                 Cell: ({ value }) => (value ?? value === 0 ? `${Number(value).toFixed(2)}%` : "—"),
             },
-            {
-                Header: "AI Recommended",
-                accessor: "ai_shortlisted",
-                filterType: "boolean",
-                filterable: true,
-                Cell: ({ value }) =>
-                    value ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-                            <Sparkles size={14} /> AI Recommended <BadgeCheck size={14} />
-                        </span>
-                    ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-light text-default">
-                            <XCircle size={14} /> Not Recommended
-                        </span>
-                    ),
-            },
-            {
-                Header: "Resume",
-                accessor: "resume_file_url",
-                disableSortBy: true,
-                filterable: false,
-                Cell: ({ value }) =>
-                    value ? (
-                        <a href={value} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-                            View
-                        </a>
-                    ) : (
-                        "—"
-                    ),
-            },
+
             {
                 Header: "Applied At",
                 accessor: "created_at",
@@ -326,28 +271,14 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
     if (!isActive) return null;
 
     return (
-        <>
-            <DataTable
-                key={refreshKey}
-                columns={columns}
-                title="Interview Completed Applicants"
-                apiUrl={`/requisitions/${requisitionId}/applicants/interviews/datatable/?bucket=completed`}
-                enableAdvancedFilters={true}
-            />
-
-            {/* ✅ only schedule interview modal */}
-            <RequisitionInterviewFormWrapper
-                requisitionId={requisitionId}
-                applicationId={selectedApplicationId}
-                isOpen={isInterviewFormOpen}
-                onClose={closeInterviewModal}
-                onSuccess={() => {
-                    closeInterviewModal();
-                    setRefreshKey((k) => k + 1);
-                }}
-            />
-        </>
+        <DataTable
+            key={refreshKey}
+            columns={columns}
+            title="Decision Pending Applicants"
+            apiUrl={`/requisitions/${requisitionId}/applicants/decision-pending/datatable`}
+            enableAdvancedFilters={true}
+        />
     );
 };
 
-export default RequisitionInterviewCompletedApplicant;
+export default RequisitionDecisionPendingApplicant;

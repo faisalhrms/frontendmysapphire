@@ -12,6 +12,8 @@ import EditObjective from "@modules/employee-self-services/objectives/views/Edit
 import ObjectiveDetail from "@modules/employee-self-services/objectives/views/ObjectiveDetail.jsx";
 import TeamObjectivesList from "@modules/employee-self-services/objectives/views/TeamObjectivesList.jsx";
 import BrandBook from "@modules/employee-self-services/brand-book/views/BrandBook.jsx";
+import CourseOffering from "@modules/employee-self-services/course-learning/views/CourseOffering.jsx";
+import CourseOfferingDetail from "@modules/employee-self-services/course-learning/components/CourseOfferingDetail.jsx";
 export const SELF_SERVICES_ROUTES = {
     SERVICES: {
         READ: {
@@ -67,7 +69,15 @@ export const SELF_SERVICES_ROUTES = {
             path: "/module/ess/brand-book",
             permission:"user.view_ess_modules"
 
-        }
+        },
+        E_LEARNING: {
+            path: "/module/ess/courses",
+            permission:"lms.manage_course_offerings"
+        },
+        E_LEARNING_DETAIL: {
+            path: "/module/ess/course/:slug",
+            permission:"lms.manage_course_offerings"
+        },
 
     }
 };
@@ -136,5 +146,15 @@ export const MODULE_ROUTES = [
         path:SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.path,
         component:BrandBook,
         permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
-    }
+    },
+    {
+        path: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.path,
+        component: CourseOffering,
+        permission: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.permission,
+    },
+    {
+        path: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING_DETAIL.path,
+        component: CourseOfferingDetail,
+        permission: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.permission,
+    },
 ];

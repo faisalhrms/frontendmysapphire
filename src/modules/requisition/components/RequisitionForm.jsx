@@ -449,16 +449,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                             </div>
                         </div>
 
-                        {currentUser?.employee?.company?.name && (
-                            <div className="box mt-4">
-                                <div className="box-header">
-                                    <div className="box-title">Company</div>
-                                </div>
-                                <div className="box-body">
-                                    <div className="text-sm">{currentUser.employee.company.name}</div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </form>
