@@ -318,7 +318,7 @@ const RequisitionInterviewCancelledApplicant = ({ requisitionId, isActive }) => 
                 key={refreshKey}
                 columns={columns}
                 title="Interview Cancelled Applicants"
-                apiUrl={`/requisitions/${requisitionId}/applicants/interviews/datatable?bucket=cancelled`}
+                apiUrl={`/requisitions/${requisitionId}/applicants/interviews/datatable/?bucket=cancelled`}
                 enableAdvancedFilters={true}
             />
 

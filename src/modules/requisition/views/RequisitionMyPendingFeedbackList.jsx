@@ -8,9 +8,10 @@ import Avatar from "@components/Avatar.jsx";
 import Notify from "@helpers/toastNotifications.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import { Eye, ClipboardCheck, Sparkles, BadgeCheck, XCircle } from "lucide-react";
+import {Eye, ClipboardCheck, Sparkles, BadgeCheck, XCircle, MessagesSquare} from "lucide-react";
 
 import RequisitionInterviewCompleteWrapper from "../models/components/RequisitionInterviewCompleteWrapper.jsx";
+import IconPageHeader from "../../layouts/includes/IconPageHeader.jsx";
 
 // ✅ best-effort: try to resolve logged in user id from common storage keys
 const tryGetCurrentUserId = () => {
@@ -450,10 +451,15 @@ export default function RequisitionMyPendingFeedbackList() {
 
     return (
         <>
+            <IconPageHeader
+                heading="Pending Interview Feedback"
+                description="Review assigned applicants and submit your pending interview feedback."
+                icon={MessagesSquare}
+            />
             <DataTable
                 key={refreshKey}
                 columns={columns}
-                title="My Pending Feedback"
+                needHeader={false}
                 apiUrl={`/requisitions/applicants/my-pending-feedback/datatable/`}
                 enableAdvancedFilters={true}
             />

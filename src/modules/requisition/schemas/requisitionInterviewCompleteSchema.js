@@ -2,19 +2,12 @@
 import { z } from "zod";
 
 export const requisitionInterviewCompleteSchema = z.object({
-    interviewer_rating: z.coerce.number().min(0).max(5),
-    interviewer_notes: z.string().optional().nullable(),
-    outcome: z.enum(["pass", "fail", "hold"]).default("pass"),
+    communication: z.coerce.number().min(0).max(5),
+    cultural_fit: z.coerce.number().min(0).max(5),
+    technical_expertise: z.coerce.number().min(0).max(5),
+    functional_expertise: z.coerce.number().min(0).max(5),
+    leadership: z.coerce.number().min(0).max(5),
 
-    // UI rows -> will be converted into feedback.rubric
-    feedback_items: z
-        .array(
-            z.object({
-                key: z.string().min(1, "Criteria is required"),
-                score: z.coerce.number().min(0).max(5),
-            })
-        )
-        .default([{ key: "communication", score: 0 }]),
-
-    feedback_notes: z.string().optional().nullable(),
+    recommendation: z.enum(["recommended", "not_recommended"]).default("recommended"),
+    remarks: z.string().optional().nullable(),
 });

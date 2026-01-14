@@ -204,7 +204,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                             name="designation"
                                             control={control}
                                             errors={errors}
-                                            placeholder="Designation"
+                                            placeholder="Grade"
                                             apiUrl="/select/designations/"
                                             queryKeyBase="designations"
                                             preselectedOptions={formatOptions(requisitionData, "designation", "id", "name")}
@@ -373,7 +373,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                             name="target_salary_currency"
                                             control={control}
                                             errors={errors}
-                                            placeholder="Currency (e.g., PKR)"
+                                            placeholder="Currency"
                                             maxLength={3}
                                         />
                                     </div>
@@ -425,6 +425,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                     {/* ✅ validity_days numeric */}
                                     <div className="col-span-12">
                                         <FormInput
+                                            is_required
                                             type="number"
                                             name="validity_days"
                                             control={control}
@@ -448,16 +449,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                             </div>
                         </div>
 
-                        {currentUser?.employee?.company?.name && (
-                            <div className="box mt-4">
-                                <div className="box-header">
-                                    <div className="box-title">Company</div>
-                                </div>
-                                <div className="box-body">
-                                    <div className="text-sm">{currentUser.employee.company.name}</div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </form>

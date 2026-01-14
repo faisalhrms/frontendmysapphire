@@ -223,19 +223,17 @@ export const getAgreementMentionUsers = async (id, opts = {}) => {
   return res.data?.data || res.data
 }
 
-export const exportReadAgreementsExcel = async ({ ids = [], s = "" } = {}, opts = {}) => {
-  try {
-    const params = {}
-    if (ids.length) params.ids = ids.join(",")
-    if (s) params.s = s
-    const res = await api.get(`${ROOT}/agreements/read-export/`, {
-      params,
-      responseType: "blob",
-      signal: opts.signal,
-    })
-    return res
-  } catch (error) {
-    Notify.error(serverMessage(error, "Failed to download agreements report"))
-    throw error
-  }
-}
+export const exportReadAgreementsExcel = ({ ids, s, cancelled = false } = {}) => {
+  const params = new URLSearchParams();
+
+  if (ids && ids.length) params.set("ids", ids.join(","));
+  if (s) params.set("s", s);
+  if (cancelled) params.set("cancelled", "true");
+
+  const qs = params.toString();
+  const url = qs
+    ? `customer-hub/agreements/read-export/?${qs}`
+    : `customer-hub/agreements/read-export/`;
+
+  return api.get(url, { responseType: "blob" });
+};

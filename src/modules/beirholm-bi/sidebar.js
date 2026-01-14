@@ -1,5 +1,6 @@
 import {generateSidebarItem} from "@helpers/formatters.js";
-import {BEIRHOLM_BI_ROUTES} from "@modules/beirholm-bi/routes.js";
+import {BEIRHOLM_BI_ROUTES, COMPETITORS_ROUTES} from "@modules/beirholm-bi/routes.js";
+import {FORMS_ROUTES} from "@modules/forms/routes.js";
 
 
 export const sidebarMenu = [
@@ -68,14 +69,32 @@ export const sidebarMenu = [
                 '',
                 BEIRHOLM_BI_ROUTES.DATA_HEALTH_FLOW_LIST.permission
             ),
-
             generateSidebarItem(
-                BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
-                'link',
-                'Competitor Analysis',
-                7,
-                '',
-                BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission
+                "",
+                "sub",
+                "Competitor Analysis",
+                8,
+                "bx bx-target-lock",
+                "",
+                [
+
+                    generateSidebarItem(
+                        BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.path,
+                        "link",
+                        " Overview",
+                        1,
+                        "bx bx-message-square-edit",
+                         BEIRHOLM_BI_ROUTES.COMPETITOR_ANALYSIS.permission
+                    ),
+                      generateSidebarItem(
+                        COMPETITORS_ROUTES.READ.path,
+                        "link",
+                        "Analysis",
+                        1,
+                        "bx bx-message-square-edit",
+                         COMPETITORS_ROUTES.READ.permission
+                    ),
+                ]
             ),
         ]
     )

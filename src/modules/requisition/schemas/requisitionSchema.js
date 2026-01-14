@@ -62,7 +62,11 @@ const requisitionSchema = z
 
         publish_on_approval: z.boolean().default(true),
 
-        validity_days: z.coerce.number().int().min(0, "Must be 0 or greater").default(0),
+        validity_days: z
+            .coerce
+            .number({ required_error: "Validity Days is required" })
+            .int("Validity Days must be a whole number")
+            .min(0, "Validity Days must be 0 or greater"),
 
         channels: z.array(z.union([z.string(), z.object({ value: z.string(), label: z.string().optional() })])).default([]),
 
