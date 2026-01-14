@@ -1,23 +1,12 @@
 import React, { useRef, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
-import { COURSE_ENROLLMENT_ROUTES, COURSE_OFFERING_ROUTES } from "@modules/lms/routes.js";
+import {COURSE_ENROLLMENT_ROUTES, COURSE_OFFERING_ROUTES, LMS_ROUTES} from "@modules/lms/routes.js";
 import CourseOfferingAssignModal from "@modules/lms/components/CourseOfferingAssignModal.jsx";
 import api from "@config/axiosConfig.js";
 import { toast } from "react-toastify";
 
 const HR_CREATE_ENDPOINT = "/lms/course-enrollments/hr/";
-
-const Badge = ({ ok, children }) => (
-    <span
-        className={[
-            "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-            ok ? "bg-success/10 text-success" : "bg-danger/10 text-danger",
-        ].join(" ")}
-    >
-        {children}
-    </span>
-);
 
 const formatDateOnly = (value) => {
     if (!value) return "—";
@@ -37,7 +26,6 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
 
     const [advancedFilters, setAdvancedFilters] = useState([]);
 
-    // ✅ NEW: modal default values (offering_id auto from row)
     const [assignDefaults, setAssignDefaults] = useState({
         offering_id: null,
         user_ids: [],
@@ -47,7 +35,6 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
 
     const onCloseModal = () => setOpenAssignModal(false);
 
-    // ✅ UPDATED: open modal WITH selected offering_id
     const onOpenModal = (offeringRow) => {
         const offeringId = offeringRow?.id ?? null;
 
@@ -114,7 +101,6 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
                 accessor: "course_title",
                 filterable: true,
 
-                // ✅ click course text → open modal and auto set offering_id
                 Cell: ({ value, row }) => {
                     const label = value ?? row.original?.course?.title ?? "—";
                     return (
@@ -171,6 +157,51 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
                 width: 140,
             },
             {
+                Header: "Rating",
+                accessor: "avg_rating",
+                filterable: false,
+                width: 170,
+                disableSortBy: true,
+                Cell: ({ row }) => {
+                    const avg = Number(row.original?.avg_rating ?? 0);
+                    const count = Number(row.original?.review_count ?? 0);
+
+                    const rounded = Math.round(avg * 10) / 10;
+                    const starsFilled = Math.round(rounded);
+                    const stars = Array.from({ length: 5 }, (_, i) => i < starsFilled);
+
+                    return (
+                        <div className="flex items-center gap-2 whitespace-nowrap">
+                            {/* Stars */}
+                            <div className="flex items-center gap-0.5">
+                                {stars.map((filled, i) => (
+                                    <svg
+                                        key={i}
+                                        viewBox="0 0 20 20"
+                                        className={`w-4 h-4 ${filled ? "text-warning" : "text-zinc-200"}`}
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.964a1 1 0 00.95.69h4.17c.969 0 1.371 1.24.588 1.81l-3.374 2.452a1 1 0 00-.364 1.118l1.286 3.964c.3.921-.755 1.688-1.538 1.118l-3.374-2.452a1 1 0 00-1.175 0l-3.374 2.452c-.783.57-1.838-.197-1.538-1.118l1.286-3.964a1 1 0 00-.364-1.118L2.05 9.391c-.783-.57-.38-1.81.588-1.81h4.17a1 1 0 00.95-.69l1.286-3.964z" />
+                                    </svg>
+                                ))}
+                            </div>
+
+                            {/* Numbers */}
+                            <div className="text-xs font-semibold text-zinc-900">
+                                {count > 0 ? (
+                                    <>
+                                        {rounded} <span className="text-zinc-400 font-normal">({count})</span>
+                                    </>
+                                ) : (
+                                    <span className="text-zinc-400">—</span>
+                                )}
+                            </div>
+                        </div>
+                    );
+                },
+            },
+            {
                 Header: "Start",
                 accessor: "started_at",
                 filterable: true,
@@ -197,8 +228,15 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
                                 title="View"
                                 type="button"
                             >
-                                <i className="ri-eye-line" />
+                                <i className="ri-eye-line"/>
                             </button>
+
+                            <Link
+                                className="ti-btn ti-btn-warning ti-btn-sm"
+                                to={`/module/lms/course-offerings/dashboard/${id}`}
+                            >
+                                <i className="ri-flow-chart"/>
+                            </Link>
 
                             <button
                                 className="ti-btn ti-btn-primary ti-btn-sm"
@@ -206,17 +244,16 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
                                 title="Edit"
                                 type="button"
                             >
-                                <i className="ri-edit-line" />
+                                <i className="ri-edit-line"/>
                             </button>
 
-                            {/* ✅ click here also auto picks offering_id, and modal shows without offering select */}
                             <button
                                 className="ti-btn ti-btn-info ti-btn-sm"
                                 onClick={() => onOpenModal(row.original)}
                                 title="Course Enrollment"
                                 type="button"
                             >
-                                <i className="ri-user-add-line" />
+                                <i className="ri-user-add-line"/>
                             </button>
 
                             <button
@@ -225,7 +262,7 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
                                 title="View Enrollments"
                                 type="button"
                             >
-                                <i className="ri-team-line" />
+                                <i className="ri-team-line"/>
                             </button>
                         </div>
                     );
@@ -251,7 +288,6 @@ export default function CourseOfferingList({ isActive = true, externalFilters = 
                 apiUrl="/lms/course-offerings/datatable/"
                 columns={columns}
                 externalFilters={externalFilters}
-                title="Course Offerings"
                 buttons={buttons}
                 enableAdvancedFilters={true}
                 advancedFilters={advancedFilters}

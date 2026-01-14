@@ -27,17 +27,10 @@ export default function LmsScorm({ isActive: componentActive = true }) {
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [editingId, setEditingId] = useState(null);
-    const [advancedFilters, setAdvancedFilters] = useState([]);
 
     const [selectedZip, setSelectedZip] = useState(null);
     const [existingZipName, setExistingZipName] = useState("");
     const [reloadKey, setReloadKey] = useState(0);
-
-    const [showPlayer, setShowPlayer] = useState(false);
-    const [playerTitle, setPlayerTitle] = useState("");
-    const [playerUrl, setPlayerUrl] = useState("");
-    const [playerLoading, setPlayerLoading] = useState(false);
-    const [playerError, setPlayerError] = useState("");
 
     const {
         control,
@@ -83,15 +76,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
         cleanupHsOverlay();
     }, [reset]);
 
-    const closePlayer = () => {
-        setShowPlayer(false);
-        setPlayerTitle("");
-        setPlayerUrl("");
-        setPlayerError("");
-        setPlayerLoading(false);
-        cleanupHsOverlay();
-    };
-
     const handleEdit = async (id) => {
         try {
             cleanupHsOverlay();
@@ -120,51 +104,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
             setShowModal(true);
         } catch (err) {
             console.error(err);
-        }
-    };
-    const iframeRef = useRef(null);
-
-    const iframeSrc = useMemo(() => {
-        if (!playerUrl || !showPlayer) return "";
-        const sep = playerUrl.includes("?") ? "&" : "?";
-        return `${playerUrl}${sep}v=${Date.now()}`;
-    }, [playerUrl, showPlayer]);
-
-
-    /**
-     * ✅ FIXED PLAY:
-     * Use EXACT same URL building as your working "story.html" code:
-     *    VITE_API_BASE_URL + detail.launch_url
-     * This supports launch_url like:
-     *    /api/lms/media/lms/scorm/extracted/.../story.html
-     */
-    const handlePlay = async (pkg) => {
-        try {
-            cleanupHsOverlay();
-            setPlayerLoading(true);
-            setPlayerError("");
-            setPlayerTitle(pkg?.title || "SCORM Player");
-            setPlayerUrl("");
-            setShowPlayer(true);
-
-            const res = await api.get(`/lms/scorm-packages/${pkg.id}/`);
-            const detail = res.data?.data;
-            const url = detail?.launch_url;
-
-            if (!url) {
-                setPlayerError("No SCORM URL found.");
-                setPlayerUrl("");
-                return;
-            }
-
-            setPlayerUrl(url);
-        } catch (err) {
-            console.error("Play error:", err.response?.data || err);
-            setPlayerError(err.response?.data?.message || "Failed to load SCORM content");
-            setPlayerUrl("");
-        } finally {
-            setPlayerLoading(false);
-            cleanupHsOverlay();
         }
     };
 
@@ -243,15 +182,12 @@ export default function LmsScorm({ isActive: componentActive = true }) {
                 accessor: "is_active",
                 Header: "Active",
                 filterable: true,
-                Cell: ({ row }) => (
-                    <span
-                        className={`px-2 py-1 rounded text-xs ${
-                            row.original.is_active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-700"
-                        }`}
-                    >
-                        {row.original.is_active ? "Yes" : "No"}
-                    </span>
-                ),
+                Cell: ({value}) => (value ? 'Yes': 'No'),
+                getCellProps: (cellInfo) => {
+                    return {
+                        className: cellInfo.value ? 'bg-success text-white' : 'bg-info text-white',
+                    }
+                },
             },
             { accessor: "created_at", Header: "Created At" },
             {
@@ -261,14 +197,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
                 disableSortBy: true,
                 Cell: ({ row }) => (
                     <div className="flex justify-center space-x-2">
-                        <button
-                            onClick={() => handlePlay(row.original)}
-                            className="ti-btn ti-btn-success ti-btn-sm flex items-center justify-center"
-                            title="Play"
-                        >
-                            <i className="ri-play-circle-line text-lg"></i>
-                        </button>
-
                         <button
                             onClick={() => handleEdit(row.original.id)}
                             className="ti-btn ti-btn-primary ti-btn-sm flex items-center justify-center"
@@ -285,74 +213,6 @@ export default function LmsScorm({ isActive: componentActive = true }) {
 
     return (
         <div className="p-4">
-            {/* Player Modal */}
-            {showPlayer && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl mx-4 dark:text-gray-200 dark:bg-bodybg">
-                        <div className="ti-modal-header flex justify-between items-center p-4 border-b">
-                            <h6 className="modal-title text-lg font-semibold">{playerTitle}</h6>
-                            <button
-                                type="button"
-                                className="text-gray-500 hover:text-gray-700 text-xl"
-                                onClick={closePlayer}
-                            >
-                                <i className="ri-close-line"></i>
-                            </button>
-                        </div>
-
-                        <div className="ti-modal-body p-4">
-                            {playerError ? (
-                                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{playerError}</div>
-                            ) : playerLoading ? (
-                                <div className="flex flex-col items-center justify-center py-12">
-                                    <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin"></div>
-                                    <p className="mt-4 text-sm text-gray-600">Loading SCORM content...</p>
-                                </div>
-                            ) : playerUrl ? (
-                                <div className="border rounded-lg overflow-hidden">
-                                    <div
-                                        className="px-3 py-2 text-xs text-gray-500 bg-gray-50 border-b font-mono break-all">
-                                        {playerUrl}
-                                    </div>
-                                    <iframe
-                                        ref={iframeRef}
-                                        title="course-player"
-                                        src={iframeSrc}
-                                        className="h-full w-full bg-white"
-                                        allow="fullscreen; autoplay"
-                                        onLoad={() => {
-                                            // Best-effort: help nested frames find API
-                                            try {
-                                                const w = iframeRef.current?.contentWindow;
-                                                if (w) {
-                                                    w.API = window.API;
-                                                    w.API_1484_11 = window.API_1484_11;
-                                                }
-                                            } catch {
-                                                // ignore
-                                            }
-                                        }}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
-                                    No SCORM URL found.
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="ti-modal-footer flex justify-end gap-2 p-4 border-t">
-                            <button
-                                type="button"
-                                onClick={closePlayer}
-                                className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Add/Edit Modal */}
             {showModal && (
@@ -498,12 +358,9 @@ export default function LmsScorm({ isActive: componentActive = true }) {
             <DataTable
                 key={reloadKey}
                 columns={columns}
-                title="SCORM Packages"
                 buttons={buttons}
                 apiUrl="/lms/scorm-packages/datatable/"
                 enableAdvancedFilters={true}
-                advancedFilters={advancedFilters}
-                setAdvancedFilters={setAdvancedFilters}
             />
         </div>
     );

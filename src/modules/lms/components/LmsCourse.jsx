@@ -24,17 +24,6 @@ function Modal({ open, title, children, onClose }) {
     );
 }
 
-const Badge = ({ ok, children }) => (
-    <span
-        className={[
-            "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-            ok ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700",
-        ].join(" ")}
-    >
-        {children}
-    </span>
-);
-
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
 
 export default function CoursesPage({ isActive = true, externalFilters = [] }) {
@@ -45,8 +34,6 @@ export default function CoursesPage({ isActive = true, externalFilters = [] }) {
     const [open, setOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [tableKey, setTableKey] = useState(0);
-    const [advancedFilters, setAdvancedFilters] = useState([]);
-
     const {
         control,
         register,
@@ -126,23 +113,12 @@ export default function CoursesPage({ isActive = true, externalFilters = [] }) {
                 accessor: "is_active",
                 Header: "Active",
                 filterable: true,
+                Cell: ({value}) => (value ? 'Yes': 'No'),
                 getCellProps: (cellInfo) => {
-                    const value = cellInfo.value;
                     return {
-                        className: value ? "bg-success text-white" : "bg-red text-white",
-                    };
+                        className: cellInfo.value ? 'bg-success text-white' : 'bg-info text-white',
+                    }
                 },
-                Cell: ({ row }) => (
-                    <span
-                        className={`px-2 py-1 rounded text-xs ${
-                            row.original.is_active
-                                ? "bg-green-100 text-green-800"
-                                : "bg-gray-100 text-gray-700"
-                        }`}
-                    >
-                        {row.original.is_active ? "Yes" : "No"}
-                    </span>
-                ),
             },
             {
                 Header: "SCORM",
@@ -196,12 +172,9 @@ export default function CoursesPage({ isActive = true, externalFilters = [] }) {
                 key={tableKey}
                 ref={tableRef}
                 columns={columns}
-                title="LMS Courses"
                 buttons={buttons}
                 apiUrl="/lms/courses/datatable/"
                 enableAdvancedFilters={true}
-                advancedFilters={advancedFilters}
-                setAdvancedFilters={setAdvancedFilters}
             />
 
             <Modal
@@ -215,8 +188,7 @@ export default function CoursesPage({ isActive = true, externalFilters = [] }) {
                         control={control}
                         errors={errors}
                         label={true}
-                        placeholder="Fire Safety Training"
-                        rules={{ required: "Title is required" }}
+                        placeholder="Title"
                         is_required={true}
                     />
 

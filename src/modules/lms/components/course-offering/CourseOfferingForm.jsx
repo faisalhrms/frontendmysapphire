@@ -44,7 +44,7 @@ export default function CourseOfferingForm({
         defaultValues: {
             company_id: null,
             course_id: null,
-            is_published: false,
+            is_published: true,
             started_at: "",
             ended_at: "",
             allow_self_enroll: true,
@@ -245,6 +245,7 @@ export default function CourseOfferingForm({
                             isDisabled={isEdit}
                             needObject={false}
                             rules={{ required: "Please select a course" }}
+                            is_required={true}
                         />
                         {errors.course_id && (
                             <p className="text-xs text-red-600 mt-1">{errors.course_id.message}</p>

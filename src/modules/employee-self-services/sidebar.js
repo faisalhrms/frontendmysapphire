@@ -61,18 +61,18 @@ export const sidebarMenu = [
                 SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission,
             ),
             generateSidebarItem(
-                SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
+                SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.path,
                 "link",
-                "Course Learing",
+                "E-Learning",
                 7,
                 "",
-                SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.permission
+                SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.permission
             ),
             generateSidebarItem(
                 "",
                 "sub",
                 "PAS",
-                7,
+                8,
                 "bx bx-target-lock",
                 "",
                 [

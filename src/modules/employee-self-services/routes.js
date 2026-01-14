@@ -69,23 +69,14 @@ export const SELF_SERVICES_ROUTES = {
             path: "/module/ess/brand-book",
             permission:"user.view_ess_modules"
 
-        }
-        ,
-        // COURSE_LEARING:{
-        //     path: "/module/ess/course-learing",
-        //     // permission:"user.view_ess_modules"
-        //
-        // },
-        // COURSE_LEARING_DETAIL: {
-        //     path: "/module/ess/course-learing/:id",
-        //
-        // },
-        COURSE_LEARING: {
-            path: "/module/ess/courses",
-            // permission:"user.view_ess_modules"
         },
-        COURSE_LEARING_DETAIL: {
+        E_LEARNING: {
+            path: "/module/ess/courses",
+            permission:"lms.manage_course_offerings"
+        },
+        E_LEARNING_DETAIL: {
             path: "/module/ess/course/:slug",
+            permission:"lms.manage_course_offerings"
         },
 
     }
@@ -156,21 +147,14 @@ export const MODULE_ROUTES = [
         component:BrandBook,
         permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
     },
-    // {
-    //     path:SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
-    //     component:CourseOffering,
-    //     // permission: SELF_SERVICES_ROUTES.SERVICES.BRAND_BOOK.permission
-    // },
-    // {
-    //     path: SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING_DETAIL.path,
-    //     component: CourseOfferingDetail,
-    // },
     {
-        path: SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING.path,
+        path: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.path,
         component: CourseOffering,
+        permission: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.permission,
     },
     {
-        path: SELF_SERVICES_ROUTES.SERVICES.COURSE_LEARING_DETAIL.path,
+        path: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING_DETAIL.path,
         component: CourseOfferingDetail,
+        permission: SELF_SERVICES_ROUTES.SERVICES.E_LEARNING.permission,
     },
 ];

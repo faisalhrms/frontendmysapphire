@@ -3,33 +3,11 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { COURSE_ENROLLMENT_ROUTES } from "@modules/lms/routes.js";
 import UserWithAvatar from "@components/UserWithAvatar.jsx";
-
-const Badge = ({ tone = "gray", children }) => {
-    const cls =
-        tone === "bg-success"
-            ? "bg-success/10 text-success"
-            : tone === "bg-info"
-                ? "bg-info/10 text-info"
-                : tone === "bg-warning"
-                    ? "bg-warning/10 text-warning"
-                    : "bg-gray-100 text-gray-700";
-
-    return (
-        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
-      {children}
-    </span>
-    );
-};
+import {toTitleCase} from "@helpers/formatters.js";
+import ProgressBar from "@components/ProgressBar.jsx";
+import {secToHrs} from "@helpers/dateTime.js";
 
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleString() : "—");
-
-const statusTone = (s) => {
-    if (s === "completed") return "bg-success";
-    if (s === "in_progress") return "bg-primary";
-    return "gray";
-};
-
-const sourceTone = (s) => (s === "hr" ? "bg-warning" : "gray"); // ✅ fixed typo
 
 export default function CourseEnrollmentList({isActive = true, externalFilters = [] }) {
     if (!isActive) return null;
@@ -58,36 +36,152 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
             Header: "User",
             accessor: "user",
             filterable: true,
+            filterKey: 'user__full_name',
             Cell: ({ value }) => <UserWithAvatar user={value} />,
         },
         {
             Header: "Source",
             accessor: "source",
+            filterType: 'select',
             filterable: true,
-            Cell: ({ value }) => <Badge tone={sourceTone(value)}>{value ?? "—"}</Badge>,
+            filterOptions: [
+                { label: 'SELF', value: 'self' },
+                { label: 'HR', value: 'hr' },
+            ],
+            Cell: ({value}) => (
+                value.toUpperCase()
+            ),
+            getCellProps: (cellInfo) => {
+                return {
+                    className: 'bg-slate-200 text-dark',
+                }
+            },
             width: 120,
         },
         {
             Header: "Status",
             accessor: "status",
+            filterType: 'select',
             filterable: true,
-            Cell: ({ value }) => <Badge tone={statusTone(value)}>{value ?? "—"}</Badge>,
+            filterOptions: [
+                { label: 'Assigned', value: 'assigned' },
+                { label: 'In Progress', value: 'in_progress' },
+                { label: 'Completed', value: 'blocked' }
+            ],
+            Cell: ({value}) => (
+                toTitleCase(value)
+            ),
+            getCellProps: (cellInfo) => {
+                const value = cellInfo.value || "";
+                let bgClass = "";
+                    switch (value) {
+                        case "assigned":
+                            bgClass = "bg-warning/10 text-warning";
+                            break;
+                        case "in_progress":
+                            bgClass = "bg-info/10 text-info";
+                            break;
+                        default:
+                            bgClass = "bg-success/10 text-success";
+                    }
+
+                return {
+                    className: `${bgClass}`,
+                };
+            },
             width: 140,
+        },
+        {
+            Header: "Rating",
+            accessor: "avg_rating",
+            filterable: false,
+            width: 170,
+            disableSortBy: true,
+            Cell: ({ row }) => {
+                const avg = Number(row.original?.avg_rating ?? 0);
+                const rounded = Math.round(avg * 10) / 10;
+                const starsFilled = Math.round(rounded);
+                const stars = Array.from({ length: 5 }, (_, i) => i < starsFilled);
+
+                return (
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                        {/* Stars */}
+                        <div className="flex items-center gap-0.5">
+                            {stars.map((filled, i) => (
+                                <svg
+                                    key={i}
+                                    viewBox="0 0 20 20"
+                                    className={`w-4 h-4 ${filled ? "text-warning" : "text-zinc-200"}`}
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.964a1 1 0 00.95.69h4.17c.969 0 1.371 1.24.588 1.81l-3.374 2.452a1 1 0 00-.364 1.118l1.286 3.964c.3.921-.755 1.688-1.538 1.118l-3.374-2.452a1 1 0 00-1.175 0l-3.374 2.452c-.783.57-1.838-.197-1.538-1.118l1.286-3.964a1 1 0 00-.364-1.118L2.05 9.391c-.783-.57-.38-1.81.588-1.81h4.17a1 1 0 00.95-.69l1.286-3.964z" />
+                                </svg>
+                            ))}
+                        </div>
+                    </div>
+                );
+            },
+        },
+        {
+            Header: "Scorm Status",
+            accessor: "scorm_status",
+            filterType: 'select',
+            filterable: true,
+            filterOptions: [
+                { value: "not attempted", label: "Not Attempted" },
+                { value: "browsing", label: "Browsing" },
+                { value: "incomplete", label: "Incomplete" },
+                { value: "completed", label: "Completed" },
+                { value: "passed", label: "Passed" },
+                { value: "failed", label: "Failed" },
+            ],
+
+            Cell: ({value}) => (
+                toTitleCase(value)
+            ),
+            width: 150,
+        },
+        {
+            Header: 'Progress',
+            accessor: 'progress',
+            filterable: false,
+            excelColumnType: 'number',
+            width: 200,
+            Cell: ({row}) => {
+                return (
+                    <ProgressBar
+                        value={row.original.progress}
+                        withStatus={false}
+                    />
+                );
+            },
         },
         {
             Header: "Completed At",
             accessor: "completed_at",
             filterable: true,
-            Cell: ({ value }) => formatDate(value),
+            filterType: 'datetime',
+            Cell: ({ value }) => formatDate(value, 'MMM dd, yyyy - HH:mm'),
+            width: 190,
+        },
+        {
+            Header: "Last Activity At",
+            accessor: "last_activity_at",
+            filterable: true,
+            filterType: 'datetime',
+            Cell: ({ value }) => formatDate(value, 'MMM dd, yyyy - HH:mm'),
             width: 190,
         },
         { Header: "Score", accessor: "score", width: 110 },
-        { Header: "Time (sec)", accessor: "total_time_seconds", width: 130 },
+        { Header: "Time Spent", accessor: "total_time_seconds",
+            Cell: ({ value }) => secToHrs(value),
+            width: 130 },
         {
             Header: "Actions",
             accessor: "__actions__",
             disableSortBy: true,
-            width: 220,
+            width: 100,
             Cell: ({ row }) => {
                 const id = row?.original?.id;
                 return (
@@ -98,13 +192,6 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
                             type="button"
                         >
                             <i className="ri-eye-line" />
-                        </button>
-                        <button
-                            className="ti-btn ti-btn-primary ti-btn-sm"
-                            onClick={() => navigate(COURSE_ENROLLMENT_ROUTES.edit(id))}
-                            type="button"
-                        >
-                            <i className="ri-edit-line" />
                         </button>
                     </div>
                 );
@@ -129,7 +216,6 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
                 apiUrl="/lms/course-enrollments/datatable/"
                 columns={columns}
                 externalFilters={externalFilters}
-                title="Course Enrollments"
                 buttons={buttons}
                 enableAdvancedFilters={true}
                 advancedFilters={advancedFilters}
