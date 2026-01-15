@@ -62,6 +62,19 @@ export default defineConfig(({ mode }) => ({
     port: 5173,        // Use the default port or change if necessary
     headers: {
       'Cache-Control': 'no-store',
-    }
-  },
+    },
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:8000",
+        changeOrigin: true,
+        secure: false,
+      },
+      // only if your Django serves media at /media (optional)
+      "/media": {
+        target: "http://127.0.0.1:8000",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+    },
 }));

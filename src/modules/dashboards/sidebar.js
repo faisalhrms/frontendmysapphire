@@ -139,6 +139,24 @@ export const sidebarMenu = [
                 '',
                 DASHBOARD_ROUTES.EXPORT_DATA_HEALTH.permission
             ),
+            generateSidebarItem(
+                '',
+                'sub',
+                'Data Pulse',
+                17,
+                '',
+                '',
+                [
+                        generateSidebarItem(
+                            DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.path,
+                            'link',
+                            'E-com',
+                            1,
+                            '',
+                            DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.permission
+                        ),
+                ]
+            ),
         ]
     ),
 ];
