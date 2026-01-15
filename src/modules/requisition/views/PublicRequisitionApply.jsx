@@ -199,15 +199,16 @@ const schema = z.object({
 });
 
 /** ---------------------- RESUME RULES ---------------------- */
+/**
+ * ✅ Requirement: only accept PDF and MS Word
+ * - PDF: application/pdf
+ * - Word DOC: application/msword
+ * - Word DOCX: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+ */
 const ALLOWED_RESUME_TYPES = [
     "application/pdf",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/rtf",
-    "text/plain",
-    "image/png",
-    "image/jpeg",
-    "image/jpg",
 ];
 const MAX_RESUME_BYTES = 10 * 1024 * 1024;
 
@@ -367,10 +368,10 @@ function RHFInput({ name, control, errors, placeholder, type = "text" }) {
                         placeholder={placeholder}
                         className={[
                             "w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none transition-all",
-                            msg ? "border-red-300 focus:ring-2 focus:ring-red-100" : "border-gray-200 focus:border-black/30 focus:ring-2 focus:ring-black/5",
+                            msg ? "border-rose-300 focus:ring-2 focus:ring-rose-100" : "border-gray-200 focus:border-black/30 focus:ring-2 focus:ring-black/5",
                         ].join(" ")}
                     />
-                    {msg ? <div className="mt-2 text-xs font-semibold text-red-600">{msg}</div> : null}
+                    {msg ? <div className="mt-2 text-xs font-semibold text-rose-600">{msg}</div> : null}
                 </div>
             )}
         />
@@ -622,8 +623,8 @@ const PublicRequisitionApply = () => {
     }, [meta]);
 
     const validateResume = (file) => {
-        if (!file) return "Please attach your resume (PDF/DOC/DOCX/RTF/TXT/PNG/JPG).";
-        if (!ALLOWED_RESUME_TYPES.includes(file.type)) return "Unsupported file type. Please upload PDF/DOC/DOCX/RTF/TXT/PNG/JPG.";
+        if (!file) return "Please attach your resume (PDF or MS Word only).";
+        if (!ALLOWED_RESUME_TYPES.includes(file.type)) return "Unsupported file type. Please upload only PDF or MS Word (DOC/DOCX).";
         if (file.size > MAX_RESUME_BYTES) return "File too large (max 10MB).";
         return "";
     };
@@ -758,8 +759,26 @@ const PublicRequisitionApply = () => {
             setServerTone("success");
             window.scrollTo({ top: 0, behavior: "smooth" });
         } catch (e) {
-            const msg = e?.response?.data?.message || e?.response?.data?.errors || e?.message || "Submission failed.";
-            const text = typeof msg === "string" ? msg : "Submission failed.";
+            const status = e?.response?.status;
+
+            const rawMsg = e?.response?.data?.message || e?.response?.data?.errors || e?.message || "Submission failed.";
+            const msgStr = typeof rawMsg === "string" ? rawMsg : "";
+
+            // ✅ Duplicate application friendly message
+            const looksLikeDuplicate =
+                status === 409 ||
+                /already\s*applied/i.test(msgStr) ||
+                /duplicate/i.test(msgStr) ||
+                /already\s*submitted/i.test(msgStr);
+
+            if (looksLikeDuplicate) {
+                setServerMessage("You have already applied for this role using this email address. Please use a different email if you want to submit another application.");
+                setServerTone("danger");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                return;
+            }
+
+            const text = typeof rawMsg === "string" ? rawMsg : "Submission failed.";
             setServerMessage(text);
             setServerTone("danger");
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -781,8 +800,8 @@ const PublicRequisitionApply = () => {
                 <div className="mx-auto max-w-3xl px-6 py-16">
                     <div className="rounded-3xl border border-gray-200 bg-white p-8">
                         <div className="flex items-start gap-3">
-                            <div className="h-11 w-11 rounded-2xl border border-red-200 bg-red-50 flex items-center justify-center">
-                                <AlertTriangle className="h-5 w-5 text-red-700" />
+                            <div className="h-11 w-11 rounded-2xl border border-rose-200 bg-rose-50 flex items-center justify-center">
+                                <AlertTriangle className="h-5 w-5 text-rose-700" />
                             </div>
                             <div>
                                 <div className="text-xl font-extrabold text-gray-900">This job is unavailable</div>
@@ -811,8 +830,8 @@ const PublicRequisitionApply = () => {
                 <div className="mx-auto max-w-3xl px-6 py-16">
                     <div className="rounded-3xl border border-gray-200 bg-white p-8">
                         <div className="flex items-start gap-3">
-                            <div className="h-11 w-11 rounded-2xl border border-red-200 bg-red-50 flex items-center justify-center">
-                                <Calendar className="h-5 w-5 text-red-700" />
+                            <div className="h-11 w-11 rounded-2xl border border-rose-200 bg-rose-50 flex items-center justify-center">
+                                <Calendar className="h-5 w-5 text-rose-700" />
                             </div>
                             <div>
                                 <div className="text-xl font-extrabold text-gray-900">Applications Closed</div>
@@ -954,7 +973,7 @@ const PublicRequisitionApply = () => {
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <div className="text-sm font-extrabold text-gray-900">Resume / CV</div>
-                    <div className="mt-1 text-sm text-gray-600">Upload a PDF/DOC/DOCX/RTF/TXT/PNG/JPG (max 10MB).</div>
+                    <div className="mt-1 text-sm text-gray-600">Upload a PDF or MS Word file only (DOC/DOCX). Max 10MB.</div>
                 </div>
                 <div className="h-11 w-11 rounded-2xl border border-gray-200 bg-white flex items-center justify-center">
                     <FileText className="h-5 w-5 text-gray-700" />
@@ -967,7 +986,7 @@ const PublicRequisitionApply = () => {
                     <input
                         ref={fileRef}
                         type="file"
-                        accept=".pdf,.doc,.docx,.rtf,.txt,.png,.jpg,.jpeg"
+                        accept=".pdf,.doc,.docx"
                         onChange={onFileChange}
                         className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-black/30 focus:ring-2 focus:ring-black/5 transition-all"
                     />
@@ -1326,7 +1345,7 @@ const PublicRequisitionApply = () => {
         serverTone === "success"
             ? "border-emerald-200 bg-emerald-50 text-emerald-900"
             : serverTone === "danger"
-                ? "border-red-200 bg-red-50 text-red-900"
+                ? "border-rose-200 bg-rose-50 text-rose-900"
                 : "border-gray-200 bg-gray-50 text-gray-900";
 
     return (
@@ -1542,6 +1561,10 @@ const PublicRequisitionApply = () => {
                                     <li className="flex items-start gap-2">
                                         <span className="mt-2 h-2 w-2 rounded-full bg-gray-900" />
                                         Experience “To” month cannot be in the future.
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="mt-2 h-2 w-2 rounded-full bg-gray-900" />
+                                        Resume must be PDF or MS Word (DOC/DOCX) only.
                                     </li>
                                 </ul>
 
