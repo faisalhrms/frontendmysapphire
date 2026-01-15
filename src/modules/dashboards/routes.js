@@ -16,6 +16,7 @@ import EquipmentAuditDashboard from "@modules/dashboards/eq-aud/views/EquipmentA
 import AnalyticsDashboard from "@modules/dashboards/analytics/views/AnalyticsDashboard.jsx";
 import civilDashboard from "@modules/dashboards/civil/views/CivilDashboard.jsx";
 import DataHealthDashboard from "@modules/dashboards/beirholmBi/views/DataHealthDashboard.jsx";
+import PulseDashboard from "@modules/dashboards/data-pulse/views/PulseDashboard.jsx";
 export const DASHBOARD_ROUTES = {
     PROJECT: {
         path: '/dashboards/project-management-system',
@@ -71,7 +72,6 @@ export const DASHBOARD_ROUTES = {
     ROAD_MAP_DASHBOARD: {
         path: '/module/road-map',
         permission: 'auth.view_roadmap_dashboard',
-
     },
     EQUIPMENT_AUDIT_DASHBOARD: {
         path: '/dashboards/assets-audit',
@@ -88,6 +88,10 @@ export const DASHBOARD_ROUTES = {
         path: '/dashboards/beirholm/export/data/health',
         permission: 'auth.view_export_data_health_dashboard',
 
+    },
+    DATA_PULSE_DASHBOARD: {
+        path: '/dashboards/data-pulse',
+        permission: 'auth.data_pulse_dashboard',
     },
 
 };
@@ -174,6 +178,11 @@ export const MODULE_ROUTES = [
     {
         path:DASHBOARD_ROUTES.EXPORT_DATA_HEALTH.path,
         component: DataHealthDashboard
+    },
+    {
+        path:DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.path,
+        component: PulseDashboard,
+        permission: DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.permission,
     },
 
 ];
