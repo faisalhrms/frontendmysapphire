@@ -472,7 +472,6 @@ export default function RequisitionMyPendingFeedbackList() {
                 onClose={closeModal}
                 onSuccess={() => {
                     closeModal();
-                    Notify.success("Feedback submitted.");
                     setRefreshKey((k) => k + 1);
                 }}
             />
