@@ -28,7 +28,7 @@ const cleanUserLabel = (u) => {
 const yesNo = (v) => (v === true ? "Yes" : v === false ? "No" : "—");
 
 const Pill = ({ children }) => (
-    <span className="inline-flex items-center rounded-full bg-gray-100 text-gray-700 px-2 py-0.5 text-xs">
+    <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs">
     {children}
   </span>
 );
@@ -114,7 +114,8 @@ export default function CourseEnrollmentView() {
     }
 
     return (
-        <div className="p-4 mb-4 bg-white">
+        <div className="p-4 mb-4 bg-white dark:text-gray-200 dark:bg-bodybg
+">
             <div className="flex items-center justify-between mb-4">
                 <div>
                     <h1 className="text-xl font-semibold">Enrollment #{row?.id}</h1>
@@ -140,7 +141,7 @@ export default function CourseEnrollmentView() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border p-4 space-y-4">
+            <div className="bg-white rounded-2xl shadow-sm border p-4 space-y-4  dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex flex-wrap gap-2">
                     <Pill>Source: {row?.source ?? "—"}</Pill>
                     <Pill>Status: {row?.status ?? "—"}</Pill>

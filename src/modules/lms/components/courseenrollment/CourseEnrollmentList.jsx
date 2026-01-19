@@ -22,13 +22,13 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
     const columns = [
         {
             Header: "Company",
-            accessor: "company_name",
+            accessor: "offering.company.name",
             filterable: true,
             Cell: ({ row }) => row?.original?.offering?.company?.name ?? "—",
         },
         {
             Header: "Course",
-            accessor: "course_title",
+            accessor: "offering.course.title",
             filterable: true,
             Cell: ({ row }) => row?.original?.offering?.course?.title ?? "—",
         },
@@ -36,59 +36,64 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
             Header: "User",
             accessor: "user",
             filterable: true,
-            filterKey: 'user__full_name',
+            filterKey: "users__full_name",
+
+            excelFormat: (u) => u?.full_name || u?.name || u?.email || "—",
+
             Cell: ({ value }) => <UserWithAvatar user={value} />,
         },
+
         {
             Header: "Source",
             accessor: "source",
-            filterType: 'select',
+            filterType: "select",
             filterable: true,
             filterOptions: [
-                { label: 'SELF', value: 'self' },
-                { label: 'HR', value: 'hr' },
+                { label: "SELF", value: "self" },
+                { label: "HR", value: "hr" },
             ],
-            Cell: ({value}) => (
-                value.toUpperCase()
-            ),
-            getCellProps: (cellInfo) => {
-                return {
-                    className: 'bg-slate-200 text-dark',
-                }
-            },
+            Cell: ({ value }) => value.toUpperCase(),
+            getCellProps: () => ({ className: "bg-slate-200 text-dark" }),
             width: 120,
         },
+
         {
             Header: "Status",
             accessor: "status",
-            filterType: 'select',
+            filterType: "select",
             filterable: true,
             filterOptions: [
-                { label: 'Assigned', value: 'assigned' },
-                { label: 'In Progress', value: 'in_progress' },
-                { label: 'Completed', value: 'blocked' }
+                { label: "Assigned", value: "assigned" },
+                { label: "In Progress", value: "in_progress" },
+                { label: "Completed", value: "blocked" },
             ],
-            Cell: ({value}) => (
-                toTitleCase(value)
-            ),
+            Cell: ({ value }) => toTitleCase(value),
+
+            excelStyleMap: {
+                assigned:    { label: "Assigned",    bgColor: "#FFF7E6", textColor: "#B45309" },
+                in_progress: { label: "In Progress", bgColor: "#E0F2FE", textColor: "#0369A1" },
+                blocked:     { label: "Completed",   bgColor: "#DCFCE7", textColor: "#15803D" },
+                completed:   { label: "Completed",   bgColor: "#DCFCE7", textColor: "#15803D" },
+            },
+
             getCellProps: (cellInfo) => {
                 const value = cellInfo.value || "";
                 let bgClass = "";
-                    switch (value) {
-                        case "assigned":
-                            bgClass = "bg-warning/10 text-warning";
-                            break;
-                        case "in_progress":
-                            bgClass = "bg-info/10 text-info";
-                            break;
-                        default:
-                            bgClass = "bg-success/10 text-success";
-                    }
-
-                return {
-                    className: `${bgClass}`,
-                };
+                switch (value) {
+                    case "assigned":
+                        bgClass = "bg-warning/10 text-warning";
+                        break;
+                    case "in_progress":
+                        bgClass = "bg-info/10 text-info";
+                        break;
+                    case "blocked":
+                    case "completed":
+                    default:
+                        bgClass = "bg-success/10 text-success";
+                }
+                return { className: `${bgClass}` };
             },
+
             width: 140,
         },
         {
@@ -105,7 +110,6 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
 
                 return (
                     <div className="flex items-center gap-2 whitespace-nowrap">
-                        {/* Stars */}
                         <div className="flex items-center gap-0.5">
                             {stars.map((filled, i) => (
                                 <svg
@@ -123,10 +127,11 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
                 );
             },
         },
+
         {
             Header: "Scorm Status",
             accessor: "scorm_status",
-            filterType: 'select',
+            filterType: "select",
             filterable: true,
             filterOptions: [
                 { value: "not attempted", label: "Not Attempted" },
@@ -136,47 +141,50 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
                 { value: "passed", label: "Passed" },
                 { value: "failed", label: "Failed" },
             ],
-
-            Cell: ({value}) => (
-                toTitleCase(value)
-            ),
+            Cell: ({ value }) => toTitleCase(value),
             width: 150,
         },
+
         {
-            Header: 'Progress',
-            accessor: 'progress',
+            Header: "Progress",
+            accessor: "progress",
             filterable: false,
-            excelColumnType: 'number',
+            excelColumnType: "number",
             width: 200,
-            Cell: ({row}) => {
-                return (
-                    <ProgressBar
-                        value={row.original.progress}
-                        withStatus={false}
-                    />
-                );
-            },
+            Cell: ({ row }) => (
+                <ProgressBar value={row.original.progress} withStatus={false} />
+            ),
         },
+
         {
             Header: "Completed At",
             accessor: "completed_at",
             filterable: true,
-            filterType: 'datetime',
-            Cell: ({ value }) => formatDate(value, 'MMM dd, yyyy - HH:mm'),
+            filterType: "datetime",
+            excelColumnType: "datetime",
+            Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
             width: 190,
         },
         {
             Header: "Last Activity At",
             accessor: "last_activity_at",
             filterable: true,
-            filterType: 'datetime',
-            Cell: ({ value }) => formatDate(value, 'MMM dd, yyyy - HH:mm'),
+            filterType: "datetime",
+            excelColumnType: "datetime",
+            Cell: ({ value }) => formatDate(value, "MMM dd, yyyy - HH:mm"),
             width: 190,
         },
+
         { Header: "Score", accessor: "score", width: 110 },
-        { Header: "Time Spent", accessor: "total_time_seconds",
+
+        {
+            Header: "Time Spent",
+            accessor: "total_time_seconds",
+            excelFormat: (sec) => secToHrs(sec),
             Cell: ({ value }) => secToHrs(value),
-            width: 130 },
+            width: 130,
+        },
+
         {
             Header: "Actions",
             accessor: "__actions__",
@@ -198,6 +206,7 @@ export default function CourseEnrollmentList({isActive = true, externalFilters =
             },
         },
     ];
+
 
     const buttons = (
         <Link

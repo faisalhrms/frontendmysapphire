@@ -71,6 +71,61 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
             </span>
         );
     };
+    // ✅ Completed tab panel (no pending/progress UI, just members nicely)
+    const renderCompletedPanelCell = (panel) => {
+        const list = Array.isArray(panel) ? panel : [];
+        if (!list.length) return "—";
+
+        const maxAvatars = 6;
+        const shown = list.slice(0, maxAvatars);
+        const extra = list.length - shown.length;
+
+        return (
+            <div className="flex items-center justify-between gap-3 w-full">
+                <div className="flex items-center shrink-0">
+                    <div className="flex -space-x-2">
+                        {shown.map((p, idx) => {
+                            const u = p?.interviewer || null;
+                            const name = u?.full_name || "—";
+                            const rating =
+                                p?.overall_rating === null || p?.overall_rating === undefined
+                                    ? null
+                                    : Number(p.overall_rating);
+
+                            // ✅ completed bucket: always green-ish ring
+                            const ringCls = "ring-success/40";
+
+                            return (
+                                <div
+                                    key={`${p?.interviewer_id || idx}`}
+                                    className={`rounded-full ring-2 ${ringCls} dark:ring-white/10`}
+                                    title={
+                                        rating != null && !Number.isNaN(rating)
+                                            ? `${name} • Rating: ${rating.toFixed(2)}`
+                                            : `${name}`
+                                    }
+                                >
+                                    <Avatar
+                                        avatar={u?.avatar || null}
+                                        full_name={name}
+                                        size="sm"
+                                        parentClasses="bg-primary/10 !fill-primary"
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {extra > 0 && (
+                        <span className="ms-2 text-xs font-semibold text-[#8c9097] dark:text-white/50">
+                        +{extra}
+                    </span>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
 
     const columns = useMemo(
         () => [
@@ -173,8 +228,22 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
             },
 
             {
-                Header: "Rating",
-                accessor: "rating",
+                Header: "Panel",
+                id: "next_interview_panel",
+                accessor: (r) => r?.next_interview?.panel || [],
+                filterable: false,
+                getCellProps: () => ({ className: "!text-left" }),
+                Cell: ({ value }) => renderCompletedPanelCell(value),
+            },
+
+            // ✅ UPDATED: show ROUND-level rating (avg of panel overall_rating for that interview)
+            {
+                Header: "Round Rating",
+                id: "round_overall_rating",
+                accessor: (r) =>
+                    r?.next_interview?.round_overall_rating ??
+                    r?.next_round_overall_rating ??
+                    null,
                 filterType: "text",
                 filterable: true,
                 Cell: ({ value }) => {
@@ -193,7 +262,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
 
                                     return (
                                         <span key={i} className="relative inline-flex">
-              {/* outline */}
+                                            {/* outline */}
                                             <Star size={16} className="text-gray-300" />
 
                                             {/* filled overlay */}
@@ -209,20 +278,18 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                                     }}
                                                 />
                                             )}
-            </span>
+                                        </span>
                                     );
                                 })}
                             </div>
 
                             <span className="text-xs font-semibold text-[#8c9097] dark:text-white/50">
-        {rating.toFixed(2)}
-      </span>
+                                {rating.toFixed(2)}
+                            </span>
                         </div>
                     );
                 },
-
             },
-
 
             {
                 Header: "Scheduled By",

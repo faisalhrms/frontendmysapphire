@@ -68,15 +68,18 @@ const RatingRow = ({ label, name, value, onChange, error, helper }) => {
 
 const SectionCard = ({ title, icon, children }) => {
     return (
-        <div className="relative rounded-[2rem] border-2 border-zinc-900 bg-white p-8 shadow-xl overflow-hidden group">
+        <div className="relative rounded-[2rem] border-2 border-zinc-900 bg-white p-8 shadow-xl overflow-hidden group dark:text-gray-200 dark:bg-bodybg
+">
             <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                 {icon}
             </div>
-            <div className="flex items-center gap-3 mb-8 border-b border-zinc-100 pb-4">
+            <div className="flex items-center gap-3 mb-8 border-b border-zinc-100 pb-4 dark:text-gray-200 dark:bg-bodybg
+">
                 <div className="text-zinc-900">
                     {icon}
                 </div>
-                <h4 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.3em]">{title}</h4>
+                <h4 className="text-[11px] font-black text-zinc-900 uppercase tracking-[0.3em] dark:text-gray-200 dark:bg-bodybg
+">{title}</h4>
             </div>
             {children}
         </div>
@@ -166,7 +169,8 @@ const CourseFeedbackModal = ({ open, enrollmentId, onSubmitted }) => {
                     </div>
 
                     {/* Form Body */}
-                    <form onSubmit={handleSubmit(submit)} className="p-10 max-h-[60vh] overflow-y-auto custom-scrollbar space-y-10">
+                    <form onSubmit={handleSubmit(submit)} className="p-10 max-h-[60vh] overflow-y-auto custom-scrollbar space-y-10 dark:text-gray-200 dark:bg-bodybg
+">
 
                         <SectionCard title="Performance Audit" icon={<Star size={24} />}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
