@@ -62,7 +62,26 @@ const badgeStyles = {
     waiting_for_approval: danger,
     draft:primary,
     approved:success,
-    shortlisted: success
+    shortlisted: success,
+    scheduled: primary,
+    rescheduled: warning,
+    cancelled: danger, // UK spelling
+    no_show: secondary,
+    interview_scheduled: primary,
+    interviewed: success,
+
+    decision_pending: warning,
+    selected: success,
+
+    offer_approval_pending: warning,
+    offer_generated: info,
+    offer_sent: primary,
+    offer_accepted: success,
+    offer_declined: danger,
+    offer_expired: danger,
+
+    hired: success,
+    offered: primary,
 
 };
 
@@ -113,7 +132,27 @@ const statusStyles = {
     cancelled: danger,
     waiting_for_scrap:txtWarning,
     approved:txtSuccess,
-    shortlisted:txtSuccess
+    shortlisted:txtSuccess,
+    scheduled: txtPrimary,
+    rescheduled: txtWarning,
+    no_show: txtSecondary,
+
+    // ✅ ApplicationStatus (TextChoices)
+    interview_scheduled: txtPrimary,
+    interviewed: txtSuccess,
+
+    decision_pending: txtWarning,
+    selected: txtSuccess,
+
+    offer_approval_pending: txtWarning,
+    offer_generated: txtSecondary,
+    offer_sent: txtPrimary,
+    offer_accepted: txtSuccess,
+    offer_declined: txtDanger,
+    offer_expired: txtDanger,
+
+    hired: txtSuccess,
+    offered: txtPrimary,
 
 };
 

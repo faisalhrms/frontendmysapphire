@@ -346,3 +346,10 @@ export const getDateRangeFromTimePeriod = (timePeriod) => {
         end: endDate.toISOString()
     };
 };
+
+export const secToHrs = (sec) => {
+    const s = Number(sec || 0);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+};

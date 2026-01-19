@@ -51,6 +51,12 @@ const channelOptions = [
     { value: "twitter", label: "Twitter/X" },
 ];
 
+// ✅ LOV options (NOT a checkbox)
+const preventDuplicateOptions = [
+    { value: false, label: "No (Allow re-apply)" },
+    { value: true, label: "Yes (Prevent duplicate by Job Description)" },
+];
+
 // Build defaults from API response (edit) or empty (create)
 const buildDefaults = (requisitionData, companyIdFromUser) => ({
     company_id: requisitionData?.company?.id ?? companyIdFromUser ?? null,
@@ -67,7 +73,6 @@ const buildDefaults = (requisitionData, companyIdFromUser) => ({
     work_mode: requisitionData?.work_mode ?? "onsite",
     replacement_for_employee: requisitionData?.replacement_for_employee ?? null,
 
-    // ✅ NEW fields (as per your updated backend)
     budget_status: requisitionData?.budget_status ?? "budgeted",
     unbudgeted_reason: requisitionData?.unbudgeted_reason ?? "",
 
@@ -83,7 +88,9 @@ const buildDefaults = (requisitionData, companyIdFromUser) => ({
 
     publish_on_approval: requisitionData?.publish_on_approval ?? true,
 
-    // ✅ numeric validity days instead of date
+    // ✅ NEW LOV value (boolean) default false
+    prevent_duplicate_applications_by_jd: requisitionData?.prevent_duplicate_applications_by_jd ?? false,
+
     validity_days: requisitionData?.validity_days ?? 0,
 
     channels: requisitionData?.channels ?? [],
@@ -94,10 +101,8 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
     const currentUser = useSelector((s) => s?.auth?.user);
     const companyId = currentUser?.employee?.company?.id ?? null;
 
-    // ✅ memoize defaults so it doesn't rebuild each render
     const defaultValues = useMemo(
         () => buildDefaults(requisitionData, companyId),
-        // important: don't depend on full object ref
         [companyId, requisitionData?.id, requisitionData?.updated_at]
     );
 
@@ -129,8 +134,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
 
     useEffect(() => {
         if (lastInitKeyRef.current === initKey) return;
-
-        // in edit mode wait for data
         if (isEditMode && !requisitionData?.id) return;
 
         reset(defaultValues);
@@ -150,9 +153,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
         const label = jd.position_title || jd.title || `JD #${id}`;
 
         if (id) {
-            // If your FormAsyncSelect stores objects, keep object:
             setValue("job_description", { value: id, label }, { shouldDirty: true, shouldValidate: true });
-            // If it stores numbers only, use: setValue("job_description", id, { ... })
         }
         setIsJDModalOpen(false);
     };
@@ -192,7 +193,12 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                                     placeholder="Job Description"
                                                     apiUrl="/select/job-descriptions/"
                                                     queryKeyBase="job-descriptions"
-                                                    preselectedOptions={formatOptions(requisitionData, "job_description", "id", "position_title")}
+                                                    preselectedOptions={formatOptions(
+                                                        requisitionData,
+                                                        "job_description",
+                                                        "id",
+                                                        "position_title"
+                                                    )}
                                                 />
                                             </div>
                                         </div>
@@ -241,22 +247,51 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
 
                                     {/* Openings */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormInput type="number" name="openings" is_required control={control} errors={errors} placeholder="Openings" min="1" />
+                                        <FormInput
+                                            type="number"
+                                            name="openings"
+                                            is_required
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Openings"
+                                            min="1"
+                                        />
                                     </div>
 
                                     {/* Req Type */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormSelect name="req_type" is_required control={control} errors={errors} placeholder="Requisition Type" options={reqTypeOptions} />
+                                        <FormSelect
+                                            name="req_type"
+                                            is_required
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Requisition Type"
+                                            options={reqTypeOptions}
+                                        />
                                     </div>
 
                                     {/* Employment Type */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormSelect name="employment_type" is_required control={control} errors={errors} placeholder="Employment Type" options={employmentTypeOptions} />
+                                        <FormSelect
+                                            name="employment_type"
+                                            is_required
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Employment Type"
+                                            options={employmentTypeOptions}
+                                        />
                                     </div>
 
                                     {/* Work Mode */}
                                     <div className="xl:col-span-3 col-span-12">
-                                        <FormSelect name="work_mode" is_required control={control} errors={errors} placeholder="Work Mode" options={workModeOptions} />
+                                        <FormSelect
+                                            name="work_mode"
+                                            is_required
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Work Mode"
+                                            options={workModeOptions}
+                                        />
                                     </div>
 
                                     {/* Contract only */}
@@ -285,7 +320,12 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                                 placeholder="Replace Employee"
                                                 apiUrl="/select/employees/replace/"
                                                 queryKeyBase="employees"
-                                                preselectedOptions={formatOptions(requisitionData, "replacement_for_employee", "id", "full_name")}
+                                                preselectedOptions={formatOptions(
+                                                    requisitionData,
+                                                    "replacement_for_employee",
+                                                    "id",
+                                                    "full_name"
+                                                )}
                                             />
                                         </div>
                                     )}
@@ -336,7 +376,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Education & Experience (Rich Text) */}
                                     <div className="xl:col-span-12 col-span-12">
                                         <FormRichTextarea
                                             name="education_relevant_experience"
@@ -347,7 +386,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Knowledge & Technical Skills (Rich Text) */}
                                     <div className="xl:col-span-12 col-span-12">
                                         <FormRichTextarea
                                             name="knowledge_technical_skills"
@@ -378,10 +416,26 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
                                     <div className="xl:col-span-4 col-span-12">
-                                        <FormInput type="number" name="target_salary_min" control={control} errors={errors} placeholder="Salary Min" min="0" step="0.01" />
+                                        <FormInput
+                                            type="number"
+                                            name="target_salary_min"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Salary Min"
+                                            min="0"
+                                            step="0.01"
+                                        />
                                     </div>
                                     <div className="xl:col-span-4 col-span-12">
-                                        <FormInput type="number" name="target_salary_max" control={control} errors={errors} placeholder="Salary Max" min="0" step="0.01" />
+                                        <FormInput
+                                            type="number"
+                                            name="target_salary_max"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Salary Max"
+                                            min="0"
+                                            step="0.01"
+                                        />
                                     </div>
 
                                     <div className="xl:col-span-6 col-span-12">
@@ -407,6 +461,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
 
                     {/* RIGHT */}
                     <div className="xxl:col-span-3 col-span-12">
+                        {/* ✅ Publishing box (unchanged, no LOV here) */}
                         <div className="box">
                             <div className="box-header">
                                 <div className="box-title">Publishing</div>
@@ -422,7 +477,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* ✅ validity_days numeric */}
                                     <div className="col-span-12">
                                         <FormInput
                                             is_required
@@ -449,16 +503,25 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                             </div>
                         </div>
 
-                        {currentUser?.employee?.company?.name && (
-                            <div className="box mt-4">
-                                <div className="box-header">
-                                    <div className="box-title">Company</div>
-                                </div>
-                                <div className="box-body">
-                                    <div className="text-sm">{currentUser.employee.company.name}</div>
+                        {/* ✅ NEW SEPARATE BOX BELOW Publishing (LOV here) */}
+                        <div className="box">
+                            <div className="box-header">
+                                <div className="box-title">Application Rules</div>
+                            </div>
+                            <div className="box-body">
+                                <div className="grid grid-cols-12 gap-4">
+                                    <div className="col-span-12">
+                                        <FormSelect
+                                            name="prevent_duplicate_applications_by_jd"
+                                            control={control}
+                                            errors={errors}
+                                            placeholder="Prevent Duplicate Applications (Same JD)"
+                                            options={preventDuplicateOptions}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             </form>

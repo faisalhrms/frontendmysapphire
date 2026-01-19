@@ -10,6 +10,8 @@ import RequisitionApplicantDetail from "./views/RequisitionApplicantDetail.jsx";
 import RequisitionApplicant from "./views/RequisitionApplicant.jsx";
 import ApplicantInterviewHistory from "./components/ApplicantInterviewHistory.jsx";
 import RequisitionMyPendingFeedbackList from "./views/RequisitionMyPendingFeedbackList.jsx";
+import RequisitionApplicantBank from "./views/RequisitionApplicantBank.jsx";
+import RequisitionCandidateProfile from "./views/RequisitionCandidateProfile.jsx";
 
 export const REQUISITION_ROUTES = {
     JOB_DESCRIPTION: {
@@ -64,6 +66,15 @@ export const REQUISITION_ROUTES = {
             path: "/module/requisition/my-pending-feedback",
             permission: "requisition.view_employmentapplicationinterview",
         },
+        APPLICANT_BANK:{
+            path: "/module/requisition/applicant-bank",
+            permission: "requisition.view_employmentapplicationinterview",
+        },
+        CANDIDATE_PROFILE:{
+            path: "/module/requisition/candidates/:applicationId",
+            permission: "requisition.view_employmentapplicationinterview",
+
+        }
     },
 };
 
@@ -120,4 +131,14 @@ export const MODULE_ROUTES = [
         component: RequisitionMyPendingFeedbackList,
         permission: REQUISITION_ROUTES.REQUISITION.MY_PENDING_FEEDBACK.permission,
     },
+    {
+        path:REQUISITION_ROUTES.REQUISITION.APPLICANT_BANK.path,
+        component:RequisitionApplicantBank,
+        permission: REQUISITION_ROUTES.REQUISITION.APPLICANT_BANK.permission
+    },
+    {
+        path:REQUISITION_ROUTES.REQUISITION.CANDIDATE_PROFILE.path,
+        component: RequisitionCandidateProfile,
+        permission: REQUISITION_ROUTES.REQUISITION.CANDIDATE_PROFILE.permission
+    }
 ];

@@ -1,18 +1,16 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import Avatar from "@components/Avatar.jsx";
-import Notify from "@helpers/toastNotifications.js";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 import {
     Sparkles,
     BadgeCheck,
     XCircle,
-    RotateCcw,
-    Ban,
     CalendarPlus,
-    History, // ✅ NEW
+    History,
+    Star,
 } from "lucide-react";
 
 import RequisitionInterviewFormWrapper from "../models/components/RequisitionInterviewFormWrapper.jsx";
@@ -20,7 +18,7 @@ import RequisitionInterviewFormWrapper from "../models/components/RequisitionInt
 const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => {
     const [refreshKey, setRefreshKey] = useState(0);
 
-    const navigate = useNavigate(); // ✅ NEW
+    const navigate = useNavigate();
 
     // ✅ schedule next interview modal
     const [isInterviewFormOpen, setIsInterviewFormOpen] = useState(false);
@@ -36,27 +34,6 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
         setSelectedApplicationId(null);
     };
 
-    // ✅ update status + shortlist flag
-    const updateOneStatus = useCallback(
-        async (applicationId, status, is_shortlisted, successMsg) => {
-            try {
-                const api = (await import("../../../config/axiosConfig.js")).default;
-
-                const body = { application_ids: [applicationId] };
-                if (status) body.status = status;
-                if (typeof is_shortlisted === "boolean") body.is_shortlisted = is_shortlisted;
-
-                await api.patch(`/requisitions/${requisitionId}/applicants/status/bulk/`, body);
-
-                Notify.success(successMsg);
-                setRefreshKey((k) => k + 1);
-            } catch (e) {
-                Notify.error(e?.response?.data?.message || e?.message || "Update failed.");
-            }
-        },
-        [requisitionId]
-    );
-
     const renderUserCell = (userObj) => {
         if (!userObj) return "—";
         return (
@@ -69,7 +46,9 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 />
                 <div className="ms-2 leading-tight">
                     <p className="font-semibold mb-0">{userObj.full_name || "—"}</p>
-                    <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">{userObj.email || "—"}</p>
+                    <p className="mb-0 text-[#8c9097] dark:text-white/50 text-[0.75rem]">
+                        {userObj.email || "—"}
+                    </p>
                 </div>
             </div>
         );
@@ -88,10 +67,65 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
         }
         return (
             <span title={value} className="truncate inline-block max-w-[240px] align-middle">
-        {value}
-      </span>
+                {value}
+            </span>
         );
     };
+    // ✅ Completed tab panel (no pending/progress UI, just members nicely)
+    const renderCompletedPanelCell = (panel) => {
+        const list = Array.isArray(panel) ? panel : [];
+        if (!list.length) return "—";
+
+        const maxAvatars = 6;
+        const shown = list.slice(0, maxAvatars);
+        const extra = list.length - shown.length;
+
+        return (
+            <div className="flex items-center justify-between gap-3 w-full">
+                <div className="flex items-center shrink-0">
+                    <div className="flex -space-x-2">
+                        {shown.map((p, idx) => {
+                            const u = p?.interviewer || null;
+                            const name = u?.full_name || "—";
+                            const rating =
+                                p?.overall_rating === null || p?.overall_rating === undefined
+                                    ? null
+                                    : Number(p.overall_rating);
+
+                            // ✅ completed bucket: always green-ish ring
+                            const ringCls = "ring-success/40";
+
+                            return (
+                                <div
+                                    key={`${p?.interviewer_id || idx}`}
+                                    className={`rounded-full ring-2 ${ringCls} dark:ring-white/10`}
+                                    title={
+                                        rating != null && !Number.isNaN(rating)
+                                            ? `${name} • Rating: ${rating.toFixed(2)}`
+                                            : `${name}`
+                                    }
+                                >
+                                    <Avatar
+                                        avatar={u?.avatar || null}
+                                        full_name={name}
+                                        size="sm"
+                                        parentClasses="bg-primary/10 !fill-primary"
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {extra > 0 && (
+                        <span className="ms-2 text-xs font-semibold text-[#8c9097] dark:text-white/50">
+                        +{extra}
+                    </span>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
 
     const columns = useMemo(
         () => [
@@ -110,7 +144,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                 </button>
                             </Link>
 
-                            {/* ✅ NEW: Interview History */}
+                            {/* ✅ Interview History */}
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-light ti-btn-sm"
@@ -119,9 +153,9 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                     navigate(`/module/requisition/${requisitionId}/applicants/${appId}/interviews`)
                                 }
                             >
-                <span className="inline-flex items-center gap-1">
-                  <History size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <History size={16} />
+                                </span>
                             </button>
 
                             {/* ✅ Completed tab: schedule next round */}
@@ -131,40 +165,15 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                                 title="Schedule Next Round"
                                 onClick={() => openInterviewModal(appId)}
                             >
-                <span className="inline-flex items-center gap-1">
-                  <CalendarPlus size={16} />
-                </span>
-                            </button>
-
-                            {/* ✅ Reject => also unshortlist */}
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-danger ti-btn-sm"
-                                title="Reject"
-                                onClick={() => updateOneStatus(appId, "rejected", false, "Applicant rejected successfully.")}
-                            >
-                <span className="inline-flex items-center gap-1">
-                  <Ban size={16} />
-                </span>
-                            </button>
-
-                            {/* ✅ Reset => also unshortlist */}
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-secondary ti-btn-sm"
-                                title="Move Back to Submitted"
-                                onClick={() => updateOneStatus(appId, "submitted", false, "Applicant moved back to Submitted.")}
-                            >
-                <span className="inline-flex items-center gap-1">
-                  <RotateCcw size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <CalendarPlus size={16} />
+                                </span>
                             </button>
                         </div>
                     );
                 },
             },
 
-            // ✅ keep remaining columns same
             {
                 Header: "Applicant",
                 accessor: "full_name",
@@ -217,14 +226,71 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 filterable: false,
                 Cell: ({ value }) => (value ? toTitleCase(value) : "—"),
             },
+
             {
-                Header: "Interviewer",
-                id: "next_interview_interviewer",
-                accessor: (r) => r?.next_interview?.interviewer || null,
+                Header: "Panel",
+                id: "next_interview_panel",
+                accessor: (r) => r?.next_interview?.panel || [],
                 filterable: false,
                 getCellProps: () => ({ className: "!text-left" }),
-                Cell: ({ value }) => renderUserCell(value),
+                Cell: ({ value }) => renderCompletedPanelCell(value),
             },
+
+            // ✅ UPDATED: show ROUND-level rating (avg of panel overall_rating for that interview)
+            {
+                Header: "Round Rating",
+                id: "round_overall_rating",
+                accessor: (r) =>
+                    r?.next_interview?.round_overall_rating ??
+                    r?.next_round_overall_rating ??
+                    null,
+                filterType: "text",
+                filterable: true,
+                Cell: ({ value }) => {
+                    if (value === null || value === undefined) return "—";
+
+                    const rating = Math.max(0, Math.min(5, Number(value) || 0));
+                    const full = Math.floor(rating);
+                    const hasHalf = rating - full >= 0.5;
+
+                    return (
+                        <div className="flex items-center justify-center gap-2">
+                            <div className="flex items-center gap-0.5">
+                                {[1, 2, 3, 4, 5].map((i) => {
+                                    const filled = i <= full;
+                                    const half = !filled && hasHalf && i === full + 1;
+
+                                    return (
+                                        <span key={i} className="relative inline-flex">
+                                            {/* outline */}
+                                            <Star size={16} className="text-gray-300" />
+
+                                            {/* filled overlay */}
+                                            {(filled || half) && (
+                                                <Star
+                                                    size={16}
+                                                    className="absolute left-0 top-0 text-warning"
+                                                    fill="currentColor"
+                                                    style={{
+                                                        clipPath: half
+                                                            ? "polygon(0 0, 50% 0, 50% 100%, 0 100%)"
+                                                            : "none",
+                                                    }}
+                                                />
+                                            )}
+                                        </span>
+                                    );
+                                })}
+                            </div>
+
+                            <span className="text-xs font-semibold text-[#8c9097] dark:text-white/50">
+                                {rating.toFixed(2)}
+                            </span>
+                        </div>
+                    );
+                },
+            },
+
             {
                 Header: "Scheduled By",
                 id: "next_interview_scheduled_by",
@@ -292,12 +358,12 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 Cell: ({ value }) =>
                     value ? (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-              <Sparkles size={14} /> AI Recommended <BadgeCheck size={14} />
-            </span>
+                            <Sparkles size={14} /> AI Recommended <BadgeCheck size={14} />
+                        </span>
                     ) : (
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold bg-light text-default">
-              <XCircle size={14} /> Not Recommended
-            </span>
+                            <XCircle size={14} /> Not Recommended
+                        </span>
                     ),
             },
             {
@@ -321,7 +387,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 filterable: true,
             },
         ],
-        [requisitionId, updateOneStatus, navigate]
+        [requisitionId, navigate]
     );
 
     if (!isActive) return null;
@@ -332,7 +398,7 @@ const RequisitionInterviewCompletedApplicant = ({ requisitionId, isActive }) => 
                 key={refreshKey}
                 columns={columns}
                 title="Interview Completed Applicants"
-                apiUrl={`/requisitions/${requisitionId}/applicants/interviews/datatable?bucket=completed`}
+                apiUrl={`/requisitions/${requisitionId}/applicants/interviews/datatable/?bucket=completed`}
                 enableAdvancedFilters={true}
             />
 

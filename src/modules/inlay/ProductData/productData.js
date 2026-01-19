@@ -797,6 +797,912 @@ export const products = {
             { label: "Dyed Cotton Trouser", value: "2.50m" },
         ],
         images: 6,    },
+    "3PBE-WS26CL1-1": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-2": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-3": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-4": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-5": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-6": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-7": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-8": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-9": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL1-10": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-11": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-12": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-13": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-14": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-15": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-16": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-17": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-18": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-19": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PBE-WS26CL2-20": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED LAWN SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Lawn Shirt", value: "3.00m"},
+            {label: "Digital Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
 
+    "3PB-WS26CL1-1": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-2": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-3": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-4": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-5": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-6": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-7": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-8": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-9": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL1-10": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-11": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-12": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-13": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-14": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-15": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-16": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-17": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-18": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-19": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PB-WS26CL2-20": {
+        name: "3 PIECE - PRINTED LAWN\nSUIT",
+        description: [
+            {label: "Printed Lawn Shirt", value: "3.00m"},
+            {label: "Printed Voile Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+
+    "3DPE-WS26CL1-1": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-2": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-3": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-4": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-5": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-6": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-7": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-8": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-9": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL1-10": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+
+    "3DBE-WS26CL1-1": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-2": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-3": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-4": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-5": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-6": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-7": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-8": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-9": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL1-10": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Leno Kara Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+
+    "3DPE-WS26CL2-11": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Silk Manar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-12": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Silk Manar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-13": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Silk Manar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-14": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Silk Manar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-15": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Silk Manar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-16": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-17": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-18": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-19": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DPE-WS26CL2-20": {
+        name: "3 PIECE - EMBROIDERED DOBBY\nSUIT",
+        description: [
+            {label: "Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+
+    "3DBE-WS26CL2-11": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-12": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-13": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-14": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-15": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-16": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-17": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-18": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-19": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DBE-WS26CL2-20": {
+        name: "3 PIECE - EMBROIDERED COTTON\nSUIT",
+        description: [
+            {label: "Embroidered Cotton Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+
+    "3DLE-WS26CL1-1": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-2": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-3": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-4": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-5": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-6": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-7": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-8": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-9": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3DLE-WS26CL1-10": {
+        name: "3 PIECE - EMBROIDERED VISCOSE\nRAW SILK SUIT",
+        description: [
+            {label: "Embroidered Viscose Raw Silk Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Chiffon Dupatta", value: "2.50m"},
+            {label: "Dyed Dull Viscose Raw Silk Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+
+    "3PPE-WS26CL1-1": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED TWILL SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Twill Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-2": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED TWILL SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Twill Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-3": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED TWILL SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Twill Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-4": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED TWILL SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Twill Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-5": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED TWILL SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Twill Shirt", value: "3.00m"},
+            {label: "Digital Printed Blended Tissue Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-6": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED DOBBY SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-7": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED DOBBY SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-8": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED DOBBY SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-9": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED DOBBY SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
+    "3PPE-WS26CL1-10": {
+        name: "3 PIECE - DIGITAL PRINTED\nEMBROIDERED DOBBY SUIT",
+        description: [
+            {label: "Digital Printed Embroidered Dobby Shirt", value: "3.00m"},
+            {label: "Digital Printed Manaar Dupatta", value: "2.50m"},
+            {label: "Dyed Cotton Trouser", value: "2.50m"},
+        ],
+        images: 0,
+    },
 };
 

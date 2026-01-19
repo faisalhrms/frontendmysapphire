@@ -8,6 +8,18 @@ const extractId = (v) => {
     return v;
 };
 
+// ✅ bool preprocess for LOV values (supports boolean or "true"/"false")
+const toBool = (v) => {
+    if (v === true || v === false) return v;
+    if (typeof v === "string") {
+        const s = v.trim().toLowerCase();
+        if (s === "true") return true;
+        if (s === "false") return false;
+    }
+    if (typeof v === "number") return Boolean(v);
+    return v;
+};
+
 const idRequired = (name) =>
     z.preprocess(
         extractId,
@@ -40,7 +52,10 @@ const requisitionSchema = z
         openings: z.coerce.number().int().min(1, "Openings must be at least 1"),
         req_type: z.enum(["new", "replacement", "additional"]),
         employment_type: z.enum(["permanent", "contract", "intern", "consultant"]),
-        contract_duration_months: z.preprocess(extractId, z.union([z.coerce.number().int().positive(), z.null()]).optional()),
+        contract_duration_months: z.preprocess(
+            extractId,
+            z.union([z.coerce.number().int().positive(), z.null()]).optional()
+        ),
         work_mode: z.enum(["onsite", "hybrid", "remote"]),
         replacement_for_employee: idOptional,
 
@@ -62,23 +77,36 @@ const requisitionSchema = z
 
         publish_on_approval: z.boolean().default(true),
 
+        // ✅ NEW LOV FIELD (boolean) default false
+        prevent_duplicate_applications_by_jd: z.preprocess(toBool, z.boolean().default(false)),
+
         validity_days: z
             .coerce
             .number({ required_error: "Validity Days is required" })
             .int("Validity Days must be a whole number")
             .min(0, "Validity Days must be 0 or greater"),
 
-        channels: z.array(z.union([z.string(), z.object({ value: z.string(), label: z.string().optional() })])).default([]),
+        channels: z
+            .array(z.union([z.string(), z.object({ value: z.string(), label: z.string().optional() })]))
+            .default([]),
 
         attachment_ids: z.array(z.number().int()).default([]),
     })
     .superRefine((data, ctx) => {
         if (data.employment_type === "contract" && !data.contract_duration_months) {
-            ctx.addIssue({ code: "custom", message: "Duration is required for Contract", path: ["contract_duration_months"] });
+            ctx.addIssue({
+                code: "custom",
+                message: "Duration is required for Contract",
+                path: ["contract_duration_months"],
+            });
         }
 
         if (data.req_type === "replacement" && !data.replacement_for_employee) {
-            ctx.addIssue({ code: "custom", message: "Replacement employee is required", path: ["replacement_for_employee"] });
+            ctx.addIssue({
+                code: "custom",
+                message: "Replacement employee is required",
+                path: ["replacement_for_employee"],
+            });
         }
 
         if (
@@ -92,7 +120,11 @@ const requisitionSchema = z
         if (data.budget_status === "unbudgeted") {
             const t = htmlToText(data.unbudgeted_reason);
             if (!t) {
-                ctx.addIssue({ code: "custom", message: "Unbudgeted reason is required", path: ["unbudgeted_reason"] });
+                ctx.addIssue({
+                    code: "custom",
+                    message: "Unbudgeted reason is required",
+                    path: ["unbudgeted_reason"],
+                });
             }
         }
     });
