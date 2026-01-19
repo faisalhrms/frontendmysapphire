@@ -16,6 +16,8 @@ import {
   GitBranch,
   Plus,
   Minus,
+  MessageSquareText,
+  X
 } from "lucide-react"
 
 import YarnConsumptionModal from "@modules/customer-hub/customer-orders/components/agreement-placement/YarnConsumptionModal.jsx"
@@ -35,12 +37,16 @@ import SelectCustomerItemModal from "@modules/customer-hub/customer-orders/compo
 import { getAgreement } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import ApprovalActivityModal from "@modules/customer-hub/customer-orders/components/agreement-placement/ApprovalActivityModal.jsx"
 import SubmitAgreementModal from "@modules/customer-hub/customer-orders/components/agreement-placement/SubmitAgreementModal.jsx"
+import AgreementRemarkModal
+  from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementRemarkModal.jsx";
+import CopyCornerBtn from "@modules/customer-hub/customer-orders/components/agreement-placement/CopyCornerBtn.jsx";
 
 const AgreementPlacementForm = forwardRef(
   (
     {
       seed = {},
       email,
+      onApiError,
       approvalActivity,
       activeApprovalType = null,
       status: propStatus,
@@ -61,25 +67,27 @@ const AgreementPlacementForm = forwardRef(
     ref,
   ) => {
     const {
-      control,
-      setValue,
-      getValues,
-      watch,
-      errors,
-      showYarn,
-      setShowYarn,
-      saving,
-      activityOpen,
-      setActivityOpen,
-      qc,
-      design,
-      color,
-      widthSeed,
-      handleComputed,
-      doSaveDraft,
-      doSubmit,
-      validateBeforeApprove
-    } = useAgreementPlacementForm({ seed, email, onAfterPersist, refetch,activeApprovalType })
+    control,
+    setValue,
+    getValues,
+    watch,
+    errors,
+    showYarn,
+    setShowYarn,
+    saving,
+    activityOpen,
+    setActivityOpen,
+    qc,
+    design,
+    color,
+    widthSeed,
+    handleComputed,
+    doSaveDraft,
+    doSubmit,
+    validateBeforeApprove,
+    backendDown,
+    backendMsg,
+    } = useAgreementPlacementForm({ seed, email, onAfterPersist, refetch,activeApprovalType,onApiError })
 
     useImperativeHandle(
       ref,
@@ -119,6 +127,8 @@ const AgreementPlacementForm = forwardRef(
 
     const canEditYarn = !!seed?.can_edit_yarn_terms
     const canEditFabric = !!seed?.can_edit_fabric_delivery
+    const [remarkOpen, setRemarkOpen] = useState(false)
+    const remark = String(watch("remark") || "").trim()
 
     const timelineCount =
       (seed?.approval_actions_count || 0) +
@@ -145,6 +155,16 @@ const AgreementPlacementForm = forwardRef(
       replaceSplitDeliveries,
       watch,
     ])
+    useImperativeHandle(
+      ref,
+      () => ({
+        saveDraft: () => doSaveDraft(),
+        submit: (submissionType, hierarchies) => doSubmit(submissionType, hierarchies),
+        validateBeforeApprove: () => validateBeforeApprove?.(),
+        openRemark: () => setRemarkOpen(true),
+      }),
+      [doSaveDraft, doSubmit, validateBeforeApprove],
+    )
 
     useEffect(() => {
       if (!splitQuantityEnabled || splitDeliveries.length === 0) return
@@ -237,10 +257,16 @@ const AgreementPlacementForm = forwardRef(
 
     const fetchMatches = useCallback(async () => {
       if (!seed?.id) return
-      const fresh = await getAgreement(seed.id)
-      setChoices(fresh?.customer_item_matches || [])
-      setStatusMsg(true)
-    }, [seed?.id])
+      try {
+        const fresh = await getAgreement(seed.id)
+        setChoices(fresh?.customer_item_matches || [])
+        setStatusMsg(true)
+        onApiError?.(null)
+      } catch (err) {
+        onApiError?.(err)
+      }
+    }, [seed?.id, onApiError])
+
 
     const totalMeters = watch("total_meters")
     const widthInchesValue =
@@ -314,6 +340,34 @@ const AgreementPlacementForm = forwardRef(
     return (
       <div className="rounded-xl border dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
         <div className="p-4">
+          {backendDown && (
+            <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-xs dark:border-amber-500/40 dark:bg-amber-900/10">
+              <div className="font-semibold">Backend connectivity issue</div>
+              <div className="opacity-80">{backendMsg}</div>
+            </div>
+          )}
+          {remark && (
+            <div className="mb-3 rounded-xl border border-violet-200 dark:border-violet-500/30 overflow-hidden">
+              <div className="bg-gradient-to-r from-violet-50 via-indigo-50 to-sky-50 dark:from-white/5 dark:via-white/5 dark:to-white/5 px-4 py-3">
+                <div className="flex items-start gap-3">
+                  <span className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/70 dark:bg-white/5 border border-violet-200/60 dark:border-white/10">
+                    <MessageSquareText size={16} />
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[0.75rem] font-semibold text-slate-700 dark:text-slate-200">
+                      Remarks
+                    </div>
+                    <div className="mt-0.5 text-sm text-slate-700 dark:text-slate-200 break-words">
+                      {remark}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+
           {statusMsg && !hasMatches && (
             <div className="rounded-xl border dark:border-defaultborder/20 overflow-hidden mb-2">
               <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 dark:from-white/5 dark:via-white/5 dark:to-white/5 p-4">
@@ -403,28 +457,34 @@ const AgreementPlacementForm = forwardRef(
                     placeholder="Execution Type"
                   />
                 </div>
-                <div className="col-span-12 md:col-span-6">
-                  <FormInput
-                    name="need_by_date"
-                    control={control}
-                    errors={errors}
-                    placeholder="Need By Date"
-                    type="date"
-                  />
-                </div>
+                  <div className="col-span-12 md:col-span-6">
+                    <div className="flex items-end justify-between mb-1">
+                      <label className="form-label mb-0">Need By Date</label>
+                      <CopyCornerBtn value={watch("need_by_date")}  dateFormat="MM/DD/YYYY"/>
+                    </div>
 
-                <div className="col-span-12">
+                    <FormInput
+                      name="need_by_date"
+                      label={false}
+                      control={control}
+                      errors={errors}
+                      placeholder="Need By Date"
+                      type="date"
+                    />
+                  </div>
+
+                  <div className="col-span-12">
                   <div className="flex items-end justify-between mb-1">
                     <label className="form-label mb-0">Fabric Delivery</label>
-                    <div className="flex flex-col items-end gap-0.5">
+
+                    <div className="flex items-center gap-2">
+                      {!splitQuantityEnabled && (
+                        <CopyCornerBtn value={watch("fabric_delivery")} dateFormat="MM/DD/YYYY" />
+                      )}
+
                       <button
                         type="button"
-                        onClick={() =>
-                          setValue(
-                            "split_quantity_enabled",
-                            !splitQuantityEnabled,
-                          )
-                        }
+                        onClick={() => setValue("split_quantity_enabled", !splitQuantityEnabled)}
                         className={
                           "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[0.7rem] transition " +
                           (splitQuantityEnabled
@@ -433,9 +493,7 @@ const AgreementPlacementForm = forwardRef(
                         }
                       >
                         <GitBranch size={14} />
-                        {splitQuantityEnabled
-                          ? "Split quantity: On"
-                          : "Split quantity"}
+                        {splitQuantityEnabled ? "Split quantity: On" : "Split quantity"}
                       </button>
                     </div>
                   </div>
@@ -476,73 +534,85 @@ const AgreementPlacementForm = forwardRef(
                     </div>
 
                     <div className="mt-3 space-y-2">
-                      {splitDeliveries.map((row, idx) => (
-                        <div
-                          key={row.id}
-                          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-bodybg shadow-sm p-3"
-                        >
-                          <div className="grid grid-cols-12 gap-3">
-                            <div className="col-span-12 sm:col-span-4">
-                              <div className="mb-1 text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
+                    {splitDeliveries.map((row, idx) => (
+                      <div
+                        key={row.id}
+                        className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-bodybg shadow-sm p-3"
+                      >
+                        <div className="grid grid-cols-12 gap-3">
+                          <div className="col-span-12 sm:col-span-4">
+                            <div className="mb-1 flex items-center justify-between">
+                              <div className="text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
                                 Qty
                               </div>
-                              <FormInput
-                                name={`split_deliveries.${idx}.quantity`}
-                                label={false}
-                                className="!h-8"
-                                control={control}
-                                errors={errors}
-                                type="number"
-                                placeholder="Qty"
-                                min={0}
-                              />
+                              <CopyCornerBtn value={watch(`split_deliveries.${idx}.quantity`)} />
                             </div>
 
-                              <div className="col-span-12 sm:col-span-7">
-                                <div className="mb-1 text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
-                                  Need by date
-                                </div>
-                                <FormInput
-                                  name={`split_deliveries.${idx}.need_by_date`}
-                                  label={false}
-                                  className="!h-8 !text-xs"
-                                  control={control}
-                                  errors={errors}
-                                  type="date"
-                                  placeholder="Need By Date"
-                                />
-                              </div>
+                            <FormInput
+                              name={`split_deliveries.${idx}.quantity`}
+                              label={false}
+                              className="!h-8"
+                              control={control}
+                              errors={errors}
+                              type="number"
+                              placeholder="Qty"
+                              min={0}
+                            />
+                          </div>
 
-                              <div className="col-span-12 sm:col-span-1 flex sm:items-end sm:justify-end">
-                                <button
-                                  type="button"
-                                  onClick={() => removeSplitDelivery(idx)}
-                                  className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-white/5 text-slate-500 hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600"
-                                  aria-label="Remove split"
-                                  title="Remove"
-                                >
-                                  <Minus size={12} />
-                                </button>
+                          <div className="col-span-12 sm:col-span-7">
+                            <div className="mb-1 flex items-center justify-between">
+                              <div className="text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
+                                Need by date
                               </div>
+                              <CopyCornerBtn value={watch(`split_deliveries.${idx}.need_by_date`)} dateFormat="MM/DD/YYYY" />
+                            </div>
 
-                            <div className="col-span-12">
-                              <div className="mb-1 text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
+                            <FormInput
+                              name={`split_deliveries.${idx}.need_by_date`}
+                              label={false}
+                              className="!h-8 !text-xs"
+                              control={control}
+                              errors={errors}
+                              type="date"
+                              placeholder="Need By Date"
+                            />
+                          </div>
+
+                          <div className="col-span-12 sm:col-span-1 flex sm:items-end sm:justify-end">
+                            <button
+                              type="button"
+                              onClick={() => removeSplitDelivery(idx)}
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-white/5 text-slate-500 hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600"
+                              aria-label="Remove split"
+                              title="Remove"
+                            >
+                              <Minus size={12} />
+                            </button>
+                          </div>
+
+                          <div className="col-span-12">
+                            <div className="mb-1 flex items-center justify-between">
+                              <div className="text-[0.65rem] font-medium text-slate-500 dark:text-slate-400">
                                 Fabric delivery
                               </div>
-                              <FormInput
-                                name={`split_deliveries.${idx}.fabric_delivery`}
-                                label={false}
-                                className="!h-8"
-                                control={control}
-                                errors={errors}
-                                type="date"
-                                placeholder="Fabric Delivery"
-                                disabled={isFabricDeliveryLocked}
-                              />
+                              <CopyCornerBtn value={watch(`split_deliveries.${idx}.fabric_delivery`)} dateFormat="MM/DD/YYYY" />
                             </div>
+
+                            <FormInput
+                              name={`split_deliveries.${idx}.fabric_delivery`}
+                              label={false}
+                              className="!h-8"
+                              control={control}
+                              errors={errors}
+                              type="date"
+                              placeholder="Fabric Delivery"
+                              disabled={isFabricDeliveryLocked}
+                            />
                           </div>
                         </div>
-                      ))}
+                      </div>
+                    ))}
                     </div>
                   </div>
                 )}
@@ -703,6 +773,15 @@ const AgreementPlacementForm = forwardRef(
                     label={false}
                   />
                 </div>
+                <div className="hidden">
+                  <FormInput
+                    name="remark"
+                    control={control}
+                    errors={errors}
+                    placeholder=""
+                    label={false}
+                  />
+                </div>
 
                 <AgreementActions
                   onSaveDraft={doSaveDraft}
@@ -710,7 +789,7 @@ const AgreementPlacementForm = forwardRef(
                   disabledSubmit={
                     disabledSubmit || status === "under_approval"
                   }
-                  disabled={saving}
+                  disabled={saving || backendDown}
                   hideSubmit={hideSubmit}
                   hideSave={hideSave}
                   mode={
@@ -745,6 +824,7 @@ const AgreementPlacementForm = forwardRef(
                   watch("width_inches")
                 }
                 widthCm={watch("width_cm")}
+                itemCode={matchedItem?.greige_item_code || greigeCode || ""}
                 greigeItemCode={greigeDisplay}
                 actionsCount={timelineCount}
                 onOpenActivity={() => setActivityOpen(true)}
@@ -851,6 +931,17 @@ const AgreementPlacementForm = forwardRef(
             setOpen(false)
           }}
         />
+        <AgreementRemarkModal
+          open={remarkOpen}
+          value={remark}
+          onClose={() => setRemarkOpen(false)}
+          onSave={(val) => {
+            setValue("remark", val || "", { shouldDirty: true, shouldValidate: true })
+            setRemarkOpen(false)
+          }}
+
+        />
+
       </div>
     )
   },

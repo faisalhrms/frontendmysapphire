@@ -3,6 +3,23 @@ import Notify from "@helpers/toastNotifications.js"
 
 const ROOT = "/customer-hub"
 
+
+export const isBackendUnreachable = (error) => {
+  if (!error) return false
+
+  if (error.code === "ERR_NETWORK") return true
+  if (!error.response && error.request) return true
+
+  const st = error.response?.status
+  return st === 502 || st === 503 || st === 504
+}
+
+export const backendUnreachableMessage = (error) => {
+  const st = error?.response?.status
+  if (st) return `Backend is unavailable (HTTP ${st}). Please try again.`
+  return "Unable to reach backend server. Check network/VPN and try again."
+}
+
 const normalizeServerError = (error, fallback) => {
   const data = error?.response?.data
   if (!data) return fallback
@@ -27,7 +44,12 @@ const normalizeServerError = (error, fallback) => {
   return fallback
 }
 
-const serverMessage = (error, fallback) => normalizeServerError(error, fallback)
+const serverMessage = (error, fallback) => {
+  if (error?._userMessage) return error._userMessage
+  if (isBackendUnreachable(error)) return backendUnreachableMessage(error)
+  return normalizeServerError(error, fallback)
+}
+
 
 
 export const createAgreement = async (payload, opts = {}) => {
@@ -64,6 +86,8 @@ export const getAgreement = async (id, opts = {}) => {
     })
     return res.data?.data || res.data
   } catch (error) {
+    console.log(error?.code, error?.message, error?.response?.status, error?.response?.data)
+
     Notify.error(serverMessage(error, "Failed to load agreement"))
     throw error
   }
