@@ -1,9 +1,15 @@
 import { useEffect, useMemo } from "react"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
-import { datatableAgreements } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import { datatableAgreements, isBackendUnreachable } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
-export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 10, root = null } = {}) => {
+export const useAgreementsFeed = ({
+  s = "",
+  mailbox = "",
+  limit = 10,
+  root = null,
+  onBackendStatusChange,
+} = {}) => {
   const fetchAgreements = ({ pageParam = 0 }) =>
     datatableAgreements({ skip: pageParam, limit, s, mailbox })
 
@@ -14,7 +20,7 @@ export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 10, root = nul
     isFetchingNextPage,
     isLoading,
     refetch,
-    isRefetching
+    isRefetching,
   } = useInfiniteQuery({
     queryKey: ["agreementsFeed", s, mailbox, limit],
     queryFn: fetchAgreements,
@@ -27,24 +33,21 @@ export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 10, root = nul
     enabled: !!mailbox,
     retry: 2,
     staleTime: 0,
-    refetchOnMount: "always"
+    refetchOnMount: "always",
+    onSuccess: () => onBackendStatusChange?.(false),
+    onError: (err) => onBackendStatusChange?.(isBackendUnreachable(err), err),
   })
 
-  const rows = useMemo(
-    () => (data?.pages || []).flatMap((p) => p.rows || []),
-    [data]
-  )
+  const rows = useMemo(() => (data?.pages || []).flatMap((p) => p.rows || []), [data])
 
   const { ref: sentinelRef, inView } = useInView({
     threshold: 0.1,
     triggerOnce: false,
-    root
+    root,
   })
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
+    if (inView && hasNextPage && !isFetchingNextPage) fetchNextPage()
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
 
   return {
@@ -53,6 +56,6 @@ export const useAgreementsFeed = ({ s = "", mailbox = "", limit = 10, root = nul
     hasNextPage,
     isFetchingNextPage,
     isLoading: isLoading || isRefetching,
-    refetch
+    refetch,
   }
 }

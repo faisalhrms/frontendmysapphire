@@ -28,7 +28,9 @@ api.interceptors.response.use(
         const { response } = error;
 
         if (!response) {
-            return Promise.reject(new Error('Network error. Please try again later.'));
+          error.code = error.code || "ERR_NETWORK"
+          error._userMessage = "Unable to reach backend server. Check network/VPN and try again."
+          return Promise.reject(error)
         }
 
         const code = response.status;
