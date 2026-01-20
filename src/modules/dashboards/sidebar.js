@@ -155,6 +155,14 @@ export const sidebarMenu = [
                             '',
                             DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.permission
                         ),
+                    generateSidebarItem(
+                        DASHBOARD_ROUTES.DATA_PULSE_RETAIL_DASHBOARD.path,
+                        'link',
+                        'Retail',
+                        2,
+                        '',
+                        DASHBOARD_ROUTES.DATA_PULSE_RETAIL_DASHBOARD.permission
+                    ),
                 ]
             ),
         ]
