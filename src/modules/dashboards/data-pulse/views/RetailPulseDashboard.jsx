@@ -1,4 +1,3 @@
-// src/modules/dashboards/data-pulse/pages/RetailPulseDashboard.jsx
 import React, { useCallback, useMemo, useState } from "react";
 import IconTabs from "@components/IconTabs.jsx";
 import useFilters from "@hooks/useFilters.js";
@@ -11,7 +10,25 @@ import CreditMemoReport from "@modules/dashboards/data-pulse/components/CreditMe
 import TopDiscountCouponsReport from "@modules/dashboards/data-pulse/components/TopDiscountCouponsReport.jsx";
 import TopEmployeeCardReport from "@modules/dashboards/data-pulse/components/TopEmployeeCardReport.jsx";
 
-import { Activity, Receipt, BadgePercent, IdCard } from "lucide-react";
+import ShiftOpenReport from "@modules/dashboards/data-pulse/components/ShiftOpenReport.jsx";
+import ReturnQtyReport from "@modules/dashboards/data-pulse/components/ReturnQtyReport.jsx";
+import SaleswiseTop10Report from "@modules/dashboards/data-pulse/components/SaleswiseTop10Report.jsx";
+import TransactionsAfterClosingTimeReport from "@modules/dashboards/data-pulse/components/TransactionsAfterClosingTimeReport.jsx";
+import VoidTransactionsReport from "@modules/dashboards/data-pulse/components/VoidTransactionsReport.jsx";
+import SuspendedTransactionsReport from "@modules/dashboards/data-pulse/components/SuspendedTransactionsReport.jsx";
+
+import {
+    Activity,
+    Receipt,
+    BadgePercent,
+    IdCard,
+    Clock,
+    Ban,
+    PauseCircle,
+    TrendingUp,
+    RotateCcw,
+    Timer,
+} from "lucide-react";
 
 const TAB_META = {
     credit_memo: {
@@ -32,6 +49,44 @@ const TAB_META = {
         tabIcon: IdCard,
         tabColorClass: "text-emerald-600",
     },
+
+    // new
+    shift_open: {
+        headerIcon: Clock,
+        headerColorClass: "text-amber-600",
+        tabIcon: Clock,
+        tabColorClass: "text-amber-600",
+    },
+    return_qty: {
+        headerIcon: RotateCcw,
+        headerColorClass: "text-rose-600",
+        tabIcon: RotateCcw,
+        tabColorClass: "text-rose-600",
+    },
+    saleswise_top_10: {
+        headerIcon: TrendingUp,
+        headerColorClass: "text-emerald-600",
+        tabIcon: TrendingUp,
+        tabColorClass: "text-emerald-600",
+    },
+    transactions_after_closing_time: {
+        headerIcon: Timer,
+        headerColorClass: "text-fuchsia-600",
+        tabIcon: Timer,
+        tabColorClass: "text-fuchsia-600",
+    },
+    void_transactions: {
+        headerIcon: Ban,
+        headerColorClass: "text-slate-700",
+        tabIcon: Ban,
+        tabColorClass: "text-slate-700",
+    },
+    suspended_transactions: {
+        headerIcon: PauseCircle,
+        headerColorClass: "text-cyan-600",
+        tabIcon: PauseCircle,
+        tabColorClass: "text-cyan-600",
+    },
 };
 
 const RetailPulseDashboard = () => {
@@ -41,7 +96,6 @@ const RetailPulseDashboard = () => {
         useMemo(
             () => ({
                 initialFilters: [
-                    // Retail service defaults to yesterday / last-5-days, but we keep UI consistent
                     { name: "date_from", defaultValue: getPastDate(7) },
                     { name: "date_to", defaultValue: getPastDate(1) },
                 ],
@@ -65,7 +119,7 @@ const RetailPulseDashboard = () => {
         <>
             <IconPageHeader
                 heading="Retail Data Pulse"
-                description="Monitor retail credit memos, discount usage, and employee card returns"
+                description="Monitor retail KPIs: credit memo, discounts, shifts, returns, sales, late transactions, void & suspended"
                 icon={activeHeader.headerIcon}
                 iconClassName={activeHeader.headerColorClass}
                 headerClasses="font-bold text-[2rem]"
@@ -118,16 +172,11 @@ const RetailPulseDashboard = () => {
                         icon: (
                             <Receipt
                                 size={18}
-                                className={
-                                    activeTab === "credit_memo" ? "text-sky-600" : "text-slate-500"
-                                }
+                                className={activeTab === "credit_memo" ? "text-sky-600" : "text-slate-500"}
                             />
                         ),
                         content: (
-                            <CreditMemoReport
-                                filters={filters}
-                                isActive={activeTab === "credit_memo"}
-                            />
+                            <CreditMemoReport filters={filters} isActive={activeTab === "credit_memo"} />
                         ),
                     },
                     {
@@ -137,9 +186,7 @@ const RetailPulseDashboard = () => {
                             <BadgePercent
                                 size={18}
                                 className={
-                                    activeTab === "top_discount_coupons"
-                                        ? "text-indigo-600"
-                                        : "text-slate-500"
+                                    activeTab === "top_discount_coupons" ? "text-indigo-600" : "text-slate-500"
                                 }
                             />
                         ),
@@ -157,16 +204,97 @@ const RetailPulseDashboard = () => {
                             <IdCard
                                 size={18}
                                 className={
-                                    activeTab === "top_employee_card"
-                                        ? "text-emerald-600"
+                                    activeTab === "top_employee_card" ? "text-emerald-600" : "text-slate-500"
+                                }
+                            />
+                        ),
+                        content: (
+                            <TopEmployeeCardReport filters={filters} isActive={activeTab === "top_employee_card"} />
+                        ),
+                    },
+
+                    // NEW 6
+                    {
+                        id: "shift_open",
+                        label: "Shift Open",
+                        icon: (
+                            <Clock
+                                size={18}
+                                className={activeTab === "shift_open" ? "text-amber-600" : "text-slate-500"}
+                            />
+                        ),
+                        content: <ShiftOpenReport filters={filters} isActive={activeTab === "shift_open"} />,
+                    },
+                    {
+                        id: "return_qty",
+                        label: "Return Qty",
+                        icon: (
+                            <RotateCcw
+                                size={18}
+                                className={activeTab === "return_qty" ? "text-rose-600" : "text-slate-500"}
+                            />
+                        ),
+                        content: <ReturnQtyReport filters={filters} isActive={activeTab === "return_qty"} />,
+                    },
+                    {
+                        id: "saleswise_top_10",
+                        label: "Saleswise Top",
+                        icon: (
+                            <TrendingUp
+                                size={18}
+                                className={activeTab === "saleswise_top_10" ? "text-emerald-600" : "text-slate-500"}
+                            />
+                        ),
+                        content: (
+                            <SaleswiseTop10Report filters={filters} isActive={activeTab === "saleswise_top_10"} />
+                        ),
+                    },
+                    {
+                        id: "transactions_after_closing_time",
+                        label: "After Closing",
+                        icon: (
+                            <Timer
+                                size={18}
+                                className={
+                                    activeTab === "transactions_after_closing_time"
+                                        ? "text-fuchsia-600"
                                         : "text-slate-500"
                                 }
                             />
                         ),
                         content: (
-                            <TopEmployeeCardReport
+                            <TransactionsAfterClosingTimeReport
                                 filters={filters}
-                                isActive={activeTab === "top_employee_card"}
+                                isActive={activeTab === "transactions_after_closing_time"}
+                            />
+                        ),
+                    },
+                    {
+                        id: "void_transactions",
+                        label: "Void Txn",
+                        icon: (
+                            <Ban
+                                size={18}
+                                className={activeTab === "void_transactions" ? "text-slate-700" : "text-slate-500"}
+                            />
+                        ),
+                        content: <VoidTransactionsReport filters={filters} isActive={activeTab === "void_transactions"} />,
+                    },
+                    {
+                        id: "suspended_transactions",
+                        label: "Suspended Txn",
+                        icon: (
+                            <PauseCircle
+                                size={18}
+                                className={
+                                    activeTab === "suspended_transactions" ? "text-cyan-600" : "text-slate-500"
+                                }
+                            />
+                        ),
+                        content: (
+                            <SuspendedTransactionsReport
+                                filters={filters}
+                                isActive={activeTab === "suspended_transactions"}
                             />
                         ),
                     },
