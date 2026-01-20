@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
-import { datatableAgreementsSidebar, isBackendUnreachable } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import { datatableAgreements, isBackendUnreachable } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
 export const useAgreementsFeed = ({
   s = "",
@@ -18,7 +18,7 @@ export const useAgreementsFeed = ({
   }, [])
 
   const fetchAgreements = ({ pageParam = 0, signal }) =>
-    datatableAgreementsSidebar(
+    datatableAgreements(
       { skip: pageParam, limit, s, mailbox },
       { signal }
     )
@@ -44,7 +44,6 @@ export const useAgreementsFeed = ({
     enabled: !!mailbox,
     staleTime: 30_000,
     refetchOnMount: "always",
-    refetchOnWindowFocus: true,
     retry: (count, err) => (isBackendUnreachable(err) ? count < 1 : count < 2),
     onSuccess: () => onBackendStatusChange?.(false),
     onError: (err) => onBackendStatusChange?.(isBackendUnreachable(err), err),
