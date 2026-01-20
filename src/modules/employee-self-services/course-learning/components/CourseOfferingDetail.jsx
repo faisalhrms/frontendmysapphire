@@ -686,7 +686,7 @@ export default function CourseOfferingDetail() {
                 {/* --- CENTERED SAPPHIRE HEADER --- */}
                 <header className="pt-16 pb-16 px-8 max-w-5xl mx-auto text-center flex flex-col items-center">
 
-                    <h1 className="text-5xl lg:text-8xl font-black tracking-tighter leading-none mb-8">
+                    <h1 className="text-5xl lg:text-8xl font-black tracking-tighter leading-none mb-8 dark:text-gray-200 dark:bg-bodybg">
                         {title.split(' ').slice(0, -1).join(' ')} <br/>
                         <span className="shimmer-text uppercase">{title.split(' ').pop()}</span>
                     </h1>
@@ -694,15 +694,15 @@ export default function CourseOfferingDetail() {
                     {isEnrolled && (
                         <div className="flex flex-wrap justify-center items-center gap-6 mt-10">
                             <div
-                                className="flex items-center gap-3 bg-zinc-50 px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
+                                className="flex items-center gap-3 bg-zinc-50 px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm dark:text-gray-200 dark:bg-bodybg">
                                 <span
-                                    className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Time Spent</span>
+                                    className="text-[10px] font-black text-zinc-400 uppercase tracking-widest dark:text-gray-200 dark:bg-bodybg">Time Spent</span>
                                 <span className="text-sm font-bold">{formatDuration(trackingData.timeSpent)}</span>
                             </div>
                             <div
-                                className="flex items-center gap-3 bg-zinc-50 px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm">
+                                className="flex items-center gap-3 bg-zinc-50 px-5 py-2.5 rounded-2xl border border-zinc-100 shadow-sm dark:text-gray-200 dark:bg-bodybg">
                                 <span
-                                    className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Status</span>
+                                    className="text-[10px] font-black text-zinc-400 uppercase tracking-widest dark:text-gray-200 dark:bg-bodybg">Status</span>
                                 <span
                                     className={`text-sm font-bold uppercase ${statusColor}`}>{statusLabel(trackingData.status)}</span>
                             </div>
@@ -717,7 +717,7 @@ export default function CourseOfferingDetail() {
                         <div className="lg:col-span-8 space-y-12">
                             {isEnrolled && (
                                 <div
-                                    className="bg-white border-2 border-zinc-900 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+                                    className="bg-white border border-gray-200 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group dark:text-gray-200 dark:bg-bodybg">
                                     <div
                                         className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
                                         <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
@@ -728,17 +728,17 @@ export default function CourseOfferingDetail() {
                                     <div className="relative z-10">
                                         <div className="flex items-end justify-between mb-6">
                                             <div>
-                                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Learning
+                                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-1 dark:text-gray-200 dark:bg-bodybg">Learning
                                                     Progress</h3>
-                                                <div className="text-5xl font-black tracking-tighter">{progressPct}%
+                                                <div className="text-5xl font-black tracking-tighter dark:text-gray-200 dark:bg-bodybg">{progressPct}%
                                                 </div>
                                             </div>
                                             <div className="text-right">
                                                 <div
-                                                    className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900">Current
+                                                    className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900 dark:text-gray-200 dark:bg-bodybg">Current
                                                     Score
                                                 </div>
-                                                <div className="text-2xl font-bold">{trackingData.score || 0}%</div>
+                                                <div className="text-2xl font-bold dark:text-gray-200 dark:bg-bodybg">{trackingData.score || 0}%</div>
                                             </div>
                                         </div>
 
@@ -753,13 +753,13 @@ export default function CourseOfferingDetail() {
                                 </div>
                             )}
 
-                            <div className="bg-zinc-50/50 border border-zinc-100 p-12 rounded-[3rem]">
-                                <h2 className="text-3xl font-black uppercase tracking-tight mb-8">Curriculum
+                            <div className="bg-zinc-50/50 border border-zinc-100 p-12 rounded-[3rem] dark:text-gray-200 dark:bg-bodybg">
+                                <h2 className="text-3xl font-black uppercase tracking-tight mb-8 dark:text-gray-200 dark:bg-bodybg">Curriculum
                                     Insight</h2>
                                 <div className="prose prose-zinc max-w-none">
-                                    <p className="text-zinc-600 text-lg leading-relaxed mb-10">{description}</p>
+                                    <p className="text-zinc-600 text-lg leading-relaxed mb-10 dark:text-gray-200 dark:bg-bodybg">{description}</p>
 
-                                    <h3 className="text-sm font-black uppercase tracking-[0.2em] mb-6">Course
+                                    <h3 className="text-sm font-black uppercase tracking-[0.2em] mb-6 dark:text-gray-200 dark:bg-bodybg">Course
                                         Objectives</h3>
                                     <div className="grid sm:grid-cols-2 gap-4">
                                         {[
@@ -769,9 +769,9 @@ export default function CourseOfferingDetail() {
                                             "Compliance Score Tracking"
                                         ].map((item, i) => (
                                             <div key={i}
-                                                 className="flex items-center gap-4 p-5 bg-white border border-zinc-200 rounded-2xl">
+                                                 className="flex items-center gap-4 p-5 bg-white border border-zinc-200 rounded-2xl dark:text-gray-200 dark:bg-bodybg">
                                                 <div
-                                                    className="w-6 h-6 rounded-full bg-zinc-900 flex items-center justify-center">
+                                                    className="w-6 h-6 rounded-full bg-zinc-900 flex items-center justify-center border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                                     <svg className="w-3 h-3 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round"
@@ -779,7 +779,7 @@ export default function CourseOfferingDetail() {
                                                     </svg>
                                                 </div>
                                                 <span
-                                                    className="text-xs font-bold uppercase tracking-tight">{item}</span>
+                                                    className="text-xs font-bold uppercase tracking-tight dark:text-gray-200 dark:bg-bodybg">{item}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -790,7 +790,7 @@ export default function CourseOfferingDetail() {
                         {/* --- RIGHT: ACTIONS SIDEBAR --- */}
                         <div className="lg:col-span-4 space-y-6 sticky top-8">
                             <div
-                                className="bg-white border-2 border-zinc-900 rounded-[2.5rem] shadow-xl overflow-hidden">
+                                className="bg-white border border-gray-200 rounded-[2.5rem] shadow-xl overflow-hidden dark:text-gray-200 dark:bg-bodybg">
                                 <div className="p-8">
                                     {/* Alerts */}
                                     {success && (
@@ -886,7 +886,7 @@ export default function CourseOfferingDetail() {
                                                         disabled={!canOpenCourse}
                                                         className="w-full py-6 bg-zinc-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em]
                                                                  hover:bg-emerald-600 transition-all active:scale-95 shadow-2xl border-b-4 border-black/20
-                                                                 flex items-center justify-center gap-3 disabled:bg-zinc-100 disabled:text-zinc-400"
+                                                                 flex items-center justify-center gap-3 disabled:bg-zinc-100 disabled:text-zinc-400 border border-gray-200"
                                                     >
                                                         <svg className="w-5 h-5" fill="currentColor"
                                                              viewBox="0 0 20 20">
@@ -903,46 +903,50 @@ export default function CourseOfferingDetail() {
                                             <div className="pt-6 border-t border-zinc-100 space-y-4">
                                                 <div className="flex justify-between items-center">
                                                     <span
-                                                        className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Active Time</span>
+                                                        className="text-[10px] font-black text-zinc-400 uppercase tracking-widest dark:text-gray-200 dark:bg-bodybg">Active Time</span>
                                                     <span
-                                                        className="text-sm font-bold">{formatDuration(trackingData.timeSpent)}</span>
+                                                        className="text-sm font-bold dark:text-gray-200 dark:bg-bodybg">{formatDuration(trackingData.timeSpent)}</span>
                                                 </div>
                                                 <div className="flex justify-between items-center">
                                                     <span
-                                                        className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Module Status</span>
+                                                        className="text-[10px] font-black text-zinc-400 uppercase tracking-widest dark:text-gray-200 dark:bg-bodybg">Module Status</span>
                                                     <span
-                                                        className={`text-sm font-bold uppercase ${statusColor}`}>{statusLabel(trackingData.status)}</span>
+                                                        className={`text-sm font-bold uppercase   ${statusColor}`}>{statusLabel(trackingData.status)}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="bg-zinc-900 p-6 flex items-center gap-3">
+                                <div className="bg-zinc-900 p-6 flex items-center gap-3 border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                                     <svg className="w-4 h-4 text-white/40" fill="none" stroke="currentColor"
                                          viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                               d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                     </svg>
-                                    <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em]">End-to-End Encryption Active</span>
+                                    <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em] dark:text-gray-200 dark:bg-bodybg">End-to-End Encryption Active</span>
                                 </div>
                             </div>
 
                             {/* LINKEDIN CREDENTIAL CARD (COMPACT) */}
                             {isCompleted && certificateId && (
-                                <div className="p-7 bg-white border-2 border-zinc-900 rounded-[2.5rem] shadow-xl space-y-5">
+                                <div className="p-7 bg-white border-2 border-zinc-900 rounded-[2.5rem] shadow-xl space-y-5 dark:text-gray-200 dark:bg-bodybg
+ ">
                                     {/* Header */}
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
-                                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+                                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-gray-200 dark:bg-bodybg
+">
                                                 LinkedIn Credential
                                             </h4>
-                                            <div className="mt-2 text-xl font-black uppercase tracking-tight text-zinc-900">
+                                            <div className="mt-2 text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-gray-200 dark:bg-bodybg
+">
                                                 Add to LinkedIn
                                             </div>
                                         </div>
 
-                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 text-white text-[9px] font-black uppercase tracking-[0.2em]">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 text-white text-[9px] font-black uppercase tracking-[0.2em] dark:text-gray-200 dark:bg-bodybg border border-gray-200
+">
                                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M20 6L9 17l-5-5" />
                                             </svg>
@@ -951,14 +955,17 @@ export default function CourseOfferingDetail() {
                                     </div>
 
                                     {/* Credential ID row */}
-                                    <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 space-y-3">
+                                    <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 space-y-3 dark:text-gray-200 dark:bg-bodybg
+">
                                         <div className="flex items-center justify-between gap-3">
-        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest dark:text-gray-200 dark:bg-bodybg
+">
           Credential ID
         </span>
                                             <button
                                                 onClick={() => copyToClipboard(certificateId)}
-                                                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-900 hover:text-emerald-700 transition"
+                                                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-900 hover:text-emerald-700 transition dark:text-gray-200 dark:bg-bodybg
+"
                                                 type="button"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -969,14 +976,16 @@ export default function CourseOfferingDetail() {
                                             </button>
                                         </div>
 
-                                        <div className="rounded-xl border border-zinc-200 bg-white px-4 py-3">
-                                            <div className="text-[11px] font-black tracking-wide text-zinc-900 break-all">
+                                        <div className="rounded-xl border border-zinc-200 bg-white px-4 py-3 dark:text-gray-200 dark:bg-bodybg">
+                                            <div className="text-[11px] font-black tracking-wide text-zinc-900 break-all dark:text-gray-200 dark:bg-bodybg
+">
                                                 {certificateId}
                                             </div>
                                         </div>
 
-                                        <div className="flex justify-between items-center pt-3 border-t border-zinc-200">
-        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                                        <div className="flex justify-between items-center pt-3 border-t border-zinc-200 dark:text-gray-200 dark:bg-bodybg">
+        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest dark:text-gray-200 dark:bg-bodybg
+">
           Issued
         </span>
                                             <span className="text-[11px] font-black">
@@ -995,12 +1004,13 @@ export default function CourseOfferingDetail() {
                                         ].map((step, i) => (
                                             <div key={i} className="flex items-start gap-3">
                                                 {/* small checkbox icon */}
-                                                <div className="mt-0.5 w-5 h-5 rounded-md border-2 border-zinc-900 flex items-center justify-center shrink-0">
-                                                    <svg className="w-3.5 h-3.5 text-zinc-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div className="mt-0.5 w-5 h-5 rounded-md  flex items-center justify-center shrink-0  border border-gray-200">
+                                                    <svg className="w-3.5 h-3.5 text-zinc-900 dark:text-gray-200 dark:bg-bodybg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M20 6L9 17l-5-5" />
                                                     </svg>
                                                 </div>
-                                                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 leading-5">
+                                                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 leading-5 dark:text-gray-200 dark:bg-bodybg
+">
                                                     {step}
                                                 </div>
                                             </div>
@@ -1019,7 +1029,7 @@ export default function CourseOfferingDetail() {
                                             }
                                             className="flex-1 py-4 bg-zinc-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em]
                    hover:bg-emerald-600 transition-all active:scale-95 shadow-xl border-b-4 border-black/20
-                   flex items-center justify-center gap-3"
+                   flex items-center justify-center gap-3  border border-gray-200"
                                             type="button"
                                         >
                                             {/* small LinkedIn icon */}
@@ -1037,7 +1047,7 @@ export default function CourseOfferingDetail() {
                             {/* RESTORED DATES & META */}
                             {
                                 startDate && endDate && (
-                                    <div className="p-8 bg-zinc-50 border border-zinc-200 rounded-[2.5rem] space-y-6">
+                                    <div className="p-8 bg-zinc-50 border border-zinc-200 rounded-[2.5rem] space-y-6 dark:text-gray-200 dark:bg-bodybg ">
                                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em]">Course
                                             Protocol</h4>
 
@@ -1045,12 +1055,12 @@ export default function CourseOfferingDetail() {
                                         <div className="space-y-4 pt-2">
                                             <div className="flex justify-between items-center">
                                         <span
-                                            className="text-[10px] font-bold text-zinc-400 uppercase">Effective Date</span>
+                                            className="text-[10px] font-bold text-zinc-400 uppercase dark:text-gray-200 dark:bg-bodybg ">Effective Date</span>
                                                 <span className="text-[11px] font-black">{formatDate(startDate)}</span>
                                             </div>
                                             <div className="flex justify-between items-center">
                                         <span
-                                            className="text-[10px] font-bold text-zinc-400 uppercase">Expiry Date</span>
+                                            className="text-[10px] font-bold text-zinc-400 uppercase dark:text-gray-200 dark:bg-bodybg ">Expiry Date</span>
                                                 <span className="text-[11px] font-black">{formatDate(endDate)}</span>
                                             </div>
                                         </div>
@@ -1060,7 +1070,7 @@ export default function CourseOfferingDetail() {
                                                 <div key={i} className="flex items-center gap-3 text-zinc-500">
                                                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-400"/>
                                                     <span
-                                                        className="text-[9px] font-bold uppercase tracking-widest">{text}</span>
+                                                        className="text-[9px] font-bold uppercase tracking-widest dark:text-gray-200 dark:bg-bodybg">{text}</span>
                                                 </div>
                                             ))}
                                         </div>

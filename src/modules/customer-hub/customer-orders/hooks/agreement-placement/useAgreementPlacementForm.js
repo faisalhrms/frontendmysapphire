@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {
   createAgreement,
   updateAgreement,
-  submitAgreement,
+  submitAgreement, backendUnreachableMessage, isBackendUnreachable,
 } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import {
   dateToYMD,
@@ -75,6 +75,8 @@ const buildDefaults = (seed = {}, email) => {
       need_by_date: normalizeDateSeed(d?.need_by_date),
       quantity: d?.quantity ?? "",
     })),
+    remark: (seed.remark ?? p.remark ?? "").toString(),
+
   }
 }
 
@@ -84,6 +86,7 @@ export const useAgreementPlacementForm = ({
   onAfterPersist,
   refetch,
   activeApprovalType = null,
+  onApiError,
 }) => {
   const queryClient = useQueryClient()
 
@@ -150,6 +153,25 @@ export const useAgreementPlacementForm = ({
   const [showYarn, setShowYarn] = useState(false)
   const [saving, setSaving] = useState(false)
   const [activityOpen, setActivityOpen] = useState(false)
+  const [backendDown, setBackendDown] = useState(false)
+  const [backendMsg, setBackendMsg] = useState("")
+
+  const markBackendOk = useCallback(() => {
+    setBackendDown(false)
+    setBackendMsg("")
+    onApiError?.(null)
+  }, [onApiError])
+
+  const markBackendDown = useCallback(
+    (err) => {
+      if (isBackendUnreachable(err)) {
+        setBackendDown(true)
+        setBackendMsg(backendUnreachableMessage(err))
+      }
+      onApiError?.(err)
+    },
+    [onApiError],
+  )
 
   useEffect(() => {
     reset(buildDefaults(seed, email))
@@ -211,6 +233,9 @@ export const useAgreementPlacementForm = ({
           ? originalExecutionType || null
           : v.execution_type || seed?.execution_type || null
       const existingPayload = seed?.payload || {}
+      const remarkStr = (v.remark ?? seed?.remark ?? existingPayload?.remark ?? "")
+        .toString()
+        .trim()
 
       return {
         owner: seed?.owner || email?.from_name || email?.from_address || null,
@@ -229,6 +254,7 @@ export const useAgreementPlacementForm = ({
         end_date: dateToYMD(v.need_by_date),
         email_id: email?.id || null,
         source: seed?.source || (email ? "email" : "manual"),
+        remark: remarkStr,
         payload: {
           ...existingPayload,
           ...v,
@@ -262,12 +288,22 @@ export const useAgreementPlacementForm = ({
 
   const persistDraft = useCallback(
     async (values, opts = {}) => {
-      const payload = payloadForSaveFrom(values, opts)
-      if (seed?.id) return await updateAgreement(seed.id, payload)
-      return await createAgreement(payload)
+      try {
+        const payload = payloadForSaveFrom(values, opts)
+        const res = seed?.id
+          ? await updateAgreement(seed.id, payload)
+          : await createAgreement(payload)
+
+        markBackendOk()
+        return res
+      } catch (err) {
+        markBackendDown(err)
+        throw err
+      }
     },
-    [seed?.id, payloadForSaveFrom]
+    [seed?.id, seed?.id, payloadForSaveFrom, markBackendOk, markBackendDown],
   )
+
 
   const invalidateFeed = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
@@ -282,13 +318,26 @@ export const useAgreementPlacementForm = ({
           if (onAfterPersist) onAfterPersist(saved)
           invalidateFeed()
           if (refetch) refetch()
+          markBackendOk()
           return saved
+        } catch (err) {
+          markBackendDown(err)
+          throw err
         } finally {
           setSaving(false)
         }
       })(),
-    [handleSubmit, persistDraft, onAfterPersist, invalidateFeed, refetch]
+    [
+      handleSubmit,
+      persistDraft,
+      onAfterPersist,
+      invalidateFeed,
+      refetch,
+      markBackendOk,
+      markBackendDown,
+    ],
   )
+
 
   const doSubmit = useCallback(
     async (submissionType = "new", hierarchies = null) => {
@@ -311,7 +360,11 @@ export const useAgreementPlacementForm = ({
         if (onAfterPersist) onAfterPersist(submitted)
         invalidateFeed()
         if (refetch) refetch()
+        markBackendOk()
         return submitted
+      } catch (err) {
+        markBackendDown(err)
+        throw err
       } finally {
         setSaving(false)
       }
@@ -324,8 +377,11 @@ export const useAgreementPlacementForm = ({
       onAfterPersist,
       invalidateFeed,
       refetch,
-    ]
+      markBackendOk,
+      markBackendDown,
+    ],
   )
+
 
   const validateBeforeApprove = useCallback(async () => {
     return await trigger()
@@ -350,5 +406,7 @@ export const useAgreementPlacementForm = ({
     doSaveDraft,
     doSubmit,
     validateBeforeApprove,
+    backendDown,
+    backendMsg,
   }
 }

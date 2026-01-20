@@ -27,11 +27,14 @@ const StarRatingBlack = ({ rating = 0, count = 0 }) => {
                     ))}
                 </div>
 
-                <span className="text-xs font-black text-zinc-900">{r.toFixed(1)}</span>
-                <span className="text-xs font-bold text-zinc-400">({c})</span>
+                <span className="text-xs font-black text-zinc-900 dark:text-gray-200 dark:bg-bodybg
+">{r.toFixed(1)}</span>
+                <span className="text-xs font-bold text-zinc-400 dark:text-gray-200 dark:bg-bodybg
+">({c})</span>
             </div>
 
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400">
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-gray-200 dark:bg-bodybg
+">
         Avg rating
       </span>
         </div>
@@ -122,7 +125,7 @@ export default function CourseOffering() {
             <div className="relative z-10">
                 {/* --- CENTERED HEADER WITH SEARCH --- */}
                 <header className="pt-16 pb-16 px-8 max-w-4xl mx-auto text-center flex flex-col items-center gap-10">
-                    <h1 className="text-6xl lg:text-8xl font-black tracking-tighter leading-none">
+                    <h1 className="text-6xl lg:text-8xl font-black tracking-tighter leading-none dark:text-gray-200 dark:bg-bodybg">
                         Learning <br />
                         <span className="shimmer-text uppercase">Resources.</span>
                     </h1>
@@ -133,7 +136,7 @@ export default function CourseOffering() {
                             <input
                                 type="text"
                                 placeholder="Search curriculum..."
-                                className="w-full bg-white border-2 border-zinc-200 rounded-2xl py-5 pl-14 pr-4 outline-none focus:border-zinc-900 transition-all shadow-xl text-zinc-900"
+                                className="w-full bg-white border-2 border-zinc-200 rounded-2xl py-5 pl-14 pr-4 outline-none focus:border-zinc-900 transition-all shadow-xl text-zinc-900 dark:text-gray-200 dark:bg-bodybg"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
@@ -153,15 +156,20 @@ export default function CourseOffering() {
                         </div>
 
                         {/* FILTER TABS */}
-                        <div className="flex bg-zinc-100 p-1.5 rounded-2xl border border-zinc-200 w-full max-w-md mx-auto shadow-sm">
+                        <div className="flex bg-zinc-100 p-1.5 rounded-2xl border border-zinc-200 w-full max-w-md mx-auto shadow-sm
+                dark:bg-neutral-900 dark:border-neutral-700">
                             {["all", "in_progress", "completed"].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
-                                    className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                    className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+                  focus-visible:ring-zinc-400 focus-visible:ring-offset-zinc-100
+                  dark:focus-visible:ring-neutral-400 dark:focus-visible:ring-offset-neutral-900
+        ${
                                         activeTab === tab
-                                            ? "bg-zinc-900 text-white shadow-xl"
-                                            : "text-zinc-400 hover:text-black"
+                                            ? "bg-zinc-900 text-white shadow-xl dark:bg-white dark:text-neutral-900"
+                                            : "text-zinc-500 hover:text-zinc-900 dark:text-neutral-400 dark:hover:text-white"
                                     }`}
                                 >
                                     {tab.replace("_", " ")}
@@ -238,13 +246,15 @@ export default function CourseOffering() {
                                             />
                                         </div>
 
-                                        <div className="p-7 flex flex-col flex-1 bg-white">
-                                            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-3 line-clamp-1 uppercase">
+                                        <div className="p-7 flex flex-col flex-1 bg-white dark:text-gray-200 dark:bg-bodybg
+
+">
+                                            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-3 line-clamp-1 uppercase dark:text-gray-200 dark:bg-bodybg">
                                                 {title}
                                             </h3>
 
                                             {desc ? (
-                                                <p className="text-zinc-500 text-sm line-clamp-2 leading-relaxed mb-4">
+                                                <p className="text-zinc-500 text-sm line-clamp-2 leading-relaxed mb-4 dark:text-gray-200 dark:bg-bodybg">
                                                     {desc}
                                                 </p>
                                             ) : (
@@ -302,7 +312,9 @@ export default function CourseOffering() {
                                                             }
                                                             navigate(`/module/ess/course/${slug}`);
                                                         }}
-                                                        className="w-full py-4 bg-white border border-zinc-200 text-zinc-900 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:border-zinc-900 transition-all active:scale-[0.97] flex items-center justify-center gap-3 group/btn disabled:opacity-60 disabled:cursor-not-allowed"
+                                                        className="w-full py-4 bg-white border border-zinc-200 text-zinc-900 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:border-zinc-900 transition-all active:scale-[0.97] flex items-center justify-center gap-3 group/btn disabled:opacity-60 disabled:cursor-not-allowed dark:text-gray-200 dark:bg-bodybg
+
+"
                                                         disabled={!canOpenCourse}
                                                         title={!canOpenCourse ? "Course details missing" : undefined}
                                                     >

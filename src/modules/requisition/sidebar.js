@@ -30,5 +30,14 @@ export const sidebarMenu = [
             "",
             REQUISITION_ROUTES.REQUISITION.MY_PENDING_FEEDBACK.permission
         ),
+        generateSidebarItem(
+            REQUISITION_ROUTES.REQUISITION.APPLICANT_BANK.path,
+            "link",
+            "Applicant Bank",
+            4,
+            "",
+            REQUISITION_ROUTES.REQUISITION.APPLICANT_BANK.permission
+        ),
+
     ]),
 ];
