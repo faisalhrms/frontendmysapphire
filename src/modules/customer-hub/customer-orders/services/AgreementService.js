@@ -126,6 +126,25 @@ export const datatableAgreements = async (
   }
 }
 
+export const datatableAgreementsSidebar = async (
+  { skip = 0, limit = 10, s = "", mailbox = "" } = {},
+  opts = {}
+) => {
+  const params = {
+    skip: String(skip),
+    limit: String(limit),
+    ...(s ? { s } : {}),
+    ...(mailbox ? { mailbox } : {}),
+  }
+
+  const res = await api.get(`${ROOT}/agreements/datatable-sidebar/`, {
+    params,
+    signal: opts.signal,
+  })
+  return res.data?.data || res.data
+}
+
+
 export const submitAgreement = async (
   id,
   submissionTypeOrOpts = "new",

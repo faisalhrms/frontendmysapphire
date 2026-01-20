@@ -116,14 +116,26 @@ const CustomerOrders = () => {
   const [mentionUsers, setMentionUsers] = useState([])
   const agreementFormRef = useRef(null)
 
-  const { rows, sentinelRef, hasNextPage, isFetchingNextPage, isLoading, refetch } =
-    useAgreementsFeed({
-      s: normalizedSearchTerm,
-      mailbox,
-      limit: LIST_LIMIT,
-      root: scrollRef.current,
-      onBackendStatusChange: (down, err) => (down ? markBackendDown(err) : markBackendOk()),
-    })
+  const [listRoot, setListRoot] = useState(null)
+
+  const {
+    rows,
+    sentinelRef,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+    fetchNextPage,
+    onListScroll,
+    canScroll,
+  } = useAgreementsFeed({
+    s: normalizedSearchTerm,
+    mailbox,
+    limit: LIST_LIMIT,
+    root: listRoot,
+    onBackendStatusChange: (down, err) => (down ? markBackendDown(err) : markBackendOk()),
+  })
+
 
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState("tab-agreement")
@@ -380,9 +392,11 @@ const CustomerOrders = () => {
             </div>
           </div>
 
-          <div
-            ref={scrollRef}
-            className="flex-1 min-h-0 overflow-y-auto relative"
+           <div
+            ref={setListRoot}
+            onScroll={onListScroll}
+            className="flex-1 min-h-0 overflow-y-scroll relative custom-scrollbar"
+            style={{ scrollbarGutter: "stable" }}
           >
             {isLoading && (
               <div className="absolute inset-0 z-10 grid place-items-center bg-white/60 dark:bg-black/20">
@@ -470,16 +484,19 @@ const CustomerOrders = () => {
                 )
               })}
             </ul>
-            <div
-              ref={sentinelRef}
-              className="py-3 text-center text-xs text-[#8c9097]"
-            >
+            <div ref={sentinelRef} className="py-3 text-center text-xs text-[#8c9097]">
               {isFetchingNextPage ? (
-                <div className="flex justify-center">
-                  <LoadingSpinner />
-                </div>
+                <div className="flex justify-center"><LoadingSpinner /></div>
               ) : hasNextPage ? (
-                "Scroll to load more"
+                canScroll ? "Scroll to load more" : (
+                  <button
+                    type="button"
+                    className="underline underline-offset-2"
+                    onClick={() => fetchNextPage()}
+                  >
+                    Load more
+                  </button>
+                )
               ) : (
                 "No more list"
               )}
