@@ -7,7 +7,7 @@ import Avatar from "@components/Avatar.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
 
-import { Eye, History, Sparkles, BadgeCheck, XCircle, UsersRound } from "lucide-react";
+import { Eye, History, Sparkles, BadgeCheck, XCircle, UsersRound ,LayoutDashboard } from "lucide-react";
 import IconPageHeader from "../../layouts/includes/IconPageHeader.jsx";
 
 const renderUserCell = (userObj) => {
@@ -110,9 +110,9 @@ export default function RequisitionApplicantBank() {
                         <div className="flex justify-center gap-2">
                             <Link to={`/module/requisition/${reqId}/applicants/${appId}`}>
                                 <button className="ti-btn ti-btn-secondary ti-btn-sm" title="View Applicant">
-                                    <span className="inline-flex items-center gap-1">
-                                        <Eye size={16} />
-                                    </span>
+        <span className="inline-flex items-center gap-1">
+          <Eye size={16} />
+        </span>
                                 </button>
                             </Link>
 
@@ -122,12 +122,26 @@ export default function RequisitionApplicantBank() {
                                 title="Interview History"
                                 onClick={() => navigate(`/module/requisition/${reqId}/applicants/${appId}/interviews`)}
                             >
-                                <span className="inline-flex items-center gap-1">
-                                    <History size={16} />
-                                </span>
+      <span className="inline-flex items-center gap-1">
+        <History size={16} />
+      </span>
+                            </button>
+
+                            {/* ✅ Dashboard button */}
+                            <button
+                                type="button"
+                                className="ti-btn ti-btn-primary ti-btn-sm"
+                                title="Requisition Dashboard"
+                                onClick={() => navigate(`/module/requisition/${reqId}/dashboard`)}
+                                disabled={!reqId}
+                            >
+      <span className="inline-flex items-center gap-1">
+        <LayoutDashboard size={16} />
+      </span>
                             </button>
                         </div>
                     );
+
                 },
             },
 

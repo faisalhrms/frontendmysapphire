@@ -12,6 +12,9 @@ import ApplicantInterviewHistory from "./components/ApplicantInterviewHistory.js
 import RequisitionMyPendingFeedbackList from "./views/RequisitionMyPendingFeedbackList.jsx";
 import RequisitionApplicantBank from "./views/RequisitionApplicantBank.jsx";
 import RequisitionCandidateProfile from "./views/RequisitionCandidateProfile.jsx";
+import RequisitionDashboard from "@modules/requisition/views/RequisitionDashboard.jsx";
+import RequisitionDecisionSummary from "@modules/requisition/views/RequisitionDecisionSummary.jsx";
+import RequisitionOfferApprovalInboxList from "@modules/requisition/views/RequisitionOfferApprovalInboxList.jsx";
 
 export const REQUISITION_ROUTES = {
     JOB_DESCRIPTION: {
@@ -74,8 +77,22 @@ export const REQUISITION_ROUTES = {
             path: "/module/requisition/candidates/:applicationId",
             permission: "requisition.view_employmentapplicationinterview",
 
-        }
+        },
+        REQUISITION_DASHBOARD: {
+            path: "/module/requisition/:id/dashboard",
+            permission: "requisition.view_employmentapplicationinterview",
+        },
+        REQUISITION_DECISION_SUMMARY:{
+            path: "/module/requisition/:requisitionId/applicants/:applicationId/decision-summary",
+            permission: "requisition.view_employmentapplicationinterview",
+        },
+        OFFER_APPROVAL_INBOX: {
+            path: "/module/requisition/offer-approval-inbox",
+            permission: "requisition.view_employmentapplicationinterview",
+        },
     },
+
+
 };
 
 export const MODULE_ROUTES = [
@@ -140,5 +157,22 @@ export const MODULE_ROUTES = [
         path:REQUISITION_ROUTES.REQUISITION.CANDIDATE_PROFILE.path,
         component: RequisitionCandidateProfile,
         permission: REQUISITION_ROUTES.REQUISITION.CANDIDATE_PROFILE.permission
-    }
+    },
+    {
+        path: REQUISITION_ROUTES.REQUISITION.REQUISITION_DASHBOARD.path,
+        component: RequisitionDashboard,
+        permission: REQUISITION_ROUTES.REQUISITION.REQUISITION_DASHBOARD.permission
+    },
+    {
+        path:REQUISITION_ROUTES.REQUISITION.REQUISITION_DECISION_SUMMARY.path,
+        component: RequisitionDecisionSummary,
+        permission: REQUISITION_ROUTES.REQUISITION.REQUISITION_DECISION_SUMMARY.permission
+    },
+    {
+        path: REQUISITION_ROUTES.REQUISITION.OFFER_APPROVAL_INBOX.path,
+        component: RequisitionOfferApprovalInboxList,
+        permission: REQUISITION_ROUTES.REQUISITION.OFFER_APPROVAL_INBOX.permission,
+    },
+
+
 ];

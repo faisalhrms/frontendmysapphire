@@ -121,9 +121,7 @@ const EquipmentDashboard = () => {
 
     return (
         <div className="space-y-6 pb-8 pt-8">
-            <div
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg
-">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
