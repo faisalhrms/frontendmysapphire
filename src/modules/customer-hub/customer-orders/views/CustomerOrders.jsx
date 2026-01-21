@@ -25,6 +25,7 @@ import {
   Trash2,
   Mail,
   FileText,
+  MessageSquareText
 } from "lucide-react"
 import NavTabs from "@modules/customer-hub/customer-orders/components/NavTabs.jsx"
 import AirjetCostingBaseSection from "@modules/customer-hub/customer-orders/components/airjet-costing/AirjetCostingBaseSection.jsx"
@@ -41,7 +42,7 @@ import {
   getAgreement,
   getAgreementMentionUsers,
   resetAgreementPayload,
-  deleteAgreement,
+  deleteAgreement, backendUnreachableMessage, isBackendUnreachable,
 } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import PrGenerationSection from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx"
 import HasPermission from "@components/HasPermission.jsx"
@@ -68,12 +69,44 @@ const Pill = ({ children, cls = "" }) => (
     {children}
   </span>
 )
+const normalizeSearch = (v) => String(v || "").replace(/\s+/g, " ").trim()
 
 const CustomerOrders = () => {
   const user = useSelector((s) => s.auth.user)
   const queryClient = useQueryClient()
   const LIST_LIMIT = 10
   const { searchTerm, handleSearchChange } = useSearchHook(1)
+
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== "undefined" ? navigator.onLine : true,
+  )
+  const [backendDown, setBackendDown] = useState(false)
+  const [backendMsg, setBackendMsg] = useState("")
+
+  useEffect(() => {
+    const on = () => setIsOnline(true)
+    const off = () => setIsOnline(false)
+    window.addEventListener("online", on)
+    window.addEventListener("offline", off)
+    return () => {
+      window.removeEventListener("online", on)
+      window.removeEventListener("offline", off)
+    }
+  }, [])
+
+  const markBackendOk = useCallback(() => {
+    setBackendDown(false)
+    setBackendMsg("")
+  }, [])
+
+  const markBackendDown = useCallback((err) => {
+    if (!isBackendUnreachable(err)) return
+    setBackendDown(true)
+    setBackendMsg(backendUnreachableMessage(err))
+  }, [])
+
+  const normalizedSearchTerm = useMemo(() => normalizeSearch(searchTerm), [searchTerm])
+
   const { mailboxes, initialMailbox } = useMailboxes()
   const [mailbox, setMailbox] = useState(
     initialMailbox || "beirholm.hub@sapphiretextiles.com.pk",
@@ -81,6 +114,9 @@ const CustomerOrders = () => {
   const [pickerOpen, setPickerOpen] = useState(false)
   const scrollRef = useRef(null)
   const [mentionUsers, setMentionUsers] = useState([])
+  const agreementFormRef = useRef(null)
+
+  const [listRoot, setListRoot] = useState(null)
 
   const {
     rows,
@@ -89,12 +125,17 @@ const CustomerOrders = () => {
     isFetchingNextPage,
     isLoading,
     refetch,
+    fetchNextPage,
+    onListScroll,
+    canScroll,
   } = useAgreementsFeed({
-    s: searchTerm,
+    s: normalizedSearchTerm,
     mailbox,
     limit: LIST_LIMIT,
-    root: scrollRef.current,
+    root: listRoot,
+    onBackendStatusChange: (down, err) => (down ? markBackendDown(err) : markBackendOk()),
   })
+
 
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState("tab-agreement")
@@ -187,11 +228,20 @@ const CustomerOrders = () => {
     refetch()
   })
 
-  const loadAgreement = useCallback(async (id, optimistic) => {
-    if (optimistic) setSelected(optimistic)
-    const full = await getAgreement(id)
-    setSelected(full)
-  }, [])
+  const loadAgreement = useCallback(
+    async (id, optimistic) => {
+      if (optimistic) setSelected(optimistic)
+      try {
+        const full = await getAgreement(id)
+        setSelected(full)
+        markBackendOk()
+      } catch (err) {
+        markBackendDown(err)
+      }
+    },
+    [markBackendDown, markBackendOk],
+  )
+
 
   const handleRefresh = useCallback(() => {
     // refresh left list
@@ -254,6 +304,17 @@ const CustomerOrders = () => {
               <h6 className="font-semibold mb-0 text-[1rem] text-white">
                 All Orders
               </h6>
+              {(!isOnline || backendDown) && (
+                <Pill
+                  cls={
+                    !isOnline
+                      ? "bg-rose-100 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300"
+                      : "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
+                  }
+                >
+                  {!isOnline ? "Offline" : "Backend issue"}
+                </Pill>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -304,7 +365,10 @@ const CustomerOrders = () => {
             <div className="flex items-center gap-2">
               <div className="input-group flex-1">
                 <input
-                  onChange={handleSearchChange}
+                  onChange={(e) => {
+                    const v = normalizeSearch(e.target.value)
+                    handleSearchChange({ target: { value: v } })
+                  }}
                   type="text"
                   className="form-control !bg-light !border-0 !rounded-s-md"
                   placeholder="Search Order"
@@ -328,9 +392,11 @@ const CustomerOrders = () => {
             </div>
           </div>
 
-          <div
-            ref={scrollRef}
-            className="flex-1 min-h-0 overflow-y-auto relative"
+           <div
+            ref={setListRoot}
+            onScroll={onListScroll}
+            className="flex-1 min-h-0 overflow-y-scroll relative custom-scrollbar"
+            style={{ scrollbarGutter: "stable" }}
           >
             {isLoading && (
               <div className="absolute inset-0 z-10 grid place-items-center bg-white/60 dark:bg-black/20">
@@ -418,16 +484,19 @@ const CustomerOrders = () => {
                 )
               })}
             </ul>
-            <div
-              ref={sentinelRef}
-              className="py-3 text-center text-xs text-[#8c9097]"
-            >
+            <div ref={sentinelRef} className="py-3 text-center text-xs text-[#8c9097]">
               {isFetchingNextPage ? (
-                <div className="flex justify-center">
-                  <LoadingSpinner />
-                </div>
+                <div className="flex justify-center"><LoadingSpinner /></div>
               ) : hasNextPage ? (
-                "Scroll to load more"
+                canScroll ? "Scroll to load more" : (
+                  <button
+                    type="button"
+                    className="underline underline-offset-2"
+                    onClick={() => fetchNextPage()}
+                  >
+                    Load more
+                  </button>
+                )
               ) : (
                 "No more list"
               )}
@@ -437,6 +506,18 @@ const CustomerOrders = () => {
 
         {/* Right detail panel */}
         <div className="dark:bg-bodybg h-[calc(100vh-6rem)] overflow-hidden rounded-md bg-white border dark:border-defaultborder/10 text-defaulttextcolor text-defaultsize flex-1 flex flex-col min-h-0">
+           {backendDown && (
+            <div className="shrink-0 px-4 py-2 border-b dark:border-defaultborder/10 bg-amber-50/70 dark:bg-amber-900/10 text-amber-800 dark:text-amber-200 text-[0.78rem]">
+              {backendMsg}
+              <button
+                type="button"
+                onClick={handleRefresh}
+                className="ml-2 underline underline-offset-2"
+              >
+                Retry
+              </button>
+            </div>
+          )}
           {selected ? (
             <>
               <div className="shrink-0 p-3">
@@ -477,6 +558,19 @@ const CustomerOrders = () => {
                           <RotateCcw size={14} />
                           Reset
                         </button>
+
+                        <button
+                          type="button"
+                          onClick={() => agreementFormRef.current?.openRemark?.()}
+                          className="ti-btn ti-btn-outline-secondary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
+                        >
+                          <MessageSquareText size={14} />
+                          Remark
+                          {!!selected?.remark && (
+                            <span className="ml-1 h-2 w-2 rounded-full bg-violet-600 inline-block" />
+                          )}
+                        </button>
+
                         <button
                           type="button"
                           onClick={() => openForEdit(selected)}
@@ -487,6 +581,7 @@ const CustomerOrders = () => {
                         </button>
                       </>
                     )}
+
                   </div>
                 </div>
 
@@ -500,20 +595,18 @@ const CustomerOrders = () => {
                   {activeTab === "tab-agreement" && (
                     <div className="max-h-[67vh] sm:max-h-[72vh] overflow-y-auto pr-1">
                       <AgreementPlacementForm
-                        key={`${selected?.id || "new"}:${
-                          selected?.updated_at || ""
-                        }`}
+                        ref={agreementFormRef}
+                        key={`${selected?.id || "new"}:${selected?.updated_at || ""}`}
                         seed={selected}
                         email={selected?.email}
-                        onAfterPersist={(entity) => {
-                          setSelected(entity)
-                        }}
+                        onAfterPersist={(entity) => setSelected(entity)}
                         approvalActivity={selected?.actions}
                         status={selected?.status}
                         currentApproverName={selected?.current_approver_name}
                         disabledSubmit={selected?.status === "under_approval"}
                         refetch={refetch}
                       />
+
                       <div className="rounded-xl border-2 dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
                         <Discussion
                           title="Agreement Placement Discussions"

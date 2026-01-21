@@ -66,7 +66,7 @@ export const markRead = async ({ threadKey, emailId, mailbox }, opts = {}) => {
 
 export const getMailboxes = async (opts = {}) => {
   try {
-    const res = await api.get(`/customer-hub/configs/datatable/`, { params: { skip: 0, limit: 100 }, signal: opts.signal })
+    const res = await api.get(`/customer-hub/configs/datatable/`, { params: { skip: 0, limit: 10 }, signal: opts.signal })
     const data = res.data?.data || res.data || {}
     const rows = data.rows || []
     return Array.from(new Set(rows.map((r) => r.mailbox_email).filter(Boolean)))

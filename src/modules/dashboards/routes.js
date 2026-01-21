@@ -17,6 +17,7 @@ import AnalyticsDashboard from "@modules/dashboards/analytics/views/AnalyticsDas
 import civilDashboard from "@modules/dashboards/civil/views/CivilDashboard.jsx";
 import DataHealthDashboard from "@modules/dashboards/beirholmBi/views/DataHealthDashboard.jsx";
 import PulseDashboard from "@modules/dashboards/data-pulse/views/PulseDashboard.jsx";
+import RetailPulseDashboard from "@modules/dashboards/data-pulse/views/RetailPulseDashboard.jsx";
 export const DASHBOARD_ROUTES = {
     PROJECT: {
         path: '/dashboards/project-management-system',
@@ -90,7 +91,11 @@ export const DASHBOARD_ROUTES = {
 
     },
     DATA_PULSE_DASHBOARD: {
-        path: '/dashboards/data-pulse',
+        path: '/dashboards/data-pulse/ecom',
+        permission: 'auth.data_pulse_dashboard',
+    },
+    DATA_PULSE_RETAIL_DASHBOARD: {
+        path: '/dashboards/data-pulse/retail',
         permission: 'auth.data_pulse_dashboard',
     },
 
@@ -182,6 +187,11 @@ export const MODULE_ROUTES = [
     {
         path:DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.path,
         component: PulseDashboard,
+        permission: DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.permission,
+    },
+    {
+        path:DASHBOARD_ROUTES.DATA_PULSE_RETAIL_DASHBOARD.path,
+        component: RetailPulseDashboard,
         permission: DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.permission,
     },
 

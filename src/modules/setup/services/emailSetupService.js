@@ -8,6 +8,7 @@ export const emailSetupTypes = [
     { value: 'sr_daily_stat_report', label: 'SR Daily Stat Report' },
     { value: 'ai_qc_daily_report', label: 'SappSense QC Report' },
     { value: 'beirholm_trend_monthly_report', label: 'Beirholm Trend Report' },
+    { value: 'daily_pulse_report', label: 'Daily Pulse Report' },
 ];
 
 export const getEmailSetupTypeLabel = (value) => {
