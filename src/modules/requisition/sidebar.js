@@ -38,6 +38,15 @@ export const sidebarMenu = [
             "",
             REQUISITION_ROUTES.REQUISITION.APPLICANT_BANK.permission
         ),
+        generateSidebarItem(
+            REQUISITION_ROUTES.REQUISITION.OFFER_APPROVAL_INBOX.path,
+            "link",
+            "Offer Approval",
+            4,
+            "",
+            REQUISITION_ROUTES.REQUISITION.OFFER_APPROVAL_INBOX.permission
+        ),
+
 
     ]),
 ];

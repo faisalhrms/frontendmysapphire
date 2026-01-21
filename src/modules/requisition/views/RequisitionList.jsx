@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import DataTable from "@components/datatable/DataTable.jsx";
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import { FilePenLine  } from "lucide-react";
+import { FilePenLine ,LayoutDashboard  } from "lucide-react";
 import IconPageHeader from "../../layouts/includes/IconPageHeader.jsx";
 import { REQUISITION_ROUTES } from "../routes.js";
 
@@ -98,15 +98,22 @@ const RequisitionList = ({ externalFilters = [] }) => {
                         </Link>
 
                         <Link to={`/module/requisition/${r.id}/applicants`}>
-                            <button
-                                className="ti-btn ti-btn-success-gradient ti-btn-sm"
-                                title="View Applicants"
-                            >
+                            <button className="ti-btn ti-btn-success-gradient ti-btn-sm" title="View Applicants">
                                 <i className="bi bi-people"></i>
+                            </button>
+                        </Link>
+
+                        {/* ✅ Dashboard */}
+                        <Link to={`/module/requisition/${r.id}/dashboard`}>
+                            <button className="ti-btn ti-btn-warning ti-btn-sm" title="Dashboard">
+        <span className="inline-flex items-center gap-1">
+          <LayoutDashboard size={16} />
+        </span>
                             </button>
                         </Link>
                     </div>
                 );
+
             },
         },
 
