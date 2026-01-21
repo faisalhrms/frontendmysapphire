@@ -202,3 +202,45 @@ export const useRequisitionApplicantsBulkStatus = (requisitionId) => {
         bulkUpdateStatus,
     };
 };
+
+// ✅ Fetch applicant decision summary
+export const useRequisitionDecisionSummary = (requisitionId, applicationId) => {
+    const [summary, setSummary] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        let mounted = true;
+
+        (async () => {
+            try {
+                setLoading(true);
+                setError("");
+
+                if (!requisitionId || !applicationId) {
+                    throw new Error("Missing requisitionId/applicationId");
+                }
+
+                // ✅ endpoint you shared
+                const { data } = await api.get(
+                    `/requisition/${requisitionId}/applicants/${applicationId}/decision-summary/`
+                );
+
+                if (!mounted) return;
+                setSummary(data?.data || null);
+            } catch (e) {
+                if (!mounted) return;
+                setError(e?.response?.data?.message || "Unable to load decision summary.");
+                setSummary(null);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
+
+        return () => {
+            mounted = false;
+        };
+    }, [requisitionId, applicationId]);
+
+    return { summary, loading, error };
+};

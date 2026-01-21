@@ -1,14 +1,78 @@
-import React, { useMemo, useState } from "react";
+// src/modules/requisition/views/RequisitionDecisionPendingApplicant.jsx
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import DataTable from "@components/datatable/DataTable.jsx";
 import Avatar from "@components/Avatar.jsx";
+import api from "@config/axiosConfig.js";
+import AlertModal from "../../../components/AlertModal.jsx";
+
 import { toTitleCase } from "@helpers/formatters.js";
 import { getBadgeClasses } from "@helpers/badges.js";
-import {History, Handshake, Star} from "lucide-react";
+
+// ✅ Handshake removed, Decision icons added
+import { History, Star, FileText, Check, X, Pause } from "lucide-react";
 
 const RequisitionDecisionPendingApplicant = ({ requisitionId, isActive }) => {
-    const [refreshKey, setRefreshKey] = useState(0);
     const navigate = useNavigate();
+    const tableRef = useRef(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    // ✅ Decision Modal State
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalDecision, setModalDecision] = useState(null); // "select" | "reject" | "on_hold"
+    const [activeRow, setActiveRow] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
+
+    const refreshTable = useCallback(() => {
+        const ref = tableRef.current;
+
+        if (ref?.reload) return ref.reload();
+        if (ref?.refresh) return ref.refresh();
+        if (ref?.fetchData) return ref.fetchData();
+        if (ref?.refetch) return ref.refetch();
+
+        setRefreshKey((k) => k + 1);
+    }, []);
+
+    const openDecisionModal = useCallback((row, decision) => {
+        setActiveRow(row);
+        setModalDecision(decision);
+        setModalOpen(true);
+    }, []);
+
+    const closeModal = useCallback(() => {
+        setModalOpen(false);
+        setModalDecision(null);
+        setActiveRow(null);
+    }, []);
+
+    const onConfirm = useCallback(
+        async (remarks) => {
+            if (!activeRow?.id || !modalDecision) return;
+
+            setSubmitting(true);
+            try {
+                await api.post(`/requisition/${requisitionId}/applicants/${activeRow.id}/decision/`, {
+                    decision: modalDecision,
+                    remarks: remarks || "",
+                });
+
+                closeModal();
+                refreshTable();
+            } catch (e) {
+                const msg =
+                    e?.response?.data?.message ||
+                    e?.response?.data?.detail ||
+                    e?.message ||
+                    "Something went wrong";
+                alert(msg);
+            } finally {
+                setSubmitting(false);
+            }
+        },
+        [activeRow?.id, modalDecision, requisitionId, closeModal, refreshTable]
+    );
 
     const renderUserCell = (userObj) => {
         if (!userObj) return "—";
@@ -43,10 +107,35 @@ const RequisitionDecisionPendingApplicant = ({ requisitionId, isActive }) => {
         }
         return (
             <span title={value} className="truncate inline-block max-w-[240px] align-middle">
-        {value}
-      </span>
+                {value}
+            </span>
         );
     };
+
+    const modalTitle =
+        modalDecision === "select"
+            ? "Select Candidate"
+            : modalDecision === "reject"
+                ? "Reject Candidate"
+                : "Put Candidate On Hold";
+
+    const modalBtn =
+        modalDecision === "select" ? "Select" : modalDecision === "reject" ? "Reject" : "On Hold";
+
+    const modalType =
+        modalDecision === "reject" ? "danger" : modalDecision === "on_hold" ? "warning" : "success";
+
+    const candidateName =
+        activeRow?.full_name ||
+        [activeRow?.first_name, activeRow?.last_name].filter(Boolean).join(" ") ||
+        "this candidate";
+
+    const modalMessage =
+        modalDecision === "select"
+            ? `Are you sure you want to SELECT ${candidateName}? This will move the candidate to Offer Approval flow.`
+            : modalDecision === "reject"
+                ? `Are you sure you want to REJECT ${candidateName}?`
+                : `Are you sure you want to put ${candidateName} ON HOLD?`;
 
     const columns = useMemo(
         () => [
@@ -65,29 +154,35 @@ const RequisitionDecisionPendingApplicant = ({ requisitionId, isActive }) => {
                                 </button>
                             </Link>
 
+                            {/* ✅ Decision Summary */}
+                            <button
+                                type="button"
+                                className="ti-btn ti-btn-primary ti-btn-sm"
+                                title="Decision Summary"
+                                onClick={() =>
+                                    navigate(`/module/requisition/${requisitionId}/applicants/${appId}/decision-summary`)
+                                }
+                            >
+                                <span className="inline-flex items-center gap-1">
+                                    <FileText size={16} />
+                                </span>
+                            </button>
+
                             {/* Interview History */}
                             <button
                                 type="button"
                                 className="ti-btn ti-btn-light ti-btn-sm"
                                 title="Interview History"
-                                onClick={() => navigate(`/module/requisition/${requisitionId}/applicants/${appId}/interviews`)}
+                                onClick={() =>
+                                    navigate(`/module/requisition/${requisitionId}/applicants/${appId}/interviews`)
+                                }
                             >
-                <span className="inline-flex items-center gap-1">
-                  <History size={16} />
-                </span>
+                                <span className="inline-flex items-center gap-1">
+                                    <History size={16} />
+                                </span>
                             </button>
 
-                            {/* Proceed to Offer (UI only: redirect to detail page) */}
-                            <button
-                                type="button"
-                                className="ti-btn ti-btn-success ti-btn-sm"
-                                title="Proceed to Offer"
-                                onClick={() => navigate(`/module/requisition/${requisitionId}/applicants/${appId}?section=offer`)}
-                            >
-                <span className="inline-flex items-center gap-1">
-                  <Handshake size={16} />
-                </span>
-                            </button>
+                            {/* ❌ Handshake / Offer Section REMOVED */}
                         </div>
                     );
                 },
@@ -167,10 +262,7 @@ const RequisitionDecisionPendingApplicant = ({ requisitionId, isActive }) => {
 
                                     return (
                                         <span key={i} className="relative inline-flex">
-              {/* outline */}
                                             <Star size={16} className="text-gray-300" />
-
-                                            {/* filled overlay */}
                                             {(filled || half) && (
                                                 <Star
                                                     size={16}
@@ -183,20 +275,18 @@ const RequisitionDecisionPendingApplicant = ({ requisitionId, isActive }) => {
                                                     }}
                                                 />
                                             )}
-            </span>
+                                        </span>
                                     );
                                 })}
                             </div>
 
                             <span className="text-xs font-semibold text-[#8c9097] dark:text-white/50">
-        {rating.toFixed(2)}
-      </span>
+                                {rating.toFixed(2)}
+                            </span>
                         </div>
                     );
                 },
-
             },
-
 
             {
                 Header: "Scheduled By",
@@ -264,20 +354,85 @@ const RequisitionDecisionPendingApplicant = ({ requisitionId, isActive }) => {
                 filterType: "datetime",
                 filterable: true,
             },
+
+            // ✅ Decision column at the end (icon buttons + wrap so no overlap)
+            {
+                Header: "Decision",
+                id: "decision_actions",
+                accessor: (r) => r?.id,
+                disableSortBy: true,
+                filterable: false,
+                headerClassName: "!text-center",
+                getCellProps: () => ({ className: "!text-center" }),
+                Cell: ({ row }) => {
+                    const r = row?.original || {};
+                    return (
+                        <div className="flex flex-wrap items-center justify-center gap-2">
+                            <button
+                                type="button"
+                                className="ti-btn ti-btn-success ti-btn-sm !px-2 !py-1"
+                                title="Select"
+                                onClick={() => openDecisionModal(r, "select")}
+                                disabled={submitting}
+                            >
+                                <Check size={16} />
+                            </button>
+
+                            <button
+                                type="button"
+                                className="ti-btn ti-btn-danger ti-btn-sm !px-2 !py-1"
+                                title="Reject"
+                                onClick={() => openDecisionModal(r, "reject")}
+                                disabled={submitting}
+                            >
+                                <X size={16} />
+                            </button>
+
+                            <button
+                                type="button"
+                                className="ti-btn ti-btn-warning ti-btn-sm !px-2 !py-1"
+                                title="On Hold"
+                                onClick={() => openDecisionModal(r, "on_hold")}
+                                disabled={submitting}
+                            >
+                                <Pause size={16} />
+                            </button>
+                        </div>
+                    );
+                },
+            },
         ],
-        [requisitionId, navigate]
+        [requisitionId, navigate, openDecisionModal, submitting]
     );
 
     if (!isActive) return null;
 
     return (
-        <DataTable
-            key={refreshKey}
-            columns={columns}
-            title="Decision Pending Applicants"
-            apiUrl={`/requisitions/${requisitionId}/applicants/decision-pending/datatable`}
-            enableAdvancedFilters={true}
-        />
+        <>
+            <DataTable
+                ref={tableRef}
+                key={refreshKey}
+                columns={columns}
+                title="Decision Pending Applicants"
+                apiUrl={`/requisitions/${requisitionId}/applicants/decision-pending/datatable`}
+                enableAdvancedFilters={true}
+            />
+
+            <AlertModal
+                id="requisition-decision-action"
+                type={modalType}
+                title={modalTitle}
+                message={modalMessage}
+                btnTxt={modalBtn}
+                isOpen={modalOpen}
+                needInput={true}
+                inputLabel="Remarks"
+                inputType="textarea"
+                isSubmitting={submitting}
+                onConfirm={onConfirm}
+                onClose={closeModal}
+            />
+        </>
     );
 };
 
