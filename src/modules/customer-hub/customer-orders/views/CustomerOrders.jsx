@@ -7,13 +7,11 @@ import React, {
   useRef,
 } from "react"
 import { useSelector } from "react-redux"
-import { useQueryClient } from "@tanstack/react-query"
 import dayjs from "dayjs"
 import mail from "@assets/images/icon/viewicon.svg"
 import Avatar from "@components/Avatar.jsx"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
 import {
-  Inbox,
   Plus,
   Edit3,
   FileSignature,
@@ -25,7 +23,8 @@ import {
   Trash2,
   Mail,
   FileText,
-  MessageSquareText
+  MessageSquareText,
+  Loader2,
 } from "lucide-react"
 import NavTabs from "@modules/customer-hub/customer-orders/components/NavTabs.jsx"
 import AirjetCostingBaseSection from "@modules/customer-hub/customer-orders/components/airjet-costing/AirjetCostingBaseSection.jsx"
@@ -42,12 +41,15 @@ import {
   getAgreement,
   getAgreementMentionUsers,
   resetAgreementPayload,
-  deleteAgreement, backendUnreachableMessage, isBackendUnreachable,
+  deleteAgreement,
+  backendUnreachableMessage,
+  isBackendUnreachable,
 } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import PrGenerationSection from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx"
 import HasPermission from "@components/HasPermission.jsx"
 import Discussion from "@components/Discussion.jsx"
 import AlertModalPortal from "@components/AlertModalPortal.jsx"
+import AgreementDetailShimmer from "@modules/customer-hub/customer-orders/components/AgreementDetailShimmer.jsx"
 
 const srcLabel = (s) =>
   s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : ""
@@ -69,16 +71,16 @@ const Pill = ({ children, cls = "" }) => (
     {children}
   </span>
 )
+
 const normalizeSearch = (v) => String(v || "").replace(/\s+/g, " ").trim()
 
 const CustomerOrders = () => {
   const user = useSelector((s) => s.auth.user)
-  const queryClient = useQueryClient()
   const LIST_LIMIT = 10
   const { searchTerm, handleSearchChange } = useSearchHook(1)
 
   const [isOnline, setIsOnline] = useState(
-    typeof navigator !== "undefined" ? navigator.onLine : true,
+    typeof navigator !== "undefined" ? navigator.onLine : true
   )
   const [backendDown, setBackendDown] = useState(false)
   const [backendMsg, setBackendMsg] = useState("")
@@ -105,37 +107,43 @@ const CustomerOrders = () => {
     setBackendMsg(backendUnreachableMessage(err))
   }, [])
 
-  const normalizedSearchTerm = useMemo(() => normalizeSearch(searchTerm), [searchTerm])
+  const normalizedSearchTerm = useMemo(
+    () => normalizeSearch(searchTerm),
+    [searchTerm]
+  )
 
   const { mailboxes, initialMailbox } = useMailboxes()
   const [mailbox, setMailbox] = useState(
-    initialMailbox || "beirholm.hub@sapphiretextiles.com.pk",
+    initialMailbox || "beirholm.hub@sapphiretextiles.com.pk"
   )
   const [pickerOpen, setPickerOpen] = useState(false)
-  const scrollRef = useRef(null)
+
   const [mentionUsers, setMentionUsers] = useState([])
   const agreementFormRef = useRef(null)
-
   const [listRoot, setListRoot] = useState(null)
 
   const {
-    rows,
+    rows: feedRows,
     sentinelRef,
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    refetch,
+    refreshFirstPage,
     fetchNextPage,
     onListScroll,
     canScroll,
+    isRefreshingFirstPage,
   } = useAgreementsFeed({
     s: normalizedSearchTerm,
     mailbox,
     limit: LIST_LIMIT,
     root: listRoot,
-    onBackendStatusChange: (down, err) => (down ? markBackendDown(err) : markBackendOk()),
+    staleMs: 30_000,
+    onBackendStatusChange: (down, err) =>
+      down ? markBackendDown(err) : markBackendOk(),
   })
 
+  const rows = feedRows || []
 
   const [selected, setSelected] = useState(null)
   const [activeTab, setActiveTab] = useState("tab-agreement")
@@ -146,6 +154,11 @@ const CustomerOrders = () => {
   const [selectedAgreementLabel, setSelectedAgreementLabel] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const detailReqRef = useRef(0)
+  const [detailLoading, setDetailLoading] = useState(false)
+  const [detailLoadingId, setDetailLoadingId] = useState(null)
+  const isDetailLoading = detailLoading && detailLoadingId === selected?.id
 
   const tabs = useMemo(() => {
     const base = [
@@ -170,26 +183,17 @@ const CustomerOrders = () => {
     ]
     return hasEmail
       ? [
-          {
-            id: "tab-email",
-            label: "Original Email",
-            icon: <Mail />,
-            color: "sky",
-          },
-          {
-            id: "tab-extracted",
-            label: "Extracted Info",
-            icon: <FileText />,
-            color: "violet",
-          },
+          { id: "tab-email", label: "Original Email", icon: <Mail />, color: "sky" },
+          { id: "tab-extracted", label: "Extracted Info", icon: <FileText />, color: "violet" },
           ...base,
         ]
       : base
   }, [hasEmail])
 
   useEffect(() => {
-    if (!tabs.find((t) => t.id === activeTab) && tabs.length)
+    if (!tabs.find((t) => t.id === activeTab) && tabs.length) {
       setActiveTab(tabs[0].id)
+    }
   }, [tabs, activeTab])
 
   useEffect(() => {
@@ -197,20 +201,47 @@ const CustomerOrders = () => {
       setMentionUsers([])
       return
     }
+
     let active = true
     const loadMentionUsers = async () => {
       try {
         const users = await getAgreementMentionUsers(selected.id)
         if (active) setMentionUsers(users || [])
-      } catch (e) {
+      } catch {
         if (active) setMentionUsers([])
       }
     }
+
     loadMentionUsers()
     return () => {
       active = false
     }
   }, [selected?.id, selected?.updated_at])
+
+  const loadAgreement = useCallback(
+    async (id, optimistic) => {
+      const reqId = ++detailReqRef.current
+      setDetailLoading(true)
+      setDetailLoadingId(id)
+
+      if (optimistic) setSelected(optimistic)
+
+      try {
+        const full = await getAgreement(id)
+        if (detailReqRef.current !== reqId) return
+        setSelected(full)
+        markBackendOk()
+      } catch (err) {
+        if (detailReqRef.current !== reqId) return
+        markBackendDown(err)
+      } finally {
+        if (detailReqRef.current === reqId) {
+          setDetailLoading(false)
+        }
+      }
+    },
+    [markBackendDown, markBackendOk]
+  )
 
   const {
     openModal,
@@ -225,44 +256,24 @@ const CustomerOrders = () => {
   } = useAgreementPlacementModal((created) => {
     setSelected(created)
     setActiveTab("tab-agreement")
-    refetch()
+    refreshFirstPage()
   })
 
-  const loadAgreement = useCallback(
-    async (id, optimistic) => {
-      if (optimistic) setSelected(optimistic)
-      try {
-        const full = await getAgreement(id)
-        setSelected(full)
-        markBackendOk()
-      } catch (err) {
-        markBackendDown(err)
-      }
-    },
-    [markBackendDown, markBackendOk],
-  )
-
-
   const handleRefresh = useCallback(() => {
-    // refresh left list
-    queryClient.invalidateQueries({
-      queryKey: ["agreementsFeed"],
-    })
+    refreshFirstPage()
 
-    // refresh selected agreement on right panel
     if (selected?.id) {
-      const optimisticRow =
-        rows && rows.length ? rows.find((r) => r.id === selected.id) : null
+      const optimisticRow = rows?.length ? rows.find((r) => r.id === selected.id) : null
       loadAgreement(selected.id, optimisticRow)
     }
-  }, [queryClient, rows, selected, loadAgreement])
+  }, [refreshFirstPage, selected?.id, rows, loadAgreement])
 
   const handleResetPayload = useCallback(async () => {
     if (!selected?.id) return
     const refreshed = await resetAgreementPayload(selected.id)
     setSelected(refreshed)
-    queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
-  }, [selected?.id, queryClient])
+    refreshFirstPage()
+  }, [selected?.id, refreshFirstPage])
 
   const handleCancelClick = useCallback((row) => {
     setSelectedId(row.id)
@@ -275,17 +286,15 @@ const CustomerOrders = () => {
     setIsSubmitting(true)
     try {
       await deleteAgreement(selectedId)
-      if (selected?.id === selectedId) {
-        setSelected(null)
-      }
-      queryClient.invalidateQueries({ queryKey: ["agreementsFeed"] })
+      if (selected?.id === selectedId) setSelected(null)
+      refreshFirstPage()
       setIsModalOpen(false)
       setSelectedId(null)
       setSelectedAgreementLabel("")
     } finally {
       setIsSubmitting(false)
     }
-  }, [selectedId, selected, queryClient])
+  }, [selectedId, selected, refreshFirstPage])
 
   return (
     <Fragment>
@@ -296,14 +305,21 @@ const CustomerOrders = () => {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                title={"Refresh Feed"}
+                title="Refresh Feed"
                 onClick={handleRefresh}
+                disabled={isRefreshingFirstPage}
               >
-                <FolderSync size={18} className="text-white ml-2" />
+                {isRefreshingFirstPage ? (
+                  <Loader2 size={18} className="text-white ml-2 animate-spin" />
+                ) : (
+                  <FolderSync size={18} className="text-white ml-2" />
+                )}
               </button>
+
               <h6 className="font-semibold mb-0 text-[1rem] text-white">
                 All Orders
               </h6>
+
               {(!isOnline || backendDown) && (
                 <Pill
                   cls={
@@ -316,15 +332,18 @@ const CustomerOrders = () => {
                 </Pill>
               )}
             </div>
+
             <div className="flex items-center gap-2">
               <div className="relative">
                 <button
                   className="flex items-center gap-2 text-white px-2 py-1 rounded-full hover:bg-white/10"
                   onClick={() => setPickerOpen((o) => !o)}
+                  type="button"
                 >
                   <Avatar full_name={mailbox} size="sm" parentClasses="me-1" />
                   <ChevronDown size={16} />
                 </button>
+
                 {pickerOpen && (
                   <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-bodybg border dark:border-defaultborder/20 rounded shadow z-50">
                     <div className="p-2 text-xs opacity-70">Switch mailbox</div>
@@ -334,22 +353,22 @@ const CustomerOrders = () => {
                         .map((m) => (
                           <li key={m}>
                             <button
+                              type="button"
                               className={`w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-light/60 dark:hover:bg-white/10 ${
-                                m === mailbox
-                                  ? "bg-light/50 dark:bg-white/5"
-                                  : ""
+                                m === mailbox ? "bg-light/50 dark:bg-white/5" : ""
                               }`}
                               onClick={() => {
+                                // cancel any in-flight agreement load
+                                detailReqRef.current += 1
+                                setDetailLoading(false)
+                                setDetailLoadingId(null)
+
                                 setMailbox(m)
                                 setPickerOpen(false)
                                 setSelected(null)
                               }}
                             >
-                              <Avatar
-                                full_name={m}
-                                size="sm"
-                                parentClasses="me-1"
-                              />
+                              <Avatar full_name={m} size="sm" parentClasses="me-1" />
                               <span className="truncate">{m}</span>
                             </button>
                           </li>
@@ -382,6 +401,7 @@ const CustomerOrders = () => {
                   <i className="ri-search-line text-[#8c9097] dark:text-white/50" />
                 </button>
               </div>
+
               <button
                 type="button"
                 onClick={openModal}
@@ -392,7 +412,7 @@ const CustomerOrders = () => {
             </div>
           </div>
 
-           <div
+          <div
             ref={setListRoot}
             onScroll={onListScroll}
             className="flex-1 min-h-0 overflow-y-scroll relative custom-scrollbar"
@@ -403,24 +423,21 @@ const CustomerOrders = () => {
                 <LoadingSpinner />
               </div>
             )}
+
             <ul className="list-none mb-0 text-defaulttextcolor text-defaultsize">
               {rows.map((r) => {
-                const isSelected = selected?.id === r.id
+                const isSelectedRow = selected?.id === r.id
                 const when = r.received_at || r.created_at
                 return (
-                  <li
-                    key={`agr:${r.id}`}
-                    className="border-b dark:border-defaultborder/20"
-                  >
+                  <li key={`agr:${r.id}`} className="border-b dark:border-defaultborder/20">
                     <button
+                      type="button"
                       className={`w-full text-left p-2 flex items-start ${
-                        isSelected
+                        isSelectedRow
                           ? "bg-[#e6f0ff] dark:bg-[#1e293b]"
                           : "hover:bg-[#eef4ff] dark:hover:bg-[#111827]"
                       }`}
-                      onClick={() => {
-                        loadAgreement(r.id, r)
-                      }}
+                      onClick={() => loadAgreement(r.id, r)}
                     >
                       <span className="shrink-0 mt-3 ms-2 w-5 h-5" />
                       <Avatar
@@ -428,6 +445,7 @@ const CustomerOrders = () => {
                         size="sm"
                         parentClasses="profile-timeline-avatar me-2"
                       />
+
                       <div className="flex-grow min-w-0">
                         <div className="mb-1 text-[0.75rem] space-x-2">
                           <span className="font-medium text-truncate">
@@ -437,24 +455,24 @@ const CustomerOrders = () => {
                             {dayjs(when).format("h:mm A")}
                           </span>
                         </div>
+
                         <span className="block font-medium">
                           Agreement #{r.agreement_no}
                         </span>
+
                         <div className="mt-1 flex items-center justify-between">
                           <span className="text-[.6875rem] text-[#8c9097] dark:text-white/50">
-                            {r.quality} • {r.design} • {r.colour || "-"} •{" "}
-                            {r.width}
+                            {r.quality} • {r.design} • {r.colour || "-"} • {r.width}
                           </span>
+
                           <div className="flex items-center gap-1">
-                            <div
-                              className="relative inline-flex group"
-                              title={srcLabel(r.source)}
-                            >
+                            <div className="relative inline-flex group" title={srcLabel(r.source)}>
                               <Pill cls={statusClass(r.status)}>
                                 <span className="transition-opacity group-hover:opacity-0">
                                   {srcLabel(r.source)}
                                 </span>
                               </Pill>
+
                               <HasPermission permission="customer_hub.delete_customer_hub_agreements">
                                 <span
                                   role="button"
@@ -484,11 +502,16 @@ const CustomerOrders = () => {
                 )
               })}
             </ul>
+
             <div ref={sentinelRef} className="py-3 text-center text-xs text-[#8c9097]">
               {isFetchingNextPage ? (
-                <div className="flex justify-center"><LoadingSpinner /></div>
+                <div className="flex justify-center">
+                  <LoadingSpinner />
+                </div>
               ) : hasNextPage ? (
-                canScroll ? "Scroll to load more" : (
+                canScroll ? (
+                  "Scroll to load more"
+                ) : (
                   <button
                     type="button"
                     className="underline underline-offset-2"
@@ -506,7 +529,7 @@ const CustomerOrders = () => {
 
         {/* Right detail panel */}
         <div className="dark:bg-bodybg h-[calc(100vh-6rem)] overflow-hidden rounded-md bg-white border dark:border-defaultborder/10 text-defaulttextcolor text-defaultsize flex-1 flex flex-col min-h-0">
-           {backendDown && (
+          {backendDown && (
             <div className="shrink-0 px-4 py-2 border-b dark:border-defaultborder/10 bg-amber-50/70 dark:bg-amber-900/10 text-amber-800 dark:text-amber-200 text-[0.78rem]">
               {backendMsg}
               <button
@@ -518,6 +541,7 @@ const CustomerOrders = () => {
               </button>
             </div>
           )}
+
           {selected ? (
             <>
               <div className="shrink-0 p-3">
@@ -525,34 +549,36 @@ const CustomerOrders = () => {
               </div>
 
               <div className="px-4 sm:px-6">
-                {/* Tabs row + actions row (stacked) */}
                 <div className="space-y-2">
-                  <NavTabs
-                    tabs={tabs}
-                    activeId={activeTab}
-                    onTabChange={(id) => setActiveTab(id)}
-                  />
+                  <div className={isDetailLoading ? "pointer-events-none opacity-70" : ""}>
+                    <NavTabs
+                      tabs={tabs}
+                      activeId={activeTab}
+                      onTabChange={(id) => setActiveTab(id)}
+                    />
+                  </div>
 
                   <div className="flex flex-wrap items-center justify-end gap-2">
                     {activeTab === "tab-costing" && (
                       <HasPermission permission="auth.view_full_costing">
                         <button
                           type="button"
+                          disabled={isDetailLoading}
                           onClick={() => setShowFullCosting((v) => !v)}
                           className="ti-btn ti-btn-outline-secondary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
                         >
                           <Calculator size={14} />
-                          {showFullCosting
-                            ? "Basic costing view"
-                            : "Full costing view"}
+                          {showFullCosting ? "Basic costing view" : "Full costing view"}
                         </button>
                       </HasPermission>
                     )}
+
                     {activeTab === "tab-agreement" && selected && (
                       <>
                         <button
                           type="button"
                           onClick={handleResetPayload}
+                          disabled={isDetailLoading}
                           className="ti-btn ti-btn-outline-danger !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
                         >
                           <RotateCcw size={14} />
@@ -561,6 +587,7 @@ const CustomerOrders = () => {
 
                         <button
                           type="button"
+                          disabled={isDetailLoading}
                           onClick={() => agreementFormRef.current?.openRemark?.()}
                           className="ti-btn ti-btn-outline-secondary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
                         >
@@ -573,6 +600,7 @@ const CustomerOrders = () => {
 
                         <button
                           type="button"
+                          disabled={isDetailLoading}
                           onClick={() => openForEdit(selected)}
                           className="ti-btn ti-btn-outline-primary !py-1 !px-2 !text-[0.75rem] inline-flex items-center gap-2"
                         >
@@ -581,55 +609,60 @@ const CustomerOrders = () => {
                         </button>
                       </>
                     )}
-
                   </div>
                 </div>
 
                 <div className="mt-4">
-                  {activeTab === "tab-email" && hasEmail && (
-                    <AgreementEmailPanel agreement={selected} />
-                  )}
-                  {activeTab === "tab-extracted" && hasEmail && (
-                    <EmailExtractionPanel email={selected.email} />
-                  )}
-                  {activeTab === "tab-agreement" && (
-                    <div className="max-h-[67vh] sm:max-h-[72vh] overflow-y-auto pr-1">
-                      <AgreementPlacementForm
-                        ref={agreementFormRef}
-                        key={`${selected?.id || "new"}:${selected?.updated_at || ""}`}
-                        seed={selected}
-                        email={selected?.email}
-                        onAfterPersist={(entity) => setSelected(entity)}
-                        approvalActivity={selected?.actions}
-                        status={selected?.status}
-                        currentApproverName={selected?.current_approver_name}
-                        disabledSubmit={selected?.status === "under_approval"}
-                        refetch={refetch}
-                      />
+                  {isDetailLoading ? (
+                    <AgreementDetailShimmer />
+                  ) : (
+                    <>
+                      {activeTab === "tab-email" && hasEmail && (
+                        <AgreementEmailPanel agreement={selected} />
+                      )}
 
-                      <div className="rounded-xl border-2 dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
-                        <Discussion
-                          title="Agreement Placement Discussions"
-                          storeEndPoint={`/customer-hub/agreements/${selected?.id}/discussion/`}
-                          getEndPoint={`/customer-hub/agreements/${selected?.id}/discussions/`}
-                          users={mentionUsers}
-                        />
-                      </div>
-                    </div>
-                  )}
+                      {activeTab === "tab-extracted" && hasEmail && (
+                        <EmailExtractionPanel email={selected.email} />
+                      )}
 
-                  {activeTab === "tab-costing" && (
-                    <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
-                      <AirjetCostingBaseSection
-                        seed={selected}
-                        showFull={showFullCosting}
-                      />
-                    </div>
-                  )}
-                  {activeTab === "tab-pr" && (
-                    <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
-                      <PrGenerationSection seed={selected} />
-                    </div>
+                      {activeTab === "tab-agreement" && (
+                        <div className="max-h-[67vh] sm:max-h-[72vh] overflow-y-auto pr-1">
+                          <AgreementPlacementForm
+                            ref={agreementFormRef}
+                            key={`${selected?.id || "new"}:${selected?.updated_at || ""}`}
+                            seed={selected}
+                            email={selected?.email}
+                            onAfterPersist={(entity) => setSelected(entity)}
+                            approvalActivity={selected?.actions}
+                            status={selected?.status}
+                            currentApproverName={selected?.current_approver_name}
+                            disabledSubmit={selected?.status === "under_approval"}
+                            refetch={refreshFirstPage}
+                          />
+
+                          <div className="rounded-xl border-2 dark:border-defaultborder/20 bg-white dark:bg-bodybg shadow-sm overflow-hidden mb-5 relative">
+                            <Discussion
+                              title="Agreement Placement Discussions"
+                              storeEndPoint={`/customer-hub/agreements/${selected?.id}/discussion/`}
+                              getEndPoint={`/customer-hub/agreements/${selected?.id}/discussions/`}
+                              users={mentionUsers}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {activeTab === "tab-costing" && (
+                        <div className="max-h-[65vh] sm:max-h-[70vh] overflow-y-auto pr-1">
+                          <AirjetCostingBaseSection seed={selected} showFull={showFullCosting} />
+                        </div>
+                      )}
+
+                      {activeTab === "tab-pr" && (
+                        <div className="max-h-[60vh] sm:max-h-[65vh] overflow-y-auto pr-1">
+                          <PrGenerationSection seed={selected} />
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -637,9 +670,7 @@ const CustomerOrders = () => {
           ) : (
             <div className="p-6 h-full min_h-[420px] flex flex-col items-center justify-center text-center">
               <img src={mail} alt="" className="w-24 h-24 mb-4" />
-              <p className="text-[#8c9097] dark:text:white/50">
-                Select item to view
-              </p>
+              <p className="text-[#8c9097] dark:text:white/50">Select item to view</p>
             </div>
           )}
         </div>
