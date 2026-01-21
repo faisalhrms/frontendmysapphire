@@ -27,7 +27,6 @@ import {
 import { useSelector } from "react-redux";
 import {DEFAULT_CHART_COLORS} from "@helpers/styles.js";
 
-// Custom Tooltip Component
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         const dataPoint = payload[0]?.payload;

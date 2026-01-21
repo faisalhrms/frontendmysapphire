@@ -128,6 +128,17 @@ export const formatAmountWithCommas = (amount) => {
     return Number(amount).toLocaleString('en-US');
 };
 
+export const formatRoundedAmountWithCommas = (amount) => {
+    const n = Number(amount);
+    if (Number.isNaN(n)) return amount;
+
+    // 4.5 -> 5, 4.4 -> 4
+    const rounded = Math.round(n);
+
+    return rounded.toLocaleString("en-US");
+};
+
+
 export const getExcerptFromText = (string, length = 20, more = "...") => {
     // Remove HTML tags
     string = string.replace(/<\/?[^>]+(>|$)/g, "");
