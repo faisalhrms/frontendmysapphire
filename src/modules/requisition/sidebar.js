@@ -21,23 +21,15 @@ export const sidebarMenu = [
             "",
             REQUISITION_ROUTES.REQUISITION.READ.permission
         ),
-
-        generateSidebarItem(
-            REQUISITION_ROUTES.REQUISITION.MY_PENDING_FEEDBACK.path,
-            "link",
-            "My Pending Feedback",
-            3,
-            "",
-            REQUISITION_ROUTES.REQUISITION.MY_PENDING_FEEDBACK.permission
-        ),
         generateSidebarItem(
             REQUISITION_ROUTES.REQUISITION.APPLICANT_BANK.path,
             "link",
             "Applicant Bank",
-            4,
+            3,
             "",
             REQUISITION_ROUTES.REQUISITION.APPLICANT_BANK.permission
         ),
+
         generateSidebarItem(
             REQUISITION_ROUTES.REQUISITION.OFFER_APPROVAL_INBOX.path,
             "link",
@@ -46,6 +38,15 @@ export const sidebarMenu = [
             "",
             REQUISITION_ROUTES.REQUISITION.OFFER_APPROVAL_INBOX.permission
         ),
+        generateSidebarItem(
+            REQUISITION_ROUTES.REQUISITION.MY_PENDING_FEEDBACK.path,
+            "link",
+            "My Pending Feedback",
+            5,
+            "",
+            REQUISITION_ROUTES.REQUISITION.MY_PENDING_FEEDBACK.permission
+        ),
+
 
 
     ]),
