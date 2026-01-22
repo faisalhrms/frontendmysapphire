@@ -25,6 +25,7 @@ import CartonDetailPage from "@modules/carton/view/CartonDetailPage.jsx";
 import PublicRequisitionApply from "./modules/requisition/views/PublicRequisitionApply.jsx";
 import Careers from "./modules/public/views/Careers.jsx";
 import JobDetail from "./modules/public/views/JobDetail.jsx";
+import OfferResponse from "@modules/requisition/views/OfferResponse.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -82,7 +83,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                             <Route path="resetpassword/:uidb64/:token" element={<ForgotPassView />} />
                             <Route path="vcard/profile/:id" element={<VCardProfile />} />
                             <Route path="forms/:slug" element={<PublicDynamicForm />} />
-                            <Route path="/careers/apply/:slug" element={<PublicRequisitionApply />} />                            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                            <Route path="/careers/apply/:slug" element={<PublicRequisitionApply />} />
+                            <Route path="/careers/offer-response" element={<OfferResponse />} />
+                            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/inlay/:code" element={<PublicInlay />} />
                             <Route path="transfer-order/delivery/detail/:sdn_id" element={<ToDetailPage />} />
                             <Route path="transfer-order/carton/detail/:id" element={<CartonDetailPage/>} />
