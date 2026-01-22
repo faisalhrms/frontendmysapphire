@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useInfiniteQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
-import { datatableAgreements, isBackendUnreachable } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import {
+  datatableAgreementsSidebar,
+  isBackendUnreachable,
+} from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
 export const useAgreementsFeed = ({
   s = "",
@@ -9,49 +12,55 @@ export const useAgreementsFeed = ({
   limit = 10,
   root = null,
   onBackendStatusChange,
+  staleMs = 30_000,
+  gcMs = 30 * 60 * 1000,
 } = {}) => {
+  const queryClient = useQueryClient()
   const scrolledRef = useRef(false)
+  const refreshingFirstRef = useRef(false)
+
   const [canScroll, setCanScroll] = useState(false)
+  const [isRefreshingFirstPage, setIsRefreshingFirstPage] = useState(false)
+
+  const queryKey = useMemo(
+    () => ["agreementsFeed", s, mailbox, limit],
+    [s, mailbox, limit]
+  )
 
   const onListScroll = useCallback(() => {
     scrolledRef.current = true
   }, [])
 
   const fetchAgreements = ({ pageParam = 0, signal }) =>
-    datatableAgreements(
-      { skip: pageParam, limit, s, mailbox },
-      { signal }
-    )
+    datatableAgreementsSidebar({ skip: pageParam, limit, s, mailbox }, { signal })
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = useInfiniteQuery({
-    queryKey: ["agreementsFeed", s, mailbox, limit],
+  const q = useInfiniteQuery({
+    queryKey,
     queryFn: fetchAgreements,
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
-      const current = Number(lastPage.current_page || 1)
-      const total = Number(lastPage.total_pages || 1)
+      const current = Number(lastPage?.current_page || 1)
+      const total = Number(lastPage?.total_pages || 1)
       const nextSkip = current * limit
       return current < total ? nextSkip : undefined
     },
     enabled: !!mailbox,
-    staleTime: 30_000,
-    refetchOnMount: "always",
+
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+
+    staleTime: staleMs,
+    gcTime: gcMs,
+
     retry: (count, err) => (isBackendUnreachable(err) ? count < 1 : count < 2),
     onSuccess: () => onBackendStatusChange?.(false),
     onError: (err) => onBackendStatusChange?.(isBackendUnreachable(err), err),
   })
 
   const rows = useMemo(
-    () => (data?.pages || []).flatMap((p) => p.rows || []),
-    [data]
+    () => (q.data?.pages || []).flatMap((p) => p?.rows || []),
+    [q.data]
   )
 
   useEffect(() => {
@@ -69,21 +78,65 @@ export const useAgreementsFeed = ({
 
   useEffect(() => {
     if (!root) return
-    if (!inView || !hasNextPage || isFetchingNextPage) return
+    if (!inView || !q.hasNextPage || q.isFetchingNextPage) return
     if (!canScroll && !scrolledRef.current) return
+    q.fetchNextPage()
+  }, [root, inView, q.hasNextPage, q.isFetchingNextPage, q.fetchNextPage, canScroll])
 
-    fetchNextPage()
-  }, [root, inView, hasNextPage, isFetchingNextPage, fetchNextPage, canScroll])
+  const refreshFirstPage = useCallback(async () => {
+    if (!mailbox) return
+    if (refreshingFirstRef.current) return
+
+    refreshingFirstRef.current = true
+    setIsRefreshingFirstPage(true)
+
+    try {
+      const first = await datatableAgreementsSidebar({ skip: 0, limit, s, mailbox })
+      onBackendStatusChange?.(false)
+
+      queryClient.setQueryData(queryKey, (old) => {
+        const oldPages = old?.pages || []
+        const oldPageParams = old?.pageParams || []
+
+        if (!oldPages.length) return { pages: [first], pageParams: [0] }
+
+        const pages = [...oldPages]
+        pages[0] = first
+
+        const pageParams = oldPageParams.length
+          ? [...oldPageParams]
+          : pages.map((_, i) => i * limit)
+
+        pageParams[0] = 0
+        return { ...old, pages, pageParams }
+      })
+    } catch (err) {
+      onBackendStatusChange?.(isBackendUnreachable(err), err)
+    } finally {
+      setIsRefreshingFirstPage(false)
+      refreshingFirstRef.current = false
+    }
+  }, [mailbox, limit, s, queryClient, queryKey, onBackendStatusChange])
+
+  useEffect(() => {
+    const state = queryClient.getQueryState(queryKey)
+    if (!state?.dataUpdatedAt) return
+    const age = Date.now() - state.dataUpdatedAt
+    if (age > staleMs) refreshFirstPage()
+  }, [queryClient, queryKey, staleMs, refreshFirstPage])
+
+  const isInitialLoading = q.isLoading && rows.length === 0
 
   return {
     rows,
     sentinelRef,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading: isLoading || isRefetching,
-    refetch,
-    fetchNextPage,
+    hasNextPage: q.hasNextPage,
+    isFetchingNextPage: q.isFetchingNextPage,
+    isLoading: isInitialLoading,
+    refreshFirstPage,
+    fetchNextPage: q.fetchNextPage,
     onListScroll,
     canScroll,
+    isRefreshingFirstPage,
   }
 }

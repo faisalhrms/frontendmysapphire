@@ -16,7 +16,7 @@ import EquipmentAuditDashboard from "@modules/dashboards/eq-aud/views/EquipmentA
 import AnalyticsDashboard from "@modules/dashboards/analytics/views/AnalyticsDashboard.jsx";
 import civilDashboard from "@modules/dashboards/civil/views/CivilDashboard.jsx";
 import DataHealthDashboard from "@modules/dashboards/beirholmBi/views/DataHealthDashboard.jsx";
-import PulseDashboard from "@modules/dashboards/data-pulse/views/PulseDashboard.jsx";
+import PulseEcomDashboard from "@modules/dashboards/data-pulse/views/PulseEcomDashboard.jsx";
 import RetailPulseDashboard from "@modules/dashboards/data-pulse/views/RetailPulseDashboard.jsx";
 export const DASHBOARD_ROUTES = {
     PROJECT: {
@@ -186,7 +186,7 @@ export const MODULE_ROUTES = [
     },
     {
         path:DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.path,
-        component: PulseDashboard,
+        component: PulseEcomDashboard,
         permission: DASHBOARD_ROUTES.DATA_PULSE_DASHBOARD.permission,
     },
     {
