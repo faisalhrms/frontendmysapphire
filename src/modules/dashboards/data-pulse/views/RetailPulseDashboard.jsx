@@ -1,9 +1,20 @@
-import React, { useMemo, useState } from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
 import ReChart from "@components/charts/ReChart.jsx";
 import { DEFAULT_CHART_COLORS } from "@helpers/styles.js";
+
+import {
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    CartesianGrid,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+} from "recharts";
 
 import {
     Activity,
@@ -25,6 +36,10 @@ import {
     TrendingDown
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
+import FormInput from "@components/form/FormInput.jsx";
+import FilterButton from "@components/form/FilterButton.jsx";
+import useFilters from "@hooks/useFilters.js";
+import {getPastDate} from "@helpers/dateTime.js";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -34,6 +49,132 @@ const EmptyState = ({ label = "No Data Available" }) => (
         {label}
     </div>
 );
+
+
+const formatPKR = (v, formatRoundedAmountWithCommas) =>
+    `PKR ${formatRoundedAmountWithCommas ? formatRoundedAmountWithCommas(v) : (Math.round(Number(v) || 0)).toLocaleString("en-US")}`;
+
+const CreditMemoAreaByStore = ({ rows = [], formatRoundedAmountWithCommas }) => {
+    const data = useMemo(() => {
+        const safe = Array.isArray(rows) ? rows : [];
+
+        return [...safe]
+            .map((r) => {
+                const applied = Number(r.AppliedAmount) || 0;
+                const orderTotal = Number(r.Total_order_Amount) || 0;
+                const paid = Math.max(orderTotal - applied, 0);
+
+                return {
+                    // X axis key
+                    store: r.WAREHOUSENAME || r.AppliedInStoreId || "-",
+
+                    // for tooltip
+                    EntryId: r.EntryId || "-",
+                    AppliedInStoreId: r.AppliedInStoreId || "-",
+                    AppliedByReceiptId: r.AppliedByReceiptId || "-",
+                    AppliedByTransactionId: r.AppliedByTransactionId || "-",
+                    Date: r.Date || r.AppliedDate || "",
+
+                    // 3 series
+                    discounted_amount: applied,
+                    order_amount: orderTotal,
+                    paid_amount: paid,
+                };
+            })
+            // sort by biggest discounted amount (so top 10 strongest signals)
+            .sort((a, b) => (b.discounted_amount || 0) - (a.discounted_amount || 0))
+            .slice(0, 10);
+    }, [rows]);
+
+    if (!data.length) return null;
+
+    return (
+        <div className="h-[420px]">
+            <ResponsiveContainer width="100%" height={420}>
+                <AreaChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 30 }}>
+                    <defs>
+                        <linearGradient id="gDiscount" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.22} />
+                            <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                        </linearGradient>
+
+                        <linearGradient id="gPaid" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.20} />
+                            <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                        </linearGradient>
+
+                        <linearGradient id="gOrder" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.18} />
+                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                        </linearGradient>
+                    </defs>
+
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+
+                    {/* X axis = store */}
+                    <XAxis
+                        dataKey="store"
+                        stroke="#6B7280"
+                        fontSize={9}
+                        interval={0}
+                        tickMargin={4}
+                        angle={-30}
+                        textAnchor="end"
+                        height={110}
+                    />
+
+                    <YAxis stroke="#6B7280" fontSize={12} />
+
+                    <Tooltip
+                        contentStyle={{
+                            backgroundColor: "#fff",
+                            border: "1px solid #E5E7EB",
+                            borderRadius: "8px",
+                        }}
+                        labelFormatter={(label) => `Store: ${label}`}
+                        formatter={(value, name, props) => {
+                            const labelMap = {
+                                discounted_amount: "Discounted Amount",
+                                paid_amount: "Paid Amount",
+                                order_amount: "Order Amount",
+                            };
+                            const key = name;
+                            return [formatPKR(value, formatRoundedAmountWithCommas), labelMap[key] || name];
+                        }}
+                    />
+
+                    <Legend />
+
+                    {/* 3 lines */}
+                    <Area
+                        type="monotone"
+                        dataKey="discounted_amount"
+                        stroke="#6366F1"
+                        fill="url(#gDiscount)"
+                        fillOpacity={1}
+                        name="Discounted Amount"
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="paid_amount"
+                        stroke="#10B981"
+                        fill="url(#gPaid)"
+                        fillOpacity={1}
+                        name="Paid Amount"
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="order_amount"
+                        stroke="#F59E0B"
+                        fill="url(#gOrder)"
+                        fillOpacity={1}
+                        name="Order Amount"
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
+        </div>
+    );
+};
 
 const Tabs = ({ tabs, activeTab, onChange }) => (
     <div className="mt-4 flex gap-2 border-t border-gray-200 pt-4 dark:border-gray-700 overflow-x-auto">
@@ -128,7 +269,7 @@ const TopItemsList = ({ items = [], valuePrefix = "", valueSuffix = "" }) => (
                     </div>
 
                     <span className="text-sm font-bold text-blue-600 tabular-nums whitespace-nowrap">
-            {valuePrefix}
+                        {valuePrefix}
                         {formatRoundedAmountWithCommas(item.value)}
                         {valueSuffix}
           </span>
@@ -138,7 +279,6 @@ const TopItemsList = ({ items = [], valuePrefix = "", valueSuffix = "" }) => (
     </div>
 );
 
-// -------- METRICS (Retail) --------
 const METRICS = [
     { key: "sales_by_store", label: "Sales by Store", icon: TrendingUp},
     { key: "returns_by_store", label: "Returns by Store", icon: TrendingDown},
@@ -175,7 +315,7 @@ function normalizeMetricRows(metricKey, rows) {
             return safe.map((r) => ({
                 name: r.WAREHOUSENAME ?? "Unknown",
                 value: Number(r.ReturnQty) || 0,
-                sub: `${r.StoreId ?? "-"} • Net Amount: ${formatRoundedAmountWithCommas(r.NET_AMOUNT) ?? "-"}`,
+                sub: `${r.StoreId ?? "-"} • Net Amount: PKR ${formatRoundedAmountWithCommas(r.NET_AMOUNT) ?? "-"}`,
             }));
 
         case "discount_coupon_top":
@@ -189,7 +329,7 @@ function normalizeMetricRows(metricKey, rows) {
             return safe.map((r) => ({
                 name: r.Name ?? "Unknown",
                 value: Number(r.Total_order_Amount) || 0,
-                sub: `Eff: ${formatRoundedAmountWithCommas(r.EffectiveAmount)} • ${r.CustomerAccount ?? "-"}`,
+                sub: `Discount: PKR ${formatRoundedAmountWithCommas(r.EffectiveAmount)} • ${r.CustomerAccount ?? "-"}`,
             }));
 
         case "credit_memo_top":
@@ -299,14 +439,14 @@ function getDetailTableConfig(metricKey) {
                     { key: "TransactionNumber", label: "Transaction #", mono: true },
                     {
                         key: "Total_order_Amount",
-                        label: "Total Order",
+                        label: "Order Amount",
                         align: "right",
                         strong: true,
                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.Total_order_Amount)}`,
                     },
                     {
                         key: "EffectiveAmount",
-                        label: "Effective Amount",
+                        label: "Discounted Amount",
                         align: "right",
                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.EffectiveAmount)}`,
                     },
@@ -326,7 +466,7 @@ function getDetailTableConfig(metricKey) {
                     { key: "AppliedByTransactionId", label: "Transaction #", mono: true },
                     {
                         key: "AppliedAmount",
-                        label: "Applied Amount",
+                        label: "Discounted Amount",
                         align: "right",
                         strong: true,
                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.AppliedAmount)}`,
@@ -422,63 +562,96 @@ const RetailPulseDashboard = () => {
     );
 
     const [activeTab, setActiveTab] = useState("overview");
+
+    const {
+        control,
+        handleSubmit,
+        errors,
+        getFilters
+    } = useFilters(
+        useMemo(
+            () => ({
+                initialFilters: [
+                    { name: 'date_from',defaultValue: getPastDate(1)},
+                    { name: 'date_to',defaultValue: getPastDate(1)},
+                ],
+            }),
+            []
+        )
+    );
+
+    const [filters, setFilters] = useState(getFilters());
+
+    const onSubmit = useCallback(
+        (formData) => {
+            setFilters(formData);
+        },
+        []
+    );
+
+    const DateInfo = ({  }) => (
+        <div className="flex items-center gap-2">
+            <Calendar size={13}/>
+            <span>
+            <span className="opacity-70">From:</span> {filters?.date_from || "-"}</span>
+            <span className="opacity-40">—</span>
+            <span>
+        <span className="opacity-70">To:</span> {filters?.date_to || "-"}</span>
+        </div>
+    );
+
     const [selectedMetric, setSelectedMetric] = useState("sales_by_store");
 
-    // ✅ KPIs always fetched
     const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/retail/kpis/",
-        {}
+        filters
     );
     const kpis = kpiResp?.kpis || {};
-    const meta = kpiResp?.meta || {};
 
     const overviewEnabled = activeTab === "overview";
     const analyticsEnabled = activeTab === "analytics";
     const riskEnabled = activeTab === "risk";
 
-    // Overview calls (optional, but safe)
     const { data: salesResp, isLoading: salesLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.sales_by_store,
-        {},
+        filters,
         { enabled: overviewEnabled }
     );
 
     const { data: returnResp, isLoading: returnLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.returns_by_store,
-        {},
+        filters,
         { enabled: overviewEnabled }
     );
 
     const { data: creditResp, isLoading: creditLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.credit_memo_top,
-        {},
+        filters,
         { enabled: overviewEnabled }
     );
 
-    // Risk calls
     const { data: acResp, isLoading: acLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.after_close_by_store,
-        {},
+        filters,
         { enabled: riskEnabled }
     );
 
     const { data: voidResp, isLoading: voidLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.void_by_store,
-        {},
+        filters,
         { enabled: riskEnabled }
     );
 
     const { data: suspResp, isLoading: suspLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.suspended_by_store,
-        {},
+        filters,
         { enabled: riskEnabled }
     );
 
-    // Analytics selected metric call
     const metricEndpoint = METRIC_ENDPOINTS[selectedMetric];
     const { data: metricResp, isLoading: metricLoading } = useFetchWithFilters(
         metricEndpoint,
-        {},
+        filters,
         { enabled: analyticsEnabled && !!metricEndpoint }
     );
 
@@ -495,43 +668,93 @@ const RetailPulseDashboard = () => {
 
     const showInitialLoading = false;
 
+    const CardShimmer = ({ width, height }) => (
+        <div style={{
+            width: width, height: height,
+            position: 'relative', overflow: 'hidden',
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            borderRadius: '4px', margin: '4px 0'
+        }}>
+            <style>{`@keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
+            <div style={{
+                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                animation: 'sweep 1.5s infinite linear'
+            }} />
+        </div>
+    );
+
     return (
         <div className="space-y-6 pb-8 pt-6">
             {/* Header */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2">
-                                <BarChart3 size={28} />
-                            </div>
-                            <div>
-                                <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Retail Data Pulse</h1>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    Top 10 signals (last 7 days, excluding today)
-                                </p>
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    {/* Left: Title + meta */}
+                    <div className="flex items-start gap-3">
+                        <div
+                            className="p-2 rounded-lg bg-gray-50 border border-gray-200 dark:bg-slate-900 dark:border-gray-700">
+                            <BarChart3 size={26} className="text-gray-700 dark:text-gray-200"/>
+                        </div>
 
-                                {meta?.date_from && meta?.date_to && (
-                                    <div className="flex items-center gap-2 mt-2 text-[11px] font-semibold text-gray-500 dark:text-gray-400">
-                                        <Calendar size={13} /> {meta.date_from} — {meta.date_to}
-                                        {meta.timezone ? (
-                                            <>
-                                                <span className="opacity-40">|</span>
-                                                <MapPin size={13} /> {meta.timezone}
-                                            </>
-                                        ) : null}
-                                    </div>
-                                )}
+                        <div className="min-w-0">
+                            <h1 className="font-bold text-2xl text-gray-900 dark:text-white">
+                                Retail Data Pulse
+                            </h1>
+
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                Top 10 signals for the selected date range.
+                            </p>
+
+                            {/* Range from filters (no meta) */}
+                            <div
+                                className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] font-semibold text-gray-500 dark:text-gray-400">
+                                <DateInfo/>
+                                <div className="flex items-center gap-2">
+                                    <span className="opacity-40">|</span>
+                                    <MapPin size={13}/>
+                                    <span>Asia/Karachi</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+                    {/* Right: Filters */}
+                    <form onSubmit={handleSubmit(onSubmit)} className="w-full lg:w-auto">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+                            <div className="w-full sm:w-[180px]">
+                                <FormInput
+                                    type="date"
+                                    name="date_from"
+                                    control={control}
+                                    errors={errors}
+                                    label={false}
+                                />
+                            </div>
+
+                            <div className="w-full sm:w-[180px]">
+                                <FormInput
+                                    type="date"
+                                    name="date_to"
+                                    control={control}
+                                    errors={errors}
+                                    label={false}
+                                />
+                            </div>
+
+                            <div className="sm:pb-[2px]">
+                                <FilterButton/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {/* Tabs */}
+                <div className="mt-4">
+                    <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab}/>
+                </div>
             </div>
 
             {showInitialLoading ? (
-                <LoadingSpinner />
+                <LoadingSpinner/>
             ) : (
                 <>
                     {/* ------------------ OVERVIEW ------------------ */}
@@ -544,53 +767,61 @@ const RetailPulseDashboard = () => {
                                     title="Net Revenue"
                                     value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.sales_net_amount_total)}`}
                                     subtitle="Total net sales"
+                                    isLoading={kpiLoading}
                                 />
                                 <StatCard
                                     icon={RotateCcw}
                                     title="Returns Value"
                                     value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.return_net_amount_total)}`}
                                     subtitle="Total returns"
+                                    isLoading={kpiLoading}
                                 />
                                 <StatCard
                                     icon={Receipt}
                                     title="Credit Issued"
                                     value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.credit_memo_total)}`}
                                     subtitle="Credit memo total"
+                                    isLoading={kpiLoading}
                                 />
                                 <StatCard
                                     icon={BadgePercent}
                                     title="Discounts"
                                     value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.discount_coupon_total)}`}
                                     subtitle="Coupons applied"
+                                    isLoading={kpiLoading}
                                 />
                                 <StatCard
                                     icon={IdCard}
                                     title="Staff Card"
                                     value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.employee_card_total)}`}
                                     subtitle="Employee spend"
+                                    isLoading={kpiLoading}
                                 />
                                 <StatCard
                                     icon={Clock}
                                     title="POS Shifts"
                                     value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.open_shifts)}
                                     subtitle="Currently open"
+                                    isLoading={kpiLoading}
                                 />
                                 <StatCard
                                     icon={ShieldAlert}
                                     title="Late Transactions"
                                     value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.after_close_txn_count)}
                                     subtitle="After closing"
+                                    isLoading={kpiLoading}
                                 />
                                 <StatCard
                                     icon={Ban}
                                     title="Void Count"
                                     value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.void_txn_count)}
                                     subtitle="Voids"
+                                    isLoading={kpiLoading}
                                 />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* Sales Trends */}
+                                {/* Sales Trend */}
                                 <div
                                     className="bg-gradient-to-br from-black to-black to-indigo-700 rounded-xl shadow-lg p-6 relative overflow-hidden">
                                     <div
@@ -598,8 +829,7 @@ const RetailPulseDashboard = () => {
                                     <div className="relative z-10">
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                <TrendingUp size={20}/>
-                                                Sales Trend
+                                                <TrendingUp size={20}/> Sales Trend
                                             </h3>
                                             <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                                 <ArrowUpRight className="text-white" size={22}/>
@@ -609,18 +839,22 @@ const RetailPulseDashboard = () => {
                                         <div className="space-y-4">
                                             <div>
                                                 <p className="text-sm text-white/80">Net Revenue</p>
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(kpis.sales_net_amount_total)}
-                                                </p>
-                                                <p className="text-xs text-white/70">Across selected period</p>
+                                                {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
+                                                    <p className="text-4xl font-bold text-white tabular-nums">
+                                                        PKR {formatRoundedAmountWithCommas(kpis.sales_net_amount_total)}
+                                                    </p>
+                                                )}
+                                                <p className="text-xs text-white/70"><DateInfo/></p>
                                             </div>
 
                                             <div
                                                 className="pt-4 border-t border-white/25 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
                                                 <p className="text-sm text-white/80">Discount Impact</p>
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(kpis.discount_coupon_total)}
-                                                </p>
+                                                {kpiLoading ? <CardShimmer width="140px" height="32px"/> : (
+                                                    <p className="text-2xl font-bold text-white tabular-nums">
+                                                        PKR {formatRoundedAmountWithCommas(kpis.discount_coupon_total)}
+                                                    </p>
+                                                )}
                                                 <p className="text-xs text-white/70">Coupons applied</p>
                                             </div>
 
@@ -640,8 +874,7 @@ const RetailPulseDashboard = () => {
                                     <div className="relative z-10">
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                <ShieldAlert size={20}/>
-                                                Risk Snapshot
+                                                <ShieldAlert size={20}/> Risk Snapshot
                                             </h3>
                                             <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                                 <ShieldAlert className="text-white" size={22}/>
@@ -650,32 +883,37 @@ const RetailPulseDashboard = () => {
 
                                         <div className="space-y-4">
                                             <div>
-                                                <p className="text-sm text-white/80">After Close Txns</p>
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    {formatRoundedAmountWithCommas(kpis.after_close_txn_count)}
-                                                </p>
+                                                <p className="text-sm text-white/80">After Close Transactions</p>
+                                                {kpiLoading ? <CardShimmer width="100px" height="40px"/> : (
+                                                    <p className="text-4xl font-bold text-white tabular-nums">
+                                                        {formatRoundedAmountWithCommas(kpis.after_close_txn_count)}
+                                                    </p>
+                                                )}
                                                 <p className="text-xs text-white/70">Transactions after closing</p>
                                             </div>
 
                                             <div className="pt-4 border-t border-white/25 grid grid-cols-2 gap-4">
                                                 <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
                                                     <p className="text-xs text-white/80">Voids</p>
-                                                    <p className="text-2xl font-bold text-white tabular-nums">
-                                                        {formatRoundedAmountWithCommas(kpis.void_txn_count)}
-                                                    </p>
+                                                    {kpiLoading ? <CardShimmer width="60px" height="32px"/> : (
+                                                        <p className="text-2xl font-bold text-white tabular-nums">
+                                                            {formatRoundedAmountWithCommas(kpis.void_txn_count)}
+                                                        </p>
+                                                    )}
                                                 </div>
                                                 <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
                                                     <p className="text-xs text-white/80">Suspended</p>
-                                                    <p className="text-2xl font-bold text-white tabular-nums">
-                                                        {formatRoundedAmountWithCommas(kpis.suspended_txn_count)}
-                                                    </p>
+                                                    {kpiLoading ? <CardShimmer width="60px" height="32px"/> : (
+                                                        <p className="text-2xl font-bold text-white tabular-nums">
+                                                            {formatRoundedAmountWithCommas(kpis.suspended_txn_count)}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
 
                                             <div
                                                 className="bg-white/10 p-2 rounded-lg text-white/90 text-sm flex items-center gap-2">
-                                                <Ban size={16}/>
-                                                Audit these stores first (see Risk tab).
+                                                <Ban size={16}/> Audit these stores first (see Risk tab).
                                             </div>
                                         </div>
                                     </div>
@@ -689,8 +927,7 @@ const RetailPulseDashboard = () => {
                                     <div className="relative z-10">
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                <RotateCcw size={20}/>
-                                                Returns & Credits
+                                                <RotateCcw size={20}/> Returns & Credits
                                             </h3>
                                             <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                                 <Receipt className="text-white" size={22}/>
@@ -700,17 +937,21 @@ const RetailPulseDashboard = () => {
                                         <div className="space-y-4">
                                             <div>
                                                 <p className="text-sm text-white/80">Returns Value</p>
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(kpis.return_net_amount_total)}
-                                                </p>
+                                                {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
+                                                    <p className="text-4xl font-bold text-white tabular-nums">
+                                                        PKR {formatRoundedAmountWithCommas(kpis.return_net_amount_total)}
+                                                    </p>
+                                                )}
                                                 <p className="text-xs text-white/70">Total returns</p>
                                             </div>
 
                                             <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
                                                 <p className="text-xs text-white/80">Credit Issued</p>
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(kpis.credit_memo_total)}
-                                                </p>
+                                                {kpiLoading ? <CardShimmer width="140px" height="32px"/> : (
+                                                    <p className="text-2xl font-bold text-white tabular-nums">
+                                                        PKR {formatRoundedAmountWithCommas(kpis.credit_memo_total)}
+                                                    </p>
+                                                )}
                                             </div>
 
                                             <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">
@@ -767,13 +1008,9 @@ const RetailPulseDashboard = () => {
                                     ) : !isNonEmptyArray(creditResp?.rows) ? (
                                         <EmptyState/>
                                     ) : (
-                                        <ReChart
-                                            data={creditResp.rows.map((r) => ({
-                                                name: r.WAREHOUSENAME,
-                                                value: Number(r.Total_order_Amount) || 0,
-                                            }))}
-                                            dimensions={{height: 420, bottom: 0}}
-                                            colors={DEFAULT_CHART_COLORS}
+                                        <CreditMemoAreaByStore
+                                            rows={creditResp?.rows || []}
+                                            formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
                                         />
                                     )}
                                 </SectionCard>
