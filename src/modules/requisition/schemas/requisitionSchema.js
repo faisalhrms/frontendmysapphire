@@ -8,16 +8,17 @@ const extractId = (v) => {
     return v;
 };
 
-// ✅ bool preprocess for LOV values (supports boolean or "true"/"false")
+// ✅ bool preprocess for LOV values (supports boolean, {value:...}, or "true"/"false")
 const toBool = (v) => {
-    if (v === true || v === false) return v;
-    if (typeof v === "string") {
-        const s = v.trim().toLowerCase();
+    const vv = extractId(v);
+    if (vv === true || vv === false) return vv;
+    if (typeof vv === "string") {
+        const s = vv.trim().toLowerCase();
         if (s === "true") return true;
         if (s === "false") return false;
     }
-    if (typeof v === "number") return Boolean(v);
-    return v;
+    if (typeof vv === "number") return Boolean(vv);
+    return vv;
 };
 
 const idRequired = (name) =>
@@ -45,10 +46,16 @@ const requisitionSchema = z
         company_id: z.preprocess(extractId, z.union([z.coerce.number().int().positive(), z.null()]).optional()),
 
         job_description: idRequired("Job Description"),
-        designation: idOptional,
-        location: idRequired("Location"),
-        hiring_manager: idOptional,
 
+        // ✅ REQUIRED now
+        designation: idRequired("Grade"),
+
+        location: idRequired("Location"),
+
+        // ✅ REQUIRED now
+        hiring_manager: idRequired("Hiring Manager"),
+
+        // ✅ REQUIRED already
         openings: z.coerce.number().int().min(1, "Openings must be at least 1"),
         req_type: z.enum(["new", "replacement", "additional"]),
         employment_type: z.enum(["permanent", "contract", "intern", "consultant"]),
@@ -59,6 +66,7 @@ const requisitionSchema = z
         work_mode: z.enum(["onsite", "hybrid", "remote"]),
         replacement_for_employee: idOptional,
 
+        // ✅ REQUIRED already (enum)
         budget_status: z.enum(["budgeted", "unbudgeted"]).default("budgeted"),
         unbudgeted_reason: z.string().optional().nullable(),
 
@@ -67,6 +75,13 @@ const requisitionSchema = z
             z.union([z.coerce.number().min(0, "Must be ≥ 0"), z.null()]).optional()
         ),
 
+        // ✅ NEW
+        max_total_experience_years: z.preprocess(
+            extractId,
+            z.union([z.coerce.number().min(0, "Must be ≥ 0"), z.null()]).optional()
+        ),
+
+        // ✅ REQUIRED now (validated via superRefine using htmlToText)
         education_relevant_experience: z.string().optional().nullable(),
         knowledge_technical_skills: z.string().optional().nullable(),
 
@@ -77,14 +92,36 @@ const requisitionSchema = z
 
         publish_on_approval: z.boolean().default(true),
 
-        // ✅ NEW LOV FIELD (boolean) default false
+        // ✅ LOV FIELD (boolean) default false
         prevent_duplicate_applications_by_jd: z.preprocess(toBool, z.boolean().default(false)),
 
-        validity_days: z
-            .coerce
-            .number({ required_error: "Validity Days is required" })
-            .int("Validity Days must be a whole number")
-            .min(0, "Validity Days must be 0 or greater"),
+        // ✅ REQUIRED
+        validity_days: z.preprocess(
+            (v) => {
+                // Handles "", null, undefined, and NaN (when input uses valueAsNumber)
+                if (v === "" || v === null || v === undefined) return undefined;
+                if (typeof v === "number" && Number.isNaN(v)) return undefined;
+
+                // If string, convert to number safely
+                if (typeof v === "string") {
+                    const s = v.trim();
+                    if (!s) return undefined;
+                    const n = Number(s);
+                    return Number.isNaN(n) ? undefined : n;
+                }
+
+                return v;
+            },
+            z
+                .number({
+                    required_error: "Validity Days is required",
+                    invalid_type_error: "Validity Days is required",
+                })
+                .int("Validity Days must be a whole number")
+                .min(0, "Validity Days must be 0 or greater")
+        ),
+
+
 
         channels: z
             .array(z.union([z.string(), z.object({ value: z.string(), label: z.string().optional() })]))
@@ -109,6 +146,7 @@ const requisitionSchema = z
             });
         }
 
+        // Salary min/max validation
         if (
             data.target_salary_min != null &&
             data.target_salary_max != null &&
@@ -117,6 +155,20 @@ const requisitionSchema = z
             ctx.addIssue({ code: "custom", message: "Min must be ≤ Max", path: ["target_salary_min"] });
         }
 
+        // ✅ Experience min/max validation
+        if (
+            data.min_total_experience_years != null &&
+            data.max_total_experience_years != null &&
+            Number(data.min_total_experience_years) > Number(data.max_total_experience_years)
+        ) {
+            ctx.addIssue({
+                code: "custom",
+                message: "Min Total Experience must be ≤ Max Total Experience",
+                path: ["min_total_experience_years"],
+            });
+        }
+
+        // Unbudgeted reason required (rich text)
         if (data.budget_status === "unbudgeted") {
             const t = htmlToText(data.unbudgeted_reason);
             if (!t) {
@@ -126,6 +178,25 @@ const requisitionSchema = z
                     path: ["unbudgeted_reason"],
                 });
             }
+        }
+
+        // ✅ REQUIRED rich fields
+        const edu = htmlToText(data.education_relevant_experience);
+        if (!edu) {
+            ctx.addIssue({
+                code: "custom",
+                message: "Education & Relevant Experience is required",
+                path: ["education_relevant_experience"],
+            });
+        }
+
+        const skills = htmlToText(data.knowledge_technical_skills);
+        if (!skills) {
+            ctx.addIssue({
+                code: "custom",
+                message: "Knowledge & Technical Skills is required",
+                path: ["knowledge_technical_skills"],
+            });
         }
     });
 
