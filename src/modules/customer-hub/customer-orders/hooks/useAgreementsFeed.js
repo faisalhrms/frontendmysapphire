@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query"
 import { useInView } from "react-intersection-observer"
 import {
-  datatableAgreementsSidebar,
+  datatableAgreements,
   isBackendUnreachable,
 } from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 
@@ -32,7 +32,7 @@ export const useAgreementsFeed = ({
   }, [])
 
   const fetchAgreements = ({ pageParam = 0, signal }) =>
-    datatableAgreementsSidebar({ skip: pageParam, limit, s, mailbox }, { signal })
+    datatableAgreements({ skip: pageParam, limit, s, mailbox }, { signal })
 
   const q = useInfiniteQuery({
     queryKey,
