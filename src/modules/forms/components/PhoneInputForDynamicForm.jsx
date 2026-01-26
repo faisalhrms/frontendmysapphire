@@ -1,15 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {getBrowserMetadata} from "@helpers/helper.js";
 
 export const COUNTRIES = [
-    {
-        code: 'US',
-        name: 'United States',
-        dialCode: '+1',
-        format: '(###) ###-####',
-        pattern: /^[2-9]\d{2}[2-9]\d{2}\d{4}$/,
-        maxLength: 10,
-        placeholder: '(xxx) xxx-xxxx'
-    },
     {
         code: 'PK',
         name: 'Pakistan',
@@ -17,7 +9,7 @@ export const COUNTRIES = [
         format: '### ### ####',
         pattern: /^[3][0-9]{9}$/,
         maxLength: 10,
-        placeholder: 'xxx xxx xxxx'
+        placeholder: '3xx xxx xxxx'
     },
     {
         code: 'GB',
@@ -33,64 +25,44 @@ export const COUNTRIES = [
         name: 'United Arab Emirates',
         dialCode: '+971',
         format: '## ### ####',
-        pattern: /^[2-9]\d{7}$/,
-        maxLength: 8,
-        placeholder: 'xx xxx xxxx'
-    },
-    {
-        code: 'SA',
-        name: 'Saudi Arabia',
-        dialCode: '+966',
-        format: '## ### ####',
-        pattern: /^[5][0-9]{8}$/,
+        pattern: /^5\d{8}$/,
         maxLength: 9,
-        placeholder: 'xx xxx xxxx'
+        placeholder: '5x xxx xxxx'
     },
-    {
-        code: 'DE',
-        name: 'Germany',
-        dialCode: '+49',
-        format: '### ### ####',
-        pattern: /^[1-9]\d{10,11}$/,
-        maxLength: 12,
-        placeholder: 'xx xxxxxxxx'
-    },
-    {
-        code: 'FR',
-        name: 'France',
-        dialCode: '+33',
-        format: '# ## ## ## ##',
-        pattern: /^[1-9]\d{8}$/,
-        maxLength: 9,
-        placeholder: 'x xx xx xx xx'
-    },
-    {
-        code: 'IT',
-        name: 'Italy',
-        dialCode: '+39',
-        format: '### #### ####',
-        pattern: /^[3][0-9]{9}$/,
-        maxLength: 10,
-        placeholder: 'xxx xxx xxxx'
-    },
-    {
-        code: 'ES',
-        name: 'Spain',
-        dialCode: '+34',
-        format: '### ### ###',
-        pattern: /^[6-9]\d{8}$/,
-        maxLength: 9,
-        placeholder: 'xxx xxx xxx'
-    }
 ];
 
+
+const guessCountryFromBrowser = () => {
+    const { timezone, language } = getBrowserMetadata();
+
+    // Strong signals (your main markets)
+    if (timezone === 'Asia/Dubai') return 'AE';
+    if (timezone === 'Asia/Karachi') return 'PK';
+    if (timezone === 'Europe/London') return 'GB';
+
+    // Weak fallback (language)
+    const lang = (language || '').toLowerCase();
+    if (lang.startsWith('en-gb')) return 'GB';
+
+    // default fallback
+    return 'GB';
+};
+
+
 const PhoneInputForDynamicForm = ({ value = '', onChange, hasError, className, placeholder }) => {
-    const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[1]); // Default to Pakistan
+    const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const dropdownRef = useRef(null);
     const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (value && value.includes('+')) return;
+        const code = guessCountryFromBrowser();
+        const found = COUNTRIES.find(c => c.code === code) || COUNTRIES[0];
+        setSelectedCountry(found);
+    }, []);
 
     // Initialize from existing value
     useEffect(() => {
