@@ -76,7 +76,7 @@ export default function PublicInlay() {
             : attachments;
 
         return ordered
-            .map((f) => f?.medium_url || f?.file_url || f?.small_url)
+            .map((f) => f?.file_url || f?.medium_url  || f?.small_url)
             .filter(Boolean);
     }, [product?.attachments, product?.thumbnail?.id]);
 
