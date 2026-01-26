@@ -20,6 +20,7 @@ const OrderExceptionFilter = ({ control, errors }) => {
                                         { value: 'PK', label: 'PK' },
                                         { value: 'UK', label: 'UK' },
                                         { value: 'UAE', label: 'UAE' },
+                                        { value: 'INT', label: 'INT' },
                                     ]}
                                     label="New Status"
                                 />

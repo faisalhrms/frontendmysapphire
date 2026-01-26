@@ -42,10 +42,10 @@ const SalesForceOrderExceptionTable = ({ data, isLoading, isActive = true }) => 
                                {data?.order_summary?.map((row, index) => (
                                    <tr
                                        key={index}
-                                       className={row.month === "Grand Total" ? "font-bold bg-[#949eb7] dark:text-gray-200 dark:bg-bodybg text-black" : ""}
+                                       className={row.month_year === "Grand Total" ? "font-bold bg-[#949eb7] dark:text-gray-200 dark:bg-bodybg text-black" : ""}
                                    >
                                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black">
-                                           {row?.month}
+                                           {row?.month_year}
                                        </td>
                                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-black text-right">
                                            {formatNumberWithCommas(row?.created)}
@@ -112,6 +112,39 @@ const SalesForceOrderExceptionTable = ({ data, isLoading, isActive = true }) => 
                                        </td>
                                        <td className="border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-danger text-right">
                                            {formatNumberWithCommas(row?.total)}
+                                       </td>
+                                   </tr>
+                               ))}
+                               </tbody>
+                           </table>
+                       </div>
+                   </div>
+
+                   {/* Whatsapp Summary */}
+                   <div className="p-2 bg-white mb-4 rounded-lg dark:text-gray-200 dark:bg-bodybg">
+                       <div className="overflow-auto">
+                           <table className="w-full border-collapse">
+                               <thead style={{ position: "sticky", top: 0, zIndex: 10, backgroundColor: "#383853" }}>
+                               <tr className="text-white">
+                                   <th colSpan="6" className="bg-blue-300 border border-gray-400 p-2 text-center">
+                                       WhatsApp Summary
+                                   </th>
+                               </tr>
+                               <tr className="text-white">
+                                   <th className="bg-blue-300 border border-gray-400 p-2 text-center">Status</th>
+                                   <th className="bg-blue-300 border border-gray-400 p-2 text-center">Count</th>
+                               </tr>
+                               </thead>
+                               <tbody>
+                               {data?.whatsapp_summary?.map((row, index) => (
+                                   <tr
+                                       key={index}
+                                   >
+                                       <td className={`border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg ${row?.status === 'Error' ? 'text-danger' : 'text-black'}`}>
+                                           {row?.status}
+                                       </td>
+                                       <td className={`border border-gray-400 p-2 whitespace-nowrap dark:text-gray-200 dark:bg-bodybg text-right ${row?.status === 'Error' ? 'text-danger' : 'text-black'}`}>
+                                           {formatNumberWithCommas(row?.count)}
                                        </td>
                                    </tr>
                                ))}

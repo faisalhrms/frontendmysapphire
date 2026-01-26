@@ -13,7 +13,6 @@ import {getDynamicButtonStyle, hexToRgb} from "@helpers/styles.js";
 import PhoneInputForDynamicForm, { COUNTRIES } from "@modules/forms/components/PhoneInputForDynamicForm.jsx";
 import PrivacyPolicyPopup from "@components/PrivacyPolicyPopup.jsx";
 import Notify from "@helpers/toastNotifications.js";
-import {useSelector} from "react-redux";
 import useDarkModeForm from "@redux/common/useDarkModeForm.js";
 const normalizeFieldName = (name) => name.replace(/\s+/g, "_").toLowerCase();
 const validatePhoneNumber = (value, field) => {
