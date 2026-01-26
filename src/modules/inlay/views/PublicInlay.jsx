@@ -1,22 +1,92 @@
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight, XCircle } from "lucide-react";
+
 import sapphireb from "@assets/images/company-logos/sapphireb.png";
 import sapphirew from "@assets/images/company-logos/sapphirew.png";
 import iconsblack from "@assets/images/company-logos/iconsblack.png";
 import iconswhite from "@assets/images/company-logos/iconswhite.png";
+import Image_not_available from "@assets/images/inlay-images/No-image-available.jpg";
+
 import useDarkMode from "@redux/common/useDarkMode.js";
-import { products } from "@modules/inlay/ProductData/productData.js";
 import EmptyState from "@components/EmptyState.jsx";
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import Image_not_available from "@assets/images/inlay-images/No-image-available.jpg"
+import api from "@config/axiosConfig.js";
+
 
 export default function PublicInlay() {
     const { code } = useParams();
     const isDark = useDarkMode();
-    const product = products[code];
+
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    // ✅ Public endpoint (based on your router register: inlay-public)
+    const endpoint = useMemo(
+        () => `/inlay/inlay-public/${encodeURIComponent(code)}/`,
+        [code]
+    );
+
+    useEffect(() => {
+        let mounted = true;
+
+        (async () => {
+            try {
+                setLoading(true);
+                const { data } = await api.get(endpoint);
+
+                // your API shape: { data: {...}, status: true/false, message, errors }
+                const obj = data?.data || null;
+
+                if (!mounted) return;
+                setProduct(obj);
+            } catch (e) {
+                if (!mounted) return;
+                setProduct(null);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
+
+        return () => {
+            mounted = false;
+        };
+    }, [endpoint]);
+
+    const descriptionItems = useMemo(() => {
+        const d = product?.description;
+        if (!d) return [];
+        return Array.isArray(d) ? d : [d];
+    }, [product?.description]);
+
+    // ✅ Images from attachments; thumbnail first if present
+    const productImages = useMemo(() => {
+        const attachments = Array.isArray(product?.attachments) ? product.attachments : [];
+        const thumbId = product?.thumbnail?.id ?? null;
+
+        const ordered = thumbId
+            ? [
+                ...attachments.filter((a) => a?.id === thumbId),
+                ...attachments.filter((a) => a?.id !== thumbId),
+            ]
+            : attachments;
+
+        return ordered
+            .map((f) => f?.medium_url || f?.file_url || f?.small_url)
+            .filter(Boolean);
+    }, [product?.attachments, product?.thumbnail?.id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center px-4">
+                <div className="text-sm text-gray-600 dark:text-gray-300">Loading...</div>
+            </div>
+        );
+    }
 
     if (!product) {
         return (
@@ -35,23 +105,6 @@ export default function PublicInlay() {
         );
     }
 
-    const allImages = import.meta.glob("@assets/images/inlay-images/*.jpg", {
-        eager: true,
-    });
-
-    const productImages = Object.keys(allImages)
-        .filter((path) => {
-            const fileName = path.split("/").pop();
-            return fileName.startsWith(`${code}-`);
-        })
-        .sort((a, b) => {
-            const getNum = (p) => {
-                const match = p.match(/-(\d+)\.JPG$/i);
-                return match ? parseInt(match[1], 10) : 0;
-            };
-            return getNum(a) - getNum(b);
-        })
-        .map((path) => allImages[path].default);
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-bodybg">
             <div className="w-full max-w-6xl bg-white dark:bg-gray-950 shadow-lg grid grid-cols-1 lg:grid-cols-2">
@@ -69,7 +122,7 @@ export default function PublicInlay() {
                         {/* Mobile Description - Shows on mobile only, AFTER name */}
                         <div className="w-full px-6 mb-4 lg:hidden">
                             <div className="space-y-3 gotham-normal text-sm text-gray-800 dark:text-gray-200">
-                                {product.description.map((item, idx) => (
+                                {descriptionItems.map((item, idx) => (
                                     <div className="flex justify-between" key={idx}>
                                         <span>{item.label}</span>
                                         <span className="font-bold">{item.value}</span>
@@ -153,7 +206,7 @@ export default function PublicInlay() {
                             {product.name}
                         </h2>
                         <div className="space-y-3 gotham-normal text-sm text-gray-800 dark:text-gray-200">
-                            {product.description.map((item, idx) => (
+                            {descriptionItems.map((item, idx) => (
                                 <div className="flex justify-between" key={idx}>
                                     <span>{item.label}</span>
                                     <span className="font-bold">{item.value}</span>
