@@ -157,7 +157,7 @@ const InlayList = ({ externalFilters = [] }) => {
 
             <DataTable
                 columns={columns}
-                title="Inlays"
+                title=""
                 apiUrl={`/inlay/inlays/datatable/`}
                 buttons={buttons}
                 enableAdvancedFilters={true}
