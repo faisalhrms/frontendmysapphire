@@ -2,12 +2,13 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2, Info, LayoutGrid, FileText, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Info, Image as ImageIcon } from "lucide-react";
 
 import FormInput from "@components/form/FormInput.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
 import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
+import FileUpload from "@components/FileUpload.jsx";
 
 import inlaySchema from "@modules/inlay/schemas/inlaySchema.js";
 import { useInlayForm } from "@modules/inlay/hooks/inlayHooks.js";
@@ -15,19 +16,34 @@ import { useInlayForm } from "@modules/inlay/hooks/inlayHooks.js";
 const buildDefaults = (inlayData) => ({
     design_code: inlayData?.design_code ?? "",
     name: inlayData?.name ?? "",
-    is_active: inlayData?.is_active ?? true,
+    is_active: typeof inlayData?.is_active === "boolean" ? inlayData.is_active : true,
+
     description: Array.isArray(inlayData?.description)
         ? inlayData.description
         : inlayData?.description
             ? [inlayData.description]
             : [{ label: "", value: "" }],
+
     attachment_ids: inlayData?.attachments?.map((f) => f.id) ?? [],
+
+    // ✅ IMPORTANT: thumbnail_id must be ID (not file_url)
+    thumbnail_id: inlayData?.thumbnail?.id ?? null,
 });
 
 const InlayForm = ({ inlayData = null, isEditMode = false, onSuccess }) => {
-    const defaultValues = useMemo(() => buildDefaults(inlayData), [inlayData?.id, inlayData?.updated_at]);
+    const defaultValues = useMemo(
+        () => buildDefaults(inlayData),
+        [inlayData?.id, inlayData?.updated_at]
+    );
 
-    const { control, handleSubmit, reset, formState: { errors, isSubmitting }, watch } = useForm({
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+        watch,
+        setValue,
+    } = useForm({
         resolver: zodResolver(inlaySchema),
         defaultValues,
     });
@@ -41,21 +57,22 @@ const InlayForm = ({ inlayData = null, isEditMode = false, onSuccess }) => {
     useEffect(() => {
         if (lastInitKeyRef.current === initKey) return;
         if (isEditMode && !inlayData?.id) return;
+
         reset(defaultValues);
         lastInitKeyRef.current = initKey;
     }, [initKey, isEditMode, inlayData?.id, reset, defaultValues]);
 
+
+
+
     const onSubmit = async (formValues) => await submitInlay(formValues);
-    const attachmentIds = watch("attachment_ids") || [];
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
             <div className="grid grid-cols-12 gap-6">
-
                 {/* LEFT MAIN CONTENT */}
                 <div className="xxl:col-span-9 col-span-12 space-y-6">
                     <div className="box border-none shadow-defaultshadow overflow-hidden bg-white dark:bg-bodybg2">
-
                         {/* Header */}
                         <div className="box-header !border-b !border-defaultborder py-4 px-6 bg-gray-100/50 dark:bg-black/10">
                             <div className="flex items-center gap-2">
@@ -66,7 +83,6 @@ const InlayForm = ({ inlayData = null, isEditMode = false, onSuccess }) => {
                         </div>
 
                         <div className="box-body p-6 space-y-10">
-
                             {/* Section: Basic Details */}
                             <section>
                                 <div className="flex items-center gap-2 mb-5">
@@ -134,8 +150,11 @@ const InlayForm = ({ inlayData = null, isEditMode = false, onSuccess }) => {
 
                                 <div className="space-y-3">
                                     {fields?.map((f, index) => (
-                                        <div key={f.id} className="grid grid-cols-12 gap-3 p-3 rounded-lg border border-defaultborder bg-gray-50/30 hover:bg-white transition-colors group">
-                                            <div className="xl:col-span-5 col-span-12">
+                                        <div
+                                            key={f.id}
+                                            className="grid grid-cols-12 gap-3 p-3 rounded-lg border border-defaultborder bg-gray-50/30 hover:bg-white transition-colors group"
+                                        >
+                                            <div className="xl:col-span-8 col-span-12">
                                                 <FormInput
                                                     name={`description.${index}.label`}
                                                     control={control}
@@ -144,7 +163,7 @@ const InlayForm = ({ inlayData = null, isEditMode = false, onSuccess }) => {
                                                 />
                                             </div>
 
-                                            <div className="xl:col-span-6 col-span-12">
+                                            <div className="xl:col-span-3 col-span-12">
                                                 <FormInput
                                                     name={`description.${index}.value`}
                                                     control={control}
@@ -188,9 +207,10 @@ const InlayForm = ({ inlayData = null, isEditMode = false, onSuccess }) => {
                                         control={control}
                                         errors={errors}
                                     />
+
                                     <div className="mt-3 flex items-start gap-2 text-xs text-textmuted">
                                         <Info size={14} className="mt-0.5 text-info" />
-                                        <p>The first image in your selection will be automatically treated as the primary thumbnail.</p>
+                                        <p>Thumbnail is selected separately on the right (and will be included in attachments automatically).</p>
                                     </div>
                                 </div>
                             </section>
@@ -205,39 +225,35 @@ const InlayForm = ({ inlayData = null, isEditMode = false, onSuccess }) => {
                     </div>
                 </div>
 
-                {/* RIGHT SIDEBAR */}
+                {/* RIGHT SIDEBAR (THUMBNAIL UPLOAD) */}
                 <div className="xxl:col-span-3 col-span-12 space-y-6">
                     <div className="box border-none shadow-defaultshadow bg-white dark:bg-bodybg2 sticky top-4">
                         <div className="box-header !border-b !border-defaultborder py-3 px-4">
                             <div className="box-title font-Montserrat text-sm flex items-center gap-2">
-                                <FileText size={16} className="text-primary" />
-                                Form Information
+                                <ImageIcon size={16} className="text-primary" />
+                                Thumbnail
                             </div>
                         </div>
-                        <div className="box-body p-4">
-                            <div className="space-y-4">
-                                <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
-                                    <div className="text-xs font-bold text-primary uppercase mb-1 flex items-center gap-1">
-                                        <ImageIcon size={12} /> Thumbnail Logic
-                                    </div>
-                                    <p className="text-xs text-gray-600 leading-relaxed">
-                                        The backend prioritizes the <b>first attachment</b> as the cover image.
-                                        Drag to reorder your images if your component supports it, or upload the main image first.
-                                    </p>
-                                </div>
 
-                                {attachmentIds?.length > 0 && (
-                                    <div className="flex items-center justify-between text-xs px-1">
-                                        <span className="text-textmuted">Selected Files:</span>
-                                        <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
-                                            {attachmentIds.length}
-                                        </span>
-                                    </div>
-                                )}
+                        <div className="box-body p-4 space-y-4">
+                            <FileUpload
+                                inputName="thumbnail_id"
+                                currentValue={inlayData?.thumbnail?.file_url}
+                                file={inlayData?.thumbnail}
+                                control={control}
+                                errors={errors}
+                            />
 
-                                <div className="text-[11px] text-textmuted italic border-t border-defaultborder pt-3">
-                                    Last Updated: {inlayData?.updated_at ? new Date(inlayData.updated_at).toLocaleDateString() : 'Never'}
-                                </div>
+                            <div className="text-xs text-textmuted leading-relaxed">
+                                thumbnail will be show in first order.
+                            </div>
+
+
+                            <div className="text-[11px] text-textmuted italic border-t border-defaultborder pt-3">
+                                Last Updated:{" "}
+                                {inlayData?.updated_at
+                                    ? new Date(inlayData.updated_at).toLocaleDateString()
+                                    : "Never"}
                             </div>
                         </div>
                     </div>

@@ -17,7 +17,7 @@ const inlaySchema = z.object({
         .array(descItemSchema)
         .optional()
         .default([]),
-
+    thumbnail_id: z.union([z.number(), z.null()]).optional(),
     attachment_ids: z
         .array(z.number().int())
         .optional()
