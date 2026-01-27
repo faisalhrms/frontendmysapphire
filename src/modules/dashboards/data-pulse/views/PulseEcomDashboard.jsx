@@ -32,14 +32,25 @@ import {
     ArrowUpRight,
     Ban,
     RotateCcw,
+    History
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
 import {getPastDate} from "@helpers/dateTime.js";
 import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FormInput from "@components/form/FormInput.jsx";
+import EcomGradientcards from "@modules/dashboards/data-pulse/components/EcomGradientcards.jsx";
+import ReturnsAreaChart from "@modules/dashboards/data-pulse/components/ecom/ReturnsAreaChart.jsx";
+import EcomReturnsGradiantCards from "@modules/dashboards/data-pulse/components/ecom/EcomReturnsGradiantCards.jsx";
+import TopHabitualReturns from "@modules/dashboards/data-pulse/components/ecom/TopHabitualReturns.jsx";
+import ReturnsLocationWise from "@modules/dashboards/data-pulse/components/ecom/ReturnsLocationWise.jsx";
+import ReturnsCancelledAfterDispatchTable
+    from "@modules/dashboards/data-pulse/components/ecom/ReturnsCancelledAfterDispatchTable.jsx";
+import DormantUsers from "@modules/dashboards/data-pulse/components/ecom/DormantUsers.jsx";
+import EcomOverviewExtrasGradientCards
+    from "@modules/dashboards/data-pulse/components/ecom/EcomOverviewExtrasGradientCards.jsx";
+import OrdersOnBehalf from "@modules/dashboards/data-pulse/components/ecom/OrdersOnBehalf.jsx";
 
-// ---- small helpers ----
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
 const EmptyState = ({ label = "No Data Available" }) => (
@@ -310,8 +321,10 @@ const PulseEcomDashboard = () => {
         () => [
             { id: "overview", label: "Overview", icon: LayoutGrid },
             { id: "orders", label: "Orders", icon: TrendingUp },
+            { id: "returns", label: "Returns", icon: RotateCcw },
             { id: "promos", label: "Promos", icon: BadgePercent },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
+            { id: "dormant_users", label: "Dormant users", icon: UserX },
         ],
         []
     );
@@ -355,16 +368,34 @@ const PulseEcomDashboard = () => {
     );
 
 
-    const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
-        "/dashboard/data-pulse/ecom/kpis/",
-        filters
-    );
-    const kpis = kpiResp?.kpis || {};
-
     const overviewEnabled = activeTab === "overview";
     const ordersEnabled = activeTab === "orders";
     const promosEnabled = activeTab === "promos";
     const riskEnabled = activeTab === "risk";
+    const dormantUsersEnabled = activeTab === "dormant_users";
+    const returnsEnabled = activeTab === "returns";
+
+
+
+    const RETURNS_TABS = [
+        { key: "habitual", label: "Habitual Customer Returns", icon: LayoutGrid },
+        { key: "location", label: "Location Wise Return", icon: MapPin },
+        { key: "cancelled", label: "Cancelled After Dispatch", icon: Ban },
+    ];
+
+    const [activeReturnsTab, setActiveReturnsTab] = useState("habitual");
+
+    const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/kpis/",
+        filters,
+        { enabled: overviewEnabled }
+    );
+
+    const { data: kpiExtraResp, isLoading: kpiExtraLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/kpis/extra/",
+        filters,
+        { enabled: overviewEnabled }
+    );
 
     const { data: topOrdersResp, isLoading: topOrdersLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/top/order-amounts/",
@@ -396,11 +427,60 @@ const PulseEcomDashboard = () => {
         { enabled: riskEnabled }
     );
 
+     const { data: returnsSummaryResp, isLoading: returnsSummaryLoading } = useFetchWithFilters(
+    "/dashboard/data-pulse/ecom/returns/kpis/",
+        filters,
+        { enabled: returnsEnabled && activeReturnsTab === "habitual" }
+        );
+
+    const { data: returnsTopHabitual, isLoading: returnsTopHabitualLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/top/habitual/",
+        filters,
+        { enabled: returnsEnabled && activeReturnsTab === "habitual" }
+    );
+
+    const { data: returnsLocationWiseRes, isLoading: returnsLocationWiseLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/location_wise/",
+        filters,
+        { enabled: returnsEnabled && activeReturnsTab === "location" }
+    );
+
+    const { data: returnsCancelledAfterDispatchRes, isLoading: returnsCancelledAfterDispatchLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/cancelled-after-dispatch/",
+        filters,
+        { enabled: returnsEnabled && activeReturnsTab === "cancelled" }
+    );
+
+    const { data: returnsInactiveUsersRes, isLoading: returnsInactiveUsersResLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/inactive-users-last7d/",
+        filters,
+        { enabled: dormantUsersEnabled}
+    );
+
+    const { data: returnsOrdersOnBehalfRes, isLoading: returnsOrdersOnBehalfLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/orders/on-behalf/",
+        filters,
+        { enabled: ordersEnabled}
+    );
+
+    const kpis = kpiResp?.kpis || {};
+    const kpisExtra = kpiExtraResp?.summary || {};
     const topOrders = topOrdersResp?.rows || [];
     const topCoupons = topCouponsResp?.rows || [];
     const topStoreCredit = topStoreCreditResp?.rows || [];
     const codIssues = codIssuesResp?.rows || [];
     const missingEmails = missingEmailResp?.rows || [];
+    const returnsKpis = returnsSummaryResp?.kpis || {};
+    const windowKpis = returnsKpis?.window || {};
+    const tillKpis = returnsKpis?.till_yesterday || {};
+    const topHabitual = returnsTopHabitual?.rows || [];
+    const returnsLocationWise = returnsLocationWiseRes?.rows || [];
+    const returnsCancelledAfterDispatch = returnsCancelledAfterDispatchRes?.rows || [];
+    const returnsCancelledAfterDispatchSummary = returnsCancelledAfterDispatchRes?.summary || {};
+    const returnsInactiveUsers = returnsInactiveUsersRes?.rows || [];
+    const returnsInactiveUsersSummary = returnsInactiveUsersRes?.summary || {};
+    const returnsOrdersOnBehalf = returnsOrdersOnBehalfRes?.rows || [];
+
 
     const chartTopOrders = useMemo(
         () =>
@@ -409,22 +489,6 @@ const PulseEcomDashboard = () => {
                 value: Number(r.GrandTotalAmount) || 0,
             })),
         [topOrders]
-    );
-
-    const CardShimmer = ({ width, height }) => (
-        <div style={{
-            width: width, height: height,
-            position: 'relative', overflow: 'hidden',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            borderRadius: '4px', margin: '4px 0'
-        }}>
-            <style>{`@keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
-            <div style={{
-                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                animation: 'sweep 1.5s infinite linear'
-            }} />
-        </div>
     );
 
 
@@ -440,6 +504,9 @@ const PulseEcomDashboard = () => {
 
     const codIssueCount = Number(kpis.cod_amount_issue_count) || 0;
     const missingEmailCount = Number(kpis.missing_email_count) || 0;
+    const wBuckets = Array.isArray(windowKpis.buckets) ? windowKpis.buckets : [];
+    const tBuckets = Array.isArray(tillKpis.buckets) ? tillKpis.buckets : [];
+
 
     return (
         <div className="space-y-6 pb-8 pt-6">
@@ -512,7 +579,12 @@ const PulseEcomDashboard = () => {
             <>
                 {activeTab === "overview" && (
                     <>
-                        {/* KPI cards */}
+                        <EcomOverviewExtrasGradientCards
+                            loading={kpiExtraLoading}
+                            summary={kpisExtra}
+                            formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                            DateInfo={DateInfo}
+                        />
                         <div className="rounded-lg shadow-sm border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 <StatCard
@@ -521,6 +593,7 @@ const PulseEcomDashboard = () => {
                                     value={kpiLoading ? '...' : formatRoundedAmountWithCommas(ordersCount)}
                                     subtitle={<DateInfo />}
                                     isLoading={kpiLoading}
+                                    loadingType='pulse'
                                 />
                                 <StatCard
                                     icon={TrendingUp}
@@ -560,155 +633,21 @@ const PulseEcomDashboard = () => {
                                 </div>
                             </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            {/* Sales Trends */}
-                            <div
-                                className="bg-gradient-to-br from-black to-black to-indigo-700 rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                <div
-                                    className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -ml-16 -mt-16"/>
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                            <TrendingUp size={20}/> Sales Trend
-                                        </h3>
-                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                            <ArrowUpRight className="text-white" size={22}/>
-                                        </div>
-                                    </div>
+                        <EcomGradientcards
+                            kpiLoading={kpiLoading}
+                            grossSales={grossSales}
+                            avgOrder={avgOrder}
+                            ordersCount={ordersCount}
+                            couponSum={couponSum}
+                            couponOrders={couponOrders}
+                            storeCreditSum={storeCreditSum}
+                            storeCreditCount={storeCreditCount}
+                            codIssueCount={codIssueCount}
+                            missingEmailCount={missingEmailCount}
+                            formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                            DateInfo={DateInfo}
 
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-white/80">Gross Sales</p>
-                                            {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(grossSales)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">
-                                                Avg Order: PKR {formatRoundedAmountWithCommas(avgOrder)}
-                                            </p>
-                                        </div>
-
-                                        <div
-                                            className="pt-4 border-t border-white/25 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                            <p className="text-sm text-white/80">Orders</p>
-                                            {kpiLoading ? <CardShimmer width="120px" height="32px"/> : (
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                                                    {formatRoundedAmountWithCommas(ordersCount)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70"><DateInfo/></p>
-                                        </div>
-
-                                        <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">
-                                            <span className="font-semibold">Tip:</span> Review top orders below for VIP
-                                            buyers.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Promo / Coupons Snapshot */}
-                            <div
-                                className="bg-gradient-to-br from-black via-fuchsia-900 to-pink-900 rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                <div
-                                    className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-16 -mt-16"/>
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                            <BadgePercent size={20}/> Promo Snapshot
-                                        </h3>
-                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                            <BadgePercent className="text-white" size={22}/>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-white/80">Coupon Discount</p>
-                                            {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(couponSum)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">
-                                                Orders with coupon: {formatRoundedAmountWithCommas(couponOrders)}
-                                            </p>
-                                        </div>
-
-                                        <div
-                                            className="pt-4 border-t border-white/25 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                            <p className="text-sm text-white/80">Store Credit Used</p>
-                                            {kpiLoading ? <CardShimmer width="160px" height="32px"/> : (
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(storeCreditSum)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">
-                                                transactions: {formatRoundedAmountWithCommas(storeCreditCount)}
-                                            </p>
-                                        </div>
-
-                                        <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">
-                                            Watch for coupon stacking & high store-credit usage.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Risk Snapshot */}
-                            <div
-                                className="bg-gradient-to-br from-red via-orange-600 to-warning rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                <div
-                                    className="absolute bottom-0 left-0 w-44 h-44 bg-white/10 rounded-full -ml-20 -mb-20"/>
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                            <ShieldAlert size={20}/> Risk Snapshot
-                                        </h3>
-                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                            <AlertTriangle className="text-white" size={22}/>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-white/80">COD Amount Issues</p>
-                                            {kpiLoading ? <CardShimmer width="100px" height="40px"/> : (
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    {formatRoundedAmountWithCommas(codIssueCount)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">OMS</p>
-                                        </div>
-
-                                        <div className="pt-4 border-t border-white/25 grid grid-cols-2 gap-4">
-                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                <p className="text-xs text-white/80">Missing Email</p>
-                                                {kpiLoading ? <CardShimmer width="60px" height="32px"/> : (
-                                                    <p className="text-2xl font-bold text-white tabular-nums">
-                                                        {formatRoundedAmountWithCommas(missingEmailCount)}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                <p className="text-xs text-white/80">Signal</p>
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                            <span className="inline-flex items-center gap-1">
-                              <Ban size={16}/> Audit
-                            </span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            className="bg-white/10 p-2 rounded-lg text-white/90 text-sm flex items-center gap-2">
-                                            <RotateCcw size={16}/> Review COD mismatches + incomplete accounts first.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        />
 
                         {/* Existing charts & tables (unchanged) */}
                         <div className="space-y-6">
@@ -805,7 +744,84 @@ const PulseEcomDashboard = () => {
                     </>
                 )}
 
-                {/* ------------------ ORDERS TAB ------------------ */}
+                {activeTab === "returns" && (
+                    <>
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                                <div className="flex flex-wrap gap-2">
+                                    {RETURNS_TABS.map((m) => {
+                                        const Icon = m.icon;
+                                        const active = activeReturnsTab === m.key;
+                                        return (
+                                            <button
+                                                key={m.key}
+                                                onClick={() => setActiveReturnsTab(m.key)}
+                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                    active
+                                                        ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                                }`}
+                                            >
+                                                <Icon size={18} />
+                                                <span className="font-medium whitespace-nowrap">{m.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* CONTENT */}
+                            <div className="p-6 space-y-6">
+                                {/* 1) OVERVIEW */}
+                                {activeReturnsTab === "habitual" && (
+                                    <div className="space-y-6">
+                                        <EcomReturnsGradiantCards
+                                            windowKpis={windowKpis}
+                                            tillKpis={tillKpis}
+                                            loading={returnsSummaryLoading}
+                                            formatAmount={formatRoundedAmountWithCommas}
+                                        />
+
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                            <SectionCard title="Window Distribution" icon={RotateCcw}>
+                                                <ReturnsAreaChart rows={wBuckets} loading={returnsSummaryLoading} />
+                                            </SectionCard>
+
+                                            <SectionCard title="Historical Baseline" icon={History}>
+                                                <ReturnsAreaChart rows={tBuckets} loading={returnsSummaryLoading} />
+                                            </SectionCard>
+                                        </div>
+
+                                        <TopHabitualReturns
+                                            rows={topHabitual}
+                                            meta={returnsTopHabitual?.meta}
+                                            loading={returnsTopHabitualLoading}
+                                        />
+                                    </div>
+                                )}
+
+                                {activeReturnsTab === "location" && (
+                                        <ReturnsLocationWise
+                                            colors={COLORS}
+                                            rows={returnsLocationWise}
+                                            loading={returnsLocationWiseLoading}
+                                        />
+                                )}
+
+                                {activeReturnsTab === "cancelled" && (
+                                    <ReturnsCancelledAfterDispatchTable
+                                        rows={returnsCancelledAfterDispatch}
+                                        loading={returnsCancelledAfterDispatchLoading}
+                                        summary={returnsCancelledAfterDispatchSummary}
+                                    />
+                                )}
+
+                            </div>
+                        </div>
+                    </>
+                )}
+
+
                 {activeTab === "orders" && (
                     <div className="space-y-6">
                         <SectionCard title="Top Order Amounts" icon={TrendingUp}>
@@ -890,12 +906,17 @@ const PulseEcomDashboard = () => {
                                         </div>
                                     )}
                                 </SectionCard>
-                            </div>
-                        )}
 
-                        {/* ------------------ PROMOS TAB ------------------ */}
-                        {activeTab === "promos" && (
-                            <div className="space-y-6">
+                        <OrdersOnBehalf
+                            rows={returnsOrdersOnBehalf}
+                            loading={returnsOrdersOnBehalfLoading}
+                            colors={COLORS}
+                        />
+                            </div>
+                 )}
+
+                {activeTab === "promos" && (
+                  <div className="space-y-6">
                                 <SectionCard title="Top Coupons" icon={BadgePercent}>
                                     {topCouponsLoading ? (
                                         <LoadingSpinner/>
@@ -946,11 +967,10 @@ const PulseEcomDashboard = () => {
                                     )}
                                 </SectionCard>
                             </div>
-                        )}
+                )}
 
-                        {/* ------------------ RISK TAB ------------------ */}
-                        {activeTab === "risk" && (
-                            <div className="space-y-6">
+                {activeTab === "risk" && (
+                  <div className="space-y-6">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <SectionCard title="COD Amount Issues" icon={AlertTriangle}>
                                         {codIssuesLoading ? (
@@ -1007,7 +1027,15 @@ const PulseEcomDashboard = () => {
                                 </SectionCard>
                             </div>
                         </div>
-                    )}
+                )}
+
+                {activeTab === "dormant_users" && (
+                    <DormantUsers
+                        rows={returnsInactiveUsers}
+                        summary={returnsInactiveUsersSummary}
+                        loading={returnsInactiveUsersResLoading}
+                    />
+                )}
                 </>
         </div>
     );
