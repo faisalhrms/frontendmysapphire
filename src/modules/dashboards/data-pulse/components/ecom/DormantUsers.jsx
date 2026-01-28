@@ -17,7 +17,15 @@ import {
 const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
     const safeRows = Array.isArray(rows) ? rows : [];
 
-    const totalUsers = Number(summary?.total_users) || 0;
+    // ✅ totals
+    const totalUsers = Number(summary?.total_users) || 0; // active + inactive
+    const totalActiveUsers = Number(summary?.total_active_users) || 0;
+    const totalInactiveUsers = Math.max(totalUsers - totalActiveUsers, 0);
+
+    // ✅ dormant list (flagged among active users)
+    const dormantUsers = Number(summary?.inactive_users) || 0;
+
+    // existing
     const neverLoggedIn = Number(summary?.never_logged_in) || 0;
     const older7 = Number(summary?.older_than_7d) || 0;
     const older14 = Number(summary?.older_than_14d) || 0;
@@ -26,10 +34,10 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
     const threshold = Number(summary?.threshold_days) || 7;
     const tz = summary?.timezone || "UTC";
 
-    // derived (useful cards)
-    const withLogin = Math.max(totalUsers - neverLoggedIn, 0);
-    const pctNever = totalUsers > 0 ? (neverLoggedIn / totalUsers) * 100 : 0;
-    const pctOlder7 = totalUsers > 0 ? (older7 / totalUsers) * 100 : 0;
+    // percentages out of dormant/flagged users
+    const withLogin = Math.max(dormantUsers - neverLoggedIn, 0);
+    const pctNever = dormantUsers > 0 ? (neverLoggedIn / dormantUsers) * 100 : 0;
+    const pctOlder7 = dormantUsers > 0 ? (older7 / dormantUsers) * 100 : 0;
 
     const tableData = useMemo(() => {
         return safeRows.map((u) => ({
@@ -56,15 +64,24 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
 
     return (
         <div className="space-y-6">
-            {/* ✅ 8 cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                {/* ✅ Total Users with subtitle Active/Inactive */}
+                <StatCard
+                    icon={Users}
+                    title="Total Users"
+                    value={totalUsers}
+                    subtitle={`Active: ${totalActiveUsers} • Inactive: ${totalInactiveUsers}`}
+                    isLoading={false}
+                />
+
                 <StatCard
                     icon={ShieldAlert}
                     title="Dormant Users"
-                    value={totalUsers}
-                    subtitle="Total flagged"
+                    value={dormantUsers}
+                    subtitle="Total flagged (active users only)"
                     isLoading={false}
                 />
+
                 <StatCard
                     icon={UserX}
                     title="Never Logged In"
@@ -72,18 +89,12 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
                     subtitle={`${pctNever.toFixed(1)}% of flagged`}
                     isLoading={false}
                 />
+
                 <StatCard
                     icon={CalendarDays}
                     title={`Inactive ≥ ${threshold} Days`}
                     value={older7}
                     subtitle={`${pctOlder7.toFixed(1)}% of flagged`}
-                    isLoading={false}
-                />
-                <StatCard
-                    icon={Clock}
-                    title="Max Days Since Login"
-                    value={maxDays}
-                    subtitle="Worst gap"
                     isLoading={false}
                 />
 
@@ -94,6 +105,7 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
                     subtitle="Deeper inactivity"
                     isLoading={false}
                 />
+
                 <StatCard
                     icon={Timer}
                     title="Inactive ≥ 30 Days"
@@ -101,18 +113,20 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
                     subtitle="Critical dormancy"
                     isLoading={false}
                 />
+
                 <StatCard
-                    icon={Users}
+                    icon={Clock}
                     title="Has Login History"
                     value={withLogin}
-                    subtitle="Logged in at least once"
+                    subtitle="Logged in at least once (flagged)"
                     isLoading={false}
                 />
+
                 <StatCard
                     icon={Globe}
                     title="Timezone"
                     value={tz}
-                    subtitle={`Rule uses UTC now()`}
+                    subtitle="Rule uses UTC now()"
                     isLoading={false}
                 />
             </div>
@@ -123,7 +137,7 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
                 <ClientSideTable
                     config={tableConfig}
                     data={tableData}
-                    title=""
+                    title="Dormant Users"
                     height="700px"
                 />
             )}

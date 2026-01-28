@@ -32,7 +32,8 @@ import {
     ArrowUpRight,
     Ban,
     RotateCcw,
-    History
+    History,
+    Users,
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
 import {getPastDate} from "@helpers/dateTime.js";
@@ -48,6 +49,9 @@ import ReturnsCancelledAfterDispatchTable
 import DormantUsers from "@modules/dashboards/data-pulse/components/ecom/DormantUsers.jsx";
 import OrdersOnBehalf from "@modules/dashboards/data-pulse/components/ecom/OrdersOnBehalf.jsx";
 import EcomOverview from "@modules/dashboards/data-pulse/components/ecom/EcomOverview.jsx";
+import EcomHabitualCustomerCards from "@modules/dashboards/data-pulse/components/ecom/EcomHabitualCustomerCards.jsx";
+import EcomHabitualRatioGradientCards
+    from "@modules/dashboards/data-pulse/components/ecom/EcomHabitualRatioGradientCards.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -233,7 +237,7 @@ const StoreCreditAreaByOrder = ({ rows = [], formatRoundedAmountWithCommas }) =>
                         stroke="#10B981"
                         fill="url(#gPaid)"
                         fillOpacity={1}
-                        name="Total Paid"
+                        name="Order Amount"
                     />
                 </AreaChart>
             </ResponsiveContainer>
@@ -321,8 +325,9 @@ const PulseEcomDashboard = () => {
             { id: "orders", label: "Orders", icon: TrendingUp },
             { id: "returns", label: "Returns", icon: RotateCcw },
             { id: "promos", label: "Discounts", icon: BadgePercent },
+            { id: "customers", label: "Customers", icon: Users },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
-            { id: "dormant_users", label: "Dormant users", icon: UserX },
+            { id: "dormant_users", label: "users", icon: UserX },
         ],
         []
     );
@@ -372,16 +377,21 @@ const PulseEcomDashboard = () => {
     const riskEnabled = activeTab === "risk";
     const dormantUsersEnabled = activeTab === "dormant_users";
     const returnsEnabled = activeTab === "returns";
+    const customersEnabled = activeTab === "customers";
 
 
+    const CUSTOMERS_TABS = [
+        { key: "habitual", label: "Habitual Customers", icon: History },
+    ];
+
+    const [activeCustomersTab, setActiveCustomersTab] = useState("habitual");
 
     const RETURNS_TABS = [
-        { key: "habitual", label: "Habitual Customer Returns", icon: LayoutGrid },
         { key: "location", label: "Location Wise Return", icon: MapPin },
         { key: "cancelled", label: "Cancelled After Dispatch", icon: Ban },
     ];
 
-    const [activeReturnsTab, setActiveReturnsTab] = useState("habitual");
+    const [activeReturnsTab, setActiveReturnsTab] = useState("location");
 
     const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/kpis/",
@@ -419,17 +429,6 @@ const PulseEcomDashboard = () => {
         { enabled: riskEnabled }
     );
 
-     const { data: returnsSummaryResp, isLoading: returnsSummaryLoading } = useFetchWithFilters(
-    "/dashboard/data-pulse/ecom/returns/kpis/",
-        filters,
-        { enabled: returnsEnabled && activeReturnsTab === "habitual" }
-        );
-
-    const { data: returnsTopHabitual, isLoading: returnsTopHabitualLoading } = useFetchWithFilters(
-        "/dashboard/data-pulse/ecom/returns/top/habitual/",
-        filters,
-        { enabled: returnsEnabled && activeReturnsTab === "habitual" }
-    );
 
     const { data: returnsLocationWiseRes, isLoading: returnsLocationWiseLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/returns/location_wise/",
@@ -454,14 +453,24 @@ const PulseEcomDashboard = () => {
         filters,
         { enabled: ordersEnabled}
     );
+
+    const { data: customerHabitualRes, isLoading: customerHabitualLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/customers/habitual/summary/",
+        filters,
+        { enabled: customersEnabled && activeCustomersTab === "habitual" }
+    );
+
+    const { data: returnsTopHabitual, isLoading: returnsTopHabitualLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/customers/habitual/top/",
+        filters,
+        { enabled: customersEnabled && activeCustomersTab === "habitual" }
+    );
+
     const topOrders = topOrdersResp?.rows || [];
     const topCoupons = topCouponsResp?.rows || [];
     const topStoreCredit = topStoreCreditResp?.rows || [];
     const codIssues = codIssuesResp?.rows || [];
     const missingEmails = missingEmailResp?.rows || [];
-    const returnsKpis = returnsSummaryResp?.kpis || {};
-    const windowKpis = returnsKpis?.window || {};
-    const tillKpis = returnsKpis?.till_yesterday || {};
     const topHabitual = returnsTopHabitual?.rows || [];
     const returnsLocationWise = returnsLocationWiseRes?.rows || [];
     const returnsCancelledAfterDispatch = returnsCancelledAfterDispatchRes?.rows || [];
@@ -479,9 +488,6 @@ const PulseEcomDashboard = () => {
             })),
         [topOrders]
     );
-
-    const wBuckets = Array.isArray(windowKpis.buckets) ? windowKpis.buckets : [];
-    const tBuckets = Array.isArray(tillKpis.buckets) ? tillKpis.buckets : [];
 
 
     return (
@@ -643,6 +649,59 @@ const PulseEcomDashboard = () => {
                     </>
                 )}
 
+                {activeTab === "customers" && (
+                    <>
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                                <div className="flex flex-wrap gap-2">
+                                    {CUSTOMERS_TABS.map((m) => {
+                                        const Icon = m.icon;
+                                        const active = activeReturnsTab === m.key;
+                                        return (
+                                            <button
+                                                key={m.key}
+                                                onClick={() => setActiveReturnsTab(m.key)}
+                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                    active
+                                                        ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                                }`}
+                                            >
+                                                <Icon size={18} />
+                                                <span className="font-medium whitespace-nowrap">{m.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div className="p-6 space-y-6">
+                                {activeCustomersTab === "habitual" && (
+                                    <div className="space-y-6">
+                                        <EcomHabitualCustomerCards
+                                            cards={customerHabitualRes?.cards}
+                                            loading={customerHabitualLoading}
+                                            formatAmount={formatRoundedAmountWithCommas}
+                                        />
+
+                                        <EcomHabitualRatioGradientCards
+                                            buckets={customerHabitualRes?.ratio_buckets}
+                                            loading={customerHabitualLoading}
+                                            formatAmount={formatRoundedAmountWithCommas}
+                                        />
+
+                                        <TopHabitualReturns
+                                            rows={topHabitual}
+                                            meta={returnsTopHabitual?.meta}
+                                            loading={returnsTopHabitualLoading}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
+
 
                 {activeTab === "orders" && (
                     <div className="space-y-6">
@@ -678,7 +737,7 @@ const PulseEcomDashboard = () => {
                                                         strong: true,
                                                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.GrandTotalAmount)}`,
                                                     },
-                                                    {key: "Description", label: "Description"},
+                                                    {key: "Description", label: "Customer Name"},
                                                 ]}
                                                 rows={topOrders}
                                             />
@@ -718,7 +777,7 @@ const PulseEcomDashboard = () => {
                                                     },
                                                     {
                                                         key: "total_payment_amount",
-                                                        label: "Total Paid",
+                                                        label: "Order Amount",
                                                         align: "right",
                                                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.total_payment_amount)}`,
                                                     },
