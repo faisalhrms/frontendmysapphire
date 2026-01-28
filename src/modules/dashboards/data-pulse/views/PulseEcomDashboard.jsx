@@ -32,14 +32,27 @@ import {
     ArrowUpRight,
     Ban,
     RotateCcw,
+    History,
+    Users,
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
 import {getPastDate} from "@helpers/dateTime.js";
 import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FormInput from "@components/form/FormInput.jsx";
+import ReturnsAreaChart from "@modules/dashboards/data-pulse/components/ecom/ReturnsAreaChart.jsx";
+import EcomReturnsGradiantCards from "@modules/dashboards/data-pulse/components/ecom/EcomReturnsGradiantCards.jsx";
+import TopHabitualReturns from "@modules/dashboards/data-pulse/components/ecom/TopHabitualReturns.jsx";
+import ReturnsLocationWise from "@modules/dashboards/data-pulse/components/ecom/ReturnsLocationWise.jsx";
+import ReturnsCancelledAfterDispatchTable
+    from "@modules/dashboards/data-pulse/components/ecom/ReturnsCancelledAfterDispatchTable.jsx";
+import DormantUsers from "@modules/dashboards/data-pulse/components/ecom/DormantUsers.jsx";
+import OrdersOnBehalf from "@modules/dashboards/data-pulse/components/ecom/OrdersOnBehalf.jsx";
+import EcomOverview from "@modules/dashboards/data-pulse/components/ecom/EcomOverview.jsx";
+import EcomHabitualCustomerCards from "@modules/dashboards/data-pulse/components/ecom/EcomHabitualCustomerCards.jsx";
+import EcomHabitualRatioGradientCards
+    from "@modules/dashboards/data-pulse/components/ecom/EcomHabitualRatioGradientCards.jsx";
 
-// ---- small helpers ----
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
 const EmptyState = ({ label = "No Data Available" }) => (
@@ -224,7 +237,7 @@ const StoreCreditAreaByOrder = ({ rows = [], formatRoundedAmountWithCommas }) =>
                         stroke="#10B981"
                         fill="url(#gPaid)"
                         fillOpacity={1}
-                        name="Total Paid"
+                        name="Order Amount"
                     />
                 </AreaChart>
             </ResponsiveContainer>
@@ -310,8 +323,11 @@ const PulseEcomDashboard = () => {
         () => [
             { id: "overview", label: "Overview", icon: LayoutGrid },
             { id: "orders", label: "Orders", icon: TrendingUp },
-            { id: "promos", label: "Promos", icon: BadgePercent },
+            { id: "returns", label: "Returns", icon: RotateCcw },
+            { id: "promos", label: "Discounts", icon: BadgePercent },
+            { id: "customers", label: "Customers", icon: Users },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
+            { id: "dormant_users", label: "users", icon: UserX },
         ],
         []
     );
@@ -355,16 +371,33 @@ const PulseEcomDashboard = () => {
     );
 
 
-    const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
-        "/dashboard/data-pulse/ecom/kpis/",
-        filters
-    );
-    const kpis = kpiResp?.kpis || {};
-
     const overviewEnabled = activeTab === "overview";
     const ordersEnabled = activeTab === "orders";
     const promosEnabled = activeTab === "promos";
     const riskEnabled = activeTab === "risk";
+    const dormantUsersEnabled = activeTab === "dormant_users";
+    const returnsEnabled = activeTab === "returns";
+    const customersEnabled = activeTab === "customers";
+
+
+    const CUSTOMERS_TABS = [
+        { key: "habitual", label: "Habitual Customers", icon: History },
+    ];
+
+    const [activeCustomersTab, setActiveCustomersTab] = useState("habitual");
+
+    const RETURNS_TABS = [
+        { key: "location", label: "Location Wise Return", icon: MapPin },
+        { key: "cancelled", label: "Cancelled After Dispatch", icon: Ban },
+    ];
+
+    const [activeReturnsTab, setActiveReturnsTab] = useState("location");
+
+    const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/kpis/",
+        filters,
+        { enabled: overviewEnabled }
+    );
 
     const { data: topOrdersResp, isLoading: topOrdersLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/top/order-amounts/",
@@ -396,11 +429,56 @@ const PulseEcomDashboard = () => {
         { enabled: riskEnabled }
     );
 
+
+    const { data: returnsLocationWiseRes, isLoading: returnsLocationWiseLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/location_wise/",
+        filters,
+        { enabled: returnsEnabled && activeReturnsTab === "location" }
+    );
+
+    const { data: returnsCancelledAfterDispatchRes, isLoading: returnsCancelledAfterDispatchLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/cancelled-after-dispatch/",
+        filters,
+        { enabled: returnsEnabled && activeReturnsTab === "cancelled" }
+    );
+
+    const { data: returnsInactiveUsersRes, isLoading: returnsInactiveUsersResLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/inactive-users-last7d/",
+        filters,
+        { enabled: dormantUsersEnabled}
+    );
+
+    const { data: returnsOrdersOnBehalfRes, isLoading: returnsOrdersOnBehalfLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/orders/on-behalf/",
+        filters,
+        { enabled: ordersEnabled}
+    );
+
+    const { data: customerHabitualRes, isLoading: customerHabitualLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/customers/habitual/summary/",
+        filters,
+        { enabled: customersEnabled && activeCustomersTab === "habitual" }
+    );
+
+    const { data: returnsTopHabitual, isLoading: returnsTopHabitualLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/customers/habitual/top/",
+        filters,
+        { enabled: customersEnabled && activeCustomersTab === "habitual" }
+    );
+
     const topOrders = topOrdersResp?.rows || [];
     const topCoupons = topCouponsResp?.rows || [];
     const topStoreCredit = topStoreCreditResp?.rows || [];
     const codIssues = codIssuesResp?.rows || [];
     const missingEmails = missingEmailResp?.rows || [];
+    const topHabitual = returnsTopHabitual?.rows || [];
+    const returnsLocationWise = returnsLocationWiseRes?.rows || [];
+    const returnsCancelledAfterDispatch = returnsCancelledAfterDispatchRes?.rows || [];
+    const returnsCancelledAfterDispatchSummary = returnsCancelledAfterDispatchRes?.summary || {};
+    const returnsInactiveUsers = returnsInactiveUsersRes?.rows || [];
+    const returnsInactiveUsersSummary = returnsInactiveUsersRes?.summary || {};
+    const returnsOrdersOnBehalf = returnsOrdersOnBehalfRes?.rows || [];
+
 
     const chartTopOrders = useMemo(
         () =>
@@ -411,35 +489,6 @@ const PulseEcomDashboard = () => {
         [topOrders]
     );
 
-    const CardShimmer = ({ width, height }) => (
-        <div style={{
-            width: width, height: height,
-            position: 'relative', overflow: 'hidden',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            borderRadius: '4px', margin: '4px 0'
-        }}>
-            <style>{`@keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
-            <div style={{
-                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                animation: 'sweep 1.5s infinite linear'
-            }} />
-        </div>
-    );
-
-
-    const ordersCount = Number(kpis.order_count) || 0;
-    const grossSales = Number(kpis.grand_total_sum) || 0;
-    const avgOrder = Number(kpis.grand_total_avg) || 0;
-
-    const couponSum = Number(kpis.coupon_sum) || 0;
-    const couponOrders = Number(kpis.coupon_order_count) || 0;
-
-    const storeCreditSum = Number(kpis.store_credit_sum) || 0;
-    const storeCreditCount = Number(kpis.store_credit_count) || 0;
-
-    const codIssueCount = Number(kpis.cod_amount_issue_count) || 0;
-    const missingEmailCount = Number(kpis.missing_email_count) || 0;
 
     return (
         <div className="space-y-6 pb-8 pt-6">
@@ -512,300 +561,148 @@ const PulseEcomDashboard = () => {
             <>
                 {activeTab === "overview" && (
                     <>
-                        {/* KPI cards */}
-                        <div className="rounded-lg shadow-sm border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <StatCard
-                                    icon={Receipt}
-                                    title="Orders"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(ordersCount)}
-                                    subtitle={<DateInfo />}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={TrendingUp}
-                                    title="Gross Sales"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(grossSales)}`}
-                                    subtitle={kpiLoading ? '...' : `Avg: PKR ${formatRoundedAmountWithCommas(avgOrder)}`}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={Wallet}
-                                    title="Store Credit"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(storeCreditSum)}`}
-                                    subtitle={kpiLoading ? '...' : `${formatRoundedAmountWithCommas(storeCreditCount)} transactions`}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={BadgePercent}
-                                    title="Coupons"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(couponSum)}`}
-                                    subtitle={kpiLoading ? '...' : `${formatRoundedAmountWithCommas(couponOrders)} orders`}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={AlertTriangle}
-                                    title="COD Issues"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(codIssueCount)}
-                                    subtitle="OMS"
-                                    isLoading={kpiLoading}
+                        {activeTab === "overview" && (
+                            <EcomOverview
+                                kpiResp={kpiResp}
+                                kpiLoading={kpiLoading}
+                                formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                DateInfo={DateInfo}
+                            />
+                        )}
+                    </>
+                )}
+
+                {activeTab === "returns" && (
+                    <>
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                                <div className="flex flex-wrap gap-2">
+                                    {RETURNS_TABS.map((m) => {
+                                        const Icon = m.icon;
+                                        const active = activeReturnsTab === m.key;
+                                        return (
+                                            <button
+                                                key={m.key}
+                                                onClick={() => setActiveReturnsTab(m.key)}
+                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                    active
+                                                        ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                                }`}
+                                            >
+                                                <Icon size={18} />
+                                                <span className="font-medium whitespace-nowrap">{m.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* CONTENT */}
+                            <div className="p-6 space-y-6">
+                                {/* 1) OVERVIEW */}
+                                {activeReturnsTab === "habitual" && (
+                                    <div className="space-y-6">
+                                        <EcomReturnsGradiantCards
+                                            windowKpis={windowKpis}
+                                            tillKpis={tillKpis}
+                                            loading={returnsSummaryLoading}
+                                            formatAmount={formatRoundedAmountWithCommas}
+                                        />
+
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                            <SectionCard title="Window Distribution" icon={RotateCcw}>
+                                                <ReturnsAreaChart rows={wBuckets} loading={returnsSummaryLoading} />
+                                            </SectionCard>
+
+                                            <SectionCard title="Historical Baseline" icon={History}>
+                                                <ReturnsAreaChart rows={tBuckets} loading={returnsSummaryLoading} />
+                                            </SectionCard>
+                                        </div>
+
+                                        <TopHabitualReturns
+                                            rows={topHabitual}
+                                            meta={returnsTopHabitual?.meta}
+                                            loading={returnsTopHabitualLoading}
+                                        />
+                                    </div>
+                                )}
+
+                                {activeReturnsTab === "location" && (
+                                        <ReturnsLocationWise
+                                            colors={COLORS}
+                                            rows={returnsLocationWise}
+                                            loading={returnsLocationWiseLoading}
+                                        />
+                                )}
+
+                                {activeReturnsTab === "cancelled" && (
+                                    <ReturnsCancelledAfterDispatchTable
+                                        rows={returnsCancelledAfterDispatch}
+                                        loading={returnsCancelledAfterDispatchLoading}
+                                        summary={returnsCancelledAfterDispatchSummary}
                                     />
-                                    <StatCard
-                                        icon={UserX}
-                                        title="Missing Email"
-                                        value={kpiLoading ? '...' : formatRoundedAmountWithCommas(missingEmailCount)}
-                                        subtitle="Accounts"
-                                        isLoading={kpiLoading}
-                                    />
-                                </div>
-                            </div>
+                                )}
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            {/* Sales Trends */}
-                            <div
-                                className="bg-gradient-to-br from-black to-black to-indigo-700 rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                <div
-                                    className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -ml-16 -mt-16"/>
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                            <TrendingUp size={20}/> Sales Trend
-                                        </h3>
-                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                            <ArrowUpRight className="text-white" size={22}/>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-white/80">Gross Sales</p>
-                                            {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(grossSales)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">
-                                                Avg Order: PKR {formatRoundedAmountWithCommas(avgOrder)}
-                                            </p>
-                                        </div>
-
-                                        <div
-                                            className="pt-4 border-t border-white/25 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                            <p className="text-sm text-white/80">Orders</p>
-                                            {kpiLoading ? <CardShimmer width="120px" height="32px"/> : (
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                                                    {formatRoundedAmountWithCommas(ordersCount)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70"><DateInfo/></p>
-                                        </div>
-
-                                        <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">
-                                            <span className="font-semibold">Tip:</span> Review top orders below for VIP
-                                            buyers.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Promo / Coupons Snapshot */}
-                            <div
-                                className="bg-gradient-to-br from-black via-fuchsia-900 to-pink-900 rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                <div
-                                    className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-16 -mt-16"/>
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                            <BadgePercent size={20}/> Promo Snapshot
-                                        </h3>
-                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                            <BadgePercent className="text-white" size={22}/>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-white/80">Coupon Discount</p>
-                                            {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(couponSum)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">
-                                                Orders with coupon: {formatRoundedAmountWithCommas(couponOrders)}
-                                            </p>
-                                        </div>
-
-                                        <div
-                                            className="pt-4 border-t border-white/25 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                            <p className="text-sm text-white/80">Store Credit Used</p>
-                                            {kpiLoading ? <CardShimmer width="160px" height="32px"/> : (
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                                                    PKR {formatRoundedAmountWithCommas(storeCreditSum)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">
-                                                transactions: {formatRoundedAmountWithCommas(storeCreditCount)}
-                                            </p>
-                                        </div>
-
-                                        <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">
-                                            Watch for coupon stacking & high store-credit usage.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Risk Snapshot */}
-                            <div
-                                className="bg-gradient-to-br from-red via-orange-600 to-warning rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                <div
-                                    className="absolute bottom-0 left-0 w-44 h-44 bg-white/10 rounded-full -ml-20 -mb-20"/>
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                            <ShieldAlert size={20}/> Risk Snapshot
-                                        </h3>
-                                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                            <AlertTriangle className="text-white" size={22}/>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-sm text-white/80">COD Amount Issues</p>
-                                            {kpiLoading ? <CardShimmer width="100px" height="40px"/> : (
-                                                <p className="text-4xl font-bold text-white tabular-nums">
-                                                    {formatRoundedAmountWithCommas(codIssueCount)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-white/70">OMS</p>
-                                        </div>
-
-                                        <div className="pt-4 border-t border-white/25 grid grid-cols-2 gap-4">
-                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                <p className="text-xs text-white/80">Missing Email</p>
-                                                {kpiLoading ? <CardShimmer width="60px" height="32px"/> : (
-                                                    <p className="text-2xl font-bold text-white tabular-nums">
-                                                        {formatRoundedAmountWithCommas(missingEmailCount)}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                <p className="text-xs text-white/80">Signal</p>
-                                                <p className="text-2xl font-bold text-white tabular-nums">
-                            <span className="inline-flex items-center gap-1">
-                              <Ban size={16}/> Audit
-                            </span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            className="bg-white/10 p-2 rounded-lg text-white/90 text-sm flex items-center gap-2">
-                                            <RotateCcw size={16}/> Review COD mismatches + incomplete accounts first.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Existing charts & tables (unchanged) */}
-                        <div className="space-y-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <SectionCard title="Top Order Amounts" icon={TrendingUp}>
-                                    {topOrdersLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(topOrders) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <div className="space-y-5">
-                                            <div className="h-[360px]">
-                                                <ReChart
-                                                    data={chartTopOrders}
-                                                    variant="bar"
-                                                    dimensions={{height: 360, bottom: 0}}
-                                                    colors={COLORS}
-                                                />
-                                            </div>
-                                            <SimpleTable
-                                                columns={[
-                                                    {
-                                                        key: "OrderNumber",
-                                                        label: "Order #",
-                                                        mono: true,
-                                                        colorClass: "text-blue-600"
-                                                    },
-                                                    {key: "OrderedDate", label: "Ordered Date"},
-                                                    {key: "Status", label: "Status"},
-                                                    {
-                                                        key: "GrandTotalAmount",
-                                                        label: "Grand Total",
-                                                        align: "right",
-                                                        strong: true,
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.GrandTotalAmount)}`,
-                                                    },
-                                                ]}
-                                                rows={topOrders}
-                                            />
-                                        </div>
-                                    )}
-                                </SectionCard>
-
-                                <SectionCard title="Top Coupons" icon={BadgePercent}>
-                                    {topCouponsLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(topCoupons) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <div className="space-y-5">
-                                            <div className="h-[360px]">
-                                                <CouponsAreaByCode
-                                                    rows={topCoupons}
-                                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                                                />
-                                            </div>
-                                            <SimpleTable
-                                                columns={[
-                                                    {
-                                                        key: "OrderNumber",
-                                                        label: "Order #",
-                                                        mono: true,
-                                                        colorClass: "text-blue-600"
-                                                    },
-                                                    {key: "coupon_code", label: "Coupon Code", strong: true},
-                                                    {key: "coupon_type", label: "Type"},
-                                                    {
-                                                        key: "coupon_amount",
-                                                        label: "Coupon Amount",
-                                                        align: "right",
-                                                        strong: true,
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.coupon_amount)}`,
-                                                    },
-                                                    {
-                                                        key: "total_payment_amount",
-                                                        label: "Paid Amount",
-                                                        align: "right",
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.total_payment_amount)}`,
-                                                    },
-                                                    {
-                                                        key: "order_total",
-                                                        label: "Order Amount",
-                                                        align: "right",
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.order_total)}`,
-                                                    },
-                                                ]}
-                                                rows={topCoupons}
-                                            />
-                                        </div>
-                                    )}
-                                </SectionCard>
                             </div>
                         </div>
                     </>
                 )}
 
-                {/* ------------------ ORDERS TAB ------------------ */}
+                {activeTab === "customers" && (
+                    <>
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                                <div className="flex flex-wrap gap-2">
+                                    {CUSTOMERS_TABS.map((m) => {
+                                        const Icon = m.icon;
+                                        const active = activeReturnsTab === m.key;
+                                        return (
+                                            <button
+                                                key={m.key}
+                                                onClick={() => setActiveReturnsTab(m.key)}
+                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                    active
+                                                        ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                                }`}
+                                            >
+                                                <Icon size={18} />
+                                                <span className="font-medium whitespace-nowrap">{m.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div className="p-6 space-y-6">
+                                {activeCustomersTab === "habitual" && (
+                                    <div className="space-y-6">
+                                        <EcomHabitualCustomerCards
+                                            cards={customerHabitualRes?.cards}
+                                            loading={customerHabitualLoading}
+                                            formatAmount={formatRoundedAmountWithCommas}
+                                        />
+
+                                        <EcomHabitualRatioGradientCards
+                                            buckets={customerHabitualRes?.ratio_buckets}
+                                            loading={customerHabitualLoading}
+                                            formatAmount={formatRoundedAmountWithCommas}
+                                        />
+
+                                        <TopHabitualReturns
+                                            rows={topHabitual}
+                                            meta={returnsTopHabitual?.meta}
+                                            loading={returnsTopHabitualLoading}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
+
+
                 {activeTab === "orders" && (
                     <div className="space-y-6">
                         <SectionCard title="Top Order Amounts" icon={TrendingUp}>
@@ -831,7 +728,7 @@ const PulseEcomDashboard = () => {
                                                         mono: true,
                                                         colorClass: "text-blue-600"
                                                     },
-                                                    {key: "OrderedDate", label: "Ordered Date"},
+                                                    {key: "OrderedDate", label: "Order Date"},
                                                     {key: "Status", label: "Status"},
                                                     {
                                                         key: "GrandTotalAmount",
@@ -840,7 +737,7 @@ const PulseEcomDashboard = () => {
                                                         strong: true,
                                                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.GrandTotalAmount)}`,
                                                     },
-                                                    {key: "Description", label: "Description"},
+                                                    {key: "Description", label: "Customer Name"},
                                                 ]}
                                                 rows={topOrders}
                                             />
@@ -880,7 +777,7 @@ const PulseEcomDashboard = () => {
                                                     },
                                                     {
                                                         key: "total_payment_amount",
-                                                        label: "Total Paid",
+                                                        label: "Order Amount",
                                                         align: "right",
                                                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.total_payment_amount)}`,
                                                     },
@@ -890,12 +787,17 @@ const PulseEcomDashboard = () => {
                                         </div>
                                     )}
                                 </SectionCard>
-                            </div>
-                        )}
 
-                        {/* ------------------ PROMOS TAB ------------------ */}
-                        {activeTab === "promos" && (
-                            <div className="space-y-6">
+                        <OrdersOnBehalf
+                            rows={returnsOrdersOnBehalf}
+                            loading={returnsOrdersOnBehalfLoading}
+                            colors={COLORS}
+                        />
+                            </div>
+                 )}
+
+                {activeTab === "promos" && (
+                  <div className="space-y-6">
                                 <SectionCard title="Top Coupons" icon={BadgePercent}>
                                     {topCouponsLoading ? (
                                         <LoadingSpinner/>
@@ -935,7 +837,7 @@ const PulseEcomDashboard = () => {
                                                     },
                                                     {
                                                         key: "order_total",
-                                                        label: "Total Order",
+                                                        label: "Order Total",
                                                         align: "right",
                                                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.order_total)}`,
                                                     },
@@ -946,11 +848,10 @@ const PulseEcomDashboard = () => {
                                     )}
                                 </SectionCard>
                             </div>
-                        )}
+                )}
 
-                        {/* ------------------ RISK TAB ------------------ */}
-                        {activeTab === "risk" && (
-                            <div className="space-y-6">
+                {activeTab === "risk" && (
+                  <div className="space-y-6">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <SectionCard title="COD Amount Issues" icon={AlertTriangle}>
                                         {codIssuesLoading ? (
@@ -1007,7 +908,15 @@ const PulseEcomDashboard = () => {
                                 </SectionCard>
                             </div>
                         </div>
-                    )}
+                )}
+
+                {activeTab === "dormant_users" && (
+                    <DormantUsers
+                        rows={returnsInactiveUsers}
+                        summary={returnsInactiveUsersSummary}
+                        loading={returnsInactiveUsersResLoading}
+                    />
+                )}
                 </>
         </div>
     );
