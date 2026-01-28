@@ -23,31 +23,12 @@ const renderDescription = (desc) => {
 
 const InlayList = ({ externalFilters = [] }) => {
     const columns = [
-        {
-            Header: "Actions",
-            accessor: "id",
-            disableSortBy: true,
-            Cell: ({ row }) => (
-                <div className="flex space-x-2">
-                    <Link to={`/module/inlay/edit/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
-                            <i className="ri-edit-line"></i>
-                        </button>
-                    </Link>
-
-                    <Link to={`/module/inlay/detail/${row.original.id}`}>
-                        <button className="ti-btn ti-btn-info ti-btn-sm" title="View">
-                            <i className="ri-eye-line"></i>
-                        </button>
-                    </Link>
-                </div>
-            ),
-        },
 
         {
             Header: "Thumbnail",
             accessor: "thumbnail",
             disableSortBy: true,
+            width: 100,
             Cell: ({ row }) => {
                 const t = row.original.thumbnail;
                 const src = t?.small_url || t?.medium_url || t?.file_url;
@@ -66,6 +47,18 @@ const InlayList = ({ externalFilters = [] }) => {
                 );
             },
         },
+        {
+            Header: "URL",
+            accessor: "public_url",
+            width: 300,
+            Cell: ({ row }) => (
+                <div className="flex items-center">
+                    <a href={row.original.public_url} target='_blank'>
+                        <div className="font-semibold text-primary underline">{row.original?.public_url}</div>
+                    </a>
+                </div>
+            )
+        },
 
         // ✅ Design Code as clickable link to /inlay/:code
         {
@@ -80,8 +73,6 @@ const InlayList = ({ externalFilters = [] }) => {
 
                 const base = import.meta.env.BASE_URL || "/";
                 const to = `${base}inlay/${encodeURIComponent(code)}`;
-
-                // ✅ hover shows full link (absolute)
                 const fullUrl = `${window.location.origin}${to.startsWith("/") ? to : `/${to}`}`;
 
                 return (
@@ -102,39 +93,47 @@ const InlayList = ({ externalFilters = [] }) => {
             filterable: true,
             filterType: "text",
             filterKey: "name",
+            width: 300,
             Cell: ({ value }) => <span>{value || "—"}</span>,
         },
-        {
-            Header: "Active",
+        { Header: "Active",
             accessor: "is_active",
+            filterType: 'boolean',
             filterable: true,
-            filterType: "select",
-            filterKey: "is_active",
-            Cell: ({ value }) => (
-                <span
-                    className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ${
-                        value ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                    }`}
-                >
-          {value ? "Active" : "Inactive"}
-        </span>
-            ),
+            Cell: ({value}) => (value ? 'Yes': 'No'),
+            getCellProps: (cellInfo) => {
+                return {
+                    className: cellInfo.value ? 'bg-success text-white' : 'bg-info text-white',
+                }
+            },
         },
-        {
-            Header: "Description",
-            accessor: "description",
-            disableSortBy: true,
-            Cell: ({ value }) => (
-                <span className="text-sm text-gray-700">{renderDescription(value)}</span>
-            ),
-        },
+
         {
             Header: "Created",
             accessor: "created_at",
             filterable: true,
             filterType: "date",
             filterKey: "created_at",
-            Cell: ({ value }) => formatDate(value),
+        },
+        {
+            Header: "Actions",
+            accessor: "id",
+            disableSortBy: true,
+            Cell: ({ row }) => (
+                <div className="flex space-x-2">
+                    <Link to={`/module/inlay/edit/${row.original.id}`}>
+                        <button className="ti-btn ti-btn-primary ti-btn-sm" title="Edit">
+                            <i className="ri-edit-line"></i>
+                        </button>
+                    </Link>
+
+                    <Link to={`/module/inlay/detail/${row.original.id}`}>
+                        <button className="ti-btn ti-btn-info ti-btn-sm" title="View">
+                            <i className="ri-eye-line"></i>
+                        </button>
+                    </Link>
+                </div>
+            ),
         },
     ];
 
@@ -158,7 +157,7 @@ const InlayList = ({ externalFilters = [] }) => {
 
             <DataTable
                 columns={columns}
-                title="Inlays"
+                title=""
                 apiUrl={`/inlay/inlays/datatable/`}
                 buttons={buttons}
                 enableAdvancedFilters={true}
