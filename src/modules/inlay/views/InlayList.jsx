@@ -148,21 +148,21 @@ const InlayList = ({ externalFilters = [] }) => {
 
     const buttons = (
         <div className="flex gap-2">
-            <button
-                type="button"
-                onClick={openUploadModal}
-                className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"
-            >
-                <i className="ri-upload-2-line mr-1"></i> Upload Inlays
-            </button>
+            {/*<button*/}
+            {/*    type="button"*/}
+            {/*    onClick={openUploadModal}*/}
+            {/*    className="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"*/}
+            {/*>*/}
+            {/*    <i className="ri-upload-2-line mr-1"></i> Upload Inlays*/}
+            {/*</button>*/}
 
-            <a
-                href={sampleFile}
-                download="sample_upload_inlays.xlsx"
-                className="ti-btn ti-btn-light !py-1 !px-2 !text-[0.75rem]"
-            >
-                <i className="ri-download-2-line mr-1"></i> Sample File
-            </a>
+            {/*<a*/}
+            {/*    href={sampleFile}*/}
+            {/*    download="sample_upload_inlays.xlsx"*/}
+            {/*    className="ti-btn ti-btn-light !py-1 !px-2 !text-[0.75rem]"*/}
+            {/*>*/}
+            {/*    <i className="ri-download-2-line mr-1"></i> Sample File*/}
+            {/*</a>*/}
 
             <Link to={INLAY_ROUTES.ADD.path}>
                 <button className="ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]">

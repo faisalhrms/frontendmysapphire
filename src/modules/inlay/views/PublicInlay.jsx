@@ -16,6 +16,7 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import api from "@config/axiosConfig.js";
+import {hexToRgb} from "@helpers/styles.js";
 
 
 export default function PublicInlay() {
@@ -31,31 +32,30 @@ export default function PublicInlay() {
         [code]
     );
 
+
     useEffect(() => {
-        let mounted = true;
+        setLoading(true);
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/inlay/inlay-public/${encodeURIComponent(code)}/`)
+            .then(async (response) => {
+                const json = await response.json();
+                if (!response.ok) {
+                    const errorMessage = json?.message || 'Something went wrong';
+                    throw new Error(errorMessage);
+                }
 
-        (async () => {
-            try {
-                setLoading(true);
-                const { data } = await api.get(endpoint);
-
-                // your API shape: { data: {...}, status: true/false, message, errors }
-                const obj = data?.data || null;
-
-                if (!mounted) return;
-                setProduct(obj);
-            } catch (e) {
-                if (!mounted) return;
+                return json;
+            })
+            .then((data) => {
+                const Res = data.data;
+                setProduct(Res);
+                setLoading(false);
+            })
+            .catch((error) => {
+                setLoading(false)
                 setProduct(null);
-            } finally {
-                if (mounted) setLoading(false);
-            }
-        })();
+            });
+    }, [code]);
 
-        return () => {
-            mounted = false;
-        };
-    }, [endpoint]);
 
     const descriptionItems = useMemo(() => {
         const d = product?.description;
