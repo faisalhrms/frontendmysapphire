@@ -1340,7 +1340,7 @@ const RetailPulseDashboard = () => {
 
                                 <StatCard
                                     icon={TrendingDown}
-                                    title="Exchange Transactions"
+                                    title="Exchange Qty"
                                     value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_txn_count || 0)}
                                     subtitle="Sale + return in same txn"
                                     isLoading={returnsSummaryLoading}
@@ -1348,36 +1348,36 @@ const RetailPulseDashboard = () => {
                             </div>
 
                             {/* Exchanges summary cards (optional but useful) */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <StatCard
-                                    icon={TrendingUp}
-                                    title="Exchange Sale Qty"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_sale_qty_total || 0)}
-                                    subtitle="Total sale qty in exchanges"
-                                    isLoading={returnsSummaryLoading}
-                                />
-                                <StatCard
-                                    icon={RotateCcw}
-                                    title="Exchange Return Qty"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_qty_total || 0)}
-                                    subtitle="Total return qty in exchanges"
-                                    isLoading={returnsSummaryLoading}
-                                />
-                                <StatCard
-                                    icon={Receipt}
-                                    title="Exchange Returns (With Transactions)"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_with_receipt_qty || 0)}
-                                    subtitle="Receipt present"
-                                    isLoading={returnsSummaryLoading}
-                                />
-                                <StatCard
-                                    icon={Receipt}
-                                    title="Exchange Returns (Without Transactions)"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_without_receipt_qty || 0)}
-                                    subtitle="No receipt"
-                                    isLoading={returnsSummaryLoading}
-                                />
-                            </div>
+                            {/*<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">*/}
+                            {/*    <StatCard*/}
+                            {/*        icon={TrendingUp}*/}
+                            {/*        title="Exchange Sale Qty"*/}
+                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_sale_qty_total || 0)}*/}
+                            {/*        subtitle="Total sale qty in exchanges"*/}
+                            {/*        isLoading={returnsSummaryLoading}*/}
+                            {/*    />*/}
+                            {/*    <StatCard*/}
+                            {/*        icon={RotateCcw}*/}
+                            {/*        title="Exchange Return Qty"*/}
+                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_qty_total || 0)}*/}
+                            {/*        subtitle="Total return qty in exchanges"*/}
+                            {/*        isLoading={returnsSummaryLoading}*/}
+                            {/*    />*/}
+                            {/*    <StatCard*/}
+                            {/*        icon={Receipt}*/}
+                            {/*        title="Exchange Returns (With Transactions)"*/}
+                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_with_receipt_qty || 0)}*/}
+                            {/*        subtitle="Receipt present"*/}
+                            {/*        isLoading={returnsSummaryLoading}*/}
+                            {/*    />*/}
+                            {/*    <StatCard*/}
+                            {/*        icon={Receipt}*/}
+                            {/*        title="Exchange Returns (Without Transactions)"*/}
+                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_without_receipt_qty || 0)}*/}
+                            {/*        subtitle="No receipt"*/}
+                            {/*        isLoading={returnsSummaryLoading}*/}
+                            {/*    />*/}
+                            {/*</div>*/}
 
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {/* 1) TOP RETURNS: Bar chart + table */}
