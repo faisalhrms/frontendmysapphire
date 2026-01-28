@@ -39,7 +39,6 @@ import {getPastDate} from "@helpers/dateTime.js";
 import useFilters from "@hooks/useFilters.js";
 import FilterButton from "@components/form/FilterButton.jsx";
 import FormInput from "@components/form/FormInput.jsx";
-import EcomGradientcards from "@modules/dashboards/data-pulse/components/EcomGradientcards.jsx";
 import ReturnsAreaChart from "@modules/dashboards/data-pulse/components/ecom/ReturnsAreaChart.jsx";
 import EcomReturnsGradiantCards from "@modules/dashboards/data-pulse/components/ecom/EcomReturnsGradiantCards.jsx";
 import TopHabitualReturns from "@modules/dashboards/data-pulse/components/ecom/TopHabitualReturns.jsx";
@@ -47,9 +46,8 @@ import ReturnsLocationWise from "@modules/dashboards/data-pulse/components/ecom/
 import ReturnsCancelledAfterDispatchTable
     from "@modules/dashboards/data-pulse/components/ecom/ReturnsCancelledAfterDispatchTable.jsx";
 import DormantUsers from "@modules/dashboards/data-pulse/components/ecom/DormantUsers.jsx";
-import EcomOverviewExtrasGradientCards
-    from "@modules/dashboards/data-pulse/components/ecom/EcomOverviewExtrasGradientCards.jsx";
 import OrdersOnBehalf from "@modules/dashboards/data-pulse/components/ecom/OrdersOnBehalf.jsx";
+import EcomOverview from "@modules/dashboards/data-pulse/components/ecom/EcomOverview.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -322,7 +320,7 @@ const PulseEcomDashboard = () => {
             { id: "overview", label: "Overview", icon: LayoutGrid },
             { id: "orders", label: "Orders", icon: TrendingUp },
             { id: "returns", label: "Returns", icon: RotateCcw },
-            { id: "promos", label: "Promos", icon: BadgePercent },
+            { id: "promos", label: "Discounts", icon: BadgePercent },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
             { id: "dormant_users", label: "Dormant users", icon: UserX },
         ],
@@ -387,12 +385,6 @@ const PulseEcomDashboard = () => {
 
     const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/kpis/",
-        filters,
-        { enabled: overviewEnabled }
-    );
-
-    const { data: kpiExtraResp, isLoading: kpiExtraLoading } = useFetchWithFilters(
-        "/dashboard/data-pulse/ecom/kpis/extra/",
         filters,
         { enabled: overviewEnabled }
     );
@@ -462,9 +454,6 @@ const PulseEcomDashboard = () => {
         filters,
         { enabled: ordersEnabled}
     );
-
-    const kpis = kpiResp?.kpis || {};
-    const kpisExtra = kpiExtraResp?.summary || {};
     const topOrders = topOrdersResp?.rows || [];
     const topCoupons = topCouponsResp?.rows || [];
     const topStoreCredit = topStoreCreditResp?.rows || [];
@@ -491,19 +480,6 @@ const PulseEcomDashboard = () => {
         [topOrders]
     );
 
-
-    const ordersCount = Number(kpis.order_count) || 0;
-    const grossSales = Number(kpis.grand_total_sum) || 0;
-    const avgOrder = Number(kpis.grand_total_avg) || 0;
-
-    const couponSum = Number(kpis.coupon_sum) || 0;
-    const couponOrders = Number(kpis.coupon_order_count) || 0;
-
-    const storeCreditSum = Number(kpis.store_credit_sum) || 0;
-    const storeCreditCount = Number(kpis.store_credit_count) || 0;
-
-    const codIssueCount = Number(kpis.cod_amount_issue_count) || 0;
-    const missingEmailCount = Number(kpis.missing_email_count) || 0;
     const wBuckets = Array.isArray(windowKpis.buckets) ? windowKpis.buckets : [];
     const tBuckets = Array.isArray(tillKpis.buckets) ? tillKpis.buckets : [];
 
@@ -579,168 +555,14 @@ const PulseEcomDashboard = () => {
             <>
                 {activeTab === "overview" && (
                     <>
-                        <EcomOverviewExtrasGradientCards
-                            loading={kpiExtraLoading}
-                            summary={kpisExtra}
-                            formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                            DateInfo={DateInfo}
-                        />
-                        <div className="rounded-lg shadow-sm border border-gray-200 dark:text-gray-200 dark:bg-bodybg">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <StatCard
-                                    icon={Receipt}
-                                    title="Orders"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(ordersCount)}
-                                    subtitle={<DateInfo />}
-                                    isLoading={kpiLoading}
-                                    loadingType='pulse'
-                                />
-                                <StatCard
-                                    icon={TrendingUp}
-                                    title="Gross Sales"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(grossSales)}`}
-                                    subtitle={kpiLoading ? '...' : `Avg: PKR ${formatRoundedAmountWithCommas(avgOrder)}`}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={Wallet}
-                                    title="Store Credit"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(storeCreditSum)}`}
-                                    subtitle={kpiLoading ? '...' : `${formatRoundedAmountWithCommas(storeCreditCount)} transactions`}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={BadgePercent}
-                                    title="Coupons"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(couponSum)}`}
-                                    subtitle={kpiLoading ? '...' : `${formatRoundedAmountWithCommas(couponOrders)} orders`}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={AlertTriangle}
-                                    title="COD Issues"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(codIssueCount)}
-                                    subtitle="OMS"
-                                    isLoading={kpiLoading}
-                                    />
-                                    <StatCard
-                                        icon={UserX}
-                                        title="Missing Email"
-                                        value={kpiLoading ? '...' : formatRoundedAmountWithCommas(missingEmailCount)}
-                                        subtitle="Accounts"
-                                        isLoading={kpiLoading}
-                                    />
-                                </div>
-                            </div>
-
-                        <EcomGradientcards
-                            kpiLoading={kpiLoading}
-                            grossSales={grossSales}
-                            avgOrder={avgOrder}
-                            ordersCount={ordersCount}
-                            couponSum={couponSum}
-                            couponOrders={couponOrders}
-                            storeCreditSum={storeCreditSum}
-                            storeCreditCount={storeCreditCount}
-                            codIssueCount={codIssueCount}
-                            missingEmailCount={missingEmailCount}
-                            formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                            DateInfo={DateInfo}
-
-                        />
-
-                        {/* Existing charts & tables (unchanged) */}
-                        <div className="space-y-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <SectionCard title="Top Order Amounts" icon={TrendingUp}>
-                                    {topOrdersLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(topOrders) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <div className="space-y-5">
-                                            <div className="h-[360px]">
-                                                <ReChart
-                                                    data={chartTopOrders}
-                                                    variant="bar"
-                                                    dimensions={{height: 360, bottom: 0}}
-                                                    colors={COLORS}
-                                                />
-                                            </div>
-                                            <SimpleTable
-                                                columns={[
-                                                    {
-                                                        key: "OrderNumber",
-                                                        label: "Order #",
-                                                        mono: true,
-                                                        colorClass: "text-blue-600"
-                                                    },
-                                                    {key: "OrderedDate", label: "Ordered Date"},
-                                                    {key: "Status", label: "Status"},
-                                                    {
-                                                        key: "GrandTotalAmount",
-                                                        label: "Grand Total",
-                                                        align: "right",
-                                                        strong: true,
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.GrandTotalAmount)}`,
-                                                    },
-                                                ]}
-                                                rows={topOrders}
-                                            />
-                                        </div>
-                                    )}
-                                </SectionCard>
-
-                                <SectionCard title="Top Coupons" icon={BadgePercent}>
-                                    {topCouponsLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(topCoupons) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <div className="space-y-5">
-                                            <div className="h-[360px]">
-                                                <CouponsAreaByCode
-                                                    rows={topCoupons}
-                                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                                                />
-                                            </div>
-                                            <SimpleTable
-                                                columns={[
-                                                    {
-                                                        key: "OrderNumber",
-                                                        label: "Order #",
-                                                        mono: true,
-                                                        colorClass: "text-blue-600"
-                                                    },
-                                                    {key: "coupon_code", label: "Coupon Code", strong: true},
-                                                    {key: "coupon_type", label: "Type"},
-                                                    {
-                                                        key: "coupon_amount",
-                                                        label: "Coupon Amount",
-                                                        align: "right",
-                                                        strong: true,
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.coupon_amount)}`,
-                                                    },
-                                                    {
-                                                        key: "total_payment_amount",
-                                                        label: "Paid Amount",
-                                                        align: "right",
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.total_payment_amount)}`,
-                                                    },
-                                                    {
-                                                        key: "order_total",
-                                                        label: "Order Amount",
-                                                        align: "right",
-                                                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.order_total)}`,
-                                                    },
-                                                ]}
-                                                rows={topCoupons}
-                                            />
-                                        </div>
-                                    )}
-                                </SectionCard>
-                            </div>
-                        </div>
+                        {activeTab === "overview" && (
+                            <EcomOverview
+                                kpiResp={kpiResp}
+                                kpiLoading={kpiLoading}
+                                formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                DateInfo={DateInfo}
+                            />
+                        )}
                     </>
                 )}
 
@@ -847,7 +669,7 @@ const PulseEcomDashboard = () => {
                                                         mono: true,
                                                         colorClass: "text-blue-600"
                                                     },
-                                                    {key: "OrderedDate", label: "Ordered Date"},
+                                                    {key: "OrderedDate", label: "Order Date"},
                                                     {key: "Status", label: "Status"},
                                                     {
                                                         key: "GrandTotalAmount",
@@ -956,7 +778,7 @@ const PulseEcomDashboard = () => {
                                                     },
                                                     {
                                                         key: "order_total",
-                                                        label: "Total Order",
+                                                        label: "Order Total",
                                                         align: "right",
                                                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.order_total)}`,
                                                     },

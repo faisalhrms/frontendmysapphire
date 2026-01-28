@@ -987,10 +987,9 @@ const RetailPulseDashboard = () => {
                                     isLoading={kpiLoading}
                                 />
                                 <StatCard
-                                    icon={Clock}
-                                    title="POS Shifts"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.open_shifts)}
-                                    subtitle="Currently open"
+                                    icon={ShieldAlert}
+                                    title="Suspended Transactions"
+                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.suspended_txn_count)}
                                     isLoading={kpiLoading}
                                 />
                                 <StatCard
