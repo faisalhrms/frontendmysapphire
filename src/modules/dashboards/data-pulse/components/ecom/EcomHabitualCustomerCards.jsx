@@ -36,12 +36,11 @@ const EcomHabitualCustomerCards = ({ cards = {}, loading = false, formatAmount =
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {data.map((c) => (
                 <StatCard
-                    key={c.title}
                     title={c.title}
-                    value={loading ? "-" : c.value}
+                    value={c.value}
                     icon={c.icon}
-                    description={c.description}
-                    loading={loading}
+                    subtitle={c.description}
+                    isLoading={loading}
                 />
             ))}
         </div>

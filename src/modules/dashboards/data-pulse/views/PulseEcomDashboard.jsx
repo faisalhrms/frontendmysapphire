@@ -393,78 +393,83 @@ const PulseEcomDashboard = () => {
 
     const [activeReturnsTab, setActiveReturnsTab] = useState("location");
 
+    const LONG_CACHE = {
+        staleTime: 1000 * 60 * 30,
+        gcTime: 1000 * 60 * 60 * 6,
+    };
+
     const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/kpis/",
         filters,
-        { enabled: overviewEnabled }
+        { enabled: overviewEnabled, ...LONG_CACHE }
     );
 
     const { data: topOrdersResp, isLoading: topOrdersLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/top/order-amounts/",
         filters,
-        { enabled: overviewEnabled || ordersEnabled }
+        { enabled: overviewEnabled || ordersEnabled, ...LONG_CACHE }
     );
 
     const { data: topCouponsResp, isLoading: topCouponsLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/top/coupons/",
         filters,
-        { enabled: overviewEnabled || promosEnabled }
+        { enabled: overviewEnabled || promosEnabled, ...LONG_CACHE }
     );
 
     const { data: topStoreCreditResp, isLoading: topStoreCreditLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/top/store-credit/",
         filters,
-        { enabled: overviewEnabled || ordersEnabled }
+        { enabled: overviewEnabled || ordersEnabled, ...LONG_CACHE }
     );
 
     const { data: codIssuesResp, isLoading: codIssuesLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/top/cod-amount-issues/",
         filters,
-        { enabled: overviewEnabled || riskEnabled }
+        { enabled: overviewEnabled || riskEnabled, ...LONG_CACHE }
     );
 
     const { data: missingEmailResp, isLoading: missingEmailLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/top/accounts-missing-email/",
         filters,
-        { enabled: riskEnabled }
+        { enabled: riskEnabled, ...LONG_CACHE }
     );
-
 
     const { data: returnsLocationWiseRes, isLoading: returnsLocationWiseLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/returns/location_wise/",
         filters,
-        { enabled: returnsEnabled && activeReturnsTab === "location" }
+        { enabled: returnsEnabled && activeReturnsTab === "location", ...LONG_CACHE }
     );
 
     const { data: returnsCancelledAfterDispatchRes, isLoading: returnsCancelledAfterDispatchLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/returns/cancelled-after-dispatch/",
         filters,
-        { enabled: returnsEnabled && activeReturnsTab === "cancelled" }
+        { enabled: returnsEnabled && activeReturnsTab === "cancelled", ...LONG_CACHE }
     );
 
     const { data: returnsInactiveUsersRes, isLoading: returnsInactiveUsersResLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/returns/inactive-users-last7d/",
         filters,
-        { enabled: dormantUsersEnabled}
+        { enabled: dormantUsersEnabled, ...LONG_CACHE }
     );
 
     const { data: returnsOrdersOnBehalfRes, isLoading: returnsOrdersOnBehalfLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/orders/on-behalf/",
         filters,
-        { enabled: ordersEnabled}
+        { enabled: ordersEnabled, ...LONG_CACHE }
     );
 
     const { data: customerHabitualRes, isLoading: customerHabitualLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/customers/habitual/summary/",
         filters,
-        { enabled: customersEnabled && activeCustomersTab === "habitual" }
+        { enabled: customersEnabled && activeCustomersTab === "habitual", ...LONG_CACHE }
     );
 
     const { data: returnsTopHabitual, isLoading: returnsTopHabitualLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/customers/habitual/top/",
         filters,
-        { enabled: customersEnabled && activeCustomersTab === "habitual" }
+        { enabled: customersEnabled && activeCustomersTab === "habitual", ...LONG_CACHE }
     );
+
 
     const topOrders = topOrdersResp?.rows || [];
     const topCoupons = topCouponsResp?.rows || [];
@@ -600,34 +605,6 @@ const PulseEcomDashboard = () => {
 
                             {/* CONTENT */}
                             <div className="p-6 space-y-6">
-                                {/* 1) OVERVIEW */}
-                                {activeReturnsTab === "habitual" && (
-                                    <div className="space-y-6">
-                                        <EcomReturnsGradiantCards
-                                            windowKpis={windowKpis}
-                                            tillKpis={tillKpis}
-                                            loading={returnsSummaryLoading}
-                                            formatAmount={formatRoundedAmountWithCommas}
-                                        />
-
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                            <SectionCard title="Window Distribution" icon={RotateCcw}>
-                                                <ReturnsAreaChart rows={wBuckets} loading={returnsSummaryLoading} />
-                                            </SectionCard>
-
-                                            <SectionCard title="Historical Baseline" icon={History}>
-                                                <ReturnsAreaChart rows={tBuckets} loading={returnsSummaryLoading} />
-                                            </SectionCard>
-                                        </div>
-
-                                        <TopHabitualReturns
-                                            rows={topHabitual}
-                                            meta={returnsTopHabitual?.meta}
-                                            loading={returnsTopHabitualLoading}
-                                        />
-                                    </div>
-                                )}
-
                                 {activeReturnsTab === "location" && (
                                         <ReturnsLocationWise
                                             colors={COLORS}
@@ -656,11 +633,11 @@ const PulseEcomDashboard = () => {
                                 <div className="flex flex-wrap gap-2">
                                     {CUSTOMERS_TABS.map((m) => {
                                         const Icon = m.icon;
-                                        const active = activeReturnsTab === m.key;
+                                        const active = activeCustomersTab === m.key;
                                         return (
                                             <button
                                                 key={m.key}
-                                                onClick={() => setActiveReturnsTab(m.key)}
+                                                onClick={() => setActiveCustomersTab(m.key)}
                                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                                     active
                                                         ? "bg-primary/10 text-primary border-primary/30 shadow-md"

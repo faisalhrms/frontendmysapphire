@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Users, BarChart3, RotateCcw, Wallet } from "lucide-react";
+import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 
 const safeNum = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
 
@@ -38,7 +39,7 @@ const RatioCard = ({ title, subtitle, icon: Icon, loading, rows, formatAmount, c
                             <Users size={12}/> Customers
                         </p>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {loading ? "-" : formatAmount(customers)}
+                            {loading ?  <PulseScan/> : formatAmount(customers)}
                         </p>
                     </div>
 
@@ -48,7 +49,7 @@ const RatioCard = ({ title, subtitle, icon: Icon, loading, rows, formatAmount, c
                             <RotateCcw size={12}/> Returns
                         </p>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {loading ? "-" : formatAmount(returns)}
+                            {loading ?  <PulseScan/> : formatAmount(returns)}
                         </p>
                     </div>
 
@@ -58,14 +59,9 @@ const RatioCard = ({ title, subtitle, icon: Icon, loading, rows, formatAmount, c
                             <Wallet size={12}/> Amount
                         </p>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {loading ? "-" : `PKR ${formatAmount(amount)}`}
+                            {loading ?  <PulseScan/> : `PKR ${formatAmount(amount)}`}
                         </p>
                     </div>
-                </div>
-
-
-                <div className="mt-4 bg-black/20 p-2 rounded-lg text-white/90 text-[11px] leading-tight">
-                    This bucket groups customers by <span className="font-semibold">return ratio</span>.
                 </div>
             </div>
         </div>

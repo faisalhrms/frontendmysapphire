@@ -9,11 +9,9 @@ import {
     Ban,
     PencilLine,
     ArrowUpRight,
-    ArrowUp,
-    ArrowDown,
+    FileText
 } from "lucide-react";
-
-import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
+import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 
 const PKR_KEYS = new Set([
     "avg_order_price",
@@ -41,24 +39,14 @@ function fmtValue({ key, value, formatRoundedAmountWithCommas }) {
     return formatRoundedAmountWithCommas(n);
 }
 
-function getDeltaPct(card) {
-    const v = card?.delta_percent;
-    if (v === null || v === undefined) return null;
-    const n = Number(v);
+/**
+ * Since we removed delta/compare from backend, iconDirection can be driven by value.
+ * This is just for coloring the icon (success/danger/white).
+ */
+function iconDirectionFromValue(card) {
+    if (!card) return null;
+    const n = Number(card?.value);
     return Number.isFinite(n) ? n : null;
-}
-
-function getDelta(card) {
-    const v = card?.delta;
-    if (v === null || v === undefined) return null;
-    const n = Number(v);
-    return Number.isFinite(n) ? n : null;
-}
-
-function dirNum(card) {
-    const dp = getDeltaPct(card);
-    if (dp !== null) return dp;
-    return getDelta(card);
 }
 
 function iconClass(n) {
@@ -66,23 +54,6 @@ function iconClass(n) {
     if (n > 0) return "text-success";
     if (n < 0) return "text-danger";
     return "text-white";
-}
-
-function fmtDeltaAbs({ key, delta, formatRoundedAmountWithCommas }) {
-    if (delta === null || delta === undefined) return null;
-    const n = Number(delta);
-    if (!Number.isFinite(n) || n === 0) return null;
-
-    const abs = Math.abs(n);
-    if (PKR_KEYS.has(key)) return `PKR ${formatRoundedAmountWithCommas(abs)}`;
-    return formatRoundedAmountWithCommas(abs);
-}
-
-function fmtDeltaPctText(deltaPct) {
-    if (deltaPct === null || deltaPct === undefined) return null;
-    const n = Number(deltaPct);
-    if (!Number.isFinite(n) || n === 0) return null;
-    return `${Math.abs(n).toFixed(2)}%`;
 }
 
 function cardsToMap(cardsArr) {
@@ -103,139 +74,55 @@ const GRADIENTS = {
     returns: "bg-gradient-to-br from-purple to-pink",
 };
 
-/** ✅ Pulse skeleton line */
-function PulseLine({ w = "w-full", h = "h-4", rounded = "rounded-md", className = "" }) {
-    return <div className={`${w} ${h} ${rounded} bg-white/15 animate-pulse ${className}`} />;
-}
+function PromoMiniCard({
+                           title,
+                           Icon,
+                           amountKey,
+                           amountValue,
+                           countLabel,
+                           countValue,
+                           loading,
+                           formatRoundedAmountWithCommas,
+                       }) {
 
-/** ✅ Pulse skeleton row that mimics the list item card */
-function PulseRow() {
     return (
-        <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm border border-white/10">
-            <div className="flex items-center justify-between gap-3">
-                <div className="flex-1 min-w-0 space-y-2">
-                    <PulseLine w="w-2/3" h="h-4" />
-                    <PulseLine w="w-1/2" h="h-3" className="opacity-70" />
-                </div>
-                <div className="text-right space-y-2">
-                    <PulseLine w="w-24" h="h-4" />
-                    <PulseLine w="w-16" h="h-3" className="opacity-70" />
-                </div>
+        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                    <Icon size={18} className="text-white" />
+                    {title}
+                </h3>
+            </div>
+
+            {/* body */}
+            <div className="flex-1 flex flex-col justify-between">
+                {loading ? (
+                    <div className="space-y-2">
+                            <PulseScan/>
+                    </div>
+                ) : (
+                    <>
+                        <p className="text-2xl font-bold text-white tabular-nums">
+                            {fmtValue({key: amountKey, value: amountValue, formatRoundedAmountWithCommas})}
+                        </p>
+
+                        <p className="text-xs text-white/70 mt-1 tabular-nums min-h-[16px]">
+                            {countLabel && countValue !== null && countValue !== undefined
+                                ? typeof countValue === "number"
+                                    ? `${countLabel}: ${formatRoundedAmountWithCommas(toNum(countValue))}`
+                                    : `${countLabel}: ${String(countValue)}`
+                                : "\u00A0"}
+                        </p>
+
+                    </>
+                )}
             </div>
         </div>
     );
 }
 
-/** Arrow badge for delta / delta% */
-function DeltaBadge({ directionNumber, text }) {
-    if (!text) return null;
 
-    const n = Number(directionNumber);
-    const isPos = Number.isFinite(n) && n > 0;
-    const isNeg = Number.isFinite(n) && n < 0;
-
-    const Arrow = isPos ? ArrowUp : isNeg ? ArrowDown : null;
-    const cls = isPos ? "text-success" : isNeg ? "text-danger" : "text-white/70";
-
-    return (
-        <div className={`inline-flex items-center gap-1 text-xs tabular-nums ${cls}`}>
-            {Arrow ? <Arrow size={14} /> : null}
-            <span>{text}</span>
-        </div>
-    );
-}
-
-/** Generic gradient list card (with pulse loading) */
-function GradientListCard({
-                              colSpanClass,
-                              gradientClass,
-                              title,
-                              Icon,
-                              iconDirection,
-                              topLabel,
-                              topValue,
-                              topSub,
-                              rows,
-                              loading,
-                              maxListHeight = 160,
-                              skeletonRows = 3,
-                              footerNote,
-                          }) {
-    return (
-        <div className={`${colSpanClass} bg-gradient-to-br ${gradientClass} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
-
-            <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                        <Icon size={20} className={iconClass(iconDirection)} />
-                        {title}
-                    </h3>
-                    <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                        <ArrowUpRight size={22} className="text-white" />
-                    </div>
-                </div>
-
-                <div className="space-y-4">
-                    <div>
-                        <p className="text-sm text-white/80">{topLabel}</p>
-
-                        {loading ? (
-                            <div className="mt-2">
-                                <PulseLine w="w-48" h="h-10" rounded="rounded-lg" />
-                                {topSub ? <PulseLine w="w-56" h="h-3" className="mt-2 opacity-70" /> : null}
-                            </div>
-                        ) : (
-                            <>
-                                <p className="text-4xl font-bold text-white tabular-nums">{topValue}</p>
-                                {topSub ? <p className="text-xs text-white/70 mt-1">{topSub}</p> : null}
-                            </>
-                        )}
-                    </div>
-
-                    <div
-                        className="pt-4 border-t border-white/30 space-y-3 overflow-y-auto pr-2"
-                    >
-                        {loading ? (
-                            Array.from({ length: skeletonRows }).map((_, i) => <PulseRow key={i} />)
-                        ) : (
-                            (rows || []).map((r, idx) => (
-                                <div
-                                    key={`${r.key || idx}-${idx}`}
-                                    className="bg-white/10 p-3 rounded-lg backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all"
-                                >
-                                    <div className="flex items-center justify-between gap-3">
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-white truncate">{r.label}</p>
-                                            {r.subLine ? <p className="text-xs text-white/70 truncate">{r.subLine}</p> : null}
-                                        </div>
-
-                                        <div className="text-right">
-                                            <p className="text-sm font-bold text-white tabular-nums">{r.valueLine}</p>
-
-                                            {(r.deltaAbsText || r.deltaPctText) ? (
-                                                <div className="mt-1 flex flex-col gap-0.5 items-end">
-                                                    <DeltaBadge directionNumber={r.dir} text={r.deltaAbsText} />
-                                                    <DeltaBadge directionNumber={r.dir} text={r.deltaPctText} />
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    {footerNote ? (
-                        <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">{footerNote}</div>
-                    ) : null}
-                </div>
-            </div>
-        </div>
-    );
-}
-
-const EcomOverview = ({ kpiResp, kpiLoading, formatRoundedAmountWithCommas }) => {
+const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
     const cardsArr = useMemo(() => {
         const c = kpiResp?.data?.cards ?? kpiResp?.cards;
         return Array.isArray(c) ? c : [];
@@ -253,37 +140,35 @@ const EcomOverview = ({ kpiResp, kpiLoading, formatRoundedAmountWithCommas }) =>
     const storeCredit = cards.store_credit;
     const empDisc = cards.employee_discount;
     const empOrders = cards.employee_discount_orders;
-    const storeCreditTx = cards.store_credit_transactions
-    const retCount = cards.returns;
-    const retAmount = cards.return_amount;
-    const retPct = cards.return_percent;
-
-    const cancelOrder = cards.cancel_order_cancel;
-    const cancelEdited = cards.cancel_edited_reason;
-    const codIssues = cards.cod_issues;
-    const missingEmail = cards.missing_email;
+    const storeCreditTx = cards.store_credit_transactions;
 
 
-
-    // -------------------------
-    // Sales
-    // -------------------------
     const salesTopValue = orders
         ? fmtValue({ key: "orders", value: orders.value, formatRoundedAmountWithCommas })
         : "-";
 
-    const salesRows = [orders, aov]
-        .filter(Boolean)
-        .map((c) => ({
-            key: c.key,
-            label: c.title || c.key,
-            subLine: c.subtitle || "",
-            valueLine: fmtValue({ key: c.key, value: c.value, formatRoundedAmountWithCommas }),
-            dir: dirNum(c),
-            deltaAbsText: fmtDeltaAbs({ key: c.key, delta: c.delta, formatRoundedAmountWithCommas }),
-            deltaPctText: fmtDeltaPctText(getDeltaPct(c)),
-        }));
+    const sectionsArr = useMemo(() => {
+        const s = kpiResp?.data?.sections ?? kpiResp?.sections;
+        return Array.isArray(s) ? s : [];
+    }, [kpiResp]);
 
+    const returnsSection = useMemo(() => {
+        return sectionsArr.find((s) => s?.key === "returns_section") || null;
+    }, [sectionsArr]);
+
+    const returnsItems = Array.isArray(returnsSection?.items) ? returnsSection.items : [];
+    const returnsMap = useMemo(() => {
+        const m = {};
+        returnsItems.forEach((c) => {
+            if (c?.key) m[c.key] = c;
+        });
+        return m;
+    }, [returnsItems]);
+
+    const retOrders = returnsMap.returns;
+    const retQty = returnsMap.return_qty;
+    const retAmount = returnsMap.return_amount;
+    const retAvgAty = returnsMap.avg_return_qty;
     // -------------------------
     // Payments
     // -------------------------
@@ -299,153 +184,517 @@ const EcomOverview = ({ kpiResp, kpiLoading, formatRoundedAmountWithCommas }) =>
             return {
                 key: name,
                 label: name,
-                subLine: `Share: ${share.toFixed(2)}%`,
+                countLabel: 'Share',
+                countValue: `${share.toFixed(2)}%`,
+                amount: amt,
                 valueLine: `PKR ${formatRoundedAmountWithCommas(amt)}`,
-                dir: null,
-                deltaAbsText: null,
-                deltaPctText: null,
             };
         });
 
     // -------------------------
     // Promo totals (TOP)
     // Total Promo Impact (PKR) = coupon_amount + store_credit + employee_discount
-    // Orders affected (count) = coupons + employee_discount_orders
+    // Orders affected (count) = coupons + employee_discount_orders + store_credit_transactions
     // -------------------------
-    const promoTotalAmt =
-        toNum(couponAmount?.value) + toNum(storeCredit?.value) + toNum(empDisc?.value);
+    const promoTotalAmt = toNum(couponAmount?.value) + toNum(storeCredit?.value) + toNum(empDisc?.value);
+    const promoTotalOrders = toNum(coupons?.value) + toNum(empOrders?.value) + toNum(storeCreditTx?.value);
 
-    const promoTotalOrders = toNum(coupons?.value) + toNum(empOrders?.value) + toNum(cards.store_credit_transactions?.value);
+    function gridColsClass(n) {
+        if (n <= 1) return "md:grid-cols-1";
+        if (n === 2) return "md:grid-cols-2";
+        if (n === 3) return "md:grid-cols-3";
+        return "md:grid-cols-4";
+    }
 
-    const promoRows = [couponAmount, coupons, storeCredit, storeCreditTx, empDisc, empOrders]
-        .filter(Boolean)
-        .map((c) => ({
-            key: c.key,
-            label: c.title || c.key,
-            subLine: c.subtitle || "",
-            valueLine: fmtValue({ key: c.key, value: c.value, formatRoundedAmountWithCommas }),
-            dir: dirNum(c),
-            deltaAbsText: fmtDeltaAbs({ key: c.key, delta: c.delta, formatRoundedAmountWithCommas }),
-            deltaPctText: fmtDeltaPctText(getDeltaPct(c)),
-        }));
+    const customerSection = useMemo(() => {
+        return sectionsArr.find((s) => s?.key === "customer_snapshot") || null;
+    }, [sectionsArr]);
+
+    const customerItems = Array.isArray(customerSection?.items) ? customerSection.items : [];
+    const customerMap = useMemo(() => {
+        const m = {};
+        customerItems.forEach((c) => {
+            if (c?.key) m[c.key] = c;
+        });
+        return m;
+    }, [customerItems]);
+
+    const totalCustomers = customerMap.total_customers;
+    const habitualReturns = customerMap.habitual_returns;
+    const customerMissingEmail = customerMap.missing_email;
+    const redFlags = customerMap.red_flags;
 
 
-    // -------------------------
-    // Returns
-    // -------------------------
-    const returnsHero = retAmount || retCount || retPct;
-    const returnsTopValue = returnsHero
-        ? fmtValue({ key: returnsHero.key, value: returnsHero.value, formatRoundedAmountWithCommas })
-        : "-";
+    const orderSection = useMemo(() => {
+        return sectionsArr.find((s) => s?.key === "order_snapshot") || null;
+    }, [sectionsArr]);
 
-    const returnsRows = [retCount, retAmount, retPct]
-        .filter(Boolean)
-        .map((c) => ({
-            key: c.key,
-            label: c.title || c.key,
-            subLine: c.subtitle || "",
-            valueLine: fmtValue({ key: c.key, value: c.value, formatRoundedAmountWithCommas }),
-            dir: dirNum(c),
-            deltaAbsText: fmtDeltaAbs({ key: c.key, delta: c.delta, formatRoundedAmountWithCommas }),
-            deltaPctText: fmtDeltaPctText(getDeltaPct(c)),
-        }));
+    const orderItems = Array.isArray(orderSection?.items) ? orderSection.items : [];
+    const orderMap = useMemo(() => {
+        const m = {};
+        orderItems.forEach((c) => {
+            if (c?.key) m[c.key] = c;
+        });
+        return m;
+    }, [orderItems]);
+
+    const ordOrders = orderMap.orders;
+    const ordCancelWhatsapp = orderMap.cancelled_by_whatsapp;
+    const ordCancelEcom = orderMap.cancel_order_cancel;
+    const ordEditedEcom = orderMap.cancel_edited_reason;
+
 
     return (
         <div className="space-y-6">
             {/* Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <GradientListCard
-                    colSpanClass="lg:col-span-6"
-                    gradientClass={GRADIENTS.sales}
-                    title="Sales Trend"
-                    Icon={TrendingUp}
-                    iconDirection={dirNum(orders) ?? dirNum(aov)}
-                    topLabel="Total Orders"
-                    topValue={salesTopValue}
-                    topSub="Orders + AOV"
-                    rows={salesRows}
-                    loading={kpiLoading}
-                    maxListHeight={140}
-                    skeletonRows={2}
-                />
+                {/* ✅ Sales Trend (2 cards) */}
+                <div className="lg:col-span-6">
+                    <div
+                        className={`bg-gradient-to-br ${GRADIENTS.sales} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
 
-                <GradientListCard
-                    colSpanClass="lg:col-span-6"
-                    gradientClass={GRADIENTS.payments}
-                    title="Payment Breakdown"
-                    Icon={Landmark}
-                    iconDirection={dirNum(pg)}
-                    topLabel="Total Sales"
-                    topValue={`PKR ${formatRoundedAmountWithCommas(pgTotal)}`}
-                    topSub={`Methods: ${pgRows.length}`}
-                    rows={pgRows}
-                    loading={kpiLoading}
-                    maxListHeight={140}
-                    skeletonRows={3}
-                />
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <TrendingUp size={20} className="text-white"/>
+                                    Sales Trend
+                                </h3>
+                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                    <ArrowUpRight size={22} className="text-white"/>
+                                </div>
+                            </div>
+
+                            {/* Top summary */}
+                            <div className="mb-4">
+                                {kpiLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan/>
+                                    </div>
+                                ) : (
+                                    <>
+                                    <p className="text-xs text-white/70 mt-1 tabular-nums">Total Orders</p>
+                                        <p className="text-4xl font-bold text-white tabular-nums">{salesTopValue}</p>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* 2 cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                                <PromoMiniCard
+                                    title={orders?.title || "Orders"}
+                                    Icon={TrendingUp}
+                                    amountKey="orders"
+                                    amountValue={orders?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title={aov?.title || "Avg Order Price"}
+                                    Icon={BadgePercent}
+                                    amountKey="avg_order_price"
+                                    amountValue={aov?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ✅ Payment Breakdown (dynamic cards count) */}
+                <div className="lg:col-span-6">
+                    <div
+                        className={`bg-gradient-to-br ${GRADIENTS.payments} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
+
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <Landmark size={20} className="text-white"/>
+                                    Payment Breakdown
+                                </h3>
+                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                    <ArrowUpRight size={22} className="text-white"/>
+                                </div>
+                            </div>
+
+                            {/* Top summary */}
+                            <div className="mb-4">
+                                {kpiLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan/>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Sales</p>
+                                        <p className="text-4xl font-bold text-white tabular-nums">
+                                            PKR {formatRoundedAmountWithCommas(pgTotal)}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Dynamic cards */}
+                            <div className={`grid grid-cols-1 ${gridColsClass(pgRows.length)} gap-4 items-stretch`}>
+                                {kpiLoading ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                                        <div
+                                            className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+                                            <div className="mt-2">
+                                                <PulseScan/>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+                                            <div className="mt-2">
+                                                <PulseScan/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    pgRows.map((r) => (
+                                        <PromoMiniCard
+                                            key={r.key}
+                                            title={r.label}
+                                            Icon={Landmark}
+                                            amountKey="payment_gateway_total"
+                                            amountValue={r.amount}
+                                            countLabel={r.countLabel}
+                                            countValue={r.countValue}
+                                            loading={kpiLoading}
+                                            formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                        />
+                                        ))
+                                        )}
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div>
             </div>
+
 
             {/* Row 2 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <GradientListCard
-                    colSpanClass="lg:col-span-6"
-                    gradientClass={GRADIENTS.promo}
-                    title="Discount Snapshot"
-                    Icon={BadgePercent}
-                    iconDirection={dirNum(empDisc) ?? dirNum(couponAmount) ?? dirNum(storeCredit)}
-                    topLabel="Total Amount"
-                    topValue={`PKR ${formatRoundedAmountWithCommas(promoTotalAmt)}`}
-                    topSub={`Total Orders: ${formatRoundedAmountWithCommas(promoTotalOrders)}`}
-                    rows={promoRows}
-                    loading={kpiLoading}
-                    maxListHeight={220}
-                    skeletonRows={5}
-                    footerNote="Watch for coupon stacking & high store-credit usage."
-                />
+                {/* ✅ Discount Snapshot: 3 cards */}
+                <div className="lg:col-span-6">
+                    <div
+                        className="bg-gradient-to-br from-black to-black rounded-xl shadow-lg p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
 
-                <GradientListCard
-                    colSpanClass="lg:col-span-6"
-                    gradientClass={GRADIENTS.returns}
-                    title="Returns Snapshot"
-                    Icon={RotateCcw}
-                    iconDirection={dirNum(returnsHero)}
-                    topLabel={"Total Amount"}
-                    topValue={returnsTopValue}
-                    topSub="Count + amount + rate"
-                    rows={returnsRows}
-                    loading={kpiLoading}
-                    maxListHeight={220}
-                    skeletonRows={3}
-                />
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <BadgePercent size={20} className="text-white"/>
+                                    Discount Snapshot
+                                </h3>
+                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                    <ArrowUpRight size={22} className="text-white"/>
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
+                                {kpiLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan/>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
+                                            Total Amount
+                                        </p>
+                                        <p className="text-4xl font-bold text-white tabular-nums">
+                                            PKR {formatRoundedAmountWithCommas(promoTotalAmt)}
+                                        </p>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
+                                            Total Orders: {formatRoundedAmountWithCommas(promoTotalOrders)}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+                                <PromoMiniCard
+                                    title="Coupons"
+                                    Icon={BadgePercent}
+                                    amountKey="coupon_amount"
+                                    amountValue={couponAmount?.value}
+                                    countLabel="Orders"
+                                    countValue={coupons?.value}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title="Store Credit"
+                                    Icon={Landmark}
+                                    amountKey="store_credit"
+                                    amountValue={storeCredit?.value}
+                                    countLabel="Orders"
+                                    countValue={storeCreditTx?.value}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title="Employee Discount"
+                                    Icon={BadgePercent}
+                                    amountKey="employee_discount"
+                                    amountValue={empDisc?.value}
+                                    countLabel="Orders"
+                                    countValue={empOrders?.value}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Returns card stays same */}
+                <div className="lg:col-span-6">
+                    <div
+                        className={`bg-gradient-to-br from-gray-950 to-gray-700 rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
+
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <RotateCcw size={20} className="text-white"/>
+                                    {returnsSection?.title || "Returns"}
+                                </h3>
+                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                    <ArrowUpRight size={22} className="text-white"/>
+                                </div>
+                            </div>
+
+                            {/* ✅ Top summary (Amount + Orders) */}
+                            <div className="mb-4">
+                                {kpiLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan/>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Amount</p>
+                                        <p className="text-4xl font-bold text-white tabular-nums">
+                                            {fmtValue({
+                                                key: "return_amount",
+                                                value: retAmount?.value,
+                                                formatRoundedAmountWithCommas
+                                            })}
+                                        </p>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
+                                            Total Orders: {formatRoundedAmountWithCommas(toNum(retOrders?.value))}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* ✅ 3 cards grid (Orders + Qty + Avg ATY) */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+                                <PromoMiniCard
+                                    title={retOrders?.title || "Orders"}
+                                    Icon={RotateCcw}
+                                    amountKey="returns"
+                                    amountValue={retOrders?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title={retQty?.title || "Qty"}
+                                    Icon={AlertTriangle}
+                                    amountKey="return_qty"
+                                    amountValue={retQty?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title={retAvgAty?.title || "Avg Qty"}
+                                    Icon={TrendingUp}
+                                    amountKey="avg_return_qty"
+                                    amountValue={retAvgAty?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            {/* Ops / Quality */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                    { c: cancelOrder, Icon: Ban },
-                    { c: cancelEdited, Icon: PencilLine },
-                    { c: codIssues, Icon: AlertTriangle },
-                    { c: missingEmail, Icon: UserX },
-                ]
-                    .filter((x) => x.c)
-                    .map(({ c, Icon }) => {
-                        const dp = getDeltaPct(c);
-                        return (
-                            <StatCard
-                                key={c.key}
-                                icon={Icon}
-                                title={c.title || c.key}
-                                value={
-                                    kpiLoading
-                                        ? "..."
-                                        : fmtValue({ key: c.key, value: c.value, formatRoundedAmountWithCommas })
-                                }
-                                isLoading={kpiLoading}
-                                loadingType="pulse"
-                            />
-                        );
-                    })}
+            {/* Row 3 - Customer + Orders Snapshot */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Customer Snapshot */}
+                <div className="lg:col-span-6">
+                    <div className="bg-gradient-to-br from-sky-950 to-sky-600 rounded-xl shadow-lg p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
+
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <UserX size={20} className="text-white" />
+                                    {customerSection?.title || "Customer Snapshot"}
+                                </h3>
+                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                    <ArrowUpRight size={22} className="text-white" />
+                                </div>
+                            </div>
+
+                            {/* Top summary */}
+                            <div className="mb-4">
+                                {kpiLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan/>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Customers</p>
+                                        <p className="text-4xl font-bold text-white tabular-nums">
+                                            {fmtValue({
+                                                key: "total_customers",
+                                                value: totalCustomers?.value,
+                                                formatRoundedAmountWithCommas,
+                                            })}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* 4 cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+
+                                <PromoMiniCard
+                                    title={habitualReturns?.title || "Habitual Returns"}
+                                    Icon={RotateCcw}
+                                    amountKey="habitual_returns"
+                                    amountValue={habitualReturns?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title={customerMissingEmail?.title || "Missing Emails"}
+                                    Icon={AlertTriangle}
+                                    amountKey="missing_email"
+                                    amountValue={customerMissingEmail?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title={redFlags?.title || "Red Flags"}
+                                    Icon={Ban}
+                                    amountKey="red_flags"
+                                    amountValue={redFlags?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Orders Snapshot */}
+                <div className="lg:col-span-6">
+                    <div className="bg-gradient-to-br from-rose-950 to-rose-600 rounded-xl shadow-lg p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
+
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <FileText size={20} className="text-white" />
+                                    {orderSection?.title || "Orders Snapshot"}
+                                </h3>
+                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                                    <ArrowUpRight size={22} className="text-white" />
+                                </div>
+                            </div>
+
+                            {/* Top summary */}
+                            <div className="mb-4">
+                                {kpiLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan/>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
+                                            Total Orders
+                                        </p>
+                                        <p className="text-4xl font-bold text-white tabular-nums">
+                                            {fmtValue({
+                                                key: "orders",
+                                                value: ordOrders?.value,
+                                                formatRoundedAmountWithCommas,
+                                            })}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* 4 cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+
+                                <PromoMiniCard
+                                    title={ordCancelWhatsapp?.title || "WhatsApp Cancellation"}
+                                    Icon={UserX}
+                                    amountKey="cancelled_by_whatsapp"
+                                    amountValue={ordCancelWhatsapp?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title={ordCancelEcom?.title || "Canceled By ECOM"}
+                                    Icon={Ban}
+                                    amountKey="cancel_order_cancel"
+                                    amountValue={ordCancelEcom?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+
+                                <PromoMiniCard
+                                    title={ordEditedEcom?.title || "Edited By ECOM"}
+                                    Icon={PencilLine}
+                                    amountKey="cancel_edited_reason"
+                                    amountValue={ordEditedEcom?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     );
 };
