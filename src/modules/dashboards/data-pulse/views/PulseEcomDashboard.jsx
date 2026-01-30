@@ -393,7 +393,7 @@ const PulseEcomDashboard = () => {
 
     ];
 
-    const [activeReturnsTab, setActiveReturnsTab] = useState("location");
+    const [activeReturnsTab, setActiveReturnsTab] = useState("cancelled");
 
     const LONG_CACHE = {
         staleTime: 1000 * 60 * 30,
