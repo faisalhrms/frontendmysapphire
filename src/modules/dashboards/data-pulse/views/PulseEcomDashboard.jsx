@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
@@ -31,9 +31,9 @@ import {
     MapPin,
     ArrowUpRight,
     Ban,
-    RotateCcw,
     History,
     Users,
+    RotateCcw, Truck,Undo
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
 import {getPastDate} from "@helpers/dateTime.js";
@@ -318,16 +318,17 @@ const SimpleTable = ({columns, rows}) => (
 // -------------------- MAIN --------------------
 const PulseEcomDashboard = () => {
     const COLORS = DEFAULT_CHART_COLORS;
+    const topRef = useRef(null);
 
     const tabs = useMemo(
         () => [
             { id: "overview", label: "Overview", icon: LayoutGrid },
             { id: "orders", label: "Orders", icon: TrendingUp },
-            { id: "returns", label: "Returns", icon: RotateCcw },
+            { id: "returns", label: "Fulfillment", icon: RotateCcw },
             { id: "promos", label: "Discounts", icon: BadgePercent },
             { id: "customers", label: "Customers", icon: Users },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
-            { id: "dormant_users", label: "users", icon: UserX },
+            { id: "dormant_users", label: "Users", icon: UserX },
         ],
         []
     );
@@ -387,11 +388,12 @@ const PulseEcomDashboard = () => {
     const [activeCustomersTab, setActiveCustomersTab] = useState("habitual");
 
     const RETURNS_TABS = [
-        { key: "location", label: "Location Wise Return", icon: MapPin },
-        { key: "cancelled", label: "Cancelled After Dispatch", icon: Ban },
+        { key: "cancelled", label: "Dispatch", icon: Truck  },
+        { key: "location", label: "Returns", icon: Undo  },
+
     ];
 
-    const [activeReturnsTab, setActiveReturnsTab] = useState("location");
+    const [activeReturnsTab, setActiveReturnsTab] = useState("cancelled");
 
     const LONG_CACHE = {
         staleTime: 1000 * 60 * 30,
@@ -401,7 +403,7 @@ const PulseEcomDashboard = () => {
     const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/kpis/",
         filters,
-        { enabled: overviewEnabled, ...LONG_CACHE }
+        { enabled: overviewEnabled||returnsEnabled, ...LONG_CACHE }
     );
 
     const { data: topOrdersResp, isLoading: topOrdersLoading } = useFetchWithFilters(
@@ -477,7 +479,6 @@ const PulseEcomDashboard = () => {
     const codIssues = codIssuesResp?.rows || [];
     const missingEmails = missingEmailResp?.rows || [];
     const topHabitual = returnsTopHabitual?.rows || [];
-    const returnsLocationWise = returnsLocationWiseRes?.rows || [];
     const returnsCancelledAfterDispatch = returnsCancelledAfterDispatchRes?.rows || [];
     const returnsCancelledAfterDispatchSummary = returnsCancelledAfterDispatchRes?.summary || {};
     const returnsInactiveUsers = returnsInactiveUsersRes?.rows || [];
@@ -494,9 +495,46 @@ const PulseEcomDashboard = () => {
         [topOrders]
     );
 
+    useEffect(() => {
+        // double-rAF ensures DOM updates are applied before scrolling
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+        });
+    }, [activeTab]);
+    const returnsSnapshot = useMemo(() => {
+        const sections = kpiResp?.data?.sections ?? kpiResp?.sections ?? [];
+        const returnsSection = Array.isArray(sections)
+            ? sections.find((s) => s?.key === "returns_section")
+            : null;
+
+        const items = Array.isArray(returnsSection?.items) ? returnsSection.items : [];
+        const m = {};
+        items.forEach((c) => {
+            if (c?.key) m[c.key] = c;
+        });
+
+        // ✅ force the title to "Returns Summary"
+        let title = (returnsSection?.title || "Returns Summary").trim();
+        title = title.replace(/snapshot/gi, "Summary");
+        if (title.toLowerCase() === "returns") title = "Returns Summary";
+
+        return {
+            title,
+            total_amount: m.return_amount?.value,
+            total_orders: m.returns?.value,
+
+            // mini cards
+            orders: m.returns?.value,
+            qty: m.return_qty?.value,
+            avg_qty: m.avg_return_qty?.value,
+        };
+    }, [kpiResp]);
+
 
     return (
-        <div className="space-y-6 pb-8 pt-6">
+        <div ref={topRef} className="space-y-6 pb-8 pt-6">
 
             {/* ---- Top header box (like you wanted) ---- */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:text-gray-200 dark:bg-bodybg">
@@ -513,9 +551,6 @@ const PulseEcomDashboard = () => {
                                 Ecom Data Pulse
                             </h1>
 
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Top 10 signals for the selected date range.
-                            </p>
 
                             {/* Range from filters (no meta) */}
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] font-semibold text-gray-500 dark:text-gray-400">
@@ -572,6 +607,9 @@ const PulseEcomDashboard = () => {
                                 kpiLoading={kpiLoading}
                                 formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
                                 DateInfo={DateInfo}
+                                setActiveTab={setActiveTab}
+                                setActiveReturnsTab={setActiveReturnsTab}
+                                setActiveCustomersTab={setActiveCustomersTab}
                             />
                         )}
                     </>
@@ -606,18 +644,24 @@ const PulseEcomDashboard = () => {
                             {/* CONTENT */}
                             <div className="p-6 space-y-6">
                                 {activeReturnsTab === "location" && (
-                                        <ReturnsLocationWise
-                                            colors={COLORS}
-                                            rows={returnsLocationWise}
-                                            loading={returnsLocationWiseLoading}
-                                        />
+                                    <ReturnsLocationWise
+                                        rows={returnsLocationWiseRes?.rows}
+                                        courierRows={returnsLocationWiseRes?.courier_rows}
+                                        categoryRows={returnsLocationWiseRes?.category_rows}
+                                        pendingPunchingRows={returnsLocationWiseRes?.pending_punching_rows}
+                                        courierTotalReturns={returnsLocationWiseRes?.courier_total_returns}
+                                        courierSummary={returnsLocationWiseRes?.courier_summary}
+                                        meta={returnsLocationWiseRes?.meta}
+                                        loading={returnsLocationWiseLoading || kpiLoading}
+                                        returnsSnapshot={returnsSnapshot}
+                                    />
                                 )}
 
                                 {activeReturnsTab === "cancelled" && (
                                     <ReturnsCancelledAfterDispatchTable
-                                        rows={returnsCancelledAfterDispatch}
-                                        loading={returnsCancelledAfterDispatchLoading}
-                                        summary={returnsCancelledAfterDispatchSummary}
+                                        filters={filters}
+                                        enabled={returnsEnabled && activeReturnsTab === "cancelled"}
+                                        cache={LONG_CACHE}
                                     />
                                 )}
 

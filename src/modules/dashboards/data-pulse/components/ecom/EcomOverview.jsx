@@ -9,7 +9,7 @@ import {
     Ban,
     PencilLine,
     ArrowUpRight,
-    FileText
+    FileText,
 } from "lucide-react";
 import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 
@@ -39,23 +39,6 @@ function fmtValue({ key, value, formatRoundedAmountWithCommas }) {
     return formatRoundedAmountWithCommas(n);
 }
 
-/**
- * Since we removed delta/compare from backend, iconDirection can be driven by value.
- * This is just for coloring the icon (success/danger/white).
- */
-function iconDirectionFromValue(card) {
-    if (!card) return null;
-    const n = Number(card?.value);
-    return Number.isFinite(n) ? n : null;
-}
-
-function iconClass(n) {
-    if (n === null) return "text-white";
-    if (n > 0) return "text-success";
-    if (n < 0) return "text-danger";
-    return "text-white";
-}
-
 function cardsToMap(cardsArr) {
     const m = {};
     (Array.isArray(cardsArr) ? cardsArr : []).forEach((c) => {
@@ -64,9 +47,6 @@ function cardsToMap(cardsArr) {
     return m;
 }
 
-/**
- * ✅ Gradient variants (NO "bg-" here, because we already apply bg-gradient-to-br in component)
- */
 const GRADIENTS = {
     sales: "bg-gradient-to-br from-black to-blue",
     payments: "bg-gradient-to-br from-black to-green",
@@ -84,7 +64,6 @@ function PromoMiniCard({
                            loading,
                            formatRoundedAmountWithCommas,
                        }) {
-
     return (
         <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
             <div className="flex items-center justify-between mb-3">
@@ -94,16 +73,15 @@ function PromoMiniCard({
                 </h3>
             </div>
 
-            {/* body */}
             <div className="flex-1 flex flex-col justify-between">
                 {loading ? (
                     <div className="space-y-2">
-                            <PulseScan/>
+                        <PulseScan />
                     </div>
                 ) : (
                     <>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {fmtValue({key: amountKey, value: amountValue, formatRoundedAmountWithCommas})}
+                            {fmtValue({ key: amountKey, value: amountValue, formatRoundedAmountWithCommas })}
                         </p>
 
                         <p className="text-xs text-white/70 mt-1 tabular-nums min-h-[16px]">
@@ -113,7 +91,6 @@ function PromoMiniCard({
                                     : `${countLabel}: ${String(countValue)}`
                                 : "\u00A0"}
                         </p>
-
                     </>
                 )}
             </div>
@@ -121,8 +98,35 @@ function PromoMiniCard({
     );
 }
 
+/** ✅ Arrow button (clickable) */
+function ArrowNavButton({ onClick }) {
+    return (
+        <button
+            type="button"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClick?.();
+            }}
+            className="bg-white/20 p-2 rounded-lg backdrop-blur-sm hover:bg-white/25 transition"
+            aria-label="Open details"
+            title="Open details"
+        >
+            <ArrowUpRight size={22} className="text-white" />
+        </button>
+    );
+}
 
-const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
+const EcomOverview = ({
+                          kpiResp,
+                          kpiLoading,
+                          formatRoundedAmountWithCommas,
+
+                          // ✅ using your state setters (no custom handler)
+                          setActiveTab,
+                          setActiveReturnsTab,
+                          setActiveCustomersTab,
+                      }) => {
     const cardsArr = useMemo(() => {
         const c = kpiResp?.data?.cards ?? kpiResp?.cards;
         return Array.isArray(c) ? c : [];
@@ -132,7 +136,6 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
 
     const orders = cards.orders;
     const aov = cards.avg_order_price;
-
     const pg = cards.payment_gateway_total;
 
     const couponAmount = cards.coupon_amount;
@@ -141,7 +144,6 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
     const empDisc = cards.employee_discount;
     const empOrders = cards.employee_discount_orders;
     const storeCreditTx = cards.store_credit_transactions;
-
 
     const salesTopValue = orders
         ? fmtValue({ key: "orders", value: orders.value, formatRoundedAmountWithCommas })
@@ -169,9 +171,7 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
     const retQty = returnsMap.return_qty;
     const retAmount = returnsMap.return_amount;
     const retAvgAty = returnsMap.avg_return_qty;
-    // -------------------------
-    // Payments
-    // -------------------------
+
     const pgTotal = toNum(pg?.value);
     const pgRows = (Array.isArray(pg?.rows) ? pg.rows : [])
         .slice()
@@ -184,18 +184,12 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
             return {
                 key: name,
                 label: name,
-                countLabel: 'Share',
+                countLabel: "Share",
                 countValue: `${share.toFixed(2)}%`,
                 amount: amt,
-                valueLine: `PKR ${formatRoundedAmountWithCommas(amt)}`,
             };
         });
 
-    // -------------------------
-    // Promo totals (TOP)
-    // Total Promo Impact (PKR) = coupon_amount + store_credit + employee_discount
-    // Orders affected (count) = coupons + employee_discount_orders + store_credit_transactions
-    // -------------------------
     const promoTotalAmt = toNum(couponAmount?.value) + toNum(storeCredit?.value) + toNum(empDisc?.value);
     const promoTotalOrders = toNum(coupons?.value) + toNum(empOrders?.value) + toNum(storeCreditTx?.value);
 
@@ -224,7 +218,6 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
     const customerMissingEmail = customerMap.missing_email;
     const redFlags = customerMap.red_flags;
 
-
     const orderSection = useMemo(() => {
         return sectionsArr.find((s) => s?.key === "order_snapshot") || null;
     }, [sectionsArr]);
@@ -243,43 +236,41 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
     const ordCancelEcom = orderMap.cancel_order_cancel;
     const ordEditedEcom = orderMap.cancel_edited_reason;
 
-
     return (
         <div className="space-y-6">
             {/* Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* ✅ Sales Trend (2 cards) */}
+                {/* Sales Trend (IGNORED NAV) */}
                 <div className="lg:col-span-6">
-                    <div
-                        className={`bg-gradient-to-br ${GRADIENTS.sales} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
+                    <div className={`bg-gradient-to-br ${GRADIENTS.sales} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
 
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                    <TrendingUp size={20} className="text-white"/>
+                                    <TrendingUp size={20} className="text-white" />
                                     Sales Trend
                                 </h3>
+
+                                {/* ❌ Not clickable */}
                                 <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                    <ArrowUpRight size={22} className="text-white"/>
+                                    <ArrowUpRight size={22} className="text-white" />
                                 </div>
                             </div>
 
-                            {/* Top summary */}
                             <div className="mb-4">
                                 {kpiLoading ? (
                                     <div className="mt-2">
-                                        <PulseScan/>
+                                        <PulseScan />
                                     </div>
                                 ) : (
                                     <>
-                                    <p className="text-xs text-white/70 mt-1 tabular-nums">Total Orders</p>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Orders</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">{salesTopValue}</p>
                                     </>
                                 )}
                             </div>
 
-                            {/* 2 cards */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                                 <PromoMiniCard
                                     title={orders?.title || "Orders"}
@@ -293,7 +284,7 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                                 />
 
                                 <PromoMiniCard
-                                    title={aov?.title || "Avg Order Price"}
+                                    title={aov?.title || "Avg Order Value"}
                                     Icon={BadgePercent}
                                     amountKey="avg_order_price"
                                     amountValue={aov?.value}
@@ -307,28 +298,28 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                     </div>
                 </div>
 
-                {/* ✅ Payment Breakdown (dynamic cards count) */}
+                {/* Payment Breakdown (IGNORED NAV) */}
                 <div className="lg:col-span-6">
-                    <div
-                        className={`bg-gradient-to-br ${GRADIENTS.payments} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
+                    <div className={`bg-gradient-to-br ${GRADIENTS.payments} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
 
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                    <Landmark size={20} className="text-white"/>
+                                    <Landmark size={20} className="text-white" />
                                     Payment Breakdown
                                 </h3>
+
+                                {/* ❌ Not clickable */}
                                 <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                    <ArrowUpRight size={22} className="text-white"/>
+                                    <ArrowUpRight size={22} className="text-white" />
                                 </div>
                             </div>
 
-                            {/* Top summary */}
                             <div className="mb-4">
                                 {kpiLoading ? (
                                     <div className="mt-2">
-                                        <PulseScan/>
+                                        <PulseScan />
                                     </div>
                                 ) : (
                                     <>
@@ -340,20 +331,17 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                                 )}
                             </div>
 
-                            {/* Dynamic cards */}
                             <div className={`grid grid-cols-1 ${gridColsClass(pgRows.length)} gap-4 items-stretch`}>
                                 {kpiLoading ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                                        <div
-                                            className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+                                        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
                                             <div className="mt-2">
-                                                <PulseScan/>
+                                                <PulseScan />
                                             </div>
                                         </div>
-                                        <div
-                                            className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+                                        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
                                             <div className="mt-2">
-                                                <PulseScan/>
+                                                <PulseScan />
                                             </div>
                                         </div>
                                     </div>
@@ -370,44 +358,43 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                                             loading={kpiLoading}
                                             formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
                                         />
-                                        ))
-                                        )}
-                                    </div>
-                                    </div>
-                                    </div>
-                                    </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
 
             {/* Row 2 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* ✅ Discount Snapshot: 3 cards */}
+                {/* ✅ Discount Snapshot -> promos */}
                 <div className="lg:col-span-6">
-                    <div
-                        className="bg-gradient-to-br from-black to-black rounded-xl shadow-lg p-6 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
+                    <div className="bg-gradient-to-br from-black to-black rounded-xl shadow-lg p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
 
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                    <BadgePercent size={20} className="text-white"/>
+                                    <BadgePercent size={20} className="text-white" />
                                     Discount Snapshot
                                 </h3>
-                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                    <ArrowUpRight size={22} className="text-white"/>
-                                </div>
+
+                                <ArrowNavButton
+                                    onClick={() => {
+                                        setActiveTab?.("promos");
+                                    }}
+                                />
                             </div>
 
                             <div className="mb-4">
                                 {kpiLoading ? (
                                     <div className="mt-2">
-                                        <PulseScan/>
+                                        <PulseScan />
                                     </div>
                                 ) : (
                                     <>
-                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
-                                            Total Amount
-                                        </p>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Amount</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
                                             PKR {formatRoundedAmountWithCommas(promoTotalAmt)}
                                         </p>
@@ -417,7 +404,6 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                                     </>
                                 )}
                             </div>
-
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                                 <PromoMiniCard
@@ -457,38 +443,36 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                     </div>
                 </div>
 
-                {/* Returns card stays same */}
+                {/* ✅ Returns Snapshot -> returns (default inner tab = location) */}
                 <div className="lg:col-span-6">
-                    <div
-                        className={`bg-gradient-to-br from-gray-950 to-gray-700 rounded-xl shadow-lg p-6 relative overflow-hidden`}>
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16"/>
+                    <div className="bg-gradient-to-br from-gray-950 to-gray-700 rounded-xl shadow-lg p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
 
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                    <RotateCcw size={20} className="text-white"/>
+                                    <RotateCcw size={20} className="text-white" />
                                     {returnsSection?.title || "Returns"}
                                 </h3>
-                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                    <ArrowUpRight size={22} className="text-white"/>
-                                </div>
+
+                                <ArrowNavButton
+                                    onClick={() => {
+                                        setActiveTab?.("returns");
+                                        setActiveReturnsTab?.("location");
+                                    }}
+                                />
                             </div>
 
-                            {/* ✅ Top summary (Amount + Orders) */}
                             <div className="mb-4">
                                 {kpiLoading ? (
                                     <div className="mt-2">
-                                        <PulseScan/>
+                                        <PulseScan />
                                     </div>
                                 ) : (
                                     <>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">Total Amount</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
-                                            {fmtValue({
-                                                key: "return_amount",
-                                                value: retAmount?.value,
-                                                formatRoundedAmountWithCommas
-                                            })}
+                                            {fmtValue({ key: "return_amount", value: retAmount?.value, formatRoundedAmountWithCommas })}
                                         </p>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">
                                             Total Orders: {formatRoundedAmountWithCommas(toNum(retOrders?.value))}
@@ -497,7 +481,6 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                                 )}
                             </div>
 
-                            {/* ✅ 3 cards grid (Orders + Qty + Avg ATY) */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                                 <PromoMiniCard
                                     title={retOrders?.title || "Orders"}
@@ -535,12 +518,11 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            {/* Row 3 - Customer + Orders Snapshot */}
+            {/* Row 3 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Customer Snapshot */}
+                {/* ✅ Customer Snapshot -> customers (default inner tab = habitual) */}
                 <div className="lg:col-span-6">
                     <div className="bg-gradient-to-br from-sky-950 to-sky-600 rounded-xl shadow-lg p-6 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
@@ -551,34 +533,31 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                                     <UserX size={20} className="text-white" />
                                     {customerSection?.title || "Customer Snapshot"}
                                 </h3>
-                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                    <ArrowUpRight size={22} className="text-white" />
-                                </div>
+
+                                <ArrowNavButton
+                                    onClick={() => {
+                                        setActiveTab?.("customers");
+                                        setActiveCustomersTab?.("habitual");
+                                    }}
+                                />
                             </div>
 
-                            {/* Top summary */}
                             <div className="mb-4">
                                 {kpiLoading ? (
                                     <div className="mt-2">
-                                        <PulseScan/>
+                                        <PulseScan />
                                     </div>
                                 ) : (
                                     <>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">Total Customers</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
-                                            {fmtValue({
-                                                key: "total_customers",
-                                                value: totalCustomers?.value,
-                                                formatRoundedAmountWithCommas,
-                                            })}
+                                            {fmtValue({ key: "total_customers", value: totalCustomers?.value, formatRoundedAmountWithCommas })}
                                         </p>
                                     </>
                                 )}
                             </div>
 
-                            {/* 4 cards */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-
                                 <PromoMiniCard
                                     title={habitualReturns?.title || "Habitual Returns"}
                                     Icon={RotateCcw}
@@ -616,7 +595,7 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                     </div>
                 </div>
 
-                {/* Orders Snapshot */}
+                {/* ✅ Orders Snapshot -> orders */}
                 <div className="lg:col-span-6">
                     <div className="bg-gradient-to-br from-rose-950 to-rose-600 rounded-xl shadow-lg p-6 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
@@ -627,36 +606,30 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                                     <FileText size={20} className="text-white" />
                                     {orderSection?.title || "Orders Snapshot"}
                                 </h3>
-                                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                    <ArrowUpRight size={22} className="text-white" />
-                                </div>
+
+                                <ArrowNavButton
+                                    onClick={() => {
+                                        setActiveTab?.("orders");
+                                    }}
+                                />
                             </div>
 
-                            {/* Top summary */}
                             <div className="mb-4">
                                 {kpiLoading ? (
                                     <div className="mt-2">
-                                        <PulseScan/>
+                                        <PulseScan />
                                     </div>
                                 ) : (
                                     <>
-                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
-                                            Total Orders
-                                        </p>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Orders</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
-                                            {fmtValue({
-                                                key: "orders",
-                                                value: ordOrders?.value,
-                                                formatRoundedAmountWithCommas,
-                                            })}
+                                            {fmtValue({ key: "orders", value: ordOrders?.value, formatRoundedAmountWithCommas })}
                                         </p>
                                     </>
                                 )}
                             </div>
 
-                            {/* 4 cards */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-
                                 <PromoMiniCard
                                     title={ordCancelWhatsapp?.title || "WhatsApp Cancellation"}
                                     Icon={UserX}
@@ -694,7 +667,6 @@ const EcomOverview = ({kpiResp, kpiLoading, formatRoundedAmountWithCommas}) => {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };
