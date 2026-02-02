@@ -40,6 +40,7 @@ import FormInput from "@components/form/FormInput.jsx";
 import FilterButton from "@components/form/FilterButton.jsx";
 import useFilters from "@hooks/useFilters.js";
 import {getPastDate} from "@helpers/dateTime.js";
+import RetailOverview from "@modules/dashboards/data-pulse/components/retail/RetailOverview.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -764,12 +765,6 @@ const RetailPulseDashboard = () => {
 
     const [selectedMetric, setSelectedMetric] = useState("sales_by_store");
 
-    const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
-        "/dashboard/data-pulse/retail/kpis/",
-        filters
-    );
-    const kpis = kpiResp?.kpis || {};
-
     const overviewEnabled = activeTab === "overview";
     const analyticsEnabled = activeTab === "analytics";
     const returnsEnabled = activeTab === "returns";
@@ -857,22 +852,6 @@ const RetailPulseDashboard = () => {
 
     const showInitialLoading = false;
 
-    const CardShimmer = ({ width, height }) => (
-        <div style={{
-            width: width, height: height,
-            position: 'relative', overflow: 'hidden',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            borderRadius: '4px', margin: '4px 0'
-        }}>
-            <style>{`@keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }`}</style>
-            <div style={{
-                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                animation: 'sweep 1.5s infinite linear'
-            }} />
-        </div>
-    );
-
     return (
         <div className="space-y-6 pb-8 pt-6">
             {/* Header */}
@@ -948,263 +927,12 @@ const RetailPulseDashboard = () => {
                 <>
                     {/* ------------------ OVERVIEW ------------------ */}
                     {activeTab === "overview" && (
-                        <div className="space-y-6">
-                            {/* KPI Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <StatCard
-                                    icon={TrendingUp}
-                                    title="Net Revenue"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.sales_net_amount_total)}`}
-                                    subtitle="Total net sales"
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={RotateCcw}
-                                    title="Returns Value"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.return_net_amount_total)}`}
-                                    subtitle="Total returns"
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={Receipt}
-                                    title="Credit Issued"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.credit_memo_total)}`}
-                                    subtitle="Credit memo total"
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={BadgePercent}
-                                    title="Discounts"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.discount_coupon_total)}`}
-                                    subtitle="Coupons applied"
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={IdCard}
-                                    title="Staff Card"
-                                    value={kpiLoading ? '...' : `PKR ${formatRoundedAmountWithCommas(kpis.employee_card_total)}`}
-                                    subtitle="Employee spend"
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={ShieldAlert}
-                                    title="Suspended Transactions"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.suspended_txn_count)}
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={ShieldAlert}
-                                    title="Late Transactions"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.after_close_txn_count)}
-                                    subtitle="After closing"
-                                    isLoading={kpiLoading}
-                                />
-                                <StatCard
-                                    icon={Ban}
-                                    title="Void Count"
-                                    value={kpiLoading ? '...' : formatRoundedAmountWithCommas(kpis.void_txn_count)}
-                                    subtitle="Voids"
-                                    isLoading={kpiLoading}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* Sales Trend */}
-                                <div
-                                    className="bg-gradient-to-br from-black to-black to-indigo-700 rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                    <div
-                                        className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -ml-16 -mt-16"/>
-                                    <div className="relative z-10">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                <TrendingUp size={20}/> Sales Trend
-                                            </h3>
-                                            <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                                <ArrowUpRight className="text-white" size={22}/>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-4">
-                                            <div>
-                                                <p className="text-sm text-white/80">Net Revenue</p>
-                                                {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
-                                                    <p className="text-4xl font-bold text-white tabular-nums">
-                                                        PKR {formatRoundedAmountWithCommas(kpis.sales_net_amount_total)}
-                                                    </p>
-                                                )}
-                                                <p className="text-xs text-white/70"><DateInfo/></p>
-                                            </div>
-
-                                            <div
-                                                className="pt-4 border-t border-white/25 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                <p className="text-sm text-white/80">Discount Impact</p>
-                                                {kpiLoading ? <CardShimmer width="140px" height="32px"/> : (
-                                                    <p className="text-2xl font-bold text-white tabular-nums">
-                                                        PKR {formatRoundedAmountWithCommas(kpis.discount_coupon_total)}
-                                                    </p>
-                                                )}
-                                                <p className="text-xs text-white/70">Coupons applied</p>
-                                            </div>
-
-                                            <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">
-                                                <span className="font-semibold">Tip:</span> Compare stores below for
-                                                quick wins.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Risk Snapshot */}
-                                <div
-                                    className="bg-gradient-to-br from-red to-orange rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                    <div
-                                        className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-16 -mt-16"/>
-                                    <div className="relative z-10">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                <ShieldAlert size={20}/> Risk Snapshot
-                                            </h3>
-                                            <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                                <ShieldAlert className="text-white" size={22}/>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-4">
-                                            <div>
-                                                <p className="text-sm text-white/80">After Close Transactions</p>
-                                                {kpiLoading ? <CardShimmer width="100px" height="40px"/> : (
-                                                    <p className="text-4xl font-bold text-white tabular-nums">
-                                                        {formatRoundedAmountWithCommas(kpis.after_close_txn_count)}
-                                                    </p>
-                                                )}
-                                                <p className="text-xs text-white/70">Transactions after closing</p>
-                                            </div>
-
-                                            <div className="pt-4 border-t border-white/25 grid grid-cols-2 gap-4">
-                                                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                    <p className="text-xs text-white/80">Voids</p>
-                                                    {kpiLoading ? <CardShimmer width="60px" height="32px"/> : (
-                                                        <p className="text-2xl font-bold text-white tabular-nums">
-                                                            {formatRoundedAmountWithCommas(kpis.void_txn_count)}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                                <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                    <p className="text-xs text-white/80">Suspended</p>
-                                                    {kpiLoading ? <CardShimmer width="60px" height="32px"/> : (
-                                                        <p className="text-2xl font-bold text-white tabular-nums">
-                                                            {formatRoundedAmountWithCommas(kpis.suspended_txn_count)}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div
-                                                className="bg-white/10 p-2 rounded-lg text-white/90 text-sm flex items-center gap-2">
-                                                <Ban size={16}/> Audit these stores first (see Risk tab).
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Returns / Credit Overview */}
-                                <div
-                                    className="bg-gradient-to-br from-black to-green rounded-xl shadow-lg p-6 relative overflow-hidden">
-                                    <div
-                                        className="absolute bottom-0 left-0 w-44 h-44 bg-white/10 rounded-full -ml-20 -mb-20"/>
-                                    <div className="relative z-10">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                <RotateCcw size={20}/> Returns & Credits
-                                            </h3>
-                                            <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                                                <Receipt className="text-white" size={22}/>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-4">
-                                            <div>
-                                                <p className="text-sm text-white/80">Returns Value</p>
-                                                {kpiLoading ? <CardShimmer width="180px" height="40px"/> : (
-                                                    <p className="text-4xl font-bold text-white tabular-nums">
-                                                        PKR {formatRoundedAmountWithCommas(kpis.return_net_amount_total)}
-                                                    </p>
-                                                )}
-                                                <p className="text-xs text-white/70">Total returns</p>
-                                            </div>
-
-                                            <div className="bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                                                <p className="text-xs text-white/80">Credit Issued</p>
-                                                {kpiLoading ? <CardShimmer width="140px" height="32px"/> : (
-                                                    <p className="text-2xl font-bold text-white tabular-nums">
-                                                        PKR {formatRoundedAmountWithCommas(kpis.credit_memo_total)}
-                                                    </p>
-                                                )}
-                                            </div>
-
-                                            <div className="bg-white/10 p-2 rounded-lg text-white/90 text-sm">
-                                                Focus: high-return stores + repeated credit memo IDs.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Optional blocks */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <SectionCard title="Sales by Store (Top 10)" icon={TrendingUp}>
-                                    {salesLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(salesResp?.rows) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <div className="h-[420px]">
-                                            <ReChart
-                                                data={salesResp.rows.map((r) => ({
-                                                    name: r.WAREHOUSENAME,
-                                                    value: Number(r.net_amount) || 0,
-                                                }))}
-                                                dimensions={{height: 420, bottom: 0}}
-                                                colors={DEFAULT_CHART_COLORS}
-                                            />
-                                        </div>
-                                    )}
-                                </SectionCard>
-
-                                <SectionCard title="Return By Store (Top 10)" icon={TrendingDown}>
-                                    {returnLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(creditResp?.rows) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <ReChart
-                                            data={returnResp.rows.map((r) => ({
-                                                name: r.WAREHOUSENAME,
-                                                value: Number(r.ReturnQty) || 0,
-                                            }))}
-                                            dimensions={{height: 420, bottom: 0}}
-                                            colors={DEFAULT_CHART_COLORS}
-                                        />
-                                    )}
-                                </SectionCard>
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-                                <SectionCard title="Credit Memos (Top 10)" icon={TrendingDown}>
-                                    {creditLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(creditResp?.rows) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <CreditMemoAreaByStore
-                                            rows={creditResp?.rows || []}
-                                            formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                                        />
-                                    )}
-                                </SectionCard>
-                            </div>
-                        </div>
+                        <RetailOverview
+                            activeTab={activeTab}
+                            filters={filters}
+                        />
                     )}
+
 
                     {activeTab === "analytics" && (
                         <div className="space-y-6">
