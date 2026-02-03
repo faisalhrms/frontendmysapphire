@@ -327,14 +327,9 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
 
             {/* ✅ Rest (unchanged) */}
             <SectionCard
-                title="Top Order Amounts"
+                title="Top 10 Orders"
                 icon={TrendingUp}
-                right={
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <ArrowUpRight size={14} />
-                        <span>Top 10 by Grand Total</span>
-                    </div>
-                }
+
             >
                 {topOrdersLoading ? (
                     <LoadingSpinner />
@@ -353,14 +348,9 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
             </SectionCard>
 
             <SectionCard
-                title="Orders On Behalf"
+                title="Order On Behalf"
                 icon={Receipt}
-                right={
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <ArrowUpRight size={14} />
-                        <span>Top 10 by Amount</span>
-                    </div>
-                }
+
             >
                 {ordersOnBehalfLoading ? (
                     <LoadingSpinner />
