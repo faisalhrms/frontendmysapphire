@@ -50,15 +50,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
-            },
-            {
-                Header: "Operation",
-                accessor: "operation",
-                excelAlignment: "center",
-                Cell: ({ value }) => value ?? "-",
-                getCellProps: () => ({
-                    className: "!text-center bg-primary/10 text-primary font-semibold",
-                }),
+                width: 100,
             },
             {
                 Header: "Amount",
@@ -67,6 +59,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "right",
                 Cell: ({ value }) => fmtMoney(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Txn #",
@@ -74,6 +67,8 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
+
             },
 
             // ✅ CORRECT FIELD: t2.RRECEIPTID
@@ -83,6 +78,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
             },
 
             // ✅ NEW: store info
@@ -92,6 +88,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
+                width: 100,
             },
             {
                 Header: "Store Name",
@@ -99,6 +96,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-semibold" }),
+                width: 100,
             },
 
             {
@@ -109,6 +107,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelFormat: "MMM dd, yyyy",
                 Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
                 getCellProps: () => ({ className: "!text-left" }),
+                width: 100,
             },
         ],
         []
@@ -123,15 +122,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
-            },
-            {
-                Header: "Operation",
-                accessor: "operation",
-                excelAlignment: "center",
-                Cell: ({ value }) => value ?? "-",
-                getCellProps: () => ({
-                    className: "!text-center bg-warning/10 text-warning font-semibold",
-                }),
+                width: 100,
             },
             {
                 Header: "Amount",
@@ -140,6 +131,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "right",
                 Cell: ({ value }) => fmtMoney(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Txn #",
@@ -147,6 +139,8 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
+
             },
 
             // ✅ CORRECT FIELD: t2.RRECEIPTID
@@ -156,6 +150,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
             },
 
             // ✅ NEW: store info
@@ -165,6 +160,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
+                width: 100,
             },
             {
                 Header: "Store Name",
@@ -172,6 +168,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-semibold" }),
+                width: 100,
             },
 
             {
@@ -182,6 +179,7 @@ const GiftCards = ({ filters, enabled }) => {
                 excelFormat: "MMM dd, yyyy",
                 Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
                 getCellProps: () => ({ className: "!text-left" }),
+                width: 100,
             },
         ],
         []

@@ -2,9 +2,13 @@ import React, { useMemo, useState } from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
-import {IdCard, MailX, Copy, Users, Search, Layers} from "lucide-react";
+import { IdCard, MailX, Copy, Users, Search, Layers, ShoppingBag } from "lucide-react";
+
 import EmployeeDiscountCardsTable
     from "@modules/dashboards/data-pulse/components/retail/EmployeeDiscountCardsTable.jsx";
+
+import EmployeeDiscountShoppingMTDTable
+    from "@modules/dashboards/data-pulse/components/retail/EmployeeDiscountShoppingMTDTable.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -18,9 +22,7 @@ const EmptyState = ({ label = "No Data Available" }) => (
 const fmtInt = (v) => (Number(v) || 0).toLocaleString("en-US");
 
 const SectionCard = ({ children }) => (
-    <div className="bg-white p-6 dark:text-gray-200 dark:bg-bodybg">
-        {children}
-    </div>
+    <div className="bg-white p-6 dark:text-gray-200 dark:bg-bodybg">{children}</div>
 );
 
 const SimpleTable = ({ columns, rows }) => (
@@ -47,11 +49,9 @@ const SimpleTable = ({ columns, rows }) => (
                     {columns.map((c) => (
                         <td
                             key={c.key}
-                            className={`px-6 py-4 whitespace-nowrap text-sm ${
-                                c.mono ? "font-mono" : ""
-                            } ${c.align === "right" ? "text-right tabular-nums" : "text-left"} ${
-                                c.strong ? "font-semibold" : ""
-                            } ${c.colorClass || "text-gray-700 dark:text-gray-300"}`}
+                            className={`px-6 py-4 whitespace-nowrap text-sm ${c.mono ? "font-mono" : ""} ${
+                                c.align === "right" ? "text-right tabular-nums" : "text-left"
+                            } ${c.strong ? "font-semibold" : ""} ${c.colorClass || "text-gray-700 dark:text-gray-300"}`}
                         >
                             {typeof c.render === "function" ? c.render(r) : r?.[c.key] ?? "-"}
                         </td>
@@ -70,18 +70,17 @@ const EMP_ENDPOINTS = {
 };
 
 const EmployeeDiscount = ({ filters, enabled }) => {
-
     const tabs = useMemo(
         () => [
             { id: "classifications", label: "By Classifications", icon: Layers },
             { id: "duplicate_cards", label: "Duplicate Cards", icon: Copy },
             { id: "active_cards", label: "Active Discount Cards", icon: IdCard },
+            { id: "discount_shopping_mtd", label: "Discount Shopping (MTD)", icon: ShoppingBag }, // NEW
         ],
         []
     );
 
     const [activeTab, setActiveTab] = useState("classifications");
-
 
     const { data: overviewResp, isLoading: overviewLoading } = useFetchWithFilters(
         EMP_ENDPOINTS.overview,
@@ -89,14 +88,12 @@ const EmployeeDiscount = ({ filters, enabled }) => {
         { enabled: !!enabled }
     );
 
-    // 2) By classification
     const { data: clsResp, isLoading: clsLoading } = useFetchWithFilters(
         EMP_ENDPOINTS.byClassification,
         filters,
         { enabled: !!enabled }
     );
 
-    // 3) Duplicate list
     const { data: dupResp, isLoading: dupLoading } = useFetchWithFilters(
         EMP_ENDPOINTS.duplicates,
         filters,
@@ -115,14 +112,7 @@ const EmployeeDiscount = ({ filters, enabled }) => {
         if (!needle) return safe;
 
         return safe.filter((r) => {
-            const hay = [
-                r.person_key,
-                r.email,
-                r.knownas,
-                r.name,
-                r.classification,
-                r.accountnums,
-            ]
+            const hay = [r.person_key, r.email, r.knownas, r.name, r.classification, r.accountnums]
                 .filter(Boolean)
                 .join(" ")
                 .toLowerCase();
@@ -161,11 +151,7 @@ const EmployeeDiscount = ({ filters, enabled }) => {
             { key: "classification", label: "Class", mono: true, colorClass: "text-blue-600" },
             { key: "name", label: "Name", strong: true },
             { key: "knownas", label: "Known As", mono: true },
-            {
-                key: "email",
-                label: "Email",
-                render: (r) => r.email || "-",
-            },
+            { key: "email", label: "Email", render: (r) => r.email || "-" },
             {
                 key: "cards_count",
                 label: "Cards",
@@ -176,9 +162,7 @@ const EmployeeDiscount = ({ filters, enabled }) => {
             {
                 key: "accountnums",
                 label: "AccountNums",
-                render: (r) => (
-                    <span className="whitespace-normal break-words">{r.accountnums || "-"}</span>
-                ),
+                render: (r) => <span className="whitespace-normal break-words">{r.accountnums || "-"}</span>,
             },
         ],
         []
@@ -194,14 +178,12 @@ const EmployeeDiscount = ({ filters, enabled }) => {
                     value={overviewLoading ? "..." : fmtInt(cards.total_active_employee_cards)}
                     isLoading={overviewLoading}
                 />
-
                 <StatCard
                     icon={MailX}
                     title="Employees Without Email"
                     value={overviewLoading ? "..." : fmtInt(cards.employees_without_email)}
                     isLoading={overviewLoading}
                 />
-
                 <StatCard
                     icon={Copy}
                     title="Employees With Duplicate Cards"
@@ -211,15 +193,14 @@ const EmployeeDiscount = ({ filters, enabled }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
-                <div
-                    className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
                     <div className="flex flex-wrap gap-2">
                         {tabs.map((m) => {
                             const Icon = m.icon;
                             const active = activeTab === m.id;
                             return (
                                 <button
-                                    key={m.key}
+                                    key={m.id}
                                     onClick={() => setActiveTab(m.id)}
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
                                         active
@@ -227,7 +208,7 @@ const EmployeeDiscount = ({ filters, enabled }) => {
                                             : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
                                     }`}
                                 >
-                                    <Icon size={18}/>
+                                    <Icon size={18} />
                                     <span className="font-medium whitespace-nowrap">{m.label}</span>
                                 </button>
                             );
@@ -236,54 +217,53 @@ const EmployeeDiscount = ({ filters, enabled }) => {
                 </div>
 
                 {activeTab === "classifications" && (
-                    <SectionCard icon={Users}>
+                    <SectionCard>
                         {clsLoading ? (
-                            <LoadingSpinner/>
+                            <LoadingSpinner />
                         ) : !isNonEmptyArray(byClassification) ? (
-                            <EmptyState label="No classification data found"/>
+                            <EmptyState label="No classification data found" />
                         ) : (
-                            <SimpleTable columns={clsColumns} rows={byClassification}/>
+                            <SimpleTable columns={clsColumns} rows={byClassification} />
                         )}
                     </SectionCard>
                 )}
+
                 {activeTab === "duplicate_cards" && (
-                    <SectionCard icon={Copy}>
-                    <div className="mb-4 flex items-center gap-3">
-                        <div className="relative w-full max-w-md">
-                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60"/>
-                            <input
-                                value={q}
-                                onChange={(e) => setQ(e.target.value)}
-                                placeholder="Search name / knownas / email / accountnum..."
-                                className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 bg-white text-sm outline-none
-                         focus:ring-2 focus:ring-primary/30 dark:bg-bodybg dark:border-gray-700"
-                            />
+                    <SectionCard>
+                        <div className="mb-4 flex items-center gap-3">
+                            <div className="relative w-full max-w-md">
+                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
+                                <input
+                                    value={q}
+                                    onChange={(e) => setQ(e.target.value)}
+                                    placeholder="Search name / knownas / email / accountnum..."
+                                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 bg-white text-sm outline-none
+                           focus:ring-2 focus:ring-primary/30 dark:bg-bodybg dark:border-gray-700"
+                                />
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                Showing <span className="font-semibold">{filteredDuplicates.length}</span> / {duplicates.length}
+                            </div>
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Showing <span className="font-semibold">{filteredDuplicates.length}</span>
-                            {" / "}
-                            {duplicates.length}
-                        </div>
-                    </div>
 
-                    {dupLoading ? (
-                        <LoadingSpinner/>
-                    ) : !isNonEmptyArray(filteredDuplicates) ? (
-                        <EmptyState label="No duplicate employees found"/>
-                    ) : (
-                        <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
-                            <SimpleTable columns={dupColumns} rows={filteredDuplicates}/>
-                        </div>
-                    )}
-                </SectionCard>
-                 )}
-                {activeTab === "active_cards" && (
-                    <EmployeeDiscountCardsTable />
-
+                        {dupLoading ? (
+                            <LoadingSpinner />
+                        ) : !isNonEmptyArray(filteredDuplicates) ? (
+                            <EmptyState label="No duplicate employees found" />
+                        ) : (
+                            <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
+                                <SimpleTable columns={dupColumns} rows={filteredDuplicates} />
+                            </div>
+                        )}
+                    </SectionCard>
                 )}
-            </div>
-            </div>
-            );
-            };
 
-            export default EmployeeDiscount;
+                {activeTab === "active_cards" && <EmployeeDiscountCardsTable />}
+
+                {activeTab === "discount_shopping_mtd" && <EmployeeDiscountShoppingMTDTable filters={filters} />}
+            </div>
+        </div>
+    );
+};
+
+export default EmployeeDiscount;

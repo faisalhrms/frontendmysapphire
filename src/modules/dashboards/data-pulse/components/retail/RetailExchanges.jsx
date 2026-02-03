@@ -60,13 +60,6 @@ const RetailExchanges = ({ filters, enabled }) => {
     const storeColumns = useMemo(
         () => [
             {
-                Header: "Store ID",
-                accessor: "warehouse",
-                excelAlignment: "left",
-                Cell: ({ value }) => value || "-",
-                getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
-            },
-            {
                 Header: "Store Name",
                 accessor: "warehousename",
                 excelAlignment: "left",
@@ -80,6 +73,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Return Qty",
@@ -88,6 +82,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "With Receipt",
@@ -96,6 +91,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Without Receipt",
@@ -104,6 +100,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Txn Count",
@@ -112,6 +109,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
         ],
         []
@@ -126,6 +124,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
                 getCellProps: () => ({ className: "!text-left" }),
+                width: 100,
             },
             {
                 Header: "Store",
@@ -148,6 +147,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Return Qty",
@@ -156,6 +156,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "With Receipt",
@@ -164,6 +165,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Without Receipt",
@@ -172,6 +174,7 @@ const RetailExchanges = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtQty(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
         ],
         []

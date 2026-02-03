@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import ReChart from "@components/charts/ReChart.jsx";
@@ -35,6 +35,7 @@ import GiftCards from "@modules/dashboards/data-pulse/components/retail/GiftCard
 import RetailReturns from "@modules/dashboards/data-pulse/components/retail/RetailReturns.jsx";
 import RetailInventory from "@modules/dashboards/data-pulse/components/retail/RetailInventory.jsx";
 import RetailExchanges from "@modules/dashboards/data-pulse/components/retail/RetailExchanges.jsx";
+import {useSearchParams} from "react-router-dom";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -175,14 +176,6 @@ const METRIC_ENDPOINTS = {
     suspended_by_store: "/dashboard/data-pulse/retail/top/suspended/",
     after_close_by_store: "/dashboard/data-pulse/retail/top/after-closing/",
 };
-
-const RETURNS_ENDPOINTS = {
-    summary: "/dashboard/data-pulse/retail/returns/summary/",
-    exchanges_top: "/dashboard/data-pulse/retail/returns/top/exchanges-with-without-receipt/",
-    returns_total_top: "/dashboard/data-pulse/retail/returns/top/returns-total/",
-    returns_with_without_top: "/dashboard/data-pulse/retail/returns/top/returns-with-without-receipt/",
-};
-
 
 
 function normalizeMetricRows(metricKey, rows) {
@@ -478,8 +471,22 @@ const RetailPulseDashboard = () => {
         []
     );
 
+    const tabIds = useMemo(() => new Set(tabs.map(t => t.id)), [tabs]);
 
-    const [activeTab, setActiveTab] = useState("overview");
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const activeTab = useMemo(() => {
+        const urlTab = searchParams.get("tab");
+        return urlTab && tabIds.has(urlTab) ? urlTab : "overview";
+    }, [searchParams, tabIds]);
+
+    const onTabChange = useCallback((tabId) => {
+        setSearchParams(prev => {
+            const p = new URLSearchParams(prev);
+            p.set("tab", tabId);
+            return p;
+        }, { replace: true });
+    }, [setSearchParams]);
 
     const {
         control,
@@ -520,7 +527,6 @@ const RetailPulseDashboard = () => {
 
     const [selectedMetric, setSelectedMetric] = useState("sales_by_store");
 
-    const overviewEnabled = activeTab === "overview";
     const analyticsEnabled = activeTab === "analytics";
     const employeeEnabled = activeTab === "employee";
     const giftCardEnabled = activeTab === "gift_card";
@@ -528,24 +534,6 @@ const RetailPulseDashboard = () => {
     const inventoryEnabled = activeTab === "inventory";
     const exchangeEnabled = activeTab === "exchanges";
     const riskEnabled = activeTab === "risk";
-
-    const { data: salesResp, isLoading: salesLoading } = useFetchWithFilters(
-        METRIC_ENDPOINTS.sales_by_store,
-        filters,
-        { enabled: overviewEnabled }
-    );
-
-    const { data: returnResp, isLoading: returnLoading } = useFetchWithFilters(
-        METRIC_ENDPOINTS.returns_by_store,
-        filters,
-        { enabled: overviewEnabled }
-    );
-
-    const { data: creditResp, isLoading: creditLoading } = useFetchWithFilters(
-        METRIC_ENDPOINTS.credit_memo_top,
-        filters,
-        { enabled: overviewEnabled }
-    );
 
     const { data: acResp, isLoading: acLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.after_close_by_store,
@@ -571,32 +559,6 @@ const RetailPulseDashboard = () => {
         filters,
         { enabled: analyticsEnabled && !!metricEndpoint }
     );
-
-    const { data: returnsSummaryResp, isLoading: returnsSummaryLoading } = useFetchWithFilters(
-        RETURNS_ENDPOINTS.summary,
-        filters,
-        { enabled: returnsEnabled }
-    );
-
-    const { data: exchangesResp, isLoading: exchangesLoading } = useFetchWithFilters(
-        RETURNS_ENDPOINTS.exchanges_top,
-        filters,
-        { enabled: returnsEnabled }
-    );
-
-    const { data: returnsTotalResp, isLoading: returnsTotalLoading } = useFetchWithFilters(
-        RETURNS_ENDPOINTS.returns_total_top,
-        filters,
-        { enabled: returnsEnabled }
-    );
-
-    const { data: returnsWithWithoutResp, isLoading: returnsWithWithoutLoading } = useFetchWithFilters(
-        RETURNS_ENDPOINTS.returns_with_without_top,
-        filters,
-        { enabled: returnsEnabled }
-    );
-
-    const returnsSummary = returnsSummaryResp?.summary || {};
 
     const metricRowsRaw = metricResp?.rows ?? [];
     const metricData = useMemo(
@@ -676,7 +638,7 @@ const RetailPulseDashboard = () => {
                 </div>
                 {/* Tabs */}
                 <div className="mt-4">
-                    <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab}/>
+                    <Tabs tabs={tabs} activeTab={activeTab} onChange={onTabChange}/>
                 </div>
             </div>
 

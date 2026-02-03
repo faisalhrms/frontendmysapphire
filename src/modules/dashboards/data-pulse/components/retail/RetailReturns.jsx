@@ -237,7 +237,7 @@ const RetailReturns = ({ filters, enabled }) => {
     const [activeSubTab, setActiveSubTab] = useState("stores");
 
     const wantReturnsCards = enabled && activeSubTab === "stores"
-    const wantLateCards = enabled && activeSubTab === "overview";
+    const wantLateCards = enabled && activeSubTab === "stores";
     const wantStores = enabled && activeSubTab === "stores";
 
     const { data: returnsCardsResp, isLoading: returnsCardsLoading } = useFetchWithFilters(
@@ -277,13 +277,6 @@ const RetailReturns = ({ filters, enabled }) => {
     const salesReturnRatioColumns = useMemo(
         () => [
             {
-                Header: "Store ID",
-                accessor: "warehouse",
-                excelAlignment: "left",
-                Cell: ({ value }) => value || "-",
-                getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
-            },
-            {
                 Header: "Store Name",
                 accessor: "warehousename",
                 excelAlignment: "left",
@@ -297,6 +290,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(value || 0)}`,
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Return",
@@ -305,6 +299,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(value || 0)}`,
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Sales %",
@@ -350,6 +345,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
             },
             {
                 Header: "Returned Transaction",
@@ -364,6 +360,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Original Transaction",
@@ -378,6 +375,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Returned Amount",
@@ -386,6 +384,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "right",
                 Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(value || 0)}`,
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
         ],
         []
@@ -401,10 +400,11 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
                 getCellProps: () => ({ className: "!text-left" }),
+                width: 100,
             },
             {
-                Header: "Store",
-                accessor: "warehouse",
+                Header: "Store Name",
+                accessor: "warehousename",
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
@@ -422,6 +422,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
             },
             {
                 Header: "Qty",
@@ -430,6 +431,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "right",
                 Cell: ({ value }) => formatRoundedAmountWithCommas(value || 0),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Amount (Incl Tax)",
@@ -438,6 +440,7 @@ const RetailReturns = ({ filters, enabled }) => {
                 excelAlignment: "right",
                 Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(value || 0)}`,
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
         ],
         []

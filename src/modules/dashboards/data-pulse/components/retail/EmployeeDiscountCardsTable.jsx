@@ -13,6 +13,7 @@ const EmployeeDiscountCardsTable = () => {
             excelAlignment: "left",
             Cell: ({ value }) => value || "-",
             getCellProps: () => ({ className: "!text-left font-mono" }),
+            width: 136,
         },
         {
             Header: "Name",
@@ -27,6 +28,7 @@ const EmployeeDiscountCardsTable = () => {
             excelAlignment: "left",
             Cell: ({ value }) => value || "-",
             getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
+            width: 126,
         },
         {
             Header: "Email",
@@ -43,6 +45,7 @@ const EmployeeDiscountCardsTable = () => {
             excelAlignment: "left",
             Cell: ({ value }) => value || "Unknown",
             getCellProps: () => ({ className: "!text-center bg-primary/10 text-primary" }),
+            width: 125,
         },
         {
             Header: "Total Value",
@@ -51,6 +54,7 @@ const EmployeeDiscountCardsTable = () => {
             excelAlignment: "right",
             Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(Number(value) || 0)}`,
             getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+            width: 121,
         },
         {
             Header: "Remaining Value",
@@ -59,6 +63,7 @@ const EmployeeDiscountCardsTable = () => {
             excelAlignment: "right",
             Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(Number(value) || 0)}`,
             getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+            width: 146,
         },
         {
             Header: "Sync At",
@@ -66,6 +71,7 @@ const EmployeeDiscountCardsTable = () => {
             disableSortBy: true,
             excelColumnType: 'date',
             excelFormat: "MMM dd, yyyy",
+            width: 135,
             Cell: ({value}) => (
                 formatDate(value, "MMM dd, yyyy")
             )
@@ -81,6 +87,7 @@ const EmployeeDiscountCardsTable = () => {
                 apiUrl="/dashboard/data-pulse/retail/employee/cards/datatable/"
                 needHeader={false}
                 enableAdvancedFilters={false}
+                hideUrlParams={true}
             />
         </>
     );

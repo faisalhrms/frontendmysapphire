@@ -203,6 +203,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
+                width: 100,
             },
             {
                 Header: "From",
@@ -210,6 +211,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
             },
             {
                 Header: "To",
@@ -217,6 +219,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelAlignment: "left",
                 Cell: ({ value }) => value || "-",
                 getCellProps: () => ({ className: "!text-left font-mono" }),
+                width: 100,
             },
             {
                 Header: "Qty Transfer",
@@ -225,6 +228,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtInt(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Qty Shipped",
@@ -233,6 +237,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtInt(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Qty Received",
@@ -241,6 +246,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtInt(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Created",
@@ -250,6 +256,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelFormat: "MMM dd, yyyy",
                 Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
                 getCellProps: () => ({ className: "!text-left" }),
+                width: 100,
             },
             {
                 Header: "Ship Date",
@@ -259,6 +266,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelFormat: "MMM dd, yyyy",
                 Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
                 getCellProps: () => ({ className: "!text-left" }),
+                width: 100,
             },
             {
                 Header: "Receive Date",
@@ -268,6 +276,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelFormat: "MMM dd, yyyy",
                 Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
                 getCellProps: () => ({ className: "!text-left" }),
+                width: 100,
             },
             {
                 Header: "Ship Aging (Days)",
@@ -276,6 +285,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtInt(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
             {
                 Header: "Receive Aging (Days)",
@@ -284,6 +294,7 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtInt(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+                width: 100,
             },
         ],
         []

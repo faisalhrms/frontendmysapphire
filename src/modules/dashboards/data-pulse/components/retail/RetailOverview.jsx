@@ -31,7 +31,7 @@ const useRetailKey = (key, filters, enabled) => {
     });
 };
 
-const RetailOverview = ({ activeTab = "overview", filters }) => {
+const RetailOverview = ({ activeTab, filters }) => {
     const enabled = activeTab === "overview";
 
     // -----------------------
@@ -70,6 +70,12 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
 
     const { data: empRes, isLoading: empLoading } = useRetailKey(
         "employee_card_total",
+        filters,
+        enabled
+    );
+
+    const { data: empDRes, isLoading: empDLoading } = useRetailKey(
+        "employee_discounted_total",
         filters,
         enabled
     );
@@ -149,6 +155,7 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
 
     const discounts = Number(pickData(discRes) || 0);
     const employee = Number(pickData(empRes) || 0);
+    const employeeD = Number(pickData(empDRes) || 0);
     const suspended = Number(pickData(suspRes) || 0);
     const lateTxn = Number(pickData(lateRes) || 0);
     const voidCount = Number(pickData(voidRes) || 0);
@@ -248,7 +255,7 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
                     isLoading={openLoading}
                 />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-6">
                 <StatCard
                     icon={Receipt}
                     title="Credit Issued"
@@ -269,6 +276,13 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
                     value={empLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(employee)}`}
                     subtitle="Employee spend amount"
                     isLoading={empLoading}
+                />
+                <StatCard
+                    icon={IdCard}
+                    title="Employee Card Discout"
+                    value={empLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(employeeD)}`}
+                    subtitle="Employee effective amount"
+                    isLoading={empDLoading}
                 />
             </div>
 
