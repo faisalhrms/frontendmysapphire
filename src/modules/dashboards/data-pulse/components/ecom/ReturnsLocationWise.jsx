@@ -8,7 +8,7 @@ import {
     RotateCcw,
     AlertTriangle,
     TrendingUp,
-    Wallet
+    Wallet,
 } from "lucide-react";
 import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 
@@ -21,17 +21,17 @@ const toNum = (v) => {
 const NF0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 const NF2 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const NF_MONEY0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
-const fmtMoney0 = (v) => `PKR ${NF_MONEY0.format(toNum(v))}`;
+
 const fmtInt = (v) => NF0.format(toNum(v));
-const fmtMoney = (v) => `PKR ${NF2.format(toNum(v))}`;
+const fmtMoney0 = (v) => `PKR ${NF_MONEY0.format(toNum(v))}`;
 
 const CardShell = ({ title, icon: Icon, rightSlot, gradient, children }) => (
     <div className={`rounded-xl shadow-lg p-5 relative overflow-hidden bg-gradient-to-br ${gradient} h-full`}>
         <div className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-16 -mt-16" />
         <div className="relative z-10">
             <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-                    {Icon ? <Icon size={16} className="text-white" /> : null}
+                <h4 className="text-base md:text-lg font-bold text-white flex items-center gap-2">
+                    {Icon ? <Icon size={20} className="text-white" /> : null}
                     {title}
                 </h4>
 
@@ -82,7 +82,6 @@ function MiniKpiCard({ title, Icon, value, loading, subtitle }) {
  * - name first
  * - count after name (on right)
  * - keeps scrollbar
- * - ✅ bigger item sizing (as requested)
  */
 function SimpleList({ rows, total, loading, getKey, getName, getCount, valueFormatter }) {
     if (loading) {
@@ -117,17 +116,13 @@ function SimpleList({ rows, total, loading, getKey, getName, getCount, valueForm
                             title={name}
                         >
                             <div className="min-w-0">
-                                {/* ✅ bigger */}
                                 <p className="text-sm text-white font-semibold truncate">{name}</p>
                             </div>
 
                             <div className="flex items-center gap-4 shrink-0 tabular-nums">
-                                {/* ✅ bigger */}
                                 <span className="text-sm text-white/95 font-semibold">
                                     {valueFormatter ? valueFormatter(cnt) : fmtInt(cnt)}
                                 </span>
-
-                                {/* ✅ slightly bigger */}
                                 <span className="text-xs text-white/70">{share.toFixed(1)}%</span>
                             </div>
                         </div>
@@ -138,23 +133,48 @@ function SimpleList({ rows, total, loading, getKey, getName, getCount, valueForm
     );
 }
 
+/** ✅ bucket tile (top 0–2 / 2–5 / 5–7 / 7+) */
+function BucketTile({ label, value, loading, tone = "default" }) {
+    const tones = {
+        default: "bg-white/10 border-white/15",
+        warm: "bg-black/10 border-white/15",
+        danger: "bg-white/10 border-white/30 ring-1 ring-white/40",
+    };
+
+    return (
+        <div className={`p-4 rounded-xl backdrop-blur-sm border ${tones[tone] || tones.default}`}>
+            <p className="text-[10px] text-white/75 uppercase tracking-wide">{label}</p>
+            <p className="text-2xl font-bold text-white tabular-nums mt-1">
+                {loading ? <PulseScan /> : fmtInt(value)}
+            </p>
+        </div>
+    );
+}
+
 const ReturnsLocationWise = ({
                                  rows = [],
                                  courierRows = [],
                                  categoryRows = [],
-                                 pendingPunchingRows = [],
+                                 pendingPunchingBucketRows = [],
+
                                  courierTotalReturns = null,
                                  courierSummary = null,
                                  meta = null,
+
+                                 // ✅ windowed loading (date filtered)
                                  loading = false,
+
+                                 // ✅ snapshot-only loading (should NOT flicker on date change)
+                                 pendingPunchingLoading = false,
+
                                  returnsSnapshot = null,
                              }) => {
     const safeRows = useMemo(() => (Array.isArray(rows) ? rows : []), [rows]);
     const safeCourierRows = useMemo(() => (Array.isArray(courierRows) ? courierRows : []), [courierRows]);
     const safeCategoryRows = useMemo(() => (Array.isArray(categoryRows) ? categoryRows : []), [categoryRows]);
-    const safePendingRows = useMemo(
-        () => (Array.isArray(pendingPunchingRows) ? pendingPunchingRows : []),
-        [pendingPunchingRows]
+    const safePendingBucketRows = useMemo(
+        () => (Array.isArray(pendingPunchingBucketRows) ? pendingPunchingBucketRows : []),
+        [pendingPunchingBucketRows]
     );
 
     const sortedLocations = useMemo(
@@ -167,17 +187,32 @@ const ReturnsLocationWise = ({
         [safeCourierRows]
     );
 
-    // Category rows are amount+qty; we can sort by qty now (since you want qty focus)
     const sortedCategories = useMemo(
         () => [...safeCategoryRows].sort((a, b) => toNum(b.total_qty) - toNum(a.total_qty)),
         [safeCategoryRows]
     );
 
-    // Pending punching (ONLY total; no "Top:" line)
-    const pendingTotal = useMemo(
-        () => safePendingRows.reduce((sum, r) => sum + toNum(r.count), 0),
-        [safePendingRows]
-    );
+    // ✅ overall buckets totals (sum across locations)
+    const pendingBuckets = useMemo(() => {
+        const acc = { b0_2: 0, b2_5: 0, b5_7: 0, b7p: 0 };
+        for (const r of safePendingBucketRows) {
+            acc.b0_2 += toNum(r["0_2_days"]);
+            acc.b2_5 += toNum(r["2_5_days"]);
+            acc.b5_7 += toNum(r["5_7_days"]);
+            acc.b7p += toNum(r["7_plus_days"]);
+        }
+        return acc;
+    }, [safePendingBucketRows]);
+
+    // ✅ total pending = sum of all buckets
+    const pendingTotal = useMemo(() => {
+        return (
+            toNum(pendingBuckets.b0_2) +
+            toNum(pendingBuckets.b2_5) +
+            toNum(pendingBuckets.b5_7) +
+            toNum(pendingBuckets.b7p)
+        );
+    }, [pendingBuckets]);
 
     const totalReturnsFallback = useMemo(() => {
         const v = courierTotalReturns ?? courierSummary?.total_returns;
@@ -190,17 +225,12 @@ const ReturnsLocationWise = ({
         [sortedLocations]
     );
 
-    const catTotalAmount = useMemo(
-        () => sortedCategories.reduce((sum, r) => sum + toNum(r.total_amount), 0),
-        [sortedCategories]
-    );
-
     const catTotalQty = useMemo(
         () => sortedCategories.reduce((sum, r) => sum + toNum(r.total_qty), 0),
         [sortedCategories]
     );
 
-    // ✅ snapshot
+    // ✅ snapshot (returns)
     const snapTitle = "Total Returns";
     const snapTotalAmount =
         returnsSnapshot?.total_amount ??
@@ -214,7 +244,6 @@ const ReturnsLocationWise = ({
         courierSummary?.total_returns ??
         totalReturnsFallback;
 
-    const snapOrders = returnsSnapshot?.orders ?? snapTotalOrders;
     const snapQty = returnsSnapshot?.qty ?? returnsSnapshot?.return_qty ?? courierSummary?.total_qty ?? null;
     const snapAvgQty = returnsSnapshot?.avg_qty ?? returnsSnapshot?.avg_return_qty ?? courierSummary?.avg_qty ?? null;
 
@@ -222,6 +251,7 @@ const ReturnsLocationWise = ({
         <div className="space-y-6">
             {/* Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+                {/* Total Returns (date filtered) */}
                 <div className="lg:col-span-6">
                     <CardShell title={snapTitle} icon={RotateCcw} gradient="from-gray-950 to-gray-700">
                         <div className="mb-4">
@@ -232,21 +262,13 @@ const ReturnsLocationWise = ({
                             ) : (
                                 <>
                                     <p className="text-xs text-white/70 mt-1 tabular-nums">Orders</p>
-                                    <p className="text-4xl font-bold text-white tabular-nums">
-                                        {fmtInt(snapTotalOrders)}
-                                    </p>
-
+                                    <p className="text-4xl font-bold text-white tabular-nums">{fmtInt(snapTotalOrders)}</p>
                                 </>
                             )}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-                            <MiniKpiCard
-                                title="Total Amount"
-                                Icon={Wallet}
-                                loading={loading}
-                                value={fmtMoney0(snapTotalAmount)}
-                            />
+                            <MiniKpiCard title="Total Amount" Icon={Wallet} loading={loading} value={fmtMoney0(snapTotalAmount)} />
                             <MiniKpiCard
                                 title="Qty"
                                 Icon={AlertTriangle}
@@ -263,24 +285,27 @@ const ReturnsLocationWise = ({
                     </CardShell>
                 </div>
 
+                {/* ✅ Pending Punching — SNAPSHOT ONLY (does NOT flicker on date change) */}
                 <div className="lg:col-span-6">
                     <CardShell title="Pending Punching" icon={Clock} gradient="from-amber-950 to-amber-500">
-                        {loading ? (
-                            <div className="space-y-2">
+                        <div className="mb-4">
+                            {pendingPunchingLoading ? (
                                 <PulseScan />
-                            </div>
-                        ) : (
-                            <>
-                                <p className="text-3xl font-bold text-white tabular-nums">{fmtInt(pendingTotal)}</p>
-                                <p className="text-xs text-white/70 mt-1 tabular-nums">Pending punching (by location)</p>
-                            </>
-                        )}
+                            ) : (
+                                <>
+                                    <p className="text-xs text-white/70 mt-1 tabular-nums">Total Pending</p>
+                                    <p className="text-4xl font-bold text-white tabular-nums">{fmtInt(pendingTotal)}</p>
+                                    <p className="text-[11px] text-white/65 mt-1">Snapshot • bucketed by days pending</p>
+                                </>
+                            )}
+                        </div>
 
-                        {!loading && meta?.pending_punching_date ? (
-                            <div className="mt-3">
-                                <Pill>Date: {meta.pending_punching_date}</Pill>
-                            </div>
-                        ) : null}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <BucketTile label="0–2 days" value={pendingBuckets.b0_2} loading={pendingPunchingLoading} />
+                            <BucketTile label="2–5 days" value={pendingBuckets.b2_5} loading={pendingPunchingLoading} tone="warm" />
+                            <BucketTile label="5–7 days" value={pendingBuckets.b5_7} loading={pendingPunchingLoading} tone="warm" />
+                            <BucketTile label="7+ days" value={pendingBuckets.b7p} loading={pendingPunchingLoading} tone="danger" />
+                        </div>
                     </CardShell>
                 </div>
             </div>
@@ -347,17 +372,12 @@ const ReturnsLocationWise = ({
                             </div>
                         ) : (
                             <>
-                                {/* ✅ show TOTAL QTY (not amount) */}
                                 <p className="text-xs text-white/70 mt-1 tabular-nums">Total Qty</p>
                                 <p className="text-3xl font-bold text-white tabular-nums">{fmtInt(catTotalQty)}</p>
-
-                                {/* (optional) keep amount hidden but still computed in case you need later */}
-                                {/* <p className="text-xs text-white/60 mt-1 tabular-nums">Amount: {fmtMoney(catTotalAmount)}</p> */}
                             </>
                         )}
 
                         <div className="mt-3">
-                            {/* ✅ list by qty, show qty as value; share is qty share */}
                             <SimpleList
                                 rows={sortedCategories.slice(0, 14)}
                                 total={catTotalQty}
