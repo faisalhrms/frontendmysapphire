@@ -1,26 +1,13 @@
 import React, {useCallback, useMemo, useState} from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
-import StatCard from "@modules/dashboards/analytics/components/StatCard.jsx";
 import ReChart from "@components/charts/ReChart.jsx";
 import { DEFAULT_CHART_COLORS } from "@helpers/styles.js";
-
-import {
-    ResponsiveContainer,
-    AreaChart,
-    Area,
-    CartesianGrid,
-    XAxis,
-    YAxis,
-    Tooltip,
-    Legend,
-} from "recharts";
 
 import {
     Activity,
     BadgePercent,
     Ban,
-    Clock,
     IdCard,
     Receipt,
     RotateCcw,
@@ -32,8 +19,10 @@ import {
     MapPin,
     Calendar,
     Users,
-    ArrowUpRight,
-    TrendingDown
+    TrendingDown,
+    Gift,
+    Boxes,
+    Repeat
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
 import FormInput from "@components/form/FormInput.jsx";
@@ -41,6 +30,11 @@ import FilterButton from "@components/form/FilterButton.jsx";
 import useFilters from "@hooks/useFilters.js";
 import {getPastDate} from "@helpers/dateTime.js";
 import RetailOverview from "@modules/dashboards/data-pulse/components/retail/RetailOverview.jsx";
+import EmployeeDiscount from "@modules/dashboards/data-pulse/components/retail/EmployeeDiscount.jsx";
+import GiftCards from "@modules/dashboards/data-pulse/components/retail/GiftCards.jsx";
+import RetailReturns from "@modules/dashboards/data-pulse/components/retail/RetailReturns.jsx";
+import RetailInventory from "@modules/dashboards/data-pulse/components/retail/RetailInventory.jsx";
+import RetailExchanges from "@modules/dashboards/data-pulse/components/retail/RetailExchanges.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -54,280 +48,6 @@ const EmptyState = ({ label = "No Data Available" }) => (
 
 const formatPKR = (v, formatRoundedAmountWithCommas) =>
     `PKR ${formatRoundedAmountWithCommas ? formatRoundedAmountWithCommas(v) : (Math.round(Number(v) || 0)).toLocaleString("en-US")}`;
-
-const CreditMemoAreaByStore = ({ rows = [], formatRoundedAmountWithCommas }) => {
-    const data = useMemo(() => {
-        const safe = Array.isArray(rows) ? rows : [];
-
-        return [...safe]
-            .map((r) => {
-                const applied = Number(r.AppliedAmount) || 0;
-                const orderTotal = Number(r.Total_order_Amount) || 0;
-                const paid = Math.max(orderTotal - applied, 0);
-
-                return {
-                    // X axis key
-                    store: r.WAREHOUSENAME || r.AppliedInStoreId || "-",
-
-                    // for tooltip
-                    EntryId: r.EntryId || "-",
-                    AppliedInStoreId: r.AppliedInStoreId || "-",
-                    AppliedByReceiptId: r.AppliedByReceiptId || "-",
-                    AppliedByTransactionId: r.AppliedByTransactionId || "-",
-                    Date: r.Date || r.AppliedDate || "",
-
-                    // 3 series
-                    discounted_amount: applied,
-                    order_amount: orderTotal,
-                    paid_amount: paid,
-                };
-            })
-            // sort by biggest discounted amount (so top 10 strongest signals)
-            .sort((a, b) => (b.discounted_amount || 0) - (a.discounted_amount || 0))
-            .slice(0, 10);
-    }, [rows]);
-
-    if (!data.length) return null;
-
-    return (
-        <div className="h-[420px]">
-            <ResponsiveContainer width="100%" height={420}>
-                <AreaChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 30 }}>
-                    <defs>
-                        <linearGradient id="gDiscount" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.22} />
-                            <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                        </linearGradient>
-
-                        <linearGradient id="gPaid" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.20} />
-                            <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                        </linearGradient>
-
-                        <linearGradient id="gOrder" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.18} />
-                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                        </linearGradient>
-                    </defs>
-
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-
-                    {/* X axis = store */}
-                    <XAxis
-                        dataKey="store"
-                        stroke="#6B7280"
-                        fontSize={9}
-                        interval={0}
-                        tickMargin={4}
-                        angle={-30}
-                        textAnchor="end"
-                        height={110}
-                    />
-
-                    <YAxis stroke="#6B7280" fontSize={12} />
-
-                    <Tooltip
-                        contentStyle={{
-                            backgroundColor: "#fff",
-                            border: "1px solid #E5E7EB",
-                            borderRadius: "8px",
-                        }}
-                        labelFormatter={(label) => `Store: ${label}`}
-                        formatter={(value, name, props) => {
-                            const labelMap = {
-                                discounted_amount: "Discounted Amount",
-                                paid_amount: "Paid Amount",
-                                order_amount: "Order Amount",
-                            };
-                            const key = name;
-                            return [formatPKR(value, formatRoundedAmountWithCommas), labelMap[key] || name];
-                        }}
-                    />
-
-                    <Legend />
-
-                    {/* 3 lines */}
-                    <Area
-                        type="monotone"
-                        dataKey="discounted_amount"
-                        stroke="#6366F1"
-                        fill="url(#gDiscount)"
-                        fillOpacity={1}
-                        name="Discounted Amount"
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="paid_amount"
-                        stroke="#10B981"
-                        fill="url(#gPaid)"
-                        fillOpacity={1}
-                        name="Paid Amount"
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="order_amount"
-                        stroke="#F59E0B"
-                        fill="url(#gOrder)"
-                        fillOpacity={1}
-                        name="Order Amount"
-                    />
-                </AreaChart>
-            </ResponsiveContainer>
-        </div>
-    );
-};
-
-const ExchangesArea4Lines = ({ rows = [] }) => {
-    const data = useMemo(() => {
-        const safe = Array.isArray(rows) ? rows : [];
-
-        // group by Warehouse so X-axis is Store ID
-        const byStore = new Map();
-
-        for (const r of safe) {
-            const store = r.Warehouse || "-";
-            const prev = byStore.get(store) || {
-                store,
-                sale_qty: 0,
-                return_qty: 0,
-                with_receipt: 0,
-                without_receipt: 0,
-            };
-
-            prev.sale_qty += Number(r.SaleQty) || 0;
-            prev.return_qty += Number(r.ReturnQty) || 0;
-            prev.with_receipt += Number(r.WithRef) || 0;
-            prev.without_receipt += Number(r.WithoutRef) || 0;
-
-            byStore.set(store, prev);
-        }
-
-        // show top 10 stores by return qty (or total activity)
-        return Array.from(byStore.values())
-            .sort((a, b) => (b.return_qty || 0) - (a.return_qty || 0))
-            .slice(0, 10);
-    }, [rows]);
-
-    if (!data.length) return null;
-
-    return (
-        <div className="h-[420px]">
-            <ResponsiveContainer width="100%" height={420}>
-                <AreaChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
-                    <defs>
-                        <linearGradient id="gSale" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.25} />
-                            <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="gReturn" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.22} />
-                            <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="gWith" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.22} />
-                            <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="gWithout" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#EF4444" stopOpacity={0.22} />
-                            <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
-                        </linearGradient>
-                    </defs>
-
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-
-                    {/* X axis = Store ID */}
-                    <XAxis
-                        dataKey="store"
-                        stroke="#6B7280"
-                        fontSize={10}
-                        interval={0}
-                        tickMargin={6}
-                        angle={-30}
-                        textAnchor="end"
-                        height={90}
-                    />
-
-                    <YAxis stroke="#6B7280" fontSize={12} />
-
-                    <Tooltip
-                        contentStyle={{
-                            backgroundColor: "#fff",
-                            border: "1px solid #E5E7EB",
-                            borderRadius: "8px",
-                        }}
-                        labelFormatter={(label) => `Store: ${label}`}
-                        formatter={(value, name) => {
-                            const map = {
-                                sale_qty: "Sale Qty",
-                                return_qty: "Return Qty",
-                                with_receipt: "Return (With Receipt)",
-                                without_receipt: "Return (Without Receipt)",
-                            };
-                            return [formatRoundedAmountWithCommas(value), map[name] || name];
-                        }}
-                    />
-
-                    <Legend />
-
-                    {/* 4 colored lines */}
-                    <Area
-                        type="monotone"
-                        dataKey="sale_qty"
-                        stroke="#6366F1"
-                        fill="url(#gSale)"
-                        fillOpacity={1}
-                        name="Sale Qty"
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="return_qty"
-                        stroke="#10B981"
-                        fill="url(#gReturn)"
-                        fillOpacity={1}
-                        name="Return Qty"
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="with_receipt"
-                        stroke="#F59E0B"
-                        fill="url(#gWith)"
-                        fillOpacity={1}
-                        name="Return (With Transactions)"
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="without_receipt"
-                        stroke="#EF4444"
-                        fill="url(#gWithout)"
-                        fillOpacity={1}
-                        name="Return (Without Transactions)"
-                    />
-                </AreaChart>
-            </ResponsiveContainer>
-        </div>
-    );
-};
-
-
-
-const toTopReturnsBarData = (rows = []) =>
-    (Array.isArray(rows) ? rows : []).map((r) => ({
-        name: r.WAREHOUSENAME || r.StoreId || "-",
-        value: Number(r.ReturnQty) || 0,
-    }));
-
-const toTopExchangesAreaData = (rows = []) =>
-    (Array.isArray(rows) ? rows : [])
-        .map((r) => ({
-            name: r.TransactionNumber || "-",
-            sale_qty: Number(r.SaleQty) || 0,
-            return_qty: Number(r.ReturnQty) || 0,
-            with_receipt: Number(r.WithRef) || 0,
-            without_receipt: Number(r.WithoutRef) || 0,
-            store: r.Warehouse || "-",
-            date: r.TransDate || r.Date || "-",
-        }))
-        .slice(0, 10);
 
 const Tabs = ({ tabs, activeTab, onChange }) => (
     <div className="mt-4 flex gap-2 border-t border-gray-200 pt-4 dark:border-gray-700 overflow-x-auto">
@@ -437,7 +157,8 @@ const METRICS = [
     { key: "returns_by_store", label: "Returns by Store", icon: TrendingDown},
     { key: "discount_coupon_top", label: "Discount Coupons", icon: BadgePercent},
     { key: "employee_card_top", label: "Employee Card", icon: IdCard},
-    { key: "credit_memo_top", label: "Credit Memos", icon: Receipt},
+    { key: "credit_memo_top", label: "Credit Memos Issued", icon: Receipt},
+    { key: "credit_memo_redeemed_top", label: "Credit Memos Redeemed", icon: Receipt},
     { key: "void_by_store", label: "Voids by Store", icon: Ban},
     { key: "suspended_by_store", label: "Suspended Transactions", icon: PauseCircle},
     { key: "after_close_by_store", label: "After Closing", icon: ShieldAlert},
@@ -449,6 +170,7 @@ const METRIC_ENDPOINTS = {
     discount_coupon_top: "/dashboard/data-pulse/retail/top/discount-coupons/",
     employee_card_top: "/dashboard/data-pulse/retail/top/employee-card/",
     credit_memo_top: "/dashboard/data-pulse/retail/top/credit-memo/",
+    credit_memo_redeemed_top: "/dashboard/data-pulse/retail/top/credit-memo-redemption/",
     void_by_store: "/dashboard/data-pulse/retail/top/void/",
     suspended_by_store: "/dashboard/data-pulse/retail/top/suspended/",
     after_close_by_store: "/dashboard/data-pulse/retail/top/after-closing/",
@@ -495,6 +217,7 @@ function normalizeMetricRows(metricKey, rows) {
             }));
 
         case "credit_memo_top":
+        case "credit_memo_redeemed_top":
             return safe.map((r) => ({
                 name: r.WAREHOUSENAME ?? "Unknown",
                 value: Number(r.AppliedAmount) || 0,
@@ -617,7 +340,34 @@ function getDetailTableConfig(metricKey) {
 
         case "credit_memo_top":
             return {
-                title: "Detailed Credit Memos",
+                title: "Detailed Credit Memos Issued",
+                columns: [
+                    { key: "Date", label: "Date", mono: true },
+                    { key: "AppliedInStoreId", label: "Store ID", mono: true, colorClass: "text-blue-600" },
+                    { key: "WAREHOUSENAME", label: "Store Name", strong: true },
+                    { key: "EntryId", label: "Entry ID", mono: true },
+                    { key: "AppliedDate", label: "Applied Date", mono: true },
+                    { key: "AppliedByReceiptId", label: "Receipt", mono: true },
+                    { key: "AppliedByTransactionId", label: "Transaction #", mono: true },
+                    {
+                        key: "AppliedAmount",
+                        label: "Discounted Amount",
+                        align: "right",
+                        strong: true,
+                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.AppliedAmount)}`,
+                    },
+                    {
+                        key: "Total_order_Amount",
+                        label: "Order Amount",
+                        align: "right",
+                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.Total_order_Amount)}`,
+                    },
+                ],
+            };
+
+        case "credit_memo_redeemed_top":
+            return {
+                title: "Detailed Credit Memos Redeemed",
                 columns: [
                     { key: "Date", label: "Date", mono: true },
                     { key: "AppliedInStoreId", label: "Store ID", mono: true, colorClass: "text-blue-600" },
@@ -718,11 +468,16 @@ const RetailPulseDashboard = () => {
         () => [
             { id: "overview", label: "Overview", icon: LayoutGrid },
             { id: "analytics", label: "Analytics", icon: BarChart3 },
+            { id: "employee", label: "Employee Card", icon: IdCard },
+            { id: "gift_card", label: "Gift Card", icon: Gift },
             { id: "returns", label: "Returns", icon: RotateCcw },
+            { id: "inventory", label: "Inventory", icon: Boxes },
+            { id: "exchanges", label: "Exchanges", icon: Repeat },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
         ],
         []
     );
+
 
     const [activeTab, setActiveTab] = useState("overview");
 
@@ -767,7 +522,11 @@ const RetailPulseDashboard = () => {
 
     const overviewEnabled = activeTab === "overview";
     const analyticsEnabled = activeTab === "analytics";
+    const employeeEnabled = activeTab === "employee";
+    const giftCardEnabled = activeTab === "gift_card";
     const returnsEnabled = activeTab === "returns";
+    const inventoryEnabled = activeTab === "inventory";
+    const exchangeEnabled = activeTab === "exchanges";
     const riskEnabled = activeTab === "risk";
 
     const { data: salesResp, isLoading: salesLoading } = useFetchWithFilters(
@@ -1036,218 +795,39 @@ const RetailPulseDashboard = () => {
                         </div>
                     )}
 
+                    {activeTab === "employee" && (
+                        <EmployeeDiscount
+                            filters={filters}
+                            enabled={employeeEnabled}
+                        />
+                    )}
+
+                    {activeTab === "gift_card" && (
+                        <GiftCards
+                            filters={filters}
+                            enabled={giftCardEnabled}
+                        />
+                    )}
+
                     {/* ------------------ RETURNS ------------------ */}
                     {activeTab === "returns" && (
-                        <div className="space-y-6">
-
-                            {/* Summary cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <StatCard
-                                    icon={RotateCcw}
-                                    title="Return Qty (Total)"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.return_qty_total || 0)}
-                                    subtitle="All returns"
-                                    isLoading={returnsSummaryLoading}
-                                />
-
-                                <StatCard
-                                    icon={Receipt}
-                                    title="Returns With Receipt"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.return_qty_with_receipt || 0)}
-                                    subtitle="Receipt available"
-                                    isLoading={returnsSummaryLoading}
-                                />
-
-                                <StatCard
-                                    icon={Receipt}
-                                    title="Returns Without Receipt"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.return_qty_without_receipt || 0)}
-                                    subtitle="No receipt"
-                                    isLoading={returnsSummaryLoading}
-                                />
-
-                                <StatCard
-                                    icon={TrendingDown}
-                                    title="Exchange Qty"
-                                    value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_txn_count || 0)}
-                                    subtitle="Sale + return in same txn"
-                                    isLoading={returnsSummaryLoading}
-                                />
-                            </div>
-
-                            {/* Exchanges summary cards (optional but useful) */}
-                            {/*<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">*/}
-                            {/*    <StatCard*/}
-                            {/*        icon={TrendingUp}*/}
-                            {/*        title="Exchange Sale Qty"*/}
-                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_sale_qty_total || 0)}*/}
-                            {/*        subtitle="Total sale qty in exchanges"*/}
-                            {/*        isLoading={returnsSummaryLoading}*/}
-                            {/*    />*/}
-                            {/*    <StatCard*/}
-                            {/*        icon={RotateCcw}*/}
-                            {/*        title="Exchange Return Qty"*/}
-                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_qty_total || 0)}*/}
-                            {/*        subtitle="Total return qty in exchanges"*/}
-                            {/*        isLoading={returnsSummaryLoading}*/}
-                            {/*    />*/}
-                            {/*    <StatCard*/}
-                            {/*        icon={Receipt}*/}
-                            {/*        title="Exchange Returns (With Transactions)"*/}
-                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_with_receipt_qty || 0)}*/}
-                            {/*        subtitle="Receipt present"*/}
-                            {/*        isLoading={returnsSummaryLoading}*/}
-                            {/*    />*/}
-                            {/*    <StatCard*/}
-                            {/*        icon={Receipt}*/}
-                            {/*        title="Exchange Returns (Without Transactions)"*/}
-                            {/*        value={returnsSummaryLoading ? "..." : formatRoundedAmountWithCommas(returnsSummary.exchanges_return_without_receipt_qty || 0)}*/}
-                            {/*        subtitle="No receipt"*/}
-                            {/*        isLoading={returnsSummaryLoading}*/}
-                            {/*    />*/}
-                            {/*</div>*/}
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {/* 1) TOP RETURNS: Bar chart + table */}
-                                <SectionCard title="Top Returns by Store" icon={TrendingDown}>
-                                    {returnsTotalLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(returnsTotalResp?.rows) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <>
-                                            {/* Chart */}
-                                            <div className="h-[420px]">
-                                                <ReChart
-                                                    data={toTopReturnsBarData(returnsTotalResp.rows)}
-                                                    dimensions={{height: 420, bottom: 0}}
-                                                    colors={DEFAULT_CHART_COLORS}
-                                                />
-                                            </div>
-
-                                            {/* Table */}
-                                            <div className="mt-4">
-                                                <SimpleTable
-                                                    columns={[
-                                                        {key: "Date", label: "Date", mono: true},
-                                                        {
-                                                            key: "StoreId",
-                                                            label: "Store ID",
-                                                            mono: true,
-                                                            colorClass: "text-blue-600"
-                                                        },
-                                                        {key: "WAREHOUSENAME", label: "Store Name", strong: true},
-                                                        {
-                                                            key: "ReturnQty",
-                                                            label: "Return Qty",
-                                                            align: "right",
-                                                            strong: true,
-                                                            render: (r) => formatRoundedAmountWithCommas(r.ReturnQty),
-                                                        },
-                                                    ]}
-                                                    rows={returnsTotalResp.rows}
-                                                />
-                                            </div>
-                                        </>
-                                    )}
-                                </SectionCard>
-
-                                {/* 2) TOP EXCHANGES: Area chart (4 lines) + table */}
-                                <SectionCard title="Top Exchanges (Sale + Return in same Transaction)" icon={RotateCcw}>
-                                    {exchangesLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(exchangesResp?.rows) ? (
-                                        <EmptyState label="No exchanges found for this date range"/>
-                                    ) : (
-                                        <>
-                                            {/* Chart */}
-                                            <ExchangesArea4Lines rows={exchangesResp.rows}/>
-
-                                            {/* Table */}
-                                            <div className="mt-4">
-                                                <SimpleTable
-                                                    columns={[
-                                                        {key: "TransDate", label: "Date", mono: true},
-                                                        {
-                                                            key: "Warehouse",
-                                                            label: "Store ID",
-                                                            mono: true,
-                                                            colorClass: "text-blue-600"
-                                                        },
-                                                        {key: "TransactionNumber", label: "Transaction #", mono: true},
-                                                        {
-                                                            key: "SaleQty",
-                                                            label: "Sale Qty",
-                                                            align: "right",
-                                                            strong: true,
-                                                            render: (r) => formatRoundedAmountWithCommas(r.SaleQty),
-                                                        },
-                                                        {
-                                                            key: "ReturnQty",
-                                                            label: "Return Qty",
-                                                            align: "right",
-                                                            strong: true,
-                                                            render: (r) => formatRoundedAmountWithCommas(r.ReturnQty),
-                                                        },
-                                                        {
-                                                            key: "WithRef",
-                                                            label: "Return (With Transactions)",
-                                                            align: "right",
-                                                            render: (r) => formatRoundedAmountWithCommas(r.WithRef),
-                                                        },
-                                                        {
-                                                            key: "WithoutRef",
-                                                            label: "Return (Without Transactions)",
-                                                            align: "right",
-                                                            render: (r) => formatRoundedAmountWithCommas(r.WithoutRef),
-                                                        },
-                                                    ]}
-                                                    rows={exchangesResp.rows}
-                                                />
-                                            </div>
-                                        </>
-                                    )}
-                                </SectionCard>
-                            </div>
-
-                            <SectionCard title="Returns With vs Without Receipt (By Store)" icon={Receipt}>
-                                {returnsWithWithoutLoading ? (
-                                    <LoadingSpinner/>
-                                ) : !isNonEmptyArray(returnsWithWithoutResp?.rows) ? (
-                                    <EmptyState/>
-                                ) : (
-                                    <SimpleTable
-                                        columns={[
-                                            {key: "Date", label: "Date", mono: true},
-                                            {
-                                                key: "StoreId",
-                                                label: "Store ID",
-                                                mono: true,
-                                                colorClass: "text-blue-600"
-                                            },
-                                            {key: "WAREHOUSENAME", label: "Store Name", strong: true},
-                                            {
-                                                key: "WithRef",
-                                                label: "With Receipt",
-                                                align: "right",
-                                                strong: true,
-                                                render: (r) => formatRoundedAmountWithCommas(r.WithRef),
-                                            },
-                                            {
-                                                key: "WithoutRef",
-                                                label: "Without Receipt",
-                                                align: "right",
-                                                strong: true,
-                                                render: (r) => formatRoundedAmountWithCommas(r.WithoutRef),
-                                            },
-                                        ]}
-                                        rows={returnsWithWithoutResp.rows}
-                                    />
-                                )}
-                            </SectionCard>
-
-                        </div>
+                        <RetailReturns
+                            filters={filters}
+                            enabled={returnsEnabled}
+                        />
                     )}
+
+                    {activeTab === "inventory" &&
+                        <RetailInventory
+                            filters={filters}
+                            enabled={inventoryEnabled} />
+                    }
+
+                    {activeTab === "exchanges" &&
+                        <RetailExchanges
+                            filters={filters}
+                            enabled={exchangeEnabled} />
+                    }
 
 
                     {/* ------------------ RISK ------------------ */}

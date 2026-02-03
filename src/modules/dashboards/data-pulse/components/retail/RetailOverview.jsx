@@ -55,6 +55,13 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
         enabled
     );
 
+    // ✅ NEW: Credit Memo Redemption (Applied)
+    const { data: creditRedeemRes, isLoading: creditRedeemLoading } = useRetailKey(
+        "credit_memo_redemption_total",
+        filters,
+        enabled
+    );
+
     const { data: discRes, isLoading: discLoading } = useRetailKey(
         "discount_coupon_total",
         filters,
@@ -85,6 +92,12 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
         enabled
     );
 
+    const { data: openRes, isLoading: openLoading } = useRetailKey(
+        "open_shifts",
+        filters,
+        enabled
+    );
+
     // -----------------------
     // Snapshot calls (ONE BY ONE)
     // -----------------------
@@ -106,7 +119,6 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
         enabled
     );
 
-    // Returns snapshot needs multiple pieces → still one-by-one
     const { data: returnsTotalsRes, isLoading: returnsTotalsLoading } = useRetailKey(
         "returns_totals",
         filters,
@@ -131,11 +143,16 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
     const salesNet = Number(pickData(saleRes) || 0);
     const returnsNet = Number(pickData(retRes) || 0);
     const creditMemo = Number(pickData(creditRes) || 0);
+
+    // ✅ NEW
+    const creditRedeemed = Number(pickData(creditRedeemRes) || 0);
+
     const discounts = Number(pickData(discRes) || 0);
     const employee = Number(pickData(empRes) || 0);
     const suspended = Number(pickData(suspRes) || 0);
     const lateTxn = Number(pickData(lateRes) || 0);
     const voidCount = Number(pickData(voidRes) || 0);
+    const openCount = Number(pickData(openRes) || 0);
 
     const salesSummary = pickData(tenderRes) || { tender_sales_by_name: [], total_sale: 0 };
     const exchangesSummary =
@@ -157,11 +174,11 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
         };
     }, [returnsTotalsRes, returnsWithWithoutRes, returnsMismatchRes, lateReturnsRes]);
 
-    // Each block can use its own loading
     const kpiLoadingAny =
         saleLoading ||
         retLoading ||
         creditLoading ||
+        creditRedeemLoading || // ✅ NEW
         discLoading ||
         empLoading ||
         suspLoading ||
@@ -179,8 +196,7 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
 
     return (
         <div className="space-y-6">
-            {/* KPI Cards (each is one API call) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
                 <StatCard
                     icon={TrendingUp}
                     title="Net Sale"
@@ -196,26 +212,14 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
                     isLoading={retLoading}
                 />
                 <StatCard
-                    icon={Receipt}
-                    title="Credit Issued"
-                    value={creditLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(creditMemo)}`}
-                    subtitle="Credit memo amount"
-                    isLoading={creditLoading}
-                />
-                <StatCard
                     icon={BadgePercent}
                     title="Discounts"
                     value={discLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(discounts)}`}
                     subtitle="Coupons applied amount"
                     isLoading={discLoading}
                 />
-                <StatCard
-                    icon={IdCard}
-                    title="Employee Card"
-                    value={empLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(employee)}`}
-                    subtitle="Employee spend amount"
-                    isLoading={empLoading}
-                />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <StatCard
                     icon={ShieldAlert}
                     title="Suspended Transactions"
@@ -231,14 +235,45 @@ const RetailOverview = ({ activeTab = "overview", filters }) => {
                 />
                 <StatCard
                     icon={Ban}
-                    title="Void Count"
+                    title="Void Transactions"
                     value={voidLoading ? "..." : formatRoundedAmountWithCommas(voidCount)}
                     subtitle="Voids"
                     isLoading={voidLoading}
                 />
+                <StatCard
+                    icon={Ban}
+                    title="Open POS"
+                    value={voidLoading ? "..." : formatRoundedAmountWithCommas(openCount)}
+                    subtitle="Open POS machines after closing"
+                    isLoading={openLoading}
+                />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                <StatCard
+                    icon={Receipt}
+                    title="Credit Issued"
+                    value={creditLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(creditMemo)}`}
+                    subtitle="Credit memo issued amount"
+                    isLoading={creditLoading}
+                />
+                <StatCard
+                    icon={Receipt}
+                    title="Credit Redeemed"
+                    value={creditRedeemLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(creditRedeemed)}`}
+                    subtitle="Credit memo applied amount"
+                    isLoading={creditRedeemLoading}
+                />
+                <StatCard
+                    icon={IdCard}
+                    title="Employee Card"
+                    value={empLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(employee)}`}
+                    subtitle="Employee spend amount"
+                    isLoading={empLoading}
+                />
             </div>
 
-            {/* Snapshots (each snapshot key is one API call) */}
+
+            {/* Snapshots */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <RetailSalesSnapshot
                     sales={salesSummary}

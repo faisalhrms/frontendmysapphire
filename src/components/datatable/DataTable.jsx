@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {updateColumnOrder, updateColumnWidths} from "@redux/common/tableConfigSlice.js";
 import EmptyState from "@components/EmptyState.jsx";
 import TableShimmerRow from "@components/TableShimmerRow.jsx";
+import {formatAmountWithCommas} from "@helpers/formatters.js";
 
 /**
  * Safely gets nested values (e.g., "employee.location.name") from an object.
@@ -35,7 +36,8 @@ const DataTable = React.memo(React.forwardRef(({
                                                    tableClass = 'whitespace-nowrap table-bordered min-w-full !border-l',
                                                    rowClassName = 'bg-gray-100 dark:bg-neutral-700',
                                                    externalFilters = [],
-                                                   hiddenParameters = []
+                                                   hiddenParameters = [],
+                                                   hideUrlParams = false
                                                }, ref) => {
 
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -378,7 +380,7 @@ const DataTable = React.memo(React.forwardRef(({
         applyAdvancedFilters,
         clearAdvancedFilters,
         resetAll,
-    } = useDataTable(apiUrl, 10, filter, enableAdvancedFilters, externalFilters, normalizedColumns, hiddenParameters);
+    } = useDataTable(apiUrl, 10, filter, enableAdvancedFilters, externalFilters, normalizedColumns, hiddenParameters, hideUrlParams);
 
     const orderedColumns = useMemo(() => {
         if (!normalizedColumns || normalizedColumns.length === 0) return [];
@@ -1207,7 +1209,7 @@ const DataTable = React.memo(React.forwardRef(({
             <div className="box-footer">
                 <div className="sm:flex items-center">
                     <div className="text-defaulttextcolor dark:text-defaulttextcolor/70">
-                        Showing {startResult} to {endResult} of {total} results
+                        Showing {startResult} to {endResult} of {formatAmountWithCommas(total)} results
                         <i className="bi bi-arrow-right ms-2 font-semibold"></i>
                     </div>
                     <div className="ms-auto">{paginationControls}</div>
