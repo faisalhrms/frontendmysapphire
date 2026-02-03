@@ -257,7 +257,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
         return [
             {
                 key: "wa_cancel",
-                title: "WhatsApp Cancel",
+                title: "WhatsApp Cancellation",
                 Icon: MessageCircle,
                 orders: toNum(ordCancelWhatsapp?.value),
                 // if backend gives amount in KPI item, we’ll use it, else 0
@@ -266,7 +266,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
             },
             {
                 key: "ecom_cancel",
-                title: "Cancel By ECOM",
+                title: "Canceled By ECOM",
                 Icon: Ban,
                 orders: toNum(ordCancelEcom?.value),
                 amount: pickItemAmount(ordCancelEcom),
@@ -327,14 +327,9 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
 
             {/* ✅ Rest (unchanged) */}
             <SectionCard
-                title="Top Order Amounts"
+                title="Top 10 Orders"
                 icon={TrendingUp}
-                right={
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <ArrowUpRight size={14} />
-                        <span>Top 10 by Grand Total</span>
-                    </div>
-                }
+
             >
                 {topOrdersLoading ? (
                     <LoadingSpinner />
@@ -353,14 +348,9 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
             </SectionCard>
 
             <SectionCard
-                title="Orders On Behalf"
+                title="Order On Behalf"
                 icon={Receipt}
-                right={
-                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <ArrowUpRight size={14} />
-                        <span>Top 10 by Amount</span>
-                    </div>
-                }
+
             >
                 {ordersOnBehalfLoading ? (
                     <LoadingSpinner />

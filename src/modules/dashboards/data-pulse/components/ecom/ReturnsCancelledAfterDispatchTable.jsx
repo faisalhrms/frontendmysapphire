@@ -120,7 +120,7 @@ function PendingTotalsPanel({ loading, totalOrders, totalQty }) {
                 <>
                     {/* Heading: slightly smaller */}
                     <p className="text-xs md:text-sm font-semibold text-white/90">
-                        Total Pending
+                        Total Orders
                     </p>
 
                     {/* Total: reduced size */}
@@ -434,7 +434,7 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
             {/* Row 2: listings */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
                 <div className="lg:col-span-4">
-                    <CardShell title="Courier Wise Dispatch" icon={Truck} gradient={GRADIENTS.courier}>
+                    <CardShell title="Courier Wise" icon={Truck} gradient={GRADIENTS.courier}>
                         {courierLoading ? (
                             <div className="space-y-2">
                                 <PulseScan />
@@ -462,7 +462,7 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
                 </div>
 
                 <div className="lg:col-span-4">
-                    <CardShell title="Location Wise Dispatch" icon={MapPin} gradient={GRADIENTS.location}>
+                    <CardShell title="Location Wise" icon={MapPin} gradient={GRADIENTS.location}>
                         {locationLoading ? (
                             <div className="space-y-2">
                                 <PulseScan />
@@ -490,7 +490,7 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
                 </div>
 
                 <div className="lg:col-span-4">
-                    <CardShell title="Pending Dispatch (Location Wise)" icon={Clock} gradient={GRADIENTS.pendingList}>
+                    <CardShell title="Pending (Location Wise)" icon={Clock} gradient={GRADIENTS.pendingList}>
                         {pendingListLoading ? (
                             <div className="space-y-2">
                                 <PulseScan />

@@ -322,7 +322,6 @@ const PulseEcomDashboard = () => {
                                     placeholder=""
                                     options={[
                                         { value: "PK", label: "PK" },
-                                        { value: "UK", label: "UK" },
                                         { value: "UAE", label: "UAE" },
                                         { value: "INT", label: "INT" },
                                     ]}
@@ -453,6 +452,7 @@ const PulseEcomDashboard = () => {
 
                 {activeTab === "risk" && (
                     <div className="space-y-6">
+                        <p className="text-rose-500">Inprocess</p>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <SectionCard title="COD Amount Issues" icon={AlertTriangle}>
                                 {codIssuesLoading ? (

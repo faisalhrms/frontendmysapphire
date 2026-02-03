@@ -21,7 +21,7 @@ import { createPortal } from "react-dom";
 import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 
-// ✅ money keys (same as before, just renamed for clarity)
+// ✅ money keys
 const MONEY_KEYS = new Set([
     "avg_order_price",
     "coupon_amount",
@@ -48,7 +48,7 @@ function unwrapPayload(resp) {
     return resp;
 }
 
-// ✅ currency mapping (as you requested)
+// ✅ currency mapping
 function getCurrencyByCountry(country) {
     const c = String(country || "PK").toUpperCase();
     if (c === "INT") return "USD";
@@ -122,7 +122,8 @@ function InfoHover({ text, widthClass = "w-72" }) {
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
         >
-      <Info size={16} className="text-white/80 hover:text-white cursor-help" />
+            {/* ✅ removed cursor-help (question mark cursor) */}
+            <Info size={16} className="text-white/80 hover:text-white" />
 
             {open && typeof document !== "undefined"
                 ? createPortal(
@@ -141,7 +142,7 @@ function InfoHover({ text, widthClass = "w-72" }) {
                     document.body
                 )
                 : null}
-    </span>
+        </span>
     );
 }
 
@@ -234,7 +235,7 @@ function KpiMiniCard({ title, Icon, value, loading }) {
     );
 }
 
-function UsersSourceCard({ title, totalUsers = 0, dormantUsers = 0, loading = false }) {
+function UsersSourceCard({ title, totalActiveUsers = 0, dormantUsers = 0, loading = false }) {
     return (
         <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full">
             <div className="text-sm font-semibold text-white/90">{title}</div>
@@ -244,12 +245,16 @@ function UsersSourceCard({ title, totalUsers = 0, dormantUsers = 0, loading = fa
                     <PulseScan />
                 </div>
             ) : (
-                <div className="mt-4">
-                    <p className="text-xs text-white/70 mt-1 tabular-nums">Dormant Users</p>
-                    <p className="text-4xl font-bold text-white tabular-nums">{NF0.format(dormantUsers)}</p>
-                    <p className="text-xs text-white/70 mt-2 tabular-nums">
-                        Total Users: {NF0.format(totalUsers)}
-                    </p>
+                <div className="mt-4 space-y-2">
+                    <div className="flex items-center justify-between text-sm text-white/85 tabular-nums">
+                        <span>Total Active Users:</span>
+                        <span className="font-semibold text-white">{NF0.format(toNum(totalActiveUsers))}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm text-white/85 tabular-nums">
+                        <span>Dormant Users:</span>
+                        <span className="font-semibold text-white">{NF0.format(toNum(dormantUsers))}</span>
+                    </div>
                 </div>
             )}
         </div>
@@ -293,21 +298,16 @@ const EcomOverview = ({
         () => String(filters?.country || "PK").toUpperCase() === "INT",
         [filters?.country]
     );
-    // ✅ change these 2 useMemos so INT returns 0 (Loyal + Churned)
 
     const loyalCount = useMemo(() => {
-        if (isINT) return 0; // ✅ INT => 0
-        const row = segmentationRows.find(
-            (r) => String(r?.customer_type || "").toLowerCase() === "loyal"
-        );
+        if (isINT) return 0;
+        const row = segmentationRows.find((r) => String(r?.customer_type || "").toLowerCase() === "loyal");
         return toNum(row?.customer_count);
     }, [segmentationRows, isINT]);
 
     const churnedCount = useMemo(() => {
-        if (isINT) return 0; // ✅ INT => 0
-        const row = segmentationRows.find(
-            (r) => String(r?.customer_type || "").toLowerCase() === "churned"
-        );
+        if (isINT) return 0;
+        const row = segmentationRows.find((r) => String(r?.customer_type || "").toLowerCase() === "churned");
         return toNum(row?.customer_count);
     }, [segmentationRows, isINT]);
 
@@ -322,6 +322,8 @@ const EcomOverview = ({
     const cards = useMemo(() => cardsToMap(cardsArr), [cardsArr]);
 
     const orders = cards.orders;
+    const orderQty = cards.order_qty; // ✅ NEW
+
     const aov = cards.avg_order_price;
     const pg = cards.payment_gateway_total;
 
@@ -332,6 +334,7 @@ const EcomOverview = ({
     const empOrders = cards.employee_discount_orders;
     const storeCreditTx = cards.store_credit_transactions;
 
+    // ✅ KEEP Total Orders as-is (top number)
     const salesTopValue = orders
         ? fmtValue({
             key: "orders",
@@ -346,10 +349,7 @@ const EcomOverview = ({
         return Array.isArray(s) ? s : [];
     }, [kpiResp]);
 
-    const returnsSection = useMemo(
-        () => sectionsArr.find((s) => s?.key === "returns_section") || null,
-        [sectionsArr]
-    );
+    const returnsSection = useMemo(() => sectionsArr.find((s) => s?.key === "returns_section") || null, [sectionsArr]);
 
     const returnsItems = Array.isArray(returnsSection?.items) ? returnsSection.items : [];
     const returnsMap = useMemo(() => {
@@ -393,10 +393,7 @@ const EcomOverview = ({
         return "md:grid-cols-4";
     }
 
-    const customerSection = useMemo(
-        () => sectionsArr.find((s) => s?.key === "customer_snapshot") || null,
-        [sectionsArr]
-    );
+    const customerSection = useMemo(() => sectionsArr.find((s) => s?.key === "customer_snapshot") || null, [sectionsArr]);
 
     const customerItems = Array.isArray(customerSection?.items) ? customerSection.items : [];
     const customerMap = useMemo(() => {
@@ -410,10 +407,7 @@ const EcomOverview = ({
     const totalCustomers = customerMap.total_customers;
     const habitualReturns = customerMap.habitual_returns;
 
-    const orderSection = useMemo(
-        () => sectionsArr.find((s) => s?.key === "order_snapshot") || null,
-        [sectionsArr]
-    );
+    const orderSection = useMemo(() => sectionsArr.find((s) => s?.key === "order_snapshot") || null, [sectionsArr]);
 
     const orderItems = Array.isArray(orderSection?.items) ? orderSection.items : [];
     const orderMap = useMemo(() => {
@@ -432,8 +426,7 @@ const EcomOverview = ({
     // Dispatch
     const dispatchPayload = useMemo(() => unwrapPayload(dispatchSummaryRes), [dispatchSummaryRes]);
     const dispatchSummary = dispatchPayload?.summary || {};
-    const dispatchedAmount = toNum(dispatchSummary.dispatch_total_amount); // ✅ NEW
-    const pendingDispatchAmount = toNum(dispatchSummary.pending_total_amount); // ✅ NEW
+    const dispatchedAmount = toNum(dispatchSummary.dispatch_total_amount);
     const dispatchedOrders = toNum(dispatchSummary.dispatch_total_orders);
     const dispatchedQty = toNum(dispatchSummary.dispatch_total_qty);
     const pendingDispatchOrders = toNum(dispatchSummary.pending_total_orders);
@@ -442,8 +435,8 @@ const EcomOverview = ({
     // Users
     const usersPayload = useMemo(() => unwrapPayload(inactiveUsersRes), [inactiveUsersRes]);
     const usersSummary = usersPayload?.summary || {};
-    const omsDormantUsers = toNum(usersSummary.inactive_users);
-    const omsTotalUsers = toNum(usersSummary.total_users);
+    const omsDormantUsers = toNum(usersSummary.dormant_users ?? usersSummary.inactive_users);
+    const omsTotalActiveUsers = toNum(usersSummary.total_active_users ?? 0);
 
     const sfccTotalUsers = 0;
     const sfccDormantUsers = 0;
@@ -459,7 +452,8 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <TrendingUp size={20} className="text-white" />
-                                    Sales Trend
+                                    Sales
+                                    <InfoHover text="Orders placed within the applied date range which have been successfully synced to the OMS." />
                                 </h3>
                                 <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                     <ArrowUpRight size={22} className="text-white" />
@@ -480,11 +474,12 @@ const EcomOverview = ({
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                                {/* ✅ ONLY THIS CARD changed: Orders -> Order Qty */}
                                 <PromoMiniCard
-                                    title={orders?.title || "Orders"}
-                                    Icon={TrendingUp}
-                                    amountKey="orders"
-                                    amountValue={orders?.value}
+                                    title={orderQty?.title || "Order Qty"}
+                                    Icon={Boxes}
+                                    amountKey="order_qty"
+                                    amountValue={orderQty?.value}
                                     countLabel={null}
                                     countValue={null}
                                     loading={kpiLoading}
@@ -573,6 +568,7 @@ const EcomOverview = ({
                 </div>
             </div>
 
+            {/* ✅ REST OF YOUR FILE UNCHANGED */}
             {/* Row 2 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-6">
@@ -653,7 +649,8 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <FileText size={20} className="text-white" />
-                                    {orderSection?.title || "Orders Snapshot"}
+                                    {/* ✅ removed Snapshot */}
+                                    {(orderSection?.title || "Orders Snapshot").replace(/\s*Snapshot\s*/i, "")}
                                 </h3>
 
                                 <ArrowNavButton onClick={() => setActiveTab?.("orders")} />
@@ -731,7 +728,9 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <Truck size={20} className="text-white" />
-                                    Fulfillment Snapshot
+                                    {/* ✅ removed Snapshot */}
+                                    Dispatch
+                                    <InfoHover text="FOs dispatched within the applied date range." />
                                 </h3>
 
                                 <ArrowNavButton
@@ -749,31 +748,28 @@ const EcomOverview = ({
                                     </div>
                                 ) : (
                                     <>
-                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Dispatched
-                                            Amount</p>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Amount</p>
 
-                                        {/* ✅ show dispatch_total_amount with currency */}
                                         <p className="text-4xl font-bold text-white tabular-nums">
                                             {currency} {formatRoundedAmountWithCommas(dispatchedAmount)}
                                         </p>
 
-                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
-                                            Pending Dispatch: {NF0.format(pendingDispatchOrders)}
-                                        </p>
+
                                     </>
                                 )}
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                                 <KpiMiniCard
-                                    title="Dispatched Orders"
+                                    title="Dispatch Orders"
                                     Icon={Boxes}
                                     value={NF0.format(dispatchedOrders)}
                                     loading={dispatchSummaryLoading}
                                 />
 
+                                {/* ✅ Avg Order -> Avg Qty */}
                                 <KpiMiniCard
-                                    title="Avg Order"
+                                    title="Avg Qty"
                                     Icon={TrendingUp}
                                     value={NF2.format(avgQtyPerOrder)}
                                     loading={dispatchSummaryLoading}
@@ -797,7 +793,9 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <RotateCcw size={20} className="text-white" />
-                                    {returnsSection?.title || "Returns Snapshot"}
+                                    {/* ✅ removed Snapshot */}
+                                    {(returnsSection?.title || "Returns Snapshot").replace(/\s*Snapshot\s*/i, "")}
+                                    <InfoHover text="FOs Returns within the applied date range." />
                                 </h3>
 
                                 <ArrowNavButton
@@ -824,9 +822,7 @@ const EcomOverview = ({
                                                 currency,
                                             })}
                                         </p>
-                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
-                                            Total Orders: {formatRoundedAmountWithCommas(toNum(retOrders?.value))}
-                                        </p>
+
                                     </>
                                 )}
                             </div>
@@ -882,7 +878,8 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <UserX size={20} className="text-white" />
-                                    {customerSection?.title || "Customers Snapshot"}
+                                    {/* ✅ removed Snapshot */}
+                                    {(customerSection?.title || "Customers Snapshot").replace(/\s*Snapshot\s*/i, "")}
                                 </h3>
 
                                 <ArrowNavButton
@@ -914,18 +911,6 @@ const EcomOverview = ({
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-                                <PromoMiniCard
-                                    title={habitualReturns?.title || "Habitual Returns"}
-                                    Icon={RotateCcw}
-                                    amountKey="habitual_returns"
-                                    amountValue={isINT ? 0 : habitualReturns?.value}   // ✅ INT => 0
-                                    countLabel={null}
-                                    countValue={null}
-                                    loading={kpiLoading}
-                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                                    currency={currency}
-                                    infoText="Criteria: More than 5 orders placed and return ratio above 50%."
-                                />
 
 
                                 <PromoMiniCard
@@ -953,6 +938,20 @@ const EcomOverview = ({
                                     currency={currency}
                                     infoText={churnedInfoText}
                                 />
+                                <PromoMiniCard
+                                    // title={habitualReturns?.title || "High Returners"}
+                                    title={ "High Returners"}
+
+                                    Icon={RotateCcw}
+                                    amountKey="habitual_returns"
+                                    amountValue={isINT ? 0 : habitualReturns?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
+                                    infoText="Criteria: More than 5 orders placed and return ratio above 50%."
+                                />
                             </div>
                         </div>
                     </div>
@@ -966,18 +965,25 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-20">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <Users size={20} className="text-white" />
-                                    Users Snapshot
+                                    {/* ✅ removed Snapshot */}
+                                    Users
                                 </h3>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                                 <UsersSourceCard
                                     title="OMS/SFSC"
-                                    totalUsers={omsTotalUsers}
+                                    totalActiveUsers={omsTotalActiveUsers}
                                     dormantUsers={omsDormantUsers}
                                     loading={inactiveUsersLoading}
                                 />
-                                <UsersSourceCard title="SFCC" totalUsers={sfccTotalUsers} dormantUsers={sfccDormantUsers} loading={false} />
+
+                                <UsersSourceCard
+                                    title="SFCC (InProcess)"
+                                    totalUsers={sfccTotalUsers}
+                                    dormantUsers={sfccDormantUsers}
+                                    loading={false}
+                                />
                             </div>
                         </div>
                     </div>

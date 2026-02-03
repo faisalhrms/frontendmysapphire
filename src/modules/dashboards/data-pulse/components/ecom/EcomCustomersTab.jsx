@@ -1,12 +1,13 @@
-import React, { useMemo } from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 
-import { Activity, Users, PieChart, ArrowUpRight } from "lucide-react";
+import {Activity, Users, PieChart, ArrowUpRight, Info} from "lucide-react";
 
 import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 import EcomHabitualRatioGradientCards from "@modules/dashboards/data-pulse/components/ecom/EcomHabitualRatioGradientCards.jsx";
 import TopHabitualReturns from "@modules/dashboards/data-pulse/components/ecom/TopHabitualReturns.jsx";
+import {createPortal} from "react-dom";
 
 const EmptyState = ({ label = "No Data Available" }) => (
     <div className="h-[220px] flex flex-col items-center justify-center text-slate-400 text-sm italic">
@@ -110,6 +111,67 @@ function gridColsClass(n) {
     if (n === 3) return "md:grid-cols-3";
     return "md:grid-cols-4";
 }
+
+function InfoHover({ text, widthClass = "w-72" }) {
+    const ref = useRef(null);
+    const [open, setOpen] = useState(false);
+    const [pos, setPos] = useState({ top: 0, left: 0 });
+
+    useEffect(() => {
+        if (!open) return;
+
+        const update = () => {
+            const el = ref.current;
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            setPos({
+                top: r.bottom + 10,
+                left: r.left + r.width / 2,
+            });
+        };
+
+        update();
+        window.addEventListener("scroll", update, true);
+        window.addEventListener("resize", update);
+        return () => {
+            window.removeEventListener("scroll", update, true);
+            window.removeEventListener("resize", update);
+        };
+    }, [open]);
+
+    if (!text) return null;
+
+    return (
+        <span
+            ref={ref}
+            className="inline-flex items-center"
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+        >
+            {/* ✅ removed cursor-help (question mark cursor) */}
+            <Info size={16} className="text-white/80 hover:text-white" />
+
+            {open && typeof document !== "undefined"
+                ? createPortal(
+                    <div
+                        className={[
+                            "fixed -translate-x-1/2",
+                            widthClass,
+                            "rounded-lg bg-black/90 text-white text-xs px-3 py-2 shadow-lg backdrop-blur-sm",
+                            "z-[999999]",
+                            "pointer-events-none",
+                        ].join(" ")}
+                        style={{ top: pos.top, left: pos.left }}
+                    >
+                        {text}
+                    </div>,
+                    document.body
+                )
+                : null}
+        </span>
+    );
+}
+
 
 const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
     // ✅ customers tab must NOT use date filters
@@ -226,7 +288,8 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                         <Users size={20} className="text-white" />
-                                        {customerSnapshot.title || "Customers Snapshot"}
+                                        {customerSnapshot.title || "Customers"}
+
                                     </h3>
                                     <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                         <ArrowUpRight size={22} className="text-white" />
@@ -300,6 +363,7 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                                     <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                         <PieChart size={20} className="text-white" />
                                         Customer Segmentation
+
                                     </h3>
                                     <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                         <ArrowUpRight size={22} className="text-white" />
@@ -315,12 +379,12 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                                         <div className="text-white/70 text-sm italic">No segmentation data</div>
                                     ) : (
                                         <>
-                                            <p className="text-xs text-white/70 mt-1 tabular-nums">Total (sum of segments)</p>
-                                            <p className="text-4xl font-bold text-white tabular-nums">
-                                                {typeof formatAmount === "function"
-                                                    ? formatAmount(toNum(segmentationTotal))
-                                                    : NF0.format(toNum(segmentationTotal))}
-                                            </p>
+                                            {/*<p className="text-xs text-white/70 mt-1 tabular-nums">Total (sum of segments)</p>*/}
+                                            {/*<p className="text-4xl font-bold text-white tabular-nums">*/}
+                                            {/*    {typeof formatAmount === "function"*/}
+                                            {/*        ? formatAmount(toNum(segmentationTotal))*/}
+                                            {/*        : NF0.format(toNum(segmentationTotal))}*/}
+                                            {/*</p>*/}
                                         </>
                                     )}
                                 </div>
