@@ -217,13 +217,14 @@ const EcomPromosTab = ({
 
     return (
         <div className="space-y-6">
+            <p className="text-rose-500">In Process</p>
             {/* ✅ Row 1: two overview-style cards */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Discount Snapshot (Coupons computed) */}
                 <div className="lg:col-span-6">
                     <CardShell
                         gradient={GRADIENTS.promo}
-                        title="Discount Snapshot"
+                        title="Discount"
                         Icon={BadgePercent}
                         loading={topCouponsLoading}
                         totalLabel="Top Coupons Total (Top 10)"
@@ -253,7 +254,7 @@ const EcomPromosTab = ({
                 <div className="lg:col-span-6">
                     <CardShell
                         gradient={GRADIENTS.storeCredit}
-                        title="Store Credit Snapshot"
+                        title="Store Credit"
                         Icon={Wallet}
                         loading={topStoreCreditLoading}
                         totalLabel="Total Store Credit"

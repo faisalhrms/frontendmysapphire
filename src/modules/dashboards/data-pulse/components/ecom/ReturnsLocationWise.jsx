@@ -293,9 +293,8 @@ const ReturnsLocationWise = ({
                                 <PulseScan />
                             ) : (
                                 <>
-                                    <p className="text-xs text-white/70 mt-1 tabular-nums">Total Pending</p>
+                                    <p className="text-xs text-white/70 mt-1 tabular-nums">Total</p>
                                     <p className="text-4xl font-bold text-white tabular-nums">{fmtInt(pendingTotal)}</p>
-                                    <p className="text-[11px] text-white/65 mt-1">Snapshot • bucketed by days pending</p>
                                 </>
                             )}
                         </div>

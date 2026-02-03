@@ -453,6 +453,7 @@ const EcomOverview = ({
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <TrendingUp size={20} className="text-white" />
                                     Sales
+                                    <InfoHover text="Orders placed within the applied date range which have been successfully synced to the OMS." />
                                 </h3>
                                 <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                     <ArrowUpRight size={22} className="text-white" />
@@ -728,7 +729,8 @@ const EcomOverview = ({
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <Truck size={20} className="text-white" />
                                     {/* ✅ removed Snapshot */}
-                                    Fulfillment
+                                    Dispatch
+                                    <InfoHover text="FOs dispatched within the applied date range." />
                                 </h3>
 
                                 <ArrowNavButton
@@ -746,7 +748,7 @@ const EcomOverview = ({
                                     </div>
                                 ) : (
                                     <>
-                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Dispatch Amount</p>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Amount</p>
 
                                         <p className="text-4xl font-bold text-white tabular-nums">
                                             {currency} {formatRoundedAmountWithCommas(dispatchedAmount)}
@@ -793,6 +795,7 @@ const EcomOverview = ({
                                     <RotateCcw size={20} className="text-white" />
                                     {/* ✅ removed Snapshot */}
                                     {(returnsSection?.title || "Returns Snapshot").replace(/\s*Snapshot\s*/i, "")}
+                                    <InfoHover text="FOs Returns within the applied date range." />
                                 </h3>
 
                                 <ArrowNavButton
@@ -936,7 +939,9 @@ const EcomOverview = ({
                                     infoText={churnedInfoText}
                                 />
                                 <PromoMiniCard
-                                    title={habitualReturns?.title || "Habitual Returns"}
+                                    // title={habitualReturns?.title || "High Returners"}
+                                    title={ "High Returners"}
+
                                     Icon={RotateCcw}
                                     amountKey="habitual_returns"
                                     amountValue={isINT ? 0 : habitualReturns?.value}
@@ -974,7 +979,7 @@ const EcomOverview = ({
                                 />
 
                                 <UsersSourceCard
-                                    title="SFCC"
+                                    title="SFCC (InProcess)"
                                     totalUsers={sfccTotalUsers}
                                     dormantUsers={sfccDormantUsers}
                                     loading={false}

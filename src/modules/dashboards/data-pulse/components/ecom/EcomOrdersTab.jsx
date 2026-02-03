@@ -257,7 +257,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
         return [
             {
                 key: "wa_cancel",
-                title: "WhatsApp Cancel",
+                title: "WhatsApp Cancellation",
                 Icon: MessageCircle,
                 orders: toNum(ordCancelWhatsapp?.value),
                 // if backend gives amount in KPI item, we’ll use it, else 0
@@ -266,7 +266,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
             },
             {
                 key: "ecom_cancel",
-                title: "Cancel By ECOM",
+                title: "Canceled By ECOM",
                 Icon: Ban,
                 orders: toNum(ordCancelEcom?.value),
                 amount: pickItemAmount(ordCancelEcom),
