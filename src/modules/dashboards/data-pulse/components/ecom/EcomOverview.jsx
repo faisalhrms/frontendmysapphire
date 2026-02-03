@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import {
     TrendingUp,
     Landmark,
@@ -10,32 +10,60 @@ import {
     PencilLine,
     ArrowUpRight,
     FileText,
+    Truck,
+    Boxes,
+    Clock,
+    Users,
+    Info,
 } from "lucide-react";
-import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
+import { createPortal } from "react-dom";
 
-const PKR_KEYS = new Set([
+import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
+import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
+
+// ✅ money keys (same as before, just renamed for clarity)
+const MONEY_KEYS = new Set([
     "avg_order_price",
     "coupon_amount",
     "store_credit",
     "employee_discount",
     "payment_gateway_total",
     "return_amount",
+    "dispatch_total_amount",
 ]);
 
 const PCT_KEYS = new Set(["return_percent"]);
+
+const NF0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const NF2 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
 
 function toNum(v) {
     const n = Number(v);
     return Number.isFinite(n) ? n : 0;
 }
 
-function fmtValue({ key, value, formatRoundedAmountWithCommas }) {
+function unwrapPayload(resp) {
+    if (!resp) return {};
+    if (resp?.data?.summary || resp?.data?.rows) return resp.data;
+    return resp;
+}
+
+// ✅ currency mapping (as you requested)
+function getCurrencyByCountry(country) {
+    const c = String(country || "PK").toUpperCase();
+    if (c === "INT") return "USD";
+    if (c === "UAE") return "AED";
+    if (c === "UK") return "EURO";
+    return "PKR";
+}
+
+function fmtValue({ key, value, formatRoundedAmountWithCommas, currency }) {
     if (value === null || value === undefined) return "-";
     if (typeof value === "string") return value;
 
     const n = toNum(value);
     if (PCT_KEYS.has(key)) return `${n.toFixed(2)}%`;
-    if (PKR_KEYS.has(key)) return `PKR ${formatRoundedAmountWithCommas(n)}`;
+    if (MONEY_KEYS.has(key)) return `${currency} ${formatRoundedAmountWithCommas(n)}`;
     return formatRoundedAmountWithCommas(n);
 }
 
@@ -50,9 +78,72 @@ function cardsToMap(cardsArr) {
 const GRADIENTS = {
     sales: "bg-gradient-to-br from-black to-blue",
     payments: "bg-gradient-to-br from-black to-green",
-    promo: "from-black to-black",
+    promo: "bg-gradient-to-br from-black to-black",
+    orders: "bg-gradient-to-br from-rose-950 to-rose-600",
     returns: "bg-gradient-to-br from-purple to-pink",
+    fulfillment: "bg-gradient-to-br from-amber-950 to-amber-500",
+    customers: "bg-gradient-to-br from-sky-950 to-sky-600",
+    users: "bg-gradient-to-br from-slate-950 to-slate-700",
 };
+
+function InfoHover({ text, widthClass = "w-72" }) {
+    const ref = useRef(null);
+    const [open, setOpen] = useState(false);
+    const [pos, setPos] = useState({ top: 0, left: 0 });
+
+    useEffect(() => {
+        if (!open) return;
+
+        const update = () => {
+            const el = ref.current;
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            setPos({
+                top: r.bottom + 10,
+                left: r.left + r.width / 2,
+            });
+        };
+
+        update();
+        window.addEventListener("scroll", update, true);
+        window.addEventListener("resize", update);
+        return () => {
+            window.removeEventListener("scroll", update, true);
+            window.removeEventListener("resize", update);
+        };
+    }, [open]);
+
+    if (!text) return null;
+
+    return (
+        <span
+            ref={ref}
+            className="inline-flex items-center"
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+        >
+      <Info size={16} className="text-white/80 hover:text-white cursor-help" />
+
+            {open && typeof document !== "undefined"
+                ? createPortal(
+                    <div
+                        className={[
+                            "fixed -translate-x-1/2",
+                            widthClass,
+                            "rounded-lg bg-black/90 text-white text-xs px-3 py-2 shadow-lg backdrop-blur-sm",
+                            "z-[999999]",
+                            "pointer-events-none",
+                        ].join(" ")}
+                        style={{ top: pos.top, left: pos.left }}
+                    >
+                        {text}
+                    </div>,
+                    document.body
+                )
+                : null}
+    </span>
+    );
+}
 
 function PromoMiniCard({
                            title,
@@ -63,13 +154,16 @@ function PromoMiniCard({
                            countValue,
                            loading,
                            formatRoundedAmountWithCommas,
+                           infoText,
+                           currency,
                        }) {
     return (
-        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+        <div className="relative z-0 hover:z-50 bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
             <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                     <Icon size={18} className="text-white" />
                     {title}
+                    {infoText ? <InfoHover text={infoText} /> : null}
                 </h3>
             </div>
 
@@ -81,7 +175,12 @@ function PromoMiniCard({
                 ) : (
                     <>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {fmtValue({ key: amountKey, value: amountValue, formatRoundedAmountWithCommas })}
+                            {fmtValue({
+                                key: amountKey,
+                                value: amountValue,
+                                formatRoundedAmountWithCommas,
+                                currency,
+                            })}
                         </p>
 
                         <p className="text-xs text-white/70 mt-1 tabular-nums min-h-[16px]">
@@ -98,7 +197,6 @@ function PromoMiniCard({
     );
 }
 
-/** ✅ Arrow button (clickable) */
 function ArrowNavButton({ onClick }) {
     return (
         <button
@@ -117,16 +215,105 @@ function ArrowNavButton({ onClick }) {
     );
 }
 
+function KpiMiniCard({ title, Icon, value, loading }) {
+    return (
+        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full">
+            <div className="flex items-center gap-2 text-sm font-semibold text-white/90">
+                {Icon ? <Icon size={18} className="text-white/90" /> : null}
+                {title}
+            </div>
+
+            {loading ? (
+                <div className="mt-2">
+                    <PulseScan />
+                </div>
+            ) : (
+                <p className="mt-3 text-2xl font-bold text-white tabular-nums">{value ?? "-"}</p>
+            )}
+        </div>
+    );
+}
+
+function UsersSourceCard({ title, totalUsers = 0, dormantUsers = 0, loading = false }) {
+    return (
+        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full">
+            <div className="text-sm font-semibold text-white/90">{title}</div>
+
+            {loading ? (
+                <div className="mt-3">
+                    <PulseScan />
+                </div>
+            ) : (
+                <div className="mt-4">
+                    <p className="text-xs text-white/70 mt-1 tabular-nums">Dormant Users</p>
+                    <p className="text-4xl font-bold text-white tabular-nums">{NF0.format(dormantUsers)}</p>
+                    <p className="text-xs text-white/70 mt-2 tabular-nums">
+                        Total Users: {NF0.format(totalUsers)}
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+}
+
 const EcomOverview = ({
                           kpiResp,
                           kpiLoading,
                           formatRoundedAmountWithCommas,
 
-                          // ✅ using your state setters (no custom handler)
                           setActiveTab,
                           setActiveReturnsTab,
                           setActiveCustomersTab,
+
+                          dispatchSummaryRes,
+                          dispatchSummaryLoading,
+
+                          inactiveUsersRes,
+                          inactiveUsersLoading,
+
+                          filters,
+                          cache,
                       }) => {
+    // ✅ currency based on selected country
+    const currency = useMemo(() => getCurrencyByCountry(filters?.country), [filters?.country]);
+
+    // ✅ segmentation summary for Loyal + Churned
+    const customerFilters = useMemo(() => ({ country: filters?.country || "PK" }), [filters?.country]);
+
+    const { data: segmentationRes, isLoading: segmentationLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/customers/segmentation/summary/",
+        customerFilters,
+        { enabled: true, ...(cache || {}) }
+    );
+
+    const segmentationPayload = useMemo(() => unwrapPayload(segmentationRes), [segmentationRes]);
+    const segmentationRows = Array.isArray(segmentationPayload?.rows) ? segmentationPayload.rows : [];
+
+    const isINT = useMemo(
+        () => String(filters?.country || "PK").toUpperCase() === "INT",
+        [filters?.country]
+    );
+    // ✅ change these 2 useMemos so INT returns 0 (Loyal + Churned)
+
+    const loyalCount = useMemo(() => {
+        if (isINT) return 0; // ✅ INT => 0
+        const row = segmentationRows.find(
+            (r) => String(r?.customer_type || "").toLowerCase() === "loyal"
+        );
+        return toNum(row?.customer_count);
+    }, [segmentationRows, isINT]);
+
+    const churnedCount = useMemo(() => {
+        if (isINT) return 0; // ✅ INT => 0
+        const row = segmentationRows.find(
+            (r) => String(r?.customer_type || "").toLowerCase() === "churned"
+        );
+        return toNum(row?.customer_count);
+    }, [segmentationRows, isINT]);
+
+    const loyalInfoText = `Criteria: 3 or more orders in past 6 months.`;
+    const churnedInfoText = `Criteria: No order in past 6 months.`;
+
     const cardsArr = useMemo(() => {
         const c = kpiResp?.data?.cards ?? kpiResp?.cards;
         return Array.isArray(c) ? c : [];
@@ -146,7 +333,12 @@ const EcomOverview = ({
     const storeCreditTx = cards.store_credit_transactions;
 
     const salesTopValue = orders
-        ? fmtValue({ key: "orders", value: orders.value, formatRoundedAmountWithCommas })
+        ? fmtValue({
+            key: "orders",
+            value: orders.value,
+            formatRoundedAmountWithCommas,
+            currency,
+        })
         : "-";
 
     const sectionsArr = useMemo(() => {
@@ -154,9 +346,10 @@ const EcomOverview = ({
         return Array.isArray(s) ? s : [];
     }, [kpiResp]);
 
-    const returnsSection = useMemo(() => {
-        return sectionsArr.find((s) => s?.key === "returns_section") || null;
-    }, [sectionsArr]);
+    const returnsSection = useMemo(
+        () => sectionsArr.find((s) => s?.key === "returns_section") || null,
+        [sectionsArr]
+    );
 
     const returnsItems = Array.isArray(returnsSection?.items) ? returnsSection.items : [];
     const returnsMap = useMemo(() => {
@@ -200,9 +393,10 @@ const EcomOverview = ({
         return "md:grid-cols-4";
     }
 
-    const customerSection = useMemo(() => {
-        return sectionsArr.find((s) => s?.key === "customer_snapshot") || null;
-    }, [sectionsArr]);
+    const customerSection = useMemo(
+        () => sectionsArr.find((s) => s?.key === "customer_snapshot") || null,
+        [sectionsArr]
+    );
 
     const customerItems = Array.isArray(customerSection?.items) ? customerSection.items : [];
     const customerMap = useMemo(() => {
@@ -215,12 +409,11 @@ const EcomOverview = ({
 
     const totalCustomers = customerMap.total_customers;
     const habitualReturns = customerMap.habitual_returns;
-    const customerMissingEmail = customerMap.missing_email;
-    const redFlags = customerMap.red_flags;
 
-    const orderSection = useMemo(() => {
-        return sectionsArr.find((s) => s?.key === "order_snapshot") || null;
-    }, [sectionsArr]);
+    const orderSection = useMemo(
+        () => sectionsArr.find((s) => s?.key === "order_snapshot") || null,
+        [sectionsArr]
+    );
 
     const orderItems = Array.isArray(orderSection?.items) ? orderSection.items : [];
     const orderMap = useMemo(() => {
@@ -236,23 +429,38 @@ const EcomOverview = ({
     const ordCancelEcom = orderMap.cancel_order_cancel;
     const ordEditedEcom = orderMap.cancel_edited_reason;
 
+    // Dispatch
+    const dispatchPayload = useMemo(() => unwrapPayload(dispatchSummaryRes), [dispatchSummaryRes]);
+    const dispatchSummary = dispatchPayload?.summary || {};
+    const dispatchedAmount = toNum(dispatchSummary.dispatch_total_amount); // ✅ NEW
+    const pendingDispatchAmount = toNum(dispatchSummary.pending_total_amount); // ✅ NEW
+    const dispatchedOrders = toNum(dispatchSummary.dispatch_total_orders);
+    const dispatchedQty = toNum(dispatchSummary.dispatch_total_qty);
+    const pendingDispatchOrders = toNum(dispatchSummary.pending_total_orders);
+    const avgQtyPerOrder = dispatchedOrders > 0 ? dispatchedQty / dispatchedOrders : 0;
+
+    // Users
+    const usersPayload = useMemo(() => unwrapPayload(inactiveUsersRes), [inactiveUsersRes]);
+    const usersSummary = usersPayload?.summary || {};
+    const omsDormantUsers = toNum(usersSummary.inactive_users);
+    const omsTotalUsers = toNum(usersSummary.total_users);
+
+    const sfccTotalUsers = 0;
+    const sfccDormantUsers = 0;
+
     return (
         <div className="space-y-6">
             {/* Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Sales Trend (IGNORED NAV) */}
                 <div className="lg:col-span-6">
-                    <div className={`bg-gradient-to-br ${GRADIENTS.sales} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                    <div className={`${GRADIENTS.sales} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
-
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <TrendingUp size={20} className="text-white" />
                                     Sales Trend
                                 </h3>
-
-                                {/* ❌ Not clickable */}
                                 <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                     <ArrowUpRight size={22} className="text-white" />
                                 </div>
@@ -281,10 +489,11 @@ const EcomOverview = ({
                                     countValue={null}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
 
                                 <PromoMiniCard
-                                    title={aov?.title || "Avg Order Value"}
+                                    title="Avg Order Value"
                                     Icon={BadgePercent}
                                     amountKey="avg_order_price"
                                     amountValue={aov?.value}
@@ -292,25 +501,22 @@ const EcomOverview = ({
                                     countValue={null}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Payment Breakdown (IGNORED NAV) */}
                 <div className="lg:col-span-6">
-                    <div className={`bg-gradient-to-br ${GRADIENTS.payments} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                    <div className={`${GRADIENTS.payments} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
-
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <Landmark size={20} className="text-white" />
                                     Payment Breakdown
                                 </h3>
-
-                                {/* ❌ Not clickable */}
                                 <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                                     <ArrowUpRight size={22} className="text-white" />
                                 </div>
@@ -325,7 +531,7 @@ const EcomOverview = ({
                                     <>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">Total Sales</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
-                                            PKR {formatRoundedAmountWithCommas(pgTotal)}
+                                            {currency} {formatRoundedAmountWithCommas(pgTotal)}
                                         </p>
                                     </>
                                 )}
@@ -334,12 +540,12 @@ const EcomOverview = ({
                             <div className={`grid grid-cols-1 ${gridColsClass(pgRows.length)} gap-4 items-stretch`}>
                                 {kpiLoading ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                                        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+                                        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full">
                                             <div className="mt-2">
                                                 <PulseScan />
                                             </div>
                                         </div>
-                                        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full flex flex-col">
+                                        <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full">
                                             <div className="mt-2">
                                                 <PulseScan />
                                             </div>
@@ -357,6 +563,7 @@ const EcomOverview = ({
                                             countValue={r.countValue}
                                             loading={kpiLoading}
                                             formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                            currency={currency}
                                         />
                                     ))
                                 )}
@@ -368,23 +575,16 @@ const EcomOverview = ({
 
             {/* Row 2 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* ✅ Discount Snapshot -> promos */}
                 <div className="lg:col-span-6">
-                    <div className="bg-gradient-to-br from-black to-black rounded-xl shadow-lg p-6 relative overflow-hidden">
+                    <div className={`${GRADIENTS.promo} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
-
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <BadgePercent size={20} className="text-white" />
                                     Discount Snapshot
                                 </h3>
-
-                                <ArrowNavButton
-                                    onClick={() => {
-                                        setActiveTab?.("promos");
-                                    }}
-                                />
+                                <ArrowNavButton onClick={() => setActiveTab?.("promos")} />
                             </div>
 
                             <div className="mb-4">
@@ -396,7 +596,7 @@ const EcomOverview = ({
                                     <>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">Total Amount</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
-                                            PKR {formatRoundedAmountWithCommas(promoTotalAmt)}
+                                            {currency} {formatRoundedAmountWithCommas(promoTotalAmt)}
                                         </p>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">
                                             Total Orders: {formatRoundedAmountWithCommas(promoTotalOrders)}
@@ -415,6 +615,7 @@ const EcomOverview = ({
                                     countValue={coupons?.value}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
 
                                 <PromoMiniCard
@@ -426,6 +627,7 @@ const EcomOverview = ({
                                     countValue={storeCreditTx?.value}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
 
                                 <PromoMiniCard
@@ -437,22 +639,165 @@ const EcomOverview = ({
                                     countValue={empOrders?.value}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* ✅ Returns Snapshot -> returns (default inner tab = location) */}
                 <div className="lg:col-span-6">
-                    <div className="bg-gradient-to-br from-gray-950 to-gray-700 rounded-xl shadow-lg p-6 relative overflow-hidden">
+                    <div className={`${GRADIENTS.orders} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <FileText size={20} className="text-white" />
+                                    {orderSection?.title || "Orders Snapshot"}
+                                </h3>
+
+                                <ArrowNavButton onClick={() => setActiveTab?.("orders")} />
+                            </div>
+
+                            <div className="mb-4">
+                                {kpiLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Orders</p>
+                                        <p className="text-4xl font-bold text-white tabular-nums">
+                                            {fmtValue({
+                                                key: "orders",
+                                                value: ordOrders?.value,
+                                                formatRoundedAmountWithCommas,
+                                                currency,
+                                            })}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+                                <PromoMiniCard
+                                    title={ordCancelWhatsapp?.title || "WhatsApp Cancellation"}
+                                    Icon={UserX}
+                                    amountKey="cancelled_by_whatsapp"
+                                    amountValue={ordCancelWhatsapp?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
+                                />
+
+                                <PromoMiniCard
+                                    title={ordCancelEcom?.title || "Canceled By ECOM"}
+                                    Icon={Ban}
+                                    amountKey="cancel_order_cancel"
+                                    amountValue={ordCancelEcom?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
+                                />
+
+                                <PromoMiniCard
+                                    title={ordEditedEcom?.title || "Edited By ECOM"}
+                                    Icon={PencilLine}
+                                    amountKey="cancel_edited_reason"
+                                    amountValue={ordEditedEcom?.value}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={kpiLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Row 3 */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-6">
+                    <div className={`${GRADIENTS.fulfillment} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
 
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                    <Truck size={20} className="text-white" />
+                                    Fulfillment Snapshot
+                                </h3>
+
+                                <ArrowNavButton
+                                    onClick={() => {
+                                        setActiveTab?.("returns");
+                                        setActiveReturnsTab?.("cancelled");
+                                    }}
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                {dispatchSummaryLoading ? (
+                                    <div className="mt-2">
+                                        <PulseScan />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Dispatched
+                                            Amount</p>
+
+                                        {/* ✅ show dispatch_total_amount with currency */}
+                                        <p className="text-4xl font-bold text-white tabular-nums">
+                                            {currency} {formatRoundedAmountWithCommas(dispatchedAmount)}
+                                        </p>
+
+                                        <p className="text-xs text-white/70 mt-1 tabular-nums">
+                                            Pending Dispatch: {NF0.format(pendingDispatchOrders)}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+                                <KpiMiniCard
+                                    title="Dispatched Orders"
+                                    Icon={Boxes}
+                                    value={NF0.format(dispatchedOrders)}
+                                    loading={dispatchSummaryLoading}
+                                />
+
+                                <KpiMiniCard
+                                    title="Avg Order"
+                                    Icon={TrendingUp}
+                                    value={NF2.format(avgQtyPerOrder)}
+                                    loading={dispatchSummaryLoading}
+                                />
+
+                                <KpiMiniCard
+                                    title="Pending Dispatch"
+                                    Icon={Clock}
+                                    value={NF0.format(pendingDispatchOrders)}
+                                    loading={dispatchSummaryLoading}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-6">
+                    <div className={`${GRADIENTS.returns} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <RotateCcw size={20} className="text-white" />
-                                    {returnsSection?.title || "Returns"}
+                                    {returnsSection?.title || "Returns Snapshot"}
                                 </h3>
 
                                 <ArrowNavButton
@@ -472,7 +817,12 @@ const EcomOverview = ({
                                     <>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">Total Amount</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
-                                            {fmtValue({ key: "return_amount", value: retAmount?.value, formatRoundedAmountWithCommas })}
+                                            {fmtValue({
+                                                key: "return_amount",
+                                                value: retAmount?.value,
+                                                formatRoundedAmountWithCommas,
+                                                currency,
+                                            })}
                                         </p>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">
                                             Total Orders: {formatRoundedAmountWithCommas(toNum(retOrders?.value))}
@@ -491,6 +841,7 @@ const EcomOverview = ({
                                     countValue={null}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
 
                                 <PromoMiniCard
@@ -502,6 +853,7 @@ const EcomOverview = ({
                                     countValue={null}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
 
                                 <PromoMiniCard
@@ -513,6 +865,7 @@ const EcomOverview = ({
                                     countValue={null}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
                                 />
                             </div>
                         </div>
@@ -520,18 +873,16 @@ const EcomOverview = ({
                 </div>
             </div>
 
-            {/* Row 3 */}
+            {/* Row 4 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* ✅ Customer Snapshot -> customers (default inner tab = habitual) */}
                 <div className="lg:col-span-6">
-                    <div className="bg-gradient-to-br from-sky-950 to-sky-600 rounded-xl shadow-lg p-6 relative overflow-hidden">
+                    <div className={`${GRADIENTS.customers} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
-
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <UserX size={20} className="text-white" />
-                                    {customerSection?.title || "Customer Snapshot"}
+                                    {customerSection?.title || "Customers Snapshot"}
                                 </h3>
 
                                 <ArrowNavButton
@@ -551,7 +902,12 @@ const EcomOverview = ({
                                     <>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">Total Customers</p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
-                                            {fmtValue({ key: "total_customers", value: totalCustomers?.value, formatRoundedAmountWithCommas })}
+                                            {fmtValue({
+                                                key: "total_customers",
+                                                value: totalCustomers?.value,
+                                                formatRoundedAmountWithCommas,
+                                                currency,
+                                            })}
                                         </p>
                                     </>
                                 )}
@@ -562,106 +918,66 @@ const EcomOverview = ({
                                     title={habitualReturns?.title || "Habitual Returns"}
                                     Icon={RotateCcw}
                                     amountKey="habitual_returns"
-                                    amountValue={habitualReturns?.value}
+                                    amountValue={isINT ? 0 : habitualReturns?.value}   // ✅ INT => 0
                                     countLabel={null}
                                     countValue={null}
                                     loading={kpiLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
+                                    infoText="Criteria: More than 5 orders placed and return ratio above 50%."
+                                />
+
+
+                                <PromoMiniCard
+                                    title="Loyal"
+                                    Icon={Users}
+                                    amountKey="loyal"
+                                    amountValue={loyalCount}
+                                    countLabel={null}
+                                    countValue={null}
+                                    loading={segmentationLoading}
+                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
+                                    infoText={loyalInfoText}
                                 />
 
                                 <PromoMiniCard
-                                    title={customerMissingEmail?.title || "Missing Emails"}
-                                    Icon={AlertTriangle}
-                                    amountKey="missing_email"
-                                    amountValue={customerMissingEmail?.value}
+                                    title="Churned"
+                                    Icon={UserX}
+                                    amountKey="churned"
+                                    amountValue={churnedCount}
                                     countLabel={null}
                                     countValue={null}
-                                    loading={kpiLoading}
+                                    loading={segmentationLoading}
                                     formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                                />
-
-                                <PromoMiniCard
-                                    title={redFlags?.title || "Red Flags"}
-                                    Icon={Ban}
-                                    amountKey="red_flags"
-                                    amountValue={redFlags?.value}
-                                    countLabel={null}
-                                    countValue={null}
-                                    loading={kpiLoading}
-                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                                    currency={currency}
+                                    infoText={churnedInfoText}
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* ✅ Orders Snapshot -> orders */}
                 <div className="lg:col-span-6">
-                    <div className="bg-gradient-to-br from-rose-950 to-rose-600 rounded-xl shadow-lg p-6 relative overflow-hidden">
+                    <div className={`${GRADIENTS.users} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
 
                         <div className="relative z-10">
-                            <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center justify-between mb-20">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                    <FileText size={20} className="text-white" />
-                                    {orderSection?.title || "Orders Snapshot"}
+                                    <Users size={20} className="text-white" />
+                                    Users Snapshot
                                 </h3>
-
-                                <ArrowNavButton
-                                    onClick={() => {
-                                        setActiveTab?.("orders");
-                                    }}
-                                />
                             </div>
 
-                            <div className="mb-4">
-                                {kpiLoading ? (
-                                    <div className="mt-2">
-                                        <PulseScan />
-                                    </div>
-                                ) : (
-                                    <>
-                                        <p className="text-xs text-white/70 mt-1 tabular-nums">Total Orders</p>
-                                        <p className="text-4xl font-bold text-white tabular-nums">
-                                            {fmtValue({ key: "orders", value: ordOrders?.value, formatRoundedAmountWithCommas })}
-                                        </p>
-                                    </>
-                                )}
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-                                <PromoMiniCard
-                                    title={ordCancelWhatsapp?.title || "WhatsApp Cancellation"}
-                                    Icon={UserX}
-                                    amountKey="cancelled_by_whatsapp"
-                                    amountValue={ordCancelWhatsapp?.value}
-                                    countLabel={null}
-                                    countValue={null}
-                                    loading={kpiLoading}
-                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                                <UsersSourceCard
+                                    title="OMS/SFSC"
+                                    totalUsers={omsTotalUsers}
+                                    dormantUsers={omsDormantUsers}
+                                    loading={inactiveUsersLoading}
                                 />
-
-                                <PromoMiniCard
-                                    title={ordCancelEcom?.title || "Canceled By ECOM"}
-                                    Icon={Ban}
-                                    amountKey="cancel_order_cancel"
-                                    amountValue={ordCancelEcom?.value}
-                                    countLabel={null}
-                                    countValue={null}
-                                    loading={kpiLoading}
-                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                                />
-
-                                <PromoMiniCard
-                                    title={ordEditedEcom?.title || "Edited By ECOM"}
-                                    Icon={PencilLine}
-                                    amountKey="cancel_edited_reason"
-                                    amountValue={ordEditedEcom?.value}
-                                    countLabel={null}
-                                    countValue={null}
-                                    loading={kpiLoading}
-                                    formatRoundedAmountWithCommas={formatRoundedAmountWithCommas}
-                                />
+                                <UsersSourceCard title="SFCC" totalUsers={sfccTotalUsers} dormantUsers={sfccDormantUsers} loading={false} />
                             </div>
                         </div>
                     </div>
