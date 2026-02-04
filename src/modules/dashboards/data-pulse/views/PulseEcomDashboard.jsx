@@ -134,6 +134,15 @@ const PulseEcomDashboard = () => {
     const COLORS = DEFAULT_CHART_COLORS;
     const topRef = useRef(null);
 
+    const formatDate = (date) => {
+        if (!date) return "-";
+        return new Date(date).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        });
+    };
+
     const tabs = useMemo(
         () => [
             { id: "overview", label: "Overview", icon: LayoutGrid },
@@ -169,20 +178,22 @@ const PulseEcomDashboard = () => {
     }, []);
 
     const DateInfo = () => (
-        <div className="flex items-center font-bold text-black gap-2">
-            <Calendar size={13} />
+        <div className="flex items-center gap-2 text-base text-black">
+            <Calendar size={13}/>
             <span>
-                <span className="opacity-70">From:</span> {filters?.date_from || "-"}
-            </span>
-            <span className="opacity-40">—</span>
+       {formatDate(filters?.date_from)}
+    </span>
+            <span>—</span>
             <span>
-                <span className="opacity-70">To:</span> {filters?.date_to || "-"}
-            </span>
-            <span className="opacity-40">|</span>
+        {formatDate(filters?.date_to)}
+    </span>
+            <span>|</span>
             <span>
-                <span className="opacity-70">Website:</span> {filters?.country || "PK"}
-            </span>
+        <span>Website:</span> {filters?.country || "PK"}
+    </span>
         </div>
+
+
     );
 
     const overviewEnabled = activeTab === "overview";

@@ -1,4 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
 import {
     MapPin,
     Truck,
@@ -9,6 +11,7 @@ import {
     AlertTriangle,
     TrendingUp,
     Wallet,
+    Info,
 } from "lucide-react";
 import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 
@@ -25,7 +28,65 @@ const NF_MONEY0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 const fmtInt = (v) => NF0.format(toNum(v));
 const fmtMoney0 = (v) => `PKR ${NF_MONEY0.format(toNum(v))}`;
 
-const CardShell = ({ title, icon: Icon, rightSlot, gradient, children }) => (
+function InfoHover({ text, widthClass = "w-72" }) {
+    const ref = useRef(null);
+    const [open, setOpen] = useState(false);
+    const [pos, setPos] = useState({ top: 0, left: 0 });
+
+    useEffect(() => {
+        if (!open) return;
+
+        const update = () => {
+            const el = ref.current;
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            setPos({
+                top: r.bottom + 10,
+                left: r.left + r.width / 2,
+            });
+        };
+
+        update();
+        window.addEventListener("scroll", update, true);
+        window.addEventListener("resize", update);
+        return () => {
+            window.removeEventListener("scroll", update, true);
+            window.removeEventListener("resize", update);
+        };
+    }, [open]);
+
+    if (!text) return null;
+
+    return (
+        <span
+            ref={ref}
+            className="inline-flex items-center"
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+        >
+            <Info size={16} className="text-white/80 hover:text-white" />
+
+            {open && typeof document !== "undefined"
+                ? createPortal(
+                    <div
+                        className={[
+                            "fixed -translate-x-1/2",
+                            widthClass,
+                            "rounded-lg bg-black/90 text-white text-xs px-3 py-2 shadow-lg backdrop-blur-sm",
+                            "z-[999999]",
+                            "pointer-events-none",
+                        ].join(" ")}
+                        style={{ top: pos.top, left: pos.left }}
+                    >
+                        {text}
+                    </div>,
+                    document.body
+                )
+                : null}
+        </span>
+    );
+}
+const CardShell = ({ title, icon: Icon, infoText, rightSlot, gradient, children }) => (
     <div className={`rounded-xl shadow-lg p-5 relative overflow-hidden bg-gradient-to-br ${gradient} h-full`}>
         <div className="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full -mr-16 -mt-16" />
         <div className="relative z-10">
@@ -33,6 +94,7 @@ const CardShell = ({ title, icon: Icon, rightSlot, gradient, children }) => (
                 <h4 className="text-base md:text-lg font-bold text-white flex items-center gap-2">
                     {Icon ? <Icon size={20} className="text-white" /> : null}
                     {title}
+                    {infoText ? <InfoHover text={infoText} /> : null}
                 </h4>
 
                 {rightSlot ?? (
@@ -287,7 +349,9 @@ const ReturnsLocationWise = ({
 
                 {/* ✅ Pending Punching — SNAPSHOT ONLY (does NOT flicker on date change) */}
                 <div className="lg:col-span-6">
-                    <CardShell title="Pending Punching" icon={Clock} gradient="from-amber-950 to-amber-500">
+                    <CardShell title="Pending Punching" icon={Clock} gradient="from-amber-950 to-amber-500"
+                               infoText="Returns received in warehouse but not punched."
+                    >
                         <div className="mb-4">
                             {pendingPunchingLoading ? (
                                 <PulseScan />

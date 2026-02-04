@@ -110,7 +110,7 @@ function InfoHover({ text, widthClass = "w-72" }) {
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
         >
-      <Info size={16} className="text-white/80 hover:text-white" />
+            <Info size={16} className="text-white/80 hover:text-white" />
 
             {open && typeof document !== "undefined"
                 ? createPortal(
@@ -129,7 +129,7 @@ function InfoHover({ text, widthClass = "w-72" }) {
                     document.body
                 )
                 : null}
-    </span>
+        </span>
     );
 }
 
@@ -208,63 +208,93 @@ function PromoMiniCard({
 const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
     // ✅ country only (no dates)
     const country = useMemo(() => String(filters?.country || "PK").toUpperCase(), [filters?.country]);
+
+    // ✅ If country is NOT PK => show 0 values everywhere
+    const isPk = country === "PK";
+
     const customerFilters = useMemo(() => ({ country }), [country]);
+
+    // ✅ IMPORTANT: disable API calls when country != PK (prevents showing old data)
+    const hookEnabled = !!enabled && isPk;
 
     // ✅ KPI call (NO date filters)
     const {
         data: kpiRespRaw,
-        isLoading: kpiLoading,
+        isLoading: kpiLoadingRaw,
         refetch: refetchKpi,
     } = useFetchWithFilters("/dashboard/data-pulse/ecom/kpis/", customerFilters, {
-        enabled: !!enabled,
+        enabled: hookEnabled,
         ...(cache || {}),
     });
 
     // Segmentation summary (no date)
     const {
         data: segmentationResRaw,
-        isLoading: segmentationLoading,
+        isLoading: segmentationLoadingRaw,
         refetch: refetchSeg,
     } = useFetchWithFilters("/dashboard/data-pulse/ecom/customers/segmentation/summary/", customerFilters, {
-        enabled: !!enabled,
+        enabled: hookEnabled,
         ...(cache || {}),
     });
 
     // Habitual endpoints (no date)
     const {
         data: habitualSummaryResRaw,
-        isLoading: habitualSummaryLoading,
+        isLoading: habitualSummaryLoadingRaw,
         refetch: refetchHabitualSummary,
     } = useFetchWithFilters("/dashboard/data-pulse/ecom/customers/habitual/summary/", customerFilters, {
-        enabled: !!enabled,
+        enabled: hookEnabled,
         ...(cache || {}),
     });
 
     const {
         data: habitualTopResRaw,
-        isLoading: habitualTopLoading,
+        isLoading: habitualTopLoadingRaw,
         refetch: refetchHabitualTop,
     } = useFetchWithFilters("/dashboard/data-pulse/ecom/customers/habitual/top/", customerFilters, {
-        enabled: !!enabled,
+        enabled: hookEnabled,
         ...(cache || {}),
     });
 
-    // ✅ Make sure data always updates when country changes (even with long staleTime)
+    // ✅ Only refetch when PK (otherwise we want stable zeros)
     useEffect(() => {
         if (!enabled) return;
+        if (!isPk) return;
         refetchKpi?.();
         refetchSeg?.();
         refetchHabitualSummary?.();
         refetchHabitualTop?.();
-    }, [enabled, country, refetchKpi, refetchSeg, refetchHabitualSummary, refetchHabitualTop]);
+    }, [enabled, isPk, country, refetchKpi, refetchSeg, refetchHabitualSummary, refetchHabitualTop]);
 
-    const kpiResp = useMemo(() => unwrap(kpiRespRaw), [kpiRespRaw]);
-    const segmentationRes = useMemo(() => unwrap(segmentationResRaw), [segmentationResRaw]);
-    const habitualSummaryRes = useMemo(() => unwrap(habitualSummaryResRaw), [habitualSummaryResRaw]);
-    const habitualTopRes = useMemo(() => unwrap(habitualTopResRaw), [habitualTopResRaw]);
+    // ✅ unwrap only when PK (otherwise ignore any stale cached payload)
+    const kpiResp = useMemo(() => (isPk ? unwrap(kpiRespRaw) : {}), [isPk, kpiRespRaw]);
+    const segmentationRes = useMemo(() => (isPk ? unwrap(segmentationResRaw) : {}), [isPk, segmentationResRaw]);
+    const habitualSummaryRes = useMemo(
+        () => (isPk ? unwrap(habitualSummaryResRaw) : {}),
+        [isPk, habitualSummaryResRaw]
+    );
+    const habitualTopRes = useMemo(() => (isPk ? unwrap(habitualTopResRaw) : {}), [isPk, habitualTopResRaw]);
+
+    // ✅ force loading false when not PK
+    const kpiLoading = isPk ? kpiLoadingRaw : false;
+    const segmentationLoading = isPk ? segmentationLoadingRaw : false;
+    const habitualSummaryLoading = isPk ? habitualSummaryLoadingRaw : false;
+    const habitualTopLoading = isPk ? habitualTopLoadingRaw : false;
 
     // ---- Customers Snapshot (from KPI sections) ----
     const customerSnapshot = useMemo(() => {
+        if (!isPk) {
+            return {
+                title: "Customers",
+                items: [
+                    { key: "total_customers", title: "Total Customers", value: 0 },
+                    { key: "habitual_returns", title: "Habitual Returns", value: 0 },
+                    { key: "missing_email", title: "Missing Emails", value: 0 },
+                    { key: "red_flags", title: "Red Flags", value: 0 },
+                ],
+            };
+        }
+
         const sections = kpiResp?.data?.sections ?? kpiResp?.sections ?? [];
         const sec =
             (Array.isArray(sections) && sections.find((s) => s?.key === "customers_section")) ||
@@ -280,24 +310,30 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
         if (!title) title = "Customers";
 
         return { title, items };
-    }, [kpiResp]);
+    }, [isPk, kpiResp]);
 
     const customerItems = customerSnapshot.items || [];
     const customerMap = useMemo(() => itemsToMap(customerItems), [customerItems]);
-    const topCustomerItem = customerMap.total_customers || customerMap.customers || customerItems[0] || null;
+
+    const topCustomerItem = useMemo(() => {
+        if (!isPk) return customerItems[0] || { key: "total_customers", title: "Total Customers", value: 0 };
+        return customerMap.total_customers || customerMap.customers || customerItems[0] || null;
+    }, [isPk, customerItems, customerMap]);
 
     const miniCustomerItems = useMemo(() => {
         const topKey = topCustomerItem?.key;
         return (Array.isArray(customerItems) ? customerItems : [])
             .filter((x) => x?.key && x.key !== topKey)
-            .slice(0, 3);
-    }, [customerItems, topCustomerItem]);
+            .slice(0, 3)
+            .map((x) => (isPk ? x : { ...x, value: 0 })); // ✅ force 0 when not PK
+    }, [isPk, customerItems, topCustomerItem]);
 
     // ---- Segmentation ----
     const segmentationRows = useMemo(() => {
+        if (!isPk) return [];
         const rows = segmentationRes?.rows ?? segmentationRes?.data?.rows;
         return Array.isArray(rows) ? rows : [];
-    }, [segmentationRes]);
+    }, [isPk, segmentationRes]);
 
     const segmentationTotal = useMemo(
         () => segmentationRows.reduce((a, r) => a + (Number(r?.customer_count) || 0), 0),
@@ -305,6 +341,16 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
     );
 
     const segmentationMini = useMemo(() => {
+        if (!isPk) {
+            // ✅ default 4 tiles with 0 when not PK
+            return [
+                { key: "Loyal", title: "Loyal", value: 0, subLabel: "Share", subValue: "0.00%" },
+                { key: "Churned", title: "Churned", value: 0, subLabel: "Share", subValue: "0.00%" },
+                { key: "New", title: "New", value: 0, subLabel: "Share", subValue: "0.00%" },
+                { key: "Returning", title: "Returning", value: 0, subLabel: "Share", subValue: "0.00%" },
+            ];
+        }
+
         const safe = Array.isArray(segmentationRows) ? segmentationRows : [];
         return safe
             .slice()
@@ -322,10 +368,18 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                     subValue: `${share.toFixed(2)}%`,
                 };
             });
-    }, [segmentationRows, segmentationTotal]);
+    }, [isPk, segmentationRows, segmentationTotal]);
 
-    const ratioBuckets = habitualSummaryRes?.ratio_buckets || habitualSummaryRes?.data?.ratio_buckets || [];
-    const topHabitualRows = habitualTopRes?.rows || habitualTopRes?.data?.rows || [];
+    // ---- Habitual ----
+    const ratioBuckets = useMemo(() => {
+        if (!isPk) return [];
+        return habitualSummaryRes?.ratio_buckets || habitualSummaryRes?.data?.ratio_buckets || [];
+    }, [isPk, habitualSummaryRes]);
+
+    const topHabitualRows = useMemo(() => {
+        if (!isPk) return [];
+        return habitualTopRes?.rows || habitualTopRes?.data?.rows || [];
+    }, [isPk, habitualTopRes]);
 
     const mergedCount =
         (kpiLoading ? 3 : miniCustomerItems.length) + (segmentationLoading ? 4 : segmentationMini.length);
@@ -360,12 +414,14 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                                 ) : (
                                     <>
                                         <p className="text-xs text-white/70 mt-1 tabular-nums">
-                                            {topCustomerItem?.title || topCustomerItem?.label || toLabel(topCustomerItem?.key)}
+                                            {topCustomerItem?.title ||
+                                                topCustomerItem?.label ||
+                                                toLabel(topCustomerItem?.key)}
                                         </p>
                                         <p className="text-4xl font-bold text-white tabular-nums">
                                             {fmtValue({
                                                 key: topCustomerItem?.key || "value",
-                                                value: topCustomerItem?.value,
+                                                value: isPk ? topCustomerItem?.value : 0, // ✅ force 0 when not PK
                                                 formatAmount,
                                             })}
                                         </p>
@@ -399,12 +455,12 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                                             title={title}
                                             Icon={Users}
                                             valueKey={it?.key || "value"}
-                                            value={it?.value}
+                                            value={isPk ? it?.value : 0} // ✅ force 0 when not PK
                                             subLabel={null}
                                             subValue={null}
-                                            loading={kpiLoading}
+                                            loading={false}
                                             formatAmount={formatAmount}
-                                            infoText={infoText} // ✅ Habitual Returns / High Returners will show when matched
+                                            infoText={infoText}
                                         />
                                     );
                                 })}
@@ -424,18 +480,18 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                                         );
                                     }
 
-                                    const infoText = getInfoText({ key: r?.key, title: r?.title }); // ✅ Loyal + Churned
+                                    const infoText = getInfoText({ key: r?.key, title: r?.title });
 
                                     return (
                                         <PromoMiniCard
-                                            key={r.key}
+                                            key={r.key || idx}
                                             title={r.title}
                                             Icon={PieChart}
                                             valueKey="customer_count"
-                                            value={r.value}
+                                            value={isPk ? r.value : 0} // ✅ force 0 when not PK
                                             subLabel={r.subLabel}
-                                            subValue={r.subValue}
-                                            loading={segmentationLoading}
+                                            subValue={isPk ? r.subValue : "0.00%"} // ✅ force share 0
+                                            loading={false}
                                             formatAmount={formatAmount}
                                             infoText={infoText}
                                         />
@@ -446,14 +502,22 @@ const EcomCustomersTab = ({ enabled, filters, cache, formatAmount }) => {
                     </div>
                 </div>
 
-                {/* ---- Ratio component (as-is) ---- */}
-                <EcomHabitualRatioGradientCards buckets={ratioBuckets} loading={habitualSummaryLoading} formatAmount={formatAmount} />
+                {/* ---- Ratio component ---- */}
+                <EcomHabitualRatioGradientCards
+                    buckets={ratioBuckets} // ✅ [] when not PK
+                    loading={habitualSummaryLoading}
+                    formatAmount={formatAmount}
+                />
 
-                {/* ---- Top habitual returns (as-is) ---- */}
+                {/* ---- Top habitual returns ---- */}
                 {!topHabitualRows?.length && !habitualTopLoading ? (
-                    <EmptyState />
+                    <EmptyState label={isPk ? "No Data Available" : "Not available for this country"} />
                 ) : (
-                    <TopHabitualReturns rows={topHabitualRows} meta={habitualTopRes?.meta} loading={habitualTopLoading} />
+                    <TopHabitualReturns
+                        rows={topHabitualRows}
+                        meta={habitualTopRes?.meta}
+                        loading={habitualTopLoading}
+                    />
                 )}
             </div>
         </div>
