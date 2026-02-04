@@ -28,6 +28,7 @@ import {
     RotateCcw,
     Truck,
     Undo,
+    Clock
 } from "lucide-react";
 
 import { formatRoundedAmountWithCommas } from "@helpers/formatters.js";
@@ -44,6 +45,9 @@ import EcomOverview from "@modules/dashboards/data-pulse/components/ecom/EcomOve
 import EcomOrdersTab from "@modules/dashboards/data-pulse/components/ecom/EcomOrdersTab.jsx";
 import EcomPromosTab from "@modules/dashboards/data-pulse/components/ecom/EcomPromosTab.jsx";
 import EcomCustomersTab from "@modules/dashboards/data-pulse/components/ecom/EcomCustomersTab.jsx";
+
+// ✅ NEW: import your lead-time component
+import ReturnsLeadTime from "@modules/dashboards/data-pulse/components/ecom/ReturnsLeadTime.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -165,7 +169,7 @@ const PulseEcomDashboard = () => {
     }, []);
 
     const DateInfo = () => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center font-bold text-black gap-2">
             <Calendar size={13} />
             <span>
                 <span className="opacity-70">From:</span> {filters?.date_from || "-"}
@@ -176,7 +180,7 @@ const PulseEcomDashboard = () => {
             </span>
             <span className="opacity-40">|</span>
             <span>
-                <span className="opacity-70">Country:</span> {filters?.country || "PK"}
+                <span className="opacity-70">Website:</span> {filters?.country || "PK"}
             </span>
         </div>
     );
@@ -192,6 +196,7 @@ const PulseEcomDashboard = () => {
     const RETURNS_TABS = [
         { key: "cancelled", label: "Dispatch", icon: Truck },
         { key: "location", label: "Returns", icon: Undo },
+        { key: "lead_time", label: "Lead Time", icon: Clock },
     ];
     const [activeReturnsTab, setActiveReturnsTab] = useState("cancelled");
 
@@ -255,6 +260,14 @@ const PulseEcomDashboard = () => {
             pendingPunchingSnapshotFilters,
             { enabled: returnsEnabled && activeReturnsTab === "location", ...LONG_CACHE }
         );
+
+    // ✅ NEW: Lead Time data fetch (if your component needs API data)
+    // If ReturnsLeadTime does its own fetching, you can delete this.
+    const { data: returnsLeadTimeRes, isLoading: returnsLeadTimeLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/lead-time/",
+        filters,
+        { enabled: returnsEnabled && activeReturnsTab === "lead_time", ...LONG_CACHE }
+    );
 
     const codIssues = codIssuesResp?.rows || [];
     const missingEmails = missingEmailResp?.rows || [];
@@ -414,6 +427,17 @@ const PulseEcomDashboard = () => {
                                     filters={filters}
                                     enabled={returnsEnabled && activeReturnsTab === "cancelled"}
                                     cache={LONG_CACHE}
+                                />
+                            )}
+
+                            {/* ✅ NEW: Lead Time tab content */}
+                            {activeReturnsTab === "lead_time" && (
+                                <ReturnsLeadTime
+                                    enabled={returnsEnabled && activeReturnsTab === "lead_time"}
+                                    filters={filters}
+                                    cache={LONG_CACHE}
+                                    data={returnsLeadTimeRes}
+                                    loading={returnsLeadTimeLoading}
                                 />
                             )}
                         </div>

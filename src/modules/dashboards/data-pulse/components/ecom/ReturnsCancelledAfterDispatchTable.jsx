@@ -118,17 +118,12 @@ function PendingTotalsPanel({ loading, totalOrders, totalQty }) {
                 <PulseScan />
             ) : (
                 <>
-                    {/* Heading: slightly smaller */}
-                    <p className="text-xs md:text-sm font-semibold text-white/90">
-                        Total Orders
-                    </p>
+                    <p className="text-xs md:text-sm font-semibold text-white/90">Total Orders</p>
 
-                    {/* Total: reduced size */}
                     <p className="mt-2 text-4xl md:text-5xl font-extrabold text-white tabular-nums leading-none">
                         {nf0.format(totalOrders)}
                     </p>
 
-                    {/* Total Qty: label + value balanced */}
                     <div className="mt-4 flex items-baseline justify-between gap-3">
                         <p className="text-xs md:text-sm font-semibold text-white/90">Total Qty</p>
                         <p className="text-sm md:text-lg font-bold text-white tabular-nums">
@@ -178,9 +173,9 @@ function SimpleList({ rows, total, loading, getKey, getName, getCount, valueForm
                             </div>
 
                             <div className="flex items-center gap-4 shrink-0 tabular-nums">
-                <span className="text-sm text-white/95 font-semibold">
-                  {valueFormatter ? valueFormatter(cnt) : nf0.format(cnt)}
-                </span>
+                                <span className="text-sm text-white/95 font-semibold">
+                                    {valueFormatter ? valueFormatter(cnt) : nf0.format(cnt)}
+                                </span>
                                 <span className="text-xs text-white/70">{share.toFixed(1)}%</span>
                             </div>
                         </div>
@@ -222,9 +217,10 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
         { enabled, ...cache }
     );
 
+    // ✅ FIX: apply filters (country) on bucket endpoint too
     const { data: pendingBucketResp, isLoading: pendingBucketLoading } = useFetchWithFilters(
         pendingBucketEndpoint,
-        {},
+        { country: filters?.country || "PK" }, // ✅ country filter applied
         { enabled, ...cache }
     );
 
@@ -238,11 +234,17 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
     const pendingSummary = pendingPayload?.summary || {};
 
     const pendingBucketSummary = pendingBucketPayload?.summary || {};
-    const pendingBucketRows = useMemo(() => (pendingBucketPayload?.rows || []).slice(), [pendingBucketPayload]);
+    const pendingBucketRows = useMemo(
+        () => (pendingBucketPayload?.rows || []).slice(),
+        [pendingBucketPayload]
+    );
 
     const courierRows = useMemo(() => (courierPayload?.courier_rows || []).slice(), [courierPayload]);
     const locationRows = useMemo(() => (locationPayload?.location_rows || []).slice(), [locationPayload]);
-    const pendingRows = useMemo(() => (pendingPayload?.pending_location_rows || []).slice(), [pendingPayload]);
+    const pendingRows = useMemo(
+        () => (pendingPayload?.pending_location_rows || []).slice(),
+        [pendingPayload]
+    );
 
     const dispatchLoading = courierLoading || locationLoading;
     const pendingListLoading = pendingLoading;
@@ -265,7 +267,6 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
         courierRows.reduce((s, r) => s + toNum(r.total_qty), 0) ||
         locationRows.reduce((s, r) => s + toNum(r.total_qty), 0);
 
-    // ✅ NEW: Avg Qty (Qty per Order)
     const dispatchAvgQty = dispatchTotalOrders > 0 ? dispatchTotalQty / dispatchTotalOrders : 0;
 
     const pendingTotalOrdersRaw = toNum(pendingSummary?.pending_total_orders);
@@ -355,7 +356,6 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
                 <div className="lg:col-span-6">
                     <CardShell title="Total Dispatch" icon={Truck} gradient={GRADIENTS.dispatched}>
-                        {/* ✅ 2 cards top, Avg Qty centered below */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                             <MiniKpiCard
                                 title="Orders"
@@ -370,7 +370,6 @@ const ReturnsCancelledAfterDispatchTable = ({ filters, enabled = true, cache = {
                                 loading={dispatchLoading}
                             />
 
-                            {/* Centered third card */}
                             <div className="md:col-span-2 flex justify-center">
                                 <div className="w-full md:w-[58%]">
                                     <MiniKpiCard
