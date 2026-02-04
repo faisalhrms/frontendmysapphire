@@ -22,7 +22,7 @@ import {
     TrendingDown,
     Gift,
     Boxes,
-    Repeat
+    Repeat, Store, ListChecks
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
 import FormInput from "@components/form/FormInput.jsx";
@@ -36,6 +36,9 @@ import RetailReturns from "@modules/dashboards/data-pulse/components/retail/Reta
 import RetailInventory from "@modules/dashboards/data-pulse/components/retail/RetailInventory.jsx";
 import RetailExchanges from "@modules/dashboards/data-pulse/components/retail/RetailExchanges.jsx";
 import {useSearchParams} from "react-router-dom";
+import VoidTransactionsTable from "@modules/dashboards/data-pulse/components/retail/VoidTransactionsTable.jsx";
+import SuspendedTransactionsTable
+    from "@modules/dashboards/data-pulse/components/retail/SuspendedTransactionsTable.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -210,12 +213,19 @@ function normalizeMetricRows(metricKey, rows) {
             }));
 
         case "credit_memo_top":
+            return safe.map((r) => ({
+                name: r.CREATEDINSTOREID ?? "Unknown",
+                value: Number(r.AMOUNT) || 0,
+                sub: `Entry: ${r.ENTRYID ?? "-"} • Txn: ${r.CREATEDBYTRANSACTIONID ?? "-"}`,
+            }));
+
         case "credit_memo_redeemed_top":
             return safe.map((r) => ({
                 name: r.WAREHOUSENAME ?? "Unknown",
                 value: Number(r.AppliedAmount) || 0,
                 sub: `Entry: ${r.EntryId ?? "-"} • Receipt: ${r.AppliedByReceiptId ?? "-"}`,
             }));
+
 
         case "void_by_store":
         case "suspended_by_store":
@@ -335,25 +345,22 @@ function getDetailTableConfig(metricKey) {
             return {
                 title: "Detailed Credit Memos Issued",
                 columns: [
-                    { key: "Date", label: "Date", mono: true },
-                    { key: "AppliedInStoreId", label: "Store ID", mono: true, colorClass: "text-blue-600" },
-                    { key: "WAREHOUSENAME", label: "Store Name", strong: true },
-                    { key: "EntryId", label: "Entry ID", mono: true },
-                    { key: "AppliedDate", label: "Applied Date", mono: true },
-                    { key: "AppliedByReceiptId", label: "Receipt", mono: true },
-                    { key: "AppliedByTransactionId", label: "Transaction #", mono: true },
+                    { key: "ENTRYID", label: "Entry ID", mono: true },
+                    { key: "CREATEDBYTRANSACTIONID", label: "Created By Txn", mono: true },
+                    { key: "CREATEDBYSTAFFID", label: "Staff ID", mono: true },
+                    { key: "CREATEDINSTOREID", label: "Store ID", mono: true, colorClass: "text-blue-600" },
                     {
-                        key: "AppliedAmount",
-                        label: "Discounted Amount",
-                        align: "right",
-                        strong: true,
-                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.AppliedAmount)}`,
+                        key: "TRANSACTIONDATE",
+                        label: "Transaction Date",
+                        mono: true,
+                        render: (r) => (r.TRANSACTIONDATE ? String(r.TRANSACTIONDATE).slice(0, 10) : "-"),
                     },
                     {
-                        key: "Total_order_Amount",
-                        label: "Order Amount",
+                        key: "AMOUNT",
+                        label: "Amount",
                         align: "right",
-                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.Total_order_Amount)}`,
+                        strong: true,
+                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.AMOUNT)}`,
                     },
                 ],
             };
@@ -371,17 +378,11 @@ function getDetailTableConfig(metricKey) {
                     { key: "AppliedByTransactionId", label: "Transaction #", mono: true },
                     {
                         key: "AppliedAmount",
-                        label: "Discounted Amount",
+                        label: "Applied Amount",
                         align: "right",
                         strong: true,
                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.AppliedAmount)}`,
-                    },
-                    {
-                        key: "Total_order_Amount",
-                        label: "Order Amount",
-                        align: "right",
-                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.Total_order_Amount)}`,
-                    },
+                    }
                 ],
             };
 
@@ -572,6 +573,16 @@ const RetailPulseDashboard = () => {
     );
 
     const showInitialLoading = false;
+
+    const riskTabs = useMemo(
+        () => [
+            { id: "by_store", label: "By Store (Top 10)", icon: Store },
+            { id: "by_transactions", label: "By Transactions", icon: ListChecks },
+        ],
+        []
+    );
+
+    const [riskSubTab, setRiskSubTab] = useState("by_store");
 
     return (
         <div className="space-y-6 pb-8 pt-6">
@@ -794,47 +805,90 @@ const RetailPulseDashboard = () => {
 
                     {/* ------------------ RISK ------------------ */}
                     {activeTab === "risk" && (
-                        <div className="space-y-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <SectionCard title="Voids by Store" icon={Ban}>
-                                    {voidLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(voidResp?.rows) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <SimpleTable
-                                            columns={getDetailTableConfig("void_by_store").columns}
-                                            rows={voidResp.rows}
-                                        />
-                                    )}
-                                </SectionCard>
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                                <div className="flex flex-wrap gap-2">
+                                    {riskTabs.map((m) => {
+                                        const Icon = m.icon;
+                                        const active = riskSubTab === m.id;
 
-                                <SectionCard title="Suspended Transactions" icon={PauseCircle}>
-                                    {suspLoading ? (
-                                        <LoadingSpinner/>
-                                    ) : !isNonEmptyArray(suspResp?.rows) ? (
-                                        <EmptyState/>
-                                    ) : (
-                                        <SimpleTable
-                                            columns={getDetailTableConfig("suspended_by_store").columns}
-                                            rows={suspResp.rows}
-                                        />
-                                    )}
-                                </SectionCard>
+                                        return (
+                                            <button
+                                                key={m.id}
+                                                onClick={() => setRiskSubTab(m.id)}
+                                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                    active
+                                                        ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                        : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                                }`}
+                                            >
+                                                <Icon size={18} />
+                                                <span className="font-medium whitespace-nowrap">{m.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
+                            <div className="p-6">
+                                {riskSubTab === "by_store" && (
+                                    <div className="space-y-6">
+                                        <div className="space-y-6">
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                                <SectionCard title="Voids by Store" icon={Ban}>
+                                                    {voidLoading ? (
+                                                        <LoadingSpinner/>
+                                                    ) : !isNonEmptyArray(voidResp?.rows) ? (
+                                                        <EmptyState/>
+                                                    ) : (
+                                                        <SimpleTable
+                                                            columns={getDetailTableConfig("void_by_store").columns}
+                                                            rows={voidResp.rows}
+                                                        />
+                                                    )}
+                                                </SectionCard>
 
-                            <SectionCard title="After Closing Transactions" icon={ShieldAlert}>
-                                {acLoading ? (
-                                    <LoadingSpinner/>
-                                ) : !isNonEmptyArray(acResp?.rows) ? (
-                                    <EmptyState/>
-                                ) : (
-                                    <SimpleTable
-                                        columns={getDetailTableConfig("after_close_by_store").columns}
-                                        rows={acResp.rows}
-                                    />
+                                                <SectionCard title="Suspended Transactions" icon={PauseCircle}>
+                                                    {suspLoading ? (
+                                                        <LoadingSpinner/>
+                                                    ) : !isNonEmptyArray(suspResp?.rows) ? (
+                                                        <EmptyState/>
+                                                    ) : (
+                                                        <SimpleTable
+                                                            columns={getDetailTableConfig("suspended_by_store").columns}
+                                                            rows={suspResp.rows}
+                                                        />
+                                                    )}
+                                                </SectionCard>
+                                            </div>
+
+                                            <SectionCard title="After Closing Transactions" icon={ShieldAlert}>
+                                                {acLoading ? (
+                                                    <LoadingSpinner/>
+                                                ) : !isNonEmptyArray(acResp?.rows) ? (
+                                                    <EmptyState/>
+                                                ) : (
+                                                    <SimpleTable
+                                                        columns={getDetailTableConfig("after_close_by_store").columns}
+                                                        rows={acResp.rows}
+                                                    />
+                                                )}
+                                            </SectionCard>
+                                        </div>
+                                    </div>
                                 )}
-                            </SectionCard>
+
+                                {riskSubTab === "by_transactions" && (
+                                    <div className="grid grid-cols-1 gap-6">
+                                        <SectionCard title="Void Transactions (Lines)" icon={Ban}>
+                                            <VoidTransactionsTable filters={filters}/>
+                                        </SectionCard>
+
+                                        <SectionCard title="Suspended Transactions (Lines)" icon={PauseCircle}>
+                                            <SuspendedTransactionsTable filters={filters}/>
+                                        </SectionCard>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </>
