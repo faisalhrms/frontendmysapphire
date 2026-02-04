@@ -294,22 +294,25 @@ const EcomOverview = ({
     const segmentationPayload = useMemo(() => unwrapPayload(segmentationRes), [segmentationRes]);
     const segmentationRows = Array.isArray(segmentationPayload?.rows) ? segmentationPayload.rows : [];
 
+    const isPK = useMemo(
+        () => String(filters?.country || "PK").toUpperCase() === "PK",
+        [filters?.country]
+    );
     const isINT = useMemo(
         () => String(filters?.country || "PK").toUpperCase() === "INT",
         [filters?.country]
     );
-
     const loyalCount = useMemo(() => {
-        if (isINT) return 0;
+        if (!isPK) return 0;
         const row = segmentationRows.find((r) => String(r?.customer_type || "").toLowerCase() === "loyal");
         return toNum(row?.customer_count);
-    }, [segmentationRows, isINT]);
+    }, [segmentationRows, isPK]);
 
     const churnedCount = useMemo(() => {
-        if (isINT) return 0;
+        if (!isPK) return 0;
         const row = segmentationRows.find((r) => String(r?.customer_type || "").toLowerCase() === "churned");
         return toNum(row?.customer_count);
-    }, [segmentationRows, isINT]);
+    }, [segmentationRows, isPK]);
 
     const loyalInfoText = `Criteria: 3 or more orders in past 6 months.`;
     const churnedInfoText = `Criteria: No order in past 6 months.`;
@@ -901,7 +904,7 @@ const EcomOverview = ({
                                         <p className="text-4xl font-bold text-white tabular-nums">
                                             {fmtValue({
                                                 key: "total_customers",
-                                                value: totalCustomers?.value,
+                                                value: isPK ? totalCustomers?.value : 0,
                                                 formatRoundedAmountWithCommas,
                                                 currency,
                                             })}
@@ -944,7 +947,7 @@ const EcomOverview = ({
 
                                     Icon={RotateCcw}
                                     amountKey="habitual_returns"
-                                    amountValue={isINT ? 0 : habitualReturns?.value}
+                                    amountValue={isPK ? habitualReturns?.value : 0}
                                     countLabel={null}
                                     countValue={null}
                                     loading={kpiLoading}
