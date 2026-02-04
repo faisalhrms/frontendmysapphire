@@ -601,10 +601,6 @@ const RetailPulseDashboard = () => {
                                 Retail Data Pulse
                             </h1>
 
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Top 10 signals for the selected date range.
-                            </p>
-
                             {/* Range from filters (no meta) */}
                             <div
                                 className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] font-semibold text-gray-500 dark:text-gray-400">
