@@ -581,7 +581,9 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <BadgePercent size={20} className="text-white" />
-                                    Discount Snapshot
+                                    Discount
+                                    <InfoHover text="Discounts redeemed within applied date range." />
+
                                 </h3>
                                 <ArrowNavButton onClick={() => setActiveTab?.("promos")} />
                             </div>
@@ -764,7 +766,7 @@ const EcomOverview = ({
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                                 <KpiMiniCard
-                                    title="Dispatch Orders"
+                                    title="Dispatched Orders"
                                     Icon={Boxes}
                                     value={NF0.format(dispatchedOrders)}
                                     loading={dispatchSummaryLoading}

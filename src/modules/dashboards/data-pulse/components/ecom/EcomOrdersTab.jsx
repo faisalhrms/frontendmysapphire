@@ -7,10 +7,10 @@ import {
     Receipt,
     ArrowUpRight,
     Users,
-    UserX,
     Ban,
     PencilLine,
     MessageCircle,
+    Truck, // ✅ NEW for Cancel After Dispatch
 } from "lucide-react";
 import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 import { formatRoundedAmountWithCommas } from "@helpers/formatters.js";
@@ -104,14 +104,7 @@ function buildOrderSnapshotMap(kpiResp) {
     return { orderSection, orderMap: m };
 }
 
-function OrderActionMiniCard({
-                                 title,
-                                 Icon,
-                                 orders,
-                                 amount,
-                                 currency,
-                                 loading,
-                             }) {
+function OrderActionMiniCard({ title, Icon, orders, amount, currency, loading }) {
     return (
         <div className="bg-white/10 rounded-xl shadow-lg p-5 border border-white/10 backdrop-blur-sm h-full">
             <div className="flex items-center gap-2 text-sm font-semibold text-white/90">
@@ -144,12 +137,7 @@ function OrderActionMiniCard({
     );
 }
 
-function OrdersSnapshotCard({
-                                currency,
-                                loading,
-                                totalOrders,
-                                cards,
-                            }) {
+function OrdersSnapshotCard({ currency, loading, totalOrders, cards }) {
     return (
         <div className={`${GRADIENTS.orders} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
@@ -177,7 +165,8 @@ function OrdersSnapshotCard({
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+                {/* ✅ NOW 5 cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
                     {cards.map((c) => (
                         <OrderActionMiniCard
                             key={c.key}
@@ -227,6 +216,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
 
     const ordOrders = orderMap.orders; // total orders
     const ordCancelWhatsapp = orderMap.cancelled_by_whatsapp;
+    const ordCancelAfterDispatch = orderMap.cancel_after_dispatch; // ✅ NEW
     const ordCancelEcom = orderMap.cancel_order_cancel;
     const ordEditedEcom = orderMap.cancel_edited_reason;
 
@@ -252,7 +242,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
         };
     }, [ordersOnBehalfResp, ordersOnBehalf]);
 
-    // ✅ New first row: single snapshot card with 4 mini cards
+    // ✅ Snapshot row: NOW 5 mini cards
     const snapshotCards = useMemo(() => {
         return [
             {
@@ -260,8 +250,15 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
                 title: "WhatsApp Cancellation",
                 Icon: MessageCircle,
                 orders: toNum(ordCancelWhatsapp?.value),
-                // if backend gives amount in KPI item, we’ll use it, else 0
                 amount: pickItemAmount(ordCancelWhatsapp),
+                loading: kpiLoading,
+            },
+            {
+                key: "cancel_after_dispatch",
+                title: "Canceled After Dispatch",
+                Icon: Truck,
+                orders: toNum(ordCancelAfterDispatch?.value),
+                amount: pickItemAmount(ordCancelAfterDispatch),
                 loading: kpiLoading,
             },
             {
@@ -291,6 +288,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
         ];
     }, [
         ordCancelWhatsapp,
+        ordCancelAfterDispatch,
         ordCancelEcom,
         ordEditedEcom,
         ordersOnBehalfSummary,
@@ -317,7 +315,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
 
     return (
         <div className="space-y-6">
-            {/* ✅ FIRST ROW (UPDATED AS YOU ASKED): Single card + 4 mini cards */}
+            {/* ✅ FIRST ROW: Single card + 5 mini cards */}
             <OrdersSnapshotCard
                 currency={currency}
                 loading={kpiLoading}
@@ -326,11 +324,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
             />
 
             {/* ✅ Rest (unchanged) */}
-            <SectionCard
-                title="Top 10 Orders"
-                icon={TrendingUp}
-
-            >
+            <SectionCard title="Top 10 Orders" icon={TrendingUp}>
                 {topOrdersLoading ? (
                     <LoadingSpinner />
                 ) : !isNonEmptyArray(topOrders) ? (
@@ -347,11 +341,7 @@ const EcomOrdersTab = ({ enabled, filters, cache, colors }) => {
                 )}
             </SectionCard>
 
-            <SectionCard
-                title="Order On Behalf"
-                icon={Receipt}
-
-            >
+            <SectionCard title="Order On Behalf" icon={Receipt}>
                 {ordersOnBehalfLoading ? (
                     <LoadingSpinner />
                 ) : !isNonEmptyArray(ordersOnBehalf) ? (
