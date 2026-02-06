@@ -210,14 +210,14 @@ const RetailOverview = ({ activeTab, filters }) => {
                     icon={TrendingUp}
                     title="Net Sale"
                     value={saleLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(salesNet)}`}
-                    subtitle="Total net sales exclusive tax"
+                    subtitle="Total net sales inclusive tax"
                     isLoading={saleLoading}
                 />
                 <StatCard
                     icon={RotateCcw}
                     title="Returns Value"
                     value={retLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(returnsNet)}`}
-                    subtitle="Total returns exclusive tax"
+                    subtitle="Total returns inclusive tax"
                     isLoading={retLoading}
                 />
                 <StatCard

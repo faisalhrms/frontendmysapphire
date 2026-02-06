@@ -307,7 +307,7 @@ function getDetailTableConfig(metricKey) {
                     { key: "DiscountCode", label: "Discount Code", strong: true },
                     {
                         key: "EffectiveAmount",
-                        label: "Effective Amount",
+                        label: "Discount Amount",
                         align: "right",
                         strong: true,
                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.EffectiveAmount)}`,
