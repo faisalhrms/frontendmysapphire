@@ -122,8 +122,7 @@ function InfoHover({ text, widthClass = "w-72" }) {
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
         >
-            {/* ✅ removed cursor-help (question mark cursor) */}
-            <Info size={16} className="text-white/80 hover:text-white" />
+      <Info size={16} className="text-white/80 hover:text-white" />
 
             {open && typeof document !== "undefined"
                 ? createPortal(
@@ -142,7 +141,7 @@ function InfoHover({ text, widthClass = "w-72" }) {
                     document.body
                 )
                 : null}
-        </span>
+    </span>
     );
 }
 
@@ -184,11 +183,16 @@ function PromoMiniCard({
                             })}
                         </p>
 
+                        {/* ✅ Removed "Share:" by allowing countValue to render alone when countLabel is null */}
                         <p className="text-xs text-white/70 mt-1 tabular-nums min-h-[16px]">
-                            {countLabel && countValue !== null && countValue !== undefined
-                                ? typeof countValue === "number"
-                                    ? `${countLabel}: ${formatRoundedAmountWithCommas(toNum(countValue))}`
-                                    : `${countLabel}: ${String(countValue)}`
+                            {countValue !== null && countValue !== undefined && countValue !== ""
+                                ? countLabel
+                                    ? typeof countValue === "number"
+                                        ? `${countLabel}: ${formatRoundedAmountWithCommas(toNum(countValue))}`
+                                        : `${countLabel}: ${String(countValue)}`
+                                    : typeof countValue === "number"
+                                        ? formatRoundedAmountWithCommas(toNum(countValue))
+                                        : String(countValue)
                                 : "\u00A0"}
                         </p>
                     </>
@@ -294,14 +298,9 @@ const EcomOverview = ({
     const segmentationPayload = useMemo(() => unwrapPayload(segmentationRes), [segmentationRes]);
     const segmentationRows = Array.isArray(segmentationPayload?.rows) ? segmentationPayload.rows : [];
 
-    const isPK = useMemo(
-        () => String(filters?.country || "PK").toUpperCase() === "PK",
-        [filters?.country]
-    );
-    const isINT = useMemo(
-        () => String(filters?.country || "PK").toUpperCase() === "INT",
-        [filters?.country]
-    );
+    const isPK = useMemo(() => String(filters?.country || "PK").toUpperCase() === "PK", [filters?.country]);
+    const isINT = useMemo(() => String(filters?.country || "PK").toUpperCase() === "INT", [filters?.country]);
+
     const loyalCount = useMemo(() => {
         if (!isPK) return 0;
         const row = segmentationRows.find((r) => String(r?.customer_type || "").toLowerCase() === "loyal");
@@ -325,7 +324,7 @@ const EcomOverview = ({
     const cards = useMemo(() => cardsToMap(cardsArr), [cardsArr]);
 
     const orders = cards.orders;
-    const orderQty = cards.order_qty; // ✅ NEW
+    const orderQty = cards.order_qty;
 
     const aov = cards.avg_order_price;
     const pg = cards.payment_gateway_total;
@@ -337,7 +336,6 @@ const EcomOverview = ({
     const empOrders = cards.employee_discount_orders;
     const storeCreditTx = cards.store_credit_transactions;
 
-    // ✅ KEEP Total Orders as-is (top number)
     const salesTopValue = orders
         ? fmtValue({
             key: "orders",
@@ -380,7 +378,7 @@ const EcomOverview = ({
             return {
                 key: name,
                 label: name,
-                countLabel: "Share",
+                countLabel: null, // ✅ remove "Share:"
                 countValue: `${share.toFixed(2)}%`,
                 amount: amt,
             };
@@ -447,11 +445,11 @@ const EcomOverview = ({
     return (
         <div className="space-y-6">
             {/* Row 1 */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 <div className="lg:col-span-6">
-                    <div className={`${GRADIENTS.sales} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                    <div className={`${GRADIENTS.sales} rounded-xl shadow-lg p-6 relative overflow-hidden h-full flex flex-col`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
-                        <div className="relative z-10">
+                        <div className="relative z-10 flex flex-col h-full">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <TrendingUp size={20} className="text-white" />
@@ -477,7 +475,6 @@ const EcomOverview = ({
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                                {/* ✅ ONLY THIS CARD changed: Orders -> Order Qty */}
                                 <PromoMiniCard
                                     title={orderQty?.title || "Order Qty"}
                                     Icon={Boxes}
@@ -507,9 +504,9 @@ const EcomOverview = ({
                 </div>
 
                 <div className="lg:col-span-6">
-                    <div className={`${GRADIENTS.payments} rounded-xl shadow-lg p-6 relative overflow-hidden`}>
+                    <div className={`${GRADIENTS.payments} rounded-xl shadow-lg p-6 relative overflow-hidden h-full flex flex-col`}>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-16 -mt-16" />
-                        <div className="relative z-10">
+                        <div className="relative z-10 flex flex-col h-full">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <Landmark size={20} className="text-white" />
@@ -583,7 +580,6 @@ const EcomOverview = ({
                                     <BadgePercent size={20} className="text-white" />
                                     Discount
                                     <InfoHover text="Discounts redeemed within applied date range." />
-
                                 </h3>
                                 <ArrowNavButton onClick={() => setActiveTab?.("promos")} />
                             </div>
@@ -654,7 +650,6 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <FileText size={20} className="text-white" />
-                                    {/* ✅ removed Snapshot */}
                                     {(orderSection?.title || "Orders Snapshot").replace(/\s*Snapshot\s*/i, "")}
                                 </h3>
 
@@ -733,7 +728,6 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <Truck size={20} className="text-white" />
-                                    {/* ✅ removed Snapshot */}
                                     Dispatch
                                     <InfoHover text="FOs dispatched within the applied date range." />
                                 </h3>
@@ -758,8 +752,6 @@ const EcomOverview = ({
                                         <p className="text-4xl font-bold text-white tabular-nums">
                                             {currency} {formatRoundedAmountWithCommas(dispatchedAmount)}
                                         </p>
-
-
                                     </>
                                 )}
                             </div>
@@ -772,7 +764,6 @@ const EcomOverview = ({
                                     loading={dispatchSummaryLoading}
                                 />
 
-                                {/* ✅ Avg Order -> Avg Qty */}
                                 <KpiMiniCard
                                     title="Avg Qty"
                                     Icon={TrendingUp}
@@ -798,7 +789,6 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <RotateCcw size={20} className="text-white" />
-                                    {/* ✅ removed Snapshot */}
                                     {(returnsSection?.title || "Returns Snapshot").replace(/\s*Snapshot\s*/i, "")}
                                     <InfoHover text="FOs Returns within the applied date range." />
                                 </h3>
@@ -827,7 +817,6 @@ const EcomOverview = ({
                                                 currency,
                                             })}
                                         </p>
-
                                     </>
                                 )}
                             </div>
@@ -883,7 +872,6 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <UserX size={20} className="text-white" />
-                                    {/* ✅ removed Snapshot */}
                                     {(customerSection?.title || "Customers Snapshot").replace(/\s*Snapshot\s*/i, "")}
                                 </h3>
 
@@ -916,8 +904,6 @@ const EcomOverview = ({
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-
-
                                 <PromoMiniCard
                                     title="Loyal"
                                     Icon={Users}
@@ -943,10 +929,9 @@ const EcomOverview = ({
                                     currency={currency}
                                     infoText={churnedInfoText}
                                 />
-                                <PromoMiniCard
-                                    // title={habitualReturns?.title || "High Returners"}
-                                    title={ "High Returners"}
 
+                                <PromoMiniCard
+                                    title={"High Returners"}
                                     Icon={RotateCcw}
                                     amountKey="habitual_returns"
                                     amountValue={isPK ? habitualReturns?.value : 0}
@@ -970,7 +955,6 @@ const EcomOverview = ({
                             <div className="flex items-center justify-between mb-20">
                                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                                     <Users size={20} className="text-white" />
-                                    {/* ✅ removed Snapshot */}
                                     Users
                                 </h3>
                             </div>

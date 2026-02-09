@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useWatch } from "react-hook-form"; // ✅ NEW
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { DEFAULT_CHART_COLORS } from "@helpers/styles.js";
@@ -152,7 +153,7 @@ const PulseEcomDashboard = () => {
             { id: "overview", label: "Overview", icon: LayoutGrid },
             { id: "orders", label: "Orders", icon: TrendingUp },
             { id: "returns", label: "Fulfillment", icon: RotateCcw },
-            { id: "discounts", label: "Discounts", icon: BadgePercent }, // ✅ renamed
+            { id: "discounts", label: "Discounts", icon: BadgePercent },
             { id: "customers", label: "Customers", icon: Users },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
             { id: "dormant_users", label: "Users", icon: UserX },
@@ -177,7 +178,36 @@ const PulseEcomDashboard = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
+    // ✅ NEW: inline date-range error (since useFilters hook doesn't expose setError)
+    const [dateRangeError, setDateRangeError] = useState("");
+
+    // ✅ Watch form values so we can set min/max on inputs
+    const watchedFrom = useWatch({ control, name: "date_from" });
+    const watchedTo = useWatch({ control, name: "date_to" });
+
+    const toISODate = (d) => {
+        if (!d) return "";
+        const dt = new Date(d);
+        return Number.isNaN(dt.getTime()) ? "" : dt.toISOString().slice(0, 10);
+    };
+
+    const watchedFromISO = useMemo(() => toISODate(watchedFrom), [watchedFrom]);
+    const watchedToISO = useMemo(() => toISODate(watchedTo), [watchedTo]);
+
     const onSubmit = useCallback((formData) => {
+        const df = formData?.date_from;
+        const dt = formData?.date_to;
+
+        if (df && dt) {
+            const dFrom = new Date(df);
+            const dTo = new Date(dt);
+            if (!Number.isNaN(dFrom.getTime()) && !Number.isNaN(dTo.getTime()) && dFrom > dTo) {
+                setDateRangeError("From date cannot be after To date.");
+                return;
+            }
+        }
+
+        setDateRangeError("");
         setFilters(formData);
     }, []);
 
@@ -196,7 +226,7 @@ const PulseEcomDashboard = () => {
 
     const overviewEnabled = activeTab === "overview";
     const ordersEnabled = activeTab === "orders";
-    const discountsEnabled = activeTab === "discounts"; // ✅ renamed
+    const discountsEnabled = activeTab === "discounts";
     const riskEnabled = activeTab === "risk";
     const dormantUsersEnabled = activeTab === "dormant_users";
     const returnsEnabled = activeTab === "returns";
@@ -209,7 +239,6 @@ const PulseEcomDashboard = () => {
     ];
     const [activeReturnsTab, setActiveReturnsTab] = useState("cancelled");
 
-    // ✅ Discounts sub-tabs
     const DISCOUNTS_TABS = [
         { key: "redemption", label: "Redemption", icon: LayoutGrid },
         { key: "issuance", label: "Issuance", icon: BarChart3 },
@@ -221,7 +250,6 @@ const PulseEcomDashboard = () => {
         gcTime: 1000 * 60 * 60 * 6,
     };
 
-    // KPI for overview/returns (date-based as before)
     const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/kpis/",
         filters,
@@ -264,7 +292,6 @@ const PulseEcomDashboard = () => {
         { enabled: overviewEnabled || dormantUsersEnabled, ...LONG_CACHE }
     );
 
-    // snapshot filters (no date filters)
     const pendingPunchingSnapshotFilters = useMemo(
         () => ({ country: filters?.country || "PK" }),
         [filters?.country]
@@ -277,7 +304,6 @@ const PulseEcomDashboard = () => {
             { enabled: returnsEnabled && activeReturnsTab === "location", ...LONG_CACHE }
         );
 
-    // Lead Time
     const { data: returnsLeadTimeRes, isLoading: returnsLeadTimeLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/returns/lead-time/",
         filters,
@@ -348,6 +374,7 @@ const PulseEcomDashboard = () => {
                                     errors={errors}
                                     label={false}
                                     placeholder=""
+                                    isClearable={false} // ✅ remove cross
                                     options={[
                                         { value: "PK", label: "PK" },
                                         { value: "UAE", label: "UAE" },
@@ -357,17 +384,38 @@ const PulseEcomDashboard = () => {
                             </div>
 
                             <div className="w-full sm:w-[180px]">
-                                <FormInput type="date" name="date_from" control={control} errors={errors} label={false} />
+                                <FormInput
+                                    type="date"
+                                    name="date_from"
+                                    control={control}
+                                    errors={errors}
+                                    label={false}
+                                    required
+                                    max={watchedToISO || undefined} // ✅ from <= to
+                                />
                             </div>
 
                             <div className="w-full sm:w-[180px]">
-                                <FormInput type="date" name="date_to" control={control} errors={errors} label={false} />
+                                <FormInput
+                                    type="date"
+                                    name="date_to"
+                                    control={control}
+                                    errors={errors}
+                                    label={false}
+                                    required
+                                    min={watchedFromISO || undefined} // ✅ to >= from
+                                />
                             </div>
 
                             <div className="sm:pb-[2px]">
                                 <FilterButton />
                             </div>
                         </div>
+
+                        {/* ✅ simple validation message */}
+                        {dateRangeError ? (
+                            <p className="mt-2 text-xs text-rose-500 font-semibold">{dateRangeError}</p>
+                        ) : null}
                     </form>
                 </div>
 
@@ -523,7 +571,6 @@ const PulseEcomDashboard = () => {
                                     cache={LONG_CACHE}
                                     formatAmount={formatRoundedAmountWithCommas}
                                 />
-
                             )}
                         </div>
                     </div>
