@@ -14,7 +14,7 @@ const TopDiscountCouponsReport = ({ isActive, filters }) => {
         { Header: "Warehouse", accessor: "Warehouse" },
         { Header: "Discount Code", accessor: "DiscountCode" },
         {
-            Header: "Effective Amount",
+            Header: "Discount Amount",
             accessor: "EffectiveAmount",
             Cell: ({ value }) => (
                 <span className="font-bold">

@@ -307,7 +307,7 @@ function getDetailTableConfig(metricKey) {
                     { key: "DiscountCode", label: "Discount Code", strong: true },
                     {
                         key: "EffectiveAmount",
-                        label: "Effective Amount",
+                        label: "Discount Amount",
                         align: "right",
                         strong: true,
                         render: (r) => `PKR ${formatRoundedAmountWithCommas(r.EffectiveAmount)}`,
@@ -600,10 +600,6 @@ const RetailPulseDashboard = () => {
                             <h1 className="font-bold text-2xl text-gray-900 dark:text-white">
                                 Retail Data Pulse
                             </h1>
-
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Top 10 signals for the selected date range.
-                            </p>
 
                             {/* Range from filters (no meta) */}
                             <div
