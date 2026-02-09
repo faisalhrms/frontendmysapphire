@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Users, BarChart3, RotateCcw, Wallet } from "lucide-react";
+import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
 
 const safeNum = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
 
@@ -38,7 +39,7 @@ const RatioCard = ({ title, subtitle, icon: Icon, loading, rows, formatAmount, c
                             <Users size={12}/> Customers
                         </p>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {loading ? "-" : formatAmount(customers)}
+                            {loading ?  <PulseScan/> : formatAmount(customers)}
                         </p>
                     </div>
 
@@ -48,7 +49,7 @@ const RatioCard = ({ title, subtitle, icon: Icon, loading, rows, formatAmount, c
                             <RotateCcw size={12}/> Returns
                         </p>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {loading ? "-" : formatAmount(returns)}
+                            {loading ?  <PulseScan/> : formatAmount(returns)}
                         </p>
                     </div>
 
@@ -58,14 +59,9 @@ const RatioCard = ({ title, subtitle, icon: Icon, loading, rows, formatAmount, c
                             <Wallet size={12}/> Amount
                         </p>
                         <p className="text-2xl font-bold text-white tabular-nums">
-                            {loading ? "-" : `PKR ${formatAmount(amount)}`}
+                            {loading ?  <PulseScan/> : `PKR ${formatAmount(amount)}`}
                         </p>
                     </div>
-                </div>
-
-
-                <div className="mt-4 bg-black/20 p-2 rounded-lg text-white/90 text-[11px] leading-tight">
-                    This bucket groups customers by <span className="font-semibold">return ratio</span>.
                 </div>
             </div>
         </div>
@@ -80,8 +76,7 @@ const EcomHabitualRatioGradientCards = ({buckets = [], loading = false, formatAm
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <RatioCard
-                title="Ratio 50–70%"
-                subtitle="Mid risk customers"
+                title="Return Ratio 50–70%"
                 icon={BarChart3}
                 loading={loading}
                 rows={b5070}
@@ -89,8 +84,7 @@ const EcomHabitualRatioGradientCards = ({buckets = [], loading = false, formatAm
                 className="bg-gradient-to-br from-slate-950 via-indigo-900 to-indigo-700"
             />
             <RatioCard
-                title="Ratio 70–90%"
-                subtitle="High risk customers"
+                title="Return Ratio 70–90%"
                 icon={RotateCcw}
                 loading={loading}
                 rows={b7090}
@@ -98,8 +92,7 @@ const EcomHabitualRatioGradientCards = ({buckets = [], loading = false, formatAm
                 className="bg-gradient-to-br from-slate-950 via-orange-700 to-amber-600"
             />
             <RatioCard
-                title="Ratio 90–100%"
-                subtitle="Critical customers"
+                title="Return Ratio 90–100%"
                 icon={Users}
                 loading={loading}
                 rows={b90100}

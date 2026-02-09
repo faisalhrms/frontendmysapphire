@@ -64,6 +64,8 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
 
     return (
         <div className="space-y-6">
+            <p className="text-rose-500">Inprocess</p>
+
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 {/* ✅ Total Users with subtitle Active/Inactive */}
                 <StatCard
@@ -132,7 +134,7 @@ const DormantUsers = ({ rows = [], summary = {}, loading = false }) => {
             </div>
 
             {!safeRows.length ? (
-                <EmptyState label="No dormant users found" />
+                <EmptyState label="No dormant users found"/>
             ) : (
                 <ClientSideTable
                     config={tableConfig}
