@@ -7,6 +7,7 @@ import {
     submitRequisitionForApproval,
 } from "@modules/requisition/services/requisitionService.js";
 import { REQUISITION_ROUTES } from "@modules/requisition/routes.js";
+import api from "@config/axiosConfig.js";
 
 const normalize = (p) => {
     const out = { ...p };
