@@ -39,7 +39,7 @@ const BRAND = {
 };
 
 /** ---------------------- VALIDATION HELPERS ---------------------- */
-const CNIC_REGEX = /^\d{14}$/; // e.g. 37203798844979 (14 digits)
+const CNIC_REGEX = /^\d{13}$/; // e.g.  (13 digits)
 const PK_MOBILE_REGEX = /^0\d{10}$/; // e.g. 01234567891 (11 digits, starts with 0)
 const DOB_MIN = new Date("1950-01-01T00:00:00");
 
@@ -139,7 +139,7 @@ const schema = z.object({
     last_name: z.string().trim().min(1, "Last Name is required").max(80, "Too long"),
 
     // CNIC: exactly 14 digits
-    cnic_number: z.string().trim().regex(CNIC_REGEX, "CNIC must be 14 digits (e.g., 12345678912345)"),
+    cnic_number: z.string().trim().regex(CNIC_REGEX, "CNIC must be 13 digits (e.g., 1234567891234)"),
 
     // DOB: not future, not before 1950 (allow empty)
     date_of_birth: z
@@ -941,7 +941,7 @@ const PublicRequisitionApply = () => {
                 <FormInput name="last_name" control={control} errors={errors} placeholder="Last Name" is_required />
             </div>
             <div className="col-span-12 sm:col-span-6">
-                <FormInput name="cnic_number" control={control} errors={errors} placeholder="CNIC Number (14 digits)" is_required />
+                <FormInput name="cnic_number" control={control} errors={errors} placeholder="CNIC Number (13 digits)" is_required />
             </div>
             <div className="col-span-12 sm:col-span-6">
                 <FormInput type="date" name="date_of_birth" control={control} errors={errors} placeholder="Date of Birth" />

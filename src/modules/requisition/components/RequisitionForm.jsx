@@ -1,4 +1,3 @@
-// @modules/requisition/components/RequisitionForm.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +8,6 @@ import FormInput from "@components/form/FormInput.jsx";
 import FormSelect from "@components/form/FormSelect.jsx";
 import FormAsyncSelect from "@components/form/FormAsyncSelect.jsx";
 import FormCheckbox from "@components/form/FormCheckbox.jsx";
-import FormButton from "@components/form/FormButton.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import FormRichTextarea from "@components/form/FormRichTextarea.jsx";
 
@@ -48,14 +46,11 @@ const channelOptions = [
     { value: "facebook", label: "Facebook" },
     { value: "twitter", label: "Twitter/X" },
 ];
-
-// ✅ LOV options (NOT a checkbox)
 const preventDuplicateOptions = [
     { value: false, label: "No (Allow re-apply)" },
     { value: true, label: "Yes (Prevent duplicate by Job Description)" },
 ];
 
-// Build defaults from API response (edit) or empty (create)
 const buildDefaults = (requisitionData, companyIdFromUser) => ({
     company_id: requisitionData?.company?.id ?? companyIdFromUser ?? null,
 
@@ -75,10 +70,8 @@ const buildDefaults = (requisitionData, companyIdFromUser) => ({
     unbudgeted_reason: requisitionData?.unbudgeted_reason ?? "",
 
     min_total_experience_years: requisitionData?.min_total_experience_years ?? null,
-    // ✅ NEW
     max_total_experience_years: requisitionData?.max_total_experience_years ?? null,
 
-    // ✅ These are required now (schema enforces; keep safe defaults)
     education_relevant_experience: requisitionData?.education_relevant_experience ?? "",
     knowledge_technical_skills: requisitionData?.knowledge_technical_skills ?? "",
 
@@ -112,6 +105,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
         handleSubmit,
         setValue,
         reset,
+        getValues,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(requisitionSchema),
@@ -122,11 +116,9 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
     const employmentType = useWatch({ control, name: "employment_type" });
     const budgetStatus = useWatch({ control, name: "budget_status" });
 
-    // ✅ watch company_id (future-proof), fallback to current user companyId
     const companyIdWatched = useWatch({ control, name: "company_id" });
     const companyIdForLocations = companyIdWatched ?? companyId;
 
-    // ✅ Location API url filtered by company_id
     const locationApiUrl = useMemo(() => {
         const base = "/select/locations/";
         return `${base}?company_id=${encodeURIComponent(companyIdForLocations ?? "")}`;
@@ -137,11 +129,9 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
         [companyIdForLocations]
     );
 
-    // submit via hook
     const { handleRequisitionSubmit: submitRequisition } =
         useRequisitionForm(requisitionData, isEditMode, onSuccess);
 
-    // ✅ Reset ONLY when form is initializing (prevents overwriting user selections/typing)
     const initKey = isEditMode
         ? `edit-${requisitionData?.id ?? "none"}`
         : `create-${companyId ?? "none"}`;
@@ -156,11 +146,24 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
         lastInitKeyRef.current = initKey;
     }, [initKey, isEditMode, requisitionData?.id, reset, defaultValues]);
 
-    const onSubmit = async (formValues) => {
-        await submitRequisition(formValues);
+    // ✅ Draft save (NO validation)
+    const [isDraftSaving, setIsDraftSaving] = useState(false);
+
+    const onSaveDraft = async () => {
+        setIsDraftSaving(true);
+        try {
+            const values = getValues();
+            await submitRequisition(values, { mode: "draft" });
+        } finally {
+            setIsDraftSaving(false);
+        }
     };
 
-    // JD modal state
+    // ✅ Submit for approval (VALIDATED)
+    const onSubmit = async (formValues) => {
+        await submitRequisition(formValues, { mode: "submit" });
+    };
+
     const [isJDModalOpen, setIsJDModalOpen] = useState(false);
 
     const handleJDModalSuccess = (resp) => {
@@ -174,6 +177,10 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
         setIsJDModalOpen(false);
     };
 
+    // Optional UX rule: only allow submit when draft/rejected/new
+    const status = requisitionData?.status || "draft";
+    const canSubmit = !isEditMode || ["draft", "rejected"].includes(status);
+    const canDraft = !isEditMode || ["draft", "rejected"].includes(status);
 
     return (
         <>
@@ -221,7 +228,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         </div>
                                     </div>
 
-                                    {/* Grade (✅ REQUIRED now) */}
+                                    {/* Grade */}
                                     <div className="xl:col-span-6 col-span-12">
                                         <FormAsyncSelect
                                             is_required
@@ -235,7 +242,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Location (✅ filtered by company_id + REQUIRED) */}
+                                    {/* Location */}
                                     <div className="xl:col-span-6 col-span-12">
                                         <FormAsyncSelect
                                             name="location"
@@ -250,7 +257,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Hiring Manager (✅ REQUIRED now) */}
+                                    {/* Hiring Manager */}
                                     <div className="xl:col-span-6 col-span-12">
                                         <FormAsyncSelect
                                             is_required
@@ -264,7 +271,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Openings (already required) */}
+                                    {/* Openings */}
                                     <div className="xl:col-span-3 col-span-12">
                                         <FormInput
                                             type="number"
@@ -277,7 +284,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Req Type (already required) */}
+                                    {/* Req Type */}
                                     <div className="xl:col-span-3 col-span-12">
                                         <FormSelect
                                             name="req_type"
@@ -289,7 +296,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Employment Type (already required) */}
+                                    {/* Employment Type */}
                                     <div className="xl:col-span-3 col-span-12">
                                         <FormSelect
                                             name="employment_type"
@@ -301,7 +308,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Work Mode (already required) */}
+                                    {/* Work Mode */}
                                     <div className="xl:col-span-3 col-span-12">
                                         <FormSelect
                                             name="work_mode"
@@ -360,7 +367,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
 
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
-                                    {/* Budget Status (required) */}
                                     <div className="xl:col-span-4 col-span-12">
                                         <FormSelect
                                             name="budget_status"
@@ -371,7 +377,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                             options={budgetStatusOptions}
                                         />
                                     </div>
-                                    {/* Max Experience (parallel) */}
+
                                     <div className="xl:col-span-4 col-span-12">
                                         <FormInput
                                             type="number"
@@ -383,7 +389,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                             step="0.5"
                                         />
                                     </div>
-                                    {/* Min Experience (parallel) */}
+
                                     <div className="xl:col-span-4 col-span-12">
                                         <FormInput
                                             type="number"
@@ -396,9 +402,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-
-
-                                    {/* Unbudgeted reason only when unbudgeted */}
                                     {budgetStatus === "unbudgeted" && (
                                         <div className="xl:col-span-12 col-span-12">
                                             <FormRichTextarea
@@ -412,7 +415,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         </div>
                                     )}
 
-                                    {/* Education (required) */}
                                     <div className="xl:col-span-12 col-span-12">
                                         <FormRichTextarea
                                             name="education_relevant_experience"
@@ -424,7 +426,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
-                                    {/* Technical Skills (required) */}
                                     <div className="xl:col-span-12 col-span-12">
                                         <FormRichTextarea
                                             name="knowledge_technical_skills"
@@ -439,15 +440,13 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                             </div>
                         </div>
 
-
-                        {/* ===== Salary Range / Budget ===== */}
+                        {/* ===== Salary / Attachments / Buttons ===== */}
                         <div className="box">
                             <div className="box-header">
                                 <div className="box-title">Salary Range / Budget</div>
                             </div>
                             <div className="box-body">
                                 <div className="grid grid-cols-12 gap-4">
-
                                     <div className="xl:col-span-6 col-span-12">
                                         <FormInput
                                             type="number"
@@ -459,6 +458,7 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                             step="0.01"
                                         />
                                     </div>
+
                                     <div className="xl:col-span-6 col-span-12">
                                         <FormInput
                                             type="number"
@@ -482,9 +482,25 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                                         />
                                     </div>
 
+                                    {/* ✅ Buttons */}
                                     <div className="xl:col-span-12 col-span-12">
-                                        <div className="border-t border-dashed bg-gray-50/60 dark:bg-black/20 flex flex-wrap gap-2 justify-end">
-                                            <FormButton isLoading={isSubmitting} />
+                                        <div className="border-t border-dashed bg-gray-50/60 dark:bg-black/20 flex flex-wrap gap-2 justify-end p-3">
+                                            <button
+                                                type="button"
+                                                className="ti-btn ti-btn-light"
+                                                onClick={onSaveDraft}
+                                                disabled={!canDraft || isSubmitting || isDraftSaving}
+                                            >
+                                                {isDraftSaving ? "Saving..." : "Save Draft"}
+                                            </button>
+
+                                            <button
+                                                type="submit"
+                                                className="ti-btn ti-btn-primary"
+                                                disabled={!canSubmit || isSubmitting || isDraftSaving}
+                                            >
+                                                {isSubmitting ? "Submitting..." : "Submit for Approval"}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -494,7 +510,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
 
                     {/* RIGHT */}
                     <div className="xxl:col-span-3 col-span-12">
-                        {/* Publishing box */}
                         <div className="box">
                             <div className="box-header">
                                 <div className="box-title">Publishing</div>
@@ -536,7 +551,6 @@ const RequisitionForm = ({ requisitionData = null, isEditMode = false, onSuccess
                             </div>
                         </div>
 
-                        {/* Application Rules */}
                         <div className="box">
                             <div className="box-header">
                                 <div className="box-title">Application Rules</div>

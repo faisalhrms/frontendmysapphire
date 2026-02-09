@@ -4,31 +4,41 @@ import {
     createRequisition,
     updateRequisition,
     getRequisition,
+    submitRequisitionForApproval,
 } from "@modules/requisition/services/requisitionService.js";
 import { REQUISITION_ROUTES } from "@modules/requisition/routes.js";
-import api from "../../../config/axiosConfig.js";
+import api from "@config/axiosConfig.js";
 
 const normalize = (p) => {
     const out = { ...p };
 
-    // IDs: option objects -> value
     ["job_description", "designation", "location", "hiring_manager", "replacement_for_employee"].forEach((k) => {
         const v = out[k];
         if (v && typeof v === "object" && "value" in v) out[k] = v.value;
     });
 
-    // Channels: [{value,label}] -> ["value"]
     if (Array.isArray(out.channels)) {
         out.channels = out.channels.map((c) => (typeof c === "string" ? c : c?.value)).filter(Boolean);
     }
 
-    // Numeric safety
-    ["contract_duration_months", "target_salary_min", "target_salary_max", "min_total_experience_years"].forEach((k) => {
-        if (out[k] === "") out[k] = null;
-    });
+    ["contract_duration_months", "target_salary_min", "target_salary_max", "min_total_experience_years", "max_total_experience_years"].forEach(
+        (k) => {
+            if (out[k] === "") out[k] = null;
+        }
+    );
+
     if (out.validity_days === "") out.validity_days = 0;
 
     return out;
+};
+
+// helper: build edit path even if your routes use :id or {id}
+const buildIdPath = (template, id) => {
+    if (!template) return null;
+    return template
+        .replace(":id", String(id))
+        .replace("{id}", String(id))
+        .replace("<id>", String(id));
 };
 
 export const useRequisitionForm = (
@@ -41,23 +51,54 @@ export const useRequisitionForm = (
     const navigate = useNavigate();
 
     const handleRequisitionSubmit = useCallback(
-        async (payload) => {
+        async (payload, { mode = "submit" } = {}) => {
             const body = normalize(payload);
 
-            const res =
-                isEditMode && id ? await updateRequisition(id, body) : await createRequisition(body);
+            // ✅ If user is submitting, don't show "saved/updated" toast.
+            const notifySave = mode === "draft";
 
-            onSuccess?.(res);
-            if (redirect) navigate(to);
+            // 1) SAVE first
+            const saved = isEditMode && id
+                ? await updateRequisition(id, body, { notify: notifySave })
+                : await createRequisition(body, { notify: notifySave });
 
-            return res;
+            const savedId = saved?.id || id;
+
+            // 2) SUBMIT if requested
+            const finalRes =
+                mode === "submit" ? await submitRequisitionForApproval(savedId) : saved;
+
+            onSuccess?.(finalRes);
+
+            // ✅ Navigation rules
+            if (redirect) {
+                if (mode === "draft") {
+                    // If we were on "create", switch to edit page after first draft save
+                    if (!isEditMode && savedId) {
+                        const editTemplate =
+                            REQUISITION_ROUTES?.REQUISITION?.UPDATE?.path ||
+                            REQUISITION_ROUTES?.REQUISITION?.EDIT?.path ||
+                            null;
+
+                        const editPath = buildIdPath(editTemplate, savedId);
+
+                        // If route exists, move to edit; otherwise, just stay put (still OK)
+                        if (editPath) navigate(editPath);
+                    }
+                    // If already edit mode: stay on same page, don't redirect away
+                } else {
+                    // submit mode
+                    navigate(to);
+                }
+            }
+
+            return finalRes;
         },
         [id, isEditMode, onSuccess, redirect, to, navigate]
     );
 
     return { handleRequisitionSubmit };
 };
-
 /** Fetch single requisition */
 export const useRequisition = (id) => {
     const [requisition, setRequisition] = useState(null);
