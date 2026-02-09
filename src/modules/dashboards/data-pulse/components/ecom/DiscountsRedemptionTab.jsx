@@ -129,7 +129,7 @@ const CardShell = ({ gradient, title, Icon, loading, totalLabel, totalValue, sub
     </div>
 );
 
-const EcomPromosTab = ({
+const DiscountsRedemptionTab = ({
                            enabled,
                            filters,
                            cache,
@@ -342,4 +342,4 @@ const EcomPromosTab = ({
     );
 };
 
-export default EcomPromosTab;
+export default DiscountsRedemptionTab;
