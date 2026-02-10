@@ -30,6 +30,7 @@ import {
     Truck,
     Undo,
     Clock,
+    Headset, // ✅ NEW
 } from "lucide-react";
 
 import { formatRoundedAmountWithCommas } from "@helpers/formatters.js";
@@ -52,6 +53,9 @@ import DiscountsIssuanceTab from "@modules/dashboards/data-pulse/components/ecom
 
 // ✅ Lead-time component
 import ReturnsLeadTime from "@modules/dashboards/data-pulse/components/ecom/ReturnsLeadTime.jsx";
+
+// ✅ NEW Customer Care component
+import CustomerCareRefunds from "@modules/dashboards/data-pulse/components/ecom/CustomerCareRefunds.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -155,6 +159,7 @@ const PulseEcomDashboard = () => {
             { id: "returns", label: "Fulfillment", icon: RotateCcw },
             { id: "discounts", label: "Discounts", icon: BadgePercent },
             { id: "customers", label: "Customers", icon: Users },
+            { id: "customer_care", label: "Customer Care", icon: Headset }, // ✅ NEW
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
             { id: "dormant_users", label: "Users", icon: UserX },
         ],
@@ -232,6 +237,9 @@ const PulseEcomDashboard = () => {
     const returnsEnabled = activeTab === "returns";
     const customersEnabled = activeTab === "customers";
 
+    // ✅ NEW: Customer Care
+    const customerCareEnabled = activeTab === "customer_care";
+
     const RETURNS_TABS = [
         { key: "cancelled", label: "Dispatch", icon: Truck },
         { key: "location", label: "Returns", icon: Undo },
@@ -244,6 +252,10 @@ const PulseEcomDashboard = () => {
         { key: "issuance", label: "Issuance", icon: BarChart3 },
     ];
     const [activeDiscountsTab, setActiveDiscountsTab] = useState("redemption");
+
+    // ✅ NEW: Customer Care sub-tabs
+    const CUSTOMER_CARE_TABS = [{ key: "refunds", label: "Refunds", icon: Undo }];
+    const [activeCustomerCareTab, setActiveCustomerCareTab] = useState("refunds");
 
     const LONG_CACHE = {
         staleTime: 1000 * 60 * 30,
@@ -308,6 +320,13 @@ const PulseEcomDashboard = () => {
         "/dashboard/data-pulse/ecom/returns/lead-time/",
         filters,
         { enabled: returnsEnabled && activeReturnsTab === "lead_time", ...LONG_CACHE }
+    );
+
+    // ✅ NEW: IBFT Approved endpoint (only when Customer Care > Refunds is active)
+    const { data: ibftApprovedRes, isLoading: ibftApprovedLoading } = useFetchWithFilters(
+        "/dashboard/data-pulse/ecom/returns/ibft-approved/",
+        filters,
+        { enabled: customerCareEnabled && activeCustomerCareTab === "refunds", ...LONG_CACHE }
     );
 
     const codIssues = codIssuesResp?.rows || [];
@@ -570,6 +589,44 @@ const PulseEcomDashboard = () => {
                                     filters={filters}
                                     cache={LONG_CACHE}
                                     formatAmount={formatRoundedAmountWithCommas}
+                                />
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* ✅ NEW: CUSTOMER CARE TAB */}
+                {activeTab === "customer_care" && (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                            <div className="flex flex-wrap gap-2">
+                                {CUSTOMER_CARE_TABS.map((m) => {
+                                    const Icon = m.icon;
+                                    const active = activeCustomerCareTab === m.key;
+
+                                    return (
+                                        <button
+                                            key={m.key}
+                                            onClick={() => setActiveCustomerCareTab(m.key)}
+                                            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                active
+                                                    ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                    : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                            }`}
+                                        >
+                                            <Icon size={18} />
+                                            <span className="font-medium whitespace-nowrap">{m.label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="p-6 space-y-6">
+                            {activeCustomerCareTab === "refunds" && (
+                                <CustomerCareRefunds
+                                    data={ibftApprovedRes}
+                                    loading={ibftApprovedLoading}
                                 />
                             )}
                         </div>
