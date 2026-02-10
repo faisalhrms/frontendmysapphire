@@ -39,6 +39,8 @@ import {useSearchParams} from "react-router-dom";
 import VoidTransactionsTable from "@modules/dashboards/data-pulse/components/retail/VoidTransactionsTable.jsx";
 import SuspendedTransactionsTable
     from "@modules/dashboards/data-pulse/components/retail/SuspendedTransactionsTable.jsx";
+import AfterClosingTransactionsTable
+    from "@modules/dashboards/data-pulse/components/retail/AfterClosingTransactionsTable.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -239,7 +241,7 @@ function normalizeMetricRows(metricKey, rows) {
             return safe.map((r) => ({
                 name: r.WAREHOUSENAME ?? "Unknown",
                 value: Math.abs(Number(r.NETAMOUNT) || 0),
-                sub: `${r.TransactionTime ?? "-"} • ${r.TRANSACTIONDATE ?? "-"}`,
+                sub: `${r.txn_count ?? "-"}`,
             }));
 
         default:
@@ -425,9 +427,9 @@ function getDetailTableConfig(metricKey) {
                 title: "Detailed After Closing Transactions",
                 columns: [
                     { key: "TRANSACTIONDATE", label: "Date", mono: true },
-                    { key: "TransactionTime", label: "Time", mono: true },
                     { key: "WAREHOUSE", label: "Store ID", mono: true, colorClass: "text-blue-600" },
                     { key: "WAREHOUSENAME", label: "Store Name", strong: true },
+                    { key: "txn_count", label: "Transaction Count", strong: true },
                     {
                         key: "GROSSAMOUNT",
                         label: "Gross",
@@ -881,6 +883,9 @@ const RetailPulseDashboard = () => {
 
                                         <SectionCard title="Suspended Transactions (Lines)" icon={PauseCircle}>
                                             <SuspendedTransactionsTable filters={filters}/>
+                                        </SectionCard>
+                                        <SectionCard title="After Closing Transactions (By Transactions)" icon={ShieldAlert}>
+                                            <AfterClosingTransactionsTable filters={filters} />
                                         </SectionCard>
                                     </div>
                                 )}
