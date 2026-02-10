@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useWatch } from "react-hook-form"; // ✅ NEW
 import { useFetchWithFilters } from "@hooks/useFetchWithFilters.js";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import { DEFAULT_CHART_COLORS } from "@helpers/styles.js";
@@ -28,7 +29,7 @@ import {
     RotateCcw,
     Truck,
     Undo,
-    Clock
+    Clock,
 } from "lucide-react";
 
 import { formatRoundedAmountWithCommas } from "@helpers/formatters.js";
@@ -43,10 +44,13 @@ import ReturnsCancelledAfterDispatchTable from "@modules/dashboards/data-pulse/c
 import DormantUsers from "@modules/dashboards/data-pulse/components/ecom/DormantUsers.jsx";
 import EcomOverview from "@modules/dashboards/data-pulse/components/ecom/EcomOverview.jsx";
 import EcomOrdersTab from "@modules/dashboards/data-pulse/components/ecom/EcomOrdersTab.jsx";
-import EcomPromosTab from "@modules/dashboards/data-pulse/components/ecom/EcomPromosTab.jsx";
 import EcomCustomersTab from "@modules/dashboards/data-pulse/components/ecom/EcomCustomersTab.jsx";
 
-// ✅ NEW: import your lead-time component
+// ✅ Discounts sub-tabs
+import DiscountsRedemptionTab from "@modules/dashboards/data-pulse/components/ecom/DiscountsRedemptionTab.jsx";
+import DiscountsIssuanceTab from "@modules/dashboards/data-pulse/components/ecom/DiscountsIssuanceTab.jsx";
+
+// ✅ Lead-time component
 import ReturnsLeadTime from "@modules/dashboards/data-pulse/components/ecom/ReturnsLeadTime.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
@@ -107,6 +111,7 @@ const SimpleTable = ({ columns, rows }) => (
                 ))}
             </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {rows.map((r, idx) => (
                 <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
@@ -148,7 +153,7 @@ const PulseEcomDashboard = () => {
             { id: "overview", label: "Overview", icon: LayoutGrid },
             { id: "orders", label: "Orders", icon: TrendingUp },
             { id: "returns", label: "Fulfillment", icon: RotateCcw },
-            { id: "promos", label: "Discounts", icon: BadgePercent },
+            { id: "discounts", label: "Discounts", icon: BadgePercent },
             { id: "customers", label: "Customers", icon: Users },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
             { id: "dormant_users", label: "Users", icon: UserX },
@@ -173,32 +178,55 @@ const PulseEcomDashboard = () => {
 
     const [filters, setFilters] = useState(getFilters());
 
+    // ✅ NEW: inline date-range error (since useFilters hook doesn't expose setError)
+    const [dateRangeError, setDateRangeError] = useState("");
+
+    // ✅ Watch form values so we can set min/max on inputs
+    const watchedFrom = useWatch({ control, name: "date_from" });
+    const watchedTo = useWatch({ control, name: "date_to" });
+
+    const toISODate = (d) => {
+        if (!d) return "";
+        const dt = new Date(d);
+        return Number.isNaN(dt.getTime()) ? "" : dt.toISOString().slice(0, 10);
+    };
+
+    const watchedFromISO = useMemo(() => toISODate(watchedFrom), [watchedFrom]);
+    const watchedToISO = useMemo(() => toISODate(watchedTo), [watchedTo]);
+
     const onSubmit = useCallback((formData) => {
+        const df = formData?.date_from;
+        const dt = formData?.date_to;
+
+        if (df && dt) {
+            const dFrom = new Date(df);
+            const dTo = new Date(dt);
+            if (!Number.isNaN(dFrom.getTime()) && !Number.isNaN(dTo.getTime()) && dFrom > dTo) {
+                setDateRangeError("From date cannot be after To date.");
+                return;
+            }
+        }
+
+        setDateRangeError("");
         setFilters(formData);
     }, []);
 
     const DateInfo = () => (
         <div className="flex items-center gap-2 text-base text-black">
-            <Calendar size={13}/>
-            <span>
-       {formatDate(filters?.date_from)}
-    </span>
+            <Calendar size={13} />
+            <span>{formatDate(filters?.date_from)}</span>
             <span>—</span>
-            <span>
-        {formatDate(filters?.date_to)}
-    </span>
+            <span>{formatDate(filters?.date_to)}</span>
             <span>|</span>
             <span>
-        <span>Website:</span> {filters?.country || "PK"}
-    </span>
+                <span>Website:</span> {filters?.country || "PK"}
+            </span>
         </div>
-
-
     );
 
     const overviewEnabled = activeTab === "overview";
     const ordersEnabled = activeTab === "orders";
-    const promosEnabled = activeTab === "promos";
+    const discountsEnabled = activeTab === "discounts";
     const riskEnabled = activeTab === "risk";
     const dormantUsersEnabled = activeTab === "dormant_users";
     const returnsEnabled = activeTab === "returns";
@@ -211,12 +239,17 @@ const PulseEcomDashboard = () => {
     ];
     const [activeReturnsTab, setActiveReturnsTab] = useState("cancelled");
 
+    const DISCOUNTS_TABS = [
+        { key: "redemption", label: "Redemption", icon: LayoutGrid },
+        { key: "issuance", label: "Issuance", icon: BarChart3 },
+    ];
+    const [activeDiscountsTab, setActiveDiscountsTab] = useState("redemption");
+
     const LONG_CACHE = {
         staleTime: 1000 * 60 * 30,
         gcTime: 1000 * 60 * 60 * 6,
     };
 
-    // KPI for overview/returns (date-based as before)
     const { data: kpiResp, isLoading: kpiLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/kpis/",
         filters,
@@ -259,7 +292,6 @@ const PulseEcomDashboard = () => {
         { enabled: overviewEnabled || dormantUsersEnabled, ...LONG_CACHE }
     );
 
-    // snapshot filters (no date filters)
     const pendingPunchingSnapshotFilters = useMemo(
         () => ({ country: filters?.country || "PK" }),
         [filters?.country]
@@ -272,8 +304,6 @@ const PulseEcomDashboard = () => {
             { enabled: returnsEnabled && activeReturnsTab === "location", ...LONG_CACHE }
         );
 
-    // ✅ NEW: Lead Time data fetch (if your component needs API data)
-    // If ReturnsLeadTime does its own fetching, you can delete this.
     const { data: returnsLeadTimeRes, isLoading: returnsLeadTimeLoading } = useFetchWithFilters(
         "/dashboard/data-pulse/ecom/returns/lead-time/",
         filters,
@@ -344,6 +374,7 @@ const PulseEcomDashboard = () => {
                                     errors={errors}
                                     label={false}
                                     placeholder=""
+                                    isClearable={false} // ✅ remove cross
                                     options={[
                                         { value: "PK", label: "PK" },
                                         { value: "UAE", label: "UAE" },
@@ -353,17 +384,38 @@ const PulseEcomDashboard = () => {
                             </div>
 
                             <div className="w-full sm:w-[180px]">
-                                <FormInput type="date" name="date_from" control={control} errors={errors} label={false} />
+                                <FormInput
+                                    type="date"
+                                    name="date_from"
+                                    control={control}
+                                    errors={errors}
+                                    label={false}
+                                    required
+                                    max={watchedToISO || undefined} // ✅ from <= to
+                                />
                             </div>
 
                             <div className="w-full sm:w-[180px]">
-                                <FormInput type="date" name="date_to" control={control} errors={errors} label={false} />
+                                <FormInput
+                                    type="date"
+                                    name="date_to"
+                                    control={control}
+                                    errors={errors}
+                                    label={false}
+                                    required
+                                    min={watchedFromISO || undefined} // ✅ to >= from
+                                />
                             </div>
 
                             <div className="sm:pb-[2px]">
                                 <FilterButton />
                             </div>
                         </div>
+
+                        {/* ✅ simple validation message */}
+                        {dateRangeError ? (
+                            <p className="mt-2 text-xs text-rose-500 font-semibold">{dateRangeError}</p>
+                        ) : null}
                     </form>
                 </div>
 
@@ -441,7 +493,6 @@ const PulseEcomDashboard = () => {
                                 />
                             )}
 
-                            {/* ✅ NEW: Lead Time tab content */}
                             {activeReturnsTab === "lead_time" && (
                                 <ReturnsLeadTime
                                     enabled={returnsEnabled && activeReturnsTab === "lead_time"}
@@ -474,15 +525,55 @@ const PulseEcomDashboard = () => {
                     />
                 )}
 
-                {activeTab === "promos" && (
-                    <EcomPromosTab
-                        enabled={promosEnabled}
-                        filters={filters}
-                        cache={LONG_CACHE}
-                        colors={COLORS}
-                        formatAmount={formatRoundedAmountWithCommas}
-                        setActiveTab={setActiveTab}
-                    />
+                {/* ✅ DISCOUNTS TAB with 2 sub-tabs */}
+                {activeTab === "discounts" && (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                            <div className="flex flex-wrap gap-2">
+                                {DISCOUNTS_TABS.map((m) => {
+                                    const Icon = m.icon;
+                                    const active = activeDiscountsTab === m.key;
+
+                                    return (
+                                        <button
+                                            key={m.key}
+                                            onClick={() => setActiveDiscountsTab(m.key)}
+                                            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all border ${
+                                                active
+                                                    ? "bg-primary/10 text-primary border-primary/30 shadow-md"
+                                                    : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
+                                            }`}
+                                        >
+                                            <Icon size={18} />
+                                            <span className="font-medium whitespace-nowrap">{m.label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="p-6 space-y-6">
+                            {activeDiscountsTab === "redemption" && (
+                                <DiscountsRedemptionTab
+                                    enabled={discountsEnabled && activeDiscountsTab === "redemption"}
+                                    filters={filters}
+                                    cache={LONG_CACHE}
+                                    colors={COLORS}
+                                    formatAmount={formatRoundedAmountWithCommas}
+                                    setActiveTab={setActiveTab}
+                                />
+                            )}
+
+                            {activeDiscountsTab === "issuance" && (
+                                <DiscountsIssuanceTab
+                                    enabled={discountsEnabled && activeDiscountsTab === "issuance"}
+                                    filters={filters}
+                                    cache={LONG_CACHE}
+                                    formatAmount={formatRoundedAmountWithCommas}
+                                />
+                            )}
+                        </div>
+                    </div>
                 )}
 
                 {activeTab === "risk" && (
