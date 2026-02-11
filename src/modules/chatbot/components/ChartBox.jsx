@@ -33,6 +33,12 @@ const wrapLabel = (s, max = 16) => {
   return lines
 }
 
+const pickFilter = (val) => {
+  if (Array.isArray(val)) return val[0] || ""
+  if (val === null || val === undefined) return ""
+  return String(val)
+}
+
 const ValueLabelPlugin = {
   id: "valueLabel",
   afterDatasetsDraw(chart, _args, pluginOptions) {
@@ -76,14 +82,30 @@ const ValueLabelPlugin = {
 }
 
 export default function ChartBox({ spec, ask }) {
-  const [product, setProduct] = useState(spec?.meta?.filters?.product || "")
-  const [country, setCountry] = useState(spec?.meta?.filters?.country || "")
-  const [supplier, setSupplier] = useState(spec?.meta?.filters?.exporter || spec?.meta?.filters?.supplier || "")
-  const [from, setFrom] = useState(spec?.meta?.filters?.date?.from || "")
-  const [to, setTo] = useState(spec?.meta?.filters?.date?.to || "")
+  const [product, setProduct] = useState(pickFilter(spec?.meta?.filters?.product))
+  const [country, setCountry] = useState(pickFilter(spec?.meta?.filters?.country))
+  const [supplier, setSupplier] = useState(pickFilter(spec?.meta?.filters?.exporter || spec?.meta?.filters?.importer || spec?.meta?.filters?.supplier))
+  const [from, setFrom] = useState(pickFilter(spec?.meta?.filters?.date?.from))
+  const [to, setTo] = useState(pickFilter(spec?.meta?.filters?.date?.to))
   const nfOpt = unitFor(spec?.metric)
 
   const labelsWrapped = useMemo(() => (spec?.labels || []).map(l => wrapLabel(l, 16)), [spec?.labels])
+  const counterpartyKey = useMemo(() => {
+    const gb = spec?.meta?.group_by
+    const keys = Array.isArray(gb) ? gb : [gb]
+    if (keys.includes("importer") || spec?.meta?.filters?.importer) return "importer"
+    return "exporter"
+  }, [spec])
+  const counterpartyLabel = counterpartyKey === "importer" ? "Importer" : "Exporter"
+
+  useEffect(() => {
+    const f = spec?.meta?.filters || {}
+    setProduct(pickFilter(f.product))
+    setCountry(pickFilter(f.country))
+    setSupplier(pickFilter(f.exporter || f.importer || f.supplier))
+    setFrom(pickFilter(f.date?.from))
+    setTo(pickFilter(f.date?.to))
+  }, [spec])
 
   const data = useMemo(() => {
     const labels = labelsWrapped
@@ -171,15 +193,17 @@ export default function ChartBox({ spec, ask }) {
     const parts = []
     if (product) parts.push(`product=${product}`)
     if (country) parts.push(`country=${country}`)
-    if (supplier) parts.push(`exporter=${supplier}`)
+    if (supplier) parts.push(`${counterpartyKey}=${supplier}`)
     if (from || to) parts.push(`date from=${from||""} to=${to||""}`)
     const meta = spec?.meta || {}
     const gb = Array.isArray(meta.group_by) ? meta.group_by.join(", ") : (meta.group_by || "")
     const metric = meta.metric || spec?.metric || "value_usd"
     const kind = spec?.type === "grouped-bar" ? "bar" : spec?.type
-    const msg = `Filter chart with ${parts.join(", ")}. Keep metric=${metric} and group_by=${gb}. Return as ${kind} chart.`
+    const filterLine = parts.length ? `Update filters: ${parts.join(", ")}.` : "Keep existing filters."
+    const gbPart = gb ? ` and group_by=${gb}` : ""
+    const msg = `${filterLine} Keep metric=${metric}${gbPart}. Return as ${kind} chart.`
     ask(msg)
-  }, [ask, product, country, supplier, from, to, spec])
+  }, [ask, product, country, supplier, from, to, spec, counterpartyKey])
 
   if (!spec) return null
 
@@ -189,7 +213,7 @@ export default function ChartBox({ spec, ask }) {
         <div className="flex flex-wrap items-center gap-2">
           <input value={product} onChange={e=>setProduct(e.target.value)} placeholder="Product" className="ti-form-control form-control-sm w-36" />
           <input value={country} onChange={e=>setCountry(e.target.value)} placeholder="Country" className="ti-form-control form-control-sm w-36" />
-          <input value={supplier} onChange={e=>setSupplier(e.target.value)} placeholder="Supplier" className="ti-form-control form-control-sm w-36" />
+          <input value={supplier} onChange={e=>setSupplier(e.target.value)} placeholder={counterpartyLabel} className="ti-form-control form-control-sm w-36" />
           <input type="date" value={from} onChange={e=>setFrom(e.target.value)} className="ti-form-control form-control-sm" />
           <input type="date" value={to} onChange={e=>setTo(e.target.value)} className="ti-form-control form-control-sm" />
           <button onClick={applyFilters} className="hs-dropdown-toggle ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]"><i className="ri-search-line"></i></button>

@@ -48,3 +48,8 @@ export async function leaveBalanceQueryTool(params = {}, { signal } = {}) {
   const res = await api.post("/chatkit/employee/leave_balance/query/", params, { signal })
   return res.data
 }
+
+export async function employeeEducationQueryTool(params = {}, { signal } = {}) {
+  const res = await api.post("/chatkit/employee/employee/education/query/", params, { signal })
+  return res.data
+}
