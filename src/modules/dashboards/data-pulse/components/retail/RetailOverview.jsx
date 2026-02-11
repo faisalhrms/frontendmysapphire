@@ -281,7 +281,7 @@ const RetailOverview = ({ activeTab, filters }) => {
                 />
                 <StatCard
                     icon={IdCard}
-                    title="Employee Card Discout"
+                    title="Employee Card Discout Amount"
                     value={empLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(employeeD)}`}
                     subtitle="Employee effective amount"
                     isLoading={empDLoading}

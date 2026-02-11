@@ -22,12 +22,6 @@ const AfterClosingTransactionsTable = ({ filters }) => {
             getCellProps: () => ({ className: "!text-left font-mono" }),
         },
         {
-            Header: "Store ID",
-            accessor: "WAREHOUSE",
-            width: 120,
-            getCellProps: () => ({ className: "!text-left font-mono text-blue-600" }),
-        },
-        {
             Header: "Store Name",
             accessor: "WAREHOUSENAME",
             getCellProps: () => ({ className: "!text-left" }),
@@ -39,21 +33,21 @@ const AfterClosingTransactionsTable = ({ filters }) => {
             getCellProps: () => ({ className: "!text-left font-mono" }),
         },
         {
-            Header: "Gross",
+            Header: "Receipt Amount",
             accessor: "GROSSAMOUNT",
             excelColumnType: "number",
             Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(Number(value) || 0)}`,
             getCellProps: () => ({ className: "!text-right tabular-nums" }),
             width: 140,
         },
-        {
-            Header: "Net",
-            accessor: "NETAMOUNT",
-            excelColumnType: "number",
-            Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(Number(value) || 0)}`,
-            getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
-            width: 140,
-        },
+        // {
+        //     Header: "Net (exl: Tax)",
+        //     accessor: "NETAMOUNT",
+        //     excelColumnType: "number",
+        //     Cell: ({ value }) => `PKR ${formatRoundedAmountWithCommas(Number(value) || 0)}`,
+        //     getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
+        //     width: 140,
+        // },
         {
             Header: "Discount",
             accessor: "DISCOUNTAMOUNT",

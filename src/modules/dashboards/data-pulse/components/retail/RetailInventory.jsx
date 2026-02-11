@@ -58,7 +58,7 @@ const RetailInventory = ({ filters, enabled }) => {
             { id: "movement", label: "Inventory Movement Journal", icon: RefreshCcw },
             { id: "shipAging", label: "Ship Aging", icon: Clock },
             { id: "receiveAging", label: "Receive Aging", icon: PackageOpen },
-            { id: "prices", label: "Item Prices", icon: Tag },
+            // { id: "prices", label: "Item Prices", icon: Tag },
         ],
         []
     );
@@ -385,17 +385,17 @@ const RetailInventory = ({ filters, enabled }) => {
                         hideUrlParams={true}
                     />
                 )}
-                {activeTab === "prices" && (
-                    <DataTable
-                        columns={itemPricesColumns}
-                        title=""
-                        apiUrl={INV_ENDPOINTS.itemPricesTable}
-                        needHeader={false}
-                        enableAdvancedFilters={false}
-                        filter={filters}
-                        hideUrlParams={true}
-                    />
-                )}
+                {/*{activeTab === "prices" && (*/}
+                {/*    <DataTable*/}
+                {/*        columns={itemPricesColumns}*/}
+                {/*        title=""*/}
+                {/*        apiUrl={INV_ENDPOINTS.itemPricesTable}*/}
+                {/*        needHeader={false}*/}
+                {/*        enableAdvancedFilters={false}*/}
+                {/*        filter={filters}*/}
+                {/*        hideUrlParams={true}*/}
+                {/*    />*/}
+                {/*)}*/}
 
             </div>
         </div>

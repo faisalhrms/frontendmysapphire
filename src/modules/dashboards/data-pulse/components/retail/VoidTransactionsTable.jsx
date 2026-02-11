@@ -13,7 +13,6 @@ const VoidTransactionsTable = ({ filters }) => {
             Cell: ({ value }) => formatDate(value, "MMM dd, yyyy"),
             width: 120,
         },
-        { Header: "Store", accessor: "storeid", width: 110, getCellProps: () => ({ className: "!text-left font-mono" }) },
         { Header: "Store Name", accessor: "warehousename", getCellProps: () => ({ className: "!text-left" }) },
         { Header: "Txn #", accessor: "transactionnumber", width: 150, getCellProps: () => ({ className: "!text-left font-mono" }) },
         { Header: "Item", accessor: "itemid", width: 120, getCellProps: () => ({ className: "!text-left font-mono" }) },
