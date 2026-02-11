@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react"
+import sanitizeHtml from "@modules/chatbot/utils/sanitizeHtml.js"
 
 const Badge = ({ ok }) => (
   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] ${ok ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" : "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300"}`}>
@@ -60,7 +61,7 @@ export default function QCReport({ result, html, llm, title = "Quality Control" 
           <div className="text-[12px] text-gray-500 dark:text-gray-400">Rendered</div>
         </div>
         <div className="p-4">
-          <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
+          <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />
         </div>
       </div>
     )
@@ -97,7 +98,7 @@ export default function QCReport({ result, html, llm, title = "Quality Control" 
       {llm ? (
         <div className="px-4 pt-3">
           <div className="rounded-lg border dark:border-gray-700 bg-amber-50 dark:bg-amber-900/20 p-3">
-            <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: llm }} />
+            <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(llm) }} />
           </div>
         </div>
       ) : null}

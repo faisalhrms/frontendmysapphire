@@ -30,7 +30,8 @@ import {
     Truck,
     Undo,
     Clock,
-    Headset, // ✅ NEW
+    Headset,
+    Briefcase
 } from "lucide-react";
 
 import { formatRoundedAmountWithCommas } from "@helpers/formatters.js";
@@ -46,6 +47,7 @@ import DormantUsers from "@modules/dashboards/data-pulse/components/ecom/Dormant
 import EcomOverview from "@modules/dashboards/data-pulse/components/ecom/EcomOverview.jsx";
 import EcomOrdersTab from "@modules/dashboards/data-pulse/components/ecom/EcomOrdersTab.jsx";
 import EcomCustomersTab from "@modules/dashboards/data-pulse/components/ecom/EcomCustomersTab.jsx";
+import CustomerCareCases from "@modules/dashboards/data-pulse/components/ecom/CustomerCareCases.jsx";
 
 // ✅ Discounts sub-tabs
 import DiscountsRedemptionTab from "@modules/dashboards/data-pulse/components/ecom/DiscountsRedemptionTab.jsx";
@@ -158,8 +160,8 @@ const PulseEcomDashboard = () => {
             { id: "orders", label: "Orders", icon: TrendingUp },
             { id: "returns", label: "Fulfillment", icon: RotateCcw },
             { id: "discounts", label: "Discounts", icon: BadgePercent },
+            { id: "customer_care", label: "Customer Care", icon: Headset },
             { id: "customers", label: "Customers", icon: Users },
-            { id: "customer_care", label: "Customer Care", icon: Headset }, // ✅ NEW
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
             { id: "dormant_users", label: "Users", icon: UserX },
         ],
@@ -254,8 +256,11 @@ const PulseEcomDashboard = () => {
     const [activeDiscountsTab, setActiveDiscountsTab] = useState("redemption");
 
     // ✅ NEW: Customer Care sub-tabs
-    const CUSTOMER_CARE_TABS = [{ key: "refunds", label: "Refunds", icon: Undo }];
-    const [activeCustomerCareTab, setActiveCustomerCareTab] = useState("refunds");
+    const CUSTOMER_CARE_TABS = [
+        { key: "cases", label: "Cases", icon: Briefcase },
+        { key: "refunds", label: "Refunds", icon: Undo },
+    ];
+    const [activeCustomerCareTab, setActiveCustomerCareTab] = useState("cases");
 
     const LONG_CACHE = {
         staleTime: 1000 * 60 * 30,
@@ -597,8 +602,10 @@ const PulseEcomDashboard = () => {
 
                 {/* ✅ NEW: CUSTOMER CARE TAB */}
                 {activeTab === "customer_care" && (
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
+                    <div
+                        className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-bodybg dark:border-gray-700">
+                        <div
+                            className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-wrap gap-4 dark:border-gray-700">
                             <div className="flex flex-wrap gap-2">
                                 {CUSTOMER_CARE_TABS.map((m) => {
                                     const Icon = m.icon;
@@ -614,7 +621,7 @@ const PulseEcomDashboard = () => {
                                                     : "bg-white text-gray-700 border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 dark:text-gray-200 dark:bg-bodybg"
                                             }`}
                                         >
-                                            <Icon size={18} />
+                                            <Icon size={18}/>
                                             <span className="font-medium whitespace-nowrap">{m.label}</span>
                                         </button>
                                     );
@@ -623,12 +630,18 @@ const PulseEcomDashboard = () => {
                         </div>
 
                         <div className="p-6 space-y-6">
+                            {activeCustomerCareTab === "cases" && (
+                                <CustomerCareCases/>
+                            )}
+
                             {activeCustomerCareTab === "refunds" && (
                                 <CustomerCareRefunds
                                     data={ibftApprovedRes}
                                     loading={ibftApprovedLoading}
                                 />
                             )}
+
+
                         </div>
                     </div>
                 )}
@@ -637,7 +650,7 @@ const PulseEcomDashboard = () => {
                     <div className="space-y-6">
                         <p className="text-rose-500">Inprocess</p>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <SectionCard title="COD Amount Issues" icon={AlertTriangle}>
+                        <SectionCard title="COD Amount Issues" icon={AlertTriangle}>
                                 {codIssuesLoading ? (
                                     <LoadingSpinner />
                                 ) : !isNonEmptyArray(codIssues) ? (

@@ -13,7 +13,6 @@ import TypingIndicator from "@modules/chatbot/components/TypingIndicator.jsx"
 import LiveScanLCD from "@modules/chatbot/components/LiveScan.jsx"
 import QCReport from "@modules/chatbot/components/QCReport.jsx"
 import ExportExcelButton from "@modules/chatbot/components/ExportExcelButton.jsx"
-import ChatService from "@modules/chatbot/services/ChatService.js"
 import { PMS_ROUTES } from "@modules/project-management/routes.js"
 import EmployeeCard from "@modules/chatbot/components/EmployeeCard.jsx"
 import EmployeeCandidates from "@modules/chatbot/components/EmployeeCandidates.jsx"
@@ -21,6 +20,8 @@ import AttendanceSummary from "@modules/chatbot/components/AttendanceSummary.jsx
 import CaloriesChatKitPane from "@modules/chatbot/components/CaloriesChatKitPane.jsx"
 import HasPermission from "@components/HasPermission.jsx"
 import EmployeeChatKitPane from "@modules/chatbot/components/EmployeeChatKitPane.jsx"
+import sanitizeHtml from "@modules/chatbot/utils/sanitizeHtml.js"
+import ChatService from "@modules/chatbot/services/ChatService.js";
 
 export default function ChatBot() {
   const {
@@ -450,7 +451,7 @@ export default function ChatBot() {
                                   m.loading ? "streaming" : ""
                                 }`}
                                 style={{ overflowAnchor: "none" }}
-                                dangerouslySetInnerHTML={{ __html: m.html }}
+                                dangerouslySetInnerHTML={{ __html: sanitizeHtml(m.html) }}
                               />
                             ) : null}
                           </div>

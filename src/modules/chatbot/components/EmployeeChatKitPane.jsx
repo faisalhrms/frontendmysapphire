@@ -8,7 +8,7 @@ import {
   employeeSearchTool,
   employeeGetTool,
   employeeQueryTool,
-  chatkitWidgetActionTool, leaveBalanceResolveTool, leaveBalanceQueryTool,
+  chatkitWidgetActionTool, leaveBalanceResolveTool, leaveBalanceQueryTool, employeeEducationQueryTool,
 } from "@modules/chatbot/services/EmployeeChatKitService.js"
 
 function parseExpiresAt(v) {
@@ -20,7 +20,18 @@ function parseExpiresAt(v) {
 
 function normalizeUrl(url) {
   if (!url) return null
-  return String(url)
+  const raw = String(url)
+  if (/^https?:\/\//i.test(raw)) return raw
+  try {
+    const baseURL = api?.defaults?.baseURL
+    if (baseURL) {
+      const base = new URL(baseURL, window.location.origin)
+      return new URL(raw, base).toString()
+    }
+  } catch (e) {
+    // fall back to window origin
+  }
+  return new URL(raw, window.location.origin).toString()
 }
 
 async function downloadWithAxios(url, filename) {
@@ -45,6 +56,7 @@ async function downloadWithAxios(url, filename) {
 
 export default function EmployeeChatKitPane({ onReady: onChatReady }) {
   const chatkitRef = useRef(null)
+  const threadIdRef = useRef(null)
 
   const sessionRef = useRef({
     secret: null,
@@ -87,6 +99,7 @@ export default function EmployeeChatKitPane({ onReady: onChatReady }) {
     if (name === "employee_search") return await employeeSearchTool(args, { signal })
     if (name === "employee_get") return await employeeGetTool(args, { signal })
     if (name === "employee_query") return await employeeQueryTool(args, { signal })
+    if (name === "employee_education_query") return await employeeEducationQueryTool(args, { signal })
 
     if (name === "leave_balance_resolve") return await leaveBalanceResolveTool(args, { signal })
     if (name === "leave_balance_query") return await leaveBalanceQueryTool(args, { signal })
@@ -101,21 +114,38 @@ export default function EmployeeChatKitPane({ onReady: onChatReady }) {
     if (!action?.type) return
     if (action.type !== "attachment.download") return
 
-    const data = await chatkitWidgetActionTool({
-      action,
-      itemId: widgetItem?.id,
-    })
+    try {
+      const threadId =
+        widgetItem?.threadId ||
+        widgetItem?.thread_id ||
+        widgetItem?.thread?.id ||
+        threadIdRef.current ||
+        action?.payload?.threadId ||
+        action?.payload?.thread_id
 
-    console.log("widget-action backend response", data)
+      const data = await chatkitWidgetActionTool({
+        action,
+        itemId: widgetItem?.id,
+        threadId,
+      })
 
-    const url = normalizeUrl(data?.download_url || data?.open_url)
-    if (!url) return
+      console.log("widget-action backend response", data)
 
-    const fileName =
-      action?.payload?.fileName ||
-      action?.payload?.filename ||
-      "download"
-    await downloadWithAxios(url, fileName)
+      const url = normalizeUrl(data?.download_url || data?.open_url)
+      if (!url) return
+
+      const fileName =
+        data?.download_name ||
+        data?.downloadName ||
+        action?.payload?.fileName ||
+        action?.payload?.file_name ||
+        action?.payload?.filename ||
+        "download"
+      await downloadWithAxios(url, fileName)
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Widget action failed"
+      console.error("widget-action error:", msg)
+    }
   }, [])
 
   const chatkitUiOptions = useMemo(
@@ -153,6 +183,15 @@ export default function EmployeeChatKitPane({ onReady: onChatReady }) {
   const chatkit = useChatKit({
     api: { getClientSecret },
     ...chatkitUiOptions,
+    onThreadChange: ({ threadId }) => {
+      threadIdRef.current = threadId
+    },
+    onThreadLoadStart: ({ threadId }) => {
+      threadIdRef.current = threadId
+    },
+    onThreadLoadEnd: ({ threadId }) => {
+      threadIdRef.current = threadId
+    },
 
     onClientTool: async (call) => {
       const controller = new AbortController()

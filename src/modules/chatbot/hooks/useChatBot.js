@@ -117,7 +117,6 @@ export default function useChatBot() {
 
   // streaming HTML buffer
   const pendingHtmlRef = useRef("")
-  const tagDepthRef = useRef(0)
   const flushTimerRef = useRef(0)
   const lastFlushTsRef = useRef(0)
   const rafTickRef = useRef(0)
@@ -326,6 +325,41 @@ export default function useChatBot() {
     }
   }
 
+  const splitPendingHtml = (html) => {
+    const lastOpen = html.lastIndexOf("<")
+    const lastClose = html.lastIndexOf(">")
+    if (lastOpen > lastClose) {
+      return { flushText: html.slice(0, lastOpen), remainder: html.slice(lastOpen) }
+    }
+    return { flushText: html, remainder: "" }
+  }
+
+  const flushPending = (i, { force = false } = {}) => {
+    const p = pendingHtmlRef.current
+    if (!p) return
+    const { flushText, remainder } = force ? { flushText: p, remainder: "" } : splitPendingHtml(p)
+    if (!flushText) {
+      pendingHtmlRef.current = remainder || p
+      return
+    }
+    pendingHtmlRef.current = remainder
+    lastFlushTsRef.current = performance.now()
+
+    setMessages(prev => {
+      const c = [...prev]
+      if (!c[i]) return prev
+      c[i] = { ...c[i], html: (c[i].html || "") + flushText }
+      return c
+    })
+
+    if (!rafTickRef.current) {
+      rafTickRef.current = requestAnimationFrame(() => {
+        setTick(t => t + 1)
+        rafTickRef.current = 0
+      })
+    }
+  }
+
   const scheduleFlush = i => {
     if (flushTimerRef.current) return
     const now = performance.now()
@@ -333,37 +367,11 @@ export default function useChatBot() {
 
     flushTimerRef.current = window.setTimeout(() => {
       flushTimerRef.current = 0
-
-      const p = pendingHtmlRef.current
-      if (!p) return
-
-      pendingHtmlRef.current = ""
-      lastFlushTsRef.current = performance.now()
-
-      setMessages(prev => {
-        const c = [...prev]
-        if (!c[i]) return prev
-        c[i] = { ...c[i], html: (c[i].html || "") + p }
-        return c
-      })
-
-      if (!rafTickRef.current) {
-        rafTickRef.current = requestAnimationFrame(() => {
-          setTick(t => t + 1)
-          rafTickRef.current = 0
-        })
-      }
+      flushPending(i)
     }, delay)
   }
 
-
   const onDeltaChunk = (i, text) => {
-    for (let k = 0; k < text.length; k++) {
-      const ch = text[k]
-      if (ch === "<") tagDepthRef.current += 1
-      if (ch === ">")
-        tagDepthRef.current = Math.max(0, tagDepthRef.current - 1)
-    }
     pendingHtmlRef.current += text
     scheduleFlush(i)
   }
@@ -373,17 +381,7 @@ export default function useChatBot() {
       clearTimeout(flushTimerRef.current)
       flushTimerRef.current = 0
     }
-    const p = pendingHtmlRef.current
-    pendingHtmlRef.current = ""
-    tagDepthRef.current = 0
-    if (p) {
-      setMessages(prev => {
-        const c = [...prev]
-        if (!c[i]) return prev
-        c[i] = { ...c[i], html: (c[i].html || "") + p }
-        return c
-      })
-    }
+    flushPending(i, { force: true })
   }
 
   const startStream = msg => {
@@ -461,7 +459,6 @@ export default function useChatBot() {
 
     // reset streaming buffer
     pendingHtmlRef.current = ""
-    tagDepthRef.current = 0
     lastFlushTsRef.current = 0
     if (flushTimerRef.current) {
       clearTimeout(flushTimerRef.current)
@@ -631,7 +628,6 @@ export default function useChatBot() {
     setCompetitorChecks(defaultCompetitorChecks)
     botIdxRef.current = -1
     pendingHtmlRef.current = ""
-    tagDepthRef.current = 0
     if (flushTimerRef.current) {
       clearTimeout(flushTimerRef.current)
       flushTimerRef.current = 0

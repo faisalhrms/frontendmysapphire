@@ -173,55 +173,71 @@ const ChatService = {
           return
         }
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder("utf-8")
-      let buffer = ""
+        const reader = res.body.getReader()
+        const decoder = new TextDecoder("utf-8")
+        let buffer = ""
 
-      const emitBlock = (block) => {
-        const lines = block.split(/\r?\n/)
-        const dataLines = []
+        const emitBlock = (block) => {
+          const lines = block.split(/\r?\n/)
+          const dataLines = []
 
-        for (const line of lines) {
-          if (!line) continue
-          if (line.startsWith(":")) continue
-          if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart())
+          for (const line of lines) {
+            if (!line) continue
+            if (line.startsWith(":")) continue
+            if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart())
+          }
+
+          if (!dataLines.length) return
+
+          const data = dataLines.join("\n").trim()
+          if (!data) return
+          if (data === "[DONE]") {
+            onEvent({ type: "done" })
+            return
+          }
+
+          try {
+            onEvent(JSON.parse(data))
+          } catch {
+            if (dataLines.length > 1) {
+              for (const line of dataLines) {
+                const trimmed = String(line || "").trim()
+                if (!trimmed) continue
+                if (trimmed === "[DONE]") {
+                  onEvent({ type: "done" })
+                  continue
+                }
+                try {
+                  onEvent(JSON.parse(trimmed))
+                } catch {}
+              }
+            }
+          }
         }
-
-        if (!dataLines.length) return
-
-        const data = dataLines.join("\n")
-        try {
-          onEvent(JSON.parse(data))
-        } catch (e) {
-          console.error("Bad SSE JSON:", data, e)
-        }
-        console.log("SSE block at", new Date().toISOString(), block.slice(0, 80))
-
-      }
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        buffer += decoder.decode(value, { stream: true })
 
         while (true) {
-          const idx = buffer.search(/\r?\n\r?\n/)
-          if (idx === -1) break
+          const { done, value } = await reader.read()
+          if (done) break
 
-          const delim = buffer.slice(idx).match(/^\r?\n\r?\n/)[0].length
-          const block = buffer.slice(0, idx)
-          buffer = buffer.slice(idx + delim)
+          buffer += decoder.decode(value, { stream: true })
 
-          if (block.trim()) emitBlock(block)
+          while (true) {
+            const idx = buffer.search(/\r?\n\r?\n/)
+            if (idx === -1) break
+
+            const delim = buffer.slice(idx).match(/^\r?\n\r?\n/)[0].length
+            const block = buffer.slice(0, idx)
+            buffer = buffer.slice(idx + delim)
+
+            if (block.trim()) emitBlock(block)
+          }
         }
-      }
 
-      // flush remaining bytes
-      buffer += decoder.decode()
-      if (buffer.trim()) emitBlock(buffer)
+        // flush remaining bytes
+        buffer += decoder.decode()
+        if (buffer.trim()) emitBlock(buffer)
 
-      onEvent({ type: "done" })
+        onEvent({ type: "done" })
 
 
 
