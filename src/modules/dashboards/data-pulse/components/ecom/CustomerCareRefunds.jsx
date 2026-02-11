@@ -1,4 +1,3 @@
-// @modules/dashboards/data-pulse/components/ecom/CustomerCareRefunds.jsx
 import React, { useMemo } from "react";
 import LoadingSpinner from "@components/LoadingSpinner.jsx";
 import PulseScan from "@modules/dashboards/data-pulse/components/ecom/PulseScan.jsx";
@@ -199,7 +198,7 @@ const CustomerCareRefunds = ({ data, loading, formatAmount }) => {
         <div className="space-y-6">
             {/* ✅ Main gradient card */}
             <CardShell
-                title="Customer Care • Refunds"
+                title="Refunds Processed before punching"
                 gradient={GRADIENTS.main}
                 right={<InfoPill text={infoText} />}
             >
@@ -208,7 +207,6 @@ const CustomerCareRefunds = ({ data, loading, formatAmount }) => {
                         title="Total Cases"
                         Icon={FileText}
                         value={nf0.format(totalCases)}
-                        subtitle="Distinct CaseNumber"
                         loading={false}
                         gradient={GRADIENTS.cases}
                     />
@@ -217,7 +215,6 @@ const CustomerCareRefunds = ({ data, loading, formatAmount }) => {
                         title="Total Orders"
                         Icon={ShoppingCart}
                         value={nf0.format(totalOrders)}
-                        subtitle="Distinct OrderNumber"
                         loading={false}
                         gradient={GRADIENTS.orders}
                     />
@@ -226,7 +223,6 @@ const CustomerCareRefunds = ({ data, loading, formatAmount }) => {
                         title="Total Amount"
                         Icon={Wallet}
                         value={money(totalAmount)}
-                        subtitle="Sum of IBFT Amount"
                         loading={false}
                         gradient={GRADIENTS.amount}
                     />
