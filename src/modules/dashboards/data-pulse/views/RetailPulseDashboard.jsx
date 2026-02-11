@@ -162,7 +162,6 @@ const METRICS = [
     { key: "sales_by_store", label: "Sales by Store", icon: TrendingUp},
     { key: "returns_by_store", label: "Returns by Store", icon: TrendingDown},
     { key: "discount_coupon_top", label: "Discount Coupons", icon: BadgePercent},
-    { key: "employee_card_top", label: "Employee Card", icon: IdCard},
     { key: "credit_memo_top", label: "Credit Memos Issued", icon: Receipt},
     { key: "credit_memo_redeemed_top", label: "Credit Memos Redeemed", icon: Receipt},
     { key: "void_by_store", label: "Voids by Store", icon: Ban},
@@ -174,7 +173,6 @@ const METRIC_ENDPOINTS = {
     sales_by_store: "/dashboard/data-pulse/retail/top/sales/",
     returns_by_store: "/dashboard/data-pulse/retail/top/returns/",
     discount_coupon_top: "/dashboard/data-pulse/retail/top/discount-coupons/",
-    employee_card_top: "/dashboard/data-pulse/retail/top/employee-card/",
     credit_memo_top: "/dashboard/data-pulse/retail/top/credit-memo/",
     credit_memo_redeemed_top: "/dashboard/data-pulse/retail/top/credit-memo-redemption/",
     void_by_store: "/dashboard/data-pulse/retail/top/void/",
@@ -207,25 +205,18 @@ function normalizeMetricRows(metricKey, rows) {
                 sub: `${r.WAREHOUSENAME ?? "-"} • Txn: ${r.TransactionNumber ?? "-"}`,
             }));
 
-        case "employee_card_top":
-            return safe.map((r) => ({
-                name: r.Name ?? "Unknown",
-                value: Number(r.Total_order_Amount) || 0,
-                sub: `Discount: PKR ${formatRoundedAmountWithCommas(r.EffectiveAmount)} • ${r.CustomerAccount ?? "-"}`,
-            }));
-
         case "credit_memo_top":
             return safe.map((r) => ({
                 name: r.CREATEDINSTOREID ?? "Unknown",
                 value: Number(r.AMOUNT) || 0,
-                sub: `Entry: ${r.ENTRYID ?? "-"} • Txn: ${r.CREATEDBYTRANSACTIONID ?? "-"}`,
+                sub: `Rec: ${r.RRECEIPTID ?? "-"}`,
             }));
 
         case "credit_memo_redeemed_top":
             return safe.map((r) => ({
                 name: r.WAREHOUSENAME ?? "Unknown",
                 value: Number(r.AppliedAmount) || 0,
-                sub: `Entry: ${r.EntryId ?? "-"} • Receipt: ${r.AppliedByReceiptId ?? "-"}`,
+                sub: `Receipt: ${r.AppliedByReceiptId ?? "-"}`,
             }));
 
 
@@ -317,38 +308,11 @@ function getDetailTableConfig(metricKey) {
                 ],
             };
 
-        case "employee_card_top":
-            return {
-                title: "Detailed Employee Card",
-                columns: [
-                    { key: "Date", label: "Date", mono: true },
-                    { key: "CustGroup", label: "Cust Group", mono: true },
-                    { key: "CustomerAccount", label: "Customer Account", mono: true, colorClass: "text-blue-600" },
-                    { key: "KnownAs", label: "Known As", mono: true },
-                    { key: "Name", label: "Name", strong: true },
-                    { key: "TransactionNumber", label: "Transaction #", mono: true },
-                    {
-                        key: "Total_order_Amount",
-                        label: "Order Amount",
-                        align: "right",
-                        strong: true,
-                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.Total_order_Amount)}`,
-                    },
-                    {
-                        key: "EffectiveAmount",
-                        label: "Discounted Amount",
-                        align: "right",
-                        render: (r) => `PKR ${formatRoundedAmountWithCommas(r.EffectiveAmount)}`,
-                    },
-                ],
-            };
-
         case "credit_memo_top":
             return {
                 title: "Detailed Credit Memos Issued",
                 columns: [
-                    { key: "ENTRYID", label: "Entry ID", mono: true },
-                    { key: "CREATEDBYTRANSACTIONID", label: "Created By Txn", mono: true },
+                    { key: "RRECEIPTID", label: "Receipt ID", mono: true },
                     { key: "CREATEDBYSTAFFID", label: "Staff ID", mono: true },
                     { key: "CREATEDINSTOREID", label: "Store ID", mono: true, colorClass: "text-blue-600" },
                     {
@@ -374,7 +338,6 @@ function getDetailTableConfig(metricKey) {
                     { key: "Date", label: "Date", mono: true },
                     { key: "AppliedInStoreId", label: "Store ID", mono: true, colorClass: "text-blue-600" },
                     { key: "WAREHOUSENAME", label: "Store Name", strong: true },
-                    { key: "EntryId", label: "Entry ID", mono: true },
                     { key: "AppliedDate", label: "Applied Date", mono: true },
                     { key: "AppliedByReceiptId", label: "Receipt", mono: true },
                     { key: "AppliedByTransactionId", label: "Transaction #", mono: true },

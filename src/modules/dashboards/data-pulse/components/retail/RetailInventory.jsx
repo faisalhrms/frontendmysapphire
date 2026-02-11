@@ -167,6 +167,13 @@ const RetailInventory = ({ filters, enabled }) => {
                 getCellProps: () => ({ className: "!text-left font-mono" }),
             },
             {
+                Header: "Item Number",
+                accessor: "itemnumber",
+                excelAlignment: "left",
+                Cell: ({ value }) => value || "-",
+                getCellProps: () => ({ className: "!text-left font-mono" }),
+            },
+            {
                 Header: "Txn Date",
                 accessor: "transactiondate",
                 excelAlignment: "left",
@@ -181,14 +188,6 @@ const RetailInventory = ({ filters, enabled }) => {
                 excelAlignment: "right",
                 excelColumnType: "number",
                 Cell: ({ value }) => fmtInt(value),
-                getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
-            },
-            {
-                Header: "Total Cost",
-                accessor: "totalcost",
-                excelAlignment: "right",
-                excelColumnType: "number",
-                Cell: ({ value }) => fmtMoney(value),
                 getCellProps: () => ({ className: "!text-right tabular-nums font-semibold" }),
             },
         ],
@@ -303,7 +302,7 @@ const RetailInventory = ({ filters, enabled }) => {
     return (
         <div className="space-y-6">
             {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <StatCard
                     icon={ArrowRightLeft}
                     title="Transfers to BGD (Total)"
@@ -324,14 +323,8 @@ const RetailInventory = ({ filters, enabled }) => {
                 />
                 <StatCard
                     icon={RefreshCcw}
-                    title="Movement Journals"
+                    title="Unique Movement Journals"
                     value={overviewLoading ? "..." : fmtInt(summary.movement_journals_count)}
-                    isLoading={overviewLoading}
-                />
-                <StatCard
-                    icon={Wallet}
-                    title="Movement Cost"
-                    value={overviewLoading ? "..." : fmtMoney(summary.movement_cost_total)}
                     isLoading={overviewLoading}
                 />
             </div>

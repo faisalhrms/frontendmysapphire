@@ -451,7 +451,7 @@ const RetailReturns = ({ filters, enabled }) => {
 
     return (
         <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <StatCard
                         icon={Wallet}
                         title="Return Amount (Incl Tax)"
@@ -480,14 +480,6 @@ const RetailReturns = ({ filters, enabled }) => {
                         title="Returns Without Receipt"
                         value={overviewLoading ? "..." : formatRoundedAmountWithCommas(returnsCards.return_qty_without_receipt || 0)}
                         subtitle="No receipt"
-                        isLoading={overviewLoading}
-                    />
-
-                    <StatCard
-                        icon={TrendingDown}
-                        title="Exchange Txns"
-                        value={overviewLoading ? "..." : formatRoundedAmountWithCommas(returnsCards.exchanges_txn_count || 0)}
-                        subtitle="Sale + return in same txn"
                         isLoading={overviewLoading}
                     />
                 </div>

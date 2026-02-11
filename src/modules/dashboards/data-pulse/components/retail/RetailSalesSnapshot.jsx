@@ -44,7 +44,7 @@ const RetailSalesSnapshot = ({ sales, loading, formatRoundedAmountWithCommas }) 
                             </div>
                         ) : (
                             <>
-                                <p className="text-xs text-white/70 mb-1 font-medium">Total Gross Sale</p>
+                                <p className="text-xs text-white/70 mb-1 font-medium">Total Net Sale</p>
                                 <p className="text-3xl font-bold text-white tabular-nums">
                                     PKR {formatRoundedAmountWithCommas(totalSale)}
                                 </p>

@@ -91,7 +91,7 @@ const RetailExchangesSnapshot = ({ exchanges, loading, formatRoundedAmountWithCo
                                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg transition-all">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-white">With Receipt</p>
+                                            <p className="text-sm font-medium text-white">Return With Receipt</p>
                                             <p className="text-xs text-white/70">{withPct}% of total returns</p>
                                         </div>
                                         <div className="text-right">
@@ -111,7 +111,7 @@ const RetailExchangesSnapshot = ({ exchanges, loading, formatRoundedAmountWithCo
                                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg transition-all">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-white">Without Receipt</p>
+                                            <p className="text-sm font-medium text-white">Return Without Receipt</p>
                                             <p className="text-xs text-white/70">{withoutPct}% of total returns</p>
                                         </div>
                                         <div className="text-right">

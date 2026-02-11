@@ -191,28 +191,28 @@ const GiftCards = ({ filters, enabled }) => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <StatCard
                     icon={Wallet}
-                    title="Issuance Amount"
+                    title="Total Issuance Amount"
                     value={overviewLoading ? "..." : fmtMoney(cards.total_issuance_amount)}
                     isLoading={overviewLoading}
                 />
 
                 <StatCard
                     icon={Hash}
-                    title="Issuance Transactions"
+                    title="Total Issuance Transactions"
                     value={overviewLoading ? "..." : fmtInt(cards.total_issuance_transactions)}
                     isLoading={overviewLoading}
                 />
 
                 <StatCard
                     icon={TrendingDown}
-                    title="Redemption Amount"
+                    title="Total Redemption Amount"
                     value={overviewLoading ? "..." : fmtMoney(cards.total_redemption_amount)}
                     isLoading={overviewLoading}
                 />
 
                 <StatCard
                     icon={TrendingUp}
-                    title="Redemption Transactions"
+                    title="Total Redemption Transactions"
                     value={overviewLoading ? "..." : fmtInt(cards.total_redemption_transactions)}
                     isLoading={overviewLoading}
                 />

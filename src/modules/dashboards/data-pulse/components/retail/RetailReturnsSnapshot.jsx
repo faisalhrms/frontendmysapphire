@@ -111,7 +111,7 @@ const RetailReturnsSnapshot = ({ returns, loading, formatRoundedAmountWithCommas
                                     <div className="bg-slate-700/30 p-4 rounded-lg border border-slate-600/50 hover:border-slate-500/50 transition-all">
                                         <div className="flex items-center justify-between mb-3">
                                             <div className="flex-1">
-                                                <p className="text-sm font-medium text-white">With Receipt</p>
+                                                <p className="text-sm font-medium text-white">Return With Receipt</p>
                                                 <p className="text-xs text-white/70">{withPct}% of total</p>
                                             </div>
                                             <p className="text-lg font-bold text-white tabular-nums">
@@ -129,7 +129,7 @@ const RetailReturnsSnapshot = ({ returns, loading, formatRoundedAmountWithCommas
                                     <div className="bg-slate-700/30 p-4 rounded-lg border border-slate-600/50 hover:border-slate-500/50 transition-all">
                                         <div className="flex items-center justify-between mb-3">
                                             <div className="flex-1">
-                                                <p className="text-sm font-medium text-white">Without Receipt</p>
+                                                <p className="text-sm font-medium text-white">Return Without Receipt</p>
                                                 <p className="text-xs text-white/70">{withoutPct}% of total</p>
                                             </div>
                                             <p className="text-lg font-bold text-white tabular-nums">

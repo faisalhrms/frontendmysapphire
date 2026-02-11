@@ -215,9 +215,9 @@ const RetailOverview = ({ activeTab, filters }) => {
                 />
                 <StatCard
                     icon={RotateCcw}
-                    title="Returns Value"
+                    title="Return + Exchange Value"
                     value={retLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(returnsNet)}`}
-                    subtitle="Total returns inclusive tax"
+                    subtitle="Total returns + exchange inclusive tax"
                     isLoading={retLoading}
                 />
                 <StatCard
