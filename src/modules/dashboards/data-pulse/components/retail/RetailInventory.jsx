@@ -305,19 +305,19 @@ const RetailInventory = ({ filters, enabled }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <StatCard
                     icon={ArrowRightLeft}
-                    title="Transfers to BGD (Total)"
+                    title="Transfers to BGD (Total TO's)"
                     value={overviewLoading ? "..." : fmtInt(summary.transfers_to_bgd_total)}
                     isLoading={overviewLoading}
                 />
                 <StatCard
                     icon={Warehouse}
-                    title="BGD Shipped"
+                    title="BGD Shipped (Total TO's)"
                     value={overviewLoading ? "..." : fmtInt(summary.transfers_to_bgd_shipped)}
                     isLoading={overviewLoading}
                 />
                 <StatCard
                     icon={PackageOpen}
-                    title="BGD Received"
+                    title="BGD Received (Total TO's)"
                     value={overviewLoading ? "..." : fmtInt(summary.transfers_to_bgd_received)}
                     isLoading={overviewLoading}
                 />

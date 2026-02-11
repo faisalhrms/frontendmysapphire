@@ -175,8 +175,8 @@ const ExchangesArea4Lines = ({ rows = [] }) => {
 
                     <Area type="monotone" dataKey="sale_qty" stroke="#6366F1" fill="url(#gSale)" fillOpacity={1} name="Sale Qty" />
                     <Area type="monotone" dataKey="return_qty" stroke="#10B981" fill="url(#gReturn)" fillOpacity={1} name="Return Qty" />
-                    <Area type="monotone" dataKey="with_receipt" stroke="#F59E0B" fill="url(#gWith)" fillOpacity={1} name="Return (With Transactions)" />
-                    <Area type="monotone" dataKey="without_receipt" stroke="#EF4444" fill="url(#gWithout)" fillOpacity={1} name="Return (Without Transactions)" />
+                    <Area type="monotone" dataKey="with_receipt" stroke="#F59E0B" fill="url(#gWith)" fillOpacity={1} name="Return (With Receipt)" />
+                    <Area type="monotone" dataKey="without_receipt" stroke="#EF4444" fill="url(#gWithout)" fillOpacity={1} name="Return (Without Receipt)" />
                 </AreaChart>
             </ResponsiveContainer>
         </div>
@@ -594,13 +594,13 @@ const RetailReturns = ({ filters, enabled }) => {
                                                     },
                                                     {
                                                         key: "WithRef",
-                                                        label: "Return (With Transactions)",
+                                                        label: "Return (With Receipt)",
                                                         align: "right",
                                                         render: (r) => formatRoundedAmountWithCommas(r.WithRef)
                                                     },
                                                     {
                                                         key: "WithoutRef",
-                                                        label: "Return (Without Transactions)",
+                                                        label: "Return (Without Receipt)",
                                                         align: "right",
                                                         render: (r) => formatRoundedAmountWithCommas(r.WithoutRef)
                                                     },
