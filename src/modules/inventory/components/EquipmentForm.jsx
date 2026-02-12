@@ -8,7 +8,7 @@ import FormButton from "@components/form/FormButton.jsx";
 import FormTextarea from "@components/form/FormTextarea.jsx";
 import GalleryUpload from "@components/GalleryUpload.jsx";
 import { formatOptions } from "@helpers/formatters.js";
-import { equipmentStatuses } from "@modules/inventory/services/inventoryService.js";
+import {equipmentStatuses, yesNoOptions} from "@modules/inventory/services/inventoryService.js";
 import equipmentSchema from "@modules/inventory/schemas/equipmentSchema.js";
 import {useEquipmentForm, useVerifyEquipment} from "@modules/inventory/hooks/inventoryHooks.js";
 import { CheckCircle, Loader2, ShieldCheck } from "lucide-react";
@@ -33,6 +33,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
             ...equipmentData,
             company_id: equipmentData?.company_id || companyId,
             laptop_issued_as_per_policy: equipmentData?.laptop_issued_as_per_policy ?? true,
+            till_on_laptop: equipmentData?.till_on_laptop ?? false,
             sub_equipments: equipmentData?.sub_equipments || [],
             quantity: equipmentData?.quantity || 1,
             verified_on: equipmentData?.verified_on || null,
@@ -592,6 +593,22 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                     </div>
                     <div className="box">
                         <div className="box-header">
+                            <div className="box-title">Till on Laptop</div>
+                        </div>
+                        <div className="box-body">
+                            <FormSelect
+                                name="till_on_laptop"
+                                control={control}
+                                errors={errors}
+                                placeholder="Till on Laptop"
+                                options={yesNoOptions}
+                                label="Till on Laptop"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="box">
+                        <div className="box-header">
                             <div className="box-title">Asset Tag Availability</div>
                         </div>
                         <div className="box-body">
@@ -615,7 +632,7 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                         disabled
                                         className="ti-btn ti-btn-success ti-btn-wave w-full flex items-center justify-center gap-2"
                                     >
-                                        <CheckCircle className="w-5 h-5" />
+                                        <CheckCircle className="w-5 h-5"/>
                                         Verified
                                     </button>
                                 ) : (
@@ -627,12 +644,12 @@ const EquipmentForm = ({ equipmentData, isEditMode = false }) => {
                                     >
                                         {isVerifying ? (
                                             <>
-                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                                <Loader2 className="w-5 h-5 animate-spin"/>
                                                 Verifying...
                                             </>
                                         ) : (
                                             <>
-                                                <ShieldCheck className="w-5 h-5" />
+                                                <ShieldCheck className="w-5 h-5"/>
                                                 Mark as Verified
                                             </>
                                         )}
