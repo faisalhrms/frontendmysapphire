@@ -215,6 +215,24 @@ const EquipmentList = ({ isActive, externalFilters = [] }) => {
             ),
         },
         {
+            Header: "Till on Laptop",
+            accessor: "till_on_laptop",
+            filterable: true,
+            filterType: "boolean",
+            Cell: ({ value }) => (
+                <span
+                    className={
+                        value
+                            ? "badge bg-success/20 text-success rounded-sm py-1"
+                            : "badge bg-danger/20 text-danger rounded-sm py-1"
+                    }
+                >
+            {value ? "Yes" : "No"}
+        </span>
+            ),
+        },
+
+        {
             Header: "Purchase Price",
             accessor: "purchase_price",
             filterable: true,

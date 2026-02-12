@@ -15,6 +15,12 @@ export const equipmentStatuses = [
     {value:'waiting_for_scrap', label: 'Waiting For Scrap' },
 ];
 
+export const yesNoOptions = [
+    { label: "No", value: false },
+    { label: "Yes", value: true },
+];
+
+
 // Create a new equipment
 export const createEquipment = async (equipmentData) => {
     try {

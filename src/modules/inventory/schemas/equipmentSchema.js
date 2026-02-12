@@ -51,6 +51,11 @@ const equipmentSchema = z.object({
     specs: z.string().max(500, "Specs can be at most 500 characters"),
     attachment_ids: z.array(z.number()).nullable().optional(),
     laptop_issued_as_per_policy: z.boolean().default(true),
+    till_on_laptop: z.preprocess((v) => {
+        if (v === "true") return true;
+        if (v === "false") return false;
+        return v;
+    }, z.boolean()).default(false),
     exception_approval_granted_by_id: z.number().min(1, "Exception approval granted by employee (Grade G-15) is required").nullable().optional(),
     laptop_model: z.string().max(250).nullable().optional(),
     user_name: z.string().max(250).nullable().optional(),
