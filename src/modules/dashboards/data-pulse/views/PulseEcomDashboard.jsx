@@ -198,8 +198,12 @@ const PulseEcomDashboard = () => {
         return Number.isNaN(dt.getTime()) ? "" : dt.toISOString().slice(0, 10);
     };
 
+    const todayISO = useMemo(() => toISODate(new Date()), []);
     const watchedFromISO = useMemo(() => toISODate(watchedFrom), [watchedFrom]);
-    const watchedToISO = useMemo(() => toISODate(watchedTo), [watchedTo]);
+
+
+    const minISO = (a, b) => (a && b ? (a < b ? a : b) : (a || b || ""));
+
 
     const onSubmit = useCallback((formData) => {
         const df = formData?.date_from;
@@ -415,7 +419,8 @@ const PulseEcomDashboard = () => {
                                     errors={errors}
                                     label={false}
                                     required
-                                    max={watchedToISO || undefined} // ✅ from <= to
+                                    max={todayISO || undefined}
+
                                 />
                             </div>
 
@@ -427,7 +432,8 @@ const PulseEcomDashboard = () => {
                                     errors={errors}
                                     label={false}
                                     required
-                                    min={watchedFromISO || undefined} // ✅ to >= from
+                                    min={watchedFromISO || ""}
+                                    max={todayISO}
                                 />
                             </div>
 
@@ -631,7 +637,10 @@ const PulseEcomDashboard = () => {
 
                         <div className="p-6 space-y-6">
                             {activeCustomerCareTab === "cases" && (
-                                <CustomerCareCases/>
+                                <CustomerCareCases
+                                    activeTab={activeTab}
+                                    filters={filters}
+                                />
                             )}
 
                             {activeCustomerCareTab === "refunds" && (

@@ -177,18 +177,21 @@ const EmployeeDiscount = ({ filters, enabled }) => {
                     title="Active Employee Cards"
                     value={overviewLoading ? "..." : fmtInt(cards.total_active_employee_cards)}
                     isLoading={overviewLoading}
+                    variant="blackIndigo"
                 />
                 <StatCard
                     icon={MailX}
                     title="Employees Without Email"
                     value={overviewLoading ? "..." : fmtInt(cards.employees_without_email)}
                     isLoading={overviewLoading}
+                    variant="redOrange"
                 />
                 <StatCard
                     icon={Copy}
                     title="Employees With Duplicate Cards"
                     value={overviewLoading ? "..." : fmtInt(cards.employees_with_duplicate_cards)}
                     isLoading={overviewLoading}
+                    variant="blackRed"
                 />
             </div>
 

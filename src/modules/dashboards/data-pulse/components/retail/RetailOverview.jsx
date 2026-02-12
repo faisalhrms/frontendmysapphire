@@ -212,6 +212,7 @@ const RetailOverview = ({ activeTab, filters }) => {
                     value={saleLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(salesNet)}`}
                     subtitle="Total net sales inclusive tax"
                     isLoading={saleLoading}
+                    variant="blackIndigo"
                 />
                 <StatCard
                     icon={RotateCcw}
@@ -219,6 +220,7 @@ const RetailOverview = ({ activeTab, filters }) => {
                     value={retLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(returnsNet)}`}
                     subtitle="Total returns + exchange inclusive tax"
                     isLoading={retLoading}
+                    variant="redOrange"
                 />
                 <StatCard
                     icon={BadgePercent}
@@ -226,6 +228,7 @@ const RetailOverview = ({ activeTab, filters }) => {
                     value={discLoading ? "..." : `PKR ${formatRoundedAmountWithCommas(discounts)}`}
                     subtitle="Coupons applied amount"
                     isLoading={discLoading}
+                    variant="blackRed"
                 />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">

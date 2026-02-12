@@ -22,7 +22,7 @@ import {
     TrendingDown,
     Gift,
     Boxes,
-    Repeat, Store, ListChecks
+    Repeat, Store, ListChecks, UserX
 } from "lucide-react";
 import {formatRoundedAmountWithCommas} from "@helpers/formatters.js";
 import FormInput from "@components/form/FormInput.jsx";
@@ -41,6 +41,7 @@ import SuspendedTransactionsTable
     from "@modules/dashboards/data-pulse/components/retail/SuspendedTransactionsTable.jsx";
 import AfterClosingTransactionsTable
     from "@modules/dashboards/data-pulse/components/retail/AfterClosingTransactionsTable.jsx";
+import RetailUsers from "@modules/dashboards/data-pulse/components/retail/RetailUsers.jsx";
 
 const isNonEmptyArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
@@ -433,6 +434,7 @@ const RetailPulseDashboard = () => {
             { id: "inventory", label: "Inventory", icon: Boxes },
             { id: "exchanges", label: "Exchanges", icon: Repeat },
             { id: "risk", label: "Audit & Risk", icon: ShieldAlert },
+            { id: "users", label: "Users", icon: UserX },
         ],
         []
     );
@@ -500,6 +502,7 @@ const RetailPulseDashboard = () => {
     const inventoryEnabled = activeTab === "inventory";
     const exchangeEnabled = activeTab === "exchanges";
     const riskEnabled = activeTab === "risk";
+    const userEnabled = activeTab === "users";
 
     const { data: acResp, isLoading: acLoading } = useFetchWithFilters(
         METRIC_ENDPOINTS.after_close_by_store,
@@ -855,6 +858,12 @@ const RetailPulseDashboard = () => {
                             </div>
                         </div>
                     )}
+
+                    {activeTab === "users" &&
+                        <RetailUsers
+                            filters={filters}
+                            enabled={userEnabled} />
+                    }
                 </>
             )}
         </div>

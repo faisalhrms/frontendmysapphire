@@ -184,10 +184,10 @@ const RetailExchanges = ({ filters, enabled }) => {
         <div className="space-y-6">
             {/* Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <StatCard icon={TrendingUp} title="Total Sale Qty" value={overviewLoading ? "..." : fmtQty(cards.total_sale_qty)} isLoading={overviewLoading} />
-                <StatCard icon={RotateCcw} title="Total Return Qty" value={overviewLoading ? "..." : fmtQty(cards.total_return_qty)} isLoading={overviewLoading} />
-                <StatCard icon={Receipt} title="With Receipt" value={overviewLoading ? "..." : fmtQty(cards.total_with_ref)} isLoading={overviewLoading} />
-                <StatCard icon={ReceiptText} title="Without Receipt" value={overviewLoading ? "..." : fmtQty(cards.total_without_ref)} isLoading={overviewLoading} />
+                <StatCard icon={TrendingUp} title="Total Sale Qty" value={overviewLoading ? "..." : fmtQty(cards.total_sale_qty)} isLoading={overviewLoading} variant="blackIndigo" />
+                <StatCard icon={RotateCcw} title="Total Return Qty" value={overviewLoading ? "..." : fmtQty(cards.total_return_qty)} isLoading={overviewLoading} variant="blackRed" />
+                <StatCard icon={Receipt} title="With Receipt" value={overviewLoading ? "..." : fmtQty(cards.total_with_ref)} isLoading={overviewLoading} variant="blackGreen" />
+                <StatCard icon={ReceiptText} title="Without Receipt" value={overviewLoading ? "..." : fmtQty(cards.total_without_ref)} isLoading={overviewLoading} variant="blackRed" />
             </div>
 
             {/* Sub-tabs + table */}
